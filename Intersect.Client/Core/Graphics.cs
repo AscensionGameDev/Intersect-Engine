@@ -73,7 +73,7 @@ namespace Intersect.Client.Core
         public static object GfxLock = new object();
 
         //Animations
-        public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
+        public static List<Animation> LiveAnimations = new List<Animation>();
 
         public static object AnimationLock = new object();
 
@@ -169,7 +169,7 @@ namespace Intersect.Client.Core
             lock (AnimationLock)
             {
                 var animations = LiveAnimations.ToArray();
-                foreach (AnimationInstance animInstance in animations)
+                foreach (Animation animInstance in animations)
                 {
                     if (animInstance.ParentGone())
                     {
@@ -209,7 +209,7 @@ namespace Intersect.Client.Core
 
             lock (AnimationLock)
             {
-                foreach (AnimationInstance animInstance in LiveAnimations)
+                foreach (Animation animInstance in LiveAnimations)
                 {
                     animInstance.Draw(false);
                 }
@@ -246,7 +246,7 @@ namespace Intersect.Client.Core
 
             lock (AnimationLock)
             {
-                foreach (AnimationInstance animInstance in LiveAnimations)
+                foreach (Animation animInstance in LiveAnimations)
                 {
                     animInstance.Draw(false, true);
                     animInstance.Draw(true, true);
@@ -291,7 +291,7 @@ namespace Intersect.Client.Core
 
             lock (AnimationLock)
             {
-                foreach (AnimationInstance animInstance in LiveAnimations)
+                foreach (Animation animInstance in LiveAnimations)
                 {
                     animInstance.Draw(true);
                 }
@@ -369,7 +369,7 @@ namespace Intersect.Client.Core
                 }
             }
 
-            foreach (AnimationInstance animInstance in LiveAnimations.ToArray())
+            foreach (Animation animInstance in LiveAnimations.ToArray())
             {
                 animInstance.EndDraw();
             }

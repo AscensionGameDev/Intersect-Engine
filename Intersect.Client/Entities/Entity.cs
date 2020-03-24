@@ -4,6 +4,7 @@ using System.Linq;
 
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -43,7 +44,7 @@ namespace Intersect.Client.Entities
         public float elapsedtime; //to be removed
 
         //Entity Animations
-        public List<AnimationInstance> Animations = new List<AnimationInstance>();
+        public List<Animation> Animations = new List<Animation>();
 
         //Animation Timer (for animated sprites)
         public long AnimationTimer;
@@ -62,20 +63,20 @@ namespace Intersect.Client.Entities
         public byte Z;
 
         //Dashing instance
-        public DashInstance Dashing;
+        public Dash Dashing;
 
-        public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
+        public Queue<Dash> DashQueue = new Queue<Dash>();
         public long DashTimer;
 
         public Guid[] Equipment = new Guid[Options.EquipmentSlots.Count];
         public int[] MyEquipment = new int[Options.EquipmentSlots.Count];
-        public AnimationInstance[] EquipmentAnimations = new AnimationInstance[Options.EquipmentSlots.Count];
+        public Animation[] EquipmentAnimations = new Animation[Options.EquipmentSlots.Count];
 
         //Extras
         public string Face = "";
         public Color NameColor = null;
-        public LabelInstance HeaderLabel;
-        public LabelInstance FooterLabel;
+        public Label HeaderLabel;
+        public Label FooterLabel;
 
         public enum LabelType
         {
@@ -123,7 +124,7 @@ namespace Intersect.Client.Entities
 
         //Status effects
         [NotNull]
-        public List<StatusInstance> Status { get; private set; } = new List<StatusInstance>();
+        public List<Status> Status { get; private set; } = new List<Status>();
 
         public int Target = -1;
         public GameTexture Texture;
@@ -217,10 +218,10 @@ namespace Intersect.Client.Entities
             HideName = packet.HideName;
             HideEntity = packet.HideEntity;
             NameColor = packet.NameColor;
-            HeaderLabel = new LabelInstance(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
-            FooterLabel = new LabelInstance(packet.FooterLabel.Label, packet.FooterLabel.Color);
+            HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
+            FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
 
-            var animsToClear = new List<AnimationInstance>();
+            var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();
             for (int i = 0; i < packet.Animations.Length; i++)
             {
@@ -273,7 +274,7 @@ namespace Intersect.Client.Entities
             {
                 foreach (var status in packet.StatusEffects)
                 {
-                    var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                    var instance = new Status(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
                     Status?.Add(instance);
 
                     if (instance.Type == StatusTypes.Shield)
@@ -331,11 +332,11 @@ namespace Intersect.Client.Entities
         {
             foreach (var anim in anims)
             {
-                Animations.Add(new AnimationInstance(anim, true, false, -1, this));
+                Animations.Add(new Animation(anim, true, false, -1, this));
             }
         }
 
-        public void ClearAnimations(List<AnimationInstance> anims)
+        public void ClearAnimations(List<Animation> anims)
         {
             if (anims == null) anims = Animations;
             if (anims.Count > 0)
@@ -531,7 +532,7 @@ namespace Intersect.Client.Entities
                             }
                             if (EquipmentAnimations[z] == null)
                             {
-                                EquipmentAnimations[z] = new AnimationInstance(anim, true, true, -1, this);
+                                EquipmentAnimations[z] = new Animation(anim, true, true, -1, this);
                                 Animations.Add(EquipmentAnimations[z]);
                             }
                         }
@@ -574,7 +575,7 @@ namespace Intersect.Client.Entities
 
             CalculateCenterPos();
 
-            foreach (AnimationInstance animInstance in Animations)
+            foreach (Animation animInstance in Animations)
             {
                 animInstance.Update();
                 if (IsStealthed())
@@ -1072,20 +1073,20 @@ namespace Intersect.Client.Entities
             switch (type)
             {
                 case LabelType.Header:
-                    if (string.IsNullOrWhiteSpace(HeaderLabel.Label)) return GetLabelLocation(LabelType.Name);
+                    if (string.IsNullOrWhiteSpace(HeaderLabel.Text)) return GetLabelLocation(LabelType.Name);
                     y = GetLabelLocation(LabelType.Name);
-                    var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Label, Graphics.EntityNameFont, 1);
+                    var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
                     y -= headerSize.Y;
                     break;
                 case LabelType.Footer:
-                    if (string.IsNullOrWhiteSpace(FooterLabel.Label)) break;
-                    var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Label, Graphics.EntityNameFont, 1);
+                    if (string.IsNullOrWhiteSpace(FooterLabel.Text)) break;
+                    var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
                     y -= (footerSize.Y - 8);
                     break;
                 case LabelType.Name:
                     y = GetLabelLocation(LabelType.Footer);
                     var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
-                    if (string.IsNullOrEmpty(FooterLabel.Label))
+                    if (string.IsNullOrEmpty(FooterLabel.Text))
                     {
                         y -= (nameSize.Y - 8);
                     }
@@ -1262,7 +1263,7 @@ namespace Intersect.Client.Entities
                     return true;
             return false;
         }
-        public StatusInstance GetStatus(Guid guid)
+        public Status GetStatus(Guid guid)
         {
             foreach (var status in Status)
                 if (status.SpellId == guid && status.IsActive())
@@ -1281,131 +1282,4 @@ namespace Intersect.Client.Entities
         }
     }
 
-    public class StatusInstance
-    {
-        public string Data = "";
-        public Guid SpellId;
-        public long TimeRecevied = 0;
-        public long TimeRemaining = 0;
-        public long TotalDuration = 1;
-        public StatusTypes Type;
-        public int[] Shield = new int[(int)Vitals.VitalCount];
-
-        public StatusInstance(Guid spellId, StatusTypes type, string data, long timeRemaining, long totalDuration)
-        {
-            SpellId = spellId;
-            Type = type;
-            Data = data;
-            TimeRemaining = timeRemaining;
-            TotalDuration = totalDuration;
-            TimeRecevied = Globals.System.GetTimeMs();
-        }
-
-        public bool IsActive()
-        {
-            return RemainingMs() > 0;
-        }
-
-        public long RemainingMs()
-        {
-            var timeDiff = Globals.System.GetTimeMs() - TimeRecevied;
-            return TimeRemaining - timeDiff;
-        }
-    }
-
-    public class DashInstance
-    {
-        private int mChangeDirection = -1;
-        private int mDashTime;
-        private Guid mEndMapId;
-        private byte mEndX;
-        private float mEndXCoord;
-        private byte mEndY;
-        private float mEndYCoord;
-        private long mStartTime;
-        private float mStartXCoord;
-        private float mStartYCoord;
-
-        public DashInstance(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, int changeDirection = -1)
-        {
-            mChangeDirection = changeDirection;
-            mEndMapId = endMapId;
-            mEndX = endX;
-            mEndY = endY;
-            mDashTime = dashTime;
-        }
-
-        public void Start(Entity en)
-        {
-            if (MapInstance.Get(en.CurrentMap) == null ||
-                MapInstance.Get(mEndMapId) == null ||
-                (mEndMapId == en.CurrentMap) && (mEndX == en.X) && (mEndY == en.Y))
-            {
-                en.Dashing = null;
-            }
-            else
-            {
-                var startMap = MapInstance.Get(en.CurrentMap);
-                var endMap = MapInstance.Get(mEndMapId);
-                mStartTime = Globals.System.GetTimeMs();
-                mStartXCoord = en.OffsetX;
-                mStartYCoord = en.OffsetY;
-                mEndXCoord = (endMap.GetX() + mEndX * Options.TileWidth) -
-                             (startMap.GetX() + en.X * Options.TileWidth);
-                mEndYCoord = (endMap.GetY() + mEndY * Options.TileHeight) -
-                             (startMap.GetY() + en.Y * Options.TileHeight);
-                if (mChangeDirection > -1) en.Dir = (byte)mChangeDirection;
-            }
-        }
-
-        public float GetXOffset()
-        {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
-            {
-                return mEndXCoord;
-            }
-            else
-            {
-                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
-            }
-        }
-
-        public float GetYOffset()
-        {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
-            {
-                return mEndYCoord;
-            }
-            else
-            {
-                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
-            }
-        }
-
-        public bool Update(Entity en)
-        {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
-            {
-                en.Dashing = null;
-                en.OffsetX = 0;
-                en.OffsetY = 0;
-                en.CurrentMap = mEndMapId;
-                en.X = mEndX;
-                en.Y = mEndY;
-            }
-            return en.Dashing != null;
-        }
-    }
-
-    public struct LabelInstance
-    {
-        public string Label;
-        public Color Color;
-
-        public LabelInstance(string label, Color color)
-        {
-            Label = label;
-            Color = color;
-        }
-    }
 }

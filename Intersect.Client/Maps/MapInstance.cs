@@ -35,8 +35,8 @@ namespace Intersect.Client.Maps
         public static Dictionary<Guid, long> MapRequests = new Dictionary<Guid, long>();
 
         //Map Attributes
-        private Dictionary<Intersect.GameObjects.Maps.MapAttribute, AnimationInstance> mAttributeAnimInstances =
-            new Dictionary<Intersect.GameObjects.Maps.MapAttribute, AnimationInstance>();
+        private Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation> mAttributeAnimInstances =
+            new Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation>();
 
         protected float mCurFogIntensity;
         protected float mFogCurrentX;
@@ -388,7 +388,7 @@ namespace Intersect.Client.Maps
                     if (anim == null) continue;
                     if (!mAttributeAnimInstances.ContainsKey(att))
                     {
-                        var animInstance = new AnimationInstance(anim, true);
+                        var animInstance = new Animation(anim, true);
                         animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                             GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0);
                         mAttributeAnimInstances.Add(att, animInstance);

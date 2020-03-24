@@ -3,7 +3,7 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Maps
 {
-    public class MapAnimationInstance : AnimationInstance
+    public class MapAnimationInstance : Animation
     {
         private int mDir;
         private int mTileX;

@@ -21,14 +21,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public ImagePanel Container;
         private Guid mCurrentSpellId;
 
-        private StatusInstance mStatus;
+        private Status mStatus;
         public ImagePanel Pnl;
-        private Label mDurationLabel;
+        private Framework.Gwen.Control.Label mDurationLabel;
 
         private string mTexLoaded = "";
-        public Label TimeLabel;
+        public Framework.Gwen.Control.Label TimeLabel;
 
-        public SpellStatus(EntityBox entityBox, StatusInstance status)
+        public SpellStatus(EntityBox entityBox, Status status)
         {
             mEntityBox = entityBox;
             mStatus = status;
@@ -39,7 +39,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             Pnl = new ImagePanel(Container, "StatusIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            mDurationLabel = new Label(Container,"DurationLabel");
+            mDurationLabel = new Framework.Gwen.Control.Label(Container, "DurationLabel");
         }
 
         public void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -73,7 +73,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             return rect;
         }
 
-        public void UpdateStatus(StatusInstance status)
+        public void UpdateStatus(Status status)
         {
             mStatus = status;
         }

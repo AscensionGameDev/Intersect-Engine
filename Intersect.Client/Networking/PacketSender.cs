@@ -78,7 +78,7 @@ namespace Intersect.Client.Networking
             GameNetwork.SendPacket(new ActivateEventPacket(eventId));
         }
 
-        public static void SendEventResponse(byte response, EventDialog ed)
+        public static void SendEventResponse(byte response, Dialog ed)
         {
             Globals.EventDialogs.Remove(ed);
             GameNetwork.SendPacket(new EventResponsePacket(ed.EventId,response));

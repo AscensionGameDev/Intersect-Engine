@@ -37,16 +37,16 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public ImagePanel EntityInfoPanel;
 
         [NotNull]
-        public readonly Label EntityMap;
+        public readonly Framework.Gwen.Control.Label EntityMap;
 
         [NotNull]
-        public readonly Label EntityLevel;
+        public readonly Framework.Gwen.Control.Label EntityLevel;
 
         [NotNull]
-        public readonly Label EntityNameAndLevel;
+        public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
 
         [NotNull]
-        public readonly Label EntityName;
+        public readonly Framework.Gwen.Control.Label EntityName;
 
         public ImagePanel EntityStatusPanel;
 
@@ -59,18 +59,18 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public RichLabel EventDesc;
         public ImagePanel ExpBackground;
         public ImagePanel ExpBar;
-        public Label ExpLbl;
-        public Label ExpTitle;
+        public Framework.Gwen.Control.Label ExpLbl;
+        public Framework.Gwen.Control.Label ExpTitle;
         public ImagePanel HpBackground;
         public ImagePanel HpBar;
         public ImagePanel ShieldBar;
-        public Label HpLbl;
-        public Label HpTitle;
+        public Framework.Gwen.Control.Label HpLbl;
+        public Framework.Gwen.Control.Label HpTitle;
         private bool mInitialized;
         public ImagePanel MpBackground;
         public ImagePanel MpBar;
-        public Label MpLbl;
-        public Label MpTitle;
+        public Framework.Gwen.Control.Label MpLbl;
+        public Framework.Gwen.Control.Label MpTitle;
 
         public Entity MyEntity;
         public ImagePanel[] PaperdollPanels;
@@ -97,10 +97,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
-            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.Name };
-            EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
-            EntityNameAndLevel = new Label(EntityInfoPanel, "NameAndLevelLabel") { IsHidden = true };
-            EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
+            EntityName = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.Name };
+            EntityLevel = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityLevelLabel");
+            EntityNameAndLevel = new Framework.Gwen.Control.Label(EntityInfoPanel, "NameAndLevelLabel") { IsHidden = true };
+            EntityMap = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityMapLabel");
 
             PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
             PaperdollTextures = new string[Options.EquipmentSlots.Count];
@@ -129,21 +129,21 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
-            HpTitle = new Label(EntityInfoPanel, "HPTitle");
+            HpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "HPTitle");
             HpTitle.SetText(Strings.EntityBox.vital0);
-            HpLbl = new Label(EntityInfoPanel, "HPLabel");
+            HpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "HPLabel");
 
             MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
             MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
-            MpTitle = new Label(EntityInfoPanel, "MPTitle");
+            MpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "MPTitle");
             MpTitle.SetText(Strings.EntityBox.vital1);
-            MpLbl = new Label(EntityInfoPanel, "MPLabel");
+            MpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "MPLabel");
 
             ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
             ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
-            ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
+            ExpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "EXPTitle");
             ExpTitle.SetText(Strings.EntityBox.exp);
-            ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
+            ExpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "EXPLabel");
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
             TradeLabel.SetText(Strings.EntityBox.trade);

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
@@ -468,7 +469,7 @@ namespace Intersect.Client.Networking
             en.Status.Clear();
             foreach (var status in packet.StatusEffects)
             {
-                var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                var instance = new Status(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
                 en.Status.Add(instance);
 
                 if (instance.Type == StatusTypes.Shield)
@@ -632,7 +633,7 @@ namespace Intersect.Client.Networking
         //EventDialogPacket
         private static void HandlePacket(EventDialogPacket packet)
         {
-            var ed = new EventDialog();
+            var ed = new Dialog();
             ed.Prompt = packet.Prompt;
             ed.Face = packet.Face;
             if (packet.Type != 0)
@@ -909,7 +910,7 @@ namespace Intersect.Client.Networking
                         var animBase = AnimationBase.Get(animId);
                         if (animBase != null)
                         {
-                            AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]);
+                            Animation animInstance = new Animation(animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]);
                             if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                             Globals.Entities[entityId].Animations.Add(animInstance);
                         }
@@ -928,7 +929,7 @@ namespace Intersect.Client.Networking
                             var animBase = AnimationBase.Get(animId);
                             if (animBase != null)
                             {
-                                AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? true : false, -1, map.LocalEntities[entityId]);
+                                Animation animInstance = new Animation(animBase, false, packet.Direction == -1 ? true : false, -1, map.LocalEntities[entityId]);
                                 if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                                 map.LocalEntities[entityId].Animations.Add(animInstance);
                             }
@@ -1106,7 +1107,7 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(EntityDashPacket packet)
         {
             if (Globals.Entities.ContainsKey(packet.EntityId))
-                Globals.Entities[packet.EntityId].DashQueue.Enqueue(new DashInstance(Globals.Entities[packet.EntityId], packet.EndMapId, packet.EndX, packet.EndY, packet.DashTime, packet.Direction));
+                Globals.Entities[packet.EntityId].DashQueue.Enqueue(new Dash(Globals.Entities[packet.EntityId], packet.EndMapId, packet.EndX, packet.EndY, packet.DashTime, packet.Direction));
         }
 
         //MapGridPacket

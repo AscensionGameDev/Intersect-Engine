@@ -10,7 +10,7 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Entities
 {
-    public class AnimationInstance
+    public class Animation
     {
         private int mRenderDir;
         private float mRenderX;
@@ -34,7 +34,7 @@ namespace Intersect.Client.Entities
         private long mStartTime = Globals.System.GetTimeMs();
         private bool mDisposeNextDraw;
 
-        public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
+        public Animation(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
         {
             MyBase = animBase;
             mParent = parent;

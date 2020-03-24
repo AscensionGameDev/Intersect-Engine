@@ -2,7 +2,7 @@
 
 namespace Intersect.Client.Entities.Events
 {
-    public class EventDialog
+    public class Dialog
     {
         public Guid EventId;
         

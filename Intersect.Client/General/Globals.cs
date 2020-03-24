@@ -104,7 +104,7 @@ namespace Intersect.Client.General
         public static Random Random = new Random();
 
         //Control Objects
-        public static List<EventDialog> EventDialogs = new List<EventDialog>();
+        public static List<Dialog> EventDialogs = new List<Dialog>();
 
         //Event Guid and the Map its associated with
         public static Dictionary<Guid,Dictionary<Guid,EventEntityPacket>> PendingEvents = new Dictionary<Guid, Dictionary<Guid, EventEntityPacket>>();

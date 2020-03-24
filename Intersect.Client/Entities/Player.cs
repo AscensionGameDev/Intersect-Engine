@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
@@ -1538,8 +1539,8 @@ namespace Intersect.Client.Entities
         private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
         {
             base.DrawName(textColor, borderColor, backgroundColor);
-            DrawLabels(HeaderLabel.Label, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
-            DrawLabels(FooterLabel.Label, 1, FooterLabel.Color,  textColor, borderColor, backgroundColor);
+            DrawLabels(HeaderLabel.Text, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
+            DrawLabels(FooterLabel.Text, 1, FooterLabel.Color,  textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()

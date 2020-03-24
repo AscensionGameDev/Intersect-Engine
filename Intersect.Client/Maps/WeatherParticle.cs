@@ -23,7 +23,7 @@ namespace Intersect.Client.Maps
         private int yVelocity;
         private Point partSize;
         private Rectangle bounds;
-        private AnimationInstance animInstance;
+        private Animation animInstance;
 
         public float X;
         public float Y;
@@ -36,7 +36,7 @@ namespace Intersect.Client.Maps
             xVelocity = xvelocity;
             yVelocity = yvelocity;
 
-            animInstance = new AnimationInstance(anim, true, false);
+            animInstance = new Animation(anim, true, false);
             var animSize = animInstance.AnimationSize();
             partSize = animSize;
 
