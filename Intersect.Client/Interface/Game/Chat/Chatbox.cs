@@ -30,13 +30,13 @@ namespace Intersect.Client.Interface.Game.Chat
         //Window Controls
         private ImagePanel mChatboxWindow;
 
-        private GameGuiBase mGameUi;
+        private GameInterface mGameUi;
         private int mMessageIndex;
         private bool mReceivedMessage;
         private long mLastChatTime = -1;
 
         //Init
-        public Chatbox(Canvas gameCanvas, GameGuiBase gameUi)
+        public Chatbox(Canvas gameCanvas, GameInterface gameUi)
         {
             mGameUi = gameUi;
 
@@ -59,7 +59,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
             mChatboxInput.IsTabable = false;
             mChatboxInput.SetMaxLength(Options.MaxChatLength);
-            Gui.FocusElements.Add(mChatboxInput);
+            Interface.FocusElements.Add(mChatboxInput);
 
             mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
             mChannelLabel.Text = Strings.Chatbox.channel;
@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Game.Chat
             for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
-                var myText = Gui.WrapText(msg.GetMessage(),
+                var myText = Interface.WrapText(msg.GetMessage(),
                     mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
                     mChatboxText.Font);
                 foreach (var t in myText)

@@ -30,7 +30,7 @@ namespace Intersect.Client.Interface.Game.Bag
         {
             mBagWindow = new WindowControl(gameCanvas, Strings.Bags.title, false, "BagWindow");
             mBagWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(mBagWindow);
+            Interface.InputBlockingElements.Add(mBagWindow);
 
             mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);

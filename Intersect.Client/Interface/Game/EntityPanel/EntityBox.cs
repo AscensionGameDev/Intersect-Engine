@@ -736,7 +736,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public void Dispose()
         {
             EntityWindow.Hide();
-            Gui.GameUi.GameCanvas.RemoveChild(EntityWindow, false);
+            Interface.GameUi.GameCanvas.RemoveChild(EntityWindow, false);
             EntityWindow.Dispose();
         }
 

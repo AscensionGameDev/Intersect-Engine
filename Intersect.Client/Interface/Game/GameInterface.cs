@@ -16,7 +16,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
-    public class GameGuiBase
+    public class GameInterface
     {
         [NotNull]
         public Canvas GameCanvas { get; }
@@ -52,12 +52,12 @@ namespace Intersect.Client.Interface.Game
         private TradingWindow mTradingWindow;
         public bool FocusChat;
 
-        public GameMenu GameMenu { get; private set; }
+        public Menu GameMenu { get; private set; }
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
 
-        public GameGuiBase([NotNull] Canvas myCanvas)
+        public GameInterface([NotNull] Canvas myCanvas)
         {
             GameCanvas = myCanvas;
             EscapeMenu = new EscapeMenu(GameCanvas) { IsHidden = true };
@@ -68,7 +68,7 @@ namespace Intersect.Client.Interface.Game
         public void InitGameGui()
         {
             mChatBox = new Chatbox(GameCanvas, this);
-            GameMenu = new GameMenu(GameCanvas);
+            GameMenu = new Menu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
             if (mPictureWindow == null)

@@ -35,7 +35,7 @@ namespace Intersect.Client.Interface.Game.Bank
         {
             mBankWindow = new WindowControl(gameCanvas, Strings.Bank.title, false, "BankWindow");
             mBankWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(mBankWindow);
+            Interface.InputBlockingElements.Add(mBankWindow);
 
             mItemContainer = new ScrollControl(mBankWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);

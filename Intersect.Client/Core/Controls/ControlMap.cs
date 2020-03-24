@@ -26,7 +26,7 @@ namespace Intersect.Client.Core.Controls
         {
             if (Key1 != Keys.None && Globals.InputManager.KeyDown(Key1)) return true;
             if (Key2 != Keys.None && Globals.InputManager.KeyDown(Key2)) return true;
-            if (Gui.MouseHitGui()) return false;
+            if (Interface.Interface.MouseHitGui()) return false;
 
             switch (Key1)
             {

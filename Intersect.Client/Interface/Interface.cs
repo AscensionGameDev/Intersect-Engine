@@ -11,6 +11,7 @@ using Intersect.Client.Framework.Gwen.Skin;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
+using Intersect.Client.Interface.Shared.Errors;
 
 using JetBrains.Annotations;
 
@@ -18,7 +19,7 @@ using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
 namespace Intersect.Client.Interface
 {
-    public static class Gui
+    public static class Interface
     {
         //GWEN GUI
         public static bool GwenInitialized;
@@ -33,12 +34,12 @@ namespace Intersect.Client.Interface
 
         public static bool SetupHandlers { get; set; }
 
-        public static GameGuiBase GameUi { get; set; }
+        public static GameInterface GameUi { get; set; }
         public static MenuGuiBase MenuUi { get; set; }
 
         public static TexturedBase Skin { get; set; }
 
-        public static ErrorMessageHandler ErrorMsgHandler;
+        public static ErrorHandler ErrorMsgHandler;
         public static bool HideUi;
 
         //Input Handling
@@ -94,7 +95,7 @@ namespace Intersect.Client.Interface
 
             FocusElements = new List<Framework.Gwen.Control.Base>();
             InputBlockingElements = new List<Framework.Gwen.Control.Base>();
-            ErrorMsgHandler = new ErrorMessageHandler(sMenuCanvas, sGameCanvas);
+            ErrorMsgHandler = new ErrorHandler(sMenuCanvas, sGameCanvas);
 
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
@@ -103,7 +104,7 @@ namespace Intersect.Client.Interface
             }
             else
             {
-                GameUi = new GameGuiBase(sGameCanvas);
+                GameUi = new GameInterface(sGameCanvas);
                 MenuUi = null;
             }
 
@@ -140,7 +141,7 @@ namespace Intersect.Client.Interface
             {
                 MenuUi.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame && ((!Gui.GameUi?.EscapeMenu?.IsHidden ?? true) || !HideUi))
+            else if (Globals.GameState == GameStates.InGame && ((!Interface.GameUi?.EscapeMenu?.IsHidden ?? true) || !HideUi))
             {
                 GameUi.Draw();
             }

@@ -61,8 +61,8 @@ namespace Intersect.Client.MonoGame
             if (renderer == null) throw new NullReferenceException("No renderer.");
 
             Globals.System = new MonoSystem();
-            Gui.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
-            Gui.GwenInput = new IntersectInput();
+            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
+            Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);

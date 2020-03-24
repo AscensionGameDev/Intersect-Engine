@@ -43,7 +43,7 @@ namespace Intersect.Client.Entities
         {
             if (mText == null && mSourceText.Trim().Length > 0)
             {
-                mText = Gui.WrapText(mSourceText, 200, Graphics.ChatBubbleFont);
+                mText = Interface.Interface.WrapText(mSourceText, 200, Graphics.ChatBubbleFont);
             }
             if (mText == null) return 0f;
             var y = (int) Math.Ceiling(mOwner.GetLabelLocation(Entity.LabelType.ChatBubble));

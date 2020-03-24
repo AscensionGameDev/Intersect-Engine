@@ -93,7 +93,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            Gui.InputBlockingElements.Add(mCraftWindow);
+            Interface.InputBlockingElements.Add(mCraftWindow);
 
             Globals.Me.InventoryUpdatedDelegate = () =>
             {

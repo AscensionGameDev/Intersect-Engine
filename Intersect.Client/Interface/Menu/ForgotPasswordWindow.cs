@@ -95,7 +95,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
         }
 
@@ -113,7 +113,7 @@ namespace Intersect.Client.Interface.Menu
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            Gui.MenuUi.MainMenu.NotifyOpenLogin();
+            Interface.MenuUi.MainMenu.NotifyOpenLogin();
         }
 
         void Textbox_SubmitPressed(Base sender, EventArgs arguments)
@@ -130,17 +130,17 @@ namespace Intersect.Client.Interface.Menu
         {
             if (!GameNetwork.Connected)
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
                 return;
             }
 
             if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) && !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text,Strings.Regex.email))
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
                 return;
             }
 
-            Gui.MenuUi.MainMenu.OpenResetPassword(mInputTextbox?.Text);
+            Interface.MenuUi.MainMenu.OpenResetPassword(mInputTextbox?.Text);
             PacketSender.SendRequestPasswordReset(mInputTextbox?.Text);
         }
     }

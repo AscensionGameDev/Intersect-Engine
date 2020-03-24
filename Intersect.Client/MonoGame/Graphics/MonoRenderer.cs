@@ -112,7 +112,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 {
                     Globals.Database.FullScreen = false;
                     Globals.Database.SavePreferences();
-                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.Errors.displaynotsupported,Strings.Errors.displaynotsupportederror.ToString(width + "x" + height)));
+                    Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.Errors.displaynotsupported, Strings.Errors.displaynotsupportederror.ToString(width + "x" + height)));
                 }
             }
 

@@ -17,14 +17,14 @@ namespace Intersect.Client.Interface.Game.Shop
         //Controls
         private WindowControl mShopWindow;
 
-        public List<ShopWindowItem> Items = new List<ShopWindowItem>();
+        public List<ShopItem> Items = new List<ShopItem>();
 
         //Init
         public ShopWindow(Canvas gameCanvas)
         {
             mShopWindow = new WindowControl(gameCanvas, Globals.GameShop.Name, false, "ShopWindow");
             mShopWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(mShopWindow);
+            Interface.InputBlockingElements.Add(mShopWindow);
 
             mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
@@ -64,7 +64,7 @@ namespace Intersect.Client.Interface.Game.Shop
         {
             for (int i = 0; i < Globals.GameShop.SellingItems.Count; i++)
             {
-                Items.Add(new ShopWindowItem(this, i));
+                Items.Add(new ShopItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "ShopItem");
                 Items[i].Setup();
                 

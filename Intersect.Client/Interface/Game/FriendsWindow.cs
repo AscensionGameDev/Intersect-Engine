@@ -33,7 +33,7 @@ namespace Intersect.Client.Interface.Game
 
             mTextboxContainer = new ImagePanel(mFriendsWindow, "SearchContainer");
             mSearchTextbox = new TextBox(mTextboxContainer, "SearchTextbox");
-            Gui.FocusElements.Add(mSearchTextbox);
+            Interface.FocusElements.Add(mSearchTextbox);
 
             mFriends = new ListBox(mFriendsWindow, "FriendsList");
 
@@ -129,7 +129,7 @@ namespace Intersect.Client.Interface.Game
                 {
                     if (friend.Online == true)
                     {
-                        Gui.GameUi.SetChatboxText("/pm " + (string) row.UserData + " ");
+                        Interface.GameUi.SetChatboxText("/pm " + (string) row.UserData + " ");
                     }
                 }
             }

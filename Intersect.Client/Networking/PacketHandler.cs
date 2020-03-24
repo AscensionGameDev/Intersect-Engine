@@ -479,12 +479,12 @@ namespace Intersect.Client.Networking
             }
             en.SortStatuses();
 
-            if (Gui.GameUi != null)
+            if (Interface.Interface.GameUi != null)
             {
                 //If its you or your target, update the entity box.
-                if (id == Globals.Me.Id && Gui.GameUi.PlayerBox != null)
+                if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
                 {
-                    Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                    Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
                 }
                 else if (id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
                 {
@@ -673,8 +673,8 @@ namespace Intersect.Client.Networking
         {
             Fade.FadeIn();
             Globals.WaitingOnServer = false;
-            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
-            Gui.MenuUi.Reset();
+            Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
+            Interface.Interface.MenuUi.Reset();
         }
 
         //MapItemsPacket
@@ -810,13 +810,13 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(CharacterCreationPacket packet)
         {
             Globals.WaitingOnServer = false;
-            Gui.MenuUi.MainMenu.NotifyOpenCharacterCreation();
+            Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterCreation();
         }
 
         //AdminPanelPacket
         private static void HandlePacket(AdminPanelPacket packet)
         {
-            Gui.GameUi.NotifyOpenAdminWindow();
+            Interface.Interface.GameUi.NotifyOpenAdminWindow();
         }
 
         //SpellCastPacket
@@ -999,9 +999,9 @@ namespace Intersect.Client.Networking
         //ShopPacket
         private static void HandlePacket(ShopPacket packet)
         {
-            if (Gui.GameUi == null)
+            if (Interface.Interface.GameUi == null)
             {
-                throw new ArgumentNullException(nameof(Gui.GameUi));
+                throw new ArgumentNullException(nameof(Interface.Interface.GameUi));
             }
 
             if (packet == null)
@@ -1013,12 +1013,12 @@ namespace Intersect.Client.Networking
             {
                 Globals.GameShop = new ShopBase();
                 Globals.GameShop.Load(packet.ShopData);
-                Gui.GameUi.NotifyOpenShop();
+                Interface.Interface.GameUi.NotifyOpenShop();
             }
             else
             {
                 Globals.GameShop = null;
-                Gui.GameUi.NotifyCloseShop();
+                Interface.Interface.GameUi.NotifyCloseShop();
             }
         }
 
@@ -1029,11 +1029,11 @@ namespace Intersect.Client.Networking
             {
                 Globals.ActiveCraftingTable = new CraftingTableBase();
                 Globals.ActiveCraftingTable.Load(packet.TableData);
-                Gui.GameUi.NotifyOpenCraftingTable();
+                Interface.Interface.GameUi.NotifyOpenCraftingTable();
             }
             else
             {
-                Gui.GameUi.NotifyCloseCraftingTable();
+                Interface.Interface.GameUi.NotifyCloseCraftingTable();
             }
         }
 
@@ -1042,11 +1042,11 @@ namespace Intersect.Client.Networking
         {
             if (!packet.Close)
             {
-                Gui.GameUi.NotifyOpenBank();
+                Interface.Interface.GameUi.NotifyOpenBank();
             }
             else
             {
-                Gui.GameUi.NotifyCloseBank();
+                Interface.Interface.GameUi.NotifyCloseBank();
             }
         }
 
@@ -1252,9 +1252,9 @@ namespace Intersect.Client.Networking
                         }
                     }
                 }
-                if (Gui.GameUi != null)
+                if (Interface.Interface.GameUi != null)
                 {
-                    Gui.GameUi.NotifyQuestsUpdated();
+                    Interface.Interface.GameUi.NotifyQuestsUpdated();
                 }
             }
         }
@@ -1275,11 +1275,11 @@ namespace Intersect.Client.Networking
                     }
                 }
 
-                Gui.GameUi.NotifyOpenTrading(packet.TradePartner);
+                Interface.Interface.GameUi.NotifyOpenTrading(packet.TradePartner);
             }
             else
             {
-                Gui.GameUi.NotifyCloseTrading();
+                Interface.Interface.GameUi.NotifyCloseTrading();
             }
         }
 
@@ -1347,11 +1347,11 @@ namespace Intersect.Client.Networking
             if (!packet.Close)
             {
                 Globals.Bag = new ItemInstance[packet.Slots];
-                Gui.GameUi.NotifyOpenBag();
+                Interface.Interface.GameUi.NotifyOpenBag();
             }
             else
             {
-                Gui.GameUi.NotifyCloseBag();
+                Interface.Interface.GameUi.NotifyCloseBag();
             }
         }
 
@@ -1401,7 +1401,7 @@ namespace Intersect.Client.Networking
                 Globals.Me.Friends.Add(f);
             }
 
-            Gui.GameUi.UpdateFriendsList();
+            Interface.Interface.GameUi.UpdateFriendsList();
         }
 
         //FriendRequestPacket
@@ -1422,7 +1422,7 @@ namespace Intersect.Client.Networking
 
             if (packet.FreeSlot) characters.Add(null);
             Globals.WaitingOnServer = false;
-            Gui.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
+            Interface.Interface.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
         }
 
         //PasswordResetResultPacket
@@ -1431,13 +1431,13 @@ namespace Intersect.Client.Networking
             if (packet.Succeeded)
             {
                 //Show Success Message and Open Login Screen
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg));
-                Gui.MenuUi.MainMenu.NotifyOpenLogin();
+                Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg));
+                Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
             }
             else
             {
                 //Show Error Message
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg));
+                Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg));
             }
             Globals.WaitingOnServer = false;
         }

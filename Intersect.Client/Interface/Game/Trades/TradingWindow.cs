@@ -35,7 +35,7 @@ namespace Intersect.Client.Interface.Game.Trades
             mTradeWindow = new WindowControl(gameCanvas,
                 Strings.Trading.title.ToString(traderName), false, "TradeWindow");
             mTradeWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(mTradeWindow);
+            Interface.InputBlockingElements.Add(mTradeWindow);
 
             mYourOffer = new Label(mTradeWindow, "YourOfferLabel")
             {

@@ -94,6 +94,7 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\ItemInstance.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Maps\MapAnimationInstance.cs" />
@@ -138,7 +139,7 @@
     <Compile Include="Networking\PacketHandler.cs" />
     <Compile Include="Networking\PacketSender.cs" />
     <Compile Include="Spells\SpellInstance.cs" />
-    <Compile Include="Interface\ErrorMessageHandler.cs" />
+    <Compile Include="Interface\Shared\Errors\ErrorHandler.cs" />
     <Compile Include="Interface\Game\AdminWindow.cs" />
     <Compile Include="Interface\Game\Bag\BagWindow.cs" />
     <Compile Include="Interface\Game\Bank\BankWindow.cs" />
@@ -152,8 +153,8 @@
     <Compile Include="Interface\Game\EntityPanel\EntityBox.cs" />
     <Compile Include="Interface\Game\EventWindow.cs" />
     <Compile Include="Interface\Game\FriendsWindow.cs" />
-    <Compile Include="Interface\Game\GameGuiBase.cs" />
-    <Compile Include="Interface\Game\GameMenu.cs" />
+    <Compile Include="Interface\Game\GameInterface.cs" />
+    <Compile Include="Interface\Game\Menu.cs" />
     <Compile Include="Interface\Game\Hotbar\HotBar.cs" />
     <Compile Include="Interface\Game\InputBox.cs" />
     <Compile Include="Interface\Game\Inventory\InventoryWindow.cs" />
@@ -165,13 +166,13 @@
     <Compile Include="Interface\Game\SpellDescWindow.cs" />
     <Compile Include="Interface\Game\Spells\SpellsWindow.cs" />
     <Compile Include="Interface\Game\Trades\TradingWindow.cs" />
-    <Compile Include="Interface\Gui.cs" />
+    <Compile Include="Interface\Interface.cs" />
     <Compile Include="Interface\Menu\SelectCharacterWindow.cs" />
     <Compile Include="Interface\Menu\LoginWindow.cs" />
     <Compile Include="Interface\Menu\MainMenu.cs" />
     <Compile Include="Interface\Menu\MenuGuiBase.cs" />
     <Compile Include="Interface\Menu\RegisterWindow.cs" />
-    <Compile Include="Interface\OptionsWindow.cs" />
+    <Compile Include="Interface\Shared\OptionsWindow.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interface\Resolution.cs" />
     <Compile Include="MonoGame\IntersectGame.cs" />

@@ -355,19 +355,19 @@ namespace Intersect.Client.Interface.Game.Inventory
                             }
                         }
                     }
-                    else if (Gui.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                    else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Options.MaxHotbar; i++)
                         {
-                            if (Gui.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Width *
-                                    FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Height >
+                                if (FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Width *
+                                    FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Height >
                                     bestIntersect)
                                 {
                                     bestIntersect =
-                                        FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Width *
-                                        FloatRect.Intersect(Gui.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Height;
+                                        FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(Interface.GameUi.Hotbar.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
                             }

@@ -39,10 +39,10 @@ namespace Intersect.Client.Core
             if (Controls.Controls.ControlHasKey(Control.OpenMenu, key))
             {
                 if (Globals.GameState != GameStates.InGame) return;
-                Gui.GameUi?.EscapeMenu?.ToggleHidden();
+                Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
             }
             
-            if (Gui.HasInputFocus())
+            if (Interface.Interface.HasInputFocus())
             {
                 return;
             }
@@ -62,7 +62,7 @@ namespace Intersect.Client.Core
 
                     case Control.ToggleGui:
                         if (Globals.GameState == GameStates.InGame)
-                            Gui.HideUi = !Gui.HideUi;
+                            Interface.Interface.HideUi = !Interface.Interface.HideUi;
                         break;
                 }
 
@@ -105,7 +105,7 @@ namespace Intersect.Client.Core
                                 break;
 
                             case Control.Enter:
-                                Gui.GameUi.FocusChat = true;
+                                Interface.Interface.GameUi.FocusChat = true;
                                 consumeKey = true;
                                 return;
 
@@ -120,48 +120,48 @@ namespace Intersect.Client.Core
                             case Control.Hotkey9:
                             case Control.Hotkey0:
                                 var index = control - Control.Hotkey1;
-                                if (0 <= index && index < Gui.GameUi?.Hotbar?.Items?.Count)
+                                if (0 <= index && index < Interface.Interface.GameUi?.Hotbar?.Items?.Count)
                                 {
-                                    Gui.GameUi?.Hotbar?.Items?[index]?.Activate();
+                                    Interface.Interface.GameUi?.Hotbar?.Items?[index]?.Activate();
                                 }
                                 else
                                 {
-                                    Log.Warn(Gui.GameUi?.Hotbar?.Items == null
+                                    Log.Warn(Interface.Interface.GameUi?.Hotbar?.Items == null
                                         ? $"Tried to press Hotkey{(index + 1) % 10} but the hotbar items are null."
                                         : $"Tried to press Hotkey{(index + 1) % 10} which was out of bounds ({control}).");
                                 }
                                 break;
 
                             case Control.OpenInventory:
-                                Gui.GameUi?.GameMenu?.ToggleInventoryWindow();
+                                Interface.Interface.GameUi?.GameMenu?.ToggleInventoryWindow();
                                 break;
 
                             case Control.OpenQuests:
-                                Gui.GameUi?.GameMenu?.ToggleQuestsWindow();
+                                Interface.Interface.GameUi?.GameMenu?.ToggleQuestsWindow();
                                 break;
 
                             case Control.OpenCharacterInfo:
-                                Gui.GameUi?.GameMenu?.ToggleCharacterWindow();
+                                Interface.Interface.GameUi?.GameMenu?.ToggleCharacterWindow();
                                 break;
 
                             case Control.OpenParties:
-                                Gui.GameUi?.GameMenu?.TogglePartyWindow();
+                                Interface.Interface.GameUi?.GameMenu?.TogglePartyWindow();
                                 break;
 
                             case Control.OpenSpells:
-                                Gui.GameUi?.GameMenu?.ToggleSpellsWindow();
+                                Interface.Interface.GameUi?.GameMenu?.ToggleSpellsWindow();
                                 break;
 
                             case Control.OpenFriends:
-                                Gui.GameUi?.GameMenu?.ToggleFriendsWindow();
+                                Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow();
                                 break;
 
                             case Control.OpenSettings:
-                                Gui.GameUi?.EscapeMenu?.OpenSettings();
+                                Interface.Interface.GameUi?.EscapeMenu?.OpenSettings();
                                 break;
 
                             case Control.OpenDebugger:
-                                Gui.GameUi?.ShowHideDebug();
+                                Interface.Interface.GameUi?.ShowHideDebug();
                                 break;
 
                             case Control.OpenAdminPanel:
@@ -185,7 +185,7 @@ namespace Intersect.Client.Core
         public static void OnKeyReleased(Keys key)
         {
             KeyUp?.Invoke(key);
-            if (Gui.HasInputFocus()) return;
+            if (Interface.Interface.HasInputFocus()) return;
             if (Globals.Me == null) return;
             if (Controls.Controls.ControlHasKey(Control.Block, key))
             {
@@ -212,9 +212,9 @@ namespace Intersect.Client.Core
             }
 
             MouseDown?.Invoke(key);
-            if (Gui.HasInputFocus()) return;
+            if (Interface.Interface.HasInputFocus()) return;
             if (Globals.GameState != GameStates.InGame || Globals.Me == null) return;
-            if (Gui.MouseHitGui()) return;
+            if (Interface.Interface.MouseHitGui()) return;
             if (Globals.Me == null) return;
             if (Globals.Me.TryTarget()) return;
             if (Controls.Controls.ControlHasKey(Control.PickUp, key))
@@ -250,7 +250,7 @@ namespace Intersect.Client.Core
             }
 
             MouseUp?.Invoke(key);
-            if (Gui.HasInputFocus()) return;
+            if (Interface.Interface.HasInputFocus()) return;
             if (Globals.Me == null) return;
             if (Controls.Controls.ControlHasKey(Control.Block, key))
             {

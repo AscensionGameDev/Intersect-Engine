@@ -1,56 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Game;
-using Intersect.Client.Localization;
 
-namespace Intersect.Client.Interface
+namespace Intersect.Client.Interface.Shared.Errors
 {
-    public class ErrorMessageHandler
-    {
-        //Controls
-        private List<GuiError> mErrors = new List<GuiError>();
-
-        //Canvasses
-        private Canvas mGameCanvas;
-
-        private Canvas mMenuCanvas;
-
-        //Init
-        public ErrorMessageHandler(Canvas menuCanvas, Canvas gameCanvas)
-        {
-            mGameCanvas = gameCanvas;
-            mMenuCanvas = menuCanvas;
-        }
-
-        public void Update()
-        {
-            if (Gui.MsgboxErrors.Count > 0)
-            {
-                mErrors.Add(new GuiError(mGameCanvas, mMenuCanvas, Gui.MsgboxErrors[0].Value,
-                    !string.IsNullOrEmpty(Gui.MsgboxErrors[0].Key)
-                        ? Gui.MsgboxErrors[0].Key
-                        : Strings.Errors.title.ToString()));
-                Gui.MsgboxErrors.RemoveAt(0);
-            }
-            for (int i = 0; i < mErrors.Count; i++)
-            {
-                if (!mErrors[i].Update())
-                {
-                    mErrors.RemoveAt(i);
-                }
-            }
-        }
-    }
-
-    class GuiError
+    class ErrorWindow
     {
         List<InputBox> mErrorWindows = new List<InputBox>();
 
-        public GuiError(Canvas gameCanvas, Canvas menuCanvas, string error, string header)
+        public ErrorWindow(Canvas gameCanvas, Canvas menuCanvas, string error, string header)
         {
             CreateErrorWindow(gameCanvas, error, header, GameContentManager.UI.InGame);
             CreateErrorWindow(menuCanvas, error, header, GameContentManager.UI.Menu);

@@ -298,19 +298,19 @@ namespace Intersect.Client.Entities
             {
                 if (Id == Globals.Me.Id)
                 {
-                    if (Gui.GameUi == null)
+                    if (Interface.Interface.GameUi == null)
                     {
-                        Log.Warn($"'{nameof(Gui.GameUi)}' is null.");
+                        Log.Warn($"'{nameof(Interface.Interface.GameUi)}' is null.");
                     }
                     else
                     {
-                        if (Gui.GameUi.PlayerBox == null)
+                        if (Interface.Interface.GameUi.PlayerBox == null)
                         {
-                            Log.Warn($"'{nameof(Gui.GameUi.PlayerBox)}' is null.");
+                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerBox)}' is null.");
                         }
                         else
                         {
-                            Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                            Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
                         }
                     }
                 }

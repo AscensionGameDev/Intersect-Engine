@@ -59,7 +59,7 @@ namespace Intersect.Client.Core
             //Destroy Game
             //TODO - Destroy Graphics and Networking peacefully
             //Network.Close();
-            Gui.DestroyGwen();
+            Interface.Interface.DestroyGwen();
             Graphics.Renderer.Close();
         }
 
@@ -70,7 +70,7 @@ namespace Intersect.Client.Core
                 GameNetwork.Update();
                 Globals.System.Update();
                 Fade.Update();
-                Gui.ToggleInput(Globals.GameState != GameStates.Intro);
+                Interface.Interface.ToggleInput(Globals.GameState != GameStates.Intro);
 
                 switch (Globals.GameState)
                 {
@@ -157,7 +157,7 @@ namespace Intersect.Client.Core
             //if (GameGraphics.FadeAmt != 255f) return;
             //Check if maps are loaded and ready
             Globals.GameState = GameStates.Loading;
-            Gui.DestroyGwen();
+            Interface.Interface.DestroyGwen();
         }
 
         private static void ProcessLoading()
@@ -179,7 +179,7 @@ namespace Intersect.Client.Core
             if (Globals.ConnectionLost)
             {
                 Main.Logout(false);
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
                 Globals.ConnectionLost = false;
                 return;
             }
@@ -326,7 +326,7 @@ namespace Intersect.Client.Core
             Globals.JoiningGame = false;
             Globals.NeedsMaps = true;
             Globals.Picture = null;
-            Gui.HideUi = false;
+            Interface.Interface.HideUi = false;
 
             //Dump Game Objects
             Globals.Me = null;
@@ -350,9 +350,9 @@ namespace Intersect.Client.Core
             Globals.EventDialogs.Clear();
             Globals.EventHolds.Clear();
             Globals.PendingEvents.Clear();
-            
 
-            Gui.InitGwen();
+
+            Interface.Interface.InitGwen();
             Fade.FadeIn();
         }
     }

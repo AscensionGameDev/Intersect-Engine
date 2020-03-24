@@ -22,7 +22,7 @@ namespace Intersect.Client.Interface.Game
             {
                 return;
             }
-            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "SpellDescWindowExpanded");
+            mDescWindow = new ImagePanel(Interface.GameUi.GameCanvas, "SpellDescWindowExpanded");
 
             ImagePanel icon = new ImagePanel(mDescWindow, "SpellIcon");
 
@@ -185,7 +185,7 @@ namespace Intersect.Client.Interface.Game
             {
                 return;
             }
-            Gui.GameUi.GameCanvas.RemoveChild(mDescWindow, false);
+            Interface.GameUi.GameCanvas.RemoveChild(mDescWindow, false);
             mDescWindow.Dispose();
         }
     }

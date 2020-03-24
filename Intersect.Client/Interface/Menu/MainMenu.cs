@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 

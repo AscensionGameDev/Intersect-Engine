@@ -1,5 +1,5 @@
 ﻿using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -13,7 +13,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
-    public class GameMenu
+    public class Menu
     {
         //Canvas instance
         private Canvas mGameCanvas;
@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Game
         private int mButtonWidth = 34;
 
         //Init
-        public GameMenu(Canvas gameCanvas)
+        public Menu(Canvas gameCanvas)
         {
             mGameCanvas = gameCanvas;
 
@@ -217,7 +217,7 @@ namespace Intersect.Client.Interface.Game
         //Input Handlers
         private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
         {
-            Gui.GameUi?.EscapeMenu?.ToggleHidden();
+            Interface.GameUi?.EscapeMenu?.ToggleHidden();
         }
 
         private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)

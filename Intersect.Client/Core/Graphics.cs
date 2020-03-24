@@ -389,8 +389,8 @@ namespace Intersect.Client.Core
                 Renderer.DisplayModeChanged())
             {
                 sDarknessTexture = null;
-                Gui.DestroyGwen();
-                Gui.InitGwen();
+                Interface.Interface.DestroyGwen();
+                Interface.Interface.InitGwen();
                 sOldWidth = Renderer.GetScreenWidth();
                 sOldHeight = Renderer.GetScreenHeight();
             }
@@ -421,7 +421,7 @@ namespace Intersect.Client.Core
                     throw new ArgumentOutOfRangeException();
             }
 
-            Gui.DrawGui();
+            Interface.Interface.DrawGui();
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
                 new Color((int)Fade.GetFade(), 0, 0, 0), null, GameBlendModes.None);

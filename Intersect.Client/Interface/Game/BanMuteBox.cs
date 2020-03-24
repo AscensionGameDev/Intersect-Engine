@@ -23,7 +23,7 @@ namespace Intersect.Client.Interface.Game
         {
             OkayEventHandler = okayClicked;
 
-            mMyWindow = new WindowControl(Gui.GameUi.GameCanvas, title, modal);
+            mMyWindow = new WindowControl(Interface.GameUi.GameCanvas, title, modal);
             mMyWindow.SetSize(500, 150);
             mMyWindow.SetPosition(Graphics.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
                 Graphics.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2);
@@ -31,7 +31,7 @@ namespace Intersect.Client.Interface.Game
             mMyWindow.DisableResizing();
             mMyWindow.Margin = Margin.Zero;
             mMyWindow.Padding = Padding.Zero;
-            Gui.InputBlockingElements.Add(mMyWindow);
+            Interface.InputBlockingElements.Add(mMyWindow);
 
             Label promptLabel = new Label(mMyWindow);
             promptLabel.SetText(prompt);
@@ -47,7 +47,7 @@ namespace Intersect.Client.Interface.Game
 
             mReasonBox = new TextBox(mMyWindow);
             mReasonBox.SetBounds(180, y - 3, 220, 22);
-            Gui.FocusElements.Add(mReasonBox);
+            Interface.FocusElements.Add(mReasonBox);
 
             y = mReasonBox.Bottom + 6;
 
@@ -114,7 +114,7 @@ namespace Intersect.Client.Interface.Game
         public void Dispose()
         {
             mMyWindow.Close();
-            Gui.GameUi.GameCanvas.RemoveChild(mMyWindow, false);
+            Interface.GameUi.GameCanvas.RemoveChild(mMyWindow, false);
             mMyWindow.Dispose();
         }
 

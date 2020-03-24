@@ -117,7 +117,7 @@ namespace Intersect.Client.Entities
             return
                 !(Globals.EventHolds.Count == 0 && !Globals.MoveRouteActive && Globals.GameShop == null &&
                   Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false &&
-                  !Gui.HasInputFocus());
+                  !Interface.Interface.HasInputFocus());
         }
 
         public override bool Update()
@@ -710,7 +710,7 @@ namespace Intersect.Client.Entities
         {
             var movex = 0f;
             var movey = 0f;
-            if (Gui.HasInputFocus())
+            if (Interface.Interface.HasInputFocus())
             {
                 return;
             }
@@ -816,11 +816,11 @@ namespace Intersect.Client.Entities
             {
                 if (closestEntity.GetType() == typeof(Player))
                 {
-                    TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
+                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
                 }
                 else
                 {
-                    TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
+                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
                 }
             }
 
@@ -1021,12 +1021,12 @@ namespace Intersect.Client.Entities
                                             if (en.Value.GetType() == typeof(Player))
                                             {
                                                 TargetBox =
-                                                    new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, en.Value);
+                                                    new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, en.Value);
                                             }
                                             else
                                             {
                                                 TargetBox =
-                                                    new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity,
+                                                    new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
                                                         en.Value);
                                             }
                                         }
@@ -1038,9 +1038,9 @@ namespace Intersect.Client.Entities
                                         if (en.Value.GetType() == typeof(Player))
                                         {
                                             //Select in admin window if open
-                                            if (Gui.GameUi.AdminWindowOpen())
+                                            if (Interface.Interface.GameUi.AdminWindowOpen())
                                             {
-                                                Gui.GameUi.AdminWindowSelectName(en.Value.Name);
+                                                Interface.Interface.GameUi.AdminWindowSelectName(en.Value.Name);
                                             }
                                         }
                                         TargetType = 0;
@@ -1063,7 +1063,7 @@ namespace Intersect.Client.Entities
                                             TargetBox.Dispose();
                                             TargetBox = null;
                                         }
-                                        TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Event, en.Value);
+                                        TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, en.Value);
                                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                                         {
                                             ClearTarget();

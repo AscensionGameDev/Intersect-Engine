@@ -123,7 +123,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
         }
 
@@ -173,31 +173,31 @@ namespace Intersect.Client.Interface.Menu
                             }
                             else
                             {
-                                Gui.MsgboxErrors.Add(
+                                Interface.MsgboxErrors.Add(
                                     new KeyValuePair<string, string>("", Strings.Registration.emailinvalid));
                             }
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(
+                            Interface.MsgboxErrors.Add(
                                 new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
                         }
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add(
+                        Interface.MsgboxErrors.Add(
                             new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(
+                    Interface.MsgboxErrors.Add(
                         new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
             }
         }
 

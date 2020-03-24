@@ -12,7 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 
-namespace Intersect.Client.Interface
+namespace Intersect.Client.Interface.Shared
 {
     public class OptionsWindow
     {
@@ -74,7 +74,7 @@ namespace Intersect.Client.Interface
 
             //Main Menu Window
             mOptionsPanel = new ImagePanel(parent, "OptionsWindow") {IsHidden = true};
-            Gui.InputBlockingElements.Add(mOptionsPanel);
+            Interface.InputBlockingElements.Add(mOptionsPanel);
 
             //Menu Header
             mOptionsHeader = new Label(mOptionsPanel, "OptionsHeader");
@@ -247,7 +247,7 @@ namespace Intersect.Client.Interface
                 mEdittingKey = keyNum;
                 mEdittingControl = (Control) sender.UserData;
                 mEdittingButton = sender;
-                Gui.GwenInput.HandleInput = false;
+                Interface.GwenInput.HandleInput = false;
                 mListeningTimer = Globals.System.GetTimeMs() + 5000;
             }
         }
@@ -319,7 +319,7 @@ namespace Intersect.Client.Interface
                 }
                 mEdittingButton.PlayHoverSound();
                 mEdittingButton = null;
-                Gui.GwenInput.HandleInput = true;
+                Interface.GwenInput.HandleInput = true;
             }
         }
 

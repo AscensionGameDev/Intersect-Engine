@@ -118,7 +118,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
         }
 
@@ -138,7 +138,7 @@ namespace Intersect.Client.Interface.Menu
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            Gui.MenuUi.MainMenu.NotifyOpenLogin();
+            Interface.MenuUi.MainMenu.NotifyOpenLogin();
         }
 
         void Textbox_SubmitPressed(Base sender, EventArgs arguments)
@@ -170,25 +170,25 @@ namespace Intersect.Client.Interface.Menu
 
             if (!GameNetwork.Connected)
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
                 return;
             }
 
             if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.ResetPass.inputcode));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.ResetPass.inputcode));
                 return;
             }
 
             if (mPasswordTextbox.Text!= mPasswordTextbox2.Text)
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
                 return;
             }
 
             if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
                 return;
             }
             using (var sha = new SHA256Managed())

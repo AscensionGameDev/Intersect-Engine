@@ -40,7 +40,7 @@ namespace Intersect.Client.Interface.Game
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
             EventHandler cancelClicked, object userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
         {
-            if (parent == null) parent = Gui.GameUi.GameCanvas;
+            if (parent == null) parent = Interface.GameUi.GameCanvas;
             OkayEventHandler = okayYesSubmitClicked;
             CancelEventHandler = cancelClicked;
             this.UserData = userData;
@@ -51,7 +51,7 @@ namespace Intersect.Client.Interface.Game
             mMyWindow = new WindowControl(parent, title, modal, "InputBox");
             mMyWindow.BeforeDraw += _myWindow_BeforeDraw;
             mMyWindow.DisableResizing();
-            Gui.InputBlockingElements.Add(mMyWindow);
+            Interface.InputBlockingElements.Add(mMyWindow);
 
             mNumericTextboxBg = new ImagePanel(mMyWindow, "Textbox");
             mNumericTextbox = new TextBoxNumeric(mNumericTextboxBg, "TextboxText");
@@ -91,7 +91,7 @@ namespace Intersect.Client.Interface.Game
             if (!mInitialized)
             {
                 mMyWindow.LoadJsonUi(_uiStage, Graphics.Renderer.GetResolutionString(), true);
-                var text = Gui.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
+                var text = Interface.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 int y = mPromptLabel.Y;
                 foreach (string s in text)
                 {

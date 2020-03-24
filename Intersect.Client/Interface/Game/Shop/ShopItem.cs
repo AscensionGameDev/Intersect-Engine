@@ -14,7 +14,7 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Shop
 {
-    public class ShopWindowItem
+    public class ShopItem
     {
         private int mCurrentItem = -2;
         private ItemDescWindow mDescWindow;
@@ -38,7 +38,7 @@ namespace Intersect.Client.Interface.Game.Shop
         //Textures
         private GameRenderTexture mSfTex;
 
-        public ShopWindowItem(ShopWindow shopWindow, int index)
+        public ShopItem(ShopWindow shopWindow, int index)
         {
             mShopWindow = shopWindow;
             mMySlot = index;

@@ -5,6 +5,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 
 using JetBrains.Annotations;
@@ -27,7 +28,7 @@ namespace Intersect.Client.Interface.Game
 
         public EscapeMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
         {
-            Gui.InputBlockingElements?.Add(this);
+            Interface.InputBlockingElements?.Add(this);
 
             Width = gameCanvas.Width;
             Height = gameCanvas.Height;
@@ -85,10 +86,10 @@ namespace Intersect.Client.Interface.Game
             if (IsHidden) RemoveModal();
             else MakeModal(true);
             base.Invalidate();
-            if (Gui.GameUi != null && Gui.GameUi.GameCanvas != null)
+            if (Interface.GameUi != null && Interface.GameUi.GameCanvas != null)
             {
-                Gui.GameUi.GameCanvas.MouseInputEnabled = false;
-                Gui.GameUi.GameCanvas.MouseInputEnabled = true;
+                Interface.GameUi.GameCanvas.MouseInputEnabled = false;
+                Interface.GameUi.GameCanvas.MouseInputEnabled = true;
             }
         }
 
@@ -100,13 +101,13 @@ namespace Intersect.Client.Interface.Game
         private void Options_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mOptionsWindow.Show();
-            Gui.GameUi?.EscapeMenu?.Hide();
+            Interface.GameUi?.EscapeMenu?.Hide();
         }
 
         public void OpenSettings()
         {
             mOptionsWindow.Show();
-            Gui.GameUi?.EscapeMenu?.Hide();
+            Interface.GameUi?.EscapeMenu?.Hide();
         }
 
         /// <inheritdoc />

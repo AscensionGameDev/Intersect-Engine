@@ -35,7 +35,7 @@ namespace Intersect.Client.Interface.Game
             //Event Dialog Window
             mEventDialogWindow = new ImagePanel(gameCanvas, "EventDialogueWindow");
             mEventDialogWindow.Hide();
-            Gui.InputBlockingElements.Add(mEventDialogWindow);
+            Interface.InputBlockingElements.Add(mEventDialogWindow);
 
             mEventFace = new ImagePanel(mEventDialogWindow, "EventFacePanel");
 

@@ -21,7 +21,7 @@ namespace Intersect.Client.Interface.Game
             if (string.IsNullOrWhiteSpace(title))
                 title = item.Name;
 
-            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "ItemDescWindow");
+            mDescWindow = new ImagePanel(Interface.GameUi.GameCanvas, "ItemDescWindow");
             if (item != null && item.ItemType == ItemTypes.Equipment)
             {
                 mDescWindow.Name = "ItemDescWindowExpanded";
@@ -178,7 +178,7 @@ namespace Intersect.Client.Interface.Game
 
         public void Dispose()
         {
-            Gui.GameUi?.GameCanvas?.RemoveChild(mDescWindow, false);
+            Interface.GameUi?.GameCanvas?.RemoveChild(mDescWindow, false);
             mDescWindow.Dispose();
         }
     }

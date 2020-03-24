@@ -80,7 +80,7 @@ namespace Intersect.Client.Interface.Game
 
             mNameTextbox = new TextBox(mAdminWindow);
             mNameTextbox.SetBounds(6, 22, 188, 18);
-            Gui.FocusElements.Add(mNameTextbox);
+            Interface.FocusElements.Add(mNameTextbox);
 
             mWarpToMeButton = new Button(mAdminWindow)
             {
