@@ -243,6 +243,7 @@ namespace Intersect.Server.Entities
         [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
                 context.Players
+                    .Where(c => c.Id == id)
                     .Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
@@ -251,12 +252,13 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Id == id))
+                    .FirstOrDefault())
             ?? throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, string, Player> QueryPlayerByName =
             EF.CompileQuery((PlayerContext context, string name) =>
                 context.Players
+                    .Where(c => c.Name == name)
                     .Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
@@ -265,7 +267,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault(c => CompareName(name, c.Name)))
+                    .FirstOrDefault())
             ?? throw new InvalidOperationException();
 
         #endregion
