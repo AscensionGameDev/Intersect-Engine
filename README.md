@@ -1,45 +1,93 @@
 # Intersect Engine
 
-Intersect is a free 2D MMORPG Maker. This game engine provides an intuitive and user friendly environmnent to create 2D ORPGs with no programming knowledge required. Source code is available here so there are absolutely no limitations to the games you can create. More information and screenshots can be found at our homepage - [https://www.freemmorpgmaker.com](https://www.freemmorpgmaker.com).
+Intersect provides a complete game development suite for creating 2d mmorpgs with no programming experience or difficult setup steps required! Intersect is powered by [MonoGame](http://monogame.net), and has been designed with stability and performance in mind. Intersect comes with [custom assets](https://github.com/AscensionGameDev/Intersect-Assets) that are free to use in your projects (even commercially) meaning that you can start developing your game in minutes!
 
-## Getting Started
+[![Home https://freemmorpgmaker.com](https://img.shields.io/badge/Home-Free%20MMORPG%20Maker-informational)](https://freemmorpgmaker.com) 
+[![Docs https://docs.freemmorpgmaker.com](https://img.shields.io/badge/Docs-Online-success)](https://docs.ascensiongamedev.com) 
+[![Visit us at https://ascensiongamedev.com](https://img.shields.io/badge/Community-Ascension%20Game%20Dev-orange)](https://ascensiongamedev.com) 
+[![Join the chat at https://discord.gg/Ggt3KJV](https://img.shields.io/discord/363106200243535872?color=%237289DA&label=Discord&logoColor=white)](https://discord.gg/Ggt3KJV)
 
-Getting started with Intersect couldn't be easier. Make sure you have Visual Studio 2017 Community (or later) installed. Open the solution files found in the Client, Editor, and Server folders to build each of the major components of our engine. We have [documentation here](https://www.freemmorpgmaker.com/docs/en/Welcome.html) that will guide you through creating an admin account and designing your game.
+ * [Build Status](#build-status)
+ * [Supported Platforms](#supported-platforms)
+ * [Intersect Assets](#interset-assets)
+ * [Support and Contributions](#support-and-contributions)
+ * [Source Code](#source-code)
+ * [Licensing](#licensing)
+ * [Helpful Links](#helpful-links)
 
-### Prerequisites
 
-```
-.Net Framework 4.5 (or Mono on Linux/OSX)
-MonoGame 3.7 (Developers only, included in repository)
-```
+## Build Status
 
-### Installing
+Our [build server](https://teamcity.freemmorpgmaker.com/?guest=1) builds, tests, and packages the latest Intersect changes.  The table below shows the current build status for the master and development branches.
 
-```
-Open the solutions provided in the Client/Editor/Server folders and hit build. 
-No special installation steps are required.
-```
+| Name  | Status |
+|:---|--------|
+| Master (Stable) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:stable/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=stable&guest=1) |
+| Development (Nightly) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:dev/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=dev&guest=1) |
 
-## Built With
 
-* [MonoGame]() [(Ms-Pl)](https://github.com/MonoGame/MonoGame/blob/develop/LICENSE.txt) for Client/Editor graphic rendering and audio playback  
-* [DarkUI](http://www.darkui.com/) [(LGPL 3)](https://github.com/RobinPerris/DarkUI/blob/master/LICENSE) for Editor form control styling  
-* [DockPanelSuite](http://dockpanelsuite.com/) [(MIT)](https://github.com/dockpanelsuite/dockpanelsuite/blob/master/license.txt) for Editor user interface docking elements  
-* [Gwen DotNet](https://code.google.com/archive/p/gwen-dotnet/) [(MIT)](http://www.opensource.org/licenses/mit-license.php) for Client user interface  
-* [PngCs](https://github.com/tommyettinger/pngcs) [(Apache)](https://github.com/tommyettinger/pngcs/blob/master/LICENSE.txt) for Editor world screenshots  
-* [Mono.Data.Sqlite](https://www.nuget.org/packages/Mono.Data.Sqlite.Portable) & [Sqlite3](https://www.sqlite.org/) for Server database and Editor map caching 
+## Supported Platforms
 
-## Authors
+ * Desktop PCs (Open GL)
+    * Windows
+    * Mac OS X
+    * Linux
 
-* **[JC Snider](https://github.com/jcsnider)**
-* **[Joe Bridges](https://github.com/irokaiser)**
+Our editor uses DirectX and must be ran in Windows, but you can host and play your game on any desktop os that supports OpenGL.
 
-Special thanks to [Robert Lodico](https://github.com/lodicolo) for all of his contributions and helping us get Intersect to release quicker than expected!
+We're open to expanding to new platforms (mobile, web, etc) but don't have the capacity to do so at this time. If you're interested in helping out let us know!
 
-## License
 
-This project has split licensing. The Client/Library are licensed MIT. The Editor/Server/Migration tool are licensed GPL. See license.md within each of the projects' folders.
+## Intersect Assets
 
-## Acknowledgments
+Intersect is distributed with [custom assets](https://github.com/AscensionGameDev/Intersect-Assets) that have been curated from our community and around the net. Assets all match in style and are all safe to use freely in commercial projects. 
 
-* Special thanks to Robin for his DarkUI library and various consultations during development of this engine. 
+
+## Support and Contributions
+
+If you think you have found a bug or have a feature request, use our [issue tracker](https://github.com/AscensionGameDev/Intersect-Engine/issues). Before opening a new issue, please search to see if your problem has already been reported.  Try to be as detailed as possible in your issue reports.
+
+If you need help using Intersect or have other questions we suggest you post on our [community forums](https://ascensiongamedev.com).  Please do not use the GitHub issue tracker for personal support requests.
+
+If you are interested in contributing fixes or features to Intersect, please read our [contributors guide](CONTRIBUTING.md) first.
+
+### Donations
+
+If you'd like to help the project by supporting us financially we accept and greatly appreciate donations at [Ascension Game Dev](https://www.ascensiongamedev.com/donate/make-donation/).
+
+
+## Source Code
+
+Getting started with Intersect couldn't be easier. Make sure you have Visual Studio 2017 Community (or later) installed. 
+
+ * Clone the source: `git clone https://github.com/AscensionGameDev/Intersect-Engine.git`
+ * Open Intersect.sln
+ * Restore Nuget packages
+ * Build
+
+We have [documentation here](https://docs.freemmorpgmaker.com/dev/start/vs.html) tailored towards new developers that will guide you through installing visual studio, cloning the source, and getting started if you need more information.
+
+
+## Licensing
+
+This project has split licensing. See license.md within each of the projects' folders.
+
+| Project  | License |
+|:---|--------|
+| Intersect.Client | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Core | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Network | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Editor | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
+| Intersect.Server | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
+
+Third-party libraries used by Intersect are under their own licenses.  Please refer to those libraries for details on the license they use.
+
+
+## Helpful Links
+
+ * The official website is [freemmorpgmaker.com](https://freemmorpgmaker.com).
+ * Our [issue tracker](https://github.com/AscensionGameDev/Intersect-Engine/issues) is on GitHub.
+ * Use our [community forums](https://ascensiongamedev.com/) for support questions.
+ * The [official documentation](https://docs.freemmorpgmaker.com) is on our website.
+ * The official [Intersect Assets](https://github.com/AscensionGameDev/Intersect-Assets) repo is separate and can be found on GitHub.
+ * Download stable and development [installers and packages](https://freemmorpgmaker.com/download).
