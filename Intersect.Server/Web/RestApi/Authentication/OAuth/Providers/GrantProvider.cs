@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Intersect.Logging;
 using Intersect.Reflection;
 using Intersect.Security.Claims;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Configuration;
 

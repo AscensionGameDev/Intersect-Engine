@@ -1,6 +1,6 @@
 ﻿using Intersect.Logging;
 using Intersect.Security.Claims;
-using Intersect.Server.Classes.Database.PlayerData.Api;
+
 using JetBrains.Annotations;
 using Microsoft.Owin.Security.Infrastructure;
 using System;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.RestApi.Configuration;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers

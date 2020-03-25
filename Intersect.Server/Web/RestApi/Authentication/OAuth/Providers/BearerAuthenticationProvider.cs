@@ -1,9 +1,11 @@
 ﻿using Intersect.Security.Claims;
-using Intersect.Server.Classes.Database.PlayerData.Api;
+
 using JetBrains.Annotations;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Threading.Tasks;
+
+using Intersect.Server.Database.PlayerData.Api;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {

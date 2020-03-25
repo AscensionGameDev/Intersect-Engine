@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Threading;
 
 using Intersect.Core;
+using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Web.RestApi;

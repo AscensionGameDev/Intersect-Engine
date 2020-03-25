@@ -2,6 +2,7 @@
 using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
+using Intersect.Server.Database;
 using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands

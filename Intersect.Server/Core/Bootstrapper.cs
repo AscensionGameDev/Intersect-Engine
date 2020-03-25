@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CommandLine;
 using Intersect.Logging;
+using Intersect.Server.Database;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;

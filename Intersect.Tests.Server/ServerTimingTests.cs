@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 using Intersect.Extensions;
 using Intersect.Server;
+using Intersect.Server.Core;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

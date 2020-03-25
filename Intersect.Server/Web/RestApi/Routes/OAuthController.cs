@@ -4,8 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes

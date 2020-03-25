@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web.Http;
 
 using Intersect.Enums;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
