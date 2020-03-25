@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Logging;
-using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
 using Strings = Intersect.Server.Localization.Strings;
 
-namespace Intersect.Server.Entities
+namespace Intersect.Server.Entities.Events
 {
     public class Event
     {
@@ -329,66 +328,6 @@ namespace Intersect.Server.Entities
             }
             output += "}";
             return output;
-        }
-    }
-
-    public class CommandInstance
-    {
-        public enum EventResponse
-        {
-            None = 0,
-            Dialogue,
-            Shop,
-            Bank,
-            Crafting,
-            Quest,
-            Timer
-        }
-
-        private int commandIndex;
-        public int CommandIndex
-        {
-            get { return commandIndex; }
-            set
-            {
-                commandIndex = value;
-                Command = commandIndex >= 0 && commandIndex < CommandList.Count ? CommandList[commandIndex] : null;
-            }
-        }
-        public EventCommand Command;
-        public Guid CommandListId;
-        public List<EventCommand> CommandList;
-
-        public EventResponse WaitingForResponse = EventResponse.None;
-        public EventCommand WaitingOnCommand = null;
-        public Guid[] BranchIds = null; //Potential Branches for Commands that require responses such as ShowingOptions or Offering a Quest
-
-        public GameObjects.Events.EventPage Page;
-
-
-        public Guid WaitingForRoute;
-        public Guid WaitingForRouteMap;
-
-        public CommandInstance(GameObjects.Events.EventPage page, int listIndex = 0)
-        {
-            Page = page;
-            CommandList = page.CommandLists.Values.First();
-            CommandIndex = listIndex;
-        }
-
-        public CommandInstance(GameObjects.Events.EventPage page, List<EventCommand> commandList, int listIndex = 0)
-        {
-            Page = page;
-            CommandList = commandList;
-            CommandIndex = listIndex;
-        }
-
-        public CommandInstance(GameObjects.Events.EventPage page, Guid commandListId, int listIndex = 0)
-        {
-            Page = page;
-            CommandList = page.CommandLists[commandListId];
-            CommandIndex = listIndex;
-
         }
     }
 }

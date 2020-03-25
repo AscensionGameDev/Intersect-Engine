@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 
-namespace Intersect.Server.EventProcessing
+namespace Intersect.Server.Entities.Events
 {
     public static class Conditions
     {
@@ -111,7 +111,7 @@ namespace Intersect.Server.EventProcessing
             else
             {
                 lvlStat = player.Stat[(int)condition.Stat].Value();
-                if (condition.IgnoreBuffs) lvlStat = player.Stat[(int)condition.Stat].Stat + player.StatPointAllocations[(int)condition.Stat];
+                if (condition.IgnoreBuffs) lvlStat = player.Stat[(int)condition.Stat].BaseStat + player.StatPointAllocations[(int)condition.Stat];
             }
             switch (condition.Comparator) //Comparator
             {
@@ -178,7 +178,7 @@ namespace Intersect.Server.EventProcessing
         {
             if (condition.Ranges[0] > -1 && condition.Ranges[1] > -1 && condition.Ranges[0] < 1440 / TimeBase.GetTimeBase().RangeInterval && condition.Ranges[1] < 1440 / TimeBase.GetTimeBase().RangeInterval)
             {
-                return (ServerTime.GetTimeRange() >= condition.Ranges[0] && ServerTime.GetTimeRange() <= condition.Ranges[1]);
+                return (Time.GetTimeRange() >= condition.Ranges[0] && Time.GetTimeRange() <= condition.Ranges[1]);
             }
             return true;
         }

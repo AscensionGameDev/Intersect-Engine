@@ -1,14 +1,13 @@
-﻿using Intersect.Enums;
-using Intersect.Logging;
-using Intersect.Server.Entities;
-using Intersect.Server.Maps;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
+using Intersect.Enums;
+using Intersect.Logging;
 using Intersect.Server.Database;
+using Intersect.Server.Entities.Events;
+using Intersect.Server.Maps;
 
-namespace Intersect.Server.Misc.Pathfinding
+namespace Intersect.Server.Entities.Pathfinding
 {
     using DbInterface = DbInterface;
 
@@ -24,12 +23,12 @@ namespace Intersect.Server.Misc.Pathfinding
     class Pathfinder
     {
         private int mConsecutiveFails;
-        private EntityInstance mEntity;
+        private Entity mEntity;
         private IEnumerable<PathNode> mPath;
         private PathfinderTarget mTarget;
         private long mWaitTime;
 
-        public Pathfinder(EntityInstance parent)
+        public Pathfinder(Entity parent)
         {
             mEntity = parent;
         }
@@ -197,9 +196,9 @@ namespace Intersect.Server.Misc.Pathfinding
                                                     }
 
                                                     //If this is a local event then we gotta loop through all other local events for the player
-                                                    if (mEntity.GetType() == typeof(EventPage))
+                                                    if (mEntity.GetType() == typeof(EventPageInstance))
                                                     {
-                                                        EventPage ev = (EventPage)mEntity;
+                                                        EventPageInstance ev = (EventPageInstance)mEntity;
                                                         if (!ev.Passable && ev.Player != null)
                                                         //Make sure this is a local event
                                                         {

@@ -1,18 +1,17 @@
-﻿using Intersect.Enums;
+﻿using System;
+
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
-using Intersect.Server.EventProcessing;
+using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
-using Intersect.Server.Misc.Pathfinding;
 using Intersect.Server.Networking;
 
-using System;
-
-namespace Intersect.Server.Entities
+namespace Intersect.Server.Entities.Events
 {
-    public class EventPageInstance : EntityInstance
+    public class EventPageInstance : Entity
     {
         private Pathfinder mPathFinder;
         public EventBase BaseEvent;
@@ -41,19 +40,19 @@ namespace Intersect.Server.Entities
                 switch (mMovementSpeed)
                 {
                     case EventMovementSpeed.Slowest:
-                        Stat[(int) Stats.Speed].Stat = 2;
+                        Stat[(int) Stats.Speed].BaseStat = 2;
                         break;
                     case EventMovementSpeed.Slower:
-                        Stat[(int) Stats.Speed].Stat = 5;
+                        Stat[(int) Stats.Speed].BaseStat = 5;
                         break;
                     case EventMovementSpeed.Normal:
-                        Stat[(int) Stats.Speed].Stat = 20;
+                        Stat[(int) Stats.Speed].BaseStat = 20;
                         break;
                     case EventMovementSpeed.Faster:
-                        Stat[(int)Stats.Speed].Stat = 30;
+                        Stat[(int)Stats.Speed].BaseStat = 30;
                         break;
                     case EventMovementSpeed.Fastest:
-                        Stat[(int)Stats.Speed].Stat = 40;
+                        Stat[(int)Stats.Speed].BaseStat = 40;
                         break;
                 }
             }
@@ -235,19 +234,19 @@ namespace Intersect.Server.Entities
             switch (speed)
             {
                 case EventMovementSpeed.Slowest:
-                    Stat[(int)Stats.Speed].Stat = 5;
+                    Stat[(int)Stats.Speed].BaseStat = 5;
                     break;
                 case EventMovementSpeed.Slower:
-                    Stat[(int)Stats.Speed].Stat = 10;
+                    Stat[(int)Stats.Speed].BaseStat = 10;
                     break;
                 case EventMovementSpeed.Normal:
-                    Stat[(int)Stats.Speed].Stat = 20;
+                    Stat[(int)Stats.Speed].BaseStat = 20;
                     break;
                 case EventMovementSpeed.Faster:
-                    Stat[(int)Stats.Speed].Stat = 30;
+                    Stat[(int)Stats.Speed].BaseStat = 30;
                     break;
                 case EventMovementSpeed.Fastest:
-                    Stat[(int)Stats.Speed].Stat = 40;
+                    Stat[(int)Stats.Speed].BaseStat = 40;
                     break;
             }
         }

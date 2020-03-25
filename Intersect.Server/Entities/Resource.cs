@@ -11,7 +11,7 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Entities
 {
-    public class Resource : EntityInstance
+    public class Resource : Entity
     {
         public bool IsDead;
 
@@ -33,14 +33,14 @@ namespace Intersect.Server.Entities
             HideName = true;
         }
 
-        public void Destroy(int dropitems = 0, EntityInstance killer = null)
+        public void Destroy(int dropitems = 0, Entity killer = null)
         {
             Die(dropitems, killer);
             PacketSender.SendEntityDie(this);
             PacketSender.SendEntityLeave(this);
         }
 
-        public override void Die(int dropitems = 100, EntityInstance killer = null)
+        public override void Die(int dropitems = 100, Entity killer = null)
         {
             base.Die(0, killer);
             Sprite = Base.Exhausted.Graphic;
@@ -85,7 +85,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityVitals(this);
         }
 
-        public void SpawnResourceItems(EntityInstance killer)
+        public void SpawnResourceItems(Entity killer)
         {
             //Find tile to spawn items
             var tiles = new List<TileHelper>();

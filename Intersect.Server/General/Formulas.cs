@@ -46,7 +46,7 @@ namespace Intersect.Server.General
         }
 
         public static int CalculateDamage(int baseDamage, DamageType damageType, Stats scalingStat, int scaling,
-            double critMultiplier, EntityInstance attacker, EntityInstance victim)
+            double critMultiplier, Entity attacker, Entity victim)
         {
             if (mFormulas == null)
             {

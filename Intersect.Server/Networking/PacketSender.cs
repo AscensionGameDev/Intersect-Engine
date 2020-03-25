@@ -18,6 +18,7 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
+using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
@@ -264,7 +265,7 @@ namespace Intersect.Server.Networking
             if (map != null)
             {
                 var entities = map.GetEntities(false);
-                var sendEntities = new List<EntityInstance>();
+                var sendEntities = new List<Entity>();
                 for (var i = 0; i < entities.Count; i++)
                 {
                     if (entities[i] != null)
@@ -286,7 +287,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityPacket
-        public static void SendEntityDataTo(Player player, EntityInstance en)
+        public static void SendEntityDataTo(Player player, Entity en)
         {
             if (en == null)
             {
@@ -322,9 +323,9 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static void SendMapEntitiesTo(Player player, List<EntityInstance> entities)
+        public static void SendMapEntitiesTo(Player player, List<Entity> entities)
         {
-            var sendEntities = new List<EntityInstance>();
+            var sendEntities = new List<Entity>();
             for (var i = 0; i < entities.Count; i++)
             {
                 if (entities[i] != null && entities[i] != player)
@@ -352,7 +353,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendMapEntityEquipmentTo(Player player, List<EntityInstance> entities)
+        public static void SendMapEntityEquipmentTo(Player player, List<Entity> entities)
         {
             for (var i = 0; i < entities.Count; i++)
             {
@@ -368,7 +369,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityDataPacket
-        public static void SendEntityDataToProximity(EntityInstance en, Player except = null)
+        public static void SendEntityDataToProximity(Entity en, Player except = null)
         {
             if (en == null)
             {
@@ -400,7 +401,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityPositionPacket
-        public static void SendEntityPositionTo(Client client, EntityInstance en)
+        public static void SendEntityPositionTo(Client client, Entity en)
         {
             if (en == null)
             {
@@ -411,7 +412,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityPositionPacket
-        public static void SendEntityPositionToAll(EntityInstance en)
+        public static void SendEntityPositionToAll(Entity en)
         {
             if (en == null)
             {
@@ -450,13 +451,13 @@ namespace Intersect.Server.Networking
         }
 
         //EntityLeftPacket
-        public static void SendEntityLeave(EntityInstance en)
+        public static void SendEntityLeave(Entity en)
         {
             SendDataToProximity(en.MapId, new EntityLeftPacket(en.Id,en.GetEntityType(),en.MapId));
         }
 
         //EntityLeavePacket
-        public static void SendEntityLeaveTo(Player player, EntityInstance en)
+        public static void SendEntityLeaveTo(Player player, Entity en)
         {
             player.SendPacket(new EntityLeftPacket(en.Id,en.GetEntityType(),en.MapId));
         }
@@ -605,19 +606,19 @@ namespace Intersect.Server.Networking
         }
 
         //EntityMovePacket
-        public static void SendEntityMove(EntityInstance en, bool correction = false)
+        public static void SendEntityMove(Entity en, bool correction = false)
         {
             SendDataToProximity(en.MapId, new EntityMovePacket(en.Id,en.GetEntityType(),en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir,correction));
         }
 
         //EntityMovePacket
-        public static void SendEntityMoveTo(Player player, EntityInstance en, bool correction = false)
+        public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
             player.SendPacket(new EntityMovePacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction));
         }
 
         //EntityVitalsPacket
-        public static EntityVitalsPacket GenerateEntityVitalsPacket(EntityInstance en)
+        public static EntityVitalsPacket GenerateEntityVitalsPacket(Entity en)
         {
             var statuses = en.Statuses.Values.ToArray();
 
@@ -625,7 +626,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityVitalsPacket
-        public static void SendEntityVitals(EntityInstance en)
+        public static void SendEntityVitals(Entity en)
         {
             if (en == null)
             {
@@ -645,7 +646,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityStatsPacket
-        public static void SendEntityStats(EntityInstance en)
+        public static void SendEntityStats(Entity en)
         {
             if (en == null)
             {
@@ -656,14 +657,14 @@ namespace Intersect.Server.Networking
         }
 
         //EntityVitalsPacket
-        public static void SendEntityVitalsTo(Client client, EntityInstance en)
+        public static void SendEntityVitalsTo(Client client, Entity en)
         {
             if (en == null) return;
             client.SendPacket(GenerateEntityVitalsPacket(en));
         }
 
         //EntityStatsPacket
-        public static EntityStatsPacket GenerateEntityStatsPacket(EntityInstance en)
+        public static EntityStatsPacket GenerateEntityStatsPacket(Entity en)
         {
             var stats = new int[(int)Stats.StatCount];
             for (var i = 0; i < (int)Stats.StatCount; i++)
@@ -675,31 +676,31 @@ namespace Intersect.Server.Networking
         }
 
         //EntityStatsPacket
-        public static void SendEntityStatsTo(Client client, EntityInstance en)
+        public static void SendEntityStatsTo(Client client, Entity en)
         {
             client.SendPacket(GenerateEntityStatsPacket(en));
         }
 
         //EntityDirectionPacket
-        public static void SendEntityDir(EntityInstance en)
+        public static void SendEntityDir(Entity en)
         {
             SendDataToProximity(en.MapId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.Dir));
         }
 
         //EntityAttackPacket
-        public static void SendEntityAttack(EntityInstance en, int attackTime)
+        public static void SendEntityAttack(Entity en, int attackTime)
         {
             SendDataToProximity(en.MapId, new EntityAttackPacket(en.Id,en.GetEntityType(),en.MapId,attackTime));
         }
 
         //EntityDiePacket
-        public static void SendEntityDie(EntityInstance en)
+        public static void SendEntityDie(Entity en)
         {
             SendDataToProximity(en.MapId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId));
         }
 
         //EntityDirectionPacket
-        public static void SendEntityDirTo(Player player, EntityInstance en)
+        public static void SendEntityDirTo(Player player, Entity en)
         {
             player.SendPacket(new EntityDirectionPacket(en.Id,en.GetEntityType(),en.MapId, (byte)en.Dir));
         }
@@ -988,7 +989,7 @@ namespace Intersect.Server.Networking
         }
 
         //SpellCastPacket
-        public static void SendEntityCastTime(EntityInstance en, Guid spellId)
+        public static void SendEntityCastTime(Entity en, Guid spellId)
         {
             SendDataToProximity(en.MapId, new SpellCastPacket(en.Id,spellId));
         }
@@ -1340,13 +1341,13 @@ namespace Intersect.Server.Networking
         }
         
         //EntityDashPacket
-        public static void SendEntityDash(EntityInstance en, Guid endMapId, byte endX, byte endY, int dashTime, sbyte direction)
+        public static void SendEntityDash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, sbyte direction)
         {
             SendDataToProximity(en.MapId, new EntityDashPacket(en.Id,endMapId,endX,endY,dashTime,direction));
         }
 
         //ActionMsgPacket
-        public static void SendActionMsg(EntityInstance en, string message, Color color)
+        public static void SendActionMsg(Entity en, string message, Color color)
         {
             SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId,en.X,en.Y,message,color));
         }
@@ -1372,13 +1373,13 @@ namespace Intersect.Server.Networking
         //TimePacket
         public static void SendTimeToAll()
         {
-            SendDataToAllPlayers(new TimePacket(ServerTime.GetTime(),TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate, ServerTime.GetTimeColor()));
+            SendDataToAllPlayers(new TimePacket(Time.GetTime(),TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate, Time.GetTimeColor()));
         }
 
         //TimePacket
         public static void SendTimeTo(Client client)
         {
-            client?.SendPacket(new TimePacket(ServerTime.GetTime(), TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate, ServerTime.GetTimeColor()));
+            client?.SendPacket(new TimePacket(Time.GetTime(), TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate, Time.GetTimeColor()));
         }
 
         //PartyPacket
@@ -1493,7 +1494,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityZDimensionPacket
-        public static void UpdateEntityZDimension(EntityInstance en, byte z)
+        public static void UpdateEntityZDimension(Entity en, byte z)
         {
             SendDataToProximity(en.MapId, new EntityZDimensionPacket(en.Id,z));
         }

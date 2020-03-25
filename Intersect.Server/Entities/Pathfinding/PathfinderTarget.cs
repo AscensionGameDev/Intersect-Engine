@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Intersect.Server.Misc.Pathfinding
+namespace Intersect.Server.Entities.Pathfinding
 {
     public class PathfinderTarget
     {

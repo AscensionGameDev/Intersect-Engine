@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Entities
 {
-    public partial class EntityInstance
+    public partial class Entity
     {
 
         #region Comparison

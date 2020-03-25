@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
-using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
-namespace Intersect.Server.EventProcessing
+namespace Intersect.Server.Entities.Events
 {
     public static class CommandProcessing
     {
@@ -361,11 +360,11 @@ namespace Intersect.Server.EventProcessing
 
             if (command.Position == 0) // Header
             {
-                player.HeaderLabel = new LabelInstance(label, color);
+                player.HeaderLabel = new Label(label, color);
             }
             else if (command.Position == 1) // Footer
             {
-                player.FooterLabel = new LabelInstance(label, color);
+                player.FooterLabel = new Label(label, color);
             }
 
             PacketSender.SendEntityDataToProximity(player);
@@ -455,7 +454,7 @@ namespace Intersect.Server.EventProcessing
             var tileX = 0;
             var tileY = 0;
             var direction = (byte)Directions.Up;
-            var targetEntity = (EntityInstance)player;
+            var targetEntity = (Entity)player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
@@ -546,7 +545,7 @@ namespace Intersect.Server.EventProcessing
             var tileX = 0;
             var tileY = 0;
             var direction = (byte)Directions.Up;
-            var targetEntity = (EntityInstance)player;
+            var targetEntity = (Entity)player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
@@ -867,11 +866,11 @@ namespace Intersect.Server.EventProcessing
                 }
 
                 //Time Stuff
-                input = input.Replace(Strings.Events.timehour, ServerTime.GetTime().ToString("%h"));
-                input = input.Replace(Strings.Events.militaryhour, ServerTime.GetTime().ToString("HH"));
-                input = input.Replace(Strings.Events.timeminute, ServerTime.GetTime().ToString("mm"));
-                input = input.Replace(Strings.Events.timesecond, ServerTime.GetTime().ToString("ss"));
-                if (ServerTime.GetTime().Hour >= 12)
+                input = input.Replace(Strings.Events.timehour, Time.GetTime().ToString("%h"));
+                input = input.Replace(Strings.Events.militaryhour, Time.GetTime().ToString("HH"));
+                input = input.Replace(Strings.Events.timeminute, Time.GetTime().ToString("mm"));
+                input = input.Replace(Strings.Events.timesecond, Time.GetTime().ToString("ss"));
+                if (Time.GetTime().Hour >= 12)
                 {
                     input = input.Replace(Strings.Events.timeperiod, Strings.Events.periodevening);
                 }

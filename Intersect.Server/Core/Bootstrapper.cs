@@ -162,9 +162,9 @@ namespace Intersect.Server.Core
             Console.WriteLine();
 
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(DbInterface.RegisteredPlayers));
-            Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
 
-            ServerTime.Update();
+            Time.Update();
 
             PacketSender.CacheGameDataPacket();
 

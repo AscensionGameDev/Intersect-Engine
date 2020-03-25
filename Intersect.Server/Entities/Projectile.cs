@@ -4,6 +4,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
+using Intersect.Server.Entities.Combat;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -11,25 +12,25 @@ using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Server.Entities
 {
-    public class Projectile : EntityInstance
+    public class Projectile : Entity
     {
         private int mSpawnCount;
         private int mSpawnedAmount;
         private int mTotalSpawns;
         public ItemBase Item;
         public ProjectileBase Base;
-        public EntityInstance Owner;
+        public Entity Owner;
         private int mQuantity;
         public bool HasGrappled;
 
         // Individual Spawns
-        public ProjectileSpawns[] Spawns;
+        public ProjectileSpawn[] Spawns;
 
         private long mSpawnTime;
         public SpellBase Spell;
-        public EntityInstance Target;
+        public Entity Target;
 
-        public Projectile(EntityInstance owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile, Guid mapId, byte X, byte Y, byte z, byte direction, EntityInstance target) : base()
+        public Projectile(Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile, Guid mapId, byte X, byte Y, byte z, byte direction, Entity target) : base()
         {
             Base = projectile;
             Name = Base.Name;
@@ -61,7 +62,7 @@ namespace Intersect.Server.Entities
                 }
             }
             mTotalSpawns *= Base.Quantity;
-            Spawns = new ProjectileSpawns[mTotalSpawns];
+            Spawns = new ProjectileSpawn[mTotalSpawns];
         }
 
         private void AddProjectileSpawns()
@@ -74,7 +75,7 @@ namespace Intersect.Server.Entities
                     {
                         if (Base.SpawnLocations[x, y].Directions[d] == true && mSpawnedAmount < Spawns.Length)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), (byte)(X + FindProjectileRotationX(Dir, x - 2, y - 2)), (byte)(Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte)Z, MapId, Base, this);
+                            ProjectileSpawn s = new ProjectileSpawn(FindProjectileRotationDir(Dir, d), (byte)(X + FindProjectileRotationX(Dir, x - 2, y - 2)), (byte)(Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte)Z, MapId, Base, this);
                             Spawns[mSpawnedAmount] = s;
                             mSpawnedAmount++;
                             mSpawnCount++;
@@ -274,7 +275,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void KillSpawn(ProjectileSpawns spawn)
+        public void KillSpawn(ProjectileSpawn spawn)
         {
             if (spawn != null && Spawns.Contains(spawn))
             {
@@ -290,7 +291,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool CheckForCollision(ProjectileSpawns spawn)
+        public bool CheckForCollision(ProjectileSpawn spawn)
         {
             var killSpawn = MoveFragment(spawn, false);
             //Check Map Entities For Hits
@@ -319,7 +320,7 @@ namespace Intersect.Server.Entities
                         if (Owner.X == X && Owner.Y == Y && Owner.MapId == MapId)
                         {
                             Owner.Dir = spawn.Dir;
-                            new DashInstance(Owner, spawn.Distance, (byte)Owner.Dir, Base.IgnoreMapBlocks, Base.IgnoreActiveResources, Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
+                            new Dash(Owner, spawn.Distance, (byte)Owner.Dir, Base.IgnoreMapBlocks, Base.IgnoreActiveResources, Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
                         }
                         killSpawn = true;
                     }
@@ -358,7 +359,7 @@ namespace Intersect.Server.Entities
             return killSpawn;
         }
 
-        public bool MoveFragment(ProjectileSpawns spawn, bool move = true)
+        public bool MoveFragment(ProjectileSpawn spawn, bool move = true)
         {
             int newx = spawn.X;
             int newy = spawn.Y;
@@ -426,7 +427,7 @@ namespace Intersect.Server.Entities
             return killSpawn;
         }
 
-        public override void Die(int dropitems = 0, EntityInstance killer = null)
+        public override void Die(int dropitems = 0, Entity killer = null)
         {
             for (int i = 0; i < Spawns.Length; i++)
             {
@@ -454,98 +455,6 @@ namespace Intersect.Server.Entities
         public override EntityTypes GetEntityType()
         {
             return EntityTypes.Projectile;
-        }
-    }
-
-    public class ProjectileSpawns
-    {
-        public byte Dir;
-        public int Distance;
-        public Guid MapId;
-        public Projectile Parent;
-        public ProjectileBase ProjectileBase;
-        public long TransmittionTimer = Globals.Timing.TimeMs;
-        public byte X;
-        public byte Y;
-        public byte Z;
-
-        public ProjectileSpawns(byte dir, byte x, byte y, byte z, Guid mapId, ProjectileBase projectileBase, Projectile parent)
-        {
-            MapId = mapId;
-            X = x;
-            Y = y;
-            Z = z;
-            Dir = dir;
-            ProjectileBase = projectileBase;
-            Parent = parent;
-            TransmittionTimer = Globals.Timing.TimeMs +
-                                (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
-        }
-
-        public bool IsAtLocation(Guid mapId, int x, int y, int z) => MapId == mapId && X == x && Y == y && Z == z;
-
-        public bool HitEntity(EntityInstance en)
-        {
-            var targetEntity = en;
-            if (targetEntity != null && targetEntity != Parent.Owner)
-            {
-                if (targetEntity.GetType() == typeof(Player)) //Player
-                {
-                    if (Parent.Owner != Parent.Target)
-                    {
-                        Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
-                        {
-                            Parent.HasGrappled = true;
-                            Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
-                        }
-
-                        if (!Parent.Base.PierceTarget) return true;
-                    }
-                }
-                else if (targetEntity.GetType() == typeof(Resource))
-                {
-                    if ((((Resource) targetEntity).IsDead &&
-                         !ProjectileBase.IgnoreExhaustedResources) ||
-                        (!((Resource) targetEntity).IsDead &&
-                         !ProjectileBase.IgnoreActiveResources))
-                    {
-                        if (Parent.Owner.GetType() == typeof(Player) && !((Resource)targetEntity).IsDead)
-                        {
-                            Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                            if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
-                            {
-                                Parent.HasGrappled = true;
-                                Parent.Owner.Dir = Dir;
-                                new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
-                            }
-                        }
-                        return true;
-                    }
-                }
-                else //Any other Parent.Target
-                {
-                    var ownerNpc = Parent.Owner as Npc;
-                    if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Combat.Friendly))
-                    {
-                        Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks
-                        {
-                            Parent.HasGrappled = true;
-                            Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
-                        }
-                        if (!Parent.Base.PierceTarget) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public void Dispose(int spawnIndex)
-        {
-            PacketSender.SendRemoveProjectileSpawn(MapId, Parent.Id, spawnIndex);
         }
     }
 }

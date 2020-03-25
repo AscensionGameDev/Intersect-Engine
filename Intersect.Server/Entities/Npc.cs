@@ -11,10 +11,8 @@ using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
-using Intersect.Server.Misc.Pathfinding;
 using Intersect.Server.Networking;
 
 using JetBrains.Annotations;
@@ -25,9 +23,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Intersect.Server.Entities.Combat;
+using Intersect.Server.Entities.Events;
+using Intersect.Server.Entities.Pathfinding;
+
 namespace Intersect.Server.Entities
 {
-    public class Npc : EntityInstance
+    public class Npc : Entity
     {
         //Spell casting
         public long CastFreq;
@@ -49,7 +51,7 @@ namespace Intersect.Server.Entities
         public long RespawnTime;
 
         //Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
-        public ConcurrentDictionary<EntityInstance, long> DamageMap = new ConcurrentDictionary<EntityInstance, long>();
+        public ConcurrentDictionary<Entity, long> DamageMap = new ConcurrentDictionary<Entity, long>();
 
         public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
@@ -62,7 +64,7 @@ namespace Intersect.Server.Entities
             for (int i= 0; i < (int) Stats.StatCount; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
-                Stat[i] = new EntityStat((Stats)i,this);
+                Stat[i] = new Stat((Stats)i,this);
             }
 
             var spellSlot = 0;
@@ -102,7 +104,7 @@ namespace Intersect.Server.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public override void Die(int dropitems = 100, EntityInstance killer = null)
+        public override void Die(int dropitems = 100, Entity killer = null)
         {
             base.Die(dropitems, killer);
             MapInstance.Get(MapId).RemoveEntity(this);
@@ -111,7 +113,7 @@ namespace Intersect.Server.Entities
         }
 
         //Targeting
-        public void AssignTarget(EntityInstance en)
+        public void AssignTarget(Entity en)
         {
             //Can't assign a new target if taunted
             var statuses = Statuses.Values.ToArray();
@@ -164,10 +166,10 @@ namespace Intersect.Server.Entities
             return base.CalculateAttackTime();
         }
 
-        public override bool CanAttack(EntityInstance entity, SpellBase spell)
+        public override bool CanAttack(Entity entity, SpellBase spell)
         {
             if (!base.CanAttack(entity, spell)) return false;
-            if (entity.GetType() == typeof(EventPage)) return false;
+            if (entity.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
@@ -196,7 +198,7 @@ namespace Intersect.Server.Entities
             return true;
         }
 
-        public override void TryAttack(EntityInstance target)
+        public override void TryAttack(Entity target)
         {
             if (target.IsDisposed) return;
             if (!CanAttack(target, null)) return;
@@ -219,7 +221,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool CanNpcCombat(EntityInstance enemy, bool friendly = false)
+        public bool CanNpcCombat(Entity enemy, bool friendly = false)
         {
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (!friendly)
@@ -260,7 +262,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        private static bool PredicateStunnedOrSleeping(StatusInstance status)
+        private static bool PredicateStunnedOrSleeping(Status status)
         {
             switch (status?.Type)
             {
@@ -287,7 +289,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private static bool PredicateUnableToCastSpells(StatusInstance status)
+        private static bool PredicateUnableToCastSpells(Status status)
         {
             switch (status?.Type)
             {
@@ -552,7 +554,7 @@ namespace Intersect.Server.Entities
                 else //Find a target if able
                 {
                     long dmg = 0;
-                    EntityInstance tgt = null;
+                    Entity tgt = null;
                     foreach (var pair in DamageMap)
                     {
                         if (pair.Value > dmg)
@@ -794,7 +796,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override void NotifySwarm(EntityInstance attacker)
+        public override void NotifySwarm(Entity attacker)
         {
             var mapEntities = MapInstance.Get(MapId).GetEntities(true);
             foreach (var en in mapEntities)
@@ -824,7 +826,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public override bool IsAllyOf(EntityInstance otherEntity)
+        public override bool IsAllyOf(Entity otherEntity)
         {
             switch (otherEntity)
             {
@@ -861,7 +863,7 @@ namespace Intersect.Server.Entities
         private void TryFindNewTarget(Guid avoidId = new Guid())
         {
             var maps = MapInstance.Get(MapId).GetSurroundingMaps(true);
-            var possibleTargets = new List<EntityInstance>();
+            var possibleTargets = new List<Entity>();
             int closestRange = Range + 1; //If the range is out of range we didn't find anything.
             int closestIndex = -1;
             foreach (var map in maps)

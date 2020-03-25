@@ -1056,7 +1056,7 @@ namespace Intersect.Server.Networking
 
                 for (int i = 0; i < (int) Stats.StatCount; i++)
                 {
-                    newChar.Stat[i].Stat = 0;
+                    newChar.Stat[i].BaseStat = 0;
                 }
 
                 newChar.StatPoints = classBase.BasePoints;
@@ -1133,7 +1133,7 @@ namespace Intersect.Server.Networking
             if (player == null)
                 return;
 
-            EntityInstance target = null;
+            Entity target = null;
             if (packet.TargetId != Guid.Empty)
             {
                 foreach (var map in player.Map.GetSurroundingMaps(true))
@@ -2760,7 +2760,7 @@ namespace Intersect.Server.Networking
 
             TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
             DbInterface.SaveGameDatabase();
-            ServerTime.Init();
+            Time.Init();
             PacketSender.SendTimeBaseToAllEditors();
         }
 

@@ -4,7 +4,7 @@ namespace Intersect.Server.Maps
 {
     public class MapNpcSpawn
     {
-        public EntityInstance Entity;
+        public Entity Entity;
         public long RespawnTime = -1;
     }
 }

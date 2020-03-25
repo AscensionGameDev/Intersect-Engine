@@ -119,7 +119,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
 
                     for (var i = 0; i < (int)Stats.StatCount; i++)
                     {
-                        player.Stat[i].Stat = 0;
+                        player.Stat[i].BaseStat = 0;
                     }
 
                     user.Players?.Add(player);

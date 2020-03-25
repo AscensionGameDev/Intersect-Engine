@@ -55,7 +55,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect.Server.MainClass</StartupObject>
+    <StartupObject>Intersect.Server.Core.MainClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -442,6 +442,10 @@
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Entities\Combat\Buff.cs" />
+    <Compile Include="Entities\Combat\Dash.cs" />
+    <Compile Include="Entities\Combat\DoT.cs" />
+    <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\Player.Database.cs" />
     <Compile Include="Database\Spell.cs" />
     <Compile Include="Database\PlayerData\Players\Switch.cs" />
@@ -449,15 +453,20 @@
     <Compile Include="Database\PlayerData\Mute.cs" />
     <Compile Include="Database\PlayerData\User.cs" />
     <Compile Include="Database\PlayerData\PlayerContext.cs" />
-    <Compile Include="Entities\Event.cs" />
+    <Compile Include="Entities\Events\Event.cs" />
     <Compile Include="Entities\Projectile.cs" />
+    <Compile Include="Entities\ProjectileSpawn.cs" />
     <Compile Include="Entities\Resource.cs" />
-    <Compile Include="Entities\EventPageInstance.cs" />
+    <Compile Include="Entities\Events\EventPageInstance.cs" />
     <Compile Include="Core\Main.cs" />
-    <Compile Include="EventProcessing\CommandProcessing.cs" />
-    <Compile Include="EventProcessing\Conditions.cs" />
+    <Compile Include="Entities\Combat\Stat.cs" />
+    <Compile Include="Entities\Combat\Status.cs" />
+    <Compile Include="Entities\Trading.cs" />
+    <Compile Include="Entities\Events\CommandInstance.cs" />
+    <Compile Include="Entities\Events\CommandProcessing.cs" />
+    <Compile Include="Entities\Events\Conditions.cs" />
     <Compile Include="General\Formulas.cs" />
-    <Compile Include="General\ServerTime.cs" />
+    <Compile Include="General\Time.cs" />
     <Compile Include="Localization\CommandsNamespace.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Maps\MapInstance.cs" />
@@ -467,10 +476,10 @@
     <Compile Include="Maps\MapResourceSpawn.cs" />
     <Compile Include="Maps\MapTrapInstance.cs" />
     <Compile Include="Maps\TileHelper.cs" />
-    <Compile Include="Misc\Pathfinding\Pathfinder.cs" />
-    <Compile Include="Misc\Pathfinding\SpatialAStar.cs" />
-    <Compile Include="Misc\Pathfinding\PathfinderTarget.cs" />
-    <Compile Include="Misc\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Entities\Pathfinding\Pathfinder.cs" />
+    <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
+    <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
+    <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />
@@ -484,11 +493,8 @@
     <Compile Include="Core\ServerLoop.cs" />
     <Compile Include="Networking\Helpers\PortChecker.cs" />
     <Compile Include="Networking\Helpers\UPnP.cs" />
-    <Compile Include="Networking\Websockets\WebSocketConnection.cs" />
-    <Compile Include="Networking\Websockets\WebSocketNetwork.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\ResetPassword.cs" />
-    <Compile Include="Spells\SpellInstance.cs" />
     <Compile Include="Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />

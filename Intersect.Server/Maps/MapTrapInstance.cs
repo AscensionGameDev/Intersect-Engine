@@ -14,7 +14,7 @@ namespace Intersect.Server.Classes.Maps
 {
     public class MapTrapInstance
     {
-        public EntityInstance Owner;
+        public Entity Owner;
         public SpellBase ParentSpell;
 
         public Guid MapId;
@@ -26,7 +26,7 @@ namespace Intersect.Server.Classes.Maps
 
         private long Duration;
 
-        public MapTrapInstance(EntityInstance owner, SpellBase parentSpell, Guid mapId, byte x, byte y, byte z)
+        public MapTrapInstance(Entity owner, SpellBase parentSpell, Guid mapId, byte x, byte y, byte z)
         {
             Owner = owner;
             ParentSpell = parentSpell;
@@ -37,7 +37,7 @@ namespace Intersect.Server.Classes.Maps
             Z = z;
         }
 
-        public void CheckEntityHasDetonatedTrap(EntityInstance entity)
+        public void CheckEntityHasDetonatedTrap(Entity entity)
         {
             if (!Triggered)
             {

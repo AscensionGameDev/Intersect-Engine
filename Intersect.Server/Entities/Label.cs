@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-namespace Intersect.Client.Entities
+namespace Intersect.Server.Entities
 {
     public struct Label
     {

@@ -1121,7 +1121,7 @@ namespace Intersect.Server.Database
                     TimeBase.SetStaticTime(time);
                 }
             }
-            ServerTime.Init();
+            Time.Init();
         }
 
         public static void SavePlayerDatabaseAsync()

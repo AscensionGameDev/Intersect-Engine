@@ -12,6 +12,7 @@ using Intersect.Logging;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
+using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 
@@ -33,7 +34,7 @@ namespace Intersect.Server.Maps
         public bool Active;
 
         [NotNull, NotMapped]
-        private readonly List<EntityInstance> mEntities = new List<EntityInstance>();
+        private readonly List<Entity> mEntities = new List<Entity>();
 
         [JsonIgnore] [NotMapped] public Dictionary<EventBase, Event> GlobalEventInstances = new Dictionary<EventBase, Event>();
         [JsonIgnore] [NotMapped] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
@@ -542,7 +543,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public EntityInstance SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
+        public Entity SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
         {
             var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
@@ -603,7 +604,7 @@ namespace Intersect.Server.Maps
             return null;
         }
 
-        public bool FindEvent(EventBase baseEvent, Entities.EventPageInstance globalClone)
+        public bool FindEvent(EventBase baseEvent, EventPageInstance globalClone)
         {
             if (GlobalEventInstances.ContainsKey(baseEvent))
             {
@@ -619,8 +620,8 @@ namespace Intersect.Server.Maps
         }
 
         //Spawn a projectile
-        public void SpawnMapProjectile(EntityInstance owner, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, Guid mapId, byte x, byte y, byte z, byte direction, EntityInstance target)
+        public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, SpellBase parentSpell,
+            ItemBase parentItem, Guid mapId, byte x, byte y, byte z, byte direction, Entity target)
         {
             lock (GetMapLock())
             {
@@ -647,7 +648,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void SpawnTrap(EntityInstance owner, SpellBase parentSpell, byte x, byte y, byte z)
+        public void SpawnTrap(Entity owner, SpellBase parentSpell, byte x, byte y, byte z)
         {
             lock (GetMapLock())
             {
@@ -665,7 +666,7 @@ namespace Intersect.Server.Maps
         }
 
         //Entity Processing
-        public void AddEntity(EntityInstance en)
+        public void AddEntity(Entity en)
         {
             if (en != null)
             {
@@ -683,7 +684,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void RemoveEntity(EntityInstance en)
+        public void RemoveEntity(Entity en)
         {
             lock (GetMapLock())
             {
@@ -711,7 +712,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void ClearEntityTargetsOf(EntityInstance en)
+        public void ClearEntityTargetsOf(Entity en)
         {
             lock (GetMapLock())
             {
@@ -921,9 +922,9 @@ namespace Intersect.Server.Maps
         }
 
         [NotNull]
-        public List<EntityInstance> GetEntities(bool includeSurroundingMaps = false)
+        public List<Entity> GetEntities(bool includeSurroundingMaps = false)
         {
-            var entities = new List<EntityInstance>();
+            var entities = new List<Entity>();
 
             lock (GetMapLock())
             {

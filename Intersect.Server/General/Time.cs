@@ -4,7 +4,7 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.General
 {
-    public static class ServerTime
+    public static class Time
     {
         private static DateTime sGameTime;
         private static long sUpdateTime;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intersect.Server.Misc.Pathfinding
+namespace Intersect.Server.Entities.Pathfinding
 {
     public interface IIndexedObject
     {

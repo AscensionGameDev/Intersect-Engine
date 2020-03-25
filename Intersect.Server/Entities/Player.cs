@@ -12,7 +12,6 @@ using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
-using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
@@ -31,12 +30,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
+using Intersect.Server.Entities.Events;
+
 namespace Intersect.Server.Entities
 {
 
     using DbInterface = DbInterface;
 
-    public partial class Player : EntityInstance
+    public partial class Player : Entity
     {
 
         //Online Players List
@@ -694,7 +695,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override void Die(int dropitems = 0, EntityInstance killer = null)
+        public override void Die(int dropitems = 0, Entity killer = null)
         {
             //Flag death to the client
             PacketSender.SendPlayerDeath(this);
@@ -921,7 +922,7 @@ namespace Intersect.Server.Entities
         }
 
         //Combat
-        public override void KilledEntity(EntityInstance entity)
+        public override void KilledEntity(Entity entity)
         {
             switch (entity)
             {
@@ -975,7 +976,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void UpdateQuestKillTasks(EntityInstance en)
+        public void UpdateQuestKillTasks(Entity en)
         {
             //If any quests demand that this Npc be killed then let's handle it
             var npc = (Npc) en;
@@ -1017,7 +1018,7 @@ namespace Intersect.Server.Entities
         }
 
         public override void TryAttack(
-            EntityInstance target,
+            Entity target,
             ProjectileBase projectile,
             SpellBase parentSpell,
             ItemBase parentItem,
@@ -1063,7 +1064,7 @@ namespace Intersect.Server.Entities
             base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
         }
 
-        public override void TryAttack(EntityInstance target)
+        public override void TryAttack(Entity target)
         {
             if (CastTime >= Globals.Timing.TimeMs)
             {
@@ -1156,7 +1157,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityAttack(this, CalculateAttackTime());
         }
 
-        public override bool CanAttack(EntityInstance entity, SpellBase spell)
+        public override bool CanAttack(Entity entity, SpellBase spell)
         {
             if (!base.CanAttack(entity, spell))
             {
@@ -1188,7 +1189,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override void NotifySwarm(EntityInstance attacker) => MapInstance.Get(MapId)
+        public override void NotifySwarm(Entity attacker) => MapInstance.Get(MapId)
             ?.GetEntities(true)
             .ForEach(
                 entity =>
@@ -1254,7 +1255,7 @@ namespace Intersect.Server.Entities
                         {
                             s += Items[Equipment[i]].StatBuffs[(int) statType] +
                                  item.StatsGiven[(int) statType] +
-                                 (int) (((Stat[(int) statType].Stat + StatPointAllocations[(int) statType]) *
+                                 (int) (((Stat[(int) statType].BaseStat + StatPointAllocations[(int) statType]) *
                                          (item.PercentageStatsGiven[(int) statType]) /
                                          100f));
                         }
@@ -1585,7 +1586,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
         }
 
-        public void UseItem(int slot, EntityInstance target = null)
+        public void UseItem(int slot, Entity target = null)
         {
             var equipped = false;
             var Item = Items[slot];
@@ -3745,7 +3746,7 @@ namespace Intersect.Server.Entities
             return true;
         }
 
-        public override bool IsAllyOf(EntityInstance otherEntity)
+        public override bool IsAllyOf(Entity otherEntity)
         {
             switch (otherEntity)
             {
@@ -3760,7 +3761,7 @@ namespace Intersect.Server.Entities
 
         public virtual bool IsAllyOf([NotNull] Player otherPlayer) => base.IsAllyOf(otherPlayer) || this.InParty(otherPlayer);
 
-        public bool CanSpellCast(SpellBase spell, EntityInstance target, bool checkVitalReqs)
+        public bool CanSpellCast(SpellBase spell, Entity target, bool checkVitalReqs)
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
@@ -3867,7 +3868,7 @@ namespace Intersect.Server.Entities
             return true;
         }
 
-        public void UseSpell(int spellSlot, EntityInstance target)
+        public void UseSpell(int spellSlot, Entity target)
         {
             var spellNum = Spells[spellSlot].SpellId;
             Target = target;
@@ -4094,7 +4095,7 @@ namespace Intersect.Server.Entities
         //Stats
         public void UpgradeStat(int statIndex)
         {
-            if (Stat[statIndex].Stat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
+            if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
             {
                 StatPointAllocations[statIndex]++;
                 StatPoints--;
@@ -5129,43 +5130,6 @@ namespace Intersect.Server.Entities
                 var newStack = new CommandInstance(eventInstance.PageInstance.MyPage);
                 eventInstance.CallStack.Push(newStack);
             }
-        }
-
-    }
-
-    public struct Trading : IDisposable
-    {
-
-        [NotNull] private readonly Player mPlayer;
-
-        public bool Actively => Counterparty != null;
-
-        [CanBeNull] public Player Counterparty;
-
-        public bool Accepted;
-
-        [NotNull] public Item[] Offer;
-
-        public Player Requester;
-
-        [NotNull] public Dictionary<Player, long> Requests;
-
-        public Trading([NotNull] Player player)
-        {
-            mPlayer = player;
-
-            Accepted = false;
-            Counterparty = null;
-            Offer = new Item[Options.MaxInvItems];
-            Requester = null;
-            Requests = new Dictionary<Player, long>();
-        }
-
-        public void Dispose()
-        {
-            Offer = new Item[0];
-            Requester = null;
-            Requests.Clear();
         }
 
     }

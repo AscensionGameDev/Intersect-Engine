@@ -260,7 +260,7 @@ namespace Intersect.Server.Database.PlayerData
         public static Tuple<Client, User> Fetch([NotNull] string userName, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(
-                queryClient => EntityInstance.CompareName(userName, queryClient?.User?.Name)
+                queryClient => Entity.CompareName(userName, queryClient?.User?.Name)
             );
 
             return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intersect.Server.Misc.Pathfinding
+namespace Intersect.Server.Entities.Pathfinding
 {
     internal class PriorityQueue<T> where T : IIndexedObject
     {

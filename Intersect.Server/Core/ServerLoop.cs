@@ -48,7 +48,7 @@ namespace Intersect.Server.Core
                         cps = 0;
                         cpsTimer = timeMs + 1000;
                     }
-                    ServerTime.Update();
+                    Time.Update();
                     var currentTime = Globals.Timing.TimeMs;
                     if (Globals.CpsLock && currentTime < timeMs + 10)
                     {
