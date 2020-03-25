@@ -55,7 +55,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect.Server.Core.MainClass</StartupObject>
+    <StartupObject>Intersect.Server.Core.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -458,7 +458,7 @@
     <Compile Include="Entities\ProjectileSpawn.cs" />
     <Compile Include="Entities\Resource.cs" />
     <Compile Include="Entities\Events\EventPageInstance.cs" />
-    <Compile Include="Core\Main.cs" />
+    <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Combat\Stat.cs" />
     <Compile Include="Entities\Combat\Status.cs" />
     <Compile Include="Entities\Trading.cs" />
