@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
@@ -7,31 +8,40 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class MigrateCommand : ServerCommand
     {
-        public MigrateCommand() : base(
-            Strings.Commands.Migrate
-        )
+
+        public MigrateCommand() : base(Strings.Commands.Migrate)
         {
         }
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            string input = "";
-            char selection = ' ';
+            var input = "";
+            var selection = ' ';
             Console.WriteLine();
             Console.WriteLine(Strings.Migration.selectdb);
             Console.WriteLine();
-            Console.WriteLine(Strings.Migration.selectgamedb.ToString(
-                Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite
-                    ? Strings.Migration.currentlysqlite
-                    : Strings.Migration.currentlymysql));
-            Console.WriteLine(Strings.Migration.selectplayerdb.ToString(
-                Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite
-                    ? Strings.Migration.currentlysqlite
-                    : Strings.Migration.currentlymysql));
+            Console.WriteLine(
+                Strings.Migration.selectgamedb.ToString(
+                    Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite
+                        ? Strings.Migration.currentlysqlite
+                        : Strings.Migration.currentlymysql
+                )
+            );
+
+            Console.WriteLine(
+                Strings.Migration.selectplayerdb.ToString(
+                    Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite
+                        ? Strings.Migration.currentlysqlite
+                        : Strings.Migration.currentlymysql
+                )
+            );
+
             Console.WriteLine();
             Console.WriteLine(Strings.Migration.cancel);
+
             // TODO: Remove > when moving to ReadKeyWait when console magic is ready
             Console.Write("> ");
             input = Console.ReadLine();
@@ -45,8 +55,11 @@ namespace Intersect.Server.Core.Commands
             else if (selection.ToString() == Strings.Migration.selectplayerdbkey.ToString())
             {
                 db = Options.PlayerDb;
-            } else {
+            }
+            else
+            {
                 Console.WriteLine(Strings.Migration.migrationcancelled);
+
                 return;
             }
 
@@ -57,6 +70,7 @@ namespace Intersect.Server.Core.Commands
             Console.WriteLine(Strings.Migration.migratetomysql);
             Console.WriteLine();
             Console.WriteLine(Strings.Migration.cancel);
+
             // TODO: Remove > when moving to ReadKeyWait when console magic is ready
             Console.Write("> ");
             input = Console.ReadLine();
@@ -67,6 +81,7 @@ namespace Intersect.Server.Core.Commands
                 selection.ToString() != Strings.Migration.selectmysqlkey.ToString())
             {
                 Console.WriteLine(Strings.Migration.migrationcancelled);
+
                 return;
             }
 
@@ -80,6 +95,7 @@ namespace Intersect.Server.Core.Commands
                 var engineString = dbengine == DatabaseOptions.DatabaseType.sqlite
                     ? Strings.Migration.sqlite
                     : Strings.Migration.mysql;
+
                 Console.WriteLine();
                 Console.WriteLine(Strings.Migration.alreadyusingengine.ToString(dbString, engineString));
                 Console.WriteLine();
@@ -96,5 +112,7 @@ namespace Intersect.Server.Core.Commands
                 }
             }
         }
+
     }
+
 }

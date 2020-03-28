@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.Logging;
-using Newtonsoft.Json;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
+
     public partial class QuestTaskEditor : UserControl
     {
-        private string mEventBackup = null;
-        private QuestBase mMyQuest;
-        private QuestBase.QuestTask mMyTask;
+
         public bool Cancelled;
+
+        private string mEventBackup = null;
+
+        private QuestBase mMyQuest;
+
+        private QuestBase.QuestTask mMyTask;
 
         public QuestTaskEditor(QuestBase refQuest, QuestBase.QuestTask refTask)
         {
@@ -41,7 +45,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
             mEventBackup = mMyTask?.EditingEvent?.JsonData;
             InitLocalization();
-            cmbTaskType.SelectedIndex = mMyTask == null ? -1 : (int)mMyTask.Objective;
+            cmbTaskType.SelectedIndex = mMyTask == null ? -1 : (int) mMyTask.Objective;
             txtStartDesc.Text = mMyTask?.Description;
             UpdateFormElements();
             switch (cmbTaskType.SelectedIndex)
@@ -51,10 +55,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 case 1: //Gather Items
                     cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
                     nudItemAmount.Value = mMyTask?.Quantity ?? 0;
+
                     break;
                 case 2: //Kill NPCS
                     cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
                     nudNpcQuantity.Value = mMyTask?.Quantity ?? 0;
+
                     break;
             }
         }
@@ -65,7 +71,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
             lblType.Text = Strings.TaskEditor.type;
             cmbTaskType.Items.Clear();
-            for (int i = 0; i < Strings.TaskEditor.types.Count; i++)
+            for (var i = 0; i < Strings.TaskEditor.types.Count; i++)
             {
                 cmbTaskType.Items.Add(Strings.TaskEditor.types[i]);
             }
@@ -99,38 +105,52 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     grpGatherItems.Show();
                     cmbItem.Items.Clear();
                     cmbItem.Items.AddRange(ItemBase.Names);
-                    if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
+                    if (cmbItem.Items.Count > 0)
+                    {
+                        cmbItem.SelectedIndex = 0;
+                    }
+
                     nudItemAmount.Value = 1;
+
                     break;
                 case 2: //Kill Npcs
                     grpKillNpcs.Show();
                     cmbNpc.Items.Clear();
                     cmbNpc.Items.AddRange(NpcBase.Names);
-                    if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
+                    if (cmbNpc.Items.Count > 0)
+                    {
+                        cmbNpc.SelectedIndex = 0;
+                    }
+
                     nudNpcQuantity.Value = 1;
+
                     break;
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyTask.Objective = (QuestObjective)cmbTaskType.SelectedIndex;
+            mMyTask.Objective = (QuestObjective) cmbTaskType.SelectedIndex;
             mMyTask.Description = txtStartDesc.Text;
             switch (mMyTask.Objective)
             {
                 case QuestObjective.EventDriven: //Event Driven
                     mMyTask.TargetId = Guid.Empty;
                     mMyTask.Quantity = 1;
+
                     break;
                 case QuestObjective.GatherItems: //Gather Items
                     mMyTask.TargetId = ItemBase.IdFromList(cmbItem.SelectedIndex);
                     mMyTask.Quantity = (int) nudItemAmount.Value;
+
                     break;
                 case QuestObjective.KillNpcs: //Kill Npcs
                     mMyTask.TargetId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
                     mMyTask.Quantity = (int) nudNpcQuantity.Value;
+
                     break;
             }
+
             ParentForm.Close();
         }
 
@@ -149,14 +169,17 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
             mMyTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
-            FrmEvent editor = new FrmEvent(null)
+            var editor = new FrmEvent(null)
             {
                 MyEvent = mMyTask.EditingEvent
             };
-            editor.InitEditor(true,true, true);
+
+            editor.InitEditor(true, true, true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();
         }
+
     }
+
 }

@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+
 using Intersect.Logging;
+
 using JetBrains.Annotations;
+
 using NCalc;
 
 namespace Intersect.Utilities
 {
+
     public delegate void FormulaFunction([NotNull] FunctionArgs args);
 
     public delegate void FormulaParameter([NotNull] ParameterArgs args);
 
     public class Formula
     {
+
         [NotNull] public static readonly List<string> SYSTEM_MATH_FUNCTIONS = new List<string>
         {
             "Abs",
@@ -45,6 +49,23 @@ namespace Intersect.Utilities
 
         [NotNull] private string mSource;
 
+        public Formula(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            Source = source;
+            Functions = new Dictionary<string, FormulaFunction>();
+            Parameters = new Dictionary<string, FormulaParameter>();
+
+            if (Expression == null)
+            {
+                throw new ArgumentNullException(nameof(Expression));
+            }
+        }
+
         [NotNull]
         public string Source
         {
@@ -70,28 +91,14 @@ namespace Intersect.Utilities
             }
         }
 
-        [NotNull] protected Expression Expression { get; set; }
+        [NotNull]
+        protected Expression Expression { get; set; }
 
-        [NotNull] protected IDictionary<string, FormulaFunction> Functions { get; }
+        [NotNull]
+        protected IDictionary<string, FormulaFunction> Functions { get; }
 
-        [NotNull] protected IDictionary<string, FormulaParameter> Parameters { get; }
-
-        public Formula(string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            Source = source;
-            Functions = new Dictionary<string, FormulaFunction>();
-            Parameters = new Dictionary<string, FormulaParameter>();
-
-            if (Expression == null)
-            {
-                throw new ArgumentNullException(nameof(Expression));
-            }
-        }
+        [NotNull]
+        protected IDictionary<string, FormulaParameter> Parameters { get; }
 
         public bool Load()
         {
@@ -104,17 +111,22 @@ namespace Intersect.Utilities
 
             Expression.EvaluateParameter += delegate(string name, ParameterArgs args)
             {
-                if (string.IsNullOrEmpty(name)) return;
+                if (string.IsNullOrEmpty(name))
+                {
+                    return;
+                }
 
                 if (!Parameters.TryGetValue(name, out var formulaParameter))
                 {
                     Log.Error($"Tried to access non-existent parameter '{name}' in a formula.");
+
                     return;
                 }
 
                 if (args == null)
                 {
                     Log.Error($"Formula parameter '{name}' arguments were null.");
+
                     return;
                 }
 
@@ -125,7 +137,10 @@ namespace Intersect.Utilities
 
             Expression.EvaluateFunction += delegate(string name, FunctionArgs args)
             {
-                if (string.IsNullOrEmpty(name)) return;
+                if (string.IsNullOrEmpty(name))
+                {
+                    return;
+                }
 
                 if (!Functions.TryGetValue(name, out var formulaFunction))
                 {
@@ -140,6 +155,7 @@ namespace Intersect.Utilities
                 if (args == null)
                 {
                     Log.Error($"Formula function '{name}' arguments were null.");
+
                     return;
                 }
 
@@ -162,11 +178,13 @@ namespace Intersect.Utilities
                 if (!shouldOverride)
                 {
                     Log.Debug($"Formula function '{name}' already exists, not overriding.");
+
                     return false;
                 }
             }
 
             Functions[name] = function;
+
             return true;
         }
 
@@ -192,11 +210,13 @@ namespace Intersect.Utilities
                 if (!shouldOverride)
                 {
                     Log.Debug($"Formula parameter '{name}' already exists, not overriding.");
+
                     return false;
                 }
             }
 
             Expression.Parameters[name] = value;
+
             return true;
         }
 
@@ -207,25 +227,33 @@ namespace Intersect.Utilities
                 if (!shouldOverride)
                 {
                     Log.Debug($"Formula evaluated parameter '{name}' already exists,not overriding.");
+
                     return false;
                 }
             }
 
-            Parameters.Add(name, delegate(ParameterArgs args)
-            {
-                if (args == null)
+            Parameters.Add(
+                name, delegate(ParameterArgs args)
                 {
-                    Log.Error($"Formula function '{name}' arguments were null.");
-                    return;
-                }
+                    if (args == null)
+                    {
+                        Log.Error($"Formula function '{name}' arguments were null.");
 
-                args.Result = value;
-            });
+                        return;
+                    }
+
+                    args.Result = value;
+                }
+            );
 
             return Parameters.ContainsKey(name);
         }
 
         public T Evaluate<T>() where T : struct, IComparable, IFormattable, IConvertible, IComparable<T>, IEquatable<T>
-            => (T) (Convert.ChangeType(Expression.Evaluate(), typeof(T)) ?? default(T));
+        {
+            return (T) (Convert.ChangeType(Expression.Evaluate(), typeof(T)) ?? default(T));
+        }
+
     }
+
 }

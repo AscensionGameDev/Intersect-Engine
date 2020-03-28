@@ -2,15 +2,24 @@
 
 namespace Intersect.Client.Framework.Gwen
 {
+
     public enum Alignments
     {
+
         Top,
+
         Bottom,
+
         Left,
+
         Right,
+
         Center,
+
         CenterH,
+
         CenterV
+
     }
 
     /// <summary>
@@ -18,19 +27,23 @@ namespace Intersect.Client.Framework.Gwen
     /// </summary>
     public static class Align
     {
+
         /// <summary>
         ///     Centers the control inside its parent.
         /// </summary>
         /// <param name="control">Control to center.</param>
         public static void Center(Base control)
         {
-            Base parent = control.Parent;
+            var parent = control.Parent;
             if (parent == null)
+            {
                 return;
+            }
+
             control.SetPosition(
-                parent.Padding.Left +
-                (((parent.Width - parent.Padding.Left - parent.Padding.Right) - control.Width) / 2),
-                (parent.Height - control.Height) / 2);
+                parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2,
+                (parent.Height - control.Height) / 2
+            );
         }
 
         /// <summary>
@@ -39,8 +52,11 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="control"></param>
         public static void AlignLeft(Base control)
         {
-            Base parent = control.Parent;
-            if (null == parent) return;
+            var parent = control.Parent;
+            if (null == parent)
+            {
+                return;
+            }
 
             control.SetPosition(parent.Padding.Left + control.Margin.Left, control.Y);
         }
@@ -51,12 +67,16 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="control"></param>
         public static void CenterHorizontally(Base control)
         {
-            Base parent = control.Parent;
-            if (null == parent) return;
+            var parent = control.Parent;
+            if (null == parent)
+            {
+                return;
+            }
 
             control.SetPosition(
-                parent.Padding.Left +
-                (((parent.Width - parent.Padding.Left - parent.Padding.Right) - control.Width) / 2), control.Y);
+                parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2,
+                control.Y
+            );
         }
 
         /// <summary>
@@ -65,8 +85,11 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="control"></param>
         public static void AlignRight(Base control)
         {
-            Base parent = control.Parent;
-            if (null == parent) return;
+            var parent = control.Parent;
+            if (null == parent)
+            {
+                return;
+            }
 
             control.SetPosition(parent.Width - control.Width - parent.Padding.Right - control.Margin.Right, control.Y);
         }
@@ -86,8 +109,11 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="control"></param>
         public static void CenterVertically(Base control)
         {
-            Base parent = control.Parent;
-            if (null == parent) return;
+            var parent = control.Parent;
+            if (null == parent)
+            {
+                return;
+            }
 
             control.SetPosition(control.X, (parent.Height - control.Height) / 2);
         }
@@ -98,8 +124,11 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="control"></param>
         public static void AlignBottom(Base control)
         {
-            Base parent = control.Parent;
-            if (null == parent) return;
+            var parent = control.Parent;
+            if (null == parent)
+            {
+                return;
+            }
 
             control.SetPosition(control.X, parent.Height - control.Height - control.Margin.Bottom);
         }
@@ -125,5 +154,7 @@ namespace Intersect.Client.Framework.Gwen
         {
             control.SetPosition(anchor.Right + spacing, anchor.Y - control.Height + anchor.Height);
         }
+
     }
+
 }

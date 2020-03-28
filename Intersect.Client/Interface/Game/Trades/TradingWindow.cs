@@ -13,27 +13,33 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Trades
 {
+
     public class TradingWindow
     {
+
         private static int sItemXPadding = 4;
+
         private static int sItemYPadding = 4;
+
         private Label mTheirOffer;
 
         //Trade button
         private Button mTrade;
-
-        public List<TradeSegment> TradeSegment = new List<TradeSegment>();
 
         private WindowControl mTradeWindow;
 
         //Name tags
         private Label mYourOffer;
 
+        public List<TradeSegment> TradeSegment = new List<TradeSegment>();
+
         //Init
         public TradingWindow(Canvas gameCanvas, string traderName)
         {
-            mTradeWindow = new WindowControl(gameCanvas,
-                Strings.Trading.title.ToString(traderName), false, "TradeWindow");
+            mTradeWindow = new WindowControl(
+                gameCanvas, Strings.Trading.title.ToString(traderName), false, "TradeWindow"
+            );
+
             mTradeWindow.DisableResizing();
             Interface.InputBlockingElements.Add(mTradeWindow);
 
@@ -51,28 +57,23 @@ namespace Intersect.Client.Interface.Game.Trades
             mTrade.SetText(Strings.Trading.accept);
             mTrade.Clicked += trade_Clicked;
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
+
             mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 TradeSegment[i].InitItemContainer(i);
             }
         }
 
         //Location
-        public int X
-        {
-            get { return mTradeWindow.X; }
-        }
+        public int X => mTradeWindow.X;
 
-        public int Y
-        {
-            get { return mTradeWindow.Y; }
-        }
+        public int Y => mTradeWindow.Y;
 
         public void Close()
         {
@@ -91,22 +92,23 @@ namespace Intersect.Client.Interface.Game.Trades
 
         public void Update()
         {
-            int g = 0;
+            var g = 0;
 
             if (mTradeWindow.IsHidden == true)
             {
                 return;
             }
-            for (int n = 0; n < 2; n++)
+
+            for (var n = 0; n < 2; n++)
             {
-                for (int i = 0; i < Options.MaxInvItems; i++)
+                for (var i = 0; i < Options.MaxInvItems; i++)
                 {
                     if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemId != Guid.Empty)
                     {
                         var item = ItemBase.Get(Globals.Trade[n, i].ItemId);
                         if (item != null)
                         {
-                            g += (item.Price * Globals.Trade[n, i].Quantity);
+                            g += item.Price * Globals.Trade[n, i].Quantity;
                             TradeSegment[n].Items[i].Pnl.IsHidden = false;
                             if (item.IsStackable)
                             {
@@ -123,6 +125,7 @@ namespace Intersect.Client.Interface.Game.Trades
                                 TradeSegment[n].Items[i].Pnl.IsHidden = true;
                                 TradeSegment[n].Values[i].IsHidden = true;
                             }
+
                             TradeSegment[n].Items[i].Update();
                         }
                     }
@@ -132,6 +135,7 @@ namespace Intersect.Client.Interface.Game.Trades
                         TradeSegment[n].Values[i].IsHidden = true;
                     }
                 }
+
                 TradeSegment[n].GoldValue.Text = Strings.Trading.value.ToString(g);
                 g = 0;
             }
@@ -139,13 +143,14 @@ namespace Intersect.Client.Interface.Game.Trades
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
                 Y = mTradeWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
                 Width = mTradeWindow.Width + sItemXPadding,
                 Height = mTradeWindow.Height + sItemYPadding
             };
+
             return rect;
         }
 
@@ -155,5 +160,7 @@ namespace Intersect.Client.Interface.Game.Trades
             mTrade.Text = Strings.Trading.pending;
             PacketSender.SendAcceptTrade();
         }
+
     }
+
 }

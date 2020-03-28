@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandGiveExperience : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private GiveExperienceCommand mMyCommand;
 
         public EventCommandGiveExperience(GiveExperienceCommand refCommand, FrmEvent editor)
@@ -29,7 +33,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Exp = (long)nudExperience.Value;
+            mMyCommand.Exp = (long) nudExperience.Value;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -37,5 +41,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

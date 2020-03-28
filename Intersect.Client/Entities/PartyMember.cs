@@ -1,15 +1,22 @@
 ﻿using System;
+
 using Intersect.Enums;
 
 namespace Intersect.Client.Entities
 {
+
     public class PartyMember
     {
+
         public Guid Id;
-        public string Name;
-        public int[] Vital = new int[(int)Vitals.VitalCount];
-        public int[] MaxVital = new int[(int)Vitals.VitalCount];
+
         public int Level;
+
+        public int[] MaxVital = new int[(int) Vitals.VitalCount];
+
+        public string Name;
+
+        public int[] Vital = new int[(int) Vitals.VitalCount];
 
         public PartyMember(Guid id, string name, int[] vital, int[] maxVital, int level)
         {
@@ -19,6 +26,7 @@ namespace Intersect.Client.Entities
             MaxVital = maxVital;
             Level = level;
         }
-    }
-}
 
+    }
+
+}

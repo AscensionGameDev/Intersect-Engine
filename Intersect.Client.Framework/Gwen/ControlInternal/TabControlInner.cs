@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Inner panel of tab control.
     /// </summary>
     public class TabControlInner : Base
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="TabControlInner" /> class.
         /// </summary>
@@ -23,5 +25,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawTabControl(this);
         }
+
     }
+
 }

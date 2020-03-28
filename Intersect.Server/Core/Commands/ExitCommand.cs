@@ -3,11 +3,11 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class ExitCommand : ServerCommand
     {
-        public ExitCommand() : base(
-            Strings.Commands.Exit
-        )
+
+        public ExitCommand() : base(Strings.Commands.Exit)
         {
         }
 
@@ -15,5 +15,7 @@ namespace Intersect.Server.Core.Commands
         {
             context.RequestShutdown();
         }
+
     }
+
 }

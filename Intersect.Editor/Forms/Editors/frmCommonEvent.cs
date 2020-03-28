@@ -9,16 +9,19 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
-using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmCommonEvent : EditorForm
     {
-        private List<string> mKnownFolders = new List<string>();
-        private List<string> mExpandedFolders = new List<string>();
+
         private string mCopiedItem;
+
+        private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmCommonEvent()
         {
@@ -58,11 +61,16 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (lstCommonEvents.SelectedNode?.Tag != null && EventBase.Get((Guid)lstCommonEvents.SelectedNode.Tag) != null)
+            if (lstCommonEvents.SelectedNode?.Tag != null &&
+                EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag) != null)
             {
-                if (MessageBox.Show(Strings.CommonEventEditor.deleteprompt, Strings.CommonEventEditor.delete, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show(
+                        Strings.CommonEventEditor.deleteprompt, Strings.CommonEventEditor.delete,
+                        MessageBoxButtons.YesNo
+                    ) ==
+                    DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(EventBase.Get((Guid)lstCommonEvents.SelectedNode.Tag));
+                    PacketSender.SendDeleteObject(EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag));
                 }
             }
         }
@@ -73,8 +81,9 @@ namespace Intersect.Editor.Forms.Editors
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstCommonEvents.SelectedNode != null && lstCommonEvents.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstCommonEvents.SelectedNode.Tag;
+                selectedId = (Guid) lstCommonEvents.SelectedNode.Tag;
             }
+
             lstCommonEvents.Nodes.Clear();
 
             //Collect folders
@@ -83,11 +92,14 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (((EventBase) itm.Value).CommonEvent)
                 {
-                    if (!string.IsNullOrEmpty(((EventBase) itm.Value).Folder) && !mFolders.Contains(((EventBase) itm.Value).Folder))
+                    if (!string.IsNullOrEmpty(((EventBase) itm.Value).Folder) &&
+                        !mFolders.Contains(((EventBase) itm.Value).Folder))
                     {
                         mFolders.Add(((EventBase) itm.Value).Folder);
                         if (!mKnownFolders.Contains(((EventBase) itm.Value).Folder))
+                        {
                             mKnownFolders.Add(((EventBase) itm.Value).Folder);
+                        }
                     }
                 }
             }
@@ -124,7 +136,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -140,18 +154,25 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstCommonEvents.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstCommonEvents.SelectedNode;
 
-            if (!btnChronological.Checked) lstCommonEvents.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstCommonEvents.Sort();
+            }
 
             lstCommonEvents.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
         }
 
@@ -160,18 +181,54 @@ namespace Intersect.Editor.Forms.Editors
             Globals.CurrentEditor = -1;
         }
 
+        private void toolStripItemCopy_Click(object sender, EventArgs e)
+        {
+            var evt = GetSelectedEvent();
+            if (evt != null && lstCommonEvents.Focused)
+            {
+                mCopiedItem = evt.JsonData;
+                toolStripItemPaste.Enabled = true;
+            }
+        }
+
+        private void toolStripItemPaste_Click(object sender, EventArgs e)
+        {
+            var evt = GetSelectedEvent();
+            if (evt != null && mCopiedItem != null && lstCommonEvents.Focused)
+            {
+                if (MessageBox.Show(
+                        Strings.CommonEventEditor.pasteprompt, Strings.CommonEventEditor.pastetitle,
+                        MessageBoxButtons.YesNo
+                    ) ==
+                    DialogResult.Yes)
+                {
+                    evt.Load(mCopiedItem, true);
+                    PacketSender.SendSaveObject(evt);
+                    InitEditor();
+                }
+            }
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         private EventBase GetSelectedEvent()
         {
-            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null) return null;
+            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null)
+            {
+                return null;
+            }
+
             return EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.CommonEventEditor.folderprompt, Strings.CommonEventEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.CommonEventEditor.folderprompt, Strings.CommonEventEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -182,6 +239,7 @@ namespace Intersect.Editor.Forms.Editors
                         evt.Folder = folderName;
                         PacketSender.SendSaveObject(evt);
                     }
+
                     mExpandedFolders.Add(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -201,6 +259,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstCommonEvents.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -219,28 +278,38 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstCommonEvents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null) return;
-            FrmEvent editor = new FrmEvent(null)
+            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null)
             {
-                MyEvent = EventBase.Get((Guid)lstCommonEvents.SelectedNode.Tag)
+                return;
+            }
+
+            var editor = new FrmEvent(null)
+            {
+                MyEvent = EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag)
             };
+
             editor.InitEditor(false, false, false);
             editor.ShowDialog();
             InitEditor();
             Globals.MainForm.BringToFront();
             BringToFront();
-
         }
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
@@ -251,6 +320,7 @@ namespace Intersect.Editor.Forms.Editors
                 evt.Folder = cmbFolder.Text;
                 PacketSender.SendSaveObject(evt);
             }
+
             InitEditor();
         }
 
@@ -286,13 +356,16 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.CommonEventEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.CommonEventEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.CommonEventEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         private void lstCommonEvents_AfterSelect(object sender, TreeViewEventArgs e)
@@ -318,29 +391,6 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-        private void toolStripItemCopy_Click(object sender, EventArgs e)
-        {
-            var evt = GetSelectedEvent();
-            if (evt != null && lstCommonEvents.Focused)
-            {
-                mCopiedItem = evt.JsonData;
-                toolStripItemPaste.Enabled = true;
-            }
-        }
-
-        private void toolStripItemPaste_Click(object sender, EventArgs e)
-        {
-            var evt = GetSelectedEvent();
-            if (evt != null && mCopiedItem != null && lstCommonEvents.Focused)
-            {
-                if (MessageBox.Show(Strings.CommonEventEditor.pasteprompt, Strings.CommonEventEditor.pastetitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    evt.Load(mCopiedItem, true);
-                    PacketSender.SendSaveObject(evt);
-                    InitEditor();
-                }
-
-            }
-        }
     }
+
 }

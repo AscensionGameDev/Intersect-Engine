@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
 {
+
     public class IntersectRenderer : Base, ICacheToTexture
     {
+
         private bool mClipping = false;
 
         private FloatRect mClipRect;
@@ -15,6 +18,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         private Color mColor;
 
         private GameRenderer mRenderer;
+
         private GameRenderTexture mRenderTarget;
 
         /// <summary>
@@ -38,10 +42,13 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         public override Color PixelColor(GameTexture texture, uint x, uint y, Color defaultColor)
         {
-            int x1 = (int) x;
-            int y1 = (int) y;
+            var x1 = (int) x;
+            var y1 = (int) y;
             if (texture == null)
+            {
                 return defaultColor;
+            }
+
             return texture.GetPixel(x1, y1);
         }
 
@@ -71,14 +78,16 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             {
                 return Point.Empty;
             }
-            Pointf size = mRenderer.MeasureText(text, font, scale * Scale);
+
+            var size = mRenderer.MeasureText(text, font, scale * Scale);
+
             return new Point((int) size.X, (int) size.Y);
         }
 
         public override void RenderText(GameFont font, Point pos, string text, float scale = 1f)
         {
             pos = Translate(pos);
-            FloatRect clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
+            var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
             clip.X = (int) Math.Round(clip.X * Scale);
             clip.Y = (int) Math.Round(clip.Y * Scale);
             clip.Width = (int) Math.Round(clip.Width * Scale);
@@ -88,14 +97,16 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         public override void DrawFilledRect(Rectangle targetRect)
         {
-            FloatRect rect = new FloatRect(Translate(targetRect).X, Translate(targetRect).Y,
-                Translate(targetRect).Width, Translate(targetRect).Height);
+            var rect = new FloatRect(
+                Translate(targetRect).X, Translate(targetRect).Y, Translate(targetRect).Width,
+                Translate(targetRect).Height
+            );
 
             //TODO
 
             if (mClipping)
             {
-                FloatRect clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
+                var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
                 clip.X = (int) Math.Round(clip.X * Scale);
                 clip.Y = (int) Math.Round(clip.Y * Scale);
                 clip.Width = (int) Math.Round(clip.Width * Scale);
@@ -111,7 +122,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
                 if (rect.X + rect.Width > clip.X + clip.Width)
                 {
-                    diff = (rect.X + rect.Width) - (clip.X + clip.Width);
+                    diff = rect.X + rect.Width - (clip.X + clip.Width);
                     rect.Width -= diff;
                 }
 
@@ -124,7 +135,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
                 if (rect.Y + rect.Height > clip.Y + clip.Height)
                 {
-                    diff = (rect.Y + rect.Height) - (clip.Y + clip.Height);
+                    diff = rect.Y + rect.Height - (clip.Y + clip.Height);
                     rect.Height -= diff;
                 }
 
@@ -132,29 +143,43 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 {
                     return;
                 }
+
                 if (rect.Height <= 0)
                 {
                     return;
                 }
             }
+
             if (mRenderTarget == null)
             {
-                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), 0, 0, 1, 1,
-                    rect.X, rect.Y, rect.Width, rect.Height, mColor,
-                    mRenderTarget, GameBlendModes.None, null, 0f, true);
+                mRenderer.DrawTexture(
+                    mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
+                    mRenderTarget, GameBlendModes.None, null, 0f, true
+                );
             }
             else
             {
-                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X,rect.Y,rect.Width,rect.Height, mColor,
-                    mRenderTarget, GameBlendModes.None, null, 0f, true);
+                mRenderer.DrawTexture(
+                    mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
+                    mRenderTarget, GameBlendModes.None, null, 0f, true
+                );
             }
         }
 
-        public override void DrawTexturedRect(GameTexture tex, Rectangle targetRect, Color clr, float u1 = 0,
-            float v1 = 0, float u2 = 1, float v2 = 1)
+        public override void DrawTexturedRect(
+            GameTexture tex,
+            Rectangle targetRect,
+            Color clr,
+            float u1 = 0,
+            float v1 = 0,
+            float u2 = 1,
+            float v2 = 1
+        )
         {
-            FloatRect rect = new FloatRect(Translate(targetRect).X, Translate(targetRect).Y,
-                Translate(targetRect).Width, Translate(targetRect).Height);
+            var rect = new FloatRect(
+                Translate(targetRect).X, Translate(targetRect).Y, Translate(targetRect).Width,
+                Translate(targetRect).Height
+            );
 
             if (null == tex)
             {
@@ -169,7 +194,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
             if (mClipping)
             {
-                FloatRect clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
+                var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
                 clip.X = (int) Math.Round(clip.X * Scale);
                 clip.Y = (int) Math.Round(clip.Y * Scale);
                 clip.Width = (int) Math.Round(clip.Width * Scale);
@@ -180,7 +205,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 if (rect.X < clip.X)
                 {
                     diff = clip.X - rect.X;
-                    vdiff = (diff);
+                    vdiff = diff;
                     rect.X += diff;
                     rect.Width -= diff;
                     u1 += vdiff;
@@ -188,8 +213,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
                 if (rect.X + rect.Width > clip.X + clip.Width)
                 {
-                    diff = (rect.X + rect.Width) - (clip.X + clip.Width);
-                    vdiff = (diff);
+                    diff = rect.X + rect.Width - (clip.X + clip.Width);
+                    vdiff = diff;
                     rect.Width -= diff;
                     u2 -= vdiff;
                 }
@@ -197,7 +222,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 if (rect.Y < clip.Y)
                 {
                     diff = clip.Y - rect.Y;
-                    vdiff = (diff);
+                    vdiff = diff;
                     rect.Y += diff;
                     rect.Height -= diff;
                     v1 += vdiff;
@@ -205,8 +230,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
                 if (rect.Y + rect.Height > clip.Y + clip.Height)
                 {
-                    diff = (rect.Y + rect.Height) - (clip.Y + clip.Height);
-                    vdiff = (diff);
+                    diff = rect.Y + rect.Height - (clip.Y + clip.Height);
+                    vdiff = diff;
                     rect.Height -= diff;
                     v2 -= vdiff;
                 }
@@ -215,25 +240,30 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 {
                     return;
                 }
+
                 if (rect.Height <= 0)
                 {
                     return;
                 }
             }
+
             //u1 /= tex.GetWidth();
             //v1 /= tex.GetHeight();
             //u2 /= tex.GetWidth();
             //v2 /= tex.GetHeight();
             if (mRenderTarget == null)
             {
-                mRenderer.DrawTexture(tex, u1, v1, u2 - u1, v2 - v1,
-                    rect.X, rect.Y, rect.Width, rect.Height,
-                    mColor, mRenderTarget, GameBlendModes.None, null, 0f, true);
+                mRenderer.DrawTexture(
+                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mRenderTarget,
+                    GameBlendModes.None, null, 0f, true
+                );
             }
             else
             {
-                mRenderer.DrawTexture(tex, u1, v1, u2 - u1, v2 - v1, rect.X,rect.Y,rect.Width,rect.Height,
-                    mColor, mRenderTarget, GameBlendModes.None, null, 0f, true);
+                mRenderer.DrawTexture(
+                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mRenderTarget,
+                    GameBlendModes.None, null, 0f, true
+                );
             }
         }
 
@@ -249,9 +279,12 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         private string RemoveExtension(string fileName)
         {
-            int fileExtPos = fileName.LastIndexOf(".");
+            var fileExtPos = fileName.LastIndexOf(".");
             if (fileExtPos >= 0)
+            {
                 fileName = fileName.Substring(0, fileExtPos);
+            }
+
             return fileName;
         }
 
@@ -261,6 +294,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             {
                 fileName = fileName.Substring(10);
             }
+
             return fileName;
         }
 
@@ -269,13 +303,12 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <summary>
         /// Cache to texture provider.
         /// </summary>
-        public override ICacheToTexture Ctt
-        {
-            get { return this; }
-        }
+        public override ICacheToTexture Ctt => this;
 
         private Dictionary<Control.Base, GameRenderTexture> m_RT;
+
         private Stack<GameRenderTexture> m_Stack;
+
         private GameRenderTexture m_RealRT;
 
         public void Initialize()
@@ -288,7 +321,9 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
             m_RT.Clear();
             if (m_Stack.Count > 0)
+            {
                 throw new InvalidOperationException("Render stack not empty");
+            }
         }
 
         /// <summary>
@@ -320,12 +355,14 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void DrawCachedControlTexture(Control.Base control)
         {
-            GameRenderTexture ri = m_RT[control];
+            var ri = m_RT[control];
+
             //ri.Display();
-            GameRenderTexture rt = mRenderTarget;
+            var rt = mRenderTarget;
             mRenderTarget = m_RealRT;
             mColor = Color.White;
             DrawTexturedRect(ri, control.Bounds, Color.White);
+
             //DrawMissingImage(control.Bounds);
             mRenderTarget = rt;
         }
@@ -343,7 +380,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 m_RT[control].Clear(Color.Transparent);
             }
 
-            GameRenderTexture ri = m_RT[control];
+            var ri = m_RT[control];
         }
 
         public void DisposeCachedTexture(Control.Base control)
@@ -365,8 +402,9 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
             throw new NotImplementedException();
         }
-        
 
         #endregion
+
     }
+
 }

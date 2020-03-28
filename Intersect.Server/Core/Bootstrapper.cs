@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+
 using CommandLine;
+
 using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.General;
@@ -14,12 +16,15 @@ using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
 using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
 {
+
     internal static class Bootstrapper
     {
+
         static Bootstrapper()
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
@@ -58,6 +63,7 @@ namespace Intersect.Server.Core
             {
                 action.Invoke();
             }
+
             Log.Diagnostic("Bootstrapper exited.");
 
             //At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
@@ -79,116 +85,24 @@ namespace Intersect.Server.Core
         [NotNull]
         private static CommandLineOptions ParseCommandLineArgs(params string[] args)
         {
-            return new Parser(settings =>
-                       {
-                           if (settings == null)
+            return new Parser(
+                           settings =>
                            {
-                               throw new ArgumentNullException(
-                                   nameof(settings),
-                                   @"If this is null the CommandLineParser dependency is likely broken."
-                               );
+                               if (settings == null)
+                               {
+                                   throw new ArgumentNullException(
+                                       nameof(settings),
+                                       @"If this is null the CommandLineParser dependency is likely broken."
+                                   );
+                               }
+
+                               settings.IgnoreUnknownArguments = true;
+                               settings.MaximumDisplayWidth = Console.BufferWidth;
                            }
-
-                           settings.IgnoreUnknownArguments = true;
-                           settings.MaximumDisplayWidth = Console.BufferWidth;
-                       })
-                       .ParseArguments<CommandLineOptions>(args)
-                       .MapResult(
-                           commandLineOptions => commandLineOptions,
-                           errors => null
-                       ) ?? throw new InvalidOperationException();
+                       ).ParseArguments<CommandLineOptions>(args)
+                       .MapResult(commandLineOptions => commandLineOptions, errors => null) ??
+                   throw new InvalidOperationException();
         }
-
-        #region Pre-Context
-
-        private static bool PreContextSetup(params string[] args)
-        {
-            if (RunningOnWindows())
-            {
-                SetConsoleCtrlHandler(ConsoleCtrlHandler, true);
-            }
-
-            if (!Strings.Load())
-            {
-                Console.WriteLine(Strings.Errors.ErrorLoadingStrings);
-                Console.ReadKey();
-                return false;
-            }
-
-            if (!Options.LoadFromDisk())
-            {
-                Console.WriteLine(Strings.Errors.errorloadingconfig);
-                Console.ReadKey();
-                return false;
-            }
-
-            if (!Directory.Exists(Path.Combine("resources", "notifications")))
-            {
-                Directory.CreateDirectory(Path.Combine("resources", "notifications"));
-            }
-
-            if (!File.Exists(Path.Combine("resources", "notifications", "PasswordReset.html")))
-            {
-                ReflectionUtils.ExtractResource("Intersect.Server.Resources.notifications.PasswordReset.html", Path.Combine("resources","notifications", "PasswordReset.html"));
-            }
-
-            DbInterface.InitializeDbLoggers();
-            DbInterface.CheckDirectories();
-
-            PrintIntroduction();
-
-            ExportDependencies(args);
-
-            Formulas.LoadFormulas();
-
-            CustomColors.Load();
-
-            return true;
-        }
-
-        private static bool PostContextSetup()
-        {
-            if (Context == null)
-            {
-                throw new ArgumentNullException(nameof(Context));
-            }
-
-            if (!DbInterface.InitDatabase(Context))
-            {
-                Console.ReadKey();
-                return false;
-            }
-
-            Console.WriteLine();
-
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString(DbInterface.RegisteredPlayers));
-            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
-
-            Time.Update();
-
-            PacketSender.CacheGameDataPacket();
-
-            return true;
-        }
-
-        private static void PrintIntroduction()
-        {
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine(@"  _____       _                          _   ");
-            Console.WriteLine(@" |_   _|     | |                        | |  ");
-            Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
-            Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
-            Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
-            Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
-            Console.WriteLine(Strings.Intro.tagline);
-            Console.WriteLine(@"Copyright (C) 2020 Ascension Game Dev");
-            Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
-            Console.WriteLine(Strings.Intro.support);
-            Console.WriteLine(Strings.Intro.loading);
-        }
-
-        #endregion
 
         #region Networking
 
@@ -236,6 +150,118 @@ namespace Intersect.Server.Core
 
         #endregion
 
+        #region System Console
+
+        private static void OnConsoleCancelKeyPress(
+            [NotNull] object sender,
+            [NotNull] ConsoleCancelEventArgs cancelEvent
+        )
+        {
+            ServerContext.Instance.RequestShutdown(true);
+
+            //Shutdown();
+            cancelEvent.Cancel = true;
+        }
+
+        #endregion
+
+        #region Pre-Context
+
+        private static bool PreContextSetup(params string[] args)
+        {
+            if (RunningOnWindows())
+            {
+                SetConsoleCtrlHandler(ConsoleCtrlHandler, true);
+            }
+
+            if (!Strings.Load())
+            {
+                Console.WriteLine(Strings.Errors.ErrorLoadingStrings);
+                Console.ReadKey();
+
+                return false;
+            }
+
+            if (!Options.LoadFromDisk())
+            {
+                Console.WriteLine(Strings.Errors.errorloadingconfig);
+                Console.ReadKey();
+
+                return false;
+            }
+
+            if (!Directory.Exists(Path.Combine("resources", "notifications")))
+            {
+                Directory.CreateDirectory(Path.Combine("resources", "notifications"));
+            }
+
+            if (!File.Exists(Path.Combine("resources", "notifications", "PasswordReset.html")))
+            {
+                ReflectionUtils.ExtractResource(
+                    "Intersect.Server.Resources.notifications.PasswordReset.html",
+                    Path.Combine("resources", "notifications", "PasswordReset.html")
+                );
+            }
+
+            DbInterface.InitializeDbLoggers();
+            DbInterface.CheckDirectories();
+
+            PrintIntroduction();
+
+            ExportDependencies(args);
+
+            Formulas.LoadFormulas();
+
+            CustomColors.Load();
+
+            return true;
+        }
+
+        private static bool PostContextSetup()
+        {
+            if (Context == null)
+            {
+                throw new ArgumentNullException(nameof(Context));
+            }
+
+            if (!DbInterface.InitDatabase(Context))
+            {
+                Console.ReadKey();
+
+                return false;
+            }
+
+            Console.WriteLine();
+
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(DbInterface.RegisteredPlayers));
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
+
+            Time.Update();
+
+            PacketSender.CacheGameDataPacket();
+
+            return true;
+        }
+
+        private static void PrintIntroduction()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine(@"  _____       _                          _   ");
+            Console.WriteLine(@" |_   _|     | |                        | |  ");
+            Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
+            Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
+            Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
+            Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
+            Console.WriteLine(Strings.Intro.tagline);
+            Console.WriteLine(@"Copyright (C) 2020 Ascension Game Dev");
+            Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine(Strings.Intro.support);
+            Console.WriteLine(Strings.Intro.loading);
+        }
+
+        #endregion
+
         #region Dependencies
 
         private static void ClearDlls()
@@ -259,7 +285,9 @@ namespace Intersect.Server.Core
                         FileName = name
                     }
                 };
+
                 p.Start();
+
                 // Do not wait for the child process to exit before
                 // reading to the end of its redirected stream.
                 // p.WaitForExit();
@@ -267,6 +295,7 @@ namespace Intersect.Server.Core
                 var output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
                 output = output.Trim();
+
                 return output;
             }
             catch
@@ -280,7 +309,11 @@ namespace Intersect.Server.Core
             try
             {
                 Debug.Assert(filename != null, "filename != null");
-                if (File.Exists(filename)) File.Delete(filename);
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+
                 return true;
             }
             catch
@@ -313,16 +346,19 @@ namespace Intersect.Server.Core
                 case PlatformID.WinCE:
                     sqliteResourceName = Environment.Is64BitProcess ? "e_sqlite3x64.dll" : "e_sqlite3x86.dll";
                     sqliteFileName = "e_sqlite3.dll";
+
                     break;
 
                 case PlatformID.MacOSX:
                     sqliteResourceName = "libe_sqlite3.dylib";
                     sqliteFileName = "libe_sqlite3.dylib";
+
                     break;
 
                 case PlatformID.Unix:
                     sqliteResourceName = Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
                     sqliteFileName = "libe_sqlite3.so";
+
                     break;
 
                 case PlatformID.Xbox:
@@ -349,18 +385,6 @@ namespace Intersect.Server.Core
 
         #endregion
 
-        #region System Console
-
-        private static void OnConsoleCancelKeyPress([NotNull] object sender,
-            [NotNull] ConsoleCancelEventArgs cancelEvent)
-        {
-            ServerContext.Instance.RequestShutdown(true);
-            //Shutdown();
-            cancelEvent.Cancel = true;
-        }
-
-        #endregion
-
         #region AppDomain
 
         private static Assembly OnAssemblyResolve([NotNull] object sender, [NotNull] ResolveEventArgs args)
@@ -374,6 +398,7 @@ namespace Intersect.Server.Core
             // check for assemblies already loaded
             var assembly = AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(fodAssembly => fodAssembly?.FullName == args.Name);
+
             if (assembly != null)
             {
                 return assembly;
@@ -386,6 +411,7 @@ namespace Intersect.Server.Core
                 AppDomain.CurrentDomain.SetupInformation.ApplicationBase != null,
                 "AppDomain.CurrentDomain.SetupInformation.ApplicationBase != null"
             );
+
             var libsFolder = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "libs", "server");
             if (File.Exists(Path.Combine(libsFolder, filename)))
             {
@@ -396,8 +422,7 @@ namespace Intersect.Server.Core
                 AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess
                     ? Path.Combine("libs", "server", "x64")
-                    : Path.Combine("libs", "server", "x86"),
-                filename
+                    : Path.Combine("libs", "server", "x86"), filename
             );
 
             return File.Exists(archSpecificPath) ? Assembly.LoadFile(archSpecificPath) : null;
@@ -421,9 +446,15 @@ namespace Intersect.Server.Core
         }
 
         //Really basic error handler for debugging purposes
-        public static void OnUnhandledException([NotNull] object sender, [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent)
+        public static void OnUnhandledException(
+            [NotNull] object sender,
+            [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent
+        )
         {
-            ProcessUnhandledException(sender, unhandledExceptionEvent.ExceptionObject as Exception ?? throw new InvalidOperationException());
+            ProcessUnhandledException(
+                sender, unhandledExceptionEvent.ExceptionObject as Exception ?? throw new InvalidOperationException()
+            );
+
             if (!(unhandledExceptionEvent?.IsTerminating ?? false))
             {
                 Console.WriteLine(Strings.Errors.errorlogged);
@@ -441,7 +472,9 @@ namespace Intersect.Server.Core
 
         private static void UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            ProcessUnhandledException(sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException());
+            ProcessUnhandledException(
+                sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException()
+            );
 
             mErrored = true;
 
@@ -471,15 +504,20 @@ namespace Intersect.Server.Core
         // sent to the handler routine.
         public enum CtrlTypes
         {
+
             CtrlCEvent = 0,
+
             CtrlBreakEvent,
+
             CtrlCloseEvent,
+
             CtrlLogoffEvent = 5,
+
             CtrlShutdownEvent
+
         }
 
-        [NotNull]
-        private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
+        [NotNull] private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
 
         private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
         {
@@ -498,6 +536,7 @@ namespace Intersect.Server.Core
                     // operating system kills the application before it
                     // actually does any clean-up and data persistence.
                     ServerContext.Instance.Dispose();
+
                     break;
 
                 default:
@@ -528,5 +567,7 @@ namespace Intersect.Server.Core
         }
 
         #endregion
+
     }
+
 }

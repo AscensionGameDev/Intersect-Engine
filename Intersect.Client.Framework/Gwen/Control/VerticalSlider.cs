@@ -1,19 +1,19 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Vertical slider.
     /// </summary>
     public class VerticalSlider : Slider
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="VerticalSlider" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public VerticalSlider(Base parent)
-            : base(parent)
+        public VerticalSlider(Base parent) : base(parent)
         {
             mSliderBar.IsHorizontal = false;
         }
@@ -60,5 +60,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             skin.DrawSlider(this, false, mSnapToNotches ? mNotchCount : 0, mSliderBar.Height);
         }
+
     }
+
 }

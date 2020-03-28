@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+
 using Intersect.Logging;
 
 namespace Intersect.Network
 {
+
     public sealed class NetworkThread
     {
+
         private readonly PacketDispatcher mDispatcher;
+
         private bool mStarted;
 
         public NetworkThread(PacketDispatcher dispatcher, string name = null)
@@ -22,7 +26,9 @@ namespace Intersect.Network
         public string Name { get; }
 
         public Thread CurrentThread { get; }
+
         public PacketQueue Queue { get; }
+
         public IList<IConnection> Connections { get; }
 
         public bool IsRunning { get; private set; }
@@ -31,7 +37,11 @@ namespace Intersect.Network
         {
             lock (this)
             {
-                if (mStarted) return;
+                if (mStarted)
+                {
+                    return;
+                }
+
                 mStarted = true;
                 IsRunning = true;
             }
@@ -59,7 +69,10 @@ namespace Intersect.Network
             while (IsRunning)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                if (!Queue.TryNext(out IPacket packet)) continue;
+                if (!Queue.TryNext(out var packet))
+                {
+                    continue;
+                }
 
                 //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
                 if (!(mDispatcher?.Dispatch(packet) ?? false))
@@ -79,9 +92,12 @@ namespace Intersect.Network
 
                 Thread.Yield();
             }
+
             sw.Stop();
 
             Log.Debug($"Exiting network thread ({Name}).");
         }
+
     }
+
 }

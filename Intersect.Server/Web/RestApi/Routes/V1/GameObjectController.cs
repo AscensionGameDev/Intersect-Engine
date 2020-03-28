@@ -1,30 +1,30 @@
-﻿using Intersect.Collections;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
+
     [RoutePrefix("gameobjects")]
     [ConfigurableAuthorize]
     public sealed class GameObjectController : ApiController
     {
+
         [Route("{objType}")]
         [HttpPost]
         public object List(string objType, [FromBody] PagingInfo pageInfo)
         {
             GameObjectType gameObjectType;
-            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) || gameObjectType == GameObjectType.Time)
+            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
+                gameObjectType == GameObjectType.Time)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
             }
@@ -36,11 +36,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (lookup != null)
             {
-                var entries = gameObjectType == GameObjectType.Event ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).OrderBy(obj => obj.Value.TimeCreated).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count) : lookup.OrderBy(obj => obj.Value.TimeCreated).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count);
+                var entries = gameObjectType == GameObjectType.Event
+                    ? lookup.Where(obj => ((EventBase) obj.Value).CommonEvent)
+                        .OrderBy(obj => obj.Value.TimeCreated)
+                        .Skip(pageInfo.Page * pageInfo.Count)
+                        .Take(pageInfo.Count)
+                    : lookup.OrderBy(obj => obj.Value.TimeCreated)
+                        .Skip(pageInfo.Page * pageInfo.Count)
+                        .Take(pageInfo.Count);
 
                 return new
                 {
-                    total = gameObjectType == GameObjectType.Event ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Count() : lookup.Count(),
+                    total = gameObjectType == GameObjectType.Event
+                        ? lookup.Where(obj => ((EventBase) obj.Value).CommonEvent).Count()
+                        : lookup.Count(),
                     pageInfo.Page,
                     count = entries.Count(),
                     entries
@@ -56,11 +65,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             if (objId == Guid.Empty)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Object not found!"); return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Object not found!");
+                return null;
             }
 
             GameObjectType gameObjectType;
-            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) || gameObjectType == GameObjectType.Time)
+            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
+                gameObjectType == GameObjectType.Time)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
             }
@@ -81,5 +92,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             return TimeBase.GetTimeBase();
         }
+
     }
+
 }

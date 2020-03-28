@@ -4,8 +4,10 @@ using JetBrains.Annotations;
 
 namespace Intersect.Utilities
 {
+
     public static class Nullability
     {
+
         [NotNull]
         public static T IsNotNull<T>(this T value)
         {
@@ -16,5 +18,7 @@ namespace Intersect.Utilities
 
             return value;
         }
+
     }
+
 }

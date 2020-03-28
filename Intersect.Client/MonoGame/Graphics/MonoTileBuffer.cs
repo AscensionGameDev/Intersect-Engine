@@ -1,47 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Client.MonoGame.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.Classes.MonoGame.Graphics
 {
+
     public class MonoTileBuffer : GameTileBuffer
     {
-        public override bool Supported { get; } = true;
-        public override GameTexture Texture { get; protected set; }
+
+        private bool disposed;
 
         private IndexBuffer indexBuffer;
-        private VertexBuffer vertexBuffer;
 
-        private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
         private List<short> indices = new List<short>();
-        private Dictionary<Tuple<float, float>, int> verticeDict = new Dictionary<Tuple<float, float>, int>();
-        private bool updatesPending = false;
 
         private GraphicsDevice mGraphicsDevice;
 
+        private bool updatesPending = false;
+
+        private VertexBuffer vertexBuffer;
+
         private int vertexCount;
 
-        private bool disposed;
+        private Dictionary<Tuple<float, float>, int> verticeDict = new Dictionary<Tuple<float, float>, int>();
+
+        private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
 
         public MonoTileBuffer(GraphicsDevice device)
         {
             mGraphicsDevice = device;
         }
 
+        public override bool Supported { get; } = true;
+
+        public override GameTexture Texture { get; protected set; }
+
         public override bool AddTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
         {
             var platformTex = tex?.GetTexture();
-            if (platformTex == null) return false;
-            if (Texture == null) Texture = tex;
-            else if (Texture.GetTexture() != platformTex) return false;
-            if (vertexBuffer != null) return false;
+            if (platformTex == null)
+            {
+                return false;
+            }
+
+            if (Texture == null)
+            {
+                Texture = tex;
+            }
+            else if (Texture.GetTexture() != platformTex)
+            {
+                return false;
+            }
+
+            if (vertexBuffer != null)
+            {
+                return false;
+            }
 
             var rotated = false;
             var pack = tex.GetTexturePackFrame();
@@ -68,15 +87,15 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
             var texture = (Texture2D) tex.GetTexture();
 
-            float textureSizeX = 1f / texture.Width;
-            float textureSizeY = 1f / texture.Height;
+            var textureSizeX = 1f / texture.Width;
+            var textureSizeY = 1f / texture.Height;
 
-            float left = srcX * textureSizeX;
-            float right = (srcX + srcW) * textureSizeX;
-            float bottom = (srcY + srcH) * textureSizeY;
-            float top = srcY * textureSizeY;
+            var left = srcX * textureSizeX;
+            var right = (srcX + srcW) * textureSizeX;
+            var bottom = (srcY + srcH) * textureSizeY;
+            var top = srcY * textureSizeY;
 
-            verticeDict.Add(new Tuple<float, float>(x,y), vertices.Count);
+            verticeDict.Add(new Tuple<float, float>(x, y), vertices.Count);
 
             if (rotated)
             {
@@ -93,20 +112,18 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
             }
 
+            indices.Add((short) vertexCount);
+            indices.Add((short) (vertexCount + 1));
+            indices.Add((short) (vertexCount + 2));
 
-            indices.Add((short)(vertexCount));
-            indices.Add((short)(vertexCount + 1));
-            indices.Add((short)(vertexCount + 2));
-
-            indices.Add((short)(vertexCount + 2));
-            indices.Add((short)(vertexCount + 1));
-            indices.Add((short)(vertexCount + 3));
+            indices.Add((short) (vertexCount + 2));
+            indices.Add((short) (vertexCount + 1));
+            indices.Add((short) (vertexCount + 3));
 
             vertexCount += 4;
+
             return true;
         }
-
-
 
         public void Draw(BasicEffect basicEffect, FloatRect view)
         {
@@ -114,8 +131,8 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             {
                 mGraphicsDevice.SetVertexBuffer(vertexBuffer);
                 mGraphicsDevice.Indices = indexBuffer;
-                
-                basicEffect.Texture = (Texture2D)Texture.GetTexture();
+
+                basicEffect.Texture = (Texture2D) Texture.GetTexture();
                 foreach (var pass in basicEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -126,26 +143,44 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
         public override bool SetData()
         {
-            if (vertexBuffer != null && !updatesPending) return false;
-            if (vertices.Count == 0) return true;
+            if (vertexBuffer != null && !updatesPending)
+            {
+                return false;
+            }
+
+            if (vertices.Count == 0)
+            {
+                return true;
+            }
+
             TileBufferCount++;
             if (vertexBuffer == null)
             {
-                vertexBuffer = new VertexBuffer(mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly);
+                vertexBuffer = new VertexBuffer(
+                    mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly
+                );
+
                 indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
             }
+
             vertexBuffer.SetData(vertices.ToArray());
             if (!updatesPending)
             {
                 indexBuffer.SetData(indices.ToArray());
             }
+
             updatesPending = false;
+
             return true;
         }
 
         public override void Dispose()
         {
-            if (vertexBuffer != null);
+            if (vertexBuffer != null)
+            {
+                ;
+            }
+
             vertexBuffer.Dispose();
             vertexBuffer = null;
             indexBuffer.Dispose();
@@ -162,12 +197,32 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             {
                 vertexIndex = verticeDict[key];
             }
-            if (vertexIndex == -1) return false;
+
+            if (vertexIndex == -1)
+            {
+                return false;
+            }
+
             var platformTex = tex?.GetTexture();
-            if (platformTex == null) return false;
-            if (tex == null) return false;
-            if (tex.GetTexture() != platformTex) return false;
-            if (vertexBuffer == null) return false;
+            if (platformTex == null)
+            {
+                return false;
+            }
+
+            if (tex == null)
+            {
+                return false;
+            }
+
+            if (tex.GetTexture() != platformTex)
+            {
+                return false;
+            }
+
+            if (vertexBuffer == null)
+            {
+                return false;
+            }
 
             var pack = tex.GetTexturePackFrame();
 
@@ -193,28 +248,42 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 }
             }
 
-            var texture = (Texture2D)tex.GetTexture();
+            var texture = (Texture2D) tex.GetTexture();
 
-            float textureSizeX = 1f / texture.Width;
-            float textureSizeY = 1f / texture.Height;
+            var textureSizeX = 1f / texture.Width;
+            var textureSizeY = 1f / texture.Height;
 
-            float left = srcX * textureSizeX;
-            float right = (srcX + srcW) * textureSizeX;
-            float bottom = (srcY + srcH) * textureSizeY;
-            float top = srcY * textureSizeY;
+            var left = srcX * textureSizeX;
+            var right = (srcX + srcW) * textureSizeX;
+            var bottom = (srcY + srcH) * textureSizeY;
+            var top = srcY * textureSizeY;
 
             if (rotated)
             {
-                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top));
-                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right,top));
-                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom));
-                vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right,bottom));
+                vertices[vertexIndex++] = new VertexPositionTexture(
+                    new Vector3(x, y + srcH, 0), new Vector2(left, top)
+                );
+
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top));
+                vertices[vertexIndex++] = new VertexPositionTexture(
+                    new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)
+                );
+
+                vertices[vertexIndex] = new VertexPositionTexture(
+                    new Vector3(x + srcW, y, 0), new Vector2(right, bottom)
+                );
             }
             else
             {
-                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom));
+                vertices[vertexIndex++] = new VertexPositionTexture(
+                    new Vector3(x, y + srcH, 0), new Vector2(left, bottom)
+                );
+
                 vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
-                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom));
+                vertices[vertexIndex++] = new VertexPositionTexture(
+                    new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)
+                );
+
                 vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
             }
 
@@ -222,5 +291,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
             return true;
         }
+
     }
+
 }

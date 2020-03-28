@@ -1,12 +1,14 @@
-﻿using Intersect.Collections;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Intersect.Collections;
 
 namespace Intersect.Network
 {
+
     public interface IPacket : IDisposable
     {
+
         byte[] Data { get; }
 
         bool IsValid { get; }
@@ -14,4 +16,5 @@ namespace Intersect.Network
         Dictionary<string, SanitizedValue<object>> Sanitize();
 
     }
+
 }

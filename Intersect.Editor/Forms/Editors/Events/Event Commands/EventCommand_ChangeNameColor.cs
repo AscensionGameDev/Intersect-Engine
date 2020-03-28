@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandChangeNameColor : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private ChangeNameColorCommand mMyCommand;
 
         public EventCommandChangeNameColor(ChangeNameColorCommand refCommand, FrmEvent editor)
@@ -16,8 +20,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
 
-            Color color = refCommand.Color;
-            if (color == null) color = Color.White;
+            var color = refCommand.Color;
+            if (color == null)
+            {
+                color = Color.White;
+            }
+
             pnlColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
             chkOverride.Checked = refCommand.Override;
             chkRemove.Checked = refCommand.Remove;
@@ -36,7 +44,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Color = Color.FromArgb(pnlColor.BackColor.A, pnlColor.BackColor.R, pnlColor.BackColor.G, pnlColor.BackColor.B);
+            mMyCommand.Color = Color.FromArgb(
+                pnlColor.BackColor.A, pnlColor.BackColor.R, pnlColor.BackColor.G, pnlColor.BackColor.B
+            );
+
             mMyCommand.Override = chkOverride.Checked;
             mMyCommand.Remove = chkRemove.Checked;
             mEventEditor.FinishCommandEdit();
@@ -55,5 +66,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 pnlColor.BackColor = colorDialog.Color;
             }
         }
+
     }
+
 }

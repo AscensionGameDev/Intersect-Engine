@@ -1,28 +1,37 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.DragDrop
 {
+
     /// <summary>
     ///     Drag and drop handling.
     /// </summary>
     public static class DragAndDrop
     {
+
         public static Package CurrentPackage;
+
         public static Base HoveredControl;
-        public static Base SourceControl;
 
         private static Base sLastPressedControl;
-        private static Base sNewHoveredControl;
+
         private static Point sLastPressedPos;
+
         private static int sMouseX;
+
         private static int sMouseY;
+
+        private static Base sNewHoveredControl;
+
+        public static Base SourceControl;
 
         private static bool OnDrop(int x, int y)
         {
-            bool success = false;
+            var success = false;
 
             if (HoveredControl != null)
             {
@@ -43,12 +52,16 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
         {
             // We're not holding a control down..
             if (sLastPressedControl == null)
+            {
                 return false;
+            }
 
             // Not been dragged far enough
-            int length = Math.Abs(x - sLastPressedPos.X) + Math.Abs(y - sLastPressedPos.Y);
+            var length = Math.Abs(x - sLastPressedPos.X) + Math.Abs(y - sLastPressedPos.Y);
             if (length < 5)
+            {
                 return false;
+            }
 
             // Create the dragging package
 
@@ -59,6 +72,7 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
             {
                 sLastPressedControl = null;
                 SourceControl = null;
+
                 return false;
             }
 
@@ -74,6 +88,7 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
             {
                 SourceControl = null;
                 CurrentPackage = null;
+
                 return false;
             }
 
@@ -94,17 +109,23 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
 
             // Nothing to change..
             if (HoveredControl == sNewHoveredControl)
+            {
                 return;
+            }
 
             // We changed - tell the old hovered control that it's no longer hovered.
             if (HoveredControl != null && HoveredControl != sNewHoveredControl)
+            {
                 HoveredControl.DragAndDrop_HoverLeave(CurrentPackage);
+            }
 
             // If we're hovering where the control came from, just forget it.
             // By changing it to null here we're not going to show any error cursors
             // it will just do nothing if you drop it.
             if (sNewHoveredControl == SourceControl)
+            {
                 sNewHoveredControl = null;
+            }
 
             // Check to see if the new potential control can accept this type of package.
             // If not, ignore it and show an error cursor.
@@ -143,6 +164,7 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
 
             CurrentPackage = package;
             SourceControl = control;
+
             return true;
         }
 
@@ -154,17 +176,25 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
 
                 // Not carrying anything, allow normal actions
                 if (CurrentPackage == null)
+                {
                     return false;
+                }
 
                 // We were carrying something, drop it.
                 OnDrop(x, y);
+
                 return true;
             }
 
             if (hoveredControl == null)
+            {
                 return false;
+            }
+
             if (!hoveredControl.DragAndDrop_Draggable())
+            {
                 return false;
+            }
 
             // Store the last clicked on control. Don't do anything yet, 
             // we'll check it in OnMouseMoved, and if it moves further than
@@ -184,13 +214,17 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
             // If we're not carrying anything, then check to see if we should
             // pick up from a control that we're holding down. If not, then forget it.
             if (CurrentPackage == null && !ShouldStartDraggingControl(x, y))
+            {
                 return;
+            }
 
             // Swap to this new hovered control and notify them of the change.
             UpdateHoveredControl(hoveredControl, x, y);
 
             if (HoveredControl == null)
+            {
                 return;
+            }
 
             // Update the hovered control every mouse move, so it can show where
             // the dropped control will land etc..
@@ -206,15 +240,24 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
         public static void RenderOverlay(Canvas canvas, Skin.Base skin)
         {
             if (CurrentPackage == null)
+            {
                 return;
+            }
+
             if (CurrentPackage.DrawControl == null)
+            {
                 return;
+            }
 
-            Point old = skin.Renderer.RenderOffset;
+            var old = skin.Renderer.RenderOffset;
 
-            skin.Renderer.AddRenderOffset(new Rectangle(
-                sMouseX - SourceControl.X - CurrentPackage.HoldOffset.X,
-                sMouseY - SourceControl.Y - CurrentPackage.HoldOffset.Y, 0, 0));
+            skin.Renderer.AddRenderOffset(
+                new Rectangle(
+                    sMouseX - SourceControl.X - CurrentPackage.HoldOffset.X,
+                    sMouseY - SourceControl.Y - CurrentPackage.HoldOffset.Y, 0, 0
+                )
+            );
+
             CurrentPackage.DrawControl.DoRender(skin);
 
             skin.Renderer.RenderOffset = old;
@@ -231,13 +274,21 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
             }
 
             if (sLastPressedControl == control)
+            {
                 sLastPressedControl = null;
+            }
 
             if (HoveredControl == control)
+            {
                 HoveredControl = null;
+            }
 
             if (sNewHoveredControl == control)
+            {
                 sNewHoveredControl = null;
+            }
         }
+
     }
+
 }

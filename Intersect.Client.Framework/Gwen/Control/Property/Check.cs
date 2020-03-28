@@ -1,18 +1,19 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control.Property
 {
+
     /// <summary>
     ///     Checkable property.
     /// </summary>
     public class Check : Base
     {
+
         protected readonly Control.CheckBox mCheckBox;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Check" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Check(Control.Base parent)
-            : base(parent)
+        public Check(Control.Base parent) : base(parent)
         {
             mCheckBox = new Control.CheckBox(this);
             mCheckBox.ShouldDrawBackground = false;
@@ -59,5 +60,7 @@
                 mCheckBox.IsChecked = false;
             }
         }
+
     }
+
 }

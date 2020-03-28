@@ -5,22 +5,24 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class PowerAccountCommand : TargetUserCommand
     {
-        [NotNull]
-        private VariableArgument<Access> Power => FindArgumentOrThrow<VariableArgument<Access>>();
 
         public PowerAccountCommand() : base(
-            Strings.Commands.PowerAccount,
-            Strings.Commands.Arguments.TargetPowerAccount,
+            Strings.Commands.PowerAccount, Strings.Commands.Arguments.TargetPowerAccount,
             new VariableArgument<Access>(Strings.Commands.Arguments.Power, RequiredIfNotHelp, true)
         )
         {
         }
+
+        [NotNull]
+        private VariableArgument<Access> Power => FindArgumentOrThrow<VariableArgument<Access>>();
 
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)
         {
@@ -30,5 +32,7 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target?.Name)}");
             }
         }
+
     }
+
 }

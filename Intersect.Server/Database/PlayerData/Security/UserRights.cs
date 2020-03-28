@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+
 using Intersect.Enums;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Security
 {
+
     public class UserRights
     {
-        [NotNull] private static readonly Type UserRightsType = typeof(UserRights);
 
         [NotNull] private static readonly Type ApiRolesType = typeof(ApiRoles);
 
-        [NotNull]
-        private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
+        [NotNull] private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanWrite)
             .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
             .ToList();
 
-        [NotNull]
-        private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
+        [NotNull] private static readonly Type UserRightsType = typeof(UserRights);
+
+        [NotNull] private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanWrite)
             .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
@@ -114,20 +117,29 @@ namespace Intersect.Server.Database.PlayerData.Security
         internal ImmutableList<string> EnumeratePermissions(bool permitted = true)
         {
             var userRights = UserRightsPermissions
-                       .Where(property => permitted == (bool)(property?.GetValue(this, null) ?? false))
-                       .Select(property => property?.Name)
-                       .ToList() ?? throw new InvalidOperationException();
+                                 .Where(property => permitted == (bool) (property?.GetValue(this, null) ?? false))
+                                 .Select(property => property?.Name)
+                                 .ToList() ??
+                             throw new InvalidOperationException();
+
             var apiRoles = ApiRolesPermissions
-                       .Where(property => permitted == (bool)(property?.GetValue(this.ApiRoles, null) ?? false))
-                       .Select(property => property?.Name)
-                       .ToList() ?? throw new InvalidOperationException();
+                               .Where(
+                                   property => permitted == (bool) (property?.GetValue(this.ApiRoles, null) ?? false)
+                               )
+                               .Select(property => property?.Name)
+                               .ToList() ??
+                           throw new InvalidOperationException();
+
             userRights.AddRange(apiRoles);
+
             return userRights.ToImmutableList();
         }
+
     }
 
     public static class AccessExtensions
     {
+
         [NotNull]
         public static UserRights AsUserRights(this Access access)
         {
@@ -146,13 +158,16 @@ namespace Intersect.Server.Database.PlayerData.Security
                     throw new ArgumentOutOfRangeException(nameof(access), access, null);
             }
         }
+
     }
 
     public class ApiRoles
     {
+
         public bool UserQuery { get; set; }
 
         public bool UserManage { get; set; }
 
     }
+
 }

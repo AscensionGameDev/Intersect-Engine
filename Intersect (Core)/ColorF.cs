@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect
+﻿namespace Intersect
 {
+
     public class ColorF
     {
+
         public ColorF()
         {
         }
@@ -29,8 +25,11 @@ namespace Intersect
         }
 
         public float A { get; set; }
+
         public float R { get; set; }
+
         public float G { get; set; }
+
         public float B { get; set; }
 
         public static ColorF White => new ColorF(255, 255, 255, 255);
@@ -62,5 +61,7 @@ namespace Intersect
         {
             return new ColorF(a, r, g, b);
         }
+
     }
+
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Client.Framework.Audio;
 
@@ -10,6 +6,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.MonoGame.Audio
 {
+
     public abstract class MonoAudioInstance<TSource> : GameAudioInstance where TSource : GameAudioSource
     {
 
@@ -18,7 +15,9 @@ namespace Intersect.Client.MonoGame.Audio
         {
         }
 
-        [NotNull] public new TSource Source => base.Source as TSource ?? throw new InvalidOperationException();
+        [NotNull]
+        public new TSource Source => base.Source as TSource ?? throw new InvalidOperationException();
 
     }
+
 }

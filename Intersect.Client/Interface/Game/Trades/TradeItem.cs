@@ -2,7 +2,6 @@
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -12,12 +11,36 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Trades
 {
+
     public class TradeItem
     {
+
         private static int sItemXPadding = 4;
+
         private static int sItemYPadding = 4;
+
+        public ImagePanel Container;
+
+        public bool IsDragging;
+
+        //Dragging
+        private bool mCanDrag;
+
+        private long mClickTime;
+
         private Guid mCurrentItemId;
+
         private ItemDescWindow mDescWindow;
+
+        private Draggable mDragIcon;
+
+        //Mouse Event Variables
+        private bool mMouseOver;
+
+        private int mMouseX = -1;
+
+        private int mMouseY = -1;
+
         private int mMySide;
 
         //Slot info
@@ -26,19 +49,6 @@ namespace Intersect.Client.Interface.Game.Trades
         //Drag/Drop References
         private TradingWindow mTradeWindow;
 
-        //Dragging
-        private bool mCanDrag;
-
-        private long mClickTime;
-        public ImagePanel Container;
-        private Draggable mDragIcon;
-        public bool IsDragging;
-
-        //Mouse Event Variables
-        private bool mMouseOver;
-
-        private int mMouseX = -1;
-        private int mMouseY = -1;
         public ImagePanel Pnl;
 
         public TradeItem(TradingWindow tradeWindow, int index, int side)
@@ -53,7 +63,7 @@ namespace Intersect.Client.Interface.Game.Trades
             Pnl = new ImagePanel(Container, "TradeIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_DoubleClicked;  //Revoke with right click or double click
+            Pnl.RightClicked += Pnl_DoubleClicked; //Revoke with right click or double click
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
         }
@@ -85,48 +95,58 @@ namespace Intersect.Client.Interface.Game.Trades
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (InputHandler.MouseFocus != null) return;
+            if (InputHandler.MouseFocus != null)
+            {
+                return;
+            }
+
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 mCanDrag = false;
+
                 return;
             }
+
             if (mDescWindow != null)
             {
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
+
             if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X, mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs);
+                mDescWindow = new ItemDescWindow(
+                    Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
+                    mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs
+                );
             }
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
+
             return rect;
         }
 
         public void Update()
         {
-            int n = mMySide;
+            var n = mMySide;
             if (Globals.Trade[n, mMySlot].ItemId != mCurrentItemId)
             {
                 mCurrentItemId = Globals.Trade[n, mMySlot].ItemId;
                 var item = ItemBase.Get(Globals.Trade[n, mMySlot].ItemId);
                 if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -147,6 +167,7 @@ namespace Intersect.Client.Interface.Game.Trades
                     }
                 }
             }
+
             if (!IsDragging)
             {
                 if (mMouseOver)
@@ -157,6 +178,7 @@ namespace Intersect.Client.Interface.Game.Trades
                         {
                             mCanDrag = true;
                         } //Only be able to drag your trade box
+
                         mMouseX = -1;
                         mMouseY = -1;
                         if (Globals.System.GetTimeMs() < mClickTime)
@@ -171,29 +193,24 @@ namespace Intersect.Client.Interface.Game.Trades
                         {
                             if (mMouseX == -1 || mMouseY == -1)
                             {
-                                mMouseX = InputHandler.MousePosition.X -
-                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                                mMouseY = InputHandler.MousePosition.Y -
-                                         Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                                mMouseX = InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X;
+                                mMouseY = InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
-                                int xdiff = mMouseX -
-                                            (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0))
-                                                 .X);
-                                int ydiff = mMouseY -
-                                            (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0))
-                                                 .Y);
+                                var xdiff = mMouseX -
+                                            (InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X);
+
+                                var ydiff = mMouseY -
+                                            (InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
-                                        mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
-                                        mMouseY, Pnl.Texture);
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                    );
                                 }
                             }
                         }
@@ -206,34 +223,43 @@ namespace Intersect.Client.Interface.Game.Trades
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2,
-                        sItemXPadding / 2 + 32, sItemYPadding / 2 + 32);
+                    var dragRect = new FloatRect(
+                        mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2, sItemXPadding / 2 + 32,
+                        sItemYPadding / 2 + 32
+                    );
 
                     float bestIntersect = 0;
-                    int bestIntersectIndex = -1;
+                    var bestIntersectIndex = -1;
+
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
                     if (mTradeWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        for (var i = 0; i < Options.MaxInvItems; i++)
                         {
                             if (mTradeWindow.TradeSegment[n].Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (
-                                    FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect)
+                                if (FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect)
                                         .Width *
                                     FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect)
-                                        .Height > bestIntersect)
+                                        .Height >
+                                    bestIntersect)
                                 {
                                     bestIntersect =
-                                        FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(),
-                                            dragRect).Width *
-                                        FloatRect.Intersect(mTradeWindow.TradeSegment[n].Items[i].RenderBounds(),
-                                            dragRect).Height;
+                                        FloatRect.Intersect(
+                                                mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect
+                                            )
+                                            .Width *
+                                        FloatRect.Intersect(
+                                                mTradeWindow.TradeSegment[n].Items[i].RenderBounds(), dragRect
+                                            )
+                                            .Height;
+
                                     bestIntersectIndex = i;
                                 }
                             }
                         }
+
                         if (bestIntersectIndex > -1)
                         {
                             if (mMySlot != bestIntersectIndex)
@@ -243,9 +269,12 @@ namespace Intersect.Client.Interface.Game.Trades
                             }
                         }
                     }
+
                     mDragIcon.Dispose();
                 }
             }
         }
+
     }
+
 }

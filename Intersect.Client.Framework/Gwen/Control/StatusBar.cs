@@ -1,10 +1,12 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Status bar.
     /// </summary>
     public class StatusBar : Label
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="StatusBar" /> class.
         /// </summary>
@@ -16,6 +18,7 @@
             Height = 22;
             Dock = Pos.Bottom;
             Padding = Padding.Two;
+
             //Text = "Status Bar"; // [omeg] todo i18n
             Alignment = Pos.Left | Pos.CenterV;
         }
@@ -39,5 +42,7 @@
         {
             skin.DrawStatusBar(this);
         }
+
     }
+
 }

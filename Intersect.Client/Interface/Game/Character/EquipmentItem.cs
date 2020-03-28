@@ -2,7 +2,6 @@
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -13,15 +12,24 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Character
 {
+
     public class EquipmentItem
     {
-        private WindowControl mCharacterWindow;
-        private Guid mCurrentItemId;
-        private ItemDescWindow mDescWindow;
-        private int[] mStatBoost = new int[Options.MaxStats];
-        private bool mTexLoaded;
+
         public ImagePanel ContentPanel;
+
+        private WindowControl mCharacterWindow;
+
+        private Guid mCurrentItemId;
+
+        private ItemDescWindow mDescWindow;
+
+        private int[] mStatBoost = new int[Options.MaxStats];
+
+        private bool mTexLoaded;
+
         private int mYindex;
+
         public ImagePanel Pnl;
 
         public EquipmentItem(int index, WindowControl characterWindow)
@@ -57,11 +65,16 @@ namespace Intersect.Client.Interface.Game.Character
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (InputHandler.MouseFocus != null) return;
+            if (InputHandler.MouseFocus != null)
+            {
+                return;
+            }
+
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return;
             }
+
             if (mDescWindow != null)
             {
                 mDescWindow.Dispose();
@@ -69,19 +82,24 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             var item = ItemBase.Get(mCurrentItemId);
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
+
             mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
+
             return rect;
         }
 
@@ -94,8 +112,7 @@ namespace Intersect.Client.Interface.Game.Character
                 var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         ContentPanel.Show();
@@ -110,8 +127,11 @@ namespace Intersect.Client.Interface.Game.Character
                 {
                     ContentPanel.Hide();
                 }
+
                 mTexLoaded = true;
             }
         }
+
     }
+
 }

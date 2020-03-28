@@ -7,18 +7,17 @@ using Intersect.Server.General;
 
 namespace Intersect.Server.Entities.Combat
 {
+
     public class DoT
     {
-
-        private long mInterval;
 
         public Entity Attacker;
 
         public int Count;
 
-        public SpellBase SpellBase;
+        private long mInterval;
 
-        public Entity Target { get; }
+        public SpellBase SpellBase;
 
         public DoT(Entity attacker, Guid spellId, Entity target)
         {
@@ -38,6 +37,8 @@ namespace Intersect.Server.Entities.Combat
 
             //Subtract 1 since the first tick always occurs when the spell is cast.
         }
+
+        public Entity Target { get; }
 
         public bool CheckExpired()
         {
@@ -72,13 +73,13 @@ namespace Intersect.Server.Entities.Combat
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
             if (SpellBase.HitAnimationId != Guid.Empty)
             {
-                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
+                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte) Directions.Up));
             }
 
             Attacker?.Attack(
                 Target, SpellBase.Combat.VitalDiff[0], SpellBase.Combat.VitalDiff[1],
-                (DamageType)SpellBase.Combat.DamageType, (Stats)SpellBase.Combat.ScalingStat,
+                (DamageType) SpellBase.Combat.DamageType, (Stats) SpellBase.Combat.ScalingStat,
                 SpellBase.Combat.Scaling, SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations,
                 aliveAnimations
             );
@@ -88,4 +89,5 @@ namespace Intersect.Server.Entities.Combat
         }
 
     }
+
 }

@@ -2,18 +2,30 @@
 
 namespace Intersect.Client.Framework.Network
 {
+
     public abstract class GameSocket
     {
+
         public abstract void Connect(string host, int port);
+
         public abstract void SendPacket(object packet);
+
         public abstract void Update();
+
         public abstract void Disconnect(string reason);
+
         public abstract void Dispose();
+
         public abstract bool IsConnected();
+
         public abstract int Ping();
+
         public event DataReceivedHandler DataReceived;
+
         public event ConnectedHandler Connected;
+
         public event ConnectionFailedHandler ConnectionFailed;
+
         public event DisconnectedHandler Disconnected;
 
         protected void OnDataReceived(IPacket packet)
@@ -35,6 +47,7 @@ namespace Intersect.Client.Framework.Network
         {
             Disconnected?.Invoke();
         }
+
     }
 
     public delegate void DataReceivedHandler(IPacket packet);
@@ -44,4 +57,5 @@ namespace Intersect.Client.Framework.Network
     public delegate void ConnectionFailedHandler(bool denied);
 
     public delegate void DisconnectedHandler();
+
 }

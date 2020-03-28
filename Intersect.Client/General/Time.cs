@@ -1,16 +1,22 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.General
 {
+
     public static class Time
     {
-        private static DateTime sServerTime = DateTime.Now;
-        private static ColorF sCurrentColor = ColorF.White;
-        private static long sUpdateTime;
-        private static float sRate = 1f;
+
         private static long sColorUpdate;
+
+        private static ColorF sCurrentColor = ColorF.White;
+
+        private static float sRate = 1f;
+
+        private static DateTime sServerTime = DateTime.Now;
+
         private static Color sTargetColor = Color.Transparent;
+
+        private static long sUpdateTime;
 
         public static void LoadTime(DateTime timeUpdate, Color clr, float rate)
         {
@@ -28,8 +34,9 @@ namespace Intersect.Client.General
                 sServerTime = sServerTime.Add(ts);
                 sUpdateTime = Globals.System.GetTimeMs() + 1000;
             }
+
             float ecTime = Globals.System.GetTimeMs() - sColorUpdate;
-            float valChange = (255 * ecTime / 10000f);
+            var valChange = 255 * ecTime / 10000f;
             sCurrentColor.A = LerpVal(sCurrentColor.A, sTargetColor.A, valChange);
             sCurrentColor.R = LerpVal(sCurrentColor.R, sTargetColor.R, valChange);
             sCurrentColor.G = LerpVal(sCurrentColor.G, sTargetColor.G, valChange);
@@ -63,6 +70,7 @@ namespace Intersect.Client.General
                     val -= amt;
                 }
             }
+
             return val;
         }
 
@@ -75,5 +83,7 @@ namespace Intersect.Client.General
         {
             return sCurrentColor;
         }
+
     }
+
 }

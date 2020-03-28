@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -11,14 +12,19 @@ using Intersect.GameObjects;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmShop : EditorForm
     {
+
         private List<ShopBase> mChanged = new List<ShopBase>();
+
         private string mCopiedItem;
+
         private ShopBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmShop()
         {
@@ -80,10 +86,26 @@ namespace Intersect.Editor.Forms.Editors
             cmbBuyFor.Items.AddRange(ItemBase.Names);
             cmbSellFor.Items.AddRange(ItemBase.Names);
             cmbDefaultCurrency.Items.AddRange(ItemBase.Names);
-            if (cmbAddBoughtItem.Items.Count > 0) cmbAddBoughtItem.SelectedIndex = 0;
-            if (cmbAddSoldItem.Items.Count > 0) cmbAddSoldItem.SelectedIndex = 0;
-            if (cmbBuyFor.Items.Count > 0) cmbBuyFor.SelectedIndex = 0;
-            if (cmbSellFor.Items.Count > 0) cmbSellFor.SelectedIndex = 0;
+            if (cmbAddBoughtItem.Items.Count > 0)
+            {
+                cmbAddBoughtItem.SelectedIndex = 0;
+            }
+
+            if (cmbAddSoldItem.Items.Count > 0)
+            {
+                cmbAddSoldItem.SelectedIndex = 0;
+            }
+
+            if (cmbBuyFor.Items.Count > 0)
+            {
+                cmbBuyFor.SelectedIndex = 0;
+            }
+
+            if (cmbSellFor.Items.Count > 0)
+            {
+                cmbSellFor.SelectedIndex = 0;
+            }
+
             InitLocalization();
             UpdateEditor();
         }
@@ -143,6 +165,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     rdoBuyBlacklist.Checked = true;
                 }
+
                 UpdateWhitelist();
                 UpdateLists();
                 if (mChanged.IndexOf(mEditorItem) == -1)
@@ -155,6 +178,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -192,49 +216,77 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstShops.SelectedNode != null && lstShops.SelectedNode.Tag != null) lstShops.SelectedNode.Text = txtName.Text;
+            if (lstShops.SelectedNode != null && lstShops.SelectedNode.Tag != null)
+            {
+                lstShops.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
         private void UpdateLists()
         {
             lstSoldItems.Items.Clear();
-            for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
+            for (var i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
-                lstSoldItems.Items.Add(Strings.ShopEditor.selldesc.ToString(ItemBase.GetName(mEditorItem.SellingItems[i].ItemId), mEditorItem.SellingItems[i].CostItemQuantity,ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId)));
+                lstSoldItems.Items.Add(
+                    Strings.ShopEditor.selldesc.ToString(
+                        ItemBase.GetName(mEditorItem.SellingItems[i].ItemId),
+                        mEditorItem.SellingItems[i].CostItemQuantity,
+                        ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId)
+                    )
+                );
             }
+
             lstBoughtItems.Items.Clear();
             if (mEditorItem.BuyingWhitelist)
             {
-                for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
+                for (var i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add(Strings.ShopEditor.buydesc.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId),mEditorItem.BuyingItems[i].CostItemQuantity,ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId)));
+                    lstBoughtItems.Items.Add(
+                        Strings.ShopEditor.buydesc.ToString(
+                            ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId),
+                            mEditorItem.BuyingItems[i].CostItemQuantity,
+                            ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId)
+                        )
+                    );
                 }
             }
             else
             {
-                for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
+                for (var i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add(Strings.ShopEditor.dontbuy.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId)));
+                    lstBoughtItems.Items.Add(
+                        Strings.ShopEditor.dontbuy.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId))
+                    );
                 }
             }
         }
 
         private void btnAddSoldItem_Click(object sender, EventArgs e)
         {
-            bool addedItem = false;
-            int cost = (int) nudSellCost.Value;
-            ShopItem newItem = new ShopItem(ItemBase.IdFromList(cmbAddSoldItem.SelectedIndex), ItemBase.IdFromList(cmbSellFor.SelectedIndex), cost);
-            for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
+            var addedItem = false;
+            var cost = (int) nudSellCost.Value;
+            var newItem = new ShopItem(
+                ItemBase.IdFromList(cmbAddSoldItem.SelectedIndex), ItemBase.IdFromList(cmbSellFor.SelectedIndex), cost
+            );
+
+            for (var i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
                 if (mEditorItem.SellingItems[i].ItemId == newItem.ItemId)
                 {
                     mEditorItem.SellingItems[i] = newItem;
                     addedItem = true;
+
                     break;
                 }
             }
-            if (!addedItem) mEditorItem.SellingItems.Add(newItem);
+
+            if (!addedItem)
+            {
+                mEditorItem.SellingItems.Add(newItem);
+            }
+
             UpdateLists();
         }
 
@@ -244,24 +296,34 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.SellingItems.RemoveAt(lstSoldItems.SelectedIndex);
             }
+
             UpdateLists();
         }
 
         private void btnAddBoughtItem_Click(object sender, EventArgs e)
         {
-            bool addedItem = false;
-            int cost = (int) nudBuyAmount.Value;
-            ShopItem newItem = new ShopItem(ItemBase.IdFromList(cmbAddBoughtItem.SelectedIndex),ItemBase.IdFromList(cmbBuyFor.SelectedIndex), cost);
-            for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
+            var addedItem = false;
+            var cost = (int) nudBuyAmount.Value;
+            var newItem = new ShopItem(
+                ItemBase.IdFromList(cmbAddBoughtItem.SelectedIndex), ItemBase.IdFromList(cmbBuyFor.SelectedIndex), cost
+            );
+
+            for (var i = 0; i < mEditorItem.BuyingItems.Count; i++)
             {
                 if (mEditorItem.BuyingItems[i].ItemId == newItem.ItemId)
                 {
                     mEditorItem.BuyingItems[i] = newItem;
                     addedItem = true;
+
                     break;
                 }
             }
-            if (!addedItem) mEditorItem.BuyingItems.Add(newItem);
+
+            if (!addedItem)
+            {
+                mEditorItem.BuyingItems.Add(newItem);
+            }
+
             UpdateLists();
         }
 
@@ -271,6 +333,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.BuyingItems.RemoveAt(lstBoughtItems.SelectedIndex);
             }
+
             UpdateLists();
         }
 
@@ -288,8 +351,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstShops.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ShopEditor.deleteprompt,
-                        Strings.ShopEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ShopEditor.deleteprompt, Strings.ShopEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -319,8 +384,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ShopEditor.undoprompt,
-                        Strings.ShopEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ShopEditor.undoprompt, Strings.ShopEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -380,25 +447,30 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstShops.SelectedNode != null && lstShops.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstShops.SelectedNode.Tag;
+                selectedId = (Guid) lstShops.SelectedNode.Tag;
             }
+
             lstShops.Nodes.Clear();
 
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in ShopBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ShopBase)itm.Value).Folder) && !mFolders.Contains(((ShopBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ShopBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((ShopBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((ShopBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ShopBase)itm.Value).Folder))
-                        mKnownFolders.Add(((ShopBase)itm.Value).Folder);
+                    mFolders.Add(((ShopBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ShopBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((ShopBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -434,7 +506,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -450,26 +524,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstShops.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstShops.SelectedNode;
 
-            if (!btnChronological.Checked) lstShops.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstShops.Sort();
+            }
 
             lstShops.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.ShopEditor.folderprompt, Strings.ShopEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.ShopEditor.folderprompt, Strings.ShopEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -494,6 +578,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstShops.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -512,20 +597,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstShops_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstShops.SelectedNode == null || lstShops.SelectedNode.Tag == null) return;
-            mEditorItem = ShopBase.Get((Guid)lstShops.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstShops.SelectedNode == null || lstShops.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = ShopBase.Get((Guid) lstShops.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -573,9 +672,13 @@ namespace Intersect.Editor.Forms.Editors
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.ShopEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

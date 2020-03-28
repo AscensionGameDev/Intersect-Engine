@@ -6,13 +6,15 @@ using JetBrains.Annotations;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public abstract partial class CommonExperiments<TExperiments> where TExperiments : CommonExperiments<TExperiments>
     {
+
         public const string CONFIG_PATH = "resources/config/experiments.config.json";
 
-        private static TExperiments mInstance;
-
         [NotNull] private static readonly IDictionary<Type, Guid> mNamespaceIdsByDeclaringType;
+
+        private static TExperiments mInstance;
 
         static CommonExperiments()
         {
@@ -22,7 +24,10 @@ namespace Intersect.Core.ExperimentalFeatures
         [NotNull]
         protected static TExperiments Instance
         {
-            get => mInstance ?? throw new InvalidOperationException($@"Did you forget to set this in the static constructor for '{typeof(TExperiments).AssemblyQualifiedName}'.");
+            get => mInstance ??
+                   throw new InvalidOperationException(
+                       $@"Did you forget to set this in the static constructor for '{typeof(TExperiments).AssemblyQualifiedName}'."
+                   );
             set => mInstance = value;
         }
 
@@ -46,10 +51,13 @@ namespace Intersect.Core.ExperimentalFeatures
             if (namespaceIdProperty.GetValue(null) is Guid generatedNamespaceId)
             {
                 mNamespaceIdsByDeclaringType[declaringType] = generatedNamespaceId;
+
                 return generatedNamespaceId;
             }
 
             throw new InvalidOperationException();
         }
+
     }
+
 }

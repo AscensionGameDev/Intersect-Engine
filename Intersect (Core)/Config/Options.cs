@@ -1,25 +1,58 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+
 using Intersect.Config;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect
 {
+
     public class Options
     {
-        #region Constants
 
-        // TODO: Clean these up
-        //Values that cannot easily be changed:
-        public const int LayerCount = 5;
-        public const int MaxStats = 5;
-        public const int MaxHotbar = 10;
+        //Caching Json
+        private static string optionsCompressed = "";
 
-        public const string DEFAULT_GAME_NAME = "Intersect";
-        public const int DEFAULT_SERVER_PORT = 5400;
+        [JsonProperty("AdminOnly", Order = -3)]
+        protected bool _adminOnly = false;
 
-        #endregion
+        //Constantly Animated Sprites
+        [JsonProperty("AnimatedSprites")] protected List<string> _animatedSprites = new List<string>();
+
+        [JsonProperty("BlockClientRegistrations", Order = -2)]
+        protected bool _blockClientRegistrations = false;
+
+        [JsonProperty("ValidPasswordResetTimeMinutes")]
+        protected ushort _passResetExpirationMin = 30;
+
+        [JsonProperty("OpenPortChecker", Order = 0)]
+        protected bool _portChecker = true;
+
+        [JsonProperty("UPnP", Order = -1)] protected bool _upnp = true;
+
+        [JsonProperty("Chat")] public ChatOptions ChatOpts = new ChatOptions();
+
+        [JsonProperty("Combat")] public CombatOptions CombatOpts = new CombatOptions();
+
+        [JsonProperty("Equipment")] public EquipmentOptions EquipmentOpts = new EquipmentOptions();
+
+        [JsonProperty("EventWatchdogKillThreshold")]
+        public int EventKillTheshhold = 5000;
+
+        public DatabaseOptions GameDatabase = new DatabaseOptions();
+
+        [JsonProperty("Map")] public MapOptions MapOpts = new MapOptions();
+
+        public DatabaseOptions PlayerDatabase = new DatabaseOptions();
+
+        [JsonProperty("Player")] public PlayerOptions PlayerOpts = new PlayerOptions();
+
+        [JsonProperty("Security")] public SecurityOptions SecurityOpts = new SecurityOptions();
+
+        public SmtpSettings SmtpSettings = new SmtpSettings();
 
         [NotNull]
         public static Options Instance { get; private set; }
@@ -29,47 +62,88 @@ namespace Intersect
 
         //Public Getters
         public static ushort ServerPort { get => Instance._serverPort; set => Instance._serverPort = value; }
+
         public static int MaxStatValue => Instance.PlayerOpts.MaxStat;
+
         public static int MaxLevel => Instance.PlayerOpts.MaxLevel;
+
         public static int MaxInvItems => Instance.PlayerOpts.MaxInventory;
+
         public static int MaxPlayerSkills => Instance.PlayerOpts.MaxSpells;
+
         public static int MaxBankSlots => Instance.PlayerOpts.MaxBank;
+
         public static int MaxCharacters => Instance.PlayerOpts.MaxCharacters;
+
         public static int ItemDropChance => Instance.PlayerOpts.ItemDropChance;
+
         public static int RequestTimeout => Instance.PlayerOpts.RequestTimeout;
+
         public static int TradeRange => Instance.PlayerOpts.TradeRange;
+
         public static int PartyRange => Instance.PlayerOpts.PartyRange;
+
         public static int WeaponIndex => Instance.EquipmentOpts.WeaponSlot;
+
         public static int ShieldIndex => Instance.EquipmentOpts.ShieldSlot;
+
         public static List<string> EquipmentSlots => Instance.EquipmentOpts.Slots;
+
         public static List<string>[] PaperdollOrder => Instance.EquipmentOpts.Paperdoll.Directions;
+
         public static List<string> ToolTypes => Instance.EquipmentOpts.ToolTypes;
+
         public static List<string> AnimatedSprites => Instance._animatedSprites;
+
         public static int RegenTime => Instance.CombatOpts.RegenTime;
+
         public static int CombatTime => Instance.CombatOpts.CombatTime;
+
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
+
         public static int MaxAttackRate => Instance.CombatOpts.MaxAttackRate;
+
         public static int BlockingSlow => Instance.CombatOpts.BlockingSlow;
+
         public static int MaxDashSpeed => Instance.CombatOpts.MaxDashSpeed;
+
         public static int GameBorderStyle => Instance.MapOpts.GameBorderStyle;
+
         public static int ItemRepawnTime => Instance.MapOpts.ItemSpawnTime;
+
         public static int ItemDespawnTime => Instance.MapOpts.ItemDespawnTime;
+
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
+
         public static int MapWidth => Instance?.MapOpts?.Width ?? 32;
+
         public static int MapHeight => Instance?.MapOpts?.Height ?? 26;
+
         public static int TileWidth => Instance.MapOpts.TileWidth;
+
         public static int TileHeight => Instance.MapOpts.TileHeight;
+
         public static int EventWatchdogKillThreshhold => Instance.EventKillTheshhold;
+
         public static int MaxChatLength => Instance.ChatOpts.MaxChatLength;
+
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static bool UPnP => Instance._upnp;
 
         public static bool OpenPortChecker => Instance._portChecker;
+
         public static SmtpSettings Smtp => Instance.SmtpSettings;
+
         public static int PasswordResetExpirationMinutes => Instance._passResetExpirationMin;
+
         public static bool AdminOnly { get => Instance._adminOnly; set => Instance._adminOnly = value; }
-        public static bool BlockClientRegistrations { get => Instance._blockClientRegistrations; set => Instance._blockClientRegistrations = value; }
+
+        public static bool BlockClientRegistrations
+        {
+            get => Instance._blockClientRegistrations;
+            set => Instance._blockClientRegistrations = value;
+        }
 
         public static DatabaseOptions PlayerDb
         {
@@ -82,7 +156,6 @@ namespace Intersect
             get => Instance.GameDatabase;
             set => Instance.GameDatabase = value;
         }
-
 
         [NotNull]
         public static PlayerOptions Player => Instance.PlayerOpts;
@@ -104,80 +177,44 @@ namespace Intersect
         [JsonProperty("ServerPort", Order = -4)]
         public ushort _serverPort { get; set; } = DEFAULT_SERVER_PORT;
 
-        [JsonProperty("AdminOnly", Order = -3)]
-        protected bool _adminOnly = false;
-
-        [JsonProperty("BlockClientRegistrations", Order = -2)]
-        protected bool _blockClientRegistrations = false;
-
-        [JsonProperty("UPnP", Order = -1)]
-        protected bool _upnp = true;
-
-        [JsonProperty("OpenPortChecker", Order = 0)]
-        protected bool _portChecker = true;
-
-        [JsonProperty ("Player")]
-        public PlayerOptions PlayerOpts = new PlayerOptions();
-
         /// <summary>
         /// Passability configuration by map zone
         /// </summary>
-        [NotNull] public Passability Passability { get; } = new Passability();
-
-        [JsonProperty("Chat")]
-        public ChatOptions ChatOpts = new ChatOptions();
-
-        [JsonProperty("Equipment")]
-        public EquipmentOptions EquipmentOpts = new EquipmentOptions();
-
-        //Constantly Animated Sprites
-        [JsonProperty("AnimatedSprites")]
-        protected List<string> _animatedSprites = new List<string>();
-
-        [JsonProperty("Combat")]
-        public CombatOptions CombatOpts = new CombatOptions();
-
-        [JsonProperty("Map")]
-        public MapOptions MapOpts = new MapOptions();
-
-        [JsonProperty("EventWatchdogKillThreshold")]
-        public int EventKillTheshhold = 5000;
-
-        [JsonProperty("ValidPasswordResetTimeMinutes")]
-        protected ushort _passResetExpirationMin = 30;
-
-        [JsonProperty("Security")]
-        public SecurityOptions SecurityOpts = new SecurityOptions();
+        [NotNull]
+        public Passability Passability { get; } = new Passability();
 
         public bool SmtpValid { get; set; }
-        public SmtpSettings SmtpSettings = new SmtpSettings();
-        public DatabaseOptions PlayerDatabase = new DatabaseOptions();
-        public DatabaseOptions GameDatabase = new DatabaseOptions();
+
+        public static string OptionsData => optionsCompressed;
 
         public void FixAnimatedSprites()
         {
-            for (int i = 0; i < _animatedSprites.Count; i++)
+            for (var i = 0; i < _animatedSprites.Count; i++)
+            {
                 _animatedSprites[i] = _animatedSprites[i].ToLower();
+            }
         }
-
-
-        //Caching Json
-        private static string optionsCompressed = "";
 
         public static bool LoadFromDisk()
         {
             Instance = new Options();
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            if (!Directory.Exists("resources"))
+            {
+                Directory.CreateDirectory("resources");
+            }
+
             if (File.Exists("resources/config.json"))
             {
                 Instance = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
             }
+
             Instance.SmtpValid = Instance.SmtpSettings.IsValid();
             Instance.SendingToClient = false;
             Instance.FixAnimatedSprites();
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance,Formatting.Indented));
+            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance, Formatting.Indented));
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);
+
             return true;
         }
 
@@ -188,8 +225,6 @@ namespace Intersect
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);
         }
-
-        public static string OptionsData => optionsCompressed;
 
         public static void LoadFromServer(string data)
         {
@@ -225,5 +260,23 @@ namespace Intersect
         {
             return !SendingToClient;
         }
+
+        #region Constants
+
+        // TODO: Clean these up
+        //Values that cannot easily be changed:
+        public const int LayerCount = 5;
+
+        public const int MaxStats = 5;
+
+        public const int MaxHotbar = 10;
+
+        public const string DEFAULT_GAME_NAME = "Intersect";
+
+        public const int DEFAULT_SERVER_PORT = 5400;
+
+        #endregion
+
     }
+
 }

@@ -1,18 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Database
 {
+
     public class Spell
     {
-        public Guid SpellId { get; set; }
-        //SpellCD NO LONGER USED
-        //CAN'T REMOVE VIA EF UNTIL SQLITE ALLOWS ALTER TABLE DROP COLUMN
-        //DON"T REMEMBER THIS VARIABLE ELSE EF WILL FAIL TO SAVE NEW PLAYERS
-        [JsonIgnore] public long SpellCd { get; set; }
-
-
-        public static Spell None => new Spell(Guid.Empty);
 
         public Spell()
         {
@@ -23,12 +17,23 @@ namespace Intersect.Server.Database
             SpellId = spellId;
         }
 
+        public Guid SpellId { get; set; }
+
+        //SpellCD NO LONGER USED
+        //CAN'T REMOVE VIA EF UNTIL SQLITE ALLOWS ALTER TABLE DROP COLUMN
+        //DON"T REMEMBER THIS VARIABLE ELSE EF WILL FAIL TO SAVE NEW PLAYERS
+        [JsonIgnore]
+        public long SpellCd { get; set; }
+
+        public static Spell None => new Spell(Guid.Empty);
+
         public Spell Clone()
         {
-            Spell newSpell = new Spell()
+            var newSpell = new Spell()
             {
                 SpellId = SpellId
             };
+
             return newSpell;
         }
 
@@ -36,5 +41,7 @@ namespace Intersect.Server.Database
         {
             SpellId = spell.SpellId;
         }
+
     }
+
 }

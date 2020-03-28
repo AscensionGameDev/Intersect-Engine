@@ -1,15 +1,17 @@
 ﻿using System;
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations.Game
 {
+
     public partial class Initial : Migration
     {
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Animations",
-                columns: table => new
+                name: "Animations", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -33,15 +35,11 @@ namespace Intersect.Server.Migrations.Game
                     Upper_AlternateRenderLayer = table.Column<bool>(nullable: false),
                     Upper_Light = table.Column<string>(nullable: true),
                     Sound = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Animations", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Animations", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Classes",
-                columns: table => new
+                name: "Classes", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -71,29 +69,21 @@ namespace Intersect.Server.Migrations.Game
                     StatIncreases = table.Column<string>(nullable: true),
                     VitalIncreases = table.Column<string>(nullable: true),
                     VitalRegen = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Classes", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Classes", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "CraftingTables",
-                columns: table => new
+                name: "CraftingTables", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Crafts = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CraftingTables", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_CraftingTables", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Crafts",
-                columns: table => new
+                name: "Crafts", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -101,15 +91,11 @@ namespace Intersect.Server.Migrations.Game
                     Ingredients = table.Column<string>(nullable: true),
                     ItemId = table.Column<Guid>(nullable: false),
                     Time = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Crafts", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Crafts", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
+                name: "Events", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -120,15 +106,11 @@ namespace Intersect.Server.Migrations.Game
                     CommonEvent = table.Column<bool>(nullable: false),
                     Global = table.Column<bool>(nullable: false),
                     Pages = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Events", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Items",
-                columns: table => new
+                name: "Items", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -169,27 +151,19 @@ namespace Intersect.Server.Migrations.Game
                     VitalsGiven = table.Column<string>(nullable: true),
                     StatsGiven = table.Column<string>(nullable: true),
                     UsageRequirements = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Items", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Items", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "MapFolders",
-                columns: table => new
+                name: "MapFolders", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     JsonData = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MapFolders", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_MapFolders", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Maps",
-                columns: table => new
+                name: "Maps", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -227,15 +201,11 @@ namespace Intersect.Server.Migrations.Game
                     WeatherXSpeed = table.Column<int>(nullable: false),
                     WeatherYSpeed = table.Column<int>(nullable: false),
                     WeatherIntensity = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Maps", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Maps", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Npcs",
-                columns: table => new
+                name: "Npcs", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -271,43 +241,31 @@ namespace Intersect.Server.Migrations.Game
                     Sprite = table.Column<string>(nullable: true),
                     Stats = table.Column<string>(nullable: true),
                     VitalRegen = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Npcs", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Npcs", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "PlayerSwitches",
-                columns: table => new
+                name: "PlayerSwitches", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TextId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlayerSwitches", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_PlayerSwitches", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "PlayerVariables",
-                columns: table => new
+                name: "PlayerVariables", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TextId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlayerVariables", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_PlayerVariables", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Projectiles",
-                columns: table => new
+                name: "Projectiles", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -327,15 +285,11 @@ namespace Intersect.Server.Migrations.Game
                     SpawnLocations = table.Column<string>(nullable: true),
                     Speed = table.Column<int>(nullable: false),
                     Spell = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Projectiles", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Projectiles", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Quests",
-                columns: table => new
+                name: "Quests", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -352,15 +306,11 @@ namespace Intersect.Server.Migrations.Game
                     StartEvent = table.Column<Guid>(nullable: false),
                     EndEvent = table.Column<Guid>(nullable: false),
                     Tasks = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Quests", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Quests", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Resources",
-                columns: table => new
+                name: "Resources", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -390,45 +340,33 @@ namespace Intersect.Server.Migrations.Game
                     Tool = table.Column<int>(nullable: false),
                     WalkableAfter = table.Column<bool>(nullable: false),
                     WalkableBefore = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Resources", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Resources", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "ServerSwitches",
-                columns: table => new
+                name: "ServerSwitches", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TextId = table.Column<string>(nullable: true),
                     Value = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ServerSwitches", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_ServerSwitches", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "ServerVariables",
-                columns: table => new
+                name: "ServerVariables", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TextId = table.Column<string>(nullable: true),
                     Value = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ServerVariables", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_ServerVariables", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Shops",
-                columns: table => new
+                name: "Shops", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -437,15 +375,11 @@ namespace Intersect.Server.Migrations.Game
                     DefaultCurrency = table.Column<Guid>(nullable: false),
                     BuyingItems = table.Column<string>(nullable: true),
                     SellingItems = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Shops", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Shops", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Spells",
-                columns: table => new
+                name: "Spells", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
@@ -485,102 +419,73 @@ namespace Intersect.Server.Migrations.Game
                     Dash_IgnoreZDimensionAttributes = table.Column<bool>(nullable: false),
                     Event = table.Column<Guid>(nullable: false),
                     VitalCost = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Spells", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Spells", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Tilesets",
-                columns: table => new
+                name: "Tilesets", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tilesets", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Tilesets", x => x.Id); }
+            );
 
             migrationBuilder.CreateTable(
-                name: "Time",
-                columns: table => new
+                name: "Time", columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     DaylightHues = table.Column<string>(nullable: true),
                     RangeInterval = table.Column<int>(nullable: false),
                     Rate = table.Column<float>(nullable: false),
                     SyncTime = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Time", x => x.Id);
-                });
+                }, constraints: table => { table.PrimaryKey("PK_Time", x => x.Id); }
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Animations");
+            migrationBuilder.DropTable(name: "Animations");
 
-            migrationBuilder.DropTable(
-                name: "Classes");
+            migrationBuilder.DropTable(name: "Classes");
 
-            migrationBuilder.DropTable(
-                name: "CraftingTables");
+            migrationBuilder.DropTable(name: "CraftingTables");
 
-            migrationBuilder.DropTable(
-                name: "Crafts");
+            migrationBuilder.DropTable(name: "Crafts");
 
-            migrationBuilder.DropTable(
-                name: "Events");
+            migrationBuilder.DropTable(name: "Events");
 
-            migrationBuilder.DropTable(
-                name: "Items");
+            migrationBuilder.DropTable(name: "Items");
 
-            migrationBuilder.DropTable(
-                name: "MapFolders");
+            migrationBuilder.DropTable(name: "MapFolders");
 
-            migrationBuilder.DropTable(
-                name: "Maps");
+            migrationBuilder.DropTable(name: "Maps");
 
-            migrationBuilder.DropTable(
-                name: "Npcs");
+            migrationBuilder.DropTable(name: "Npcs");
 
-            migrationBuilder.DropTable(
-                name: "PlayerSwitches");
+            migrationBuilder.DropTable(name: "PlayerSwitches");
 
-            migrationBuilder.DropTable(
-                name: "PlayerVariables");
+            migrationBuilder.DropTable(name: "PlayerVariables");
 
-            migrationBuilder.DropTable(
-                name: "Projectiles");
+            migrationBuilder.DropTable(name: "Projectiles");
 
-            migrationBuilder.DropTable(
-                name: "Quests");
+            migrationBuilder.DropTable(name: "Quests");
 
-            migrationBuilder.DropTable(
-                name: "Resources");
+            migrationBuilder.DropTable(name: "Resources");
 
-            migrationBuilder.DropTable(
-                name: "ServerSwitches");
+            migrationBuilder.DropTable(name: "ServerSwitches");
 
-            migrationBuilder.DropTable(
-                name: "ServerVariables");
+            migrationBuilder.DropTable(name: "ServerVariables");
 
-            migrationBuilder.DropTable(
-                name: "Shops");
+            migrationBuilder.DropTable(name: "Shops");
 
-            migrationBuilder.DropTable(
-                name: "Spells");
+            migrationBuilder.DropTable(name: "Spells");
 
-            migrationBuilder.DropTable(
-                name: "Tilesets");
+            migrationBuilder.DropTable(name: "Tilesets");
 
-            migrationBuilder.DropTable(
-                name: "Time");
+            migrationBuilder.DropTable(name: "Time");
         }
+
     }
+
 }

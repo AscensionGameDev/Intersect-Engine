@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Intersect.Client.Entities
 {
+
     public struct Label
     {
-        [JsonProperty("Label")]
-        public string Text;
+
+        [JsonProperty("Label")] public string Text;
+
         public Color Color;
 
         public Label(string label, Color color)
@@ -19,5 +15,7 @@ namespace Intersect.Client.Entities
             Text = label;
             Color = color;
         }
+
     }
+
 }

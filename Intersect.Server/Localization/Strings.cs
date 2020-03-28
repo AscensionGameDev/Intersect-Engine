@@ -1,14 +1,14 @@
-﻿using Intersect.Localization;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+using Intersect.Localization;
 using Intersect.Logging;
 
 using JetBrains.Annotations;
 
 using Newtonsoft.Json;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Intersect.Server.Localization
 {
@@ -20,14 +20,20 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString adminonly =
+                @"The server is currently allowing only admins to connect. Come back later!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badlogin = @"Username or password incorrect.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString banned = @"{00} has been banned!";
@@ -73,10 +79,6 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString maxchars =
                 @"You have already created the maximum number of characters. Delete one before creating a new one.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
-
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString muted = @"{00} has been muted!";
 
@@ -87,19 +89,15 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString registrationsblocked =  @"Account registrations are currently blocked by the server.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString registrationsblocked =
+                @"Account registrations are currently blocked by the server.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString unbanned = @"Account {00} has been unbanned!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString unmuted = @"{00} has been unmuted!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString adminonly =
-                @"The server is currently allowing only admins to connect. Come back later!";
 
         }
 
@@ -249,9 +247,6 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString exp = @"Experience";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString addsymbol = @"+";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -271,9 +266,6 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString critical = @"CRITICAL HIT!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString invulnerable = @"INVULNERABLE!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocaleDictionary<int, LocalizedString> damagetypes =
                 new LocaleDictionary<int, LocalizedString>(
                     new Dictionary<int, LocalizedString>
@@ -289,6 +281,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString dynamicreq = @"You do not meet the requirements to cast the spell!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString exp = @"Experience";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString invulnerable = @"INVULNERABLE!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString levelreq = @"You are not a high enough level to use this ability.";
@@ -317,6 +315,15 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString silenced = @"You cannot cast this ability whilst silenced.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleepblocking = @"You are asleep and can't block.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString statreq =
@@ -353,15 +360,6 @@ namespace Intersect.Server.Localization
                     {12, @"TAUNT!"},
                 }
             );
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString sleepblocking = @"You are asleep and can't block.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunattacking = @"You are stunned and can't attack.";
@@ -401,28 +399,24 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirolegranted = @"{00} now has the {01} api role!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString apirolenotgranted = @"Failed to assign api role {00}, api access must be enabled for {01} first!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirolenotfound = @"Api role {00} not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString apirolenotgranted =
+                @"Failed to assign api role {00}, api access must be enabled for {01} first!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString
+                apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apiroles = @"Api roles for {00}:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -516,19 +510,22 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString nullfound = @"Tried to load null value for index {00} of {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString upgraderequired = @"Your databases need to be upgraded! This process could corrupt your game data if any errors are encountered.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString upgradebackup = @"Please make a backup of your game and player databases, and then type '{00}' to continue or '{01}' to quit.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString upgradeready = @"READY";
+            public readonly LocalizedString upgradebackup =
+                @"Please make a backup of your game and player databases, and then type '{00}' to continue or '{01}' to quit.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString upgradeexit = @"EXIT";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString upgradepleasewait = @"Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!";
+            public readonly LocalizedString upgradepleasewait =
+                @"Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString upgradeready = @"READY";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString upgraderequired =
+                @"Your databases need to be upgraded! This process could corrupt your game data if any errors are encountered.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
@@ -539,12 +536,12 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString
-                ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorloadingconfig =
                 @"Failed to load server options! Press any key to shut down.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString
+                ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
@@ -558,23 +555,22 @@ namespace Intersect.Server.Localization
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
             public readonly LocalizedString errortimeout = @"Too many failed requests. Please wait and try again!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString floodsize = @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString floodaverage =
+                @"[Flood]: 3+ Rapid Detections. Total Detections: {00} [User: {01} | Player: {02} | IP {03}]";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString floodburst = @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString floodburst =
+                @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString floodaverage = @"[Flood]: 3+ Rapid Detections. Total Detections: {00} [User: {01} | Player: {02} | IP {03}]";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString floodsize =
+                @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
 
         }
 
@@ -588,10 +584,10 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString eventnamecommand = @"\en";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString eventparams = @"\evtparams";
+            public readonly LocalizedString eventparam = @"\evtparam";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString eventparam = @"\evtparam";
+            public readonly LocalizedString eventparams = @"\evtparams";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString globalswitch = @"\gs";
@@ -636,10 +632,12 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString timesecond = @"\second";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString watchdogkill = @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshhold.  (Map: {00}  Event: {01})";
+            public readonly LocalizedString watchdogkill =
+                @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshhold.  (Map: {00}  Event: {01})";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString watchdogkillcommon = @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshhold.  (Event {00})";
+            public readonly LocalizedString watchdogkillcommon =
+                @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshhold.  (Event {00})";
 
         }
 
@@ -685,7 +683,10 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString none = @"None";
+            public readonly LocalizedString Disabled = @"Disabled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString DisabledLowerCase = @"disabled";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString Enabled = @"Enabled";
@@ -694,10 +695,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString EnabledLowerCase = @"enabled";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString Disabled = @"Disabled";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString DisabledLowerCase = @"disabled";
+            public readonly LocalizedString none = @"None";
 
         }
 
@@ -707,8 +705,7 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString api = @"API listening on '{00}'.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apifailed = @"Failed to start API.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -804,6 +801,10 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString alreadyusingengine =
+                @"   Migration Error: {00} database is already using {01}!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cancel = @"   Press any other key to cancel migration.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -813,106 +814,102 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString currentlysqlite = @"currently using Sqlite";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString gamedb = @"Game";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectgamedb =
-                "   [1] Game Database ({00})  -  Sqlite Strongly Recommended!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectplayerdb = "   [2] Player Database ({00})";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectgamedbkey = @"1";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectplayerdbkey = @"2";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString sqlite = @"Sqlite";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString migratetomysql = @"   [2] Mysql";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString migrationcancelled = @"Migration Cancelled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString migrationcomplete = @"Migration complete! Press enter to exit.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mysql = @"Mysql";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString playerdb = @"Player";
+            public readonly LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectsqlitekey = @"1";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString selectmysqlkey = @"2";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString alreadyusingengine =
-                @"   Migration Error: {00} database is already using {01}!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString startingmigration =
-                @"Starting migration, please wait! (This could take several minutes depending on the size of your game)";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqlhost = @"Host: ";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqlport = @"Port: ";
+            public readonly LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mysqldatabase = @"Database: ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqluser = @"User: ";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqlpass = @"Password: ";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...";
+            public readonly LocalizedString mysqlhost = @"Host: ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mysqlnotempty =
                 @"Database must be empty before migration! Please delete any tables before proceeding! Migration Cancelled.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
+            public readonly LocalizedString mysqlpass = @"Password: ";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString mysqlport = @"Port: ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mysqltryagain =
                 @"Would you like to try entering your connection info again? (y/n)  ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString tryagaincharacter = @"y";
+            public readonly LocalizedString mysqluser = @"User: ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString migrationcancelled = @"Migration Cancelled";
+            public readonly LocalizedString overwritecharacter = @"y";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString playerdb = @"Player";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectgamedb =
+                "   [1] Game Database ({00})  -  Sqlite Strongly Recommended!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectgamedbkey = @"1";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectmysqlkey = @"2";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectplayerdb = "   [2] Player Database ({00})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectplayerdbkey = @"2";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString selectsqlitekey = @"1";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString sqlite = @"Sqlite";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString sqlitealreadyexists = @"{00} already exists, overwrite? (y/n)  ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString overwritecharacter = @"y";
+            public readonly LocalizedString startingmigration =
+                @"Starting migration, please wait! (This could take several minutes depending on the size of your game)";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString stoppingserver =
                 @"Please wait, stopping server, and saving current database...";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString migrationcomplete = @"Migration complete! Press enter to exit.";
+            public readonly LocalizedString tryagaincharacter = @"y";
 
         }
 
@@ -920,11 +917,11 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString pleasewait = @"Please wait while network diagnostics run....";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString hastebin =
                 @"Network Debug information uploaded to {00} (copied to clipboard) share this link with AGD when requesting for help getting your game online!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString pleasewait = @"Please wait while network diagnostics run....";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString savedtofile =
@@ -946,13 +943,13 @@ namespace Intersect.Server.Localization
 
         public sealed class NotificationsNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString product = @"Intersect Game Engine";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
-            public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
         }
 
         public sealed class PartiesNamespace : LocaleNamespace
@@ -1006,9 +1003,10 @@ namespace Intersect.Server.Localization
 
         public sealed class PasswordResetNotificationNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
+
         }
 
         public sealed class PlayerNamespace : LocaleNamespace
@@ -1233,13 +1231,13 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString offerinvalid = @"Invalid item selected to offer!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString revokeinvalid = @"Invalid item selected to revoke!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString tradenospace = @"There is no space left in the trade window for that item!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";
 
         }
 
@@ -1290,9 +1288,13 @@ namespace Intersect.Server.Localization
                 {
                     if (exception.Message.Contains("Commands.announcement"))
                     {
-                        throw new Exception("Server strings invalid! Upgrade steps to B6 were not followed correctly. Server must close!");
+                        throw new Exception(
+                            "Server strings invalid! Upgrade steps to B6 were not followed correctly. Server must close!"
+                        );
                     }
+
                     Log.Error(exception);
+
                     return false;
                 }
             }
@@ -1308,11 +1310,13 @@ namespace Intersect.Server.Localization
                 Directory.CreateDirectory("resources");
                 var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new LocalizedStringConverter());
                 File.WriteAllText(filepath, json, Encoding.UTF8);
+
                 return true;
             }
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 return false;
             }
         }
@@ -1381,8 +1385,7 @@ namespace Intersect.Server.Localization
 
             [NotNull] public readonly PartiesNamespace Parties = new PartiesNamespace();
 
-            [NotNull]
-            public readonly PasswordResetNotificationNamespace PasswordResetNotificationNamespace =
+            [NotNull] public readonly PasswordResetNotificationNamespace PasswordResetNotificationNamespace =
                 new PasswordResetNotificationNamespace();
 
             [NotNull] public readonly PlayerNamespace Player = new PlayerNamespace();

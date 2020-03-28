@@ -5,7 +5,6 @@ using System.Linq;
 
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Extensions;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
@@ -18,6 +17,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
+
     public partial class Player
     {
 
@@ -47,11 +47,12 @@ namespace Intersect.Server.Entities
             return lookupKey.HasId ? Fetch(lookupKey.Id, playerContext) : Fetch(lookupKey.Name, playerContext);
         }
 
-        public static Tuple<Client, Player> Fetch([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
+        public static Tuple<Client, Player> Fetch(
+            [NotNull] string playerName,
+            [CanBeNull] PlayerContext playerContext = null
+        )
         {
-            var client = Globals.Clients.Find(
-                queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name)
-            );
+            var client = Globals.Clients.Find(queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name));
 
             return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName, playerContext));
         }
@@ -70,6 +71,7 @@ namespace Intersect.Server.Entities
                 lock (DbInterface.GetPlayerContextLock())
                 {
                     var context = DbInterface.GetPlayerContext();
+
                     return QueryPlayerById(context, playerId);
                 }
             }
@@ -86,6 +88,7 @@ namespace Intersect.Server.Entities
                 lock (DbInterface.GetPlayerContextLock())
                 {
                     var context = DbInterface.GetPlayerContext();
+
                     return QueryPlayerByName(context, playerName);
                 }
             }
@@ -103,6 +106,7 @@ namespace Intersect.Server.Entities
         public static Player Load(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
         {
             var player = Find(playerId, playerContext);
+
             return Load(player);
         }
 
@@ -110,6 +114,7 @@ namespace Intersect.Server.Entities
         public static Player Load([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
         {
             var player = Find(playerName, playerContext);
+
             return Load(player);
         }
 
@@ -143,6 +148,7 @@ namespace Intersect.Server.Entities
             lock (DbInterface.GetPlayerContextLock())
             {
                 var context = DbInterface.GetPlayerContext();
+
                 return context.Players.Count();
             }
         }
@@ -155,6 +161,7 @@ namespace Intersect.Server.Entities
                 lock (DbInterface.GetPlayerContextLock())
                 {
                     var context = DbInterface.GetPlayerContext();
+
                     return QueryPlayers(context, page * count, count) ?? throw new InvalidOperationException();
                 }
             }
@@ -165,7 +172,12 @@ namespace Intersect.Server.Entities
         }
 
         [NotNull]
-        public static IEnumerable<Player> Rank(int page, int count, SortDirection sortDirection, [CanBeNull] PlayerContext playerContext = null)
+        public static IEnumerable<Player> Rank(
+            int page,
+            int count,
+            SortDirection sortDirection,
+            [CanBeNull] PlayerContext playerContext = null
+        )
         {
             var context = playerContext;
             if (context != null)
@@ -176,7 +188,10 @@ namespace Intersect.Server.Entities
             lock (DbInterface.GetPlayerContextLock())
             {
                 context = DbInterface.GetPlayerContext();
-                var results = sortDirection == SortDirection.Ascending ? QueryPlayersWithRankAscending(context, page * count, count) : QueryPlayersWithRank(context, page * count, count);
+                var results = sortDirection == SortDirection.Ascending
+                    ? QueryPlayersWithRankAscending(context, page * count, count)
+                    : QueryPlayersWithRank(context, page * count, count);
+
                 return results ?? throw new InvalidOperationException();
             }
         }
@@ -184,67 +199,64 @@ namespace Intersect.Server.Entities
         #endregion
 
         #region Compiled Queries
-        
+
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
             EF.CompileQuery(
-                (PlayerContext context, int offset, int count) =>
-                    context.Players
-                        .OrderBy(player => player.Id.ToString())
-                        .Skip(offset)
-                        .Take(count)
-                        .Include(p => p.Bank)
-                        .Include(p => p.Friends)
-                        .ThenInclude(p => p.Target)
-                        .Include(p => p.Hotbar)
-                        .Include(p => p.Quests)
-                        .Include(p => p.Variables)
-                        .Include(p => p.Items)
-                        .Include(p => p.Spells)
+                (PlayerContext context, int offset, int count) => context.Players
+                    .OrderBy(player => player.Id.ToString())
+                    .Skip(offset)
+                    .Take(count)
+                    .Include(p => p.Bank)
+                    .Include(p => p.Friends)
+                    .ThenInclude(p => p.Target)
+                    .Include(p => p.Hotbar)
+                    .Include(p => p.Quests)
+                    .Include(p => p.Variables)
+                    .Include(p => p.Items)
+                    .Include(p => p.Spells)
             ) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
             EF.CompileQuery(
-                (PlayerContext context, int offset, int count) =>
-                    context.Players
-                        .OrderByDescending(entity => EF.Property<dynamic>(entity, "Level"))
-                        .ThenByDescending(entity => EF.Property<dynamic>(entity, "Exp"))
-                        .Skip(offset)
-                        .Take(count)
-                        .Include(p => p.Bank)
-                        .Include(p => p.Friends)
-                        .ThenInclude(p => p.Target)
-                        .Include(p => p.Hotbar)
-                        .Include(p => p.Quests)
-                        .Include(p => p.Variables)
-                        .Include(p => p.Items)
-                        .Include(p => p.Spells)
+                (PlayerContext context, int offset, int count) => context.Players
+                    .OrderByDescending(entity => EF.Property<dynamic>(entity, "Level"))
+                    .ThenByDescending(entity => EF.Property<dynamic>(entity, "Exp"))
+                    .Skip(offset)
+                    .Take(count)
+                    .Include(p => p.Bank)
+                    .Include(p => p.Friends)
+                    .ThenInclude(p => p.Target)
+                    .Include(p => p.Hotbar)
+                    .Include(p => p.Quests)
+                    .Include(p => p.Variables)
+                    .Include(p => p.Items)
+                    .Include(p => p.Spells)
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRankAscending =
+        [NotNull]
+        private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRankAscending =
             EF.CompileQuery(
-                (PlayerContext context, int offset, int count) =>
-                    context.Players
-                        .OrderBy(entity => EF.Property<dynamic>(entity, "Level"))
-                        .ThenBy(entity => EF.Property<dynamic>(entity, "Exp"))
-                        .Skip(offset)
-                        .Take(count)
-                        .Include(p => p.Bank)
-                        .Include(p => p.Friends)
-                        .ThenInclude(p => p.Target)
-                        .Include(p => p.Hotbar)
-                        .Include(p => p.Quests)
-                        .Include(p => p.Variables)
-                        .Include(p => p.Items)
-                        .Include(p => p.Spells)
+                (PlayerContext context, int offset, int count) => context.Players
+                    .OrderBy(entity => EF.Property<dynamic>(entity, "Level"))
+                    .ThenBy(entity => EF.Property<dynamic>(entity, "Exp"))
+                    .Skip(offset)
+                    .Take(count)
+                    .Include(p => p.Bank)
+                    .Include(p => p.Friends)
+                    .ThenInclude(p => p.Target)
+                    .Include(p => p.Hotbar)
+                    .Include(p => p.Quests)
+                    .Include(p => p.Variables)
+                    .Include(p => p.Items)
+                    .Include(p => p.Spells)
             ) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
-            EF.CompileQuery((PlayerContext context, Guid id) =>
-                context.Players
-                    .Include(p => p.Bank)
+            EF.CompileQuery(
+                (PlayerContext context, Guid id) => context.Players.Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
                     .Include(p => p.Hotbar)
@@ -252,13 +264,13 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Id == id))
-            ?? throw new InvalidOperationException();
+                    .FirstOrDefault(c => c.Id == id)
+            ) ??
+            throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, string, Player> QueryPlayerByName =
-            EF.CompileQuery((PlayerContext context, string name) =>
-                context.Players
-                    .Include(p => p.Bank)
+            EF.CompileQuery(
+                (PlayerContext context, string name) => context.Players.Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
                     .Include(p => p.Hotbar)
@@ -266,11 +278,14 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault(c => CompareName(name, c.Name)))
-            ?? throw new InvalidOperationException();
+                    .FirstOrDefault(c => CompareName(name, c.Name))
+            ) ??
+            throw new InvalidOperationException();
 
         #endregion
 
         #endregion
+
     }
+
 }

@@ -10,8 +10,13 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game.Spells
 {
+
     public class SpellsWindow
     {
+
+        //Spell List
+        public List<SpellItem> Items = new List<SpellItem>();
+
         //Initialized
         private bool mInitializedSpells;
 
@@ -20,9 +25,6 @@ namespace Intersect.Client.Interface.Game.Spells
 
         //Controls
         private WindowControl mSpellWindow;
-
-        //Spell List
-        public List<SpellItem> Items = new List<SpellItem>();
 
         //Location
         public int X;
@@ -48,13 +50,15 @@ namespace Intersect.Client.Interface.Game.Spells
                 InitItemContainer();
                 mInitializedSpells = true;
             }
+
             if (mSpellWindow.IsHidden == true)
             {
                 return;
             }
+
             X = mSpellWindow.X;
             Y = mSpellWindow.Y;
-            for (int i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Globals.Me.Spells[i].SpellId != Guid.Empty)
                 {
@@ -74,21 +78,27 @@ namespace Intersect.Client.Interface.Game.Spells
 
         private void InitItemContainer()
         {
-            for (int i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Items.Add(new SpellItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
-                
+
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i]
+                    .Container.SetPosition(
+                        i %
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Width + xPadding) +
+                        xPadding,
+                        i /
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Height + yPadding) +
+                        yPadding
+                    );
             }
         }
 
@@ -109,16 +119,19 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).X -
                     (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
                 Y = mSpellWindow.LocalPosToCanvas(new Point(0, 0)).Y -
                     (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
-                Width = mSpellWindow.Width + (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right),
-                Height = mSpellWindow.Height + (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom)
+                Width = mSpellWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
+                Height = mSpellWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom
             };
+
             return rect;
         }
+
     }
+
 }

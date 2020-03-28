@@ -2,20 +2,21 @@
 
 namespace Intersect.Network
 {
+
     public class NetworkConfiguration
     {
-        public NetworkConfiguration()
-            : this("localhost", 5400)
+
+        public NetworkConfiguration() : this("localhost", 5400)
         {
         }
 
-        public NetworkConfiguration(string host, ushort port)
-            : this(host, port, 0, false)
+        public NetworkConfiguration(string host, ushort port) : this(host, port, 0, false)
         {
         }
 
-        public NetworkConfiguration(ushort port, ushort maximumConnections = 512)
-            : this(null, port, maximumConnections, true)
+        public NetworkConfiguration(ushort port, ushort maximumConnections = 512) : this(
+            null, port, maximumConnections, true
+        )
         {
         }
 
@@ -33,8 +34,13 @@ namespace Intersect.Network
         }
 
         public string Host { get; set; }
+
         public int Port { get; set; }
+
         public bool IsServer { get; }
+
         public int MaximumConnections { get; set; }
+
     }
+
 }

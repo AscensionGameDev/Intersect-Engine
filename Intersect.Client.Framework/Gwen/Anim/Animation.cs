@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.Anim
 {
+
     public class Animation
     {
+
         //private static List<Animation> g_AnimationsListed = new List<Animation>(); // unused
-        private static readonly Dictionary<Base, List<Animation>> Animations = new Dictionary<Base, List<Animation>>()
-            ;
+        private static readonly Dictionary<Base, List<Animation>> Animations = new Dictionary<Base, List<Animation>>();
 
         protected Base mControl;
 
@@ -22,7 +24,10 @@ namespace Intersect.Client.Framework.Gwen.Anim
         {
             animation.mControl = control;
             if (!Animations.ContainsKey(control))
+            {
                 Animations[control] = new List<Animation>();
+            }
+
             Animations[control].Add(animation);
         }
 
@@ -37,10 +42,10 @@ namespace Intersect.Client.Framework.Gwen.Anim
 
         internal static void GlobalThink()
         {
-            foreach (KeyValuePair<Base, List<Animation>> pair in Animations)
+            foreach (var pair in Animations)
             {
                 var valCopy = pair.Value.FindAll(x => true); // list copy so foreach won't break when we remove elements
-                foreach (Animation animation in valCopy)
+                foreach (var animation in valCopy)
                 {
                     animation.Think();
                     if (animation.Finished)
@@ -50,5 +55,7 @@ namespace Intersect.Client.Framework.Gwen.Anim
                 }
             }
         }
+
     }
+
 }

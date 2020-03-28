@@ -15,12 +15,6 @@ namespace Intersect.Server.Core
     {
 
         /// <summary>
-        /// The <see cref="System.Diagnostics.Stopwatch"/> instance used to keep track of time.
-        /// </summary>
-        [NotNull]
-        public Stopwatch Stopwatch { get; }
-
-        /// <summary>
         /// Constructs a <code>ServerTiming</code> instance and starts the <see cref="Stopwatch"/>.
         /// </summary>
         public ServerTiming()
@@ -28,6 +22,12 @@ namespace Intersect.Server.Core
             Stopwatch = new Stopwatch();
             Stopwatch.Start();
         }
+
+        /// <summary>
+        /// The <see cref="System.Diagnostics.Stopwatch"/> instance used to keep track of time.
+        /// </summary>
+        [NotNull]
+        public Stopwatch Stopwatch { get; }
 
         /// <summary>
         /// Gets the total elapsed time in milliseconds since this instance was created.

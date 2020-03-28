@@ -1,10 +1,13 @@
 ﻿using System;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
+
     public interface ICommandArgument
     {
+
         char ShortName { get; }
 
         [NotNull]
@@ -34,16 +37,18 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         bool IsRequiredByDefault { get; }
 
-        bool IsRequired(ParserContext parserContext);
-
         bool IsPositional { get; }
 
         [CanBeNull]
         string Delimeter { get; }
 
+        bool IsRequired(ParserContext parserContext);
+
         [CanBeNull]
         TValue DefaultValueAsType<TValue>();
 
         bool IsValueAllowed([CanBeNull] object value);
+
     }
+
 }

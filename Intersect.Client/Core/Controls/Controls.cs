@@ -9,9 +9,9 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Core.Controls
 {
+
     public class Controls
     {
-        public static Controls ActiveControls { get; set; }
 
         [NotNull] public readonly IDictionary<Control, ControlMap> ControlMapping;
 
@@ -36,16 +36,23 @@ namespace Intersect.Client.Core.Controls
                     var key2 = Globals.Database.LoadPreference(name + "_key2");
                     if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
                     {
-                        Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
-                        Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
+                        Globals.Database.SavePreference(
+                            name + "_key1", ((int) ControlMapping[control].Key1).ToString()
+                        );
+
+                        Globals.Database.SavePreference(
+                            name + "_key2", ((int) ControlMapping[control].Key2).ToString()
+                        );
                     }
                     else
                     {
-                        CreateControlMap(control, (Keys)Convert.ToInt32(key1), (Keys)Convert.ToInt32(key2));
+                        CreateControlMap(control, (Keys) Convert.ToInt32(key1), (Keys) Convert.ToInt32(key2));
                     }
                 }
             }
         }
+
+        public static Controls ActiveControls { get; set; }
 
         public void ResetDefaults()
         {
@@ -87,8 +94,8 @@ namespace Intersect.Client.Core.Controls
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
                 var name = Enum.GetName(typeof(Control), control);
-                Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
-                Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
+                Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].Key1).ToString());
+                Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].Key2).ToString());
             }
         }
 
@@ -103,20 +110,33 @@ namespace Intersect.Client.Core.Controls
             {
                 return ActiveControls.ControlMapping[control]?.KeyDown() ?? false;
             }
+
             return false;
         }
 
         public static List<Control> GetControlsFor(Keys key)
         {
-            return Enum.GetValues(typeof(Control)).Cast<Control>().Where(control => ControlHasKey(control, key)).ToList();
+            return Enum.GetValues(typeof(Control))
+                .Cast<Control>()
+                .Where(control => ControlHasKey(control, key))
+                .ToList();
         }
 
         public static bool ControlHasKey(Control control, Keys key)
         {
-            if (key == Keys.None) return false;
-            if (!(ActiveControls?.ControlMapping.ContainsKey(control) ?? false)) return false;
+            if (key == Keys.None)
+            {
+                return false;
+            }
+
+            if (!(ActiveControls?.ControlMapping.ContainsKey(control) ?? false))
+            {
+                return false;
+            }
+
             var mapping = ActiveControls.ControlMapping[control];
-            return (mapping?.Key1 == key || mapping?.Key2 == key);
+
+            return mapping?.Key1 == key || mapping?.Key2 == key;
         }
 
         public void UpdateControl(Control control, int keyNum, Keys key)
@@ -148,5 +168,7 @@ namespace Intersect.Client.Core.Controls
                 ControlMapping.Add(control, new ControlMap(control, key1, key2));
             }
         }
+
     }
+
 }

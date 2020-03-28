@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Drag&drop highlight.
     /// </summary>
     public class Highlight : Base
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Highlight" /> class.
         /// </summary>
@@ -23,5 +25,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawHighlight(this);
         }
+
     }
+
 }

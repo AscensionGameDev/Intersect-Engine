@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Server.Database;
 
@@ -10,6 +7,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Entities
 {
+
     public struct Trading : IDisposable
     {
 
@@ -46,4 +44,5 @@ namespace Intersect.Server.Entities
         }
 
     }
+
 }

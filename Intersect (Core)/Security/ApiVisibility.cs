@@ -2,6 +2,7 @@
 
 namespace Intersect.Security
 {
+
     [Flags]
     public enum ApiVisibility : uint
     {

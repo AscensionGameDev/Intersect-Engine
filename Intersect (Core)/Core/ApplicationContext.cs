@@ -2,39 +2,34 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Intersect.Logging;
 using Intersect.Threading;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Core
 {
-    public abstract class ApplicationContext<TContext> : IApplicationContext where TContext : ApplicationContext<TContext>
-    {
-        [NotNull] private object mShutdownLock;
 
-        private bool mNeedsLockPulse;
+    public abstract class ApplicationContext<TContext> : IApplicationContext
+        where TContext : ApplicationContext<TContext>
+    {
 
         private bool mIsRunning;
 
-        #region Instance Management
+        private bool mNeedsLockPulse;
 
-        [NotNull]
-        private TContext This => this as TContext ?? throw new InvalidOperationException();
+        [NotNull] private object mShutdownLock;
 
-        [NotNull]
-        private static ConcurrentInstance<TContext> ConcurrentInstance { get; }
-
-        [NotNull]
-        public static TContext Instance => ConcurrentInstance;
-
-        static ApplicationContext()
+        protected ApplicationContext()
         {
-            ConcurrentInstance = new ConcurrentInstance<TContext>();
+            ConcurrentInstance.Set(This);
+            mShutdownLock = new object();
         }
 
-        #endregion
-
         protected bool IsDisposing { get; private set; }
+
+        public bool IsShutdownRequested { get; private set; }
 
         public bool IsDisposed { get; private set; }
 
@@ -44,14 +39,6 @@ namespace Intersect.Core
         {
             get => mIsRunning && !IsShutdownRequested;
             private set => mIsRunning = value;
-        }
-
-        public bool IsShutdownRequested { get; private set; }
-
-        protected ApplicationContext()
-        {
-            ConcurrentInstance.Set(This);
-            mShutdownLock = new object();
         }
 
         public void Start(bool lockUntilShutdown = true)
@@ -99,25 +86,44 @@ namespace Intersect.Core
                 }
 
                 IsShutdownRequested = true;
-                disposeTask = new Task(() =>
-                {
-                    Dispose();
-
-                    lock (mShutdownLock)
+                disposeTask = new Task(
+                    () =>
                     {
-                        Monitor.PulseAll(mShutdownLock);
+                        Dispose();
+
+                        lock (mShutdownLock)
+                        {
+                            Monitor.PulseAll(mShutdownLock);
+                        }
                     }
-                });
+                );
 
                 disposeTask.Start();
             }
 
-            
             if (join)
             {
                 disposeTask.Wait();
             }
         }
+
+        #region Instance Management
+
+        [NotNull]
+        private TContext This => this as TContext ?? throw new InvalidOperationException();
+
+        [NotNull]
+        private static ConcurrentInstance<TContext> ConcurrentInstance { get; }
+
+        [NotNull]
+        public static TContext Instance => ConcurrentInstance;
+
+        static ApplicationContext()
+        {
+            ConcurrentInstance = new ConcurrentInstance<TContext>();
+        }
+
+        #endregion
 
         #region Dispose
 
@@ -165,5 +171,7 @@ namespace Intersect.Core
         }
 
         #endregion
+
     }
+
 }

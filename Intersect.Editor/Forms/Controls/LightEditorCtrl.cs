@@ -8,11 +8,15 @@ using Intersect.GameObjects;
 
 namespace Intersect.Editor.Forms.Controls
 {
+
     public partial class LightEditorCtrl : UserControl
     {
-        private LightBase mBackupLight;
-        private LightBase mEditingLight;
+
         public bool CanClose = true;
+
+        private LightBase mBackupLight;
+
+        private LightBase mEditingLight;
 
         public LightEditorCtrl()
         {
@@ -32,10 +36,15 @@ namespace Intersect.Editor.Forms.Controls
             nudOffsetX.Value = tmpLight.OffsetX;
             nudOffsetY.Value = tmpLight.OffsetY;
             nudExpand.Value = (int) tmpLight.Expand;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R,
-                tmpLight.Color.G,
-                tmpLight.Color.B);
-            if (!CanClose) btnOkay.Hide();
+            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(
+                tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G, tmpLight.Color.B
+            );
+
+            if (!CanClose)
+            {
+                btnOkay.Hide();
+            }
+
             InitLocalization();
         }
 
@@ -56,8 +65,15 @@ namespace Intersect.Editor.Forms.Controls
         //Lights Tab
         private void btnLightEditorClose_Click(object sender, EventArgs e)
         {
-            if (CanClose) Visible = false;
-            if (mEditingLight == Globals.EditingLight) Globals.EditingLight = null;
+            if (CanClose)
+            {
+                Visible = false;
+            }
+
+            if (mEditingLight == Globals.EditingLight)
+            {
+                Globals.EditingLight = null;
+            }
         }
 
         private void btnLightEditorRevert_Click(object sender, EventArgs e)
@@ -68,10 +84,17 @@ namespace Intersect.Editor.Forms.Controls
                 mEditingLight.Size = mBackupLight.Size;
                 mEditingLight.OffsetX = mBackupLight.OffsetX;
                 mEditingLight.OffsetY = mBackupLight.OffsetY;
-                if (mEditingLight == Globals.EditingLight) Globals.EditingLight = null;
+                if (mEditingLight == Globals.EditingLight)
+                {
+                    Globals.EditingLight = null;
+                }
             }
+
             Graphics.TilePreviewUpdated = true;
-            if (CanClose) Visible = false;
+            if (CanClose)
+            {
+                Visible = false;
+            }
         }
 
         private void btnSelectLightColor_Click(object sender, EventArgs e)
@@ -79,8 +102,10 @@ namespace Intersect.Editor.Forms.Controls
             colorDialog.Color = System.Drawing.Color.White;
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
-            mEditingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G,
-                colorDialog.Color.B);
+            mEditingLight.Color = Color.FromArgb(
+                colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B
+            );
+
             Graphics.TilePreviewUpdated = true;
         }
 
@@ -95,6 +120,7 @@ namespace Intersect.Editor.Forms.Controls
             {
                 return;
             }
+
             mEditingLight.OffsetX = (int) nudOffsetX.Value;
             Graphics.TilePreviewUpdated = true;
         }
@@ -105,6 +131,7 @@ namespace Intersect.Editor.Forms.Controls
             {
                 return;
             }
+
             mEditingLight.OffsetY = (int) nudOffsetY.Value;
             Graphics.TilePreviewUpdated = true;
         }
@@ -115,6 +142,7 @@ namespace Intersect.Editor.Forms.Controls
             {
                 return;
             }
+
             mEditingLight.Size = (int) nudSize.Value;
             Graphics.TilePreviewUpdated = true;
         }
@@ -125,6 +153,7 @@ namespace Intersect.Editor.Forms.Controls
             {
                 return;
             }
+
             mEditingLight.Intensity = (byte) nudIntensity.Value;
             Graphics.TilePreviewUpdated = true;
         }
@@ -135,8 +164,11 @@ namespace Intersect.Editor.Forms.Controls
             {
                 return;
             }
+
             mEditingLight.Expand = (int) nudExpand.Value;
             Graphics.TilePreviewUpdated = true;
         }
+
     }
+
 }

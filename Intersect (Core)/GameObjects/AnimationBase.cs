@@ -1,15 +1,19 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Intersect.Models;
+
 using Microsoft.EntityFrameworkCore;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
+
     [Owned]
     public class AnimationLayer
     {
+
         public AnimationLayer()
         {
             Lights = new LightBase[FrameCount];
@@ -45,19 +49,11 @@ namespace Intersect.GameObjects
 
         [NotMapped]
         public LightBase[] Lights { get; set; }
+
     }
 
     public class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     {
-        public AnimationLayer Lower { get; set; }
-        public AnimationLayer Upper { get; set; }
-
-        //Misc
-        public string Sound { get; set; }
-        public bool CompleteSound { get; set; }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public AnimationBase(Guid id) : base(id)
@@ -76,5 +72,19 @@ namespace Intersect.GameObjects
             Lower = new AnimationLayer();
             Upper = new AnimationLayer();
         }
+
+        public AnimationLayer Lower { get; set; }
+
+        public AnimationLayer Upper { get; set; }
+
+        //Misc
+        public string Sound { get; set; }
+
+        public bool CompleteSound { get; set; }
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
     }
+
 }

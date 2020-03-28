@@ -1,16 +1,17 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Radio button.
     /// </summary>
     public class RadioButton : CheckBox
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RadioButton" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public RadioButton(Base parent)
-            : base(parent)
+        public RadioButton(Base parent) : base(parent)
         {
             SetSize(15, 15);
             MouseInputEnabled = true;
@@ -31,5 +32,7 @@
         {
             skin.DrawRadioButton(this, IsChecked, IsDepressed);
         }
+
     }
+
 }

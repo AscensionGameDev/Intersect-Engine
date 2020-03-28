@@ -9,9 +9,12 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandChangeSprite : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private ChangeSpriteCommand mMyCommand;
 
         public EventCommandChangeSprite(ChangeSpriteCommand refCommand, FrmEvent editor)
@@ -21,7 +24,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
-            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
+            );
+
             if (cmbSprite.Items.IndexOf(mMyCommand.Sprite) > -1)
             {
                 cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(mMyCommand.Sprite);
@@ -30,6 +36,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbSprite.SelectedIndex = 0;
             }
+
             UpdatePreview();
         }
 
@@ -43,18 +50,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdatePreview()
         {
-            Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            Graphics g = Graphics.FromImage(destBitmap);
+            var destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
+            var g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.Black);
             if (File.Exists("resources/entities/" + cmbSprite.Text))
             {
-                Bitmap sourceBitmap = new Bitmap("resources/entities/" + cmbSprite.Text);
-                g.DrawImage(sourceBitmap,
-                    new Rectangle(pnlPreview.Width / 2 - sourceBitmap.Width / 8,
-                        pnlPreview.Height / 2 - sourceBitmap.Height / 8, sourceBitmap.Width / 4,
-                        sourceBitmap.Height / 4),
-                    new Rectangle(0, 0, sourceBitmap.Width / 4, sourceBitmap.Height / 4), GraphicsUnit.Pixel);
+                var sourceBitmap = new Bitmap("resources/entities/" + cmbSprite.Text);
+                g.DrawImage(
+                    sourceBitmap,
+                    new Rectangle(
+                        pnlPreview.Width / 2 - sourceBitmap.Width / 8, pnlPreview.Height / 2 - sourceBitmap.Height / 8,
+                        sourceBitmap.Width / 4, sourceBitmap.Height / 4
+                    ), new Rectangle(0, 0, sourceBitmap.Width / 4, sourceBitmap.Height / 4), GraphicsUnit.Pixel
+                );
             }
+
             g.Dispose();
             pnlPreview.BackgroundImage = destBitmap;
         }
@@ -74,5 +84,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             UpdatePreview();
         }
+
     }
+
 }

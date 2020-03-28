@@ -2,18 +2,24 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Server.Entities;
+
 using JetBrains.Annotations;
+
 using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
 {
+
     public class ServerNetwork : AbstractNetwork, IServer
     {
-        public ServerNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters)
-            : base(configuration)
+
+        public ServerNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
+            configuration
+        )
         {
             Guid = Guid.NewGuid();
 
@@ -27,12 +33,15 @@ namespace Intersect.Server.Networking.Lidgren
         }
 
         public HandleConnectionEvent OnConnected { get; set; }
+
         public HandleConnectionEvent OnConnectionApproved { get; set; }
+
         public HandleConnectionEvent OnDisconnected { get; set; }
 
         public bool Listen()
         {
             StartInterfaces();
+
             return true;
         }
 
@@ -65,10 +74,10 @@ namespace Intersect.Server.Networking.Lidgren
                     var response = peer.CreateMessage();
                     response.WriteVariableInt32(Player.OnlineCount);
                     peer.SendUnconnectedMessage(response, message.SenderEndPoint);
+
                     break;
             }
         }
-
 
         protected virtual bool HandleConnectionRequested(INetworkLayerInterface sender, IConnection connection)
         {
@@ -76,25 +85,32 @@ namespace Intersect.Server.Networking.Lidgren
             {
                 if (!string.IsNullOrEmpty(connection.Ip))
                 {
-                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
+                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) &&
+                           Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
                 }
                 else
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
         public override bool Send(IPacket packet)
-            => Send(Connections, packet);
+        {
+            return Send(Connections, packet);
+        }
 
         public override bool Send(IConnection connection, IPacket packet)
-            => Send(new[] {connection}, packet);
+        {
+            return Send(new[] {connection}, packet);
+        }
 
         public override bool Send(ICollection<IConnection> connections, IPacket packet)
         {
             SendPacket(packet, connections, TransmissionMode.All);
+
             return true;
         }
 
@@ -102,5 +118,7 @@ namespace Intersect.Server.Networking.Lidgren
         {
             return new ConcurrentDictionary<TKey, TValue>();
         }
+
     }
+
 }

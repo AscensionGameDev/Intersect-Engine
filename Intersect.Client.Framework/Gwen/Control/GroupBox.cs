@@ -1,11 +1,13 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Group box (container).
     /// </summary>
     /// <remarks>Don't use autosize with docking.</remarks>
     public class GroupBox : Label
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="GroupBox" /> class.
         /// </summary>
@@ -27,6 +29,7 @@
             mInnerPanel = new Base(this);
             mInnerPanel.Dock = Pos.Fill;
             mInnerPanel.Margin = new Margin(5, TextHeight + 5, 5, 5);
+
             //Margin = new Margin(5, 5, 5, 5);
         }
 
@@ -66,7 +69,11 @@
             mInnerPanel.SizeToChildren();
             SizeToChildren();
             if (Width < TextWidth + TextPadding.Right + TextPadding.Left)
+            {
                 Width = TextWidth + TextPadding.Right + TextPadding.Left;
+            }
         }
+
     }
+
 }

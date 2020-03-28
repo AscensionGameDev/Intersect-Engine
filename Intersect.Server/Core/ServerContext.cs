@@ -1,25 +1,25 @@
-﻿using Intersect.Logging;
-using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
-using Intersect.Server.Networking;
-using Intersect.Server.Networking.Lidgren;
-
-using JetBrains.Annotations;
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 
 using Intersect.Core;
+using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
+using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
+using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Web.RestApi;
 
+using JetBrains.Annotations;
+
 using Open.Nat;
+
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
 #endif
@@ -30,13 +30,21 @@ namespace Intersect.Server.Core
     internal sealed class ServerContext : ApplicationContext<ServerContext>
     {
 
-        #region Threads
+        public ServerContext([NotNull] CommandLineOptions startupOptions)
+        {
+            StartupOptions = startupOptions;
 
-        private Thread ThreadConsole { get; set; }
+            if (startupOptions.Port > 0)
+            {
+                Options.ServerPort = startupOptions.Port;
+            }
 
-        private Thread ThreadLogic { get; set; }
+            ServerConsole = new ServerConsole();
+            ServerLogic = new ServerLogic();
+            RestApi = new RestApi(startupOptions.ApiPort);
 
-        #endregion
+            Network = CreateNetwork();
+        }
 
         [NotNull]
         public CommandLineOptions StartupOptions { get; }
@@ -53,19 +61,115 @@ namespace Intersect.Server.Core
         [NotNull]
         public RestApi RestApi { get; }
 
-        public ServerContext([NotNull] CommandLineOptions startupOptions)
+        #region Startup
+
+        protected override void InternalStart()
         {
-            StartupOptions = startupOptions;
+            try
+            {
+                InternalStartNetworking();
 
-            if (startupOptions.Port > 0)
-                Options.ServerPort = startupOptions.Port;
+                if (!StartupOptions.DoNotShowConsole)
+                {
+                    ThreadConsole = ServerConsole.Start();
+                }
 
-            ServerConsole = new ServerConsole();
-            ServerLogic = new ServerLogic();
-            RestApi = new RestApi(startupOptions.ApiPort);
+                ThreadLogic = ServerLogic.Start();
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                Dispose();
 
-            Network = CreateNetwork();
+                throw;
+            }
         }
+
+        #endregion
+
+        #region Dispose
+
+        protected override void Dispose(bool disposing)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            if (disposing)
+            {
+                #region CLEAN THIS UP
+
+                // TODO: This may actually be fine here? Might want to move it into Bootstrapper though as "PrintShutdown()"
+                Console.WriteLine();
+                Console.WriteLine(Strings.Commands.exiting);
+                Console.WriteLine();
+
+#if WEBSOCKETS
+                Log.Info("Shutting down websockets..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                WebSocketNetwork.Stop();
+#endif
+
+                // Except this line, this line is fine.
+                Log.Info("Disposing network..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                Network.Dispose();
+
+                // TODO: This probably also needs to not be a global, but will require more work to clean up.
+                Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                DbInterface.SavePlayerDatabase(Environment.StackTrace);
+                Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                DbInterface.SaveGameDatabase();
+
+                // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
+                Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                RestApi.Dispose();
+
+                #endregion
+
+                if (ThreadConsole?.IsAlive ?? false)
+                {
+                    Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                    if (!ThreadConsole.Join(1000))
+                    {
+                        try
+                        {
+                            ThreadConsole.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+                        }
+                    }
+                }
+
+                if (ThreadLogic?.IsAlive ?? false)
+                {
+                    Log.Info("Shutting down the logic thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                    if (!ThreadLogic.Join(10000))
+                    {
+                        try
+                        {
+                            ThreadLogic.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+                        }
+                    }
+                }
+            }
+
+            Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+            base.Dispose(disposing);
+            Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+            Console.WriteLine(Strings.Commands.exited);
+        }
+
+        #endregion
+
+        #region Threads
+
+        private Thread ThreadConsole { get; set; }
+
+        private Thread ThreadLogic { get; set; }
+
+        #endregion
 
         #region Network
 
@@ -151,109 +255,6 @@ namespace Intersect.Server.Core
         }
 
         #endregion
-
-        #endregion
-
-        #region Startup
-
-        protected override void InternalStart()
-        {
-            try
-            {
-                InternalStartNetworking();
-
-                if (!StartupOptions.DoNotShowConsole)
-                {
-                    ThreadConsole = ServerConsole.Start();
-                }
-
-                ThreadLogic = ServerLogic.Start();
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-                Dispose();
-                throw;
-            }
-        }
-
-        #endregion
-
-        #region Dispose
-
-        protected override void Dispose(bool disposing)
-        {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            if (disposing)
-            {
-                #region CLEAN THIS UP
-
-                // TODO: This may actually be fine here? Might want to move it into Bootstrapper though as "PrintShutdown()"
-                Console.WriteLine();
-                Console.WriteLine(Strings.Commands.exiting);
-                Console.WriteLine();
-
-#if WEBSOCKETS
-                Log.Info("Shutting down websockets..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                WebSocketNetwork.Stop();
-#endif
-
-                // Except this line, this line is fine.
-                Log.Info("Disposing network..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                Network.Dispose();
-
-                // TODO: This probably also needs to not be a global, but will require more work to clean up.
-                Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SavePlayerDatabase(Environment.StackTrace);
-                Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SaveGameDatabase();
-
-                // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
-                Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                RestApi.Dispose();
-
-                #endregion
-
-                if (ThreadConsole?.IsAlive ?? false)
-                {
-                    Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                    if (!ThreadConsole.Join(1000))
-                    {
-                        try
-                        {
-                            ThreadConsole.Abort();
-                        }
-                        catch (ThreadAbortException ex)
-                        {
-
-                        }
-                    }
-                }
-
-                if (ThreadLogic?.IsAlive ?? false)
-                {
-                    Log.Info("Shutting down the logic thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                    if (!ThreadLogic.Join(10000))
-                    {
-                        try
-                        {
-                            ThreadLogic.Abort();
-                        }
-                        catch (ThreadAbortException ex)
-                        {
-
-                        }
-                    }
-                }
-            }
-
-            Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-            base.Dispose(disposing);
-            Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-            Console.WriteLine(Strings.Commands.exited);
-        }
 
         #endregion
 

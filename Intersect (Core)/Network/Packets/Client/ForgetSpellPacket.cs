@@ -1,17 +1,19 @@
-﻿using Intersect.Collections;
+﻿using System.Collections.Generic;
 
-using System.Collections.Generic;
+using Intersect.Collections;
 
 namespace Intersect.Network.Packets.Client
 {
+
     public class ForgetSpellPacket : CerasPacket
     {
-        public int Slot { get; set; }
 
         public ForgetSpellPacket(int slot)
         {
             Slot = slot;
         }
+
+        public int Slot { get; set; }
 
         public override Dictionary<string, SanitizedValue<object>> Sanitize()
         {
@@ -21,5 +23,7 @@ namespace Intersect.Network.Packets.Client
 
             return sanitizer.Sanitized;
         }
+
     }
+
 }

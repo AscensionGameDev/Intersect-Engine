@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Dynamic;
 using System.Linq;
 
 using Intersect.Server.Localization;
@@ -21,28 +20,6 @@ namespace Intersect.Server.Database.PlayerData
 
     public class Mute
     {
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
-
-        [ForeignKey("Player"), Column("PlayerId")] // SOURCE TODO: Migrate column
-        public Guid UserId { get; private set; }
-
-        [JsonIgnore, Column("Player")] // SOURCE TODO: Migrate column
-        public virtual User User { get; private set; }
-
-        [JsonIgnore, NotMapped]
-        public bool IsIp => Guid.Empty == UserId;
-
-        public string Ip { get; private set; }
-
-        public DateTime StartTime { get; private set; }
-
-        public DateTime EndTime { get; set; }
-
-        public string Reason { get; private set; }
-
-        public string Muter { get; private set; }
 
         public Mute()
         {
@@ -71,6 +48,28 @@ namespace Intersect.Server.Database.PlayerData
             User = user;
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; private set; }
+
+        [ForeignKey("Player"), Column("PlayerId")] // SOURCE TODO: Migrate column
+        public Guid UserId { get; private set; }
+
+        [JsonIgnore, Column("Player")] // SOURCE TODO: Migrate column
+        public virtual User User { get; private set; }
+
+        [JsonIgnore, NotMapped]
+        public bool IsIp => Guid.Empty == UserId;
+
+        public string Ip { get; private set; }
+
+        public DateTime StartTime { get; private set; }
+
+        public DateTime EndTime { get; set; }
+
+        public string Reason { get; private set; }
+
+        public string Muter { get; private set; }
+
         public static bool Add([NotNull] Mute mute, [CanBeNull] PlayerContext playerContext = null)
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -88,6 +87,7 @@ namespace Intersect.Server.Database.PlayerData
 
                 context.Mutes.Add(mute);
                 DbInterface.SavePlayerDatabaseAsync();
+
                 return true;
             }
         }
@@ -114,6 +114,7 @@ namespace Intersect.Server.Database.PlayerData
         )
         {
             user.UserMute = new Mute(user, ip, reason, duration, muter);
+
             return Add(user.UserMute, playerContext);
         }
 
@@ -147,6 +148,7 @@ namespace Intersect.Server.Database.PlayerData
 
                 context.Mutes.Remove(mute);
                 DbInterface.SavePlayerDatabaseAsync();
+
                 return true;
             }
         }
@@ -202,10 +204,16 @@ namespace Intersect.Server.Database.PlayerData
             }
 
             var mute = user.Mute;
-            return mute == null ? null : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
+
+            return mute == null
+                ? null
+                : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
 
-        public static Mute Find([NotNull] User user) => Find(user.Id);
+        public static Mute Find([NotNull] User user)
+        {
+            return Find(user.Id);
+        }
 
         public static Mute Find(Guid userId)
         {
@@ -228,23 +236,36 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<Mute> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
+        public static IEnumerable<Mute> FindAll([NotNull] User user)
+        {
+            return ByUser(DbInterface.GetPlayerContext(), user.Id);
+        }
 
-        public static IEnumerable<Mute> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
+        public static IEnumerable<Mute> FindAll(Guid userId)
+        {
+            return ByUser(DbInterface.GetPlayerContext(), userId);
+        }
 
-        public static IEnumerable<Mute> FindAll(string ip) => ByIp(DbInterface.GetPlayerContext(), ip);
+        public static IEnumerable<Mute> FindAll(string ip)
+        {
+            return ByIp(DbInterface.GetPlayerContext(), ip);
+        }
 
         #region Compiled Queries
 
         [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Mute>> ByUser =
             EF.CompileQuery<PlayerContext, Guid, Mute>(
-                (context, userId) => context.Mutes.Where(mute => mute.UserId == userId && mute.EndTime > DateTime.UtcNow)
+                (context, userId) =>
+                    context.Mutes.Where(mute => mute.UserId == userId && mute.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
             EF.CompileQuery<PlayerContext, string, Mute>(
-                (context, ip) => context.Mutes.Where(mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase) && mute.EndTime > DateTime.UtcNow)
+                (context, ip) => context.Mutes.Where(
+                    mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase) &&
+                            mute.EndTime > DateTime.UtcNow
+                )
             ) ??
             throw new InvalidOperationException();
 

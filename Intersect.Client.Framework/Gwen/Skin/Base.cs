@@ -1,22 +1,35 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.Skin
 {
+
     /// <summary>
     ///     Base skin.
     /// </summary>
     public class Base : IDisposable
     {
-        protected GameFont mDefaultFont;
+
         protected readonly Renderer.Base mRenderer;
 
         /// <summary>
         ///     Colors of various UI elements.
         /// </summary>
         public SkinColors Colors;
+
+        protected GameFont mDefaultFont;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Base" /> class.
+        /// </summary>
+        /// <param name="renderer">Renderer to use.</param>
+        protected Base(Renderer.Base renderer)
+        {
+            mDefaultFont = null;
+            mRenderer = renderer;
+        }
 
         /// <summary>
         ///     Default font to use when rendering text if none specified.
@@ -31,16 +44,6 @@ namespace Intersect.Client.Framework.Gwen.Skin
         ///     Renderer used.
         /// </summary>
         public Renderer.Base Renderer => mRenderer;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Base" /> class.
-        /// </summary>
-        /// <param name="renderer">Renderer to use.</param>
-        protected Base(Renderer.Base renderer)
-        {
-            mDefaultFont = null;
-            mRenderer = renderer;
-        }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -136,8 +139,13 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
         }
 
-        public virtual void DrawScrollButton(Control.Base control, Pos direction, bool depressed, bool hovered,
-            bool disabled)
+        public virtual void DrawScrollButton(
+            Control.Base control,
+            Pos direction,
+            bool depressed,
+            bool hovered,
+            bool disabled
+        )
         {
         }
 
@@ -165,8 +173,13 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
         }
 
-        public virtual void DrawComboBoxArrow(Control.Base control, bool hovered, bool depressed, bool open,
-            bool disabled)
+        public virtual void DrawComboBoxArrow(
+            Control.Base control,
+            bool hovered,
+            bool depressed,
+            bool open,
+            bool disabled
+        )
         {
         }
 
@@ -193,55 +206,84 @@ namespace Intersect.Client.Framework.Gwen.Skin
         public virtual void DrawDebugOutlines(Control.Base control)
         {
             mRenderer.DrawColor = control.PaddingOutlineColor;
-            Rectangle inner = new Rectangle(control.Bounds.Left + control.Padding.Left,
-                control.Bounds.Top + control.Padding.Top,
+            var inner = new Rectangle(
+                control.Bounds.Left + control.Padding.Left, control.Bounds.Top + control.Padding.Top,
                 control.Bounds.Width - control.Padding.Right - control.Padding.Left,
-                control.Bounds.Height - control.Padding.Bottom - control.Padding.Top);
+                control.Bounds.Height - control.Padding.Bottom - control.Padding.Top
+            );
+
             mRenderer.DrawLinedRect(inner);
 
             mRenderer.DrawColor = control.MarginOutlineColor;
-            Rectangle outer = new Rectangle(control.Bounds.Left - control.Margin.Left,
-                control.Bounds.Top - control.Margin.Top,
+            var outer = new Rectangle(
+                control.Bounds.Left - control.Margin.Left, control.Bounds.Top - control.Margin.Top,
                 control.Bounds.Width + control.Margin.Right + control.Margin.Left,
-                control.Bounds.Height + control.Margin.Bottom + control.Margin.Top);
+                control.Bounds.Height + control.Margin.Bottom + control.Margin.Top
+            );
+
             mRenderer.DrawLinedRect(outer);
 
             mRenderer.DrawColor = control.BoundsOutlineColor;
             mRenderer.DrawLinedRect(control.Bounds);
         }
 
-        public virtual void DrawTreeNode(Control.Base ctrl, bool open, bool selected, int labelHeight, int labelWidth,
-            int halfWay, int lastBranch, bool isRoot)
+        public virtual void DrawTreeNode(
+            Control.Base ctrl,
+            bool open,
+            bool selected,
+            int labelHeight,
+            int labelWidth,
+            int halfWay,
+            int lastBranch,
+            bool isRoot
+        )
         {
             Renderer.DrawColor = Colors.Tree.Lines;
 
             if (!isRoot)
+            {
                 Renderer.DrawFilledRect(new Rectangle(8, halfWay, 16 - 9, 1));
+            }
 
-            if (!open) return;
+            if (!open)
+            {
+                return;
+            }
 
             Renderer.DrawFilledRect(new Rectangle(14 + 7, labelHeight + 1, 1, lastBranch + halfWay - labelHeight));
         }
 
         public virtual void DrawPropertyRow(Control.Base control, int iWidth, bool bBeingEdited, bool hovered)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             if (bBeingEdited)
+            {
                 mRenderer.DrawColor = Colors.Properties.ColumnSelected;
+            }
             else if (hovered)
+            {
                 mRenderer.DrawColor = Colors.Properties.ColumnHover;
+            }
             else
+            {
                 mRenderer.DrawColor = Colors.Properties.ColumnNormal;
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(0, rect.Y, iWidth, rect.Height));
 
             if (bBeingEdited)
+            {
                 mRenderer.DrawColor = Colors.Properties.LineSelected;
+            }
             else if (hovered)
+            {
                 mRenderer.DrawColor = Colors.Properties.LineHover;
+            }
             else
+            {
                 mRenderer.DrawColor = Colors.Properties.LineNormal;
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(iWidth, rect.Y, 1, rect.Height));
 
@@ -273,7 +315,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawPropertyTreeNode(Control.Base control, int borderLeft, int borderTop)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             mRenderer.DrawColor = Colors.Properties.Border;
 
@@ -295,8 +337,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawArrowDown(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            var x = rect.Width / 5.0f;
+            var y = rect.Height / 5.0f;
 
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 1.0f, x, y * 1.0f));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 1.0f, x, y * 2.0f));
@@ -307,8 +349,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawArrowUp(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            var x = rect.Width / 5.0f;
+            var y = rect.Height / 5.0f;
 
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 3.0f, x, y * 1.0f));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 2.0f, x, y * 2.0f));
@@ -319,8 +361,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawArrowLeft(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            var x = rect.Width / 5.0f;
+            var y = rect.Height / 5.0f;
 
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 3.0f, rect.Y + y * 0.0f, x * 1.0f, y));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 2.0f, rect.Y + y * 1.0f, x * 2.0f, y));
@@ -331,8 +373,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawArrowRight(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            var x = rect.Width / 5.0f;
+            var y = rect.Height / 5.0f;
 
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 0.0f, x * 1.0f, y));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 1.0f, x * 2.0f, y));
@@ -343,8 +385,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawCheck(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            var x = rect.Width / 5.0f;
+            var y = rect.Height / 5.0f;
 
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 3.0f, x * 2, y * 2));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 4.0f, x * 2, y * 2));
@@ -355,9 +397,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawLabel(Control.Base control)
         {
-
         }
 
         #endregion
+
     }
+
 }

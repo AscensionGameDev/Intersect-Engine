@@ -5,30 +5,36 @@ using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
-using Intersect.Client.Maps;
 using Intersect.Logging;
 
 namespace Intersect.Client.Core
 {
+
     public static class Audio
     {
+
+        private static string sCurrentSong = "";
+
+        private static float sFadeRate;
+
+        private static long sFadeTimer;
+
+        private static bool sFadingOut;
+
+        //Sounds
+        private static List<Sound> sGameSounds = new List<Sound>();
+
         private static bool sIsInitialized;
+
+        private static float sQueuedFade;
+
+        private static bool sQueuedLoop;
 
         //Music
         private static string sQueuedMusic = "";
 
-        private static string sCurrentSong = "";
-        private static float sFadeRate;
-        private static long sFadeTimer;
         private static GameAudioInstance sMyMusic { get; set; }
-        private static bool sFadingOut;
-        private static bool sQueuedLoop;
-        private static float sQueuedFade;
-
-        //Sounds
-        private static List<Sound> sGameSounds = new List<Sound>();
 
         //Init
         public static void Init()
@@ -37,6 +43,7 @@ namespace Intersect.Client.Core
             {
                 return;
             }
+
             Globals.ContentManager.LoadAudio();
             sIsInitialized = true;
         }
@@ -47,7 +54,8 @@ namespace Intersect.Client.Core
             {
                 sMyMusic.SetVolume(sMyMusic.GetVolume(), true);
             }
-            for (int i = 0; i < sGameSounds.Count; i++)
+
+            for (var i = 0; i < sGameSounds.Count; i++)
             {
                 sGameSounds[i].Update();
                 if (!sGameSounds[i].Loaded)
@@ -91,7 +99,8 @@ namespace Intersect.Client.Core
                     }
                 }
             }
-            for (int i = 0; i < sGameSounds.Count; i++)
+
+            for (var i = 0; i < sGameSounds.Count; i++)
             {
                 sGameSounds[i].Update();
                 if (!sGameSounds[i].Loaded)
@@ -108,16 +117,19 @@ namespace Intersect.Client.Core
             {
                 //Entered a map with no music selected, fade out any music that's already playing.
                 StopMusic(3f);
+
                 return;
             }
-            
+
             ClearQueue();
 
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
             {
-                if (fadeout < 0.01|| sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
+                if (fadeout < 0.01 ||
+                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
+                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
+                    sMyMusic.GetVolume() == 0)
                 {
                     StopMusic();
                     StartMusic(filename, fadein, loop);
@@ -179,8 +191,10 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Math.Abs(fadeout) < 0.01 || sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-                sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
+            if (Math.Abs(fadeout) < 0.01 ||
+                sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
+                sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
+                sMyMusic.GetVolume() == 0)
             {
                 sCurrentSong = "";
                 sMyMusic.Stop();
@@ -198,19 +212,37 @@ namespace Intersect.Client.Core
         }
 
         //Sounds
-        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance, Entity parent = null)
+        public static MapSound AddMapSound(
+            string filename,
+            int x,
+            int y,
+            Guid mapId,
+            bool loop,
+            int distance,
+            Entity parent = null
+        )
         {
-            if (sGameSounds?.Count > 128) return null;
+            if (sGameSounds?.Count > 128)
+            {
+                return null;
+            }
+
             var sound = new MapSound(filename, x, y, mapId, loop, distance, parent);
             sGameSounds?.Add(sound);
+
             return sound;
         }
 
         public static Sound AddGameSound(string filename, bool loop)
         {
-            if (sGameSounds?.Count > 128) return null;
+            if (sGameSounds?.Count > 128)
+            {
+                return null;
+            }
+
             var sound = new Sound(filename, loop);
             sGameSounds?.Add(sound);
+
             return sound;
         }
 
@@ -221,7 +253,7 @@ namespace Intersect.Client.Core
 
         public static void StopAllSounds()
         {
-            for (int i = 0; i < sGameSounds.Count; i++)
+            for (var i = 0; i < sGameSounds.Count; i++)
             {
                 if (sGameSounds[i] != null)
                 {
@@ -229,5 +261,7 @@ namespace Intersect.Client.Core
                 }
             }
         }
+
     }
+
 }

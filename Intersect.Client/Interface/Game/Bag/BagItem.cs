@@ -2,7 +2,6 @@
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -13,33 +12,42 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bag
 {
+
     public class BagItem
     {
+
         private static int sItemXPadding = 4;
+
         private static int sItemYPadding = 4;
+
+        public ImagePanel Container;
+
+        public bool IsDragging;
 
         //Drag/Drop References
         private BagWindow mBagWindow;
-
-        private Guid mCurrentItemId;
-        private ItemDescWindow mDescWindow;
-
-        //Slot info
-        private int mMySlot;
 
         //Dragging
         private bool mCanDrag;
 
         private long mClickTime;
-        public ImagePanel Container;
+
+        private Guid mCurrentItemId;
+
+        private ItemDescWindow mDescWindow;
+
         private Draggable mDragIcon;
-        public bool IsDragging;
 
         //Mouse Event Variables
         private bool mMouseOver;
 
         private int mMouseX = -1;
+
         private int mMouseY = -1;
+
+        //Slot info
+        private int mMySlot;
+
         public ImagePanel Pnl;
 
         public BagItem(BagWindow bagWindow, int index)
@@ -85,34 +93,45 @@ namespace Intersect.Client.Interface.Game.Bag
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (InputHandler.MouseFocus != null) return;
+            if (InputHandler.MouseFocus != null)
+            {
+                return;
+            }
+
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 mCanDrag = false;
+
                 return;
             }
+
             if (mDescWindow != null)
             {
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
+
             if (Globals.Bag[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Bag[mMySlot].Base, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y, Globals.Bag[mMySlot].StatBuffs);
+                mDescWindow = new ItemDescWindow(
+                    Globals.Bag[mMySlot].Base, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
+                    Globals.Bag[mMySlot].StatBuffs
+                );
             }
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
+
             return rect;
         }
 
@@ -124,8 +143,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 var item = ItemBase.Get(Globals.Bag[mMySlot].ItemId);
                 if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -146,6 +164,7 @@ namespace Intersect.Client.Interface.Game.Bag
                     }
                 }
             }
+
             if (!IsDragging)
             {
                 if (mMouseOver)
@@ -167,29 +186,24 @@ namespace Intersect.Client.Interface.Game.Bag
                         {
                             if (mMouseX == -1 || mMouseY == -1)
                             {
-                                mMouseX = InputHandler.MousePosition.X -
-                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X;
-                                mMouseY = InputHandler.MousePosition.Y -
-                                         Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
+                                mMouseX = InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X;
+                                mMouseY = InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
-                                int xdiff = mMouseX -
-                                            (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0))
-                                                 .X);
-                                int ydiff = mMouseY -
-                                            (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Point(0, 0))
-                                                 .Y);
+                                var xdiff = mMouseX -
+                                            (InputHandler.MousePosition.X - Pnl.LocalPosToCanvas(new Point(0, 0)).X);
+
+                                var ydiff = mMouseY -
+                                            (InputHandler.MousePosition.Y - Pnl.LocalPosToCanvas(new Point(0, 0)).Y);
+
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
-                                        mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
-                                        mMouseY, Pnl.Texture);
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                    );
                                 }
                             }
                         }
@@ -202,16 +216,19 @@ namespace Intersect.Client.Interface.Game.Bag
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2,
-                        sItemXPadding / 2 + 32, sItemYPadding / 2 + 32);
+                    var dragRect = new FloatRect(
+                        mDragIcon.X - sItemXPadding / 2, mDragIcon.Y - sItemYPadding / 2, sItemXPadding / 2 + 32,
+                        sItemYPadding / 2 + 32
+                    );
 
                     float bestIntersect = 0;
-                    int bestIntersectIndex = -1;
+                    var bestIntersectIndex = -1;
+
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
                     if (mBagWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Globals.Bag.Length; i++)
+                        for (var i = 0; i < Globals.Bag.Length; i++)
                         {
                             if (mBagWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
@@ -222,10 +239,12 @@ namespace Intersect.Client.Interface.Game.Bag
                                     bestIntersect =
                                         FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Width *
                                         FloatRect.Intersect(mBagWindow.Items[i].RenderBounds(), dragRect).Height;
+
                                     bestIntersectIndex = i;
                                 }
                             }
                         }
+
                         if (bestIntersectIndex > -1)
                         {
                             if (mMySlot != bestIntersectIndex)
@@ -235,9 +254,12 @@ namespace Intersect.Client.Interface.Game.Bag
                             }
                         }
                     }
+
                     mDragIcon.Dispose();
                 }
             }
         }
+
     }
+
 }

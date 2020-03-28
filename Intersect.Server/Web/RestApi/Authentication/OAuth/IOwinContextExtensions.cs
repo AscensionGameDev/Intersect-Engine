@@ -29,7 +29,9 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
             var request = owinContext.Request;
 
             var formParameters = string.Join("&", await request.JsonBodyToEncodedParameterStrings());
-            var formParametersBody = new StringContent(formParameters, Encoding.UTF8, "application/x-www-form-urlencoded");
+            var formParametersBody = new StringContent(
+                formParameters, Encoding.UTF8, "application/x-www-form-urlencoded"
+            );
 
             request.Body = await formParametersBody.ReadAsStreamAsync();
         }

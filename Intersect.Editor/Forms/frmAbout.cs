@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 
 namespace Intersect.Editor.Forms
 {
+
     public partial class FrmAbout : Form
     {
+
         public FrmAbout()
         {
             InitializeComponent();
@@ -24,8 +27,10 @@ namespace Intersect.Editor.Forms
         private void InitLocalization()
         {
             Text = Strings.About.title;
-            lblVersion.Text = Strings.About.version.ToString( Application.ProductVersion);
+            lblVersion.Text = Strings.About.version.ToString(Application.ProductVersion);
             lblWebsite.Text = Strings.About.site;
         }
+
     }
+
 }

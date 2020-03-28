@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect
+﻿namespace Intersect
 {
+
     public struct BytePoint
     {
+
         public byte X;
+
         public byte Y;
 
         public BytePoint(byte x, byte y)
@@ -16,5 +13,7 @@ namespace Intersect
             X = x;
             Y = y;
         }
+
     }
+
 }

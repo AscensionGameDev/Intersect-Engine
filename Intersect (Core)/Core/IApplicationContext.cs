@@ -1,11 +1,15 @@
 ﻿using System;
+
 using Intersect.Threading;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Core
 {
+
     public interface IApplicationContext : IDisposable
     {
+
         bool IsDisposed { get; }
 
         bool IsStarted { get; }
@@ -16,5 +20,7 @@ namespace Intersect.Core
 
         [NotNull]
         LockingActionQueue StartWithActionQueue();
+
     }
+
 }

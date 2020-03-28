@@ -6,11 +6,15 @@ using JetBrains.Annotations;
 
 namespace Intersect.Utilities
 {
+
     public static class GuidUtils
     {
+
         /// <inheritdoc cref="CreateNamed(Guid, byte[])" />
-        public static Guid CreateNamed(Guid namespaceId, [NotNull] string name) =>
-            CreateNamed(namespaceId, Encoding.UTF8.GetBytes(name));
+        public static Guid CreateNamed(Guid namespaceId, [NotNull] string name)
+        {
+            return CreateNamed(namespaceId, Encoding.UTF8.GetBytes(name));
+        }
 
         /// <summary>
         /// Version 5 UUID implementation of RFC 4122 §4.3.
@@ -57,5 +61,7 @@ namespace Intersect.Utilities
 
             return new Guid(namedIdData);
         }
+
     }
+
 }

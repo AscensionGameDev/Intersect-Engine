@@ -6,8 +6,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public class ExperimentalFlagConverter : JsonConverter<ExperimentalFlag>
     {
+
         public override bool CanRead => true;
 
         public override bool CanWrite => true;
@@ -17,7 +19,10 @@ namespace Intersect.Core.ExperimentalFeatures
             [NotNull] JsonWriter writer,
             ExperimentalFlag value,
             [NotNull] JsonSerializer serializer
-        ) => serializer.Serialize(writer, value);
+        )
+        {
+            serializer.Serialize(writer, value);
+        }
 
         /// <inheritdoc />
         public override ExperimentalFlag ReadJson(
@@ -29,7 +34,10 @@ namespace Intersect.Core.ExperimentalFeatures
         )
         {
             serializer.Populate(reader, existingValue);
+
             return existingValue;
         }
+
     }
+
 }

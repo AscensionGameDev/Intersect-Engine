@@ -1,14 +1,16 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Property button.
     /// </summary>
     public class ColorButton : Button
     {
+
         private Color mColor;
 
         /// <summary>
@@ -39,5 +41,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             skin.Renderer.DrawColor = mColor;
             skin.Renderer.DrawFilledRect(RenderBounds);
         }
+
     }
+
 }

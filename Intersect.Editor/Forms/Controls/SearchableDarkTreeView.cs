@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -93,8 +92,10 @@ namespace Intersect.Editor.Forms.Controls
             return -1 < name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase);
         }
 
-        protected virtual bool FilterBySearchText(KeyValuePair<Guid, IDatabaseObject> pair) =>
-            FilterBySearchText(pair.Value);
+        protected virtual bool FilterBySearchText(KeyValuePair<Guid, IDatabaseObject> pair)
+        {
+            return FilterBySearchText(pair.Value);
+        }
 
         protected virtual DarkTreeNode ObjectAsNode([NotNull] IDatabaseObject databaseObject)
         {
@@ -106,10 +107,13 @@ namespace Intersect.Editor.Forms.Controls
             return node;
         }
 
-        protected virtual DarkTreeNode PairAsNode(KeyValuePair<Guid, IDatabaseObject> pair) => ObjectAsNode(
-            pair.Value ??
-            throw new ArgumentNullException(nameof(pair.Value), $@"{pair.Key} has a null object associated.")
-        );
+        protected virtual DarkTreeNode PairAsNode(KeyValuePair<Guid, IDatabaseObject> pair)
+        {
+            return ObjectAsNode(
+                pair.Value ??
+                throw new ArgumentNullException(nameof(pair.Value), $@"{pair.Key} has a null object associated.")
+            );
+        }
 
         protected void UpdateNodes()
         {
@@ -149,8 +153,8 @@ namespace Intersect.Editor.Forms.Controls
 
         private void toolStripCreate_Click(object sender, EventArgs e)
         {
-
         }
+
     }
 
 }

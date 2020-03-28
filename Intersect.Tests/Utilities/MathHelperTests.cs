@@ -1,6 +1,6 @@
 ﻿using System;
+
 using Intersect.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NUnit.Framework;
 
@@ -8,9 +8,11 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Utilities
 {
+
     [TestFixture]
     public class MathHelperTests
     {
+
         [Test]
         public void ClampDecimal()
         {
@@ -21,12 +23,25 @@ namespace Intersect.Utilities
                 var val = random.NextDecimal(decimal.MinValue, decimal.MaxValue);
                 var min = random.NextDecimal(decimal.MinValue, decimal.MaxValue);
                 var max = random.NextDecimal(decimal.MinValue, decimal.MaxValue);
-                if (min > max) ValueUtils.Swap(ref min, ref max);
+                if (min > max)
+                {
+                    ValueUtils.Swap(ref min, ref max);
+                }
 
                 var expected = val;
-                if (val < min) expected = min;
-                if (val > max) expected = max;
-                Assert.AreEqual(expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}");
+                if (val < min)
+                {
+                    expected = min;
+                }
+
+                if (val > max)
+                {
+                    expected = max;
+                }
+
+                Assert.AreEqual(
+                    expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}"
+                );
             }
 
             Assert.IsTrue(i > 100);
@@ -42,12 +57,25 @@ namespace Intersect.Utilities
                 var val = random.NextDouble(double.MinValue, double.MaxValue);
                 var min = random.NextDouble(double.MinValue, double.MaxValue);
                 var max = random.NextDouble(double.MinValue, double.MaxValue);
-                if (min > max) ValueUtils.Swap(ref min, ref max);
+                if (min > max)
+                {
+                    ValueUtils.Swap(ref min, ref max);
+                }
 
                 var expected = val;
-                if (val < min) expected = min;
-                if (val > max) expected = max;
-                Assert.AreEqual(expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}");
+                if (val < min)
+                {
+                    expected = min;
+                }
+
+                if (val > max)
+                {
+                    expected = max;
+                }
+
+                Assert.AreEqual(
+                    expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}"
+                );
             }
 
             Assert.IsTrue(i > 100);
@@ -63,12 +91,25 @@ namespace Intersect.Utilities
                 var val = random.NextLong(long.MinValue, long.MaxValue);
                 var min = random.NextLong(long.MinValue, long.MaxValue);
                 var max = random.NextLong(long.MinValue, long.MaxValue);
-                if (min > max) ValueUtils.Swap(ref min, ref max);
+                if (min > max)
+                {
+                    ValueUtils.Swap(ref min, ref max);
+                }
 
                 var expected = val;
-                if (val < min) expected = min;
-                if (val > max) expected = max;
-                Assert.AreEqual(expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}");
+                if (val < min)
+                {
+                    expected = min;
+                }
+
+                if (val > max)
+                {
+                    expected = max;
+                }
+
+                Assert.AreEqual(
+                    expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}"
+                );
             }
 
             Assert.IsTrue(i > 100);
@@ -84,15 +125,30 @@ namespace Intersect.Utilities
                 var val = random.NextULong(ulong.MinValue, ulong.MaxValue);
                 var min = random.NextULong(ulong.MinValue, ulong.MaxValue);
                 var max = random.NextULong(ulong.MinValue, ulong.MaxValue);
-                if (min > max) ValueUtils.Swap(ref min, ref max);
+                if (min > max)
+                {
+                    ValueUtils.Swap(ref min, ref max);
+                }
 
                 var expected = val;
-                if (val < min) expected = min;
-                if (val > max) expected = max;
-                Assert.AreEqual(expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}");
+                if (val < min)
+                {
+                    expected = min;
+                }
+
+                if (val > max)
+                {
+                    expected = max;
+                }
+
+                Assert.AreEqual(
+                    expected, MathHelper.Clamp(val, min, max), $"val={val}, min={min}, max={max}, expected={expected}"
+                );
             }
 
             Assert.IsTrue(i > 100);
         }
+
     }
+
 }

@@ -6,8 +6,10 @@ using JetBrains.Annotations;
 
 namespace Intersect.Collections
 {
+
     public sealed class NamedInstanceStore<TInstance>
     {
+
         [NotNull] private Func<TInstance> mFactory;
 
         [NotNull] private IDictionary<string, TInstance> mInstances;
@@ -31,7 +33,10 @@ namespace Intersect.Collections
         public TInstance GetInstance([NotNull] string name)
         {
             TryGetValue(name, out var instance);
+
             return instance;
         }
+
     }
+
 }

@@ -1,7 +1,4 @@
-﻿using Intersect.Config;
-using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -9,30 +6,135 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
-using Intersect.Logging.Microsoft.Extensions.Logging;
+using Intersect.Config;
 
+using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database
 {
+
     /// <summary>
     /// Abstract DbContext class for all Intersect database contexts.
     /// </summary>
     /// <inheritdoc cref="DbContext" />
     /// <inheritdoc cref="ISeedableContext" />
-    public abstract class IntersectDbContext<T>: DbContext, ISeedableContext
-        where T : IntersectDbContext<T>
+    public abstract class IntersectDbContext<T> : DbContext, ISeedableContext where T : IntersectDbContext<T>
     {
+
+        [NotNull] private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo>();
+
+        private static DbConnectionStringBuilder configuredConnectionStringBuilder;
+
+        private static DatabaseOptions.DatabaseType configuredDatabaseType = DatabaseOptions.DatabaseType.SQLite;
+
+        private static ILoggerFactory loggerFactory;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionStringBuilder"></param>
+        /// <param name="databaseType"></param>
+        /// <inheritdoc />
+        protected IntersectDbContext(
+            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
+            bool isTemporary = false,
+            Intersect.Logging.Logger dbLogger = null,
+            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+        )
+        {
+            ConnectionStringBuilder = connectionStringBuilder;
+            DatabaseType = databaseType;
+
+            //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
+            if (dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
+            {
+                var efLogLevel = LogLevel.None;
+                switch (logLevel)
+                {
+                    case Intersect.Logging.LogLevel.None:
+                        break;
+                    case Intersect.Logging.LogLevel.Error:
+                        efLogLevel = LogLevel.Error;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Warn:
+                        efLogLevel = LogLevel.Warning;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Info:
+                        efLogLevel = LogLevel.Information;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Trace:
+                        efLogLevel = LogLevel.Trace;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Verbose:
+                        efLogLevel = LogLevel.Trace;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Debug:
+                        efLogLevel = LogLevel.Debug;
+
+                        break;
+                    case Intersect.Logging.LogLevel.Diagnostic:
+                        efLogLevel = LogLevel.Trace;
+
+                        break;
+                    case Intersect.Logging.LogLevel.All:
+                        efLogLevel = LogLevel.Trace;
+
+                        break;
+                }
+
+                loggerFactory = LoggerFactory.Create(
+                    builder =>
+                    {
+                        builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(dbLogger));
+                    }
+                );
+            }
+
+            if (!isTemporary)
+            {
+                Current = this as T;
+            }
+        }
+
         public static T Current { get; private set; }
 
         private static ILoggerFactory MsExtLoggerFactory { get; } =
             LoggerFactory.Create(builder => builder.AddConsole());
 
-        private static DatabaseOptions.DatabaseType configuredDatabaseType = DatabaseOptions.DatabaseType.SQLite;
+        /// <summary>
+        /// 
+        /// </summary>
+        public DatabaseOptions.DatabaseType DatabaseType { get; }
 
-        private static DbConnectionStringBuilder configuredConnectionStringBuilder;
+        /// <summary>
+        /// 
+        /// </summary>
+        [NotNull]
+        public DbConnectionStringBuilder ConnectionStringBuilder { get; }
 
-        private static ILoggerFactory loggerFactory;
+        [NotNull]
+        public ICollection<string> PendingMigrations =>
+            Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
+
+        public DbSet<TType> GetDbSet<TType>() where TType : class
+        {
+            var searchType = typeof(DbSet<TType>);
+            var property = GetType()
+                .GetProperties()
+                .FirstOrDefault(propertyInfo => searchType == propertyInfo.PropertyType);
+
+            return property?.GetValue(this) as DbSet<TType>;
+        }
 
         public static void Configure(
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
@@ -44,10 +146,6 @@ namespace Intersect.Server.Database
         }
 
         [NotNull]
-        private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
-            new ConcurrentDictionary<Type, ConstructorInfo>();
-
-        [NotNull]
         public static T Create(
             DatabaseOptions.DatabaseType? databaseType = null,
             DbConnectionStringBuilder connectionStringBuilder = null
@@ -56,7 +154,10 @@ namespace Intersect.Server.Database
             var type = typeof(T);
             if (!constructorCache.TryGetValue(type, out var constructorInfo))
             {
-                constructorInfo = type.GetConstructor(new [] { typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType) });
+                constructorInfo = type.GetConstructor(
+                    new[] {typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType)}
+                );
+
                 constructorCache[type] = constructorInfo;
             }
 
@@ -79,73 +180,6 @@ namespace Intersect.Server.Database
             return contextInstance;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public DatabaseOptions.DatabaseType DatabaseType { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [NotNull] public DbConnectionStringBuilder ConnectionStringBuilder { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connectionStringBuilder"></param>
-        /// <param name="databaseType"></param>
-        /// <inheritdoc />
-        protected IntersectDbContext(
-            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            bool isTemporary = false, Intersect.Logging.Logger dbLogger = null, Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-            )
-        {
-            ConnectionStringBuilder = connectionStringBuilder;
-            DatabaseType = databaseType;
-
-            //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
-            if (dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
-            {
-                var efLogLevel = LogLevel.None;
-                switch (logLevel)
-                {
-                    case Intersect.Logging.LogLevel.None:
-                        break;
-                    case Intersect.Logging.LogLevel.Error:
-                        efLogLevel = LogLevel.Error;
-                        break;
-                    case Intersect.Logging.LogLevel.Warn:
-                        efLogLevel = LogLevel.Warning;
-                        break;
-                    case Intersect.Logging.LogLevel.Info:
-                        efLogLevel = LogLevel.Information;
-                        break;
-                    case Intersect.Logging.LogLevel.Trace:
-                        efLogLevel = LogLevel.Trace;
-                        break;
-                    case Intersect.Logging.LogLevel.Verbose:
-                        efLogLevel = LogLevel.Trace;
-                        break;
-                    case Intersect.Logging.LogLevel.Debug:
-                        efLogLevel = LogLevel.Debug;
-                        break;
-                    case Intersect.Logging.LogLevel.Diagnostic:
-                        efLogLevel = LogLevel.Trace;
-                        break;
-                    case Intersect.Logging.LogLevel.All:
-                        efLogLevel = LogLevel.Trace;
-                        break;
-                }
-                loggerFactory = LoggerFactory.Create(builder => { builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(dbLogger)); });
-            }
-
-            if (!isTemporary)
-            {
-                Current = this as T;
-            }
-        }
-
         protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -159,10 +193,12 @@ namespace Intersect.Server.Database
             {
                 case DatabaseOptions.DatabaseType.SQLite:
                     optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString);
+
                     break;
 
                 case DatabaseOptions.DatabaseType.MySQL:
                     optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString);
+
                     break;
 
                 default:
@@ -188,10 +224,12 @@ namespace Intersect.Server.Database
                 {
                     case DatabaseOptions.DatabaseType.SQLite:
                         command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+
                         break;
 
                     case DatabaseOptions.DatabaseType.MySQL:
                         command.CommandText = "show tables;";
+
                         break;
 
                     default:
@@ -209,19 +247,8 @@ namespace Intersect.Server.Database
             }
         }
 
-        public DbSet<TType> GetDbSet<TType>() where TType : class
-        {
-            var searchType = typeof(DbSet<TType>);
-            var property = GetType()
-                .GetProperties()
-                .FirstOrDefault(propertyInfo => searchType == propertyInfo.PropertyType);
-            return property?.GetValue(this) as DbSet<TType>;
-        }
-
-        [NotNull]
-        public ICollection<string> PendingMigrations => Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
-
         public virtual void MigrationsProcessed([NotNull] string[] migrations) { }
 
     }
+
 }

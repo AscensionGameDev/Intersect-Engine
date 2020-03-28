@@ -1,14 +1,16 @@
-﻿using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Gwen.Control;
+﻿using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Color square.
     /// </summary>
     public class ColorDisplay : Base
     {
+
         private Color mColor;
+
         //private bool m_DrawCheckers;
 
         /// <summary>
@@ -19,6 +21,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             SetSize(32, 32);
             mColor = Color.FromArgb(255, 255, 0, 0);
+
             //m_DrawCheckers = true;
         }
 
@@ -64,5 +67,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawColorDisplay(this, mColor);
         }
+
     }
+
 }

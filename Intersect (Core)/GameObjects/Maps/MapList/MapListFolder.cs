@@ -1,15 +1,18 @@
 ﻿using System;
+
 using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
+
     public class MapListFolder : MapListItem
     {
+
         public MapList Children = new MapList();
+
         public Guid FolderId = Guid.Empty;
 
-        public MapListFolder()
-            : base()
+        public MapListFolder() : base()
         {
             Name = "New Folder";
             Type = 0;
@@ -19,5 +22,7 @@ namespace Intersect.GameObjects.Maps.MapList
         {
             Children.PostLoad(gameMaps, isServer, false);
         }
+
     }
+
 }

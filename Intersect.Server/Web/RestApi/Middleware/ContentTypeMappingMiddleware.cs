@@ -9,6 +9,7 @@ using Microsoft.Owin;
 
 namespace Intersect.Server.Web.RestApi.Middleware
 {
+
     using RequestMap = IDictionary<(PathString, string, string), RequestMapFunc>;
 
     /// <summary>
@@ -21,6 +22,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
     /// <inheritdoc />
     public sealed class ContentTypeMappingMiddleware : OwinMiddleware
     {
+
         [NotNull] private readonly RequestMap mRequestMap;
 
         /// <inheritdoc />
@@ -57,5 +59,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
 
             owinContext.ToString();
         }
+
     }
+
 }

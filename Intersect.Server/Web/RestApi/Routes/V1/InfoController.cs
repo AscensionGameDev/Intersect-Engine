@@ -1,13 +1,16 @@
 ﻿using System.Web.Http;
+
 using Intersect.Server.General;
 using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
+
     [RoutePrefix("info")]
     [ConfigurableAuthorize]
     public sealed class InfoController : ApiController
     {
+
         [Route("authorized")]
         [HttpGet]
         [Authorize]
@@ -49,5 +52,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 onlineCount = Globals.OnlineList?.Count
             };
         }
+
     }
+
 }

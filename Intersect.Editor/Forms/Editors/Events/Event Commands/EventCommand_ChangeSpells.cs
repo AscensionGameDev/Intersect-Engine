@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -7,10 +8,14 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandChangeSpells : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private EventPage mCurrentPage;
+
         private ChangeSpellsCommand mMyCommand;
 
         public EventCommandChangeSpells(ChangeSpellsCommand refCommand, EventPage refPage, FrmEvent editor)
@@ -30,10 +35,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             grpChangeSpells.Text = Strings.EventChangeSpells.title;
             cmbAction.Items.Clear();
-            for (int i = 0; i < Strings.EventChangeSpells.actions.Count; i++)
+            for (var i = 0; i < Strings.EventChangeSpells.actions.Count; i++)
             {
                 cmbAction.Items.Add(Strings.EventChangeSpells.actions[i]);
             }
+
             lblAction.Text = Strings.EventChangeSpells.action;
             lblSpell.Text = Strings.EventChangeSpells.spell;
             btnSave.Text = Strings.EventChangeSpells.okay;
@@ -51,5 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

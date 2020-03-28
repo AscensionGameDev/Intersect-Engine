@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Entities
 {
+
     public partial class Entity
     {
 
@@ -28,4 +29,5 @@ namespace Intersect.Server.Entities
         #endregion
 
     }
+
 }

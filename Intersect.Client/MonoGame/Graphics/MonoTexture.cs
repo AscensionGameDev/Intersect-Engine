@@ -1,25 +1,37 @@
 ﻿using System;
 using System.IO;
+
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
+
     public class MonoTexture : GameTexture
     {
+
         private GraphicsDevice mGraphicsDevice;
-        private GameTexturePackFrame mPackFrame;
+
         private int mHeight = -1;
+
         private long mLastAccessTime;
+
         private bool mLoadError;
+
         private string mName = "";
+
+        private GameTexturePackFrame mPackFrame;
+
         private string mPath = "";
+
         private Texture2D mTexture;
+
         private int mWidth = -1;
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
@@ -41,14 +53,24 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void LoadTexture()
         {
-            if (mTexture != null) return;
+            if (mTexture != null)
+            {
+                return;
+            }
+
             if (mPackFrame != null)
             {
                 ((MonoTexture) mPackFrame.PackTexture).LoadTexture();
+
                 return;
             }
+
             mLoadError = true;
-            if (!File.Exists(mPath)) return;
+            if (!File.Exists(mPath))
+            {
+                return;
+            }
+
             using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 try
@@ -65,7 +87,12 @@ namespace Intersect.Client.MonoGame.Graphics
                 {
                     //Failed to load texture.. lets log like we do with audio
                     Log.Error($"Error loading '{mName}'.", ex);
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]", new Color(0xBF, 0x0, 0x0)));
+                    ChatboxMsg.AddMessage(
+                        new ChatboxMsg(
+                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
+                            new Color(0xBF, 0x0, 0x0)
+                        )
+                    );
                 }
             }
         }
@@ -83,24 +110,52 @@ namespace Intersect.Client.MonoGame.Graphics
         public override int GetWidth()
         {
             ResetAccessTime();
-            if (mWidth != -1) return mWidth;
-            if (mTexture == null) LoadTexture();
-            if (mLoadError) mWidth = 0;
+            if (mWidth != -1)
+            {
+                return mWidth;
+            }
+
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
+            if (mLoadError)
+            {
+                mWidth = 0;
+            }
+
             return mWidth;
         }
 
         public override int GetHeight()
         {
             ResetAccessTime();
-            if (mHeight != -1) return mHeight;
-            if (mTexture == null) LoadTexture();
-            if (mLoadError) mHeight = 0;
+            if (mHeight != -1)
+            {
+                return mHeight;
+            }
+
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
+            if (mLoadError)
+            {
+                mHeight = 0;
+            }
+
             return mHeight;
         }
 
         public override object GetTexture()
         {
-            if (mPackFrame != null) return mPackFrame.PackTexture.GetTexture();
+            if (mPackFrame != null)
+            {
+                return mPackFrame.PackTexture.GetTexture();
+            }
+
             ResetAccessTime();
 
             if (mTexture == null)
@@ -128,7 +183,7 @@ namespace Intersect.Client.MonoGame.Graphics
             var pack = GetTexturePackFrame();
             if (pack != null)
             {
-                tex = (Texture2D)mPackFrame.PackTexture.GetTexture();
+                tex = (Texture2D) mPackFrame.PackTexture.GetTexture();
                 if (pack.Rotated)
                 {
                     var z = x1;
@@ -144,6 +199,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var pixel = new Microsoft.Xna.Framework.Color[1];
             tex?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+
             return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
@@ -154,10 +210,20 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void Update()
         {
-            if (mTexture == null) return;
-            if (mLastAccessTime >= Globals.System.GetTimeMs()) return;
+            if (mTexture == null)
+            {
+                return;
+            }
+
+            if (mLastAccessTime >= Globals.System.GetTimeMs())
+            {
+                return;
+            }
+
             mTexture.Dispose();
             mTexture = null;
         }
+
     }
+
 }

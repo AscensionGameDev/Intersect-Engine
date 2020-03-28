@@ -1,14 +1,26 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Threading;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Threading
 {
+
     public class LockingActionQueue
     {
+
         [NotNull] private readonly object mLockObject;
 
         private Action mNextAction;
+
+        public LockingActionQueue() : this(new object())
+        {
+        }
+
+        public LockingActionQueue([NotNull] object lockObjectObject)
+        {
+            mLockObject = lockObjectObject;
+        }
 
         [CanBeNull]
         public Action NextAction
@@ -18,6 +30,7 @@ namespace Intersect.Threading
                 lock (mLockObject)
                 {
                     Monitor.Wait(mLockObject);
+
                     return mNextAction;
                 }
             }
@@ -32,14 +45,6 @@ namespace Intersect.Threading
             }
         }
 
-        public LockingActionQueue()
-            : this(new object())
-        {
-        }
-
-        public LockingActionQueue([NotNull] object lockObjectObject)
-        {
-            mLockObject = lockObjectObject;
-        }
     }
+
 }

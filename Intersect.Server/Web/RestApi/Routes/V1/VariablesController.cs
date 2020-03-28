@@ -1,11 +1,12 @@
-﻿using Intersect.Server.Database.GameData;
-using Intersect.Server.Web.RestApi.Attributes;
-using Intersect.Server.Web.RestApi.Payloads;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+
+using Intersect.Server.Database.GameData;
+using Intersect.Server.Web.RestApi.Attributes;
+using Intersect.Server.Web.RestApi.Payloads;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -24,6 +25,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var context = GameContext.Current;
             var entries = GameContext.Queries.ServerVariables(context, pageInfo.Page, pageInfo.Count)?.ToList();
+
             return new
             {
                 total = context.ServerVariables?.Count() ?? 0,

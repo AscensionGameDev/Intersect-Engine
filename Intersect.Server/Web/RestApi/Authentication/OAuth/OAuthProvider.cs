@@ -1,15 +1,18 @@
-﻿using Intersect.Server.Web.RestApi.Authentication.OAuth.Providers;
+﻿using System;
+using System.Collections.Generic;
+
+using Intersect.Server.Web.RestApi.Authentication.OAuth.Providers;
 using Intersect.Server.Web.RestApi.Configuration;
+using Intersect.Server.Web.RestApi.Middleware;
+
 using JetBrains.Annotations;
+
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
+
 using Owin;
 using Owin.Security.AesDataProtectorProvider;
-using System;
-using System.Collections.Generic;
-
-using Intersect.Server.Web.RestApi.Middleware;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {
@@ -21,17 +24,17 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 
         public const string TokenEndpoint = "/api/oauth/token";
 
-        [NotNull]
-        private OAuthAuthorizationServerProvider OAuthAuthorizationServerProvider { get; }
-
-        [NotNull]
-        private AuthenticationTokenProvider RefreshTokenProvider { get; }
-
         public OAuthProvider([NotNull] ApiConfiguration configuration) : base(configuration)
         {
             OAuthAuthorizationServerProvider = new GrantProvider(Configuration);
             RefreshTokenProvider = new RefreshTokenProvider(Configuration);
         }
+
+        [NotNull]
+        private OAuthAuthorizationServerProvider OAuthAuthorizationServerProvider { get; }
+
+        [NotNull]
+        private AuthenticationTokenProvider RefreshTokenProvider { get; }
 
         public override void Configure([NotNull] IAppBuilder appBuilder)
         {

@@ -8,49 +8,63 @@ using Intersect.Client.General;
 
 namespace Intersect.Client.Interface.Game
 {
+
     class Draggable
     {
-        ImagePanel mPnl;
 
         public static Draggable Active = null;
+
+        ImagePanel mPnl;
 
         public Draggable(int x, int y, GameTexture tex)
         {
             mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
             mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
-                InputHandler.MousePosition.Y - mPnl.Height / 2);
+            mPnl.SetPosition(
+                InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
+            );
+
             mPnl.Texture = tex;
             Active = this;
         }
 
         public int X
         {
-            get { return mPnl.X; }
-            set { mPnl.X = value; }
+            get => mPnl.X;
+            set => mPnl.X = value;
         }
 
         public int Y
         {
-            get { return mPnl.Y; }
-            set { mPnl.Y = value; }
+            get => mPnl.Y;
+            set => mPnl.Y = value;
         }
 
         public bool Update()
         {
-            mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
-                InputHandler.MousePosition.Y - mPnl.Height / 2);
+            mPnl.SetPosition(
+                InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
+            );
+
             if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return true;
             }
+
             return false;
         }
 
         public void Dispose()
         {
-            if (Active == this) Active = null; ;
+            if (Active == this)
+            {
+                Active = null;
+            }
+
+            ;
             Interface.GameUi.GameCanvas.RemoveChild(mPnl, false);
         }
+
     }
+
 }

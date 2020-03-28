@@ -2,28 +2,42 @@
 using System.Drawing;
 
 using Intersect.Editor.Content;
-using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
+
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Entities
 {
+
     public class Animation
     {
-        private int mRenderDir;
-        private float mRenderX;
-        private float mRenderY;
+
         private bool mInfiniteLoop;
+
         private int mLowerFrame;
+
         private int mLowerLoop;
+
         private long mLowerTimer;
-        public AnimationBase MyBase;
+
+        private int mRenderDir;
+
+        private float mRenderX;
+
+        private float mRenderY;
+
         private bool mShowLower = true;
+
         private bool mShowUpper = true;
+
         private int mUpperFrame;
+
         private int mUpperLoop;
+
         private long mUpperTimer;
+
+        public AnimationBase MyBase;
 
         public Animation(AnimationBase animBase, bool loopForever)
         {
@@ -37,68 +51,100 @@ namespace Intersect.Editor.Entities
 
         public void Draw(RenderTarget2D target, bool upper = false, bool alternate = false)
         {
-            if (!upper && alternate != MyBase.Lower.AlternateRenderLayer) return;
-            if (upper && alternate != MyBase.Upper.AlternateRenderLayer) return;
+            if (!upper && alternate != MyBase.Lower.AlternateRenderLayer)
+            {
+                return;
+            }
+
+            if (upper && alternate != MyBase.Upper.AlternateRenderLayer)
+            {
+                return;
+            }
+
             if (!upper)
             {
                 //Draw Lower
-                Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    MyBase.Lower.Sprite);
+                var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Lower.Sprite);
                 if (mShowLower)
                 {
-                    if (mLowerFrame >= MyBase.Lower.FrameCount) return;
+                    if (mLowerFrame >= MyBase.Lower.FrameCount)
+                    {
+                        return;
+                    }
+
                     if (tex != null)
                     {
                         if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / MyBase.Lower.XFrames;
-                            int frameHeight = (int) tex.Height / MyBase.Lower.YFrames;
-                            Core.Graphics.DrawTexture(tex,
-                                new RectangleF((mLowerFrame % MyBase.Lower.XFrames) * frameWidth,
-                                    (float)Math.Floor((double)mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
-                                    frameWidth,
-                                    frameHeight),
-                                new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
-                                    frameHeight),
-                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
+                            var frameWidth = (int) tex.Width / MyBase.Lower.XFrames;
+                            var frameHeight = (int) tex.Height / MyBase.Lower.YFrames;
+                            Core.Graphics.DrawTexture(
+                                tex,
+                                new RectangleF(
+                                    mLowerFrame % MyBase.Lower.XFrames * frameWidth,
+                                    (float) Math.Floor((double) mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
+                                    frameWidth, frameHeight
+                                ),
+                                new RectangleF(
+                                    mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth, frameHeight
+                                ), System.Drawing.Color.White, target, BlendState.NonPremultiplied
+                            );
                         }
                     }
+
                     Core.Graphics.AddLight(
-                        Options.MapWidth * Options.TileWidth - Core.Graphics.CurrentView.Left + (int)mRenderX + MyBase.Lower.Lights[mLowerFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight  - Core.Graphics.CurrentView.Top + (int)mRenderY +
-                        MyBase.Lower.Lights[mLowerFrame].OffsetY,
-                        MyBase.Lower.Lights[mLowerFrame]);
+                        Options.MapWidth * Options.TileWidth -
+                        Core.Graphics.CurrentView.Left +
+                        (int) mRenderX +
+                        MyBase.Lower.Lights[mLowerFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight -
+                        Core.Graphics.CurrentView.Top +
+                        (int) mRenderY +
+                        MyBase.Lower.Lights[mLowerFrame].OffsetY, MyBase.Lower.Lights[mLowerFrame]
+                    );
                 }
             }
             else
             {
                 //Draw Upper
-                Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    MyBase.Upper.Sprite);
+                var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Upper.Sprite);
                 if (mShowUpper)
                 {
-                    if (mUpperFrame >= MyBase.Upper.FrameCount) return;
+                    if (mUpperFrame >= MyBase.Upper.FrameCount)
+                    {
+                        return;
+                    }
+
                     if (tex != null)
                     {
                         if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / MyBase.Upper.XFrames;
-                            int frameHeight = (int) tex.Height / MyBase.Upper.YFrames;
-                            Core.Graphics.DrawTexture(tex,
-                                new RectangleF((mUpperFrame % MyBase.Upper.XFrames) * frameWidth,
-                                    (float)Math.Floor((double)mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
-                                    frameWidth,
-                                    frameHeight),
-                                new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
-                                    frameHeight),
-                                System.Drawing.Color.White, target, BlendState.NonPremultiplied);
+                            var frameWidth = (int) tex.Width / MyBase.Upper.XFrames;
+                            var frameHeight = (int) tex.Height / MyBase.Upper.YFrames;
+                            Core.Graphics.DrawTexture(
+                                tex,
+                                new RectangleF(
+                                    mUpperFrame % MyBase.Upper.XFrames * frameWidth,
+                                    (float) Math.Floor((double) mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
+                                    frameWidth, frameHeight
+                                ),
+                                new RectangleF(
+                                    mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth, frameHeight
+                                ), System.Drawing.Color.White, target, BlendState.NonPremultiplied
+                            );
                         }
                     }
+
                     Core.Graphics.AddLight(
-                        Options.MapWidth * Options.TileWidth - Core.Graphics.CurrentView.Left + (int)mRenderX + MyBase.Upper.Lights[mUpperFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight - Core.Graphics.CurrentView.Top + (int)mRenderY +
-                        MyBase.Upper.Lights[mUpperFrame].OffsetY,
-                        MyBase.Upper.Lights[mUpperFrame]);
+                        Options.MapWidth * Options.TileWidth -
+                        Core.Graphics.CurrentView.Left +
+                        (int) mRenderX +
+                        MyBase.Upper.Lights[mUpperFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight -
+                        Core.Graphics.CurrentView.Top +
+                        (int) mRenderY +
+                        MyBase.Upper.Lights[mUpperFrame].OffsetY, MyBase.Upper.Lights[mUpperFrame]
+                    );
                 }
             }
         }
@@ -131,8 +177,10 @@ namespace Intersect.Editor.Entities
                         }
                     }
                 }
+
                 mLowerTimer = Globals.System.GetTimeMs() + MyBase.Lower.FrameSpeed;
             }
+
             if (mUpperTimer < Globals.System.GetTimeMs() && mShowUpper)
             {
                 mUpperFrame++;
@@ -152,8 +200,11 @@ namespace Intersect.Editor.Entities
                         }
                     }
                 }
+
                 mUpperTimer = Globals.System.GetTimeMs() + MyBase.Upper.FrameSpeed;
             }
         }
+
     }
+
 }

@@ -2,11 +2,16 @@
 
 namespace Intersect.Client.Interface.Game.Chat
 {
+
     public class ChatboxMsg
     {
+
         private static List<ChatboxMsg> sGameMessages = new List<ChatboxMsg>();
+
         private string mMsg = "";
+
         private Color mMsgColor;
+
         private string mTarget = "";
 
         public ChatboxMsg(string msg, Color clr, string target = "")
@@ -45,5 +50,7 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             sGameMessages.Clear();
         }
+
     }
+
 }

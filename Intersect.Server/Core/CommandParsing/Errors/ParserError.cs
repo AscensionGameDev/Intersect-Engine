@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Immutable;
+
 using Intersect.Server.Core.CommandParsing.Commands;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
+
     public class ParserError
     {
-        public bool IsFatal { get; }
-
-        [NotNull]
-        public string Message { get; }
-
-        [CanBeNull]
-        public Exception Exception { get; }
-
-        public ImmutableArray<string> Arguments { get; }
 
         public ParserError(string message = null, bool fatal = true)
         {
@@ -28,17 +22,29 @@ namespace Intersect.Server.Core.CommandParsing.Errors
             Message = message ?? "Unknown parser error occurred.";
         }
 
-        public ParserError(string message, Exception exception, params string[] arguments)
-            : this(message, exception, true, arguments)
+        public ParserError(string message, Exception exception, params string[] arguments) : this(
+            message, exception, true, arguments
+        )
         {
         }
 
-        public ParserError(string message, Exception exception, bool fatal = true, params string[] arguments)
-            : this(message, fatal)
+        public ParserError(string message, Exception exception, bool fatal = true, params string[] arguments) : this(
+            message, fatal
+        )
         {
             Exception = exception;
             Arguments = arguments?.ToImmutableArray() ?? ImmutableArray.Create<string>();
         }
+
+        public bool IsFatal { get; }
+
+        [NotNull]
+        public string Message { get; }
+
+        [CanBeNull]
+        public Exception Exception { get; }
+
+        public ImmutableArray<string> Arguments { get; }
 
         [NotNull]
         public ParserResult AsResult(ICommand command = null)
@@ -47,8 +53,7 @@ namespace Intersect.Server.Core.CommandParsing.Errors
         }
 
         [NotNull]
-        public ParserResult<TCommand> AsResult<TCommand>(TCommand command)
-            where TCommand : ICommand
+        public ParserResult<TCommand> AsResult<TCommand>(TCommand command) where TCommand : ICommand
         {
             return new ParserResult<TCommand>(command, this);
         }
@@ -57,5 +62,7 @@ namespace Intersect.Server.Core.CommandParsing.Errors
         {
             return Message;
         }
+
     }
+
 }

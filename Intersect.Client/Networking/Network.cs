@@ -1,34 +1,41 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
-using Intersect.Config;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
 
 namespace Intersect.Client.Networking
 {
+
     public static class Network
     {
-        public static GameSocket Socket;
 
-        private static bool sConnected;
         public static bool Connecting;
 
+        private static bool sConnected;
+
+        public static GameSocket Socket;
+
         private static int sPing;
+
         public static bool Connected => Socket?.IsConnected() ?? sConnected;
 
         public static int Ping
         {
-            get { return Socket?.Ping() ?? sPing; }
-            set { sPing = value; }
+            get => Socket?.Ping() ?? sPing;
+            set => sPing = value;
         }
 
         public static void InitNetwork()
         {
-            if (Socket == null) return;
+            if (Socket == null)
+            {
+                return;
+            }
+
             Socket.Connected += MySocket_OnConnected;
             Socket.Disconnected += MySocket_OnDisconnected;
             Socket.DataReceived += MySocket_OnDataReceived;
@@ -46,7 +53,10 @@ namespace Intersect.Client.Networking
         private static void MySocket_OnConnectionFailed(bool denied)
         {
             sConnected = false;
-            if (!denied) TryConnect();
+            if (!denied)
+            {
+                TryConnect();
+            }
         }
 
         private static void MySocket_OnDataReceived(IPacket packet)
@@ -69,7 +79,6 @@ namespace Intersect.Client.Networking
                 Socket?.Disconnect("");
                 TryConnect();
             }
-
         }
 
         private static void MySocket_OnConnected()
@@ -103,5 +112,7 @@ namespace Intersect.Client.Networking
         {
             Socket?.Update();
         }
+
     }
+
 }

@@ -14,12 +14,18 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class QuestsWindow
     {
+
         private Button mBackButton;
+
         private ScrollControl mQuestDescArea;
+
         private RichLabel mQuestDescLabel;
+
         private Label mQuestDescTemplateLabel;
+
         private ListBox mQuestList;
 
         private Label mQuestStatus;
@@ -28,7 +34,9 @@ namespace Intersect.Client.Interface.Game
         private WindowControl mQuestsWindow;
 
         private Label mQuestTitle;
+
         private Button mQuitButton;
+
         private QuestBase mSelectedQuest;
 
         //Init
@@ -67,16 +75,17 @@ namespace Intersect.Client.Interface.Game
         {
             if (mSelectedQuest != null)
             {
-                new InputBox(Strings.QuestLog.abandontitle.ToString(mSelectedQuest.Name),
+                new InputBox(
+                    Strings.QuestLog.abandontitle.ToString(mSelectedQuest.Name),
                     Strings.QuestLog.abandonprompt.ToString(mSelectedQuest.Name), true, InputBox.InputType.YesNo,
-                    AbandonQuest, null,
-                    mSelectedQuest.Id);
+                    AbandonQuest, null, mSelectedQuest.Id
+                );
             }
         }
 
         void AbandonQuest(object sender, EventArgs e)
         {
-            PacketSender.SendAbandonQuest((Guid)((InputBox) sender).UserData);
+            PacketSender.SendAbandonQuest((Guid) ((InputBox) sender).UserData);
         }
 
         private void _backButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -93,6 +102,7 @@ namespace Intersect.Client.Interface.Game
                 UpdateQuestList();
                 UpdateSelectedQuest();
             }
+
             if (mQuestsWindow.IsHidden)
             {
                 return;
@@ -102,7 +112,8 @@ namespace Intersect.Client.Interface.Game
             {
                 if (Globals.Me.QuestProgress.ContainsKey(mSelectedQuest.Id))
                 {
-                    if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed && Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId == Guid.Empty)
+                    if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed &&
+                        Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId == Guid.Empty)
                     {
                         //Completed
                         if (!mSelectedQuest.LogAfterComplete)
@@ -110,6 +121,7 @@ namespace Intersect.Client.Interface.Game
                             mSelectedQuest = null;
                             UpdateSelectedQuest();
                         }
+
                         return;
                     }
                     else
@@ -123,9 +135,11 @@ namespace Intersect.Client.Interface.Game
                                 UpdateSelectedQuest();
                             }
                         }
+
                         return;
                     }
                 }
+
                 if (!mSelectedQuest.LogBeforeOffer)
                 {
                     mSelectedQuest = null;
@@ -204,6 +218,7 @@ namespace Intersect.Client.Interface.Game
                 mSelectedQuest = quest;
                 UpdateSelectedQuest();
             }
+
             mQuestList.UnselectAll();
         }
 
@@ -224,7 +239,7 @@ namespace Intersect.Client.Interface.Game
                 mQuitButton.IsDisabled = true;
                 ListBoxRow rw;
                 string[] myText = null;
-                List<string> taskString = new List<string>();
+                var taskString = new List<string>();
                 if (Globals.Me.QuestProgress.ContainsKey(mSelectedQuest.Id))
                 {
                     if (Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId != Guid.Empty)
@@ -234,40 +249,54 @@ namespace Intersect.Client.Interface.Game
                         mQuestStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
                         if (mSelectedQuest.InProgressDescription.Length > 0)
                         {
-                            mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, Color.White, Alignments.Left,
-                                mQuestDescTemplateLabel.Font);
+                            mQuestDescLabel.AddText(
+                                mSelectedQuest.InProgressDescription, Color.White, Alignments.Left,
+                                mQuestDescTemplateLabel.Font
+                            );
+
                             mQuestDescLabel.AddLineBreak();
                             mQuestDescLabel.AddLineBreak();
                         }
-                        mQuestDescLabel.AddText(Strings.QuestLog.currenttask, Color.White, Alignments.Left,
-                            mQuestDescTemplateLabel.Font);
+
+                        mQuestDescLabel.AddText(
+                            Strings.QuestLog.currenttask, Color.White, Alignments.Left, mQuestDescTemplateLabel.Font
+                        );
+
                         mQuestDescLabel.AddLineBreak();
-                        for (int i = 0; i < mSelectedQuest.Tasks.Count; i++)
+                        for (var i = 0; i < mSelectedQuest.Tasks.Count; i++)
                         {
                             if (mSelectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId)
                             {
                                 if (mSelectedQuest.Tasks[i].Description.Length > 0)
                                 {
-                                    mQuestDescLabel.AddText(mSelectedQuest.Tasks[i].Description, Color.White, Alignments.Left,
-                                        mQuestDescTemplateLabel.Font);
+                                    mQuestDescLabel.AddText(
+                                        mSelectedQuest.Tasks[i].Description, Color.White, Alignments.Left,
+                                        mQuestDescTemplateLabel.Font
+                                    );
+
                                     mQuestDescLabel.AddLineBreak();
                                     mQuestDescLabel.AddLineBreak();
                                 }
+
                                 if (mSelectedQuest.Tasks[i].Objective == QuestObjective.GatherItems) //Gather Items
                                 {
-                                    mQuestDescLabel.AddText(Strings.QuestLog.taskitem.ToString(
+                                    mQuestDescLabel.AddText(
+                                        Strings.QuestLog.taskitem.ToString(
                                             Globals.Me.QuestProgress[mSelectedQuest.Id].TaskProgress,
                                             mSelectedQuest.Tasks[i].Quantity,
-                                            ItemBase.GetName(mSelectedQuest.Tasks[i].TargetId)),
-                                        Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
+                                            ItemBase.GetName(mSelectedQuest.Tasks[i].TargetId)
+                                        ), Color.White, Alignments.Left, mQuestDescTemplateLabel.Font
+                                    );
                                 }
                                 else if (mSelectedQuest.Tasks[i].Objective == QuestObjective.KillNpcs) //Kill Npcs
                                 {
-                                    mQuestDescLabel.AddText(Strings.QuestLog.tasknpc.ToString(
+                                    mQuestDescLabel.AddText(
+                                        Strings.QuestLog.tasknpc.ToString(
                                             Globals.Me.QuestProgress[mSelectedQuest.Id].TaskProgress,
                                             mSelectedQuest.Tasks[i].Quantity,
-                                            NpcBase.GetName(mSelectedQuest.Tasks[i].TargetId)),
-                                        Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
+                                            NpcBase.GetName(mSelectedQuest.Tasks[i].TargetId)
+                                        ), Color.White, Alignments.Left, mQuestDescTemplateLabel.Font
+                                    );
                                 }
                             }
                         }
@@ -283,8 +312,10 @@ namespace Intersect.Client.Interface.Game
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.completed);
                                 mQuestStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.EndDescription, Color.White, Alignments.Left,
-                                    mQuestDescTemplateLabel.Font);
+                                mQuestDescLabel.AddText(
+                                    mSelectedQuest.EndDescription, Color.White, Alignments.Left,
+                                    mQuestDescTemplateLabel.Font
+                                );
                             }
                         }
                         else
@@ -294,8 +325,11 @@ namespace Intersect.Client.Interface.Game
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.notstarted);
                                 mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
-                                    mQuestDescTemplateLabel.Font);
+                                mQuestDescLabel.AddText(
+                                    mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
+                                    mQuestDescTemplateLabel.Font
+                                );
+
                                 mQuitButton?.Hide();
                             }
                         }
@@ -308,10 +342,12 @@ namespace Intersect.Client.Interface.Game
                     {
                         mQuestStatus.SetText(Strings.QuestLog.notstarted);
                         mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                        mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
-                            mQuestDescTemplateLabel.Font);
+                        mQuestDescLabel.AddText(
+                            mSelectedQuest.BeforeDescription, Color.White, Alignments.Left, mQuestDescTemplateLabel.Font
+                        );
                     }
                 }
+
                 mQuestList.Hide();
                 mQuestTitle.IsHidden = false;
                 mQuestTitle.Text = mSelectedQuest.Name;
@@ -339,5 +375,7 @@ namespace Intersect.Client.Interface.Game
             mQuestsWindow.IsHidden = true;
             mSelectedQuest = null;
         }
+
     }
+
 }

@@ -14,13 +14,11 @@ namespace Intersect.Logging.Output
 
         private static readonly string Spacer = Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
-        [NotNull]
-        private string mFilename;
+        [NotNull] private string mFilename;
 
         private StreamWriter mWriter;
 
-        public FileOutput(string filename = null, bool append = true)
-            : this(filename, LogLevel.All, append)
+        public FileOutput(string filename = null, bool append = true) : this(filename, LogLevel.All, append)
         {
         }
 
@@ -42,6 +40,7 @@ namespace Intersect.Logging.Output
                 if (string.IsNullOrEmpty(value))
                 {
                     Log.Warn("Cannot set FileOutput to an empty file name.");
+
                     return;
                 }
 
@@ -80,30 +79,53 @@ namespace Intersect.Logging.Output
 
         public LogLevel LogLevel { get; set; }
 
-        private void InternalWrite([NotNull] LogConfiguration configuration, LogLevel logLevel, Exception exception, [NotNull] string format, params object[] args)
+        public void Write(LogConfiguration configuration, LogLevel logLevel, string message)
+        {
+            InternalWrite(configuration, logLevel, null, message);
+        }
+
+        public void Write(LogConfiguration configuration, LogLevel logLevel, string format, params object[] args)
+        {
+            InternalWrite(configuration, logLevel, null, format, args);
+        }
+
+        public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string message)
+        {
+            InternalWrite(configuration, logLevel, exception, message);
+        }
+
+        public void Write(
+            LogConfiguration configuration,
+            LogLevel logLevel,
+            Exception exception,
+            string format,
+            params object[] args
+        )
+        {
+            InternalWrite(configuration, logLevel, exception, format, args);
+        }
+
+        private void InternalWrite(
+            [NotNull] LogConfiguration configuration,
+            LogLevel logLevel,
+            Exception exception,
+            [NotNull] string format,
+            params object[] args
+        )
         {
             if (LogLevel < logLevel)
             {
                 return;
             }
 
-            var line = configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, exception, format, args);
+            var line = configuration.Formatter.Format(
+                configuration, logLevel, DateTime.UtcNow, exception, format, args
+            );
+
             Writer.Write(line);
             Writer.Write(Spacer);
             Writer.Flush();
         }
-
-        public void Write(LogConfiguration configuration, LogLevel logLevel, string message)
-            => InternalWrite(configuration, logLevel, null, message);
-
-        public void Write(LogConfiguration configuration, LogLevel logLevel, string format, params object[] args)
-            => InternalWrite(configuration, logLevel, null, format, args);
-
-        public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string message)
-            => InternalWrite(configuration, logLevel, exception, message);
-
-        public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string format, params object[] args)
-            => InternalWrite(configuration, logLevel, exception, format, args);
 
         ~FileOutput()
         {

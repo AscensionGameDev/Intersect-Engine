@@ -2,17 +2,18 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Properties node.
     /// </summary>
     public class PropertyTreeNode : TreeNode
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="PropertyTreeNode" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public PropertyTreeNode(Base parent)
-            : base(parent)
+        public PropertyTreeNode(Base parent) : base(parent)
         {
             mTitle.TextColorOverride = Skin.Colors.Properties.Title;
         }
@@ -25,5 +26,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawPropertyTreeNode(this, mInnerPanel.X, mInnerPanel.Y);
         }
+
     }
+
 }

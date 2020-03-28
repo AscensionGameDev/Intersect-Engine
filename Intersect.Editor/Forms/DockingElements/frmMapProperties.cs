@@ -1,15 +1,19 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
+
     public partial class FrmMapProperties : DockContent
     {
+
         //Cross Thread Delegates
         public delegate void UpdateProperties();
+
         public UpdateProperties UpdatePropertiesDelegate;
 
         public FrmMapProperties()
@@ -23,8 +27,10 @@ namespace Intersect.Editor.Forms.DockingElements
             if (gridMapProperties.InvokeRequired)
             {
                 gridMapProperties.Invoke((MethodInvoker) delegate { Init(map); });
+
                 return;
             }
+
             gridMapProperties.SelectedObject = new MapProperties(map);
             InitLocalization();
         }
@@ -43,5 +49,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             return gridMapProperties.SelectedGridItem;
         }
+
     }
+
 }

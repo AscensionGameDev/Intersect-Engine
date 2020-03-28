@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
@@ -10,8 +11,10 @@ using MapListUpdates = Intersect.Enums.MapListUpdates;
 
 namespace Intersect.Editor.Networking
 {
+
     public static class PacketSender
     {
+
         public static void SendPing()
         {
             Network.SendPacket(new PingPacket());
@@ -19,7 +22,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendLogin(string username, string password)
         {
-            Network.SendPacket(new LoginPacket(username,password));
+            Network.SendPacket(new LoginPacket(username, password));
         }
 
         public static void SendNeedMap(Guid mapId)
@@ -29,7 +32,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendMap(MapInstance map)
         {
-            Network.SendPacket(new MapUpdatePacket(map.Id,map.JsonData,map.GenerateTileData(),map.AttributeData));
+            Network.SendPacket(new MapUpdatePacket(map.Id, map.JsonData, map.GenerateTileData(), map.AttributeData));
         }
 
         public static void SendCreateMap(int location, Guid currentMapId, MapListItem parent)
@@ -48,11 +51,11 @@ namespace Intersect.Editor.Networking
                 {
                     if (parent.GetType() == typeof(MapListMap))
                     {
-                        Network.SendPacket(new CreateMapPacket(1, ((MapListMap)parent).MapId));
+                        Network.SendPacket(new CreateMapPacket(1, ((MapListMap) parent).MapId));
                     }
                     else
                     {
-                        Network.SendPacket(new CreateMapPacket(0, ((MapListFolder)parent).FolderId));
+                        Network.SendPacket(new CreateMapPacket(0, ((MapListFolder) parent).FolderId));
                     }
                 }
             }
@@ -60,7 +63,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendMapListMove(int srcType, Guid srcId, int destType, Guid destId)
         {
-            Network.SendPacket(new MapListUpdatePacket(MapListUpdates.MoveItem,srcType,srcId,destType,destId,""));
+            Network.SendPacket(new MapListUpdatePacket(MapListUpdates.MoveItem, srcType, srcId, destType, destId, ""));
         }
 
         public static void SendAddFolder(MapListItem parent)
@@ -73,11 +76,19 @@ namespace Intersect.Editor.Networking
             {
                 if (parent.GetType() == typeof(MapListMap))
                 {
-                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 1, ((MapListMap)parent).MapId, ""));
+                    Network.SendPacket(
+                        new MapListUpdatePacket(
+                            MapListUpdates.AddFolder, 0, Guid.Empty, 1, ((MapListMap) parent).MapId, ""
+                        )
+                    );
                 }
                 else
                 {
-                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, ((MapListFolder)parent).FolderId, ""));
+                    Network.SendPacket(
+                        new MapListUpdatePacket(
+                            MapListUpdates.AddFolder, 0, Guid.Empty, 0, ((MapListFolder) parent).FolderId, ""
+                        )
+                    );
                 }
             }
         }
@@ -86,11 +97,17 @@ namespace Intersect.Editor.Networking
         {
             if (parent.GetType() == typeof(MapListMap))
             {
-                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 1, ((MapListMap)parent).MapId, 0, Guid.Empty, name));
+                Network.SendPacket(
+                    new MapListUpdatePacket(MapListUpdates.Rename, 1, ((MapListMap) parent).MapId, 0, Guid.Empty, name)
+                );
             }
             else
             {
-                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 0, ((MapListFolder)parent).FolderId, 0, Guid.Empty, name));
+                Network.SendPacket(
+                    new MapListUpdatePacket(
+                        MapListUpdates.Rename, 0, ((MapListFolder) parent).FolderId, 0, Guid.Empty, name
+                    )
+                );
             }
         }
 
@@ -98,11 +115,17 @@ namespace Intersect.Editor.Networking
         {
             if (target.GetType() == typeof(MapListMap))
             {
-                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 1, ((MapListMap) target).MapId, 0, Guid.Empty, ""));
+                Network.SendPacket(
+                    new MapListUpdatePacket(MapListUpdates.Delete, 1, ((MapListMap) target).MapId, 0, Guid.Empty, "")
+                );
             }
             else
             {
-                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 0, ((MapListFolder)target).FolderId, 0, Guid.Empty, ""));
+                Network.SendPacket(
+                    new MapListUpdatePacket(
+                        MapListUpdates.Delete, 0, ((MapListFolder) target).FolderId, 0, Guid.Empty, ""
+                    )
+                );
             }
         }
 
@@ -113,12 +136,12 @@ namespace Intersect.Editor.Networking
 
         public static void SendUnlinkMap(Guid mapId)
         {
-            Network.SendPacket(new UnlinkMapPacket(mapId,Globals.CurrentMap.Id));
+            Network.SendPacket(new UnlinkMapPacket(mapId, Globals.CurrentMap.Id));
         }
 
         public static void SendLinkMap(Guid adjacentMapId, Guid linkMapId, int gridX, int gridY)
         {
-            Network.SendPacket(new LinkMapPacket(linkMapId,adjacentMapId,gridX,gridY));
+            Network.SendPacket(new LinkMapPacket(linkMapId, adjacentMapId, gridX, gridY));
         }
 
         public static void SendCreateObject(GameObjectType type)
@@ -128,18 +151,22 @@ namespace Intersect.Editor.Networking
 
         public static void SendOpenEditor(GameObjectType type)
         {
-            if (Globals.CurrentEditor != -1) return;
+            if (Globals.CurrentEditor != -1)
+            {
+                return;
+            }
+
             Network.SendPacket(new RequestOpenEditorPacket(type));
         }
 
         public static void SendDeleteObject(IDatabaseObject obj)
         {
-            Network.SendPacket(new DeleteGameObjectPacket(obj.Type,obj.Id));
+            Network.SendPacket(new DeleteGameObjectPacket(obj.Type, obj.Id));
         }
 
         public static void SendSaveObject(IDatabaseObject obj)
         {
-            Network.SendPacket(new SaveGameObjectPacket(obj.Type,obj.Id,obj.JsonData));
+            Network.SendPacket(new SaveGameObjectPacket(obj.Type, obj.Id, obj.JsonData));
         }
 
         public static void SendSaveTime(string timeJson)
@@ -156,5 +183,7 @@ namespace Intersect.Editor.Networking
         {
             Network.SendPacket(new EnterMapPacket(mapId));
         }
+
     }
+
 }

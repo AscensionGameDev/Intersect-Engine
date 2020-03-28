@@ -10,13 +10,14 @@ using Newtonsoft.Json;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class CreditsWindow
     {
+
         private Button mBackBtn;
 
         //Content
         private ScrollControl mCreditsContent;
-        private RichLabel mRichLabel;
 
         //Parent
         private Label mCreditsHeader;
@@ -25,6 +26,8 @@ namespace Intersect.Client.Interface.Menu
         private ImagePanel mCreditsWindow;
 
         private MainMenu mMainMenu;
+
+        private RichLabel mRichLabel;
 
         //Init
         public CreditsWindow(Canvas parent, MainMenu mainMenu)
@@ -49,7 +52,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu,Graphics.Renderer.GetResolutionString());
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -72,7 +75,7 @@ namespace Intersect.Client.Interface.Menu
         {
             mCreditsWindow.IsHidden = false;
             mRichLabel.ClearText();
-            Credits credits = new Credits();
+            var credits = new Credits();
             var creditsFile = Path.Combine("resources", "credits.json");
             if (File.Exists(creditsFile))
             {
@@ -80,7 +83,7 @@ namespace Intersect.Client.Interface.Menu
             }
             else
             {
-                Credits.CreditsLine line = new Credits.CreditsLine();
+                var line = new Credits.CreditsLine();
                 line.Text = "Insert your credits here!";
                 line.Alignment = "center";
                 line.Size = 12;
@@ -88,6 +91,7 @@ namespace Intersect.Client.Interface.Menu
                 line.Font = "sourcesansproblack";
                 credits.Lines.Add(line);
             }
+
             File.WriteAllText(creditsFile, JsonConvert.SerializeObject(credits, Formatting.Indented));
 
             foreach (var line in credits.Lines)
@@ -98,12 +102,18 @@ namespace Intersect.Client.Interface.Menu
                 }
                 else
                 {
-                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
-                        line.GetAlignment(), GameContentManager.Current.GetFont(line.Font, line.Size));
+                    mRichLabel.AddText(
+                        line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B), line.GetAlignment(),
+                        GameContentManager.Current.GetFont(line.Font, line.Size)
+                    );
+
                     mRichLabel.AddLineBreak();
                 }
             }
+
             mRichLabel.SizeToChildren(false, true);
         }
+
     }
+
 }

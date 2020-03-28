@@ -11,10 +11,14 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandOptions : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private EventPage mCurrentPage;
+
         private ShowOptionsCommand mMyCommand;
 
         public EventCommandOptions(ShowOptionsCommand refCommand, EventPage refPage, FrmEvent editor)
@@ -40,6 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbFace.SelectedIndex = 0;
             }
+
             UpdateFacePreview();
         }
 
@@ -59,10 +64,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateFacePreview()
         {
-            if (pnlFace == null) return;
+            if (pnlFace == null)
+            {
+                return;
+            }
+
             pnlFace.BackgroundImage = File.Exists($"resources/faces/{cmbFace?.Text}")
-                    ? new Bitmap($"resources/faces/{cmbFace?.Text}")
-                    : null;
+                ? new Bitmap($"resources/faces/{cmbFace?.Text}")
+                : null;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -89,7 +98,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void lblCommands_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
+            );
         }
+
     }
+
 }

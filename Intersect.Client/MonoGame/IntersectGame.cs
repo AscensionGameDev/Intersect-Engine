@@ -6,7 +6,6 @@ using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.General;
-using Intersect.Client.Interface;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Database;
 using Intersect.Client.MonoGame.File_Management;
@@ -14,7 +13,6 @@ using Intersect.Client.MonoGame.Graphics;
 using Intersect.Client.MonoGame.Input;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Client.MonoGame.System;
-using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Logging;
 
@@ -25,12 +23,15 @@ using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 
 namespace Intersect.Client.MonoGame
 {
+
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
     public class IntersectGame : Game
     {
+
         private double mLastUpdateTime = 0;
+
         public IntersectGame()
         {
             //Setup an error handler
@@ -41,7 +42,8 @@ namespace Intersect.Client.MonoGame
             var graphics = new GraphicsDeviceManager(this);
             graphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
             {
-                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
+                    RenderTargetUsage.PreserveContents;
             };
 
             Content.RootDirectory = "";
@@ -53,12 +55,15 @@ namespace Intersect.Client.MonoGame
             ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
 
             Globals.Database.LoadPreferences();
-            
+
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(graphics, Content, this);
             Core.Graphics.Renderer = renderer;
-            if (renderer == null) throw new NullReferenceException("No renderer.");
+            if (renderer == null)
+            {
+                throw new NullReferenceException("No renderer.");
+            }
 
             Globals.System = new MonoSystem();
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
@@ -117,6 +122,7 @@ namespace Intersect.Client.MonoGame
                     ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
+
             base.Update(gameTime);
         }
 
@@ -138,6 +144,7 @@ namespace Intersect.Client.MonoGame
             {
                 Exit();
             }
+
             base.Draw(gameTime);
         }
 
@@ -147,10 +154,15 @@ namespace Intersect.Client.MonoGame
             Networking.Network.Close("quitting");
             if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
             {
-                MessageBox.Show(Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(
+                    Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation
+                );
             }
+
             base.Dispose();
         }
+
     }
+
 }
- 

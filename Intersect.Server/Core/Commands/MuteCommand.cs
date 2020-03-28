@@ -4,14 +4,13 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class MuteCommand : ModeratorActionCommand
     {
+
         public MuteCommand() : base(
-            Strings.Commands.Mute,
-            Strings.Commands.Arguments.TargetMute,
-            Strings.Commands.Arguments.DurationMute,
-            Strings.Commands.Arguments.IpMute,
-            Strings.Commands.Arguments.ReasonMute
+            Strings.Commands.Mute, Strings.Commands.Arguments.TargetMute, Strings.Commands.Arguments.DurationMute,
+            Strings.Commands.Arguments.IpMute, Strings.Commands.Arguments.ReasonMute
         )
         {
         }
@@ -21,12 +20,14 @@ namespace Intersect.Server.Core.Commands
             if (target.Entity == null)
             {
                 Console.WriteLine($@"    {Strings.Player.offline}");
+
                 return;
             }
 
             // TODO: Refactor the global/console messages into ModeratorActionCommand
             var name = target.Entity.Name;
-            if (string.IsNullOrEmpty(Mute.FindMuteReason(target.User.Id, ""))) {
+            if (string.IsNullOrEmpty(Mute.FindMuteReason(target.User.Id, "")))
+            {
                 Mute.Add(target, duration, reason, Strings.Commands.muteuser, ip ? target.GetIp() : "");
                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(name));
                 Console.WriteLine($@"    {Strings.Account.muted.ToString(name)}");
@@ -36,5 +37,7 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine($@"    {Strings.Account.alreadymuted.ToString(name)}");
             }
         }
+
     }
+
 }

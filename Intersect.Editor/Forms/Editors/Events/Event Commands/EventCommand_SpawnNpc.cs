@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -11,16 +12,28 @@ using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandSpawnNpc : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private MapBase mCurrentMap;
+
         private EventBase mEditingEvent;
+
         private SpawnNpcCommand mMyCommand;
+
         private int mSpawnX;
+
         private int mSpawnY;
 
-        public EventCommandSpawnNpc(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, SpawnNpcCommand editingCommand)
+        public EventCommandSpawnNpc(
+            FrmEvent eventEditor,
+            MapBase currentMap,
+            EventBase currentEvent,
+            SpawnNpcCommand editingCommand
+        )
         {
             InitializeComponent();
             mMyCommand = editingCommand;
@@ -39,6 +52,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbConditionType.SelectedIndex = 1;
             }
+
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             UpdateFormElements();
@@ -49,12 +63,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     nudWarpX.Value = mMyCommand.X;
                     nudWarpY.Value = mMyCommand.Y;
                     cmbDirection.SelectedIndex = mMyCommand.Dir;
+
                     break;
                 case 1: //On/Around Entity Spawn
                     mSpawnX = mMyCommand.X;
                     mSpawnY = mMyCommand.Y;
                     chkDirRelative.Checked = Convert.ToBoolean(mMyCommand.Dir);
                     UpdateSpawnPreview();
+
                     break;
             }
         }
@@ -71,15 +87,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpTileSpawn.Text = Strings.EventSpawnNpc.spawntype0;
             grpEntitySpawn.Text = Strings.EventSpawnNpc.spawntype1;
 
-            lblMap.Text = Strings.Warping.map.ToString( "");
-            lblX.Text = Strings.Warping.x.ToString( "");
-            lblY.Text = Strings.Warping.y.ToString( "");
-            lblMap.Text = Strings.Warping.direction.ToString( "");
+            lblMap.Text = Strings.Warping.map.ToString("");
+            lblX.Text = Strings.Warping.x.ToString("");
+            lblY.Text = Strings.Warping.y.ToString("");
+            lblMap.Text = Strings.Warping.direction.ToString("");
             cmbDirection.Items.Clear();
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+
             cmbDirection.SelectedIndex = 0;
             btnVisual.Text = Strings.Warping.visual;
 
@@ -100,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 case 0: //Tile Spawn
                     grpTileSpawn.Show();
                     cmbMap.Items.Clear();
-                    for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                    for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                     {
                         cmbMap.Items.Add(MapList.OrderedMaps[i].Name);
                         if (MapList.OrderedMaps[i].MapId == mMyCommand.MapId)
@@ -108,10 +125,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                             cmbMap.SelectedIndex = i;
                         }
                     }
+
                     if (cmbMap.SelectedIndex == -1)
                     {
                         cmbMap.SelectedIndex = 0;
                     }
+
                     break;
                 case 1: //On/Around Entity Spawn
                     grpEntitySpawn.Show();
@@ -123,34 +142,43 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     {
                         foreach (var evt in mCurrentMap.LocalEvents)
                         {
-                            cmbEntities.Items.Add(evt.Key == mEditingEvent.Id
-                                ? Strings.EventSpawnNpc.This + " "
-                                : "" + evt.Value.Name);
-                            if (mMyCommand.EntityId == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                            cmbEntities.Items.Add(
+                                evt.Key == mEditingEvent.Id ? Strings.EventSpawnNpc.This + " " : "" + evt.Value.Name
+                            );
+
+                            if (mMyCommand.EntityId == evt.Key)
+                            {
+                                cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                            }
                         }
                     }
+
                     UpdateSpawnPreview();
+
                     break;
             }
         }
 
         private void UpdateSpawnPreview()
         {
-            Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
-            Font renderFont = new Font(new FontFamily("Arial"), 14);
-            Graphics g = Graphics.FromImage(destBitmap);
+            var destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
+            var renderFont = new Font(new FontFamily("Arial"), 14);
+            var g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.White);
             g.FillRectangle(Brushes.Red, new Rectangle((mSpawnX + 2) * 32, (mSpawnY + 2) * 32, 32, 32));
-            for (int x = 0; x < 5; x++)
+            for (var x = 0; x < 5; x++)
             {
                 g.DrawLine(Pens.Black, x * 32, 0, x * 32, 32 * 5);
                 g.DrawLine(Pens.Black, 0, x * 32, 32 * 5, x * 32);
             }
+
             g.DrawLine(Pens.Black, 0, 32 * 5 - 1, 32 * 5, 32 * 5 - 1);
             g.DrawLine(Pens.Black, 32 * 5 - 1, 0, 32 * 5 - 1, 32 * 5 - 1);
-            g.DrawString("E", renderFont, Brushes.Black,
-                pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
-                pnlSpawnLoc.Height / 2 - g.MeasureString("S", renderFont).Height / 2);
+            g.DrawString(
+                "E", renderFont, Brushes.Black, pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
+                pnlSpawnLoc.Height / 2 - g.MeasureString("S", renderFont).Height / 2
+            );
+
             g.Dispose();
             pnlSpawnLoc.BackgroundImage = destBitmap;
         }
@@ -165,7 +193,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
                     mMyCommand.X = (sbyte) nudWarpX.Value;
                     mMyCommand.Y = (sbyte) nudWarpY.Value;
-                    mMyCommand.Dir = (byte)cmbDirection.SelectedIndex;
+                    mMyCommand.Dir = (byte) cmbDirection.SelectedIndex;
+
                     break;
                 case 1: //On/Around Entity Spawn
                     mMyCommand.MapId = Guid.Empty;
@@ -177,11 +206,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     {
                         mMyCommand.EntityId = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
-                    mMyCommand.X = (sbyte)mSpawnX;
-                    mMyCommand.Y = (sbyte)mSpawnY;
-                    mMyCommand.Dir = (byte)Convert.ToInt32(chkDirRelative.Checked);
+
+                    mMyCommand.X = (sbyte) mSpawnX;
+                    mMyCommand.Y = (sbyte) mSpawnY;
+                    mMyCommand.Dir = (byte) Convert.ToInt32(chkDirRelative.Checked);
+
                     break;
             }
+
             mEventEditor.FinishCommandEdit();
         }
 
@@ -197,20 +229,24 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnVisual_Click(object sender, EventArgs e)
         {
-            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, (int) nudWarpX.Value,
-                (int) nudWarpY.Value);
+            var frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.SelectTile(
+                MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, (int) nudWarpX.Value, (int) nudWarpY.Value
+            );
+
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 nudWarpX.Value = frmWarpSelection.GetX();
                 nudWarpY.Value = frmWarpSelection.GetY();
             }
@@ -220,10 +256,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             if (e.X >= 0 && e.Y >= 0 && e.X < pnlSpawnLoc.Width && e.Y < pnlSpawnLoc.Height)
             {
-                mSpawnX = (int) Math.Floor((double) (e.X) / Options.TileWidth) - 2;
-                mSpawnY = (int) Math.Floor((double) (e.Y) / Options.TileHeight) - 2;
+                mSpawnX = (int) Math.Floor((double) e.X / Options.TileWidth) - 2;
+                mSpawnY = (int) Math.Floor((double) e.Y / Options.TileHeight) - 2;
                 UpdateSpawnPreview();
             }
         }
+
     }
+
 }

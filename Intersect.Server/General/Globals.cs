@@ -1,32 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Intersect.GameObjects;
 using Intersect.Server.Core;
 using Intersect.Server.Entities;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.General
 {
+
     public static class Globals
     {
+
+        [NotNull] public static readonly object ClientLock = new object();
+
+        [NotNull] public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
+
+        [NotNull] public static readonly List<Client> Clients = new List<Client>();
+
+        public static long Cps = 0;
+
+        public static bool CpsLock = true;
+
         [NotNull]
         public static ServerTiming Timing { get; } = new ServerTiming();
 
-        public static long Cps = 0;
-        public static bool CpsLock = true;
-
-        [NotNull] public static readonly object ClientLock = new object();
-        [NotNull] public static readonly List<Client> Clients = new List<Client>();
-        [NotNull] public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
-
         //Game helping stuff
-        [NotNull] public static Random Rand { get; } = new Random();
+        [NotNull]
+        public static Random Rand { get; } = new Random();
 
-        public static List<Player> OnlineList => Clients
-            .FindAll(client => client?.Entity != null)
+        public static List<Player> OnlineList => Clients.FindAll(client => client?.Entity != null)
             .Select(client => client.Entity)
             .ToList();
 
@@ -61,5 +68,7 @@ namespace Intersect.Server.General
                 map?.DespawnItemsOf(item);
             }
         }
+
     }
+
 }

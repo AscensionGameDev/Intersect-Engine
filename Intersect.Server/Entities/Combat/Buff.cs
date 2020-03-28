@@ -3,6 +3,7 @@ using Intersect.Server.General;
 
 namespace Intersect.Server.Entities.Combat
 {
+
     public class Buff
     {
 
@@ -20,4 +21,5 @@ namespace Intersect.Server.Entities.Combat
         }
 
     }
+
 }

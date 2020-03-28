@@ -1,32 +1,33 @@
-﻿using Intersect.Server.Entities;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 
 using Intersect.Logging;
 using Intersect.Security;
 using Intersect.Server.Database.PlayerData.Api;
-
-using JetBrains.Annotations;
 using Intersect.Server.Database.PlayerData.Security;
-using Intersect.Server.Extensions;
+using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Payloads;
+
+using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Intersect.Server.Database.PlayerData
 {
+
     [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
     public class User
     {
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
         public Guid Id { get; private set; }
@@ -34,9 +35,11 @@ namespace Intersect.Server.Database.PlayerData
         [Column(Order = 1)]
         public string Name { get; set; }
 
-        [JsonIgnore] public string Salt { get; set; }
+        [JsonIgnore]
+        public string Salt { get; set; }
 
-        [JsonIgnore] public string Password { get; set; }
+        [JsonIgnore]
+        public string Password { get; set; }
 
         [Column(Order = 2)]
         public string Email { get; set; }
@@ -62,6 +65,128 @@ namespace Intersect.Server.Database.PlayerData
 
         [JsonIgnore]
         public DateTime? PasswordResetTime { get; set; }
+
+        public User Load()
+        {
+            // ReSharper disable once InvertIf
+            if (Players != null)
+            {
+                foreach (var player in Players)
+                {
+                    Player.Load(player);
+                }
+            }
+
+            return this;
+        }
+
+        public static string SaltPasswordHash([NotNull] string passwordHash, [NotNull] string salt)
+        {
+            using (var sha = new SHA256Managed())
+            {
+                return BitConverter
+                    .ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(passwordHash.ToUpperInvariant() + salt)))
+                    .Replace("-", "");
+            }
+        }
+
+        public bool IsPasswordValid([NotNull] string passwordHash)
+        {
+            if (string.IsNullOrWhiteSpace(passwordHash) || string.IsNullOrWhiteSpace(Salt))
+            {
+                return false;
+            }
+
+            var saltedPasswordHash = SaltPasswordHash(passwordHash, Salt);
+
+            return string.Equals(Password, saltedPasswordHash, StringComparison.Ordinal);
+        }
+
+        public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
+        {
+            return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
+        }
+
+        public bool TrySetPassword([NotNull] string passwordHash)
+        {
+            using (var sha = new SHA256Managed())
+            {
+                using (var rng = new RNGCryptoServiceProvider())
+                {
+                    /* Generate a Salt */
+                    var saltBuffer = new byte[20];
+                    rng.GetBytes(saltBuffer);
+                    var salt = BitConverter
+                        .ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(saltBuffer))))
+                        .Replace("-", "");
+
+                    Salt = salt;
+                    Password = SaltPasswordHash(passwordHash, salt);
+
+                    return true;
+                }
+            }
+        }
+
+        public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            var client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
+        }
+
+        public static Tuple<Client, User> Fetch(
+            [NotNull] string userName,
+            [CanBeNull] PlayerContext playerContext = null
+        )
+        {
+            var client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
+        }
+
+        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+
+                    return userId == Guid.Empty ? null : QueryUserById(context, userId);
+                }
+            }
+            else
+            {
+                return userId == Guid.Empty ? null : QueryUserById(playerContext, userId);
+            }
+        }
+
+        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
+        {
+            try
+            {
+                if (playerContext == null)
+                {
+                    lock (DbInterface.GetPlayerContextLock())
+                    {
+                        var context = DbInterface.GetPlayerContext();
+
+                        return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                    }
+                }
+                else
+                {
+                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+
+                throw;
+            }
+        }
 
         #region Instance Variables
 
@@ -99,20 +224,6 @@ namespace Intersect.Server.Database.PlayerData
 
         #endregion
 
-        public User Load()
-        {
-            // ReSharper disable once InvertIf
-            if (Players != null)
-            {
-                foreach (var player in Players)
-                {
-                    Player.Load(player);
-                }
-            }
-
-            return this;
-        }
-
         #region Listing
 
         [NotNull]
@@ -121,6 +232,7 @@ namespace Intersect.Server.Database.PlayerData
             lock (DbInterface.GetPlayerContextLock())
             {
                 var context = DbInterface.GetPlayerContext();
+
                 return context.Users.Count();
             }
         }
@@ -140,6 +252,7 @@ namespace Intersect.Server.Database.PlayerData
                     catch (Exception exception)
                     {
                         exception.ToString();
+
                         throw;
                     }
                 }
@@ -154,158 +267,70 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Compiled Queries
 
-        [NotNull]
-        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
+        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
             EF.CompileQuery(
-                (PlayerContext context, int offset, int count) =>
-                    context.Users
-                        .OrderBy(user => user.Id.ToString())
-                        .Skip(offset)
-                        .Take(count)
-                        .Include(p => p.Ban)
-                        .Include(p => p.Mute)
+                (PlayerContext context, int offset, int count) => context.Users.OrderBy(user => user.Id.ToString())
+                    .Skip(offset)
+                    .Take(count)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull]
-        private static readonly Func<PlayerContext, string, User> QueryUserByName =
-            EF.CompileQuery((PlayerContext context, string username) =>
-                context.Users
-                    .Where(u => u.Name == username)
+        [NotNull] private static readonly Func<PlayerContext, string, User> QueryUserByName =
+            EF.CompileQuery(
+                (PlayerContext context, string username) => context.Users.Where(u => u.Name == username)
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
-                    .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
-                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Players).ThenInclude(c => c.Quests)
-                    .Include(p => p.Players).ThenInclude(c => c.Variables)
-                    .Include(p => p.Players).ThenInclude(c => c.Items)
-                    .Include(p => p.Players).ThenInclude(c => c.Spells)
-                    .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .FirstOrDefault())
-            ?? throw new InvalidOperationException();
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Friends)
+                    .ThenInclude(c => c.Target)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Quests)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Variables)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Spells)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
 
-        [NotNull]
-        private static readonly Func<PlayerContext, Guid, User> QueryUserById =
-            EF.CompileQuery((PlayerContext context, Guid id) =>
-                context.Users
-                    .Where(u => u.Id == id)
+        [NotNull] private static readonly Func<PlayerContext, Guid, User> QueryUserById =
+            EF.CompileQuery(
+                (PlayerContext context, Guid id) => context.Users.Where(u => u.Id == id)
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
-                    .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
-                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Players).ThenInclude(c => c.Quests)
-                    .Include(p => p.Players).ThenInclude(c => c.Variables)
-                    .Include(p => p.Players).ThenInclude(c => c.Items)
-                    .Include(p => p.Players).ThenInclude(c => c.Spells)
-                    .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .FirstOrDefault())
-            ?? throw new InvalidOperationException();
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Friends)
+                    .ThenInclude(c => c.Target)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Quests)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Variables)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Spells)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
 
         #endregion
 
-        public static string SaltPasswordHash([NotNull] string passwordHash, [NotNull] string salt)
-        {
-            using (var sha = new SHA256Managed())
-            {
-                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(passwordHash.ToUpperInvariant() + salt))).Replace("-", "");
-            }
-        }
-
-        public bool IsPasswordValid([NotNull] string passwordHash)
-        {
-            if (string.IsNullOrWhiteSpace(passwordHash) || string.IsNullOrWhiteSpace(Salt))
-            {
-                return false;
-            }
-
-            var saltedPasswordHash = SaltPasswordHash(passwordHash, Salt);
-            return string.Equals(Password, saltedPasswordHash, StringComparison.Ordinal);
-        }
-
-        public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
-        {
-            return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
-        }
-
-        public bool TrySetPassword([NotNull] string passwordHash)
-        {
-            using (var sha = new SHA256Managed())
-            {
-                using (var rng = new RNGCryptoServiceProvider())
-                {
-                    /* Generate a Salt */
-                    var saltBuffer = new byte[20];
-                    rng.GetBytes(saltBuffer);
-                    var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(saltBuffer)))).Replace("-", "");
-
-                    Salt = salt;
-                    Password = SaltPasswordHash(passwordHash, salt);
-
-                    return true;
-                }
-            }
-        }
-
-        public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
-        {
-            var client = Globals.Clients.Find(
-                queryClient => userId == queryClient?.User?.Id
-            );
-
-            return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
-        }
-
-        public static Tuple<Client, User> Fetch([NotNull] string userName, [CanBeNull] PlayerContext playerContext = null)
-        {
-            var client = Globals.Clients.Find(
-                queryClient => Entity.CompareName(userName, queryClient?.User?.Name)
-            );
-
-            return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
-        }
-
-        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
-        {
-            if (playerContext == null)
-            {
-                lock (DbInterface.GetPlayerContextLock())
-                {
-                    var context = DbInterface.GetPlayerContext();
-                    return userId == Guid.Empty ? null : QueryUserById(context, userId);
-                }
-            }
-            else
-            {
-                return userId == Guid.Empty ? null : QueryUserById(playerContext, userId);
-            }
-        }
-
-        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
-        {
-            try
-            {
-                if (playerContext == null)
-                {
-                    lock (DbInterface.GetPlayerContextLock())
-                    {
-                        var context = DbInterface.GetPlayerContext();
-
-                        return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
-                    }
-                }
-                else
-                {
-                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-
-                throw;
-            }
-        }
     }
+
 }

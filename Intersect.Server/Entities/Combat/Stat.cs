@@ -7,22 +7,17 @@ using Intersect.Server.General;
 
 namespace Intersect.Server.Entities.Combat
 {
+
     public class Stat
     {
-
-        private Entity mOwner;
-
-        private Stats mStatType;
 
         private Dictionary<SpellBase, Buff> mBuff = new Dictionary<SpellBase, Buff>();
 
         private bool mChanged;
 
-        public int BaseStat
-        {
-            get => mOwner.BaseStats[(int)mStatType];
-            set => mOwner.BaseStats[(int)mStatType] = value;
-        }
+        private Entity mOwner;
+
+        private Stats mStatType;
 
         public Stat(Stats statType, Entity owner)
         {
@@ -30,11 +25,17 @@ namespace Intersect.Server.Entities.Combat
             mStatType = statType;
         }
 
+        public int BaseStat
+        {
+            get => mOwner.BaseStats[(int) mStatType];
+            set => mOwner.BaseStats[(int) mStatType] = value;
+        }
+
         public int Value()
         {
             var s = BaseStat;
 
-            s += mOwner.StatPointAllocations[(int)mStatType];
+            s += mOwner.StatPointAllocations[(int) mStatType];
             s += mOwner.GetStatBuffs(mStatType);
 
             //Add buffs
@@ -91,4 +92,5 @@ namespace Intersect.Server.Entities.Combat
         }
 
     }
+
 }

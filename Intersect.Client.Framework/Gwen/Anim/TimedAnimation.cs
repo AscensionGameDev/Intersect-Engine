@@ -2,13 +2,19 @@
 
 namespace Intersect.Client.Framework.Gwen.Anim
 {
+
     // Timed animation. Provides a useful base for animations.
     public class TimedAnimation : Animation
     {
+
         private float mEase;
+
         private float mEnd;
+
         private bool mFinished;
+
         private float mStart;
+
         private bool mStarted;
 
         public TimedAnimation(float length, float delay = 0.0f, float ease = 1.0f)
@@ -27,12 +33,16 @@ namespace Intersect.Client.Framework.Gwen.Anim
             //base.Think();
 
             if (mFinished)
+            {
                 return;
+            }
 
-            float current = Platform.Neutral.GetTimeInSeconds();
-            float secondsIn = current - mStart;
+            var current = Platform.Neutral.GetTimeInSeconds();
+            var secondsIn = current - mStart;
             if (secondsIn < 0.0)
+            {
                 return;
+            }
 
             if (!mStarted)
             {
@@ -40,11 +50,16 @@ namespace Intersect.Client.Framework.Gwen.Anim
                 OnStart();
             }
 
-            float delta = secondsIn / (mEnd - mStart);
+            var delta = secondsIn / (mEnd - mStart);
             if (delta < 0.0f)
+            {
                 delta = 0.0f;
+            }
+
             if (delta > 1.0f)
+            {
                 delta = 1.0f;
+            }
 
             Run((float) Math.Pow(delta, mEase));
 
@@ -68,5 +83,7 @@ namespace Intersect.Client.Framework.Gwen.Anim
         protected virtual void OnFinish()
         {
         }
+
     }
+
 }

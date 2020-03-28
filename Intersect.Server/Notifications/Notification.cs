@@ -1,24 +1,16 @@
-﻿using Intersect.Server.Localization;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
+
 using Intersect.Logging;
-using NotFiniteNumberException = System.NotFiniteNumberException;
-using Strings = Intersect.Server.Localization.Strings;
+using Intersect.Server.Localization;
 
 namespace Intersect.Server.Notifications
 {
+
     public class Notification
     {
-        public string ToAddress { get; set; } = "";
-        public string Subject { get; set; } = "";
-        public string Body { get; set; } = "";
-        public bool IsHtml { get; set; } = false;
 
         public Notification(string to, string subject = "", bool html = false)
         {
@@ -26,6 +18,14 @@ namespace Intersect.Server.Notifications
             Subject = subject;
             IsHtml = html;
         }
+
+        public string ToAddress { get; set; } = "";
+
+        public string Subject { get; set; } = "";
+
+        public string Body { get; set; } = "";
+
+        public bool IsHtml { get; set; } = false;
 
         public void Send()
         {
@@ -50,6 +50,7 @@ namespace Intersect.Server.Notifications
                             UseDefaultCredentials = false,
                             Credentials = new NetworkCredential(Options.Smtp.Username, Options.Smtp.Password)
                         };
+
                         using (var message = new MailMessage(fromAddress, toAddress)
                         {
                             Subject = Subject,
@@ -62,24 +63,44 @@ namespace Intersect.Server.Notifications
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: Uncaught Error" + Environment.NewLine + ex.ToString());
+                        Log.Error(
+                            "Failed to send email (Subject: " +
+                            Subject +
+                            ") to " +
+                            ToAddress +
+                            ". Reason: Uncaught Error" +
+                            Environment.NewLine +
+                            ex.ToString()
+                        );
                     }
                 }
                 else
                 {
-                    Log.Warn("Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!");
+                    Log.Warn(
+                        "Failed to send email (Subject: " +
+                        Subject +
+                        ") to " +
+                        ToAddress +
+                        ". Reason: SMTP not configured!"
+                    );
                 }
             }
             else
             {
-                Log.Warn("Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!");
+                Log.Warn(
+                    "Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!"
+                );
             }
         }
 
         protected bool LoadFromTemplate(string templatename, string username)
         {
             var templatesDir = Path.Combine("resources", "notifications");
-            if (!Directory.Exists(templatesDir)) Directory.CreateDirectory(templatesDir);
+            if (!Directory.Exists(templatesDir))
+            {
+                Directory.CreateDirectory(templatesDir);
+            }
+
             var filepath = Path.Combine("resources", "notifications", templatename + ".html");
             if (File.Exists(filepath))
             {
@@ -88,13 +109,25 @@ namespace Intersect.Server.Notifications
                 Body = Body.Replace("{{product}}", Strings.Notifications.product);
                 Body = Body.Replace("{{copyright}}", Strings.Notifications.copyright);
                 Body = Body.Replace("{{name}}", username);
+
                 return true;
             }
             else
             {
-                Log.Warn("Failed to load email template (Subject: " + Subject + ") for " + ToAddress + ". Reason: Template " + templatename + ".html not found!");
+                Log.Warn(
+                    "Failed to load email template (Subject: " +
+                    Subject +
+                    ") for " +
+                    ToAddress +
+                    ". Reason: Template " +
+                    templatename +
+                    ".html not found!"
+                );
             }
+
             return false;
         }
+
     }
+
 }

@@ -1,22 +1,23 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     RGBA color picker.
     /// </summary>
     public class ColorPicker : Base, IColorPicker
     {
+
         private Color mColor;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ColorPicker" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ColorPicker(Base parent)
-            : base(parent)
+        public ColorPicker(Base parent) : base(parent)
         {
             MouseInputEnabled = true;
 
@@ -68,12 +69,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                GroupBox gb = FindChildByName("Alphagroupbox", true) as GroupBox;
+                var gb = FindChildByName("Alphagroupbox", true) as GroupBox;
+
                 return !gb.IsHidden;
             }
             set
             {
-                GroupBox gb = FindChildByName("Alphagroupbox", true) as GroupBox;
+                var gb = FindChildByName("Alphagroupbox", true) as GroupBox;
                 gb.IsHidden = !value;
                 Invalidate();
             }
@@ -101,24 +103,24 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             const int colorSize = 12;
 
-            GroupBox colorGroup = new GroupBox(this);
+            var colorGroup = new GroupBox(this);
             colorGroup.SetPosition(10, y);
             colorGroup.SetText(name);
             colorGroup.SetSize(160, 35);
             colorGroup.Name = name + "groupbox";
 
-            ColorDisplay disp = new ColorDisplay(colorGroup);
+            var disp = new ColorDisplay(colorGroup);
             disp.Name = name;
             disp.SetBounds(0, 10, colorSize, colorSize);
 
-            TextBoxNumeric numeric = new TextBoxNumeric(colorGroup);
+            var numeric = new TextBoxNumeric(colorGroup);
             numeric.Name = name + "Box";
             numeric.SetPosition(105, 7);
             numeric.SetSize(26, 16);
             numeric.SelectAllOnFocus = true;
             numeric.TextChanged += NumericTyped;
 
-            HorizontalSlider slider = new HorizontalSlider(colorGroup);
+            var slider = new HorizontalSlider(colorGroup);
             slider.SetPosition(colorSize + 5, 10);
             slider.SetRange(0, 255);
             slider.SetSize(80, colorSize);
@@ -128,28 +130,47 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private void NumericTyped(Base control, EventArgs args)
         {
-            TextBoxNumeric box = control as TextBoxNumeric;
+            var box = control as TextBoxNumeric;
             if (null == box)
+            {
                 return;
+            }
 
             if (box.Text == string.Empty)
+            {
                 return;
+            }
 
-            int textValue = (int) box.Value;
-            if (textValue < 0) textValue = 0;
-            if (textValue > 255) textValue = 255;
+            var textValue = (int) box.Value;
+            if (textValue < 0)
+            {
+                textValue = 0;
+            }
+
+            if (textValue > 255)
+            {
+                textValue = 255;
+            }
 
             if (box.Name.Contains("Red"))
+            {
                 R = textValue;
+            }
 
             if (box.Name.Contains("Green"))
+            {
                 G = textValue;
+            }
 
             if (box.Name.Contains("Blue"))
+            {
                 B = textValue;
+            }
 
             if (box.Name.Contains("Alpha"))
+            {
                 A = textValue;
+            }
 
             UpdateControls();
         }
@@ -164,15 +185,16 @@ namespace Intersect.Client.Framework.Gwen.Control
             CreateColorControl("Blue", startY + height * 2);
             CreateColorControl("Alpha", startY + height * 3);
 
-            GroupBox finalGroup = new GroupBox(this);
+            var finalGroup = new GroupBox(this);
             finalGroup.SetPosition(180, 40);
             finalGroup.SetSize(60, 60);
             finalGroup.SetText("Result");
             finalGroup.Name = "ResultGroupBox";
 
-            ColorDisplay disp = new ColorDisplay(finalGroup);
+            var disp = new ColorDisplay(finalGroup);
             disp.Name = "Result";
             disp.SetBounds(0, 10, 32, 32);
+
             //disp.DrawCheckers = true;
 
             //UpdateControls();
@@ -180,13 +202,13 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private void UpdateColorControls(string name, Color col, int sliderVal)
         {
-            ColorDisplay disp = FindChildByName(name, true) as ColorDisplay;
+            var disp = FindChildByName(name, true) as ColorDisplay;
             disp.Color = col;
 
-            HorizontalSlider slider = FindChildByName(name + "Slider", true) as HorizontalSlider;
+            var slider = FindChildByName(name + "Slider", true) as HorizontalSlider;
             slider.Value = sliderVal;
 
-            TextBoxNumeric box = FindChildByName(name + "Box", true) as TextBoxNumeric;
+            var box = FindChildByName(name + "Box", true) as TextBoxNumeric;
             box.Value = sliderVal;
         }
 
@@ -198,11 +220,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             UpdateColorControls("Blue", Color.FromArgb(255, 0, 0, SelectedColor.B), SelectedColor.B);
             UpdateColorControls("Alpha", Color.FromArgb(SelectedColor.A, 255, 255, 255), SelectedColor.A);
 
-            ColorDisplay disp = FindChildByName("Result", true) as ColorDisplay;
+            var disp = FindChildByName("Result", true) as ColorDisplay;
             disp.Color = SelectedColor;
 
             if (ColorChanged != null)
+            {
                 ColorChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void SlidersMoved(Base control, EventArgs args)
@@ -214,11 +238,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             HorizontalSlider* alphaSlider	= gwen_cast<HorizontalSlider>(	FindChildByName( "AlphaSlider", true ) );
             */
 
-            HorizontalSlider slider = control as HorizontalSlider;
+            var slider = control as HorizontalSlider;
             if (slider != null)
+            {
                 SetColorByName(GetColorFromName(slider.Name), (int) slider.Value);
+            }
 
             UpdateControls();
+
             //SetColor( Gwen::Color( redSlider->GetValue(), greenSlider->GetValue(), blueSlider->GetValue(), alphaSlider->GetValue() ) );
         }
 
@@ -233,9 +260,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             SizeToChildren(false, true);
             SetSize(Width, Height + 5);
 
-            GroupBox groupBox = FindChildByName("ResultGroupBox", true) as GroupBox;
+            var groupBox = FindChildByName("ResultGroupBox", true) as GroupBox;
             if (groupBox != null)
+            {
                 groupBox.SetPosition(groupBox.X, Height * 0.5f - groupBox.Height * 0.5f);
+            }
 
             //UpdateControls(); // this spams events continuously every tick
         }
@@ -243,39 +272,73 @@ namespace Intersect.Client.Framework.Gwen.Control
         private int GetColorByName(string colorName)
         {
             if (colorName == "Red")
+            {
                 return SelectedColor.R;
+            }
+
             if (colorName == "Green")
+            {
                 return SelectedColor.G;
+            }
+
             if (colorName == "Blue")
+            {
                 return SelectedColor.B;
+            }
+
             if (colorName == "Alpha")
+            {
                 return SelectedColor.A;
+            }
+
             return 0;
         }
 
         private static string GetColorFromName(string name)
         {
             if (name.Contains("Red"))
+            {
                 return "Red";
+            }
+
             if (name.Contains("Green"))
+            {
                 return "Green";
+            }
+
             if (name.Contains("Blue"))
+            {
                 return "Blue";
+            }
+
             if (name.Contains("Alpha"))
+            {
                 return "Alpha";
+            }
+
             return String.Empty;
         }
 
         private void SetColorByName(string colorName, int colorValue)
         {
             if (colorName == "Red")
+            {
                 R = colorValue;
+            }
             else if (colorName == "Green")
+            {
                 G = colorValue;
+            }
             else if (colorName == "Blue")
+            {
                 B = colorValue;
+            }
             else if (colorName == "Alpha")
+            {
                 A = colorValue;
+            }
         }
+
     }
+
 }

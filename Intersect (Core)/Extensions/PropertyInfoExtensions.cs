@@ -5,8 +5,10 @@ using JetBrains.Annotations;
 
 namespace Intersect.Extensions
 {
+
     public static class PropertyInfoExtensions
     {
+
         public static bool TryGetValue<TValue>(
             [NotNull] this PropertyInfo propertyInfo,
             object target,
@@ -16,10 +18,12 @@ namespace Intersect.Extensions
             if (propertyInfo.GetValue(target) is TValue typedValue)
             {
                 value = typedValue;
+
                 return true;
             }
 
             value = default(TValue);
+
             return false;
         }
 
@@ -33,10 +37,12 @@ namespace Intersect.Extensions
             if (propertyInfo.GetValue(target, index) is TValue typedValue)
             {
                 value = typedValue;
+
                 return true;
             }
 
             value = default(TValue);
+
             return false;
         }
 
@@ -53,11 +59,15 @@ namespace Intersect.Extensions
             if (propertyInfo.GetValue(target, invokeAttr, binder, index, culture) is TValue typedValue)
             {
                 value = typedValue;
+
                 return true;
             }
 
             value = default(TValue);
+
             return false;
         }
+
     }
+
 }

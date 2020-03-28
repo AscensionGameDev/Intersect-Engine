@@ -1,28 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
-using Intersect.Enums;
-using Intersect.GameObjects;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
+using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmCrafts : EditorForm
     {
+
         private List<CraftBase> mChanged = new List<CraftBase>();
+
         private string mCopiedItem;
+
         private CraftBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
 
-        private bool updatingIngedients = false;
+        private List<string> mKnownFolders = new List<string>();
 
+        private bool updatingIngedients = false;
 
         public FrmCrafts()
         {
@@ -72,27 +78,34 @@ namespace Intersect.Editor.Forms.Editors
                 nudQuantity.Hide();
                 lblQuantity.Hide();
                 lblIngredient.Hide();
-                for (int i = 0; i < mEditorItem.Ingredients.Count; i++)
+                for (var i = 0; i < mEditorItem.Ingredients.Count; i++)
                 {
                     if (mEditorItem.Ingredients[i].ItemId != Guid.Empty)
                     {
-                        lstIngredients.Items.Add(Strings.CraftsEditor.ingredientlistitem.ToString(
-                            ItemBase.GetName(mEditorItem.Ingredients[i].ItemId),
-                            mEditorItem.Ingredients[i].Quantity));
+                        lstIngredients.Items.Add(
+                            Strings.CraftsEditor.ingredientlistitem.ToString(
+                                ItemBase.GetName(mEditorItem.Ingredients[i].ItemId), mEditorItem.Ingredients[i].Quantity
+                            )
+                        );
                     }
                     else
                     {
-                        lstIngredients.Items.Add(Strings.CraftsEditor.ingredientlistitem.ToString(
-                            Strings.CraftsEditor.ingredientnone, mEditorItem.Ingredients[i].Quantity));
+                        lstIngredients.Items.Add(
+                            Strings.CraftsEditor.ingredientlistitem.ToString(
+                                Strings.CraftsEditor.ingredientnone, mEditorItem.Ingredients[i].Quantity
+                            )
+                        );
                     }
                 }
+
                 if (lstIngredients.Items.Count > 0)
                 {
                     lstIngredients.SelectedIndex = 0;
-                    cmbIngredient.SelectedIndex = ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                    cmbIngredient.SelectedIndex =
+                        ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+
                     nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
                 }
-
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -104,6 +117,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -111,7 +125,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstCrafts.SelectedNode != null && lstCrafts.SelectedNode.Tag != null) lstCrafts.SelectedNode.Text = txtName.Text;
+            if (lstCrafts.SelectedNode != null && lstCrafts.SelectedNode.Tag != null)
+            {
+                lstCrafts.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
@@ -119,23 +137,31 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity = (int)nudQuantity.Value;
+                mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity = (int) nudQuantity.Value;
                 updatingIngedients = true;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId), nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] =
+                        Strings.CraftsEditor.ingredientlistitem.ToString(
+                            ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
+                            nudQuantity.Value
+                        );
                 }
                 else
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(Strings.CraftsEditor.ingredientnone, nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] =
+                        Strings.CraftsEditor.ingredientlistitem.ToString(
+                            Strings.CraftsEditor.ingredientnone, nudQuantity.Value
+                        );
                 }
+
                 updatingIngedients = false;
             }
         }
 
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Time = (int)nudSpeed.Value;
+            mEditorItem.Time = (int) nudSpeed.Value;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -191,9 +217,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstCrafts.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.CraftsEditor.deleteprompt,
-                        Strings.CraftsEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.CraftsEditor.deleteprompt, Strings.CraftsEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -223,9 +250,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.CraftsEditor.undoprompt,
-                        Strings.CraftsEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.CraftsEditor.undoprompt, Strings.CraftsEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -286,14 +314,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstIngredients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (updatingIngedients) return;
+            if (updatingIngedients)
+            {
+                return;
+            }
+
             if (lstIngredients.SelectedIndex > -1)
             {
                 cmbIngredient.Show();
                 nudQuantity.Show();
                 lblQuantity.Show();
                 lblIngredient.Show();
-                cmbIngredient.SelectedIndex = ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                cmbIngredient.SelectedIndex =
+                    ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+
                 nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
             }
             else
@@ -309,9 +343,14 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                mEditorItem.Ingredients.Insert(lstIngredients.SelectedIndex,
-                    new CraftIngredient(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId,
-                        mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity));
+                mEditorItem.Ingredients.Insert(
+                    lstIngredients.SelectedIndex,
+                    new CraftIngredient(
+                        mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId,
+                        mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity
+                    )
+                );
+
                 UpdateEditor();
             }
         }
@@ -336,18 +375,26 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId = ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
+                mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId =
+                    ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
+
                 updatingIngedients = true;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(
-                        ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
-                        nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] =
+                        Strings.CraftsEditor.ingredientlistitem.ToString(
+                            ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
+                            nudQuantity.Value
+                        );
                 }
                 else
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(Strings.CraftsEditor.ingredientnone, nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] =
+                        Strings.CraftsEditor.ingredientlistitem.ToString(
+                            Strings.CraftsEditor.ingredientnone, nudQuantity.Value
+                        );
                 }
+
                 updatingIngedients = false;
             }
         }
@@ -392,29 +439,34 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCraftQuantity_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Quantity = (int)nudCraftQuantity.Value;
+            mEditorItem.Quantity = (int) nudCraftQuantity.Value;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstCrafts.SelectedNode != null && lstCrafts.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstCrafts.SelectedNode.Tag;
+                selectedId = (Guid) lstCrafts.SelectedNode.Tag;
             }
+
             lstCrafts.Nodes.Clear();
 
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in CraftBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((CraftBase)itm.Value).Folder) && !mFolders.Contains(((CraftBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((CraftBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((CraftBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((CraftBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((CraftBase)itm.Value).Folder))
-                        mKnownFolders.Add(((CraftBase)itm.Value).Folder);
+                    mFolders.Add(((CraftBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((CraftBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((CraftBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -450,7 +502,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -466,26 +520,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstCrafts.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstCrafts.SelectedNode;
 
-            if (!btnChronological.Checked) lstCrafts.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstCrafts.Sort();
+            }
 
             lstCrafts.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.CraftsEditor.folderprompt, Strings.CraftsEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.CraftsEditor.folderprompt, Strings.CraftsEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -510,6 +574,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstCrafts.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -528,20 +593,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstCrafts_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstCrafts.SelectedNode == null || lstCrafts.SelectedNode.Tag == null) return;
-            mEditorItem = CraftBase.Get((Guid)lstCrafts.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstCrafts.SelectedNode == null || lstCrafts.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = CraftBase.Get((Guid) lstCrafts.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -583,15 +662,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.CraftsEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.CraftsEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.CraftsEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

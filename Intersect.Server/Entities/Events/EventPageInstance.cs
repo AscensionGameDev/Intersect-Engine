@@ -11,54 +11,51 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Entities.Events
 {
+
     public class EventPageInstance : Entity
     {
-        private Pathfinder mPathFinder;
+
         public EventBase BaseEvent;
-        public Player Player;
-        private bool mDirectionFix;
+
         public bool DisablePreview;
+
         public EventPageInstance GlobalClone;
-        public Event MyEventIndex;
-        public EventGraphic MyGraphic = new EventGraphic();
-        public EventPage MyPage;
-        private int mPageNum;
-        public string Param;
-        private EventRenderLayer mRenderLayer = EventRenderLayer.SameAsPlayer;
-        public EventTrigger Trigger;
-        private bool mWalkingAnim;
+
+        private bool mDirectionFix;
+
+        private EventMovementSpeed mMovementSpeed;
+
+        public EventMovementFrequency MovementFreq;
 
         public EventMovementType MovementType;
-        public EventMovementFrequency MovementFreq;
-        private EventMovementSpeed mMovementSpeed;
-        public EventMovementSpeed MovementSpeed
-        {
-            get { return mMovementSpeed; }
-            set
-            {
-                mMovementSpeed = value;
-                switch (mMovementSpeed)
-                {
-                    case EventMovementSpeed.Slowest:
-                        Stat[(int) Stats.Speed].BaseStat = 2;
-                        break;
-                    case EventMovementSpeed.Slower:
-                        Stat[(int) Stats.Speed].BaseStat = 5;
-                        break;
-                    case EventMovementSpeed.Normal:
-                        Stat[(int) Stats.Speed].BaseStat = 20;
-                        break;
-                    case EventMovementSpeed.Faster:
-                        Stat[(int)Stats.Speed].BaseStat = 30;
-                        break;
-                    case EventMovementSpeed.Fastest:
-                        Stat[(int)Stats.Speed].BaseStat = 40;
-                        break;
-                }
-            }
-        }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, Event eventIndex, Player player) : base(Guid.NewGuid())
+        private int mPageNum;
+
+        private Pathfinder mPathFinder;
+
+        private EventRenderLayer mRenderLayer = EventRenderLayer.SameAsPlayer;
+
+        private bool mWalkingAnim;
+
+        public Event MyEventIndex;
+
+        public EventGraphic MyGraphic = new EventGraphic();
+
+        public EventPage MyPage;
+
+        public string Param;
+
+        public Player Player;
+
+        public EventTrigger Trigger;
+
+        public EventPageInstance(
+            EventBase myEvent,
+            EventPage myPage,
+            Guid mapId,
+            Event eventIndex,
+            Player player
+        ) : base(Guid.NewGuid())
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -95,29 +92,43 @@ namespace Intersect.Server.Entities.Events
                 {
                     case 0:
                         Dir = 1;
+
                         break;
                     case 1:
                         Dir = 2;
+
                         break;
                     case 2:
                         Dir = 3;
+
                         break;
                     case 3:
                         Dir = 0;
+
                         break;
                 }
             }
+
             if (myPage.AnimationId != Guid.Empty)
             {
                 Animations.Add(myPage.AnimationId);
             }
+
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
             Player = player;
             SendToPlayer();
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, Event eventIndex, Player player, EventPageInstance globalClone) : base(instanceId)
+        public EventPageInstance(
+            EventBase myEvent,
+            EventPage myPage,
+            Guid instanceId,
+            Guid mapId,
+            Event eventIndex,
+            Player player,
+            EventPageInstance globalClone
+        ) : base(instanceId)
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -154,26 +165,64 @@ namespace Intersect.Server.Entities.Events
                 {
                     case 0:
                         Dir = 1;
+
                         break;
                     case 1:
                         Dir = 2;
+
                         break;
                     case 2:
                         Dir = 3;
+
                         break;
                     case 3:
                         Dir = 0;
+
                         break;
                 }
             }
+
             if (myPage.AnimationId != Guid.Empty)
             {
                 Animations.Add(myPage.AnimationId);
             }
+
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
             Player = player;
             SendToPlayer();
+        }
+
+        public EventMovementSpeed MovementSpeed
+        {
+            get => mMovementSpeed;
+            set
+            {
+                mMovementSpeed = value;
+                switch (mMovementSpeed)
+                {
+                    case EventMovementSpeed.Slowest:
+                        Stat[(int) Stats.Speed].BaseStat = 2;
+
+                        break;
+                    case EventMovementSpeed.Slower:
+                        Stat[(int) Stats.Speed].BaseStat = 5;
+
+                        break;
+                    case EventMovementSpeed.Normal:
+                        Stat[(int) Stats.Speed].BaseStat = 20;
+
+                        break;
+                    case EventMovementSpeed.Faster:
+                        Stat[(int) Stats.Speed].BaseStat = 30;
+
+                        break;
+                    case EventMovementSpeed.Fastest:
+                        Stat[(int) Stats.Speed].BaseStat = 40;
+
+                        break;
+                }
+            }
         }
 
         public void SendToPlayer()
@@ -195,8 +244,11 @@ namespace Intersect.Server.Entities.Events
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
-            if (packet == null) packet = new EventEntityPacket();
-            
+            if (packet == null)
+            {
+                packet = new EventEntityPacket();
+            }
+
             if (GlobalClone != null)
             {
                 Sprite = GlobalClone.Sprite;
@@ -212,7 +264,7 @@ namespace Intersect.Server.Entities.Events
 
             packet = base.EntityPacket(packet, forPlayer);
 
-            var pkt = (EventEntityPacket)packet;
+            var pkt = (EventEntityPacket) packet;
             pkt.HideName = HideName;
             pkt.DirectionFix = mDirectionFix;
             pkt.WalkingAnim = mWalkingAnim;
@@ -220,6 +272,7 @@ namespace Intersect.Server.Entities.Events
             pkt.Description = MyPage.Description;
             pkt.Graphic = MyGraphic;
             pkt.RenderLayer = (byte) mRenderLayer;
+
             return pkt;
         }
 
@@ -234,26 +287,35 @@ namespace Intersect.Server.Entities.Events
             switch (speed)
             {
                 case EventMovementSpeed.Slowest:
-                    Stat[(int)Stats.Speed].BaseStat = 5;
+                    Stat[(int) Stats.Speed].BaseStat = 5;
+
                     break;
                 case EventMovementSpeed.Slower:
-                    Stat[(int)Stats.Speed].BaseStat = 10;
+                    Stat[(int) Stats.Speed].BaseStat = 10;
+
                     break;
                 case EventMovementSpeed.Normal:
-                    Stat[(int)Stats.Speed].BaseStat = 20;
+                    Stat[(int) Stats.Speed].BaseStat = 20;
+
                     break;
                 case EventMovementSpeed.Faster:
-                    Stat[(int)Stats.Speed].BaseStat = 30;
+                    Stat[(int) Stats.Speed].BaseStat = 30;
+
                     break;
                 case EventMovementSpeed.Fastest:
-                    Stat[(int)Stats.Speed].BaseStat = 40;
+                    Stat[(int) Stats.Speed].BaseStat = 40;
+
                     break;
             }
         }
 
         public void Update(bool isActive, long timeMs)
         {
-            if (MoveTimer >= Globals.Timing.TimeMs || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
+            if (MoveTimer >= Globals.Timing.TimeMs || GlobalClone != null || isActive && MyPage.InteractionFreeze)
+            {
+                return;
+            }
+
             if (MovementType == EventMovementType.MoveRoute && MoveRoute != null)
             {
                 ProcessMoveRoute(Player, timeMs);
@@ -262,8 +324,12 @@ namespace Intersect.Server.Entities.Events
             {
                 if (MovementType == EventMovementType.Random) //Random
                 {
-                    if (Globals.Rand.Next(0, 2) != 0) return;
-                    var dir = (byte)Globals.Rand.Next(0, 4);
+                    if (Globals.Rand.Next(0, 2) != 0)
+                    {
+                        return;
+                    }
+
+                    var dir = (byte) Globals.Rand.Next(0, 4);
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Player);
@@ -312,8 +378,11 @@ namespace Intersect.Server.Entities.Events
                                     mPathFinder.GetTarget().TargetX != forPlayer.X ||
                                     mPathFinder.GetTarget().TargetY != forPlayer.Y)
                                 {
-                                    mPathFinder.SetTarget(new PathfinderTarget(forPlayer.MapId, forPlayer.X, forPlayer.Y, forPlayer.Z));
+                                    mPathFinder.SetTarget(
+                                        new PathfinderTarget(forPlayer.MapId, forPlayer.X, forPlayer.Y, forPlayer.Z)
+                                    );
                                 }
+
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
@@ -322,7 +391,7 @@ namespace Intersect.Server.Entities.Events
                                     {
                                         if (CanMove(pathDir) == -1)
                                         {
-                                            Move((byte)pathDir, forPlayer);
+                                            Move((byte) pathDir, forPlayer);
                                             moved = true;
                                         }
                                         else
@@ -332,29 +401,35 @@ namespace Intersect.Server.Entities.Events
                                     }
                                 }
                             }
+
                             break;
                         case MoveRouteEnum.MoveAwayFromPlayer:
                             //This won't be anything special.
                             if (forPlayer != null && GlobalClone == null) //Local Event
                             {
-                                moveDir = (byte)GetDirectionTo(forPlayer);
+                                moveDir = (byte) GetDirectionTo(forPlayer);
                                 if (moveDir > -1)
                                 {
                                     switch (moveDir)
                                     {
                                         case (int) Directions.Up:
                                             moveDir = (int) Directions.Down;
+
                                             break;
                                         case (int) Directions.Down:
                                             moveDir = (int) Directions.Up;
+
                                             break;
                                         case (int) Directions.Left:
                                             moveDir = (int) Directions.Right;
+
                                             break;
                                         case (int) Directions.Right:
                                             moveDir = (int) Directions.Left;
+
                                             break;
                                     }
+
                                     if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
@@ -363,7 +438,7 @@ namespace Intersect.Server.Entities.Events
                                     else
                                     {
                                         //Move Randomly
-                                        moveDir = (byte)Globals.Rand.Next(0, 4);
+                                        moveDir = (byte) Globals.Rand.Next(0, 4);
                                         if (CanMove(moveDir) == -1)
                                         {
                                             Move(moveDir, forPlayer);
@@ -374,7 +449,7 @@ namespace Intersect.Server.Entities.Events
                                 else
                                 {
                                     //Move Randomly
-                                    moveDir = (byte)Globals.Rand.Next(0, 4);
+                                    moveDir = (byte) Globals.Rand.Next(0, 4);
                                     if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
@@ -382,6 +457,7 @@ namespace Intersect.Server.Entities.Events
                                     }
                                 }
                             }
+
                             break;
                         case MoveRouteEnum.FacePlayer:
                             if (forPlayer != null && GlobalClone == null) //Local Event
@@ -389,10 +465,11 @@ namespace Intersect.Server.Entities.Events
                                 lookDir = GetDirectionTo(forPlayer);
                                 if (lookDir > -1)
                                 {
-                                    ChangeDir((byte)lookDir);
+                                    ChangeDir((byte) lookDir);
                                     moved = true;
                                 }
                             }
+
                             break;
                         case MoveRouteEnum.FaceAwayFromPlayer:
                             if (forPlayer != null && GlobalClone == null) //Local Event
@@ -404,119 +481,146 @@ namespace Intersect.Server.Entities.Events
                                     {
                                         case (int) Directions.Up:
                                             lookDir = (int) Directions.Down;
+
                                             break;
                                         case (int) Directions.Down:
                                             lookDir = (int) Directions.Up;
+
                                             break;
                                         case (int) Directions.Left:
                                             lookDir = (int) Directions.Right;
+
                                             break;
                                         case (int) Directions.Right:
                                             lookDir = (int) Directions.Left;
+
                                             break;
                                     }
-                                    ChangeDir((byte)lookDir);
+
+                                    ChangeDir((byte) lookDir);
                                     moved = true;
                                 }
                             }
+
                             break;
                         case MoveRouteEnum.SetSpeedSlowest:
                             SetMovementSpeed(EventMovementSpeed.Slowest);
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetSpeedSlower:
                             SetMovementSpeed(EventMovementSpeed.Slower);
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetSpeedNormal:
                             SetMovementSpeed(EventMovementSpeed.Normal);
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetSpeedFaster:
                             SetMovementSpeed(EventMovementSpeed.Faster);
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetSpeedFastest:
                             SetMovementSpeed(EventMovementSpeed.Fastest);
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetFreqLowest:
                             MovementFreq = EventMovementFrequency.Lowest;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetFreqLower:
                             MovementFreq = EventMovementFrequency.Lower;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetFreqNormal:
                             MovementFreq = EventMovementFrequency.Normal;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetFreqHigher:
                             MovementFreq = EventMovementFrequency.Higher;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetFreqHighest:
                             MovementFreq = EventMovementFrequency.Highest;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.WalkingAnimOn:
                             mWalkingAnim = true;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.WalkingAnimOff:
                             mWalkingAnim = false;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.DirectionFixOn:
                             mDirectionFix = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.DirectionFixOff:
                             mDirectionFix = false;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.WalkthroughOn:
                             Passable = true;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.WalkthroughOff:
                             Passable = false;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.ShowName:
                             HideName = false;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.HideName:
                             HideName = true;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetLevelBelow:
                             mRenderLayer = EventRenderLayer.BelowPlayer;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetLevelNormal:
                             mRenderLayer = EventRenderLayer.SameAsPlayer;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetLevelAbove:
                             mRenderLayer = EventRenderLayer.AbovePlayer;
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetGraphic:
                             MyGraphic.Type = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
@@ -531,20 +635,26 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     case 0:
                                         Dir = 1;
+
                                         break;
                                     case 1:
                                         Dir = 2;
+
                                         break;
                                     case 2:
                                         Dir = 3;
+
                                         break;
                                     case 3:
                                         Dir = 0;
+
                                         break;
                                 }
                             }
+
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
@@ -553,33 +663,43 @@ namespace Intersect.Server.Entities.Events
                             {
                                 Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
                             }
+
                             shouldSendUpdate = true;
                             moved = true;
+
                             break;
                         default:
                             //Gonna end up returning false because command not found
                             return false;
                     }
+
                     if (moved || MoveRoute.IgnoreIfBlocked)
                     {
                         MoveRoute.ActionIndex++;
                         if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
                         {
-                            if (MoveRoute.RepeatRoute) MoveRoute.ActionIndex = 0;
+                            if (MoveRoute.RepeatRoute)
+                            {
+                                MoveRoute.ActionIndex = 0;
+                            }
+
                             MoveRoute.Complete = true;
                         }
                     }
+
                     if (shouldSendUpdate)
                     {
                         //Send Update
                         SendToPlayer();
                     }
+
                     if (MoveTimer < Globals.Timing.TimeMs)
                     {
                         MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                     }
                 }
             }
+
             return true;
         }
 
@@ -604,22 +724,43 @@ namespace Intersect.Server.Entities.Events
 
         public override int CanMove(int moveDir)
         {
-            if (Player == null && mPageNum != 0) return -5;
+            if (Player == null && mPageNum != 0)
+            {
+                return -5;
+            }
+
             switch (moveDir)
             {
                 case (int) Directions.Up:
-                    if (Y == 0) return -5;
+                    if (Y == 0)
+                    {
+                        return -5;
+                    }
+
                     break;
                 case (int) Directions.Down:
-                    if (Y == Options.MapHeight - 1) return -5;
+                    if (Y == Options.MapHeight - 1)
+                    {
+                        return -5;
+                    }
+
                     break;
                 case (int) Directions.Left:
-                    if (X == 0) return -5;
+                    if (X == 0)
+                    {
+                        return -5;
+                    }
+
                     break;
                 case (int) Directions.Right:
-                    if (X == Options.MapWidth - 1) return -5;
+                    if (X == Options.MapWidth - 1)
+                    {
+                        return -5;
+                    }
+
                     break;
             }
+
             return base.CanMove(moveDir);
         }
 
@@ -640,22 +781,38 @@ namespace Intersect.Server.Entities.Events
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
             if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.Player, MyEventIndex))
-                return true;
-            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.Player.Map))
-                return true;
-            for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyEventIndex.Player,MyEventIndex))
+                return true;
+            }
+
+            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.Player.Map))
+            {
+                return true;
+            }
+
+            for (var i = 0; i < BaseEvent.Pages.Count; i++)
+            {
+                if (Conditions.CanSpawnPage(BaseEvent.Pages[i], MyEventIndex.Player, MyEventIndex))
                 {
-                    if (i > mPageNum) return true;
+                    if (i > mPageNum)
+                    {
+                        return true;
+                    }
                 }
             }
+
             if (GlobalClone != null)
             {
                 var map = MapInstance.Get(GlobalClone.MapId);
-                if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
+                if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone))
+                {
+                    return true;
+                }
             }
+
             return false;
         }
+
     }
+
 }

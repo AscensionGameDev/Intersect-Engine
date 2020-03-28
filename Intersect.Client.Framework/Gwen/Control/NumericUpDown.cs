@@ -1,28 +1,33 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Numeric up/down.
     /// </summary>
     public class NumericUpDown : TextBoxNumeric
     {
+
         private readonly UpDownButtonDown mDown;
 
         private readonly Splitter mSplitter;
+
         private readonly UpDownButtonUp mUp;
+
         private int mMax;
+
         private int mMin;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="NumericUpDown" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public NumericUpDown(Base parent)
-            : base(parent)
+        public NumericUpDown(Base parent) : base(parent)
         {
             SetSize(100, 20);
 
@@ -73,9 +78,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => base.Value;
             set
             {
-                if (value < mMin) value = mMin;
-                if (value > mMax) value = mMax;
-                if (value == mValue) return;
+                if (value < mMin)
+                {
+                    value = mMin;
+                }
+
+                if (value > mMax)
+                {
+                    value = mMax;
+                }
+
+                if (value == mValue)
+                {
+                    return;
+                }
 
                 base.Value = value;
             }
@@ -95,7 +111,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </returns>
         protected override bool OnKeyUp(bool down)
         {
-            if (down) OnButtonUp(null, EventArgs.Empty);
+            if (down)
+            {
+                OnButtonUp(null, EventArgs.Empty);
+            }
+
             return true;
         }
 
@@ -108,7 +128,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </returns>
         protected override bool OnKeyDown(bool down)
         {
-            if (down) OnButtonDown(null, new ClickedEventArgs(0, 0, true));
+            if (down)
+            {
+                OnButtonDown(null, new ClickedEventArgs(0, 0, true));
+            }
+
             return true;
         }
 
@@ -139,9 +163,20 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             float d;
             if (!float.TryParse(str, out d))
+            {
                 return false;
-            if (d < mMin) return false;
-            if (d > mMax) return false;
+            }
+
+            if (d < mMin)
+            {
+                return false;
+            }
+
+            if (d > mMax)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -152,7 +187,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.OnTextChanged();
             if (ValueChanged != null)
+            {
                 ValueChanged.Invoke(this, EventArgs.Empty);
+            }
         }
+
     }
+
 }

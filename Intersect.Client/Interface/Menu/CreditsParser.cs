@@ -4,16 +4,23 @@ using Intersect.Client.Framework.Gwen;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     class Credits
     {
+
         public List<CreditsLine> Lines = new List<CreditsLine>();
 
         public struct CreditsLine
         {
+
             public string Text;
+
             public string Font;
+
             public int Size;
+
             public string Alignment;
+
             public Color Clr;
 
             public Alignments GetAlignment()
@@ -28,6 +35,9 @@ namespace Intersect.Client.Interface.Menu
                         return Alignments.Left;
                 }
             }
+
         }
+
     }
+
 }

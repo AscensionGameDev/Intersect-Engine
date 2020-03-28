@@ -1,15 +1,19 @@
 ﻿using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
+
     public class MonoShader : GameShader
     {
+
         private Effect mShader;
+
         private bool mValuesChanged = false;
 
         public MonoShader(string shaderName, ContentManager content) : base(shaderName)
@@ -54,5 +58,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             return mShader;
         }
+
     }
+
 }

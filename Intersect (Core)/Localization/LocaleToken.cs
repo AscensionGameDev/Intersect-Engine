@@ -1,13 +1,31 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
-using System;
 
 namespace Intersect.Localization
 {
+
     [Serializable]
     public class LocaleToken : LocaleNamespace
     {
+
         [JsonIgnore] private LocalizedString mName;
+
+        public LocaleToken()
+        {
+        }
+
+        public LocaleToken([NotNull] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($@"Parameter '{nameof(name)}' cannot be null or whitespace.");
+            }
+
+            mName = name.Trim();
+        }
 
         [JsonProperty(nameof(Name), NullValueHandling = NullValueHandling.Ignore)]
         protected LocalizedString JsonName
@@ -40,18 +58,6 @@ namespace Intersect.Localization
             }
         }
 
-        public LocaleToken()
-        {
-        }
-
-        public LocaleToken([NotNull] string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($@"Parameter '{nameof(name)}' cannot be null or whitespace.");
-            }
-
-            mName = name.Trim();
-        }
     }
+
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-
-using JetBrains.Annotations;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
@@ -11,6 +8,8 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 
 using Intersect.Server.Web.RestApi.Attributes;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -69,9 +68,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         }
 
                         var descriptionSegments = description.RelativePath.Split('/');
-                        if (Math.Max(segments.Length, 1) + 1 >= descriptionSegments.Length - (description.ParameterDescriptions?.Count ?? 0))
+                        if (Math.Max(segments.Length, 1) + 1 >=
+                            descriptionSegments.Length - (description.ParameterDescriptions?.Count ?? 0))
                         {
                             pathSegments.Add(description.RelativePath);
+
                             return true;
                         }
 
@@ -90,6 +91,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         }
 
                         pathSegments.Add(partialDescriptionPath);
+
                         return false;
                     }
                 )
@@ -102,6 +104,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         dynamic expando = new ExpandoObject();
                         expando.path = group?.FirstOrDefault();
                         expando.children = group?.Count();
+
                         return expando;
                     }
                 )
@@ -121,7 +124,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 default:
                     // TODO: Make this not show detail if it has multiple differing branches (e.g. if looking at /api/v1/ don't show detail when there's /api/v1/doc/* and /api/v1/info/*)
                     var showDetail = descriptions.All(
-                        description => description?.RelativePath?.Split('/').Length - (description?.ParameterDescriptions?.Count + 1) <= segments.Length
+                        description =>
+                            description?.RelativePath?.Split('/').Length -
+                            (description?.ParameterDescriptions?.Count + 1) <=
+                            segments.Length
                     );
 
                     // TODO: ABSOLUTELY REWRITE THIS SO THIS STUFF IS SOMEHOW PRE-CALCULATED AND NOT USING DYNAMICS!!! I AM LOOKING AT YOU, ME, MR. AUTHOR OF THIS GARBAGE PILE. -panda

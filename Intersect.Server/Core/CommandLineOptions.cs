@@ -1,11 +1,21 @@
 ﻿using CommandLine;
+
 using Intersect.Network;
 
 namespace Intersect.Server.Core
 {
+
     internal class CommandLineOptions
     {
-        public CommandLineOptions(bool doNotShowConsole, bool doNotHaltOnError, bool noNatPunchthrough, bool noNetworkCheck, ushort port, ushort apiport)
+
+        public CommandLineOptions(
+            bool doNotShowConsole,
+            bool doNotHaltOnError,
+            bool noNatPunchthrough,
+            bool noNetworkCheck,
+            ushort port,
+            ushort apiport
+        )
         {
             DoNotShowConsole = doNotShowConsole;
             DoNotHaltOnError = doNotHaltOnError;
@@ -27,10 +37,10 @@ namespace Intersect.Server.Core
         [Option('P', "no-port-check", Default = false, Required = false)]
         public bool NoNetworkCheck { get; }
 
-        [Option('p', "port", Default = (ushort)0, Required = false)]
+        [Option('p', "port", Default = (ushort) 0, Required = false)]
         public ushort Port { get; }
 
-        [Option('a', "apiport", Default = (ushort)0, Required = false)]
+        [Option('a', "apiport", Default = (ushort) 0, Required = false)]
         public ushort ApiPort { get; }
 
         public ushort ValidPort(ushort defaultPort)
@@ -42,5 +52,7 @@ namespace Intersect.Server.Core
         {
             return NetworkHelper.IsValidPort(defaultApiPort) ? ApiPort : defaultApiPort;
         }
+
     }
+
 }

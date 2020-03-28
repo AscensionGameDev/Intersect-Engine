@@ -2,11 +2,16 @@
 
 namespace Intersect.Server.Entities.Pathfinding
 {
+
     public class PathfinderTarget
     {
+
         public Guid TargetMapId;
+
         public int TargetX;
+
         public int TargetY;
+
         public int TargetZ;
 
         public PathfinderTarget(Guid mapId, int x, int y, int z)
@@ -16,5 +21,7 @@ namespace Intersect.Server.Entities.Pathfinding
             TargetY = y;
             TargetZ = z;
         }
+
     }
+
 }

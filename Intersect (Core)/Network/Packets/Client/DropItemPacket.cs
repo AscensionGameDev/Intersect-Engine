@@ -1,5 +1,6 @@
 ﻿namespace Intersect.Network.Packets.Client
 {
+
     public class DropItemPacket : SlotQuantityPacket
     {
 
@@ -8,4 +9,5 @@
         }
 
     }
+
 }

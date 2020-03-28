@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandWait : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private WaitCommand mMyCommand;
 
         public EventCommandWait(WaitCommand refCommand, FrmEvent editor)
@@ -42,5 +46,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void nudWait_ValueChanged(object sender, EventArgs e)
         {
         }
+
     }
+
 }

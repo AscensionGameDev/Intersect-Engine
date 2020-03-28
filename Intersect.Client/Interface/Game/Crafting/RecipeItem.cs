@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
@@ -12,28 +11,34 @@ using Intersect.GameObjects.Crafting;
 
 namespace Intersect.Client.Interface.Game.Crafting
 {
+
     public class RecipeItem
     {
-        //References
-        private CraftingWindow mCraftingWindow;
+
+        public ImagePanel Container;
 
         public ItemDescWindow DescWindow;
 
-        //Slot info
-        CraftIngredient mIngredient;
+        public bool IsDragging;
 
         //Dragging
         private bool mCanDrag;
 
-        public ImagePanel Container;
+        //References
+        private CraftingWindow mCraftingWindow;
+
         private Draggable mDragIcon;
-        public bool IsDragging;
+
+        //Slot info
+        CraftIngredient mIngredient;
 
         //Mouse Event Variables
         private bool mMouseOver;
 
         private int mMouseX = -1;
+
         private int mMouseY = -1;
+
         public ImagePanel Pnl;
 
         public RecipeItem(CraftingWindow craftingWindow, CraftIngredient ingredient)
@@ -47,8 +52,6 @@ namespace Intersect.Client.Interface.Game.Crafting
             Pnl = new ImagePanel(Container, name);
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-
-
         }
 
         public void LoadItem()
@@ -57,7 +60,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
@@ -93,27 +96,35 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (InputHandler.MouseFocus != null) return;
+            if (InputHandler.MouseFocus != null)
+            {
+                return;
+            }
+
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 mCanDrag = false;
+
                 return;
             }
+
             if (DescWindow != null)
             {
                 DescWindow.Dispose();
                 DescWindow = null;
             }
+
             if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
             {
-                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, new int[(int)Stats.StatCount]);
+                DescWindow = new ItemDescWindow(
+                    ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
+                    new int[(int) Stats.StatCount]
+                );
             }
         }
+
     }
-
-
-
 
 }

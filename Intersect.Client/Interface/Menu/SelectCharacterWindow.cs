@@ -13,19 +13,30 @@ using Intersect.Client.Networking;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class SelectCharacterWindow
     {
+
+        public List<Character> Characters = new List<Character>();
+
         private ImagePanel mCharacterContainer;
+
         private ImagePanel mCharacterPortrait;
 
         //Image
         private string mCharacterPortraitImg = "";
 
         private Label mCharacterSelectionHeader;
+
         private ImagePanel mCharacterSelectionPanel;
+
         private Label mCharnameLabel;
+
         private Button mDeleteButton;
+
         private Label mInfoLabel;
+
+        private Button mLogoutButton;
 
         //Parent
         private MainMenu mMainMenu;
@@ -36,15 +47,13 @@ namespace Intersect.Client.Interface.Menu
         private Button mNextCharButton;
 
         private ImagePanel[] mPaperdollPortraits;
+
         private Button mPlayButton;
+
         private Button mPrevCharButton;
-        public List<Character> Characters = new List<Character>();
-        private Button mLogoutButton;
 
         //Selected Char
         private int mSelectedChar = 0;
-
-        public bool IsHidden => mCharacterSelectionPanel.IsHidden;
 
         //Init
         public SelectCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -96,7 +105,7 @@ namespace Intersect.Client.Interface.Menu
             mNewButton.Clicked += _newButton_Clicked;
 
             //Logout Button
-            mLogoutButton = new Button(mCharacterSelectionPanel,"LogoutButton");
+            mLogoutButton = new Button(mCharacterSelectionPanel, "LogoutButton");
             mLogoutButton.SetText(Strings.CharacterSelection.logout);
             mLogoutButton.IsHidden = true;
             mLogoutButton.Clicked += mLogoutButton_Clicked;
@@ -104,6 +113,7 @@ namespace Intersect.Client.Interface.Menu
             mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
+        public bool IsHidden => mCharacterSelectionPanel.IsHidden;
 
         //Methods
         public void Update()
@@ -137,14 +147,16 @@ namespace Intersect.Client.Interface.Menu
             {
                 mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count + 1];
                 mCharacterPortrait = new ImagePanel(mCharacterContainer);
-                for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
+                for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
                     mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
                 }
+
                 mNextCharButton.BringToFront();
                 mPrevCharButton.BringToFront();
             }
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 mPaperdollPortraits[i].Hide();
             }
@@ -152,12 +164,17 @@ namespace Intersect.Client.Interface.Menu
             if (Characters[mSelectedChar] != null)
             {
                 mCharnameLabel.SetText(Strings.CharacterSelection.name.ToString(Characters[mSelectedChar].Name));
-                mInfoLabel.SetText(Strings.CharacterSelection.info.ToString(Characters[mSelectedChar].Level,  Characters[mSelectedChar].Class));
+                mInfoLabel.SetText(
+                    Strings.CharacterSelection.info.ToString(
+                        Characters[mSelectedChar].Level, Characters[mSelectedChar].Class
+                    )
+                );
+
                 mPlayButton.Show();
                 mDeleteButton.Show();
                 mNewButton.Hide();
 
-                for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
+                for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
                     if (Characters[mSelectedChar].Equipment[i] == "Player")
                     {
@@ -170,10 +187,16 @@ namespace Intersect.Client.Interface.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Characters[mSelectedChar].Face);
+                mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                    GameContentManager.TextureType.Face, Characters[mSelectedChar].Face
+                );
+
                 if (mCharacterPortrait.Texture == null)
                 {
-                    mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite);
+                    mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                        GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite
+                    );
+
                     isFace = false;
                 }
 
@@ -181,48 +204,78 @@ namespace Intersect.Client.Interface.Menu
                 {
                     if (isFace)
                     {
-                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                        mCharacterPortrait.SetTextureRect(
+                            0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
+                        );
+
                         var scale = Math.Min(
                             mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
                             mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
                         );
-                        mCharacterPortrait.SetSize((int)(mCharacterPortrait.Texture.GetWidth() * scale), (int)(mCharacterPortrait.Texture.GetHeight() * scale));
-                        mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
+
+                        mCharacterPortrait.SetSize(
+                            (int) (mCharacterPortrait.Texture.GetWidth() * scale),
+                            (int) (mCharacterPortrait.Texture.GetHeight() * scale)
+                        );
+
+                        mCharacterPortrait.SetPosition(
+                            mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                        );
+
                         mCharacterPortrait.Show();
                     }
                     else
                     {
-                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth() / 4,
-                            mCharacterPortrait.Texture.GetHeight() / 4);
-                        mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth() / 4,
-                            mCharacterPortrait.Texture.GetHeight() / 4);
-                        mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
-                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
+                        mCharacterPortrait.SetTextureRect(
+                            0, 0, mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                        );
 
-                        for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
+                        mCharacterPortrait.SetSize(
+                            mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                        );
+
+                        mCharacterPortrait.SetPosition(
+                            mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                        );
+
+                        for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                mPaperdollPortraits[i].Texture =
-                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
-                                        Characters[mSelectedChar].Equipment[i]);
+                                mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
+                                    GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
+                                );
+
                                 if (mPaperdollPortraits[i].Texture != null)
                                 {
                                     mPaperdollPortraits[i].Show();
-                                    mPaperdollPortraits[i].SetTextureRect(0, 0,
-                                        mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                        mPaperdollPortraits[i].Texture.GetHeight() / 4);
-                                    mPaperdollPortraits[i].SetSize(mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                        mPaperdollPortraits[i].Texture.GetHeight() / 4);
-                                    mPaperdollPortraits[i].SetPosition(
-                                        mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
-                                        mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2);
+                                    mPaperdollPortraits[i]
+                                        .SetTextureRect(
+                                            0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                            mPaperdollPortraits[i].Texture.GetHeight() / 4
+                                        );
+
+                                    mPaperdollPortraits[i]
+                                        .SetSize(
+                                            mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                            mPaperdollPortraits[i].Texture.GetHeight() / 4
+                                        );
+
+                                    mPaperdollPortraits[i]
+                                        .SetPosition(
+                                            mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
+                                            mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2
+                                        );
                                 }
                             }
                             else
                             {
                                 if (mPaperdollPortraits[i].Texture != null)
+                                {
                                     mPaperdollPortraits[i].Show();
+                                }
                             }
                         }
                     }
@@ -265,6 +318,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 mSelectedChar = Characters.Count - 1;
             }
+
             UpdateDisplay();
         }
 
@@ -275,6 +329,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 mSelectedChar = 0;
             }
+
             UpdateDisplay();
         }
 
@@ -286,16 +341,17 @@ namespace Intersect.Client.Interface.Menu
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            InputBox iBox =
-                new InputBox(Strings.CharacterSelection.deletetitle.ToString( Characters[mSelectedChar].Name),
-                    Strings.CharacterSelection.deleteprompt.ToString( Characters[mSelectedChar].Name),
-                    true, InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id,
-                    mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu);
+            var iBox = new InputBox(
+                Strings.CharacterSelection.deletetitle.ToString(Characters[mSelectedChar].Name),
+                Strings.CharacterSelection.deleteprompt.ToString(Characters[mSelectedChar].Name), true,
+                InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id,
+                mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu
+            );
         }
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.SendDeleteCharacter((Guid)(((InputBox) sender).UserData));
+            PacketSender.SendDeleteCharacter((Guid) ((InputBox) sender).UserData);
             mSelectedChar = 0;
             UpdateDisplay();
         }
@@ -304,17 +360,26 @@ namespace Intersect.Client.Interface.Menu
         {
             PacketSender.SendNewCharacter();
         }
+
     }
 
     public class Character
     {
+
         public string Class = "";
+
         public string[] Equipment = new string[Options.EquipmentSlots.Count + 1];
+
         public bool Exists = false;
+
         public string Face = "";
+
         public Guid Id;
+
         public int Level = 1;
+
         public string Name = "";
+
         public string Sprite = "";
 
         public Character(Guid id)
@@ -322,7 +387,15 @@ namespace Intersect.Client.Interface.Menu
             Id = id;
         }
 
-        public Character(Guid id, string name, string sprite, string face, int level, string charClass, string[] equipment)
+        public Character(
+            Guid id,
+            string name,
+            string sprite,
+            string face,
+            int level,
+            string charClass,
+            string[] equipment
+        )
         {
             Equipment = equipment;
             Id = id;
@@ -336,11 +409,14 @@ namespace Intersect.Client.Interface.Menu
 
         public Character()
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
+            for (var i = 0; i < Options.EquipmentSlots.Count + 1; i++)
             {
                 Equipment[i] = "";
             }
+
             Equipment[0] = "Player";
         }
+
     }
+
 }

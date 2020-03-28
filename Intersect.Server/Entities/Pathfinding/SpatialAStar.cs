@@ -3,13 +3,17 @@ using System.Collections.Generic;
 
 namespace Intersect.Server.Entities.Pathfinding
 {
+
     public interface IIndexedObject
     {
+
         int Index { get; set; }
+
     }
 
     public class PathNode : IComparer<PathNode>, IIndexedObject
     {
+
         public static readonly PathNode Comparer = new PathNode(0, 0, false);
 
         public PathNode(int inX, int inY, bool isWall)
@@ -20,24 +24,33 @@ namespace Intersect.Server.Entities.Pathfinding
         }
 
         public double G { get; internal set; }
+
         public double H { get; internal set; }
+
         public double F { get; internal set; }
 
         public int X { get; set; }
+
         public int Y { get; set; }
+
         public bool IsWall { get; set; }
 
         public int Compare(PathNode x, PathNode y)
         {
             if (x.F < y.F)
+            {
                 return -1;
+            }
             else if (x.F > y.F)
+            {
                 return 1;
+            }
 
             return 0;
         }
 
         public int Index { get; set; }
+
     }
 
     /// <summary>
@@ -45,12 +58,19 @@ namespace Intersect.Server.Entities.Pathfinding
     /// </summary>
     public class SpatialAStar
     {
+
         private static readonly double Sqrt2 = Math.Sqrt(2);
+
         private PathNode[,] mCameFrom;
+
         private OpenCloseMap mClosedSet;
+
         private OpenCloseMap mOpenSet;
+
         private PriorityQueue<PathNode> mOrderedOpenSet;
+
         private OpenCloseMap mRuntimeGrid;
+
         private PathNode[,] mSearchSpace;
 
         public SpatialAStar(PathNode[,] inGrid)
@@ -67,25 +87,31 @@ namespace Intersect.Server.Entities.Pathfinding
         }
 
         public PathNode[,] SearchSpace { get; private set; }
+
         public int Width { get; private set; }
+
         public int Height { get; private set; }
 
         protected virtual double Heuristic(PathNode inStart, PathNode inEnd)
         {
-            return Math.Sqrt((inStart.X - inEnd.X) * (inStart.X - inEnd.X) +
-                             (inStart.Y - inEnd.Y) * (inStart.Y - inEnd.Y));
+            return Math.Sqrt(
+                (inStart.X - inEnd.X) * (inStart.X - inEnd.X) + (inStart.Y - inEnd.Y) * (inStart.Y - inEnd.Y)
+            );
         }
 
         protected virtual double NeighborDistance(PathNode inStart, PathNode inEnd)
         {
-            int diffX = Math.Abs(inStart.X - inEnd.X);
-            int diffY = Math.Abs(inStart.Y - inEnd.Y);
+            var diffX = Math.Abs(inStart.X - inEnd.X);
+            var diffY = Math.Abs(inStart.Y - inEnd.Y);
 
             switch (diffX + diffY)
             {
-                case 1: return 1;
-                case 2: return Sqrt2;
-                case 0: return 0;
+                case 1:
+                    return 1;
+                case 2:
+                    return Sqrt2;
+                case 0:
+                    return 0;
                 default:
                     throw new ApplicationException();
             }
@@ -99,25 +125,27 @@ namespace Intersect.Server.Entities.Pathfinding
         /// </summary>
         public LinkedList<PathNode> Search(Point inStartNode, Point inEndNode, PathNode inUserContext)
         {
-            PathNode startNode = mSearchSpace[inStartNode.X, inStartNode.Y];
-            PathNode endNode = mSearchSpace[inEndNode.X, inEndNode.Y];
+            var startNode = mSearchSpace[inStartNode.X, inStartNode.Y];
+            var endNode = mSearchSpace[inEndNode.X, inEndNode.Y];
 
             //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             //watch.Start();
 
             if (startNode == endNode)
+            {
                 return new LinkedList<PathNode>(new PathNode[] {startNode});
+            }
 
-            PathNode[] neighborNodes = new PathNode[8];
+            var neighborNodes = new PathNode[8];
 
             mClosedSet.Clear();
             mOpenSet.Clear();
             mRuntimeGrid.Clear();
             mOrderedOpenSet.Clear();
 
-            for (int x = 0; x < Width; x++)
+            for (var x = 0; x < Width; x++)
             {
-                for (int y = 0; y < Height; y++)
+                for (var y = 0; y < Height; y++)
                 {
                     mCameFrom[x, y] = null;
                 }
@@ -132,11 +160,11 @@ namespace Intersect.Server.Entities.Pathfinding
 
             mRuntimeGrid.Add(startNode);
 
-            int nodes = 0;
+            var nodes = 0;
 
             while (!mOpenSet.IsEmpty)
             {
-                PathNode x = mOrderedOpenSet.Pop();
+                var x = mOrderedOpenSet.Pop();
 
                 if (x == endNode)
                 {
@@ -144,7 +172,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
                     //elapsed.Add(watch.ElapsedMilliseconds);
 
-                    LinkedList<PathNode> result = ReconstructPath(mCameFrom, mCameFrom[endNode.X, endNode.Y]);
+                    var result = ReconstructPath(mCameFrom, mCameFrom[endNode.X, endNode.Y]);
 
                     result.AddLast(endNode);
 
@@ -156,24 +184,30 @@ namespace Intersect.Server.Entities.Pathfinding
 
                 StoreNeighborNodes(x, neighborNodes);
 
-                for (int i = 0; i < neighborNodes.Length; i++)
+                for (var i = 0; i < neighborNodes.Length; i++)
                 {
-                    PathNode y = neighborNodes[i];
+                    var y = neighborNodes[i];
                     bool tentativeIsBetter;
 
                     if (y == null)
+                    {
                         continue;
+                    }
 
                     if (y.IsWall)
+                    {
                         continue;
+                    }
 
                     if (mClosedSet.Contains(y))
+                    {
                         continue;
+                    }
 
                     nodes++;
 
-                    double tentativeGScore = mRuntimeGrid[x].G + NeighborDistance(x, y);
-                    bool wasAdded = false;
+                    var tentativeGScore = mRuntimeGrid[x].G + NeighborDistance(x, y);
+                    var wasAdded = false;
 
                     if (!mOpenSet.Contains(y))
                     {
@@ -195,16 +229,22 @@ namespace Intersect.Server.Entities.Pathfinding
                         mCameFrom[y.X, y.Y] = x;
 
                         if (!mRuntimeGrid.Contains(y))
+                        {
                             mRuntimeGrid.Add(y);
+                        }
 
                         mRuntimeGrid[y].G = tentativeGScore;
                         mRuntimeGrid[y].H = Heuristic(y, endNode);
                         mRuntimeGrid[y].F = mRuntimeGrid[y].G + mRuntimeGrid[y].H;
 
                         if (wasAdded)
+                        {
                             mOrderedOpenSet.Push(y);
+                        }
                         else
+                        {
                             mOrderedOpenSet.Update(y);
+                        }
                     }
                 }
             }
@@ -214,7 +254,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
         private LinkedList<PathNode> ReconstructPath(PathNode[,] cameFrom, PathNode currentNode)
         {
-            LinkedList<PathNode> result = new LinkedList<PathNode>();
+            var result = new LinkedList<PathNode>();
 
             ReconstructPathRecursive(cameFrom, currentNode, result);
 
@@ -223,7 +263,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
         private void ReconstructPathRecursive(PathNode[,] cameFrom, PathNode currentNode, LinkedList<PathNode> result)
         {
-            PathNode item = cameFrom[currentNode.X, currentNode.Y];
+            var item = cameFrom[currentNode.X, currentNode.Y];
 
             if (item != null)
             {
@@ -232,45 +272,64 @@ namespace Intersect.Server.Entities.Pathfinding
                 result.AddLast(currentNode);
             }
             else
+            {
                 result.AddLast(currentNode);
+            }
         }
 
         private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
         {
-            int x = inAround.X;
-            int y = inAround.Y;
+            var x = inAround.X;
+            var y = inAround.Y;
 
             inNeighbors[0] = null;
 
             if (y > 0)
+            {
                 inNeighbors[1] = mSearchSpace[x, y - 1];
+            }
             else
+            {
                 inNeighbors[1] = null;
+            }
 
             inNeighbors[2] = null;
 
             if (x > 0)
+            {
                 inNeighbors[3] = mSearchSpace[x - 1, y];
+            }
             else
+            {
                 inNeighbors[3] = null;
+            }
 
             if (x < Width - 1)
+            {
                 inNeighbors[4] = mSearchSpace[x + 1, y];
+            }
             else
+            {
                 inNeighbors[4] = null;
+            }
 
             inNeighbors[5] = null;
 
             if (y < Height - 1)
+            {
                 inNeighbors[6] = mSearchSpace[x, y + 1];
+            }
             else
+            {
                 inNeighbors[6] = null;
+            }
 
             inNeighbors[7] = null;
         }
 
         private class OpenCloseMap
         {
+
             private PathNode[,] mMap;
 
             public OpenCloseMap(int inWidth, int inHeight)
@@ -281,31 +340,26 @@ namespace Intersect.Server.Entities.Pathfinding
             }
 
             public int Width { get; private set; }
+
             public int Height { get; private set; }
+
             public int Count { get; private set; }
 
-            public PathNode this[int x, int y]
-            {
-                get { return mMap[x, y]; }
-            }
+            public PathNode this[int x, int y] => mMap[x, y];
 
-            public PathNode this[PathNode node]
-            {
-                get { return mMap[node.X, node.Y]; }
-            }
+            public PathNode this[PathNode node] => mMap[node.X, node.Y];
 
-            public bool IsEmpty
-            {
-                get { return Count == 0; }
-            }
+            public bool IsEmpty => Count == 0;
 
             public void Add(PathNode inValue)
             {
-                PathNode item = mMap[inValue.X, inValue.Y];
+                var item = mMap[inValue.X, inValue.Y];
 
 #if DEBUG
                 if (item != null)
+                {
                     throw new ApplicationException();
+                }
 #endif
 
                 Count++;
@@ -314,14 +368,18 @@ namespace Intersect.Server.Entities.Pathfinding
 
             public bool Contains(PathNode inValue)
             {
-                PathNode item = mMap[inValue.X, inValue.Y];
+                var item = mMap[inValue.X, inValue.Y];
 
                 if (item == null)
+                {
                     return false;
+                }
 
 #if DEBUG
                 if (!inValue.Equals(item))
+                {
                     throw new ApplicationException();
+                }
 #endif
 
                 return true;
@@ -329,11 +387,13 @@ namespace Intersect.Server.Entities.Pathfinding
 
             public void Remove(PathNode inValue)
             {
-                PathNode item = mMap[inValue.X, inValue.Y];
+                var item = mMap[inValue.X, inValue.Y];
 
 #if DEBUG
                 if (!inValue.Equals(item))
+                {
                     throw new ApplicationException();
+                }
 #endif
 
                 Count--;
@@ -344,14 +404,17 @@ namespace Intersect.Server.Entities.Pathfinding
             {
                 Count = 0;
 
-                for (int x = 0; x < Width; x++)
+                for (var x = 0; x < Width; x++)
                 {
-                    for (int y = 0; y < Height; y++)
+                    for (var y = 0; y < Height; y++)
                     {
                         mMap[x, y] = null;
                     }
                 }
             }
+
         }
+
     }
+
 }

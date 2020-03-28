@@ -6,14 +6,11 @@ using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.General;
-using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.EntityPanel;
-using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
-using Intersect.Client.Spells;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -23,40 +20,55 @@ using Newtonsoft.Json;
 
 namespace Intersect.Client.Entities
 {
+
     public class Player : Entity
     {
-        public delegate void InventoryUpdated();
-        public InventoryUpdated InventoryUpdatedDelegate;
-        private ItemDescWindow mItemTargetBox;
-        public EntityBox TargetBox;
 
-        public Guid TargetIndex;
-        public int TargetType;
+        public delegate void InventoryUpdated();
 
         public Guid Class;
+
         public long Experience = 0;
+
         public long ExperienceToNextLevel = 0;
+
         public List<FriendInstance> Friends = new List<FriendInstance>();
+
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+
+        public InventoryUpdated InventoryUpdatedDelegate;
+
         public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
-        public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
-        public long CombatTimer { get; set; } = 0;
+
+        private ItemDescWindow mItemTargetBox;
+
+        private Entity mLastBumpedEvent = null;
 
         private List<PartyMember> mParty;
 
         public Dictionary<Guid, QuestProgress> QuestProgress = new Dictionary<Guid, QuestProgress>();
+
+        public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
+
         public int StatPoints = 0;
 
-        private Entity mLastBumpedEvent = null;
+        public EntityBox TargetBox;
+
+        public Guid TargetIndex;
+
+        public int TargetType;
 
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
-            for (int i = 0; i < Options.MaxHotbar; i++)
+            for (var i = 0; i < Options.MaxHotbar; i++)
             {
                 Hotbar[i] = new HotbarInstance();
             }
+
             mRenderPriority = 2;
         }
+
+        public long CombatTimer { get; set; } = 0;
 
         public List<PartyMember> Party
         {
@@ -73,7 +85,7 @@ namespace Intersect.Client.Entities
 
         public override Guid CurrentMap
         {
-            get { return base.CurrentMap; }
+            get => base.CurrentMap;
             set
             {
                 if (value != base.CurrentMap)
@@ -84,7 +96,10 @@ namespace Intersect.Client.Entities
                     if (Globals.Me == this)
                     {
                         if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                        {
                             Audio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
+                        }
+
                         if (newMap != null && oldMap != null)
                         {
                             newMap.CompareEffects(oldMap);
@@ -105,7 +120,10 @@ namespace Intersect.Client.Entities
             {
                 foreach (var member in Party)
                 {
-                    if (member.Id == entity.Id) return true;
+                    if (member.Id == entity.Id)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -114,10 +132,13 @@ namespace Intersect.Client.Entities
 
         public bool IsBusy()
         {
-            return
-                !(Globals.EventHolds.Count == 0 && !Globals.MoveRouteActive && Globals.GameShop == null &&
-                  Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false &&
-                  !Interface.Interface.HasInputFocus());
+            return !(Globals.EventHolds.Count == 0 &&
+                     !Globals.MoveRouteActive &&
+                     Globals.GameShop == null &&
+                     Globals.InBank == false &&
+                     Globals.InCraft == false &&
+                     Globals.InTrade == false &&
+                     !Interface.Interface.HasInputFocus());
         }
 
         public override bool Update()
@@ -129,21 +150,26 @@ namespace Intersect.Client.Entities
                 {
                     ProcessDirectionalInput();
                 }
+
                 if (Controls.KeyDown(Control.AttackInteract))
                 {
                     if (!Globals.Me.TryAttack())
                     {
                         if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMs() +
-                                                     Globals.Me.CalculateAttackTime();
+                        {
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMs() + Globals.Me.CalculateAttackTime();
+                        }
                     }
                 }
             }
+
             if (TargetBox != null)
             {
                 TargetBox.Update();
             }
-            bool returnval = base.Update();
+
+            var returnval = base.Update();
+
             return returnval;
         }
 
@@ -151,21 +177,21 @@ namespace Intersect.Client.Entities
         public override void Load(EntityPacket packet)
         {
             base.Load(packet);
-            var pkt = (PlayerEntityPacket)packet;
+            var pkt = (PlayerEntityPacket) packet;
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
-            if (((PlayerEntityPacket)packet).Equipment != null)
+            if (((PlayerEntityPacket) packet).Equipment != null)
             {
-                if (this == Globals.Me && ((PlayerEntityPacket)packet).Equipment.InventorySlots != null)
+                if (this == Globals.Me && ((PlayerEntityPacket) packet).Equipment.InventorySlots != null)
                 {
-                    this.MyEquipment = ((PlayerEntityPacket)packet).Equipment.InventorySlots;
+                    this.MyEquipment = ((PlayerEntityPacket) packet).Equipment.InventorySlots;
                 }
-                else if (((PlayerEntityPacket)packet).Equipment.ItemIds != null)
+                else if (((PlayerEntityPacket) packet).Equipment.ItemIds != null)
                 {
-                    this.Equipment = ((PlayerEntityPacket)packet).Equipment.ItemIds;
+                    this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
                 }
             }
         }
@@ -178,7 +204,7 @@ namespace Intersect.Client.Entities
         //Item Processing
         public void SwapItems(int Label, int Color)
         {
-            Item tmpInstance = Inventory[Color].Clone();
+            var tmpInstance = Inventory[Color].Clone();
             Inventory[Color] = Inventory[Label].Clone();
             Inventory[Label] = tmpInstance.Clone();
         }
@@ -189,41 +215,47 @@ namespace Intersect.Client.Entities
             {
                 if (Inventory[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Inventory.dropitem,
-                        Strings.Inventory.dropitemprompt.ToString(
-                            ItemBase.Get(Inventory[index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Inventory.dropitem,
+                        Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
-                    InputBox iBox = new InputBox(Strings.Inventory.dropitem, Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, DropInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Inventory.dropitem,
+                        Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.YesNo, DropInputBoxOkay, null, index
+                    );
                 }
             }
         }
 
         private void DropItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendDropItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
         private void DropInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendDropItem((int)((InputBox)sender).UserData, 1);
+            PacketSender.SendDropItem((int) ((InputBox) sender).UserData, 1);
         }
 
         public int FindItem(Guid itemId, int itemVal = 1)
         {
-            for (int i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Inventory[i].ItemId == itemId && Inventory[i].Quantity >= itemVal)
                 {
                     return i;
                 }
             }
+
             return -1;
         }
 
@@ -237,7 +269,11 @@ namespace Intersect.Client.Entities
 
         public long GetItemCooldown(Guid id)
         {
-            if (ItemCooldowns.ContainsKey(id)) return ItemCooldowns[id];
+            if (ItemCooldowns.ContainsKey(id))
+            {
+                return ItemCooldowns[id];
+            }
+
             return 0;
         }
 
@@ -247,7 +283,7 @@ namespace Intersect.Client.Entities
 
             if (hotbarInstance.ItemOrSpellId != Guid.Empty)
             {
-                for (int i = 0; i < Inventory.Length; i++)
+                for (var i = 0; i < Inventory.Length; i++)
                 {
                     var itm = Inventory[i];
                     if (itm != null && itm.ItemId == hotbarInstance.ItemOrSpellId)
@@ -259,21 +295,27 @@ namespace Intersect.Client.Entities
                             if (itemBase.ItemType == ItemTypes.Bag)
                             {
                                 if (hotbarInstance.BagId == itm.BagId)
+                                {
                                     break;
+                                }
                             }
                             else if (itemBase.ItemType == ItemTypes.Equipment)
                             {
                                 if (hotbarInstance.PreferredStatBuffs != null)
                                 {
                                     var statMatch = true;
-                                    for (int s = 0; s < hotbarInstance.PreferredStatBuffs.Length; s++)
+                                    for (var s = 0; s < hotbarInstance.PreferredStatBuffs.Length; s++)
                                     {
                                         if (itm.StatBuffs[s] != hotbarInstance.PreferredStatBuffs[s])
+                                        {
                                             statMatch = false;
+                                        }
                                     }
 
                                     if (statMatch)
+                                    {
                                         break;
+                                    }
                                 }
                             }
                             else
@@ -290,13 +332,14 @@ namespace Intersect.Client.Entities
 
         public bool IsEquipped(int slot)
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (MyEquipment[i] == slot)
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -308,9 +351,12 @@ namespace Intersect.Client.Entities
                 if (itm.ItemId != Guid.Empty)
                 {
                     if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Globals.System.GetTimeMs())
+                    {
                         return true;
+                    }
                 }
             }
+
             return false;
         }
 
@@ -322,15 +368,18 @@ namespace Intersect.Client.Entities
                 if (itm.ItemId != Guid.Empty)
                 {
                     if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Globals.System.GetTimeMs())
+                    {
                         return ItemCooldowns[itm.ItemId] - Globals.System.GetTimeMs();
+                    }
                 }
             }
+
             return 0;
         }
 
         public decimal GetCooldownReduction()
         {
-            int cooldown = 0;
+            var cooldown = 0;
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -358,51 +407,59 @@ namespace Intersect.Client.Entities
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
-                int foundItem = -1;
-                for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
+                var foundItem = -1;
+                for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
                 {
                     if (Globals.GameShop.BuyingItems[i].ItemId == Inventory[index].ItemId)
                     {
                         foundItem = i;
+
                         break;
                     }
                 }
-                if ((foundItem > -1 && Globals.GameShop.BuyingWhitelist) ||
-                    (foundItem == -1 && !Globals.GameShop.BuyingWhitelist))
+
+                if (foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
+                    foundItem == -1 && !Globals.GameShop.BuyingWhitelist)
                 {
                     if (Inventory[index].Quantity > 1)
                     {
-                        InputBox iBox = new InputBox(Strings.Shop.sellitem,
-                            Strings.Shop.sellitemprompt.ToString(
-                                ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput,
-                            SellItemInputBoxOkay, null, index);
+                        var iBox = new InputBox(
+                            Strings.Shop.sellitem,
+                            Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index
+                        );
                     }
                     else
                     {
-                        InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, SellInputBoxOkay, null, index);
+                        var iBox = new InputBox(
+                            Strings.Shop.sellitem,
+                            Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                            InputBox.InputType.YesNo, SellInputBoxOkay, null, index
+                        );
                     }
                 }
                 else
                 {
-                    InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.cannotsell,
-                        true, InputBox.InputType.OkayOnly, null, null, -1);
+                    var iBox = new InputBox(
+                        Strings.Shop.sellitem, Strings.Shop.cannotsell, true, InputBox.InputType.OkayOnly, null, null,
+                        -1
+                    );
                 }
             }
         }
 
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendSellItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
         private void SellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
+            PacketSender.SendSellItem((int) ((InputBox) sender).UserData, 1);
         }
 
         //bank
@@ -412,11 +469,11 @@ namespace Intersect.Client.Entities
             {
                 if (Inventory[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Bank.deposititem,
-                        Strings.Bank.deposititemprompt.ToString(
-                            ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput,
-                        DepositItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Bank.deposititem,
+                        Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -427,10 +484,10 @@ namespace Intersect.Client.Entities
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendDepositItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
@@ -440,10 +497,11 @@ namespace Intersect.Client.Entities
             {
                 if (Globals.Bank[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Bank.withdrawitem,
-                        Strings.Bank.withdrawitemprompt.ToString(
-                            ItemBase.Get(Globals.Bank[index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Bank.withdrawitem,
+                        Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -454,10 +512,10 @@ namespace Intersect.Client.Entities
 
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendWithdrawItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
@@ -468,11 +526,11 @@ namespace Intersect.Client.Entities
             {
                 if (Inventory[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Bags.storeitem,
-                        Strings.Bags.storeitemprompt.ToString(
-                            ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput,
-                        StoreBagItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Bags.storeitem,
+                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -483,10 +541,10 @@ namespace Intersect.Client.Entities
 
         private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendStoreBagItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
@@ -496,10 +554,11 @@ namespace Intersect.Client.Entities
             {
                 if (Globals.Bag[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Bags.retreiveitem,
-                        Strings.Bags.retreiveitemprompt.ToString(
-                            ItemBase.Get(Globals.Bag[index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Bags.retreiveitem,
+                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -510,10 +569,10 @@ namespace Intersect.Client.Entities
 
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetrieveBagItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendRetrieveBagItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
@@ -524,11 +583,11 @@ namespace Intersect.Client.Entities
             {
                 if (Inventory[index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Trading.offeritem,
-                        Strings.Trading.offeritemprompt.ToString(
-                            ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput,
-                        TradeItemInputBoxOkay, null, index);
+                    var iBox = new InputBox(
+                        Strings.Trading.offeritem,
+                        Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -539,25 +598,24 @@ namespace Intersect.Client.Entities
 
         private void TradeItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendOfferTradeItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
         public void TryRevokeItem(int index)
         {
-            if (Globals.Trade[0, index] != null && ItemBase.Get(Globals.Trade[0, index].ItemId) !=
-                null)
+            if (Globals.Trade[0, index] != null && ItemBase.Get(Globals.Trade[0, index].ItemId) != null)
             {
                 if (Globals.Trade[0, index].Quantity > 1)
                 {
-                    InputBox iBox = new InputBox(Strings.Trading.revokeitem,
-                        Strings.Trading.revokeitemprompt.ToString(
-                            ItemBase.Get(Globals.Trade[0, index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RevokeItemInputBoxOkay, null,
-                        index);
+                    var iBox = new InputBox(
+                        Strings.Trading.revokeitem,
+                        Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
+                        true, InputBox.InputType.NumericInput, RevokeItemInputBoxOkay, null, index
+                    );
                 }
                 else
                 {
@@ -568,17 +626,17 @@ namespace Intersect.Client.Entities
 
         private void RevokeItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int)((InputBox)sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
+                PacketSender.SendRevokeTradeItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)
         {
-            Spell tmpInstance = Spells[spell2].Clone();
+            var tmpInstance = Spells[spell2].Clone();
             Spells[spell2] = Spells[spell1].Clone();
             Spells[spell1] = tmpInstance.Clone();
         }
@@ -587,21 +645,24 @@ namespace Intersect.Client.Entities
         {
             if (SpellBase.Get(Spells[index].SpellId) != null)
             {
-                InputBox iBox = new InputBox(Strings.Spells.forgetspell,
-                    Strings.Spells.forgetspellprompt.ToString(
-                        SpellBase.Get(Spells[index].SpellId).Name), true, InputBox.InputType.YesNo,
-                    ForgetSpellInputBoxOkay, null, index);
+                var iBox = new InputBox(
+                    Strings.Spells.forgetspell,
+                    Strings.Spells.forgetspellprompt.ToString(SpellBase.Get(Spells[index].SpellId).Name), true,
+                    InputBox.InputType.YesNo, ForgetSpellInputBoxOkay, null, index
+                );
             }
         }
 
         private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendForgetSpell((int)((InputBox)sender).UserData);
+            PacketSender.SendForgetSpell((int) ((InputBox) sender).UserData);
         }
 
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellId != Guid.Empty && (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].SpellId) || Globals.Me.SpellCooldowns[Spells[index].SpellId] < Globals.System.GetTimeMs()))
+            if (Spells[index].SpellId != Guid.Empty &&
+                (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].SpellId) ||
+                 Globals.Me.SpellCooldowns[Spells[index].SpellId] < Globals.System.GetTimeMs()))
             {
                 PacketSender.SendUseSpell(index, TargetIndex);
             }
@@ -609,18 +670,27 @@ namespace Intersect.Client.Entities
 
         public long GetSpellCooldown(Guid id)
         {
-            if (SpellCooldowns.ContainsKey(id)) return SpellCooldowns[id];
+            if (SpellCooldowns.ContainsKey(id))
+            {
+                return SpellCooldowns[id];
+            }
+
             return 0;
         }
 
         public void TryUseSpell(Guid spellId)
         {
-            if (spellId == Guid.Empty) return;
-            for (int i = 0; i < Spells.Length; i++)
+            if (spellId == Guid.Empty)
+            {
+                return;
+            }
+
+            for (var i = 0; i < Spells.Length; i++)
             {
                 if (Spells[i].SpellId == spellId)
                 {
                     TryUseSpell(i);
+
                     return;
                 }
             }
@@ -630,7 +700,7 @@ namespace Intersect.Client.Entities
         {
             if (hotbarInstance.ItemOrSpellId != Guid.Empty && SpellBase.Get(hotbarInstance.ItemOrSpellId) != null)
             {
-                for (int i = 0; i < Spells.Length; i++)
+                for (var i = 0; i < Spells.Length; i++)
                 {
                     if (Spells[i].SpellId == hotbarInstance.ItemOrSpellId)
                     {
@@ -638,6 +708,7 @@ namespace Intersect.Client.Entities
                     }
                 }
             }
+
             return -1;
         }
 
@@ -645,7 +716,7 @@ namespace Intersect.Client.Entities
         public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
-            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Stats.StatCount];
+            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int) Stats.StatCount];
             if (itemType == 0)
             {
                 var item = Inventory[itemSlot];
@@ -663,6 +734,7 @@ namespace Intersect.Client.Entities
                     Hotbar[hotbarSlot].ItemOrSpellId = spell.SpellId;
                 }
             }
+
             PacketSender.SendHotbarUpdate(hotbarSlot, itemType, itemSlot);
         }
 
@@ -690,14 +762,15 @@ namespace Intersect.Client.Entities
             {
                 if (Y < Options.MapHeight && Y >= 0)
                 {
-                    if (MapInstance.Get(CurrentMap) != null &&
-                        MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
+                    if (MapInstance.Get(CurrentMap) != null && MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
                     {
                         if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type == MapAttributes.ZDimension)
                         {
-                            if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
+                            if (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
                             {
-                                Z = (byte)(((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo - 1);
+                                Z = (byte) (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y])
+                                            .GatewayTo -
+                                            1);
                             }
                         }
                     }
@@ -714,22 +787,27 @@ namespace Intersect.Client.Entities
             {
                 return;
             }
+
             if (Controls.KeyDown(Control.MoveUp))
             {
                 movey = 1;
             }
+
             if (Controls.KeyDown(Control.MoveDown))
             {
                 movey = -1;
             }
+
             if (Controls.KeyDown(Control.MoveLeft))
             {
                 movex = -1;
             }
+
             if (Controls.KeyDown(Control.MoveRight))
             {
                 movex = 1;
             }
+
             Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
@@ -737,14 +815,17 @@ namespace Intersect.Client.Entities
                 {
                     Globals.Me.MoveDir = 1;
                 }
+
                 if (movey > 0)
                 {
                     Globals.Me.MoveDir = 0;
                 }
+
                 if (movex < 0)
                 {
                     Globals.Me.MoveDir = 2;
                 }
+
                 if (movex > 0)
                 {
                     Globals.Me.MoveDir = 3;
@@ -761,14 +842,17 @@ namespace Intersect.Client.Entities
                 if (myMap != null && targetMap != null)
                 {
                     //Calculate World Tile of Me
-                    var x1 = X + (myMap.MapGridX * Options.MapWidth);
-                    var y1 = Y + (myMap.MapGridY * Options.MapHeight);
+                    var x1 = X + myMap.MapGridX * Options.MapWidth;
+                    var y1 = Y + myMap.MapGridY * Options.MapHeight;
+
                     //Calculate world tile of target
-                    var x2 = target.X + (targetMap.MapGridX * Options.MapWidth);
-                    var y2 = target.Y + (targetMap.MapGridY * Options.MapHeight);
-                    return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+                    var x2 = target.X + targetMap.MapGridX * Options.MapWidth;
+                    var y2 = target.Y + targetMap.MapGridY * Options.MapHeight;
+
+                    return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
                 }
             }
+
             //Something is null.. return a value that is out of range :) 
             return 9999;
         }
@@ -788,10 +872,15 @@ namespace Intersect.Client.Entities
 
             foreach (var en in Globals.Entities)
             {
-                if (en.Value == null) continue;
+                if (en.Value == null)
+                {
+                    continue;
+                }
+
                 if (Globals.GridMaps.Contains(en.Value.CurrentMap))
                 {
-                    if (en.Value.GetEntityType() == EntityTypes.GlobalEntity || en.Value.GetEntityType() == EntityTypes.Player)
+                    if (en.Value.GetEntityType() == EntityTypes.GlobalEntity ||
+                        en.Value.GetEntityType() == EntityTypes.Player)
                     {
                         if (en.Value != Globals.Me && !Globals.Me.IsInMyParty(en.Value))
                         {
@@ -810,7 +899,10 @@ namespace Intersect.Client.Entities
                 TargetBox = null;
             }
 
-            if (closestEntity == null) return;
+            if (closestEntity == null)
+            {
+                return;
+            }
 
             if (TargetBox == null)
             {
@@ -820,7 +912,9 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
+                    TargetBox = new EntityBox(
+                        Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity
+                    );
                 }
             }
 
@@ -837,12 +931,12 @@ namespace Intersect.Client.Entities
 
             if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
             {
-                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]]
-                    .ItemId);
+                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]].ItemId);
                 if (item != null)
                 {
                     PacketSender.SendBlock(true);
                     Blocking = true;
+
                     return true;
                 }
             }
@@ -874,39 +968,57 @@ namespace Intersect.Client.Entities
             {
                 case 0:
                     y--;
+
                     break;
                 case 1:
                     y++;
+
                     break;
                 case 2:
                     x--;
+
                     break;
                 case 3:
                     x++;
+
                     break;
             }
+
             if (GetRealLocation(ref x, ref y, ref map))
             {
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value == null) continue;
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
                     if (en.Value != Globals.Me)
                     {
-                        if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y && en.Value.CanBeAttacked())
+                        if (en.Value.CurrentMap == map &&
+                            en.Value.X == x &&
+                            en.Value.Y == y &&
+                            en.Value.CanBeAttacked())
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
                             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+
                             return true;
                         }
                     }
                 }
             }
+
             foreach (MapInstance eventMap in MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
-                    if (en.Value == null) continue;
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
                     if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y)
                     {
                         if (en.Value.GetType() == typeof(Event))
@@ -914,6 +1026,7 @@ namespace Intersect.Client.Entities
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Key);
                             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+
                             return true;
                         }
                     }
@@ -923,13 +1036,14 @@ namespace Intersect.Client.Entities
             //Projectile/empty swing for animations
             PacketSender.SendAttack(Guid.Empty);
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+
             return true;
         }
 
         public bool GetRealLocation(ref int x, ref int y, ref Guid mapId)
         {
-            int tmpX = x;
-            int tmpY = y;
+            var tmpX = x;
+            var tmpY = y;
             var tmpI = -1;
             if (MapInstance.Get(mapId) != null)
             {
@@ -938,22 +1052,25 @@ namespace Intersect.Client.Entities
 
                 if (x < 0)
                 {
-                    tmpX = (Options.MapWidth) - (x * -1);
+                    tmpX = Options.MapWidth - x * -1;
                     gridX--;
                 }
+
                 if (y < 0)
                 {
-                    tmpY = (Options.MapHeight) - (y * -1);
+                    tmpY = Options.MapHeight - y * -1;
                     gridY--;
                 }
-                if (y > (Options.MapHeight - 1))
+
+                if (y > Options.MapHeight - 1)
                 {
-                    tmpY = y - (Options.MapHeight);
+                    tmpY = y - Options.MapHeight;
                     gridY++;
                 }
-                if (x > (Options.MapWidth - 1))
+
+                if (x > Options.MapWidth - 1)
                 {
-                    tmpX = x - (Options.MapWidth);
+                    tmpX = x - Options.MapWidth;
                     gridX++;
                 }
 
@@ -961,13 +1078,15 @@ namespace Intersect.Client.Entities
                 {
                     if (MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
                     {
-                        x = (byte)tmpX;
-                        y = (byte)tmpY;
+                        x = (byte) tmpX;
+                        y = (byte) tmpY;
                         mapId = Globals.MapGrid[gridX, gridY];
+
                         return true;
                     }
                 }
             }
+
             return false;
         }
 
@@ -982,18 +1101,18 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
+            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
+                if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
-                    if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
+                    if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
                     {
                         //Remove the offsets to just be dealing with pixels within the map selected
-                        x -= (int)map.GetX();
-                        y -= (int)map.GetY();
+                        x -= (int) map.GetX();
+                        y -= (int) map.GetY();
 
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
@@ -1004,8 +1123,14 @@ namespace Intersect.Client.Entities
                         {
                             foreach (var en in Globals.Entities)
                             {
-                                if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapId && en.Value.X == x && en.Value.Y == y &&
+                                if (en.Value == null)
+                                {
+                                    continue;
+                                }
+
+                                if (en.Value.CurrentMap == mapId &&
+                                    en.Value.X == x &&
+                                    en.Value.Y == y &&
                                     (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                 {
                                     if (en.Value.GetType() != typeof(Projectile) &&
@@ -1016,25 +1141,31 @@ namespace Intersect.Client.Entities
                                             TargetBox.Dispose();
                                             TargetBox = null;
                                         }
+
                                         if (en.Value != Globals.Me)
                                         {
                                             if (en.Value.GetType() == typeof(Player))
                                             {
-                                                TargetBox =
-                                                    new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, en.Value);
+                                                TargetBox = new EntityBox(
+                                                    Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, en.Value
+                                                );
                                             }
                                             else
                                             {
-                                                TargetBox =
-                                                    new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
-                                                        en.Value);
+                                                TargetBox = new EntityBox(
+                                                    Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
+                                                    en.Value
+                                                );
                                             }
                                         }
+
                                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                                         {
                                             ClearTarget();
+
                                             return true;
                                         }
+
                                         if (en.Value.GetType() == typeof(Player))
                                         {
                                             //Select in admin window if open
@@ -1043,19 +1174,28 @@ namespace Intersect.Client.Entities
                                                 Interface.Interface.GameUi.AdminWindowSelectName(en.Value.Name);
                                             }
                                         }
+
                                         TargetType = 0;
                                         TargetIndex = en.Value.Id;
+
                                         return true;
                                     }
                                 }
                             }
+
                             foreach (MapInstance eventMap in MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {
-                                    if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == mapId && en.Value.X == x &&
-                                        en.Value.Y == y && !((Event)en.Value).DisablePreview &&
+                                    if (en.Value == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (en.Value.CurrentMap == mapId &&
+                                        en.Value.X == x &&
+                                        en.Value.Y == y &&
+                                        !((Event) en.Value).DisablePreview &&
                                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                     {
                                         if (TargetBox != null)
@@ -1063,23 +1203,32 @@ namespace Intersect.Client.Entities
                                             TargetBox.Dispose();
                                             TargetBox = null;
                                         }
-                                        TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, en.Value);
+
+                                        TargetBox = new EntityBox(
+                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, en.Value
+                                        );
+
                                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                                         {
                                             ClearTarget();
+
                                             return true;
                                         }
+
                                         TargetType = 1;
                                         TargetIndex = en.Value.Id;
+
                                         return true;
                                     }
                                 }
                             }
                         }
+
                         return false;
                     }
                 }
             }
+
             return false;
         }
 
@@ -1090,6 +1239,7 @@ namespace Intersect.Client.Entities
                 TargetBox.Dispose();
                 TargetBox = null;
             }
+
             TargetIndex = Guid.Empty;
             TargetType = -1;
             if (mItemTargetBox != null)
@@ -1106,14 +1256,17 @@ namespace Intersect.Client.Entities
             {
                 return false;
             }
+
             foreach (var item in map.MapItems)
             {
                 if (item.Value.X == X && item.Value.Y == Y)
                 {
                     PacketSender.SendPickupItem(item.Key);
+
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -1136,19 +1289,22 @@ namespace Intersect.Client.Entities
 
             if (this == Globals.Me)
             {
-                if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)
+                if (Options.WeaponIndex > -1 &&
+                    Options.WeaponIndex < Equipment.Length &&
+                    MyEquipment[Options.WeaponIndex] >= 0)
                 {
                     weapon = ItemBase.Get(Inventory[MyEquipment[Options.WeaponIndex]].ItemId);
                 }
             }
             else
             {
-                if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] != Guid.Empty)
+                if (Options.WeaponIndex > -1 &&
+                    Options.WeaponIndex < Equipment.Length &&
+                    Equipment[Options.WeaponIndex] != Guid.Empty)
                 {
                     weapon = ItemBase.Get(Equipment[Options.WeaponIndex]);
                 }
             }
-
 
             if (weapon != null)
             {
@@ -1158,9 +1314,10 @@ namespace Intersect.Client.Entities
                 }
                 else if (weapon.AttackSpeedModifier == 2) //Percentage
                 {
-                    attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
+                    attackTime = (int) (attackTime * (100f / weapon.AttackSpeedValue));
                 }
             }
+
             return attackTime;
         }
 
@@ -1179,7 +1336,9 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Stun || Status[n].Type == StatusTypes.Snare || Status[n].Type == StatusTypes.Sleep)
+                if (Status[n].Type == StatusTypes.Stun ||
+                    Status[n].Type == StatusTypes.Snare ||
+                    Status[n].Type == StatusTypes.Sleep)
                 {
                     return;
                 }
@@ -1191,8 +1350,8 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var tmpX = (sbyte)X;
-            var tmpY = (sbyte)Y;
+            var tmpX = (sbyte) X;
+            var tmpY = (sbyte) Y;
             Entity blockedBy = null;
 
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
@@ -1211,6 +1370,7 @@ namespace Intersect.Client.Entities
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
+
                             break;
                         case 1:
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
@@ -1221,6 +1381,7 @@ namespace Intersect.Client.Entities
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
                             }
+
                             break;
                         case 2:
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
@@ -1231,6 +1392,7 @@ namespace Intersect.Client.Entities
                                 OffsetY = 0;
                                 OffsetX = Options.TileWidth;
                             }
+
                             break;
                         case 3:
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
@@ -1241,6 +1403,7 @@ namespace Intersect.Client.Entities
                                 OffsetY = 0;
                                 OffsetX = -Options.TileWidth;
                             }
+
                             break;
                     }
 
@@ -1253,14 +1416,14 @@ namespace Intersect.Client.Entities
                     {
                         MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
                         didMove = true;
-                        if (tmpX < 0 || tmpY < 0 || tmpX > (Options.MapWidth - 1) || tmpY > (Options.MapHeight - 1))
+                        if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
                         {
                             var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
                             var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                             if (tmpX < 0)
                             {
                                 gridX--;
-                                X = (byte)(Options.MapWidth - 1);
+                                X = (byte) (Options.MapWidth - 1);
                             }
                             else if (tmpX >= Options.MapWidth)
                             {
@@ -1269,12 +1432,13 @@ namespace Intersect.Client.Entities
                             }
                             else
                             {
-                                X = (byte)tmpX;
+                                X = (byte) tmpX;
                             }
+
                             if (tmpY < 0)
                             {
                                 gridY--;
-                                Y = (byte)(Options.MapHeight - 1);
+                                Y = (byte) (Options.MapHeight - 1);
                             }
                             else if (tmpY >= Options.MapHeight)
                             {
@@ -1283,8 +1447,9 @@ namespace Intersect.Client.Entities
                             }
                             else
                             {
-                                Y = (byte)tmpY;
+                                Y = (byte) tmpY;
                             }
+
                             if (CurrentMap != Globals.MapGrid[gridX, gridY])
                             {
                                 CurrentMap = Globals.MapGrid[gridX, gridY];
@@ -1293,16 +1458,17 @@ namespace Intersect.Client.Entities
                         }
                         else
                         {
-                            X = (byte)tmpX;
-                            Y = (byte)tmpY;
+                            X = (byte) tmpX;
+                            Y = (byte) tmpY;
                         }
+
                         TryToChangeDimension();
                     }
                     else
                     {
                         if (MoveDir != Dir)
                         {
-                            Dir = (byte)MoveDir;
+                            Dir = (byte) MoveDir;
                             PacketSender.SendDirection(Dir);
                         }
 
@@ -1314,6 +1480,7 @@ namespace Intersect.Client.Entities
                     }
                 }
             }
+
             Globals.MyX = X;
             Globals.MyY = Y;
             if (didMove)
@@ -1324,16 +1491,23 @@ namespace Intersect.Client.Entities
 
         public void FetchNewMaps()
         {
-            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0) return;
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0)
+            {
+                return;
+            }
+
             if (MapInstance.Get(Globals.Me.CurrentMap) != null)
             {
                 var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
                 var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
+                for (var x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    for (var y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        if (x >= 0 &&
+                            x < Globals.MapGridWidth &&
+                            y >= 0 &&
+                            y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != Guid.Empty)
                         {
                             if (MapInstance.Get(Globals.MapGrid[x, y]) == null)
@@ -1356,73 +1530,101 @@ namespace Intersect.Client.Entities
         ///     Returns any value zero or greater matching the entity index that is in the way.
         /// </summary>
         /// <returns></returns>
-        public int IsTileBlocked(int x, int y, int z, Guid mapId, ref Entity blockedBy, bool ignoreAliveResources = true, bool ignoreDeadResources = true)
+        public int IsTileBlocked(
+            int x,
+            int y,
+            int z,
+            Guid mapId,
+            ref Entity blockedBy,
+            bool ignoreAliveResources = true,
+            bool ignoreDeadResources = true
+        )
         {
             var mapInstance = MapInstance.Get(mapId);
-            if (mapInstance == null) return -2;
+            if (mapInstance == null)
+            {
+                return -2;
+            }
+
             var gridX = mapInstance.MapGridX;
             var gridY = mapInstance.MapGridY;
             try
             {
-                int tmpX = x;
-                int tmpY = y;
-                Guid tmpMapId = Guid.Empty;
+                var tmpX = x;
+                var tmpY = y;
+                var tmpMapId = Guid.Empty;
                 if (x < 0)
                 {
                     gridX--;
-                    tmpX = (Options.MapWidth) - (x * -1);
+                    tmpX = Options.MapWidth - x * -1;
                 }
+
                 if (y < 0)
                 {
                     gridY--;
-                    tmpY = (Options.MapHeight) - (y * -1);
+                    tmpY = Options.MapHeight - y * -1;
                 }
-                if (x > (Options.MapWidth - 1))
+
+                if (x > Options.MapWidth - 1)
                 {
                     gridX++;
-                    tmpX = x - (Options.MapWidth);
+                    tmpX = x - Options.MapWidth;
                 }
-                if (y > (Options.MapHeight - 1))
+
+                if (y > Options.MapHeight - 1)
                 {
                     gridY++;
-                    tmpY = y - (Options.MapHeight);
+                    tmpY = y - Options.MapHeight;
                 }
 
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
+                {
                     return -2;
+                }
 
                 tmpMapId = Globals.MapGrid[gridX, gridY];
 
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value == null) continue;
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
                     if (en.Value == Globals.Me)
                     {
                         continue;
                     }
                     else
                     {
-                        if (en.Value.CurrentMap == tmpMapId && en.Value.X == tmpX && en.Value.Y == tmpY && en.Value.Z == Z)
+                        if (en.Value.CurrentMap == tmpMapId &&
+                            en.Value.X == tmpX &&
+                            en.Value.Y == tmpY &&
+                            en.Value.Z == Z)
                         {
                             if (en.Value.GetType() != typeof(Projectile))
                             {
                                 if (en.Value.GetType() == typeof(Resource))
                                 {
-                                    var resourceBase = ((Resource)en.Value).GetResourceBase();
+                                    var resourceBase = ((Resource) en.Value).GetResourceBase();
                                     if (resourceBase != null)
                                     {
-                                        if (!ignoreAliveResources && !((Resource)en.Value).IsDead)
+                                        if (!ignoreAliveResources && !((Resource) en.Value).IsDead)
                                         {
                                             blockedBy = en.Value;
+
                                             return -6;
                                         }
-                                        if (!ignoreDeadResources && ((Resource)en.Value).IsDead)
+
+                                        if (!ignoreDeadResources && ((Resource) en.Value).IsDead)
                                         {
                                             blockedBy = en.Value;
+
                                             return -6;
                                         }
-                                        if ((resourceBase.WalkableAfter && ((Resource)en.Value).IsDead) ||
-                                            (resourceBase.WalkableBefore && !((Resource)en.Value).IsDead))
+
+                                        if (resourceBase.WalkableAfter && ((Resource) en.Value).IsDead ||
+                                            resourceBase.WalkableBefore && !((Resource) en.Value).IsDead)
                                         {
                                             continue;
                                         }
@@ -1432,25 +1634,37 @@ namespace Intersect.Client.Entities
                                 {
                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
                                     var entityMap = MapInstance.Get(en.Value.CurrentMap);
-                                    if (Options.Instance.Passability.Passable[(int)entityMap.ZoneType])
+                                    if (Options.Instance.Passability.Passable[(int) entityMap.ZoneType])
                                     {
                                         continue;
                                     }
                                 }
+
                                 blockedBy = en.Value;
+
                                 return -6;
                             }
                         }
                     }
                 }
+
                 if (MapInstance.Get(tmpMapId) != null)
                 {
                     foreach (var en in MapInstance.Get(tmpMapId).LocalEntities)
                     {
-                        if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == tmpMapId && en.Value.X == tmpX && en.Value.Y == tmpY && en.Value.Z == Z && !en.Value.Passable)
+                        if (en.Value == null)
+                        {
+                            continue;
+                        }
+
+                        if (en.Value.CurrentMap == tmpMapId &&
+                            en.Value.X == tmpX &&
+                            en.Value.Y == tmpY &&
+                            en.Value.Z == Z &&
+                            !en.Value.Passable)
                         {
                             blockedBy = en.Value;
+
                             return -4;
                         }
                     }
@@ -1467,7 +1681,7 @@ namespace Intersect.Client.Entities
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
                         {
-                            if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
+                            if (((MapZDimensionAttribute) gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                             {
                                 return -3;
                             }
@@ -1526,11 +1740,14 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            Color customColorOverride = NameColor;
+            var customColorOverride = NameColor;
             if (customColorOverride != null)
             {
                 //We don't want to override the default colors if the color is transparent!
-                if (customColorOverride.A != 0) textColor = customColorOverride;
+                if (customColorOverride.A != 0)
+                {
+                    textColor = customColorOverride;
+                }
             }
 
             DrawNameAndLabels(textColor, borderColor, backgroundColor);
@@ -1540,21 +1757,25 @@ namespace Intersect.Client.Entities
         {
             base.DrawName(textColor, borderColor, backgroundColor);
             DrawLabels(HeaderLabel.Text, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
-            DrawLabels(FooterLabel.Text, 1, FooterLabel.Color,  textColor, borderColor, backgroundColor);
+            DrawLabels(FooterLabel.Text, 1, FooterLabel.Color, textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()
         {
             foreach (var en in Globals.Entities)
             {
-                if (en.Value == null) continue;
+                if (en.Value == null)
+                {
+                    continue;
+                }
+
                 if (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value))
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
+                            en.Value.DrawTarget((int) TargetTypes.Selected);
                         }
                     }
                 }
@@ -1564,83 +1785,115 @@ namespace Intersect.Client.Entities
                     ClearTarget();
                 }
             }
+
             foreach (MapInstance eventMap in MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
-                    if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.Id && !((Event)en.Value).DisablePreview && (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.CurrentMap == eventMap.Id &&
+                        !((Event) en.Value).DisablePreview &&
+                        (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                         {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
+                            en.Value.DrawTarget((int) TargetTypes.Selected);
                         }
                     }
                 }
             }
 
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
+            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
+                if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
-                    if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
+                    if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
                     {
                         var mapId = map.Id;
 
                         foreach (var en in Globals.Entities)
                         {
-                            if (en.Value == null) continue;
-                            if (en.Value.CurrentMap == mapId && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x, y))
+                            if (en.Value == null)
+                            {
+                                continue;
+                            }
+
+                            if (en.Value.CurrentMap == mapId &&
+                                !en.Value.IsStealthed() &&
+                                en.Value.WorldPos.Contains(x, y))
                             {
                                 if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                 {
                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
-                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        en.Value.DrawTarget((int) TargetTypes.Hover);
                                     }
                                 }
                             }
                         }
+
                         foreach (MapInstance eventMap in MapInstance.Lookup.Values)
                         {
                             foreach (var en in eventMap.LocalEntities)
                             {
-                                if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapId && !((Event)en.Value).DisablePreview && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x, y))
+                                if (en.Value == null)
+                                {
+                                    continue;
+                                }
+
+                                if (en.Value.CurrentMap == mapId &&
+                                    !((Event) en.Value).DisablePreview &&
+                                    !en.Value.IsStealthed() &&
+                                    en.Value.WorldPos.Contains(x, y))
                                 {
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
-                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        en.Value.DrawTarget((int) TargetTypes.Hover);
                                     }
                                 }
                             }
                         }
+
                         break;
                     }
                 }
             }
         }
+
     }
 
     public class FriendInstance
     {
+
         public string Map;
+
         public string Name;
+
         public bool Online = false;
+
     }
 
     public class HotbarInstance
     {
-        public Guid ItemOrSpellId = Guid.Empty;
+
         public Guid BagId = Guid.Empty;
-        public int[] PreferredStatBuffs = new int[(int)Stats.StatCount];
+
+        public Guid ItemOrSpellId = Guid.Empty;
+
+        public int[] PreferredStatBuffs = new int[(int) Stats.StatCount];
 
         public void Load(string data)
         {
             JsonConvert.PopulateObject(data, this);
         }
+
     }
+
 }

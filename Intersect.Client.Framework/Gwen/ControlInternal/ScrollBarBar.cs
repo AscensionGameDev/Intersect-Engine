@@ -2,19 +2,20 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Scrollbar bar.
     /// </summary>
     public class ScrollBarBar : Dragger
     {
+
         private bool mHorizontal;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ScrollBarBar" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ScrollBarBar(Base parent)
-            : base(parent)
+        public ScrollBarBar(Base parent) : base(parent)
         {
             RestrictToParent = true;
             Target = this;
@@ -59,7 +60,9 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             base.OnMouseMoved(x, y, dx, dy);
             if (!mHeld)
+            {
                 return;
+            }
 
             InvalidateParent();
         }
@@ -83,10 +86,14 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         protected override void Layout(Skin.Base skin)
         {
             if (null == Parent)
+            {
                 return;
+            }
 
             //Move to our current position to force clamping - is this a hack?
             MoveTo(X, Y);
         }
+
     }
+
 }

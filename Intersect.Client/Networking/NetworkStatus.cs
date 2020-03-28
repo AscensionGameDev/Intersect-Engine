@@ -1,19 +1,28 @@
 ﻿using System;
+
 using Intersect.Client.Localization;
 
 namespace Intersect.Client.Networking
 {
+
     public enum NetworkStatus
     {
+
         Unknown = 0,
+
         Connecting,
+
         Online,
+
         Offline,
+
         Failed
+
     }
 
     public static class NetworkStatusExtensions
     {
+
         public static string ToLocalizedString(this NetworkStatus networkStatus)
         {
             switch (networkStatus)
@@ -37,5 +46,7 @@ namespace Intersect.Client.Networking
                     throw new ArgumentOutOfRangeException(nameof(networkStatus), networkStatus, null);
             }
         }
+
     }
+
 }

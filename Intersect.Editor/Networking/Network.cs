@@ -1,31 +1,37 @@
-﻿using Intersect.Config;
-using Intersect.Editor.General;
-using Intersect.Logging;
-using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
 using Intersect.Configuration;
-using Intersect.Network.Packets;
+using Intersect.Editor.General;
+using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
 
 namespace Intersect.Editor.Networking
 {
+
     public static class Network
     {
-        public static ClientNetwork EditorLidgrenNetwork;
+
         public static bool Connecting;
+
         public static bool ConnectionDenied;
+
+        public static ClientNetwork EditorLidgrenNetwork;
+
         public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
 
         public static void InitNetwork()
         {
             if (EditorLidgrenNetwork == null)
             {
-                var config = new NetworkConfiguration(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
+                var config = new NetworkConfiguration(
+                    ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port
+                );
+
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
                 {
@@ -74,7 +80,7 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        public static void HandleDc(INetworkLayerInterface netInterface,IConnection netConnection)
+        public static void HandleDc(INetworkLayerInterface netInterface, IConnection netConnection)
         {
             DestroyNetwork();
             if (Globals.MainForm != null && Globals.MainForm.Visible)
@@ -107,5 +113,7 @@ namespace Intersect.Editor.Networking
                 }
             }
         }
+
     }
+
 }

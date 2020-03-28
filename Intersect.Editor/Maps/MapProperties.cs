@@ -13,8 +13,10 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Maps
 {
+
     class CustomCategory : CategoryAttribute
     {
+
         public CustomCategory(string category) : base(category)
         {
         }
@@ -23,28 +25,34 @@ namespace Intersect.Editor.Maps
         {
             return Strings.MapProperties.categories[value];
         }
+
     }
 
     class CustomDisplayName : DisplayNameAttribute
     {
+
         public CustomDisplayName(string name) : base(name)
         {
         }
 
         public override string DisplayName => Strings.MapProperties.displaynames[DisplayNameValue];
+
     }
 
     class CustomDescription : DescriptionAttribute
     {
+
         public CustomDescription(string desc) : base(desc)
         {
         }
 
         public override string Description => Strings.MapProperties.descriptions[DescriptionValue];
+
     }
 
     class MapProperties
     {
+
         private MapBase mMyMap;
 
         public MapProperties(MapBase map)
@@ -55,13 +63,10 @@ namespace Intersect.Editor.Maps
         [Browsable(false)]
         public Guid MapId => mMyMap.Id;
 
-        [CustomCategory("general"),
-         CustomDescription("namedesc"),
-         CustomDisplayName("name"),
-         DefaultValue("New Map")]
+        [CustomCategory("general"), CustomDescription("namedesc"), CustomDisplayName("name"), DefaultValue("New Map")]
         public string Name
         {
-            get { return mMyMap.Name; }
+            get => mMyMap.Name;
             set
             {
                 if (mMyMap.Name != value)
@@ -73,15 +78,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("general"),
-         CustomDescription("zonedesc"),
-         CustomDisplayName("zonetype"),
-         DefaultValue("Normal"),
-         TypeConverter(typeof(MapZoneProperty)),
-         Browsable(true)]
+        [CustomCategory("general"), CustomDescription("zonedesc"), CustomDisplayName("zonetype"),
+         DefaultValue("Normal"), TypeConverter(typeof(MapZoneProperty)), Browsable(true)]
         public string ZoneType
         {
-            get { return Strings.MapProperties.zones[(int)mMyMap.ZoneType]; }
+            get => Strings.MapProperties.zones[(int) mMyMap.ZoneType];
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
@@ -89,28 +90,26 @@ namespace Intersect.Editor.Maps
                 {
                     if (Strings.MapProperties.zones[i] == value)
                     {
-                        mMyMap.ZoneType = (MapZones)i;
+                        mMyMap.ZoneType = (MapZones) i;
                     }
                 }
+
                 Globals.MapEditorWindow.AddUndoState();
             }
         }
 
-        [CustomCategory("audio"),
-         CustomDescription("musicdesc"),
-         CustomDisplayName("music"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapMusicProperty)),
-         Browsable(true)]
+        [CustomCategory("audio"), CustomDescription("musicdesc"), CustomDisplayName("music"), DefaultValue("None"),
+         TypeConverter(typeof(MapMusicProperty)), Browsable(true)]
         public string Music
         {
             get
             {
-                var musicList = new List<string> { Strings.General.none };
+                var musicList = new List<string> {Strings.General.none};
                 musicList.AddRange(GameContentManager.SmartSortedMusicNames);
                 mMyMap.Music = musicList.Find(
                     item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
                 );
+
                 return TextUtils.NullToNone(mMyMap.Music);
             }
             set
@@ -124,21 +123,18 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("audio"),
-         CustomDescription("sounddesc"),
-         CustomDisplayName("sound"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapSoundProperty)),
-         Browsable(true)]
+        [CustomCategory("audio"), CustomDescription("sounddesc"), CustomDisplayName("sound"), DefaultValue("None"),
+         TypeConverter(typeof(MapSoundProperty)), Browsable(true)]
         public string Sound
         {
             get
             {
-                var soundList = new List<string> { Strings.General.none };
+                var soundList = new List<string> {Strings.General.none};
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 mMyMap.Sound = soundList.Find(
                     item => string.Equals(item, mMyMap.Sound, StringComparison.InvariantCultureIgnoreCase)
                 );
+
                 return TextUtils.NullToNone(mMyMap.Sound);
             }
             set
@@ -152,13 +148,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("isindoorsdesc"),
-         CustomDisplayName("isindoors"),
+        [CustomCategory("lighting"), CustomDescription("isindoorsdesc"), CustomDisplayName("isindoors"),
          DefaultValue(false)]
         public bool IsIndoors
         {
-            get { return mMyMap.IsIndoors; }
+            get => mMyMap.IsIndoors;
             set
             {
                 if (mMyMap.IsIndoors != value)
@@ -171,13 +165,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("brightnessdesc"),
-         CustomDisplayName("brightness"),
+        [CustomCategory("lighting"), CustomDescription("brightnessdesc"), CustomDisplayName("brightness"),
          DefaultValue(100)]
         public int Brightness
         {
-            get { return mMyMap.Brightness; }
+            get => mMyMap.Brightness;
             set
             {
                 if (mMyMap.Brightness != value)
@@ -191,13 +183,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("playerlightsizedesc"),
-         CustomDisplayName("playerlightsize"),
+        [CustomCategory("lighting"), CustomDescription("playerlightsizedesc"), CustomDisplayName("playerlightsize"),
          DefaultValue(300)]
         public int PlayerLightSize
         {
-            get { return mMyMap.PlayerLightSize; }
+            get => mMyMap.PlayerLightSize;
             set
             {
                 if (mMyMap.PlayerLightSize != value)
@@ -211,13 +201,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("playerlightexpanddesc"),
-         CustomDisplayName("playerlightexpand"),
+        [CustomCategory("lighting"), CustomDescription("playerlightexpanddesc"), CustomDisplayName("playerlightexpand"),
          DefaultValue(0)]
         public float PlayerLightExpand
         {
-            get { return mMyMap.PlayerLightExpand; }
+            get => mMyMap.PlayerLightExpand;
             set
             {
                 if (mMyMap.PlayerLightExpand != value)
@@ -231,42 +219,39 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("playerlightintensitydesc"),
-         CustomDisplayName("playerlightintensity"),
-         DefaultValue(255)]
+        [CustomCategory("lighting"), CustomDescription("playerlightintensitydesc"),
+         CustomDisplayName("playerlightintensity"), DefaultValue(255)]
         public float PlayerLightIntensity
         {
-            get { return mMyMap.PlayerLightIntensity; }
+            get => mMyMap.PlayerLightIntensity;
             set
             {
                 if (mMyMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    var val = Math.Max(value, (byte)0);
-                    mMyMap.PlayerLightIntensity = (byte)Math.Min(val, (byte)255);
+                    var val = Math.Max(value, (byte) 0);
+                    mMyMap.PlayerLightIntensity = (byte) Math.Min(val, (byte) 255);
                     Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
         }
 
-        [CustomCategory("lighting"),
-         CustomDescription("playerlightcolordesc"),
-         CustomDisplayName("playerlightcolor"),
+        [CustomCategory("lighting"), CustomDescription("playerlightcolordesc"), CustomDisplayName("playerlightcolor"),
          DefaultValue(0)]
         public System.Drawing.Color PlayerLightColor
         {
-            get
-            {
-                return System.Drawing.Color.FromArgb(mMyMap.PlayerLightColor.A, mMyMap.PlayerLightColor.R,
-                    mMyMap.PlayerLightColor.G,
-                    mMyMap.PlayerLightColor.B);
-            }
+            get =>
+                System.Drawing.Color.FromArgb(
+                    mMyMap.PlayerLightColor.A, mMyMap.PlayerLightColor.R, mMyMap.PlayerLightColor.G,
+                    mMyMap.PlayerLightColor.B
+                );
             set
             {
-                if (mMyMap.PlayerLightColor.A != value.A || mMyMap.PlayerLightColor.R != value.R ||
-                    mMyMap.PlayerLightColor.G != value.G || mMyMap.PlayerLightColor.B != value.B)
+                if (mMyMap.PlayerLightColor.A != value.A ||
+                    mMyMap.PlayerLightColor.R != value.R ||
+                    mMyMap.PlayerLightColor.G != value.G ||
+                    mMyMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
@@ -276,13 +261,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("overlay"),
-         CustomDescription("rhuedesc"),
-         CustomDisplayName("rhue"),
-         DefaultValue(0)]
+        [CustomCategory("overlay"), CustomDescription("rhuedesc"), CustomDisplayName("rhue"), DefaultValue(0)]
         public int RHue
         {
-            get { return mMyMap.RHue; }
+            get => mMyMap.RHue;
             set
             {
                 if (mMyMap.RHue != value)
@@ -295,13 +277,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("overlay"),
-         CustomDescription("ghuedesc"),
-         CustomDisplayName("ghue"),
-         DefaultValue(0)]
+        [CustomCategory("overlay"), CustomDescription("ghuedesc"), CustomDisplayName("ghue"), DefaultValue(0)]
         public int GHue
         {
-            get { return mMyMap.GHue; }
+            get => mMyMap.GHue;
             set
             {
                 if (mMyMap.GHue != value)
@@ -314,13 +293,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("overlay"),
-         CustomDescription("bhuedesc"),
-         CustomDisplayName("bhue"),
-         DefaultValue(0)]
+        [CustomCategory("overlay"), CustomDescription("bhuedesc"), CustomDisplayName("bhue"), DefaultValue(0)]
         public int BHue
         {
-            get { return mMyMap.BHue; }
+            get => mMyMap.BHue;
             set
             {
                 if (mMyMap.BHue != value)
@@ -333,13 +309,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("overlay"),
-         CustomDescription("ahuedesc"),
-         CustomDisplayName("ahue"),
-         DefaultValue(0)]
+        [CustomCategory("overlay"), CustomDescription("ahuedesc"), CustomDisplayName("ahue"), DefaultValue(0)]
         public int AHue
         {
-            get { return mMyMap.AHue; }
+            get => mMyMap.AHue;
             set
             {
                 if (mMyMap.AHue != value)
@@ -352,25 +325,23 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("fog"),
-         CustomDescription("fogdesc"),
-         CustomDisplayName("fog"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapFogProperty)),
-         Browsable(true)]
+        [CustomCategory("fog"), CustomDescription("fogdesc"), CustomDisplayName("fog"), DefaultValue("None"),
+         TypeConverter(typeof(MapFogProperty)), Browsable(true)]
         public string Fog
         {
             get
             {
-                List<string> fogList = new List<string>
+                var fogList = new List<string>
                 {
                     Strings.General.none
                 };
+
                 fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
                 if (fogList.IndexOf(mMyMap.Fog) <= -1)
                 {
                     mMyMap.Fog = null;
                 }
+
                 return TextUtils.NullToNone(mMyMap.Fog);
             }
             set
@@ -384,13 +355,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("fog"),
-         CustomDescription("fogxspeeddesc"),
-         CustomDisplayName("fogxspeed"),
-         DefaultValue(0)]
+        [CustomCategory("fog"), CustomDescription("fogxspeeddesc"), CustomDisplayName("fogxspeed"), DefaultValue(0)]
         public int FogXSpeed
         {
-            get { return mMyMap.FogXSpeed; }
+            get => mMyMap.FogXSpeed;
             set
             {
                 if (mMyMap.FogXSpeed != value)
@@ -403,13 +371,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("fog"),
-         CustomDescription("fogyspeeddesc"),
-         CustomDisplayName("fogyspeed"),
-         DefaultValue(0)]
+        [CustomCategory("fog"), CustomDescription("fogyspeeddesc"), CustomDisplayName("fogyspeed"), DefaultValue(0)]
         public int FogYSpeed
         {
-            get { return mMyMap.FogYSpeed; }
+            get => mMyMap.FogYSpeed;
             set
             {
                 if (mMyMap.FogYSpeed != value)
@@ -422,13 +387,10 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("fog"),
-         CustomDescription("fogalphadesc"),
-         CustomDisplayName("fogalpha"),
-         DefaultValue(0)]
+        [CustomCategory("fog"), CustomDescription("fogalphadesc"), CustomDisplayName("fogalpha"), DefaultValue(0)]
         public int FogAlpha
         {
-            get { return mMyMap.FogTransparency; }
+            get => mMyMap.FogTransparency;
             set
             {
                 if (mMyMap.FogTransparency != value)
@@ -440,24 +402,26 @@ namespace Intersect.Editor.Maps
                 }
             }
         }
+
         //Weather
-        [CustomCategory("weather"),
-         CustomDescription("weatherdesc"),
-         CustomDisplayName("weather"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapWeatherProperty)),
-         Browsable(true)]
+        [CustomCategory("weather"), CustomDescription("weatherdesc"), CustomDisplayName("weather"),
+         DefaultValue("None"), TypeConverter(typeof(MapWeatherProperty)), Browsable(true)]
         public string Weather
         {
             get
             {
-                List<string> WeatherList = new List<string>
+                var WeatherList = new List<string>
                 {
                     Strings.General.none
                 };
+
                 WeatherList.AddRange(AnimationBase.Names);
                 var name = AnimationBase.GetName(mMyMap.WeatherAnimationId);
-                if (AnimationBase.Get(mMyMap.WeatherAnimationId) == null) name = null;
+                if (AnimationBase.Get(mMyMap.WeatherAnimationId) == null)
+                {
+                    name = null;
+                }
+
                 return TextUtils.NullToNone(name);
             }
             set
@@ -469,6 +433,7 @@ namespace Intersect.Editor.Maps
                     var index = animationNames.IndexOf(value);
                     idVal = AnimationBase.IdFromList(index);
                 }
+
                 if (mMyMap.WeatherAnimationId != idVal)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
@@ -478,13 +443,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("weather"),
-         CustomDescription("weatherxspeeddesc"),
-         CustomDisplayName("weatherxspeed"),
+        [CustomCategory("weather"), CustomDescription("weatherxspeeddesc"), CustomDisplayName("weatherxspeed"),
          DefaultValue(0)]
         public int WeatherXSpeed
         {
-            get { return mMyMap.WeatherXSpeed; }
+            get => mMyMap.WeatherXSpeed;
             set
             {
                 if (mMyMap.WeatherXSpeed != value)
@@ -497,13 +460,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("weather"),
-         CustomDescription("weatheryspeeddesc"),
-         CustomDisplayName("weatheryspeed"),
+        [CustomCategory("weather"), CustomDescription("weatheryspeeddesc"), CustomDisplayName("weatheryspeed"),
          DefaultValue(0)]
         public int WeatherYSpeed
         {
-            get { return mMyMap.WeatherYSpeed; }
+            get => mMyMap.WeatherYSpeed;
             set
             {
                 if (mMyMap.WeatherYSpeed != value)
@@ -516,13 +477,11 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("weather"),
-         CustomDescription("weatherintensitydesc"),
-         CustomDisplayName("weatherintensity"),
+        [CustomCategory("weather"), CustomDescription("weatherintensitydesc"), CustomDisplayName("weatherintensity"),
          DefaultValue(0)]
         public int WeatherAlpha
         {
-            get { return mMyMap.WeatherIntensity; }
+            get => mMyMap.WeatherIntensity;
             set
             {
                 if (mMyMap.WeatherIntensity != value)
@@ -535,25 +494,23 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("misc"),
-         CustomDescription("panoramadesc"),
-         CustomDisplayName("panorama"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapImageProperty)),
-         Browsable(true)]
+        [CustomCategory("misc"), CustomDescription("panoramadesc"), CustomDisplayName("panorama"), DefaultValue("None"),
+         TypeConverter(typeof(MapImageProperty)), Browsable(true)]
         public string Panorama
         {
             get
             {
-                List<string> imageList = new List<string>
+                var imageList = new List<string>
                 {
                     Strings.General.none
                 };
+
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (imageList.IndexOf(mMyMap.Panorama) <= -1)
                 {
                     mMyMap.Panorama = null;
                 }
+
                 return TextUtils.NullToNone(mMyMap.Panorama);
             }
             set
@@ -567,25 +524,23 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        [CustomCategory("misc"),
-         CustomDescription("overlaygraphicdesc"),
-         CustomDisplayName("overlaygraphic"),
-         DefaultValue("None"),
-         TypeConverter(typeof(MapImageProperty)),
-         Browsable(true)]
+        [CustomCategory("misc"), CustomDescription("overlaygraphicdesc"), CustomDisplayName("overlaygraphic"),
+         DefaultValue("None"), TypeConverter(typeof(MapImageProperty)), Browsable(true)]
         public string OverlayGraphic
         {
             get
             {
-                List<string> imageList = new List<string>
+                var imageList = new List<string>
                 {
                     Strings.General.none
                 };
+
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
                 if (imageList.IndexOf(mMyMap.OverlayGraphic) <= -1)
                 {
                     mMyMap.OverlayGraphic = null;
                 }
+
                 return TextUtils.NullToNone(mMyMap.OverlayGraphic);
             }
             set
@@ -598,145 +553,12 @@ namespace Intersect.Editor.Maps
                 }
             }
         }
+
     }
 
     public class MapMusicProperty : StringConverter
     {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-        {
-            //true means show a combobox
-            return true;
-        }
 
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return false;
-        }
-
-        public override StandardValuesCollection
-            GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<string> musicList = new List<string>
-            {
-                Strings.General.none
-            };
-            musicList.AddRange(GameContentManager.SmartSortedMusicNames);
-            return new StandardValuesCollection(musicList.ToArray());
-        }
-    }
-
-    public class MapSoundProperty : StringConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-        {
-            //true means show a combobox
-            return true;
-        }
-
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return false;
-        }
-
-        public override StandardValuesCollection
-            GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<string> soundList = new List<string>
-            {
-                Strings.General.none
-            };
-            soundList.AddRange(GameContentManager.SmartSortedSoundNames);
-            return new StandardValuesCollection(soundList.ToArray());
-        }
-    }
-
-    public class MapFogProperty : StringConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-        {
-            //true means show a combobox
-            return true;
-        }
-
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return false;
-        }
-
-        public override StandardValuesCollection
-            GetStandardValues(ITypeDescriptorContext context)
-        {
-            List<string> fogList = new List<string>
-            {
-                Strings.General.none
-            };
-            fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
-            return new StandardValuesCollection(fogList.ToArray());
-        }
-    }
-
-    public class MapImageProperty : StringConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-        {
-            //true means show a combobox
-            return true;
-        }
-
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return false;
-        }
-
-        public override StandardValuesCollection
-            GetStandardValues(ITypeDescriptorContext context)
-        {
-            var imageList = new List<string>
-            {
-                Strings.General.none
-            };
-            imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
-            return new StandardValuesCollection(imageList.ToArray());
-        }
-    }
-
-    public class MapZoneProperty : StringConverter
-    {
-        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-        {
-            //true means show a combobox
-            return true;
-        }
-
-        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-        {
-            //true will limit to list. false will show the list, 
-            //but allow free-form entry
-            return false;
-        }
-
-        public override StandardValuesCollection
-            GetStandardValues(ITypeDescriptorContext context)
-        {
-            var values = new List<string>();
-            for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
-            {
-                values.Add(Strings.MapProperties.zones[i]);
-            }
-            return new StandardValuesCollection(values);
-        }
-    }
-
-    public class MapWeatherProperty : StringConverter
-    {
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
         {
             //true means show a combobox
@@ -752,12 +574,165 @@ namespace Intersect.Editor.Maps
 
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            List<string> WeatherList = new List<string>
+            var musicList = new List<string>
             {
                 Strings.General.none
             };
+
+            musicList.AddRange(GameContentManager.SmartSortedMusicNames);
+
+            return new StandardValuesCollection(musicList.ToArray());
+        }
+
+    }
+
+    public class MapSoundProperty : StringConverter
+    {
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            var soundList = new List<string>
+            {
+                Strings.General.none
+            };
+
+            soundList.AddRange(GameContentManager.SmartSortedSoundNames);
+
+            return new StandardValuesCollection(soundList.ToArray());
+        }
+
+    }
+
+    public class MapFogProperty : StringConverter
+    {
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            var fogList = new List<string>
+            {
+                Strings.General.none
+            };
+
+            fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
+
+            return new StandardValuesCollection(fogList.ToArray());
+        }
+
+    }
+
+    public class MapImageProperty : StringConverter
+    {
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            var imageList = new List<string>
+            {
+                Strings.General.none
+            };
+
+            imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+
+            return new StandardValuesCollection(imageList.ToArray());
+        }
+
+    }
+
+    public class MapZoneProperty : StringConverter
+    {
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            var values = new List<string>();
+            for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            {
+                values.Add(Strings.MapProperties.zones[i]);
+            }
+
+            return new StandardValuesCollection(values);
+        }
+
+    }
+
+    public class MapWeatherProperty : StringConverter
+    {
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            var WeatherList = new List<string>
+            {
+                Strings.General.none
+            };
+
             WeatherList.AddRange(AnimationBase.Names);
+
             return new StandardValuesCollection(WeatherList.ToArray());
         }
+
     }
+
 }

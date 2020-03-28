@@ -8,16 +8,21 @@ using System.Resources;
 
 namespace Intersect.Client
 {
+
 #if WINDOWS || LINUX
     /// <summary>
     ///     The main class.
     /// </summary>
     public static class Program
     {
-        public static string OpenGLError = "";
-        public static string OpenGLLink = "";
+
         public static string OpenALError = "";
+
         public static string OpenALLink = "";
+
+        public static string OpenGLError = "";
+
+        public static string OpenGLLink = "";
 
         /// <summary>
         ///     The main entry point for the application.
@@ -40,32 +45,43 @@ namespace Intersect.Client
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
+                if (ex.InnerException != null &&
+                    ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
                 {
                     var txt = "NoSuitableGraphicsDeviceException" + Environment.NewLine;
                     txt += ex.InnerException.ToString();
                     txt += ex.InnerException.InnerException.ToString();
                     File.WriteAllText("gfxerror.txt", txt);
-                    System.Windows.Forms.MessageBox.Show(String.Format(OpenGLError,OpenGLLink));
+                    System.Windows.Forms.MessageBox.Show(String.Format(OpenGLError, OpenGLLink));
                     if (!string.IsNullOrEmpty(OpenGLLink))
                     {
                         Process.Start(OpenGLLink);
                     }
+
                     Environment.Exit(-1);
                 }
+
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoAudioHardwareException")
                 {
-                    System.Windows.Forms.MessageBox.Show(String.Format(OpenALError,OpenALLink));
+                    System.Windows.Forms.MessageBox.Show(String.Format(OpenALError, OpenALLink));
                     if (!string.IsNullOrEmpty(OpenALLink))
                     {
                         Process.Start(OpenALLink);
                     }
+
                     Environment.Exit(-1);
                 }
+
                 var type = Type.GetType("Intersect.Client.MonoGame.IntersectGame", true);
                 Debug.Assert(type != null, "type != null");
-                MethodInfo staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");
-                staticMethodInfo.Invoke(null, new object[] {null, new UnhandledExceptionEventArgs(ex.InnerException != null ? ex.InnerException : ex,true) });
+                var staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");
+                staticMethodInfo.Invoke(
+                    null,
+                    new object[]
+                    {
+                        null, new UnhandledExceptionEventArgs(ex.InnerException != null ? ex.InnerException : ex, true)
+                    }
+                );
             }
         }
 
@@ -97,7 +113,9 @@ namespace Intersect.Client
                         FileName = name
                     }
                 };
+
                 p.Start();
+
                 // Do not wait for the child process to exit before
                 // reading to the end of its redirected stream.
                 // p.WaitForExit();
@@ -105,9 +123,13 @@ namespace Intersect.Client
                 var output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
                 output = output.Trim();
+
                 return output;
             }
-            catch { return ""; }
+            catch
+            {
+                return "";
+            }
         }
 
         private static void ExportDependencies()
@@ -136,6 +158,7 @@ namespace Intersect.Client
                 case PlatformID.WinCE:
                     ExportDependency("SDL2.dll", folder);
                     ExportDependency("soft_oal.dll", folder);
+
                     break;
 
                 case PlatformID.MacOSX:
@@ -143,6 +166,7 @@ namespace Intersect.Client
                     ExportDependency("libSDL2-2.0.0.dylib", "");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
+
                     break;
 
                 case PlatformID.Xbox:
@@ -154,6 +178,7 @@ namespace Intersect.Client
                     ExportDependency("libSDL2-2.0.so.0", folder);
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
+
                     break;
             }
 
@@ -164,12 +189,17 @@ namespace Intersect.Client
         {
             /* If it failed it means the file already exists and can't be deleted for whatever reason. */
             var path = string.IsNullOrEmpty(nameoverride) ? filename : nameoverride;
-            if (!DeleteIfExists(path)) return;
+            if (!DeleteIfExists(path))
+            {
+                return;
+            }
 
             Debug.Assert(filename != null, "filename != null");
 
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Intersect.Client.Resources.{(string.IsNullOrEmpty(folder) ? "" : $"{folder}.")}{filename}";
+            var resourceName =
+                $"Intersect.Client.Resources.{(string.IsNullOrEmpty(folder) ? "" : $"{folder}.")}{filename}";
+
             if (assembly.GetManifestResourceNames().Contains(resourceName))
             {
                 Console.WriteLine($@"Resource: {resourceName}");
@@ -179,7 +209,7 @@ namespace Intersect.Client
                     using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
                         var data = new byte[resourceStream.Length];
-                        resourceStream.Read(data, 0, (int)resourceStream.Length);
+                        resourceStream.Read(data, 0, (int) resourceStream.Length);
                         fileStream.Write(data, 0, data.Length);
                     }
                 }
@@ -190,24 +220,37 @@ namespace Intersect.Client
                 Debug.Assert(resourceStream != null, "resourceStream != null");
                 var resources = new ResourceSet(resourceStream);
 
-                path = Path.Combine("resources", folder, filename.Split(new char[] { '.' })[0]?.Split(new char[] { '-' })[0]);
+                path = Path.Combine(
+                    "resources", folder, filename.Split(new char[] {'.'})[0]?.Split(new char[] {'-'})[0]
+                );
+
                 path = path.ToLower();
 
                 var enumerator = resources.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     Console.WriteLine(enumerator.Key);
-                    if (enumerator.Key == null || enumerator.Key.ToString().Trim() != path.Trim()) continue;
-                    using (var fs = new FileStream(string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                    if (enumerator.Key == null || enumerator.Key.ToString().Trim() != path.Trim())
+                    {
+                        continue;
+                    }
+
+                    using (var fs = new FileStream(
+                        string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate,
+                        FileAccess.ReadWrite
+                    ))
                     {
                         var memoryStream = (UnmanagedMemoryStream) enumerator.Value;
-                        if (memoryStream == null) continue;
+                        if (memoryStream == null)
+                        {
+                            continue;
+                        }
+
                         var data = new byte[memoryStream.Length];
                         memoryStream.Read(data, 0, (int) memoryStream.Length);
                         fs.Write(data, 0, data.Length);
                     }
                 }
-
             }
         }
 
@@ -216,11 +259,20 @@ namespace Intersect.Client
             try
             {
                 Debug.Assert(filename != null, "filename != null");
-                if (File.Exists(filename)) File.Delete(filename);
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+
                 return true;
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
         }
+
     }
 #endif
+
 }

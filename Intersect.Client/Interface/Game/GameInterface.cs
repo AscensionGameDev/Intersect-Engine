@@ -16,54 +16,80 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class GameInterface
     {
+
+        public bool FocusChat;
+
+        //Public Components - For clicking/dragging
+        public HotBarWindow Hotbar;
+
+        private AdminWindow mAdminWindow;
+
+        private BagWindow mBagWindow;
+
+        private BankWindow mBankWindow;
+
+        private Chatbox mChatBox;
+
+        private CraftingWindow mCraftingWindow;
+
+        private DebugMenu mDebugMenu;
+
+        private EventWindow mEventWindow;
+
+        private PictureWindow mPictureWindow;
+
+        private QuestOfferWindow mQuestOfferWindow;
+
+        private ShopWindow mShopWindow;
+
+        private bool mShouldCloseBag;
+
+        private bool mShouldCloseBank;
+
+        private bool mShouldCloseCraftingTable;
+
+        private bool mShouldCloseShop;
+
+        private bool mShouldCloseTrading;
+
+        private bool mShouldOpenAdminWindow;
+
+        private bool mShouldOpenBag;
+
+        private bool mShouldOpenBank;
+
+        private bool mShouldOpenCraftingTable;
+
+        private bool mShouldOpenShop;
+
+        private bool mShouldOpenTrading;
+
+        private bool mShouldUpdateQuestLog = true;
+
+        private string mTradingTarget;
+
+        private TradingWindow mTradingWindow;
+
+        public EntityBox PlayerBox;
+
+        public GameInterface([NotNull] Canvas myCanvas)
+        {
+            GameCanvas = myCanvas;
+            EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+
+            InitGameGui();
+        }
+
         [NotNull]
         public Canvas GameCanvas { get; }
 
         [NotNull]
         public EscapeMenu EscapeMenu { get; }
 
-        private AdminWindow mAdminWindow;
-        private BagWindow mBagWindow;
-        private BankWindow mBankWindow;
-        private Chatbox mChatBox;
-        private CraftingWindow mCraftingWindow;
-        private PictureWindow mPictureWindow;
-        private DebugMenu mDebugMenu;
-
-        private EventWindow mEventWindow;
-        public EntityBox PlayerBox;
-        private QuestOfferWindow mQuestOfferWindow;
-        private ShopWindow mShopWindow;
-        private bool mShouldCloseBag;
-        private bool mShouldCloseBank;
-        private bool mShouldCloseCraftingTable;
-        private bool mShouldCloseShop;
-        private bool mShouldCloseTrading;
-        private bool mShouldOpenAdminWindow;
-        private bool mShouldOpenBag;
-        private bool mShouldOpenBank;
-        private bool mShouldOpenCraftingTable;
-        private bool mShouldOpenShop;
-        private bool mShouldOpenTrading;
-        private bool mShouldUpdateQuestLog = true;
-        private string mTradingTarget;
-        private TradingWindow mTradingWindow;
-        public bool FocusChat;
-
         public Menu GameMenu { get; private set; }
-
-        //Public Components - For clicking/dragging
-        public HotBarWindow Hotbar;
-
-        public GameInterface([NotNull] Canvas myCanvas)
-        {
-            GameCanvas = myCanvas;
-            EscapeMenu = new EscapeMenu(GameCanvas) { IsHidden = true };
-
-            InitGameGui();
-        }
 
         public void InitGameGui()
         {
@@ -72,7 +98,10 @@ namespace Intersect.Client.Interface.Game
             Hotbar = new HotBarWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
             if (mPictureWindow == null)
+            {
                 mPictureWindow = new PictureWindow(GameCanvas);
+            }
+
             mEventWindow = new EventWindow(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
@@ -113,6 +142,7 @@ namespace Intersect.Client.Interface.Game
                     mAdminWindow.Show();
                 }
             }
+
             mShouldOpenAdminWindow = false;
         }
 
@@ -129,7 +159,11 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenShop()
         {
-            if (mShopWindow != null) mShopWindow.Close();
+            if (mShopWindow != null)
+            {
+                mShopWindow.Close();
+            }
+
             mShopWindow = new ShopWindow(GameCanvas);
             mShouldOpenShop = false;
         }
@@ -147,7 +181,11 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenBank()
         {
-            if (mBankWindow != null) mBankWindow.Close();
+            if (mBankWindow != null)
+            {
+                mBankWindow.Close();
+            }
+
             mBankWindow = new BankWindow(GameCanvas);
             mShouldOpenBank = false;
             Globals.InBank = true;
@@ -166,7 +204,11 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenBag()
         {
-            if (mBagWindow != null) mBagWindow.Close();
+            if (mBagWindow != null)
+            {
+                mBagWindow.Close();
+            }
+
             mBagWindow = new BagWindow(GameCanvas);
             mShouldOpenBag = false;
             Globals.InBag = true;
@@ -185,7 +227,11 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenCraftingTable()
         {
-            if (mCraftingWindow != null) mCraftingWindow.Close();
+            if (mCraftingWindow != null)
+            {
+                mCraftingWindow.Close();
+            }
+
             mCraftingWindow = new CraftingWindow(GameCanvas);
             mShouldOpenCraftingTable = false;
             Globals.InCraft = true;
@@ -211,7 +257,11 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenTrading()
         {
-            if (mTradingWindow != null) mTradingWindow.Close();
+            if (mTradingWindow != null)
+            {
+                mTradingWindow.Close();
+            }
+
             mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
             mShouldOpenTrading = false;
             Globals.InTrade = true;
@@ -235,12 +285,17 @@ namespace Intersect.Client.Interface.Game
             {
                 mAdminWindow = new AdminWindow(GameCanvas);
             }
+
             mAdminWindow.Show();
         }
 
         public bool AdminWindowOpen()
         {
-            if (mAdminWindow != null && mAdminWindow.IsVisible()) return true;
+            if (mAdminWindow != null && mAdminWindow.IsVisible())
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -255,6 +310,7 @@ namespace Intersect.Client.Interface.Game
             {
                 PlayerBox?.SetEntity(Globals.Me);
             }
+
             mChatBox?.Update();
             GameMenu?.Update(mShouldUpdateQuestLog);
             mShouldUpdateQuestLog = false;
@@ -275,7 +331,9 @@ namespace Intersect.Client.Interface.Game
 
             if (Globals.Picture != null)
             {
-                if (mPictureWindow.Picture != Globals.Picture || mPictureWindow.Size != Globals.PictureSize || mPictureWindow.Clickable != Globals.PictureClickable)
+                if (mPictureWindow.Picture != Globals.Picture ||
+                    mPictureWindow.Size != Globals.PictureSize ||
+                    mPictureWindow.Clickable != Globals.PictureClickable)
                 {
                     mPictureWindow.Setup(Globals.Picture, Globals.PictureSize, Globals.PictureClickable);
                 }
@@ -307,6 +365,7 @@ namespace Intersect.Client.Interface.Game
                 PacketSender.SendCloseShop();
                 CloseShop();
             }
+
             mShouldCloseShop = false;
 
             //Bank Update
@@ -348,6 +407,7 @@ namespace Intersect.Client.Interface.Game
                     mBagWindow.Update();
                 }
             }
+
             mShouldCloseBag = false;
 
             //Crafting station update
@@ -368,6 +428,7 @@ namespace Intersect.Client.Interface.Game
                     mCraftingWindow.Update();
                 }
             }
+
             mShouldCloseCraftingTable = false;
 
             //Trading update
@@ -396,6 +457,7 @@ namespace Intersect.Client.Interface.Game
                     }
                 }
             }
+
             mShouldCloseTrading = false;
 
             if (FocusChat)
@@ -403,6 +465,7 @@ namespace Intersect.Client.Interface.Game
                 mChatBox.Focus();
                 FocusChat = false;
             }
+
             GameCanvas.RenderCanvas();
         }
 
@@ -451,5 +514,7 @@ namespace Intersect.Client.Interface.Game
             CloseTrading();
             GameCanvas.Dispose();
         }
+
     }
+
 }

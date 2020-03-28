@@ -1,25 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 
 namespace Intersect.Client.Entities
 {
+
     public class Dash
     {
+
         private int mChangeDirection = -1;
+
         private int mDashTime;
+
         private Guid mEndMapId;
+
         private byte mEndX;
+
         private float mEndXCoord;
+
         private byte mEndY;
+
         private float mEndYCoord;
+
         private long mStartTime;
+
         private float mStartXCoord;
+
         private float mStartYCoord;
 
         public Dash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, int changeDirection = -1)
@@ -35,7 +42,7 @@ namespace Intersect.Client.Entities
         {
             if (MapInstance.Get(en.CurrentMap) == null ||
                 MapInstance.Get(mEndMapId) == null ||
-                (mEndMapId == en.CurrentMap) && (mEndX == en.X) && (mEndY == en.Y))
+                mEndMapId == en.CurrentMap && mEndX == en.X && mEndY == en.Y)
             {
                 en.Dashing = null;
             }
@@ -46,11 +53,12 @@ namespace Intersect.Client.Entities
                 mStartTime = Globals.System.GetTimeMs();
                 mStartXCoord = en.OffsetX;
                 mStartYCoord = en.OffsetY;
-                mEndXCoord = (endMap.GetX() + mEndX * Options.TileWidth) -
-                             (startMap.GetX() + en.X * Options.TileWidth);
-                mEndYCoord = (endMap.GetY() + mEndY * Options.TileHeight) -
-                             (startMap.GetY() + en.Y * Options.TileHeight);
-                if (mChangeDirection > -1) en.Dir = (byte)mChangeDirection;
+                mEndXCoord = endMap.GetX() + mEndX * Options.TileWidth - (startMap.GetX() + en.X * Options.TileWidth);
+                mEndYCoord = endMap.GetY() + mEndY * Options.TileHeight - (startMap.GetY() + en.Y * Options.TileHeight);
+                if (mChangeDirection > -1)
+                {
+                    en.Dir = (byte) mChangeDirection;
+                }
             }
         }
 
@@ -62,7 +70,7 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
+                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float) mDashTime);
             }
         }
 
@@ -74,7 +82,7 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
+                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float) mDashTime);
             }
         }
 
@@ -89,7 +97,10 @@ namespace Intersect.Client.Entities
                 en.X = mEndX;
                 en.Y = mEndY;
             }
+
             return en.Dashing != null;
         }
+
     }
+
 }

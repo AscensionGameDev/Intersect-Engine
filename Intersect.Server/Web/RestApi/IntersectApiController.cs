@@ -5,6 +5,7 @@ using Intersect.Server.Web.RestApi.Serialization;
 
 namespace Intersect.Server.Web.RestApi
 {
+
     public abstract class IntersectApiController : ApiController
     {
 
@@ -21,5 +22,7 @@ namespace Intersect.Server.Web.RestApi
                     new ApiVisibilityContractResolver(RequestContext);
             }
         }
+
     }
+
 }

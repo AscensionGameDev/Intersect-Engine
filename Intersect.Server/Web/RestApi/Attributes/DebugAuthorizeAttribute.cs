@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-
-using Intersect.Security.Claims;
-using Intersect.Server.Web.RestApi.Services;
 
 using JetBrains.Annotations;
 
@@ -20,6 +14,7 @@ namespace Intersect.Server.Web.RestApi.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     internal class DebugAuthorizeAttribute : AuthorizeAttribute
     {
+
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
 #if DEBUG

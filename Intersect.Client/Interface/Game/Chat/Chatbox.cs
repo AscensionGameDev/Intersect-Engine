@@ -13,27 +13,38 @@ using Intersect.Configuration;
 
 namespace Intersect.Client.Interface.Game.Chat
 {
+
     public class Chatbox
     {
-        private ComboBox mChannelCombobox;
-        private TextBox mChatboxInput;
-        private ListBox mChatboxMessages;
-        private ScrollBar mChatboxScrollBar;
-        private Label mChatboxText;
-        private ImagePanel mChatbar;
 
-        private Label mChatboxTitle;
+        private ComboBox mChannelCombobox;
+
         private Label mChannelLabel;
 
+        private ImagePanel mChatbar;
+
+        private TextBox mChatboxInput;
+
+        private ListBox mChatboxMessages;
+
+        private ScrollBar mChatboxScrollBar;
+
         private Button mChatboxSendButton;
+
+        private Label mChatboxText;
+
+        private Label mChatboxTitle;
 
         //Window Controls
         private ImagePanel mChatboxWindow;
 
         private GameInterface mGameUi;
-        private int mMessageIndex;
-        private bool mReceivedMessage;
+
         private long mLastChatTime = -1;
+
+        private int mMessageIndex;
+
+        private bool mReceivedMessage;
 
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
@@ -46,11 +57,11 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxMessages.EnableScroll(false, true);
             mChatboxWindow.ShouldCacheToTexture = true;
 
-            mChatboxTitle = new Label(mChatboxWindow,"ChatboxTitle");
+            mChatboxTitle = new Label(mChatboxWindow, "ChatboxTitle");
             mChatboxTitle.Text = Strings.Chatbox.title;
             mChatboxTitle.IsHidden = true;
 
-            mChatbar = new ImagePanel(mChatboxWindow,"Chatbar");
+            mChatbar = new ImagePanel(mChatboxWindow, "Chatbar");
             mChatbar.IsHidden = true;
 
             mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
@@ -66,11 +77,12 @@ namespace Intersect.Client.Interface.Game.Chat
             mChannelLabel.IsHidden = true;
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
                 menuItem.UserData = i;
             }
+
             //Add admin channel only if power > 0.
             if (Globals.Me.Type > 0)
             {
@@ -104,9 +116,11 @@ namespace Intersect.Client.Interface.Game.Chat
             for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
-                var myText = Interface.WrapText(msg.GetMessage(),
-                    mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
-                    mChatboxText.Font);
+                var myText = Interface.WrapText(
+                    msg.GetMessage(), mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
+                    mChatboxText.Font
+                );
+
                 foreach (var t in myText)
                 {
                     var rw = mChatboxMessages.AddRow(t.Trim());
@@ -122,6 +136,7 @@ namespace Intersect.Client.Interface.Game.Chat
                         mChatboxMessages.RemoveRow(0);
                     }
                 }
+
                 mMessageIndex++;
             }
         }
@@ -134,8 +149,8 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ListBoxRow rw = (ListBoxRow) sender;
-            string target = (string) rw.UserData;
+            var rw = (ListBoxRow) sender;
+            var target = (string) rw.UserData;
             if (target != "")
             {
                 if (mGameUi.AdminWindowOpen())
@@ -181,6 +196,7 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red));
                 mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
+
                 return;
             }
 
@@ -189,10 +205,14 @@ namespace Intersect.Client.Interface.Game.Chat
             if (mChatboxInput.Text.Trim().Length <= 0 || mChatboxInput.Text == GetDefaultInputText())
             {
                 mChatboxInput.Text = GetDefaultInputText();
+
                 return;
             }
 
-            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString()));
+            PacketSender.SendChatMsg(
+                mChatboxInput.Text.Trim(), byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString())
+            );
+
             mChatboxInput.Text = GetDefaultInputText();
         }
 
@@ -202,17 +222,27 @@ namespace Intersect.Client.Interface.Game.Chat
             var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Key2;
             if (key1 == Keys.None && key2 != Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]);
+                return Strings.Chatbox.enterchat1.ToString(
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                );
             }
             else if (key1 != Keys.None && key2 == Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()]);
+                return Strings.Chatbox.enterchat1.ToString(
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()]
+                );
             }
             else if (key1 != Keys.None && key2 != Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()], Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]);
+                return Strings.Chatbox.enterchat1.ToString(
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()],
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                );
             }
+
             return Strings.Chatbox.enterchat;
         }
+
     }
+
 }

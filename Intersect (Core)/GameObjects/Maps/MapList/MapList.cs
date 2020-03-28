@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+
 using Intersect.Collections;
-using Intersect.GameObjects.Crafting;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
+
     public class MapList
     {
+
         //So EF will save this :P
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
@@ -27,13 +30,33 @@ namespace Intersect.GameObjects.Maps.MapList
         [Column("JsonData")]
         public string JsonData
         {
-            get => JsonConvert.SerializeObject(this, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace});
-            set => JsonConvert.PopulateObject(value,this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => JsonConvert.SerializeObject(
+                this,
+                new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
+            set => JsonConvert.PopulateObject(
+                value, this,
+                new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
         }
 
         public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true, bool isTopLevel = false)
         {
-            if (isTopLevel) OrderedMaps.Clear();
+            if (isTopLevel)
+            {
+                OrderedMaps.Clear();
+            }
+
             foreach (var itm in Items.ToArray())
             {
                 if (itm.Type == 0)
@@ -61,19 +84,27 @@ namespace Intersect.GameObjects.Maps.MapList
                     }
                 }
             }
+
             if (isTopLevel)
+            {
                 OrderedMaps.Sort();
+            }
         }
 
         public void AddMap(Guid mapId, long timeCreated, DatabaseObjectLookup gameMaps)
         {
-            if (!gameMaps.Keys.Contains(mapId)) return;
+            if (!gameMaps.Keys.Contains(mapId))
+            {
+                return;
+            }
+
             var tmp = new MapListMap()
             {
                 Name = gameMaps[mapId].Name,
                 MapId = mapId,
                 TimeCreated = timeCreated
             };
+
             Items.Add(tmp);
         }
 
@@ -84,31 +115,34 @@ namespace Intersect.GameObjects.Maps.MapList
                 Name = folderName,
                 FolderId = Guid.NewGuid()
             };
+
             Items.Add(tmp);
         }
 
         public MapListFolder FindDir(Guid folderId)
         {
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].Type == 0)
                 {
                     if (((MapListFolder) Items[i]).FolderId == folderId)
                     {
-                        return ((MapListFolder) Items[i]);
+                        return (MapListFolder) Items[i];
                     }
+
                     if (((MapListFolder) Items[i]).Children.FindDir(folderId) != null)
                     {
                         return ((MapListFolder) Items[i]).Children.FindDir(folderId);
                     }
                 }
             }
+
             return null;
         }
 
         public MapListMap FindMap(Guid mapId)
         {
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].Type == 0)
                 {
@@ -121,16 +155,17 @@ namespace Intersect.GameObjects.Maps.MapList
                 {
                     if (((MapListMap) Items[i]).MapId == mapId)
                     {
-                        return ((MapListMap) Items[i]);
+                        return (MapListMap) Items[i];
                     }
                 }
             }
+
             return null;
         }
 
         public MapListFolder FindMapParent(Guid mapId, MapListFolder parent)
         {
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
@@ -147,12 +182,13 @@ namespace Intersect.GameObjects.Maps.MapList
                     }
                 }
             }
+
             return null;
         }
 
         public MapListFolder FindFolderParent(Guid folderId, MapListFolder parent)
         {
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
@@ -160,6 +196,7 @@ namespace Intersect.GameObjects.Maps.MapList
                     {
                         return parent;
                     }
+
                     if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
                         null)
                     {
@@ -167,6 +204,7 @@ namespace Intersect.GameObjects.Maps.MapList
                     }
                 }
             }
+
             return null;
         }
 
@@ -189,6 +227,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 {
                     targetList = destParent.Children;
                 }
+
                 dest = FindDir(destId);
             }
             else
@@ -202,8 +241,10 @@ namespace Intersect.GameObjects.Maps.MapList
                 {
                     targetList = destParent.Children;
                 }
+
                 dest = FindMap(destId);
             }
+
             if (srcType == 0)
             {
                 sourceParent = FindFolderParent(srcId, null);
@@ -215,6 +256,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 {
                     sourceList = sourceParent.Children;
                 }
+
                 source = FindDir(srcId);
             }
             else
@@ -228,8 +270,10 @@ namespace Intersect.GameObjects.Maps.MapList
                 {
                     sourceList = sourceParent.Children;
                 }
+
                 source = FindMap(srcId);
             }
+
             if (targetList != null && dest != null && sourceList != null && source != null)
             {
                 if (destType == 0)
@@ -258,8 +302,8 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public void DeleteFolder(Guid folderId)
         {
-            MapListFolder parent = FindFolderParent(folderId, null);
-            MapListFolder self = FindDir(folderId);
+            var parent = FindFolderParent(folderId, null);
+            var self = FindDir(folderId);
             if (parent == null)
             {
                 List.Items.AddRange(self.Children.Items);
@@ -274,8 +318,8 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public void DeleteMap(Guid mapid)
         {
-            MapListFolder parent = FindMapParent(mapid, null);
-            MapListMap self = FindMap(mapid);
+            var parent = FindMapParent(mapid, null);
+            var self = FindMap(mapid);
             if (parent == null)
             {
                 List.Items.Remove(self);
@@ -299,12 +343,15 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public Guid FindFirstMap()
         {
-            Guid lowestMap = Guid.Empty;
+            var lowestMap = Guid.Empty;
             if (OrderedMaps.Count > 0)
             {
                 lowestMap = OrderedMaps[0].MapId;
             }
+
             return lowestMap;
         }
+
     }
+
 }

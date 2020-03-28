@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -12,15 +14,21 @@ using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmCraftingTables : EditorForm
     {
+
         private List<CraftingTableBase> mChanged = new List<CraftingTableBase>();
+
         private string mCopiedItem;
+
         private CraftBase mCurrentCraft;
+
         private CraftingTableBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmCraftingTables()
         {
@@ -59,7 +67,6 @@ namespace Intersect.Editor.Forms.Editors
 
                 //Clean up crafts array
 
-
                 foreach (var val in mEditorItem.Crafts)
                 {
                     var listIndex = CraftBase.ListIndex(val);
@@ -79,15 +86,19 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
-        
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstTables.SelectedNode != null && lstTables.SelectedNode.Tag != null) lstTables.SelectedNode.Text = txtName.Text;
+            if (lstTables.SelectedNode != null && lstTables.SelectedNode.Tag != null)
+            {
+                lstTables.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
@@ -127,9 +138,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstTables.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.CraftingTableEditor.deleteprompt,
-                        Strings.CraftingTableEditor.delete, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.CraftingTableEditor.deleteprompt, Strings.CraftingTableEditor.delete,
+                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -159,9 +171,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.CraftingTableEditor.undoprompt,
-                        Strings.CraftingTableEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.CraftingTableEditor.undoprompt, Strings.CraftingTableEditor.undotitle,
+                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -252,7 +265,7 @@ namespace Intersect.Editor.Forms.Editors
         private void lstAvailableCrafts_SelectedValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Crafts.Clear();
-            for (int i = 0; i < lstAvailableCrafts.Items.Count; i++)
+            for (var i = 0; i < lstAvailableCrafts.Items.Count; i++)
             {
                 if (lstAvailableCrafts.CheckedIndices.Contains(i))
                 {
@@ -262,25 +275,30 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstTables.SelectedNode != null && lstTables.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstTables.SelectedNode.Tag;
+                selectedId = (Guid) lstTables.SelectedNode.Tag;
             }
+
             lstTables.Nodes.Clear();
 
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in CraftingTableBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((CraftingTableBase)itm.Value).Folder) && !mFolders.Contains(((CraftingTableBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((CraftingTableBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((CraftingTableBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((CraftingTableBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((CraftingTableBase)itm.Value).Folder))
-                        mKnownFolders.Add(((CraftingTableBase)itm.Value).Folder);
+                    mFolders.Add(((CraftingTableBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((CraftingTableBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((CraftingTableBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -316,7 +334,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -332,26 +352,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstTables.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstTables.SelectedNode;
 
-            if (!btnChronological.Checked) lstTables.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstTables.Sort();
+            }
 
             lstTables.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.CraftingTableEditor.folderprompt, Strings.CraftingTableEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.CraftingTableEditor.folderprompt, Strings.CraftingTableEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -376,6 +406,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstTables.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -394,20 +425,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstTables_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstTables.SelectedNode == null || lstTables.SelectedNode.Tag == null) return;
-            mEditorItem = CraftingTableBase.Get((Guid)lstTables.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstTables.SelectedNode == null || lstTables.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = CraftingTableBase.Get((Guid) lstTables.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -449,15 +494,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.CraftingTableEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.CraftingTableEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.CraftingTableEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

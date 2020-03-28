@@ -2,15 +2,21 @@
 
 namespace Intersect.Client.Framework.Database
 {
+
     public abstract class GameDatabase
     {
+
         public bool FullScreen;
+
         public bool HideOthersOnWindowOpen;
 
         //Preferences
         public int MusicVolume;
+
         public int SoundVolume;
+
         public int TargetFps;
+
         public int TargetResolution;
 
         //Saving password, other stuff we don't want in the games directory
@@ -21,8 +27,12 @@ namespace Intersect.Client.Framework.Database
         public T LoadPreference<T>(string key, T defaultValue)
         {
             var value = LoadPreference(key);
-            if (string.IsNullOrEmpty(value)) return defaultValue;
-            return (T)Convert.ChangeType(value, typeof(T));
+            if (string.IsNullOrEmpty(value))
+            {
+                return defaultValue;
+            }
+
+            return (T) Convert.ChangeType(value, typeof(T));
         }
 
         //Load all preferences when the game starts
@@ -47,5 +57,7 @@ namespace Intersect.Client.Framework.Database
         }
 
         public abstract bool LoadConfig();
+
     }
+
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
 
@@ -6,26 +7,32 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Text box (editable).
     /// </summary>
     public class TextBox : Label
     {
+
+        //Sound Effects
+        private string mAddTextSound;
+
         protected Rectangle mCaretBounds;
+
         private int mCursorEnd;
 
         private int mCursorPos;
 
         protected float mLastInputTime;
+
+        private int mMaxTextLength = -1;
+
+        private string mRemoveTextSound;
+
         private bool mSelectAll;
 
         protected Rectangle mSelectionBounds;
 
-        private int mMaxTextLength = -1;
-
-        //Sound Effects
-        private string mAddTextSound;
-        private string mRemoveTextSound;
         private string mSubmitSound;
 
         /// <summary>
@@ -70,7 +77,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             set
             {
                 mSelectAll = value;
-                if (value) OnSelectAll(this, EventArgs.Empty);
+                if (value)
+                {
+                    OnSelectAll(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -87,7 +97,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mCursorPos;
             set
             {
-                if (mCursorPos == value) return;
+                if (mCursorPos == value)
+                {
+                    return;
+                }
 
                 mCursorPos = value;
                 RefreshCursorBounds();
@@ -99,7 +112,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mCursorEnd;
             set
             {
-                if (mCursorEnd == value) return;
+                if (mCursorEnd == value)
+                {
+                    return;
+                }
 
                 mCursorEnd = value;
                 RefreshCursorBounds();
@@ -124,7 +140,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>True if allowed.</returns>
         protected virtual bool IsTextAllowed(string text, int position)
         {
-            if (mMaxTextLength >= 0 && this.Text.Length + text.Length > mMaxTextLength) return false;
+            if (mMaxTextLength >= 0 && this.Text.Length + text.Length > mMaxTextLength)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -144,11 +164,20 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.OnTextChanged();
 
-            if (mCursorPos > TextLength) mCursorPos = TextLength;
-            if (mCursorEnd > TextLength) mCursorEnd = TextLength;
+            if (mCursorPos > TextLength)
+            {
+                mCursorPos = TextLength;
+            }
+
+            if (mCursorEnd > TextLength)
+            {
+                mCursorEnd = TextLength;
+            }
 
             if (TextChanged != null)
+            {
                 TextChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -162,9 +191,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.OnChar(chr);
 
-            if (chr == '\t') return false;
+            if (chr == '\t')
+            {
+                return false;
+            }
 
             InsertText(chr.ToString());
+
             return true;
         }
 
@@ -182,12 +215,16 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             if (mCursorPos > TextLength)
+            {
                 mCursorPos = TextLength;
+            }
 
             if (!IsTextAllowed(text, mCursorPos))
+            {
                 return;
+            }
 
-            string str = Text;
+            var str = Text;
             str = str.Insert(mCursorPos, text);
             SetText(str);
 
@@ -208,9 +245,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.Render(skin);
 
             if (ShouldDrawBackground)
+            {
                 skin.DrawTextBox(this);
+            }
 
-            if (!HasFocus) return;
+            if (!HasFocus)
+            {
+                return;
+            }
 
             // Draw selection.. if selected..
             if (mCursorPos != mCursorEnd)
@@ -220,9 +262,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             // Draw caret
-            float time = Platform.Neutral.GetTimeInSeconds() - mLastInputTime;
+            var time = Platform.Neutral.GetTimeInSeconds() - mLastInputTime;
 
-            if ((time % 1.0f) <= 0.5f)
+            if (time % 1.0f <= 0.5f)
             {
                 skin.Renderer.DrawColor = mNormalTextColor != null ? mNormalTextColor : TextColorOverride;
                 skin.Renderer.DrawFilledRect(mCaretBounds);
@@ -235,8 +277,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             MakeCaretVisible();
 
-            Point pA = GetCharacterPosition(mCursorPos);
-            Point pB = GetCharacterPosition(mCursorEnd);
+            var pA = GetCharacterPosition(mCursorPos);
+            var pB = GetCharacterPosition(mCursorEnd);
 
             mSelectionBounds.X = Math.Min(pA.X, pB.X);
             mSelectionBounds.Y = TextY - 1;
@@ -267,7 +309,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="from">Source control.</param>
         protected override void OnCopy(Base from, EventArgs args)
         {
-            if (!HasSelection) return;
+            if (!HasSelection)
+            {
+                return;
+            }
+
             base.OnCopy(from, args);
 
             Platform.Neutral.SetClipboardText(GetSelection());
@@ -279,7 +325,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="from">Source control.</param>
         protected override void OnCut(Base from, EventArgs args)
         {
-            if (!HasSelection) return;
+            if (!HasSelection)
+            {
+                return;
+            }
+
             base.OnCut(from, args);
 
             Platform.Neutral.SetClipboardText(GetSelection());
@@ -320,7 +370,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyReturn(bool down)
         {
             base.OnKeyReturn(down);
-            if (down) return true;
+            if (down)
+            {
+                return true;
+            }
 
             OnReturn();
 
@@ -347,14 +400,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.OnKeyBackspace(down);
 
-            if (!down) return true;
-            if (HasSelection)
+            if (!down)
             {
-                EraseSelection();
                 return true;
             }
 
-            if (mCursorPos == 0) return true;
+            if (HasSelection)
+            {
+                EraseSelection();
+
+                return true;
+            }
+
+            if (mCursorPos == 0)
+            {
+                return true;
+            }
 
             DeleteText(mCursorPos - 1, 1);
 
@@ -371,14 +432,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyDelete(bool down)
         {
             base.OnKeyDelete(down);
-            if (!down) return true;
-            if (HasSelection)
+            if (!down)
             {
-                EraseSelection();
                 return true;
             }
 
-            if (mCursorPos >= TextLength) return true;
+            if (HasSelection)
+            {
+                EraseSelection();
+
+                return true;
+            }
+
+            if (mCursorPos >= TextLength)
+            {
+                return true;
+            }
 
             DeleteText(mCursorPos, 1);
 
@@ -395,10 +464,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyLeft(bool down)
         {
             base.OnKeyLeft(down);
-            if (!down) return true;
+            if (!down)
+            {
+                return true;
+            }
 
             if (mCursorPos > 0)
+            {
                 mCursorPos--;
+            }
 
             if (!Input.InputHandler.IsShiftDown)
             {
@@ -406,6 +480,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             RefreshCursorBounds();
+
             return true;
         }
 
@@ -419,10 +494,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyRight(bool down)
         {
             base.OnKeyRight(down);
-            if (!down) return true;
+            if (!down)
+            {
+                return true;
+            }
 
             if (mCursorPos < TextLength)
+            {
                 mCursorPos++;
+            }
 
             if (!Input.InputHandler.IsShiftDown)
             {
@@ -430,6 +510,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             RefreshCursorBounds();
+
             return true;
         }
 
@@ -443,7 +524,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyHome(bool down)
         {
             base.OnKeyHome(down);
-            if (!down) return true;
+            if (!down)
+            {
+                return true;
+            }
+
             mCursorPos = 0;
 
             if (!Input.InputHandler.IsShiftDown)
@@ -452,6 +537,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             RefreshCursorBounds();
+
             return true;
         }
 
@@ -473,6 +559,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             RefreshCursorBounds();
+
             return true;
         }
 
@@ -482,12 +569,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Current selection.</returns>
         public string GetSelection()
         {
-            if (!HasSelection) return String.Empty;
+            if (!HasSelection)
+            {
+                return String.Empty;
+            }
 
-            int start = Math.Min(mCursorPos, mCursorEnd);
-            int end = Math.Max(mCursorPos, mCursorEnd);
+            var start = Math.Min(mCursorPos, mCursorEnd);
+            var end = Math.Max(mCursorPos, mCursorEnd);
 
-            string str = Text;
+            var str = Text;
+
             return str.Substring(start, end - start);
         }
 
@@ -498,7 +589,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="length">Length in characters.</param>
         public virtual void DeleteText(int startPos, int length, bool playSound = true)
         {
-            string str = Text;
+            var str = Text;
             str = str.Remove(startPos, length);
             SetText(str);
 
@@ -509,7 +600,10 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             CursorEnd = mCursorPos;
 
-            if (length > 0 && playSound) base.PlaySound(mRemoveTextSound);
+            if (length > 0 && playSound)
+            {
+                base.PlaySound(mRemoveTextSound);
+            }
         }
 
         /// <summary>
@@ -517,8 +611,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void EraseSelection(bool playSound = true)
         {
-            int start = Math.Min(mCursorPos, mCursorEnd);
-            int end = Math.Max(mCursorPos, mCursorEnd);
+            var start = Math.Min(mCursorPos, mCursorEnd);
+            var end = Math.Max(mCursorPos, mCursorEnd);
 
             DeleteText(start, end - start, playSound);
 
@@ -540,18 +634,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (mSelectAll)
             {
                 OnSelectAll(this, EventArgs.Empty);
+
                 //m_SelectAll = false;
                 return;
             }
 
-            int c = GetClosestCharacter(x, y).X;
+            var c = GetClosestCharacter(x, y).X;
 
             if (down)
             {
                 CursorPos = c;
 
                 if (!Input.InputHandler.IsShiftDown)
+                {
                     CursorEnd = c;
+                }
 
                 InputHandler.MouseFocus = this;
             }
@@ -575,34 +672,43 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
             base.OnMouseMoved(x, y, dx, dy);
-            if (InputHandler.MouseFocus != this) return;
+            if (InputHandler.MouseFocus != this)
+            {
+                return;
+            }
 
-            int c = GetClosestCharacter(x, y).X;
+            var c = GetClosestCharacter(x, y).X;
 
             CursorPos = c;
         }
 
         protected virtual void MakeCaretVisible()
         {
-            int caretPos = GetCharacterPosition(mCursorPos).X - TextX;
+            var caretPos = GetCharacterPosition(mCursorPos).X - TextX;
 
             // If the caret is already in a semi-good position, leave it.
             {
-                int realCaretPos = caretPos + TextX;
+                var realCaretPos = caretPos + TextX;
                 if (realCaretPos > Width * 0.1f && realCaretPos < Width * 0.9f)
+                {
                     return;
+                }
             }
 
             // The ideal position is for the caret to be right in the middle
-            int idealx = (int) (-caretPos + Width * 0.5f);
+            var idealx = (int) (-caretPos + Width * 0.5f);
 
             // Don't show too much whitespace to the right
             if (idealx + TextWidth < Width - TextPadding.Right - Padding.Right)
+            {
                 idealx = -TextWidth + (Width - TextPadding.Right - Padding.Right);
+            }
 
             // Or the left
             if (idealx > TextPadding.Left + Padding.Left)
+            {
                 idealx = TextPadding.Left + Padding.Left;
+            }
 
             SetTextPosition(idealx, TextY);
         }
@@ -635,22 +741,35 @@ namespace Intersect.Client.Framework.Gwen.Control
             mMaxTextLength = val;
         }
 
-
         public override JObject GetJson()
         {
             var obj = base.GetJson();
             obj.Add("AddTextSound", mAddTextSound);
             obj.Add("RemoveTextSound", mRemoveTextSound);
-            obj.Add("SubmitSound",mSubmitSound);
+            obj.Add("SubmitSound", mSubmitSound);
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["AddTextSound"] != null) mAddTextSound = (string)obj["AddTextSound"];
-            if (obj["RemoveTextSound"] != null) mRemoveTextSound = (string)obj["RemoveTextSound"];
-            if (obj["SubmitSound"] != null) mSubmitSound = (string)obj["SubmitSound"];
+            if (obj["AddTextSound"] != null)
+            {
+                mAddTextSound = (string) obj["AddTextSound"];
+            }
+
+            if (obj["RemoveTextSound"] != null)
+            {
+                mRemoveTextSound = (string) obj["RemoveTextSound"];
+            }
+
+            if (obj["SubmitSound"] != null)
+            {
+                mSubmitSound = (string) obj["SubmitSound"];
+            }
         }
+
     }
+
 }

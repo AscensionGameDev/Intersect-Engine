@@ -8,9 +8,12 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandPlayBgm : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private PlayBgmCommand mMyCommand;
 
         public EventCommandPlayBgm(PlayBgmCommand refCommand, FrmEvent editor)
@@ -54,5 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
+
     }
+
 }

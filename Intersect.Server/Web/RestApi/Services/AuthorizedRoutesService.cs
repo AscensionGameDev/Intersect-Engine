@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Web.Http;
@@ -8,17 +6,13 @@ using System.Web.Http.Description;
 
 using Intersect.Server.Web.RestApi.Configuration;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Server.Web.RestApi.Services
 {
 
     internal sealed class AuthorizedRoutesService : IAuthorizedRoutesService
     {
-
-        [NotNull]
-        private IReadOnlyDictionary<string, object> Routes { get; }
-
-        [NotNull]
-        public IApiExplorer ApiExplorer { get; }
 
         public AuthorizedRoutesService(
             [NotNull] ApiConfiguration apiConfiguration,
@@ -28,6 +22,12 @@ namespace Intersect.Server.Web.RestApi.Services
             ApiExplorer = httpConfiguration.Services.GetApiExplorer() ?? throw new InvalidOperationException();
             Routes = apiConfiguration.RouteAuthorization;
         }
+
+        [NotNull]
+        private IReadOnlyDictionary<string, object> Routes { get; }
+
+        [NotNull]
+        public IApiExplorer ApiExplorer { get; }
 
         /// <inheritdoc />
         public bool RequiresAuthorization(string endpoint, string method)

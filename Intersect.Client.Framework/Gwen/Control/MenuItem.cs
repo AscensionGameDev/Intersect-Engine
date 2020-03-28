@@ -1,28 +1,34 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Menu item.
     /// </summary>
     public class MenuItem : Button
     {
+
         private Label mAccelerator;
+
         private bool mCheckable;
+
         private bool mChecked;
+
         private Menu mMenu;
+
         private bool mOnStrip;
+
         private Base mSubmenuArrow;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MenuItem" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public MenuItem(Base parent)
-            : base(parent)
+        public MenuItem(Base parent) : base(parent)
         {
             AutoSizeToContents = true;
             mOnStrip = false;
@@ -58,7 +64,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                if (mMenu == null) return false;
+                if (mMenu == null)
+                {
+                    return false;
+                }
+
                 return !mMenu.IsHidden;
             }
         }
@@ -72,22 +82,30 @@ namespace Intersect.Client.Framework.Gwen.Control
             set
             {
                 if (value == mChecked)
+                {
                     return;
+                }
 
                 mChecked = value;
 
                 if (CheckChanged != null)
+                {
                     CheckChanged.Invoke(this, EventArgs.Empty);
+                }
 
                 if (value)
                 {
                     if (Checked != null)
+                    {
                         Checked.Invoke(this, EventArgs.Empty);
+                    }
                 }
                 else
                 {
                     if (UnChecked != null)
+                    {
                         UnChecked.Invoke(this, EventArgs.Empty);
+                    }
                 }
             }
         }
@@ -107,7 +125,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                     if (!mOnStrip)
                     {
                         if (mSubmenuArrow != null)
+                        {
                             mSubmenuArrow.Dispose();
+                        }
+
                         mSubmenuArrow = new RightArrow(this);
                         mSubmenuArrow.SetSize(15, 15);
                     }
@@ -158,6 +179,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mSubmenuArrow.Position(Pos.Right | Pos.CenterV, 4, 0);
             }
+
             base.Layout(skin);
         }
 
@@ -174,9 +196,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 IsChecked = !IsChecked;
                 if (Selected != null)
+                {
                     Selected.Invoke(this, new ItemSelectedEventArgs(this));
+                }
+
                 GetCanvas().CloseMenus();
             }
+
             base.OnClicked(x, y);
         }
 
@@ -186,9 +212,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void ToggleMenu()
         {
             if (IsMenuOpen)
+            {
                 CloseMenu();
+            }
             else
+            {
                 OpenMenu();
+            }
         }
 
         /// <summary>
@@ -196,18 +226,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public void OpenMenu()
         {
-            if (null == mMenu) return;
+            if (null == mMenu)
+            {
+                return;
+            }
 
             mMenu.IsHidden = false;
             mMenu.BringToFront();
 
-            Point p = LocalPosToCanvas(Point.Empty);
+            var p = LocalPosToCanvas(Point.Empty);
 
             // Strip menus open downwards
             if (mOnStrip)
             {
                 mMenu.SetPosition(p.X, p.Y + Height + 1);
             }
+
             // Submenus open sidewards
             else
             {
@@ -224,7 +258,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public void CloseMenu()
         {
-            if (null == mMenu) return;
+            if (null == mMenu)
+            {
+                return;
+            }
+
             mMenu.Close();
             mMenu.CloseAll();
         }
@@ -239,12 +277,16 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mAccelerator.Alignment = Pos.Left;
             }
 
-            if (Width < Parent.Width) Width = Parent.Width;
-            
+            if (Width < Parent.Width)
+            {
+                Width = Parent.Width;
+            }
         }
 
-        public MenuItem SetAction(GwenEventHandler<EventArgs> handler,
-            GwenEventHandler<ItemSelectedEventArgs> selHandler)
+        public MenuItem SetAction(
+            GwenEventHandler<EventArgs> handler,
+            GwenEventHandler<ItemSelectedEventArgs> selHandler
+        )
         {
             if (mAccelerator != null)
             {
@@ -252,6 +294,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             Selected += selHandler;
+
             return this;
         }
 
@@ -264,14 +307,19 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             if (acc == String.Empty)
+            {
                 return;
+            }
 
             mAccelerator = new Label(this);
             mAccelerator.Dock = Pos.Right;
             mAccelerator.Alignment = Pos.Right | Pos.CenterV;
             mAccelerator.Text = acc;
             mAccelerator.Margin = new Margin(0, 0, 16, 0);
+
             // todo
         }
+
     }
+
 }

@@ -9,10 +9,9 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Entities.Combat
 {
+
     public class Status
     {
-
-        public SpellBase Spell;
 
         public string Data = "";
 
@@ -20,11 +19,11 @@ namespace Intersect.Server.Entities.Combat
 
         private Entity mEntity;
 
+        public SpellBase Spell;
+
         public long StartTime;
 
         public StatusTypes Type;
-
-        public int[] shield { get; set; } = new int[(int)Enums.Vitals.VitalCount];
 
         public Status(Entity en, SpellBase spell, StatusTypes type, int duration, string data)
         {
@@ -44,15 +43,16 @@ namespace Intersect.Server.Entities.Combat
                     type == StatusTypes.Stun ||
                     type == StatusTypes.Taunt)
                 {
-                    Duration = Globals.Timing.TimeMs + duration - (long)((((Player)en).GetTenacity() / 100) * duration);
+                    Duration = Globals.Timing.TimeMs + duration - (long) (((Player) en).GetTenacity() / 100 * duration);
                 }
             }
 
             if (type == StatusTypes.Shield)
             {
-                for (var i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
+                for (var i = (int) Vitals.Health; i < (int) Vitals.VitalCount; i++)
                 {
-                    shield[i] = Math.Abs(spell.Combat.VitalDiff[i]) + (int)((spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].BaseStat) / 100f);
+                    shield[i] = Math.Abs(spell.Combat.VitalDiff[i]) +
+                                (int) (spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].BaseStat / 100f);
                 }
             }
 
@@ -69,7 +69,7 @@ namespace Intersect.Server.Entities.Combat
                 {
                     if (status.Type == StatusTypes.Cleanse)
                     {
-                        PacketSender.SendActionMsg(en, Strings.Combat.status[(int)Type], CustomColors.Combat.Cleanse);
+                        PacketSender.SendActionMsg(en, Strings.Combat.status[(int) Type], CustomColors.Combat.Cleanse);
 
                         return;
                     }
@@ -89,6 +89,8 @@ namespace Intersect.Server.Entities.Combat
             PacketSender.SendEntityVitals(mEntity);
         }
 
+        public int[] shield { get; set; } = new int[(int) Enums.Vitals.VitalCount];
+
         public void TryRemoveStatus()
         {
             if (Duration <= Globals.Timing.TimeMs) //Check the timer
@@ -99,7 +101,7 @@ namespace Intersect.Server.Entities.Combat
             //If shield check for out of hp
             if (Type == StatusTypes.Shield)
             {
-                for (var i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
+                for (var i = (int) Vitals.Health; i < (int) Vitals.VitalCount; i++)
                 {
                     if (shield[i] > 0)
                     {
@@ -121,11 +123,11 @@ namespace Intersect.Server.Entities.Combat
         {
             if (Type == StatusTypes.Shield)
             {
-                shield[(int)vital] -= amount;
-                if (shield[(int)vital] <= 0)
+                shield[(int) vital] -= amount;
+                if (shield[(int) vital] <= 0)
                 {
-                    amount = -shield[(int)vital]; //Return piercing damage.
-                    shield[(int)vital] = 0;
+                    amount = -shield[(int) vital]; //Return piercing damage.
+                    shield[(int) vital] = 0;
                     TryRemoveStatus();
                 }
                 else
@@ -136,4 +138,5 @@ namespace Intersect.Server.Entities.Combat
         }
 
     }
+
 }

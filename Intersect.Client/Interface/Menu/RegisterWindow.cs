@@ -15,12 +15,16 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class RegisterWindow
     {
+
         private Button mBackBtn;
 
         private ImagePanel mEmailBackground;
+
         private Label mEmailLabel;
+
         private TextBox mEmailTextbox;
 
         //Parent
@@ -29,10 +33,15 @@ namespace Intersect.Client.Interface.Menu
         private ImagePanel mPasswordBackground;
 
         private ImagePanel mPasswordBackground2;
+
         private Label mPasswordLabel;
+
         private Label mPasswordLabel2;
+
         private TextBoxPassword mPasswordTextbox;
+
         private TextBoxPassword mPasswordTextbox2;
+
         private Button mRegisterBtn;
 
         private Label mRegistrationHeader;
@@ -41,10 +50,10 @@ namespace Intersect.Client.Interface.Menu
         private ImagePanel mRegistrationPanel;
 
         private ImagePanel mUsernameBackground;
-        private Label mUsernameLabel;
-        private TextBox mUsernameTextbox;
 
-        public bool IsHidden => mRegistrationPanel.IsHidden;
+        private Label mUsernameLabel;
+
+        private TextBox mUsernameTextbox;
 
         //Init
         public RegisterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -116,6 +125,8 @@ namespace Intersect.Client.Interface.Menu
             mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
+        public bool IsHidden => mRegistrationPanel.IsHidden;
+
         //Methods
         public void Update()
         {
@@ -151,6 +162,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 return;
             }
+
             if (Networking.Network.Connected)
             {
                 if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
@@ -162,37 +174,47 @@ namespace Intersect.Client.Interface.Menu
                             if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.email))
                             {
                                 Hide();
+
                                 //Hash Password
                                 using (var sha = new SHA256Managed())
                                 {
-                                    var hashedPass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", "");
-                                    PacketSender.SendCreateAccount(mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text);
+                                    var hashedPass = BitConverter.ToString(
+                                            sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))
+                                        )
+                                        .Replace("-", "");
+
+                                    PacketSender.SendCreateAccount(
+                                        mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text
+                                    );
                                 }
+
                                 Globals.WaitingOnServer = true;
                                 ChatboxMsg.ClearMessages();
                             }
                             else
                             {
                                 Interface.MsgboxErrors.Add(
-                                    new KeyValuePair<string, string>("", Strings.Registration.emailinvalid));
+                                    new KeyValuePair<string, string>("", Strings.Registration.emailinvalid)
+                                );
                             }
                         }
                         else
                         {
                             Interface.MsgboxErrors.Add(
-                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
+                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid)
+                            );
                         }
                     }
                     else
                     {
                         Interface.MsgboxErrors.Add(
-                            new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
+                            new KeyValuePair<string, string>("", Strings.Registration.passwordmatch)
+                        );
                     }
                 }
                 else
                 {
-                    Interface.MsgboxErrors.Add(
-                        new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+                    Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
                 }
             }
             else
@@ -232,5 +254,7 @@ namespace Intersect.Client.Interface.Menu
             Hide();
             mMainMenu.Show();
         }
+
     }
+
 }

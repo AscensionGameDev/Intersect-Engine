@@ -1,14 +1,17 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control.Property
 {
+
     /// <summary>
     ///     Color property.
     /// </summary>
     public class Color : Text
     {
+
         protected readonly ColorButton mButton;
 
         /// <summary>
@@ -44,16 +47,16 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
         /// <param name="control">Event source.</param>
         protected virtual void OnButtonPressed(Control.Base control, EventArgs args)
         {
-            Menu menu = new Menu(GetCanvas());
+            var menu = new Menu(GetCanvas());
             menu.SetSize(256, 180);
             menu.DeleteOnClose = true;
             menu.IconMarginDisabled = true;
 
-            HsvColorPicker picker = new HsvColorPicker(menu);
+            var picker = new HsvColorPicker(menu);
             picker.Dock = Pos.Fill;
             picker.SetSize(256, 128);
 
-            string[] split = mTextBox.Text.Split(' ');
+            var split = mTextBox.Text.Split(' ');
 
             picker.SetColor(GetColorFromText(), false, true);
             picker.ColorChanged += OnColorChanged;
@@ -67,7 +70,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
         /// <param name="control">Event source.</param>
         protected virtual void OnColorChanged(Control.Base control, EventArgs args)
         {
-            HsvColorPicker picker = control as HsvColorPicker;
+            var picker = control as HsvColorPicker;
             SetTextFromColor(picker.SelectedColor);
             DoChanged();
         }
@@ -89,7 +92,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
 
         private Intersect.Color GetColorFromText()
         {
-            string[] split = mTextBox.Text.Split(' ');
+            var split = mTextBox.Text.Split(' ');
 
             byte red = 0;
             byte green = 0;
@@ -119,5 +122,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
             base.DoChanged();
             mButton.Color = GetColorFromText();
         }
+
     }
+
 }

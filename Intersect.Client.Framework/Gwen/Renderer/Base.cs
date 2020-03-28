@@ -1,21 +1,21 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
 {
+
     /// <summary>
     ///     Base renderer.
     /// </summary>
     public class Base : IDisposable
     {
-        //public Random rnd;
-        private Point mRenderOffset;
 
         private Rectangle mClipRegion;
-        //protected ICacheToTexture m_RTT;
 
-        public float Scale { get; set; }
+        //public Random rnd;
+        private Point mRenderOffset;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
@@ -26,8 +26,58 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             mRenderOffset = Point.Empty;
             Scale = 1.0f;
             if (Ctt != null)
+            {
                 Ctt.Initialize();
+            }
         }
+
+        //protected ICacheToTexture m_RTT;
+
+        public float Scale { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the current drawing color.
+        /// </summary>
+        public virtual Color DrawColor { get; set; }
+
+        /// <summary>
+        ///     Rendering offset. No need to touch it usually.
+        /// </summary>
+        public Point RenderOffset
+        {
+            get => mRenderOffset;
+            set => mRenderOffset = value;
+        }
+
+        /// <summary>
+        ///     Clipping rectangle.
+        /// </summary>
+        public Rectangle ClipRegion
+        {
+            get => mClipRegion;
+            set => mClipRegion = value;
+        }
+
+        /// <summary>
+        ///     Indicates whether the clip region is visible.
+        /// </summary>
+        public bool ClipRegionVisible
+        {
+            get
+            {
+                if (mClipRegion.Width <= 0 || mClipRegion.Height <= 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        ///     Cache to texture provider.
+        /// </summary>
+        public virtual ICacheToTexture Ctt => null;
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -36,7 +86,10 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         public virtual void Dispose()
         {
             if (Ctt != null)
+            {
                 Ctt.ShutDown();
+            }
+
             GC.SuppressFinalize(this);
         }
 
@@ -62,46 +115,9 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
         }
 
-        /// <summary>
-        ///     Gets or sets the current drawing color.
-        /// </summary>
-        public virtual Color DrawColor { get; set; }
-
-        /// <summary>
-        ///     Rendering offset. No need to touch it usually.
-        /// </summary>
-        public Point RenderOffset
-        {
-            get => mRenderOffset;
-            set => mRenderOffset = value;
-        }
-
-        /// <summary>
-        ///     Clipping rectangle.
-        /// </summary>
-        public Rectangle ClipRegion
-        {
-            get => mClipRegion;
-            set => mClipRegion = value;
-        }
-
         public virtual GameTexture GetWhiteTexture()
         {
             return null;
-        }
-
-        /// <summary>
-        ///     Indicates whether the clip region is visible.
-        /// </summary>
-        public bool ClipRegionVisible
-        {
-            get
-            {
-                if (mClipRegion.Width <= 0 || mClipRegion.Height <= 0)
-                    return false;
-
-                return true;
-            }
         }
 
         /// <summary>
@@ -162,8 +178,15 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="v1">Texture coordinate v1.</param>
         /// <param name="u2">Texture coordinate u2.</param>
         /// <param name="v2">Texture coordinate v2.</param>
-        public virtual void DrawTexturedRect(GameTexture t, Rectangle targetRect, Color clr, float u1 = 0, float v1 = 0,
-            float u2 = 1, float v2 = 1)
+        public virtual void DrawTexturedRect(
+            GameTexture t,
+            Rectangle targetRect,
+            Color clr,
+            float u1 = 0,
+            float v1 = 0,
+            float u2 = 1,
+            float v2 = 1
+        )
         {
         }
 
@@ -177,11 +200,6 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             DrawColor = Color.Red;
             DrawFilledRect(rect);
         }
-
-        /// <summary>
-        ///     Cache to texture provider.
-        /// </summary>
-        public virtual ICacheToTexture Ctt => null;
 
         /// <summary>
         ///     Loads the specified font.
@@ -294,6 +312,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
                 DrawFilledRect(new Rectangle(rect.X, rect.Y + 1, 1, rect.Height - 1));
                 DrawFilledRect(new Rectangle(rect.X + rect.Width, rect.Y + 1, 1, rect.Height - 1));
+
                 return;
             }
 
@@ -312,13 +331,15 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         private int TranslateX(int x)
         {
-            int x1 = x + mRenderOffset.X;
+            var x1 = x + mRenderOffset.X;
+
             return Util.Ceil(x1 * Scale);
         }
 
         private int TranslateY(int y)
         {
-            int y1 = y + mRenderOffset.Y;
+            var y1 = y + mRenderOffset.Y;
+
             return Util.Ceil(y1 * Scale);
         }
 
@@ -341,9 +362,10 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// </summary>
         public Point Translate(Point p)
         {
-            int x = p.X;
-            int y = p.Y;
+            var x = p.X;
+            var y = p.Y;
             Translate(ref x, ref y);
+
             return new Point(x, y);
         }
 
@@ -352,8 +374,9 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// </summary>
         public Rectangle Translate(Rectangle rect)
         {
-            return new Rectangle(TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width * Scale),
-                Util.Ceil(rect.Height * Scale));
+            return new Rectangle(
+                TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width * Scale), Util.Ceil(rect.Height * Scale)
+            );
         }
 
         /// <summary>
@@ -374,16 +397,16 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             rect.X = mRenderOffset.X;
             rect.Y = mRenderOffset.Y;
 
-            Rectangle r = rect;
+            var r = rect;
             if (rect.X < mClipRegion.X)
             {
-                r.Width -= (mClipRegion.X - r.X);
+                r.Width -= mClipRegion.X - r.X;
                 r.X = mClipRegion.X;
             }
 
             if (rect.Y < mClipRegion.Y)
             {
-                r.Height -= (mClipRegion.Y - r.Y);
+                r.Height -= mClipRegion.Y - r.Y;
                 r.Y = mClipRegion.Y;
             }
 
@@ -399,5 +422,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
             mClipRegion = r;
         }
+
     }
+
 }

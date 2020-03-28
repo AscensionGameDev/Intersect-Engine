@@ -4,6 +4,7 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Entities.Combat
 {
+
     public class Dash
     {
 
@@ -29,7 +30,7 @@ namespace Intersect.Server.Entities.Combat
         {
             DistanceTraveled = 0;
             Direction = direction;
-            Facing = (byte)en.Dir;
+            Facing = (byte) en.Dir;
 
             CalculateRange(en, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
             if (Range <= 0)
@@ -37,10 +38,10 @@ namespace Intersect.Server.Entities.Combat
                 return;
             } //Remove dash instance if no where to dash
 
-            TransmittionTimer = Globals.Timing.TimeMs + (long)((float)Options.MaxDashSpeed / (float)Range);
+            TransmittionTimer = Globals.Timing.TimeMs + (long) ((float) Options.MaxDashSpeed / (float) Range);
             PacketSender.SendEntityDash(
-                en, en.MapId, (byte)en.X, (byte)en.Y, (int)(Options.MaxDashSpeed * (Range / 10f)),
-                Direction == Facing ? (sbyte)Direction : (sbyte)-1
+                en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.MaxDashSpeed * (Range / 10f)),
+                Direction == Facing ? (sbyte) Direction : (sbyte) -1
             );
 
             en.MoveTimer = Globals.Timing.TimeMs + Options.MaxDashSpeed;
@@ -76,17 +77,17 @@ namespace Intersect.Server.Entities.Combat
                     return;
                 } //Check for active resources
 
-                if (n == (int)EntityTypes.Resource && activeResourcePass == false)
+                if (n == (int) EntityTypes.Resource && activeResourcePass == false)
                 {
                     return;
                 } //Check for dead resources
 
-                if (n == (int)EntityTypes.Resource && deadResourcePass == false)
+                if (n == (int) EntityTypes.Resource && deadResourcePass == false)
                 {
                     return;
                 } //Check for players and solid events
 
-                if (n == (int)EntityTypes.Player || n == (int)EntityTypes.Event)
+                if (n == (int) EntityTypes.Player || n == (int) EntityTypes.Event)
                 {
                     return;
                 }
@@ -99,4 +100,5 @@ namespace Intersect.Server.Entities.Combat
         }
 
     }
+
 }

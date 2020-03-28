@@ -1,16 +1,20 @@
-﻿using Intersect.IO;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 
+using Intersect.IO;
+
+using JetBrains.Annotations;
+
 namespace Intersect
 {
+
     using SystemConsole = System.Console;
 
     // TODO: Make this instanceable
     public static class Console
     {
+
         //#region Instance Management
 
         //[NotNull]
@@ -24,6 +28,7 @@ namespace Intersect
         //}
 
         private static readonly TextWriter mDefaultError;
+
         private static readonly TextWriter mDefaultOut;
 
         static Console()
@@ -45,9 +50,9 @@ namespace Intersect
 
         //#endregion
 
-#region Instance
+        #region Instance
 
-#region Extensions
+        #region Extensions
 
         public static bool InputHistoryEnabled
         {
@@ -61,17 +66,17 @@ namespace Intersect
             set => Context.InputHistoryLength = value;
         }
 
-#endregion
+        #endregion
 
-#region Color
+        #region Color
 
-        public static  ConsoleColor BackgroundColor
+        public static ConsoleColor BackgroundColor
         {
             get => SystemConsole.BackgroundColor;
             set => SystemConsole.BackgroundColor = value;
         }
 
-        public static  ConsoleColor ForegroundColor
+        public static ConsoleColor ForegroundColor
         {
             get => SystemConsole.ForegroundColor;
             set => SystemConsole.ForegroundColor = value;
@@ -82,19 +87,19 @@ namespace Intersect
             SystemConsole.ResetColor();
         }
 
-#endregion
+        #endregion
 
-#region Buffer
+        #region Buffer
 
-#region Buffer Size
+        #region Buffer Size
 
-        public static  int BufferHeight
+        public static int BufferHeight
         {
             get => SystemConsole.BufferHeight;
             set => SystemConsole.BufferHeight = value;
         }
 
-        public static  int BufferWidth
+        public static int BufferWidth
         {
             get => SystemConsole.BufferWidth;
             set => SystemConsole.BufferWidth = value;
@@ -105,21 +110,21 @@ namespace Intersect
             SystemConsole.SetBufferSize(width, height);
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Window
+        #region Window
 
-#region Window Position
+        #region Window Position
 
-        public static  int WindowLeft
+        public static int WindowLeft
         {
             get => SystemConsole.WindowLeft;
             set => SystemConsole.WindowLeft = value;
         }
 
-        public static  int WindowTop
+        public static int WindowTop
         {
             get => SystemConsole.WindowTop;
             set => SystemConsole.WindowTop = value;
@@ -130,17 +135,17 @@ namespace Intersect
             SystemConsole.SetWindowPosition(left, top);
         }
 
-#endregion
+        #endregion
 
-#region Window Size
+        #region Window Size
 
-        public static  int WindowHeight
+        public static int WindowHeight
         {
             get => SystemConsole.WindowHeight;
             set => SystemConsole.WindowHeight = value;
         }
 
-        public static  int WindowWidth
+        public static int WindowWidth
         {
             get => SystemConsole.WindowWidth;
             set => SystemConsole.WindowWidth = value;
@@ -151,17 +156,17 @@ namespace Intersect
             SystemConsole.SetWindowSize(width, height);
         }
 
-        public static  int LargestWindowHeight => SystemConsole.LargestWindowHeight;
+        public static int LargestWindowHeight => SystemConsole.LargestWindowHeight;
 
-        public static  int LargestWindowWidth => SystemConsole.LargestWindowWidth;
+        public static int LargestWindowWidth => SystemConsole.LargestWindowWidth;
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Cursor
+        #region Cursor
 
-#region Cursor Position
+        #region Cursor Position
 
         public static int CursorLeft
         {
@@ -199,27 +204,27 @@ namespace Intersect
             SystemConsole.SetCursorPosition(position % bufferWidth, position / bufferWidth);
         }
 
-#endregion
+        #endregion
 
-#region Cursor Appearance
+        #region Cursor Appearance
 
-        public static  int CursorSize
+        public static int CursorSize
         {
             get => SystemConsole.CursorSize;
             set => SystemConsole.CursorSize = value;
         }
 
-        public static  bool CursorVisible
+        public static bool CursorVisible
         {
             get => SystemConsole.CursorVisible;
             set => SystemConsole.CursorVisible = value;
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region General
+        #region General
 
         [NotNull]
         public static string Title
@@ -228,7 +233,7 @@ namespace Intersect
             set => SystemConsole.Title = value;
         }
 
-#region Encoding
+        #region Encoding
 
         /// <summary>Gets or sets the encoding the console uses to read input. </summary>
         /// <returns>The encoding used to read console input.</returns>
@@ -254,13 +259,16 @@ namespace Intersect
             set => SystemConsole.OutputEncoding = value;
         }
 
-#endregion
+        #endregion
 
-#region Beep
+        #region Beep
 
         /// <summary>Plays the sound of a beep through the console speaker.</summary>
         /// <exception cref="T:System.Security.HostProtectionException">This method was executed on a server, such as SQL Server, that does not permit access to a user interface.</exception>
-        public static void Beep() => SystemConsole.Beep();
+        public static void Beep()
+        {
+            SystemConsole.Beep();
+        }
 
         /// <summary>Plays the sound of a beep of a specified frequency and duration through the console speaker.</summary>
         /// <param name="frequency">The frequency of the beep, ranging from 37 to 32767 hertz.</param>
@@ -269,15 +277,18 @@ namespace Intersect
         /// <paramref name="frequency" /> is less than 37 or more than 32767 hertz.-or-
         /// <paramref name="duration" /> is less than or equal to zero.</exception>
         /// <exception cref="T:System.Security.HostProtectionException">This method was executed on a server, such as SQL Server, that does not permit access to the console.</exception>
-        public static void Beep(int frequency, int duration) => SystemConsole.Beep(frequency, duration);
+        public static void Beep(int frequency, int duration)
+        {
+            SystemConsole.Beep(frequency, duration);
+        }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Input
+        #region Input
 
-#region Keys
+        #region Keys
 
         public static ConsoleKeyInfo ReadKey()
         {
@@ -287,6 +298,7 @@ namespace Intersect
         private static ConsoleKeyInfo ReadKeySkipPrint()
         {
             ContextOut.SkipNextWriteChar = true;
+
             return ReadKey();
         }
 
@@ -325,14 +337,17 @@ namespace Intersect
         /// <summary>Occurs when the <see cref="F:System.ConsoleModifiers.Control" /> modifier key (Ctrl) and either the <see cref="F:System.ConsoleKey.C" /> console key (C) or the Break key are pressed simultaneously (Ctrl+C or Ctrl+Break).</summary>
         public static event ConsoleCancelEventHandler CancelKeyPress;
 
-#endregion
+        #endregion
 
-#region Char/String
+        #region Char/String
 
         /// <summary>Reads the next character from the standard input stream.</summary>
         /// <returns>The next character from the input stream, or negative one (-1) if there are currently no more characters to be read.</returns>
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
-        public static int Read() => SystemConsole.Read();
+        public static int Read()
+        {
+            return SystemConsole.Read();
+        }
 
         /// <summary>Reads the next line of characters from the standard input stream.</summary>
         /// <returns>The next line of characters from the input stream, or <see langword="null" /> if no more lines are available.</returns>
@@ -348,13 +363,13 @@ namespace Intersect
 #endif
         }
 
-#endregion
+        #endregion
 
-#region Wait
+        #region Wait
 
         [NotNull]
         private static ConsoleContext Context { get; }
-        
+
         [NotNull]
         private static ConsoleWriter ContextOut { get; }
 
@@ -389,18 +404,20 @@ namespace Intersect
                 return ReadLine();
             }
 
-            var result = Context.BufferedReadLine(ContextOut.TextWriter.Write, ContextOut.TextWriter.WriteLine, ReadKeySkipPrint);
+            var result = Context.BufferedReadLine(
+                ContextOut.TextWriter.Write, ContextOut.TextWriter.WriteLine, ReadKeySkipPrint
+            );
 
             Context.Clear();
 
             return result;
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Output
+        #region Output
 
         public static void Clear()
         {
@@ -409,7 +426,7 @@ namespace Intersect
             Context.WritePrefix(Out.Write);
         }
 
-#region WriteLine
+        #region WriteLine
 
         /// <summary>Writes the current line terminator to the standard output stream.</summary>
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
@@ -542,9 +559,9 @@ namespace Intersect
             SystemConsole.WriteLine(value);
         }
 
-#endregion
+        #endregion
 
-#region Write
+        #region Write
 
         /// <summary>Writes the text representation of the specified array of objects to the standard output stream using the specified format information.</summary>
         /// <param name="format">A composite format string (see Remarks).</param>
@@ -670,48 +687,66 @@ namespace Intersect
             SystemConsole.Write(value);
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Streams
+        #region Streams
 
         /// <summary>Acquires the standard error stream.</summary>
         /// <returns>The standard error stream.</returns>
-        public static Stream OpenStandardError() => SystemConsole.OpenStandardError();
+        public static Stream OpenStandardError()
+        {
+            return SystemConsole.OpenStandardError();
+        }
 
         /// <summary>Acquires the standard error stream, which is set to a specified buffer size.</summary>
         /// <param name="bufferSize">The internal stream buffer size. </param>
         /// <returns>The standard error stream.</returns>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
         /// <paramref name="bufferSize" /> is less than or equal to zero. </exception>
-        public static Stream OpenStandardError(int bufferSize) => SystemConsole.OpenStandardError(bufferSize);
+        public static Stream OpenStandardError(int bufferSize)
+        {
+            return SystemConsole.OpenStandardError(bufferSize);
+        }
 
         /// <summary>Acquires the standard input stream.</summary>
         /// <returns>The standard input stream.</returns>
-        public static Stream OpenStandardInput() => SystemConsole.OpenStandardInput();
+        public static Stream OpenStandardInput()
+        {
+            return SystemConsole.OpenStandardInput();
+        }
 
         /// <summary>Acquires the standard input stream, which is set to a specified buffer size.</summary>
         /// <param name="bufferSize">The internal stream buffer size. </param>
         /// <returns>The standard input stream.</returns>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
         /// <paramref name="bufferSize" /> is less than or equal to zero. </exception>
-        public static Stream OpenStandardInput(int bufferSize) => SystemConsole.OpenStandardInput(bufferSize);
+        public static Stream OpenStandardInput(int bufferSize)
+        {
+            return SystemConsole.OpenStandardInput(bufferSize);
+        }
 
         /// <summary>Acquires the standard output stream.</summary>
         /// <returns>The standard output stream.</returns>
-        public static Stream OpenStandardOutput() => SystemConsole.OpenStandardOutput();
+        public static Stream OpenStandardOutput()
+        {
+            return SystemConsole.OpenStandardOutput();
+        }
 
         /// <summary>Acquires the standard output stream, which is set to a specified buffer size.</summary>
         /// <param name="bufferSize">The internal stream buffer size. </param>
         /// <returns>The standard output stream.</returns>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
         /// <paramref name="bufferSize" /> is less than or equal to zero. </exception>
-        public static Stream OpenStandardOutput(int bufferSize) => SystemConsole.OpenStandardOutput(bufferSize);
+        public static Stream OpenStandardOutput(int bufferSize)
+        {
+            return SystemConsole.OpenStandardOutput(bufferSize);
+        }
 
-#endregion
+        #endregion
 
-#region Reader/Writer
+        #region Reader/Writer
 
         /// <summary>Gets a value that indicates whether input has been redirected from the standard input stream.</summary>
         /// <returns>
@@ -760,24 +795,35 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newIn" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetIn([NotNull] TextReader newIn) => SystemConsole.SetIn(newIn);
+        public static void SetIn([NotNull] TextReader newIn)
+        {
+            SystemConsole.SetIn(newIn);
+        }
 
         /// <summary>Sets the <see cref="P:System.Console.Out" /> property to the specified <see cref="T:System.IO.TextWriter" /> object.</summary>
         /// <param name="newOut">A stream that is the new standard output. </param>
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newOut" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetOut([NotNull] TextWriter newOut) => SystemConsole.SetOut(newOut);
+        public static void SetOut([NotNull] TextWriter newOut)
+        {
+            SystemConsole.SetOut(newOut);
+        }
 
         /// <summary>Sets the <see cref="P:System.Console.Error" /> property to the specified <see cref="T:System.IO.TextWriter" /> object.</summary>
         /// <param name="newError">A stream that is the new standard error output. </param>
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newError" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetError([NotNull] TextWriter newError) => SystemConsole.SetError(newError);
+        public static void SetError([NotNull] TextWriter newError)
+        {
+            SystemConsole.SetError(newError);
+        }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
+
     }
+
 }

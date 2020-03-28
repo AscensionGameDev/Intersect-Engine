@@ -14,28 +14,32 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class ForgotPasswordWindow
     {
-        private Button mBackBtn;
-        private Button mSubmitBtn;
 
-        private Label mWindowHeader;
+        private Button mBackBtn;
+
+        private RichLabel mHintLabel;
+
+        private Label mHintLabelTemplate;
 
         //Controls
-        private ImagePanel mResetWindow;
+        private ImagePanel mInputBackground;
+
+        private Label mInputLabel;
+
+        private TextBox mInputTextbox;
 
         //Parent
         private MainMenu mMainMenu;
 
         //Controls
-        private ImagePanel mInputBackground;
-        private Label mInputLabel;
-        private TextBox mInputTextbox;
+        private ImagePanel mResetWindow;
 
-        private Label mHintLabelTemplate;
-        private RichLabel mHintLabel;
+        private Button mSubmitBtn;
 
-        public bool IsHidden => mResetWindow.IsHidden;
+        private Label mWindowHeader;
 
         //Init
         public ForgotPasswordWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -80,8 +84,14 @@ namespace Intersect.Client.Interface.Menu
             mHintLabel = new RichLabel(mResetWindow);
             mHintLabel.SetBounds(mHintLabelTemplate.Bounds);
             mHintLabelTemplate.IsHidden = false;
-            mHintLabel.AddText(Strings.ForgotPass.hint, mHintLabelTemplate.TextColor, mHintLabelTemplate.CurAlignments.Count > 0 ? mHintLabelTemplate.CurAlignments[0] : Alignments.Left, mHintLabelTemplate.Font);
+            mHintLabel.AddText(
+                Strings.ForgotPass.hint, mHintLabelTemplate.TextColor,
+                mHintLabelTemplate.CurAlignments.Count > 0 ? mHintLabelTemplate.CurAlignments[0] : Alignments.Left,
+                mHintLabelTemplate.Font
+            );
         }
+
+        public bool IsHidden => mResetWindow.IsHidden;
 
         private void Textbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
@@ -131,17 +141,22 @@ namespace Intersect.Client.Interface.Menu
             if (!Networking.Network.Connected)
             {
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) && !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text,Strings.Regex.email))
+            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) &&
+                !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.email))
             {
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+
                 return;
             }
 
             Interface.MenuUi.MainMenu.OpenResetPassword(mInputTextbox?.Text);
             PacketSender.SendRequestPasswordReset(mInputTextbox?.Text);
         }
+
     }
+
 }

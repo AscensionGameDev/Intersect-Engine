@@ -4,8 +4,10 @@ using Intersect.Server.Web.RestApi.Payloads;
 
 namespace Intersect.Server.Web.RestApi.Types
 {
+
     public struct DataPage<TValue>
     {
+
         public int Total { get; set; }
 
         public int Page { get; set; }
@@ -19,5 +21,7 @@ namespace Intersect.Server.Web.RestApi.Types
         public IEnumerable<Sort> Sort { get; set; }
 
         public dynamic Extra { get; set; }
+
     }
+
 }

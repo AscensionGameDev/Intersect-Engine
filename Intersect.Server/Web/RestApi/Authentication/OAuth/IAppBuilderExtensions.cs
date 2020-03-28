@@ -27,7 +27,10 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
         public static IAppBuilder UseContentTypeMappingMiddleware(
             [NotNull] this IAppBuilder appBuilder,
             [NotNull] IDictionary<(PathString, string, string), RequestMapFunc> requestMap
-        ) => appBuilder.Use<ContentTypeMappingMiddleware>(requestMap);
+        )
+        {
+            return appBuilder.Use<ContentTypeMappingMiddleware>(requestMap);
+        }
 
     }
 

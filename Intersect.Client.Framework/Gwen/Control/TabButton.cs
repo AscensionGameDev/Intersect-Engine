@@ -1,22 +1,25 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Tab header.
     /// </summary>
     public class TabButton : Button
     {
+
         private TabControl mControl;
+
         private Base mPage;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TabButton" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TabButton(Base parent)
-            : base(parent)
+        public TabButton(Base parent) : base(parent)
         {
             DragAndDrop_SetPackage(true, "TabButtonMove");
             Alignment = Pos.Top | Pos.Left;
@@ -36,9 +39,16 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mControl;
             set
             {
-                if (value == mControl) return;
+                if (value == mControl)
+                {
+                    return;
+                }
+
                 if (mControl != null)
+                {
                     mControl.OnLoseTab(this);
+                }
+
                 mControl = value;
             }
         }
@@ -92,6 +102,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyDown(bool down)
         {
             OnKeyRight(down);
+
             return true;
         }
 
@@ -105,6 +116,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeyUp(bool down)
         {
             OnKeyLeft(down);
+
             return true;
         }
 
@@ -120,7 +132,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (down)
             {
                 var count = Parent.Children.Count;
-                int me = Parent.Children.IndexOf(this);
+                var me = Parent.Children.IndexOf(this);
                 if (me + 1 < count)
                 {
                     var nextTab = Parent.Children[me + 1];
@@ -144,7 +156,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (down)
             {
                 var count = Parent.Children.Count;
-                int me = Parent.Children.IndexOf(this);
+                var me = Parent.Children.IndexOf(this);
                 if (me - 1 >= 0)
                 {
                     var prevTab = Parent.Children[me - 1];
@@ -166,16 +178,21 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (IsDisabled)
                 {
                     TextColor = Skin.Colors.Tab.Active.Disabled;
+
                     return;
                 }
+
                 if (IsDepressed)
                 {
                     TextColor = Skin.Colors.Tab.Active.Down;
+
                     return;
                 }
+
                 if (IsHovered)
                 {
                     TextColor = Skin.Colors.Tab.Active.Hover;
+
                     return;
                 }
 
@@ -185,20 +202,27 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (IsDisabled)
             {
                 TextColor = Skin.Colors.Tab.Inactive.Disabled;
+
                 return;
             }
+
             if (IsDepressed)
             {
                 TextColor = Skin.Colors.Tab.Inactive.Down;
+
                 return;
             }
+
             if (IsHovered)
             {
                 TextColor = Skin.Colors.Tab.Inactive.Hover;
+
                 return;
             }
 
             TextColor = Skin.Colors.Tab.Inactive.Normal;
         }
+
     }
+
 }

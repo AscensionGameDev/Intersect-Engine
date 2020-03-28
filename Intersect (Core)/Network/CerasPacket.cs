@@ -7,17 +7,21 @@ using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
+
     public abstract class CerasPacket : IPacket
     {
+
         [NotNull] private static readonly Ceras sCerasInstance = new Ceras(true);
 
         protected CerasPacket()
         {
         }
 
-
         /// <inheritdoc />
-        public virtual void Dispose() => throw new NotImplementedException();
+        public virtual void Dispose()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <inheritdoc />
         public virtual byte[] Data => sCerasInstance.Serialize(this);
@@ -25,7 +29,11 @@ namespace Intersect.Network
         public virtual bool IsValid => true;
 
         /// <inheritdoc />
-        public virtual Dictionary<string, SanitizedValue<object>> Sanitize() => null;
+        public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
+        {
+            return null;
+        }
 
     }
+
 }

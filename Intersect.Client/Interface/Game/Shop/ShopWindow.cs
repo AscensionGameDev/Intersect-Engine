@@ -7,17 +7,20 @@ using Intersect.Client.General;
 
 namespace Intersect.Client.Interface.Game.Shop
 {
+
     public class ShopWindow
     {
+
         private static int sItemXPadding = 4;
+
         private static int sItemYPadding = 4;
+
+        public List<ShopItem> Items = new List<ShopItem>();
 
         private ScrollControl mItemContainer;
 
         //Controls
         private WindowControl mShopWindow;
-
-        public List<ShopItem> Items = new List<ShopItem>();
 
         //Init
         public ShopWindow(Canvas gameCanvas)
@@ -35,15 +38,9 @@ namespace Intersect.Client.Interface.Game.Shop
         }
 
         //Location
-        public int X
-        {
-            get { return mShopWindow.X; }
-        }
+        public int X => mShopWindow.X;
 
-        public int Y
-        {
-            get { return mShopWindow.Y; }
-        }
+        public int Y => mShopWindow.Y;
 
         public void Close()
         {
@@ -62,24 +59,32 @@ namespace Intersect.Client.Interface.Game.Shop
 
         private void InitItemContainer()
         {
-            for (int i = 0; i < Globals.GameShop.SellingItems.Count; i++)
+            for (var i = 0; i < Globals.GameShop.SellingItems.Count; i++)
             {
                 Items.Add(new ShopItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "ShopItem");
                 Items[i].Setup();
-                
+
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 Items[i].LoadItem();
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i]
+                    .Container.SetPosition(
+                        i %
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Width + xPadding) +
+                        xPadding,
+                        i /
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Height + yPadding) +
+                        yPadding
+                    );
             }
         }
+
     }
+
 }

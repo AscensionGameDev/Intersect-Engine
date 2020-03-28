@@ -2,19 +2,20 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Slider bar.
     /// </summary>
     public class SliderBar : Dragger
     {
+
         private bool mBHorizontal;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SliderBar" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public SliderBar(Base parent)
-            : base(parent)
+        public SliderBar(Base parent) : base(parent)
         {
             Target = this;
             RestrictToParent = true;
@@ -37,5 +38,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawSliderButton(this, IsHeld, IsHorizontal);
         }
+
     }
+
 }

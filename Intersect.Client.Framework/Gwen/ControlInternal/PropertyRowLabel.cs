@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Label for PropertyRow.
     /// </summary>
     public class PropertyRowLabel : Label
     {
+
         private readonly PropertyRow mPropertyRow;
 
         /// <summary>
@@ -28,22 +30,27 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             if (IsDisabled)
             {
                 TextColor = Skin.Colors.Button.Disabled;
+
                 return;
             }
 
             if (mPropertyRow != null && mPropertyRow.IsEditing)
             {
                 TextColor = Skin.Colors.Properties.LabelSelected;
+
                 return;
             }
 
             if (mPropertyRow != null && mPropertyRow.IsHovered)
             {
                 TextColor = Skin.Colors.Properties.LabelHover;
+
                 return;
             }
 
             TextColor = Skin.Colors.Properties.LabelNormal;
         }
+
     }
+
 }

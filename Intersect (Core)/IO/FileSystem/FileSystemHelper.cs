@@ -1,10 +1,13 @@
-﻿using Intersect.Logging;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.IO;
+
+using Intersect.Logging;
+
+using JetBrains.Annotations;
 
 namespace Intersect.IO.FileSystem
 {
+
     public static class FileSystemHelper
     {
 
@@ -35,9 +38,11 @@ namespace Intersect.IO.FileSystem
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 return false;
             }
         }
 
     }
+
 }

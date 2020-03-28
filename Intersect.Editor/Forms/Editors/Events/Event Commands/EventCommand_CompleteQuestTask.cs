@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandCompleteQuestTask : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private CompleteQuestTaskCommand mMyCommand;
 
         public EventCommandCompleteQuestTask(CompleteQuestTaskCommand refCommand, FrmEvent editor)
@@ -36,8 +40,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.QuestId = QuestBase.IdFromList(cmbQuests.SelectedIndex);
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.Get(
-                    QuestBase.IdFromList(cmbQuests.SelectedIndex));
+                var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     var i = -1;
@@ -51,6 +54,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     }
                 }
             }
+
             mEventEditor.FinishCommandEdit();
         }
 
@@ -65,7 +69,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblTask.Hide();
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.Get( QuestBase.IdFromList(cmbQuests.SelectedIndex));
+                var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     lblTask.Show();
@@ -82,5 +86,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
             }
         }
+
     }
+
 }

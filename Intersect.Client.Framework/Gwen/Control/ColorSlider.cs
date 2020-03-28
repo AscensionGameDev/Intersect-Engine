@@ -1,25 +1,29 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     HSV hue selector.
     /// </summary>
     public class ColorSlider : Base
     {
+
         private bool mDepressed;
+
         private int mSelectedDist;
+
         private GameTexture mTexture;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ColorSlider" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ColorSlider(Base parent)
-            : base(parent)
+        public ColorSlider(Base parent) : base(parent)
         {
             SetSize(32, 128);
             MouseInputEnabled = true;
@@ -55,10 +59,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void Render(Skin.Base skin)
         {
             skin.Renderer.DrawColor = Color.White;
-            skin.Renderer.DrawTexturedRect(skin.Renderer.GetWhiteTexture(), new Rectangle(5, 0, Width - 10, Height),
-                Color.White);
+            skin.Renderer.DrawTexturedRect(
+                skin.Renderer.GetWhiteTexture(), new Rectangle(5, 0, Width - 10, Height), Color.White
+            );
 
-            int drawHeight = mSelectedDist - 3;
+            var drawHeight = mSelectedDist - 3;
 
             //Draw our selectors
             skin.Renderer.DrawColor = Color.Black;
@@ -83,9 +88,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.OnMouseClickedLeft(x, y, down);
             mDepressed = down;
             if (down)
+            {
                 InputHandler.MouseFocus = this;
+            }
             else
+            {
                 InputHandler.MouseFocus = null;
+            }
 
             OnMouseMoved(x, y, 0, 0);
         }
@@ -101,33 +110,45 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (mDepressed)
             {
-                Point cursorPos = CanvasPosToLocal(new Point(x, y));
+                var cursorPos = CanvasPosToLocal(new Point(x, y));
 
                 if (cursorPos.Y < 0)
+                {
                     cursorPos.Y = 0;
+                }
+
                 if (cursorPos.Y > Height)
+                {
                     cursorPos.Y = Height;
+                }
 
                 mSelectedDist = cursorPos.Y;
                 if (ColorChanged != null)
+                {
                     ColorChanged.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
         private Color GetColorAtHeight(int y)
         {
-            float yPercent = y / (float) Height;
+            var yPercent = y / (float) Height;
+
             return Util.HsvToColor(yPercent * 360, 1, 1);
         }
 
         private void SetColor(Color color)
         {
-            Hsv hsv = color.ToHsv();
+            var hsv = color.ToHsv();
 
             mSelectedDist = (int) (hsv.H / 360 * Height);
 
             if (ColorChanged != null)
+            {
                 ColorChanged.Invoke(this, EventArgs.Empty);
+            }
         }
+
     }
+
 }

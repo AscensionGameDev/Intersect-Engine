@@ -1,24 +1,27 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Tab strip - groups TabButtons and allows reordering.
     /// </summary>
     public class TabStrip : Base
     {
+
         private bool mAllowReorder;
+
         private Base mTabDragControl;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TabStrip" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TabStrip(Base parent)
-            : base(parent)
+        public TabStrip(Base parent) : base(parent)
         {
             mAllowReorder = false;
         }
@@ -47,22 +50,33 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 Dock = value;
                 if (Dock == Pos.Top)
+                {
                     Padding = new Padding(5, 0, 0, 0);
+                }
+
                 if (Dock == Pos.Left)
+                {
                     Padding = new Padding(0, 5, 0, 0);
+                }
+
                 if (Dock == Pos.Bottom)
+                {
                     Padding = new Padding(5, 0, 0, 0);
+                }
+
                 if (Dock == Pos.Right)
+                {
                     Padding = new Padding(0, 5, 0, 0);
+                }
             }
         }
 
         public override bool DragAndDrop_HandleDrop(Package p, int x, int y)
         {
-            Point localPos = CanvasPosToLocal(new Point(x, y));
+            var localPos = CanvasPosToLocal(new Point(x, y));
 
-            TabButton button = DragAndDrop.SourceControl as TabButton;
-            TabControl tabControl = Parent as TabControl;
+            var button = DragAndDrop.SourceControl as TabButton;
+            var tabControl = Parent as TabControl;
             if (tabControl != null && button != null)
             {
                 if (button.TabControl != tabControl)
@@ -72,26 +86,31 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             }
 
-            Base droppedOn = GetControlAt(localPos.X, localPos.Y);
+            var droppedOn = GetControlAt(localPos.X, localPos.Y);
             if (droppedOn != null)
             {
-                Point dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
+                var dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
                 DragAndDrop.SourceControl.BringNextToControl(droppedOn, dropPos.X > droppedOn.Width / 2);
             }
             else
             {
                 DragAndDrop.SourceControl.BringToFront();
             }
+
             return true;
         }
 
         public override bool DragAndDrop_CanAcceptPackage(Package p)
         {
             if (!mAllowReorder)
+            {
                 return false;
+            }
 
             if (p.Name == "TabButtonMove")
+            {
                 return true;
+            }
 
             return false;
         }
@@ -102,18 +121,21 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Layout(Skin.Base skin)
         {
-            Point largestTab = new Point(5, 5);
+            var largestTab = new Point(5, 5);
 
-            int num = 0;
+            var num = 0;
             foreach (var child in Children)
             {
-                TabButton button = child as TabButton;
-                if (null == button) continue;
+                var button = child as TabButton;
+                if (null == button)
+                {
+                    continue;
+                }
 
                 button.SizeToContents();
 
-                Margin m = new Margin();
-                int notFirst = num > 0 ? -1 : 0;
+                var m = new Margin();
+                var notFirst = num > 0 ? -1 : 0;
 
                 if (Dock == Pos.Top)
                 {
@@ -147,10 +169,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             if (Dock == Pos.Top || Dock == Pos.Bottom)
+            {
                 SetSize(Width, largestTab.Y);
+            }
 
             if (Dock == Pos.Left || Dock == Pos.Right)
+            {
                 SetSize(largestTab.X, Height);
+            }
 
             base.Layout(skin);
         }
@@ -174,17 +200,18 @@ namespace Intersect.Client.Framework.Gwen.Control
                 RemoveChild(mTabDragControl, false); // [omeg] need to do that explicitely
                 mTabDragControl.Dispose();
             }
+
             mTabDragControl = null;
         }
 
         public override void DragAndDrop_Hover(Package p, int x, int y)
         {
-            Point localPos = CanvasPosToLocal(new Point(x, y));
+            var localPos = CanvasPosToLocal(new Point(x, y));
 
-            Base droppedOn = GetControlAt(localPos.X, localPos.Y);
+            var droppedOn = GetControlAt(localPos.X, localPos.Y);
             if (droppedOn != null && droppedOn != this)
             {
-                Point dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
+                var dropPos = droppedOn.CanvasPosToLocal(new Point(x, y));
                 mTabDragControl.SetBounds(new Rectangle(0, 0, 3, Height));
                 mTabDragControl.BringToFront();
                 mTabDragControl.SetPosition(droppedOn.X - 1, 0);
@@ -193,6 +220,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 {
                     mTabDragControl.MoveBy(droppedOn.Width - 1, 0);
                 }
+
                 mTabDragControl.Dock = Pos.None;
             }
             else
@@ -201,5 +229,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mTabDragControl.BringToFront();
             }
         }
+
     }
+
 }

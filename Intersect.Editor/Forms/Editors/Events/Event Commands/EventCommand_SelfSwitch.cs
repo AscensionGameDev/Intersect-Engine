@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandSelfSwitch : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private SetSelfSwitchCommand mMyCommand;
 
         public EventCommandSelfSwitch(SetSelfSwitchCommand refCommand, FrmEvent editor)
@@ -25,10 +29,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpSelfSwitch.Text = Strings.EventSelfSwitch.title;
             lblSelfSwitch.Text = Strings.EventSelfSwitch.label;
             cmbSetSwitch.Items.Clear();
-            for (int i = 0; i < Strings.EventSelfSwitch.selfswitches.Count; i++)
+            for (var i = 0; i < Strings.EventSelfSwitch.selfswitches.Count; i++)
             {
                 cmbSetSwitch.Items.Add(Strings.EventSelfSwitch.selfswitches[i]);
             }
+
             cmbSetSwitchVal.Items.Clear();
             cmbSetSwitchVal.Items.Add(Strings.EventSelfSwitch.False);
             cmbSetSwitchVal.Items.Add(Strings.EventSelfSwitch.True);
@@ -47,5 +52,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

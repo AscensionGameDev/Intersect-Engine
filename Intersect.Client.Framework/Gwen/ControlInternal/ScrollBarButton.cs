@@ -2,19 +2,20 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Scrollbar button.
     /// </summary>
     public class ScrollBarButton : Button
     {
+
         private Pos mDirection;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ScrollBarButton" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ScrollBarButton(Base parent)
-            : base(parent)
+        public ScrollBarButton(Base parent) : base(parent)
         {
             SetDirectionUp();
         }
@@ -52,5 +53,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawScrollButton(this, mDirection, IsDepressed, IsHovered, IsDisabled);
         }
+
     }
+
 }

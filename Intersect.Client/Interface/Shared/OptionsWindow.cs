@@ -14,37 +14,52 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared
 {
+
     public class OptionsWindow
     {
+
         private Button mApplyBtn;
+
+        private Button mApplyKeybindingsButton;
+
+        private LabeledCheckBox mAutocloseWindowsCheckbox;
+
         private Button mBackBtn;
+
+        private Button mCancelKeybindingsButton;
+
         private ScrollControl mControlsContainer;
 
         //Keybindings
         private Button mEditKeybindingsBtn;
 
         private Button mEdittingButton;
+
         private Control mEdittingControl;
+
         private Controls mEdittingControls;
+
         private int mEdittingKey = -1;
-        private Button mApplyKeybindingsButton;
-        private Button mCancelKeybindingsButton;
-        private Button mRestoreKeybindingsButton;
 
         private ImagePanel mFpsBackground;
+
         private Label mFpsLabel;
+
         private ComboBox mFpsList;
 
         private LabeledCheckBox mFullscreen;
-        private LabeledCheckBox mAutocloseWindowsCheckbox;
 
         //Parent Windows
         private bool mGameWindow = false;
 
         private Dictionary<Control, Button[]> mKeyButtons = new Dictionary<Control, Button[]>();
+
         private long mListeningTimer;
+
         private MainMenu mMainMenu;
+
         private Label mMusicLabel;
+
         private HorizontalSlider mMusicSlider;
 
         //Panels
@@ -61,9 +76,15 @@ namespace Intersect.Client.Interface.Shared
         private int mPreviousSoundVolume;
 
         private ImagePanel mResolutionBackground;
+
         private Label mResolutionLabel;
+
         private ComboBox mResolutionList;
+
+        private Button mRestoreKeybindingsButton;
+
         private Label mSoundLabel;
+
         private HorizontalSlider mSoundSlider;
 
         //Init
@@ -94,11 +115,13 @@ namespace Intersect.Client.Interface.Shared
 
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
             var myModes = Graphics.Renderer.GetValidVideoModes();
-            myModes?.ForEach(t =>
-            {
-                var item = mResolutionList.AddItem(t);
-                item.Alignment = Pos.Left;
-            });
+            myModes?.ForEach(
+                t =>
+                {
+                    var item = mResolutionList.AddItem(t);
+                    item.Alignment = Pos.Left;
+                }
+            );
 
             //FPS Background
             mFpsBackground = new ImagePanel(mOptionsContainer, "FPSPanel");
@@ -117,24 +140,22 @@ namespace Intersect.Client.Interface.Shared
             mFpsList.AddItem(Strings.Options.unlimitedfps);
 
             //Options - Fullscreen Checkbox
-            mFullscreen =
-                new LabeledCheckBox(mOptionsContainer, "FullscreenCheckbox")
-                {
-                    Text = Strings.Options.fullscreen
-                };
+            mFullscreen = new LabeledCheckBox(mOptionsContainer, "FullscreenCheckbox")
+            {
+                Text = Strings.Options.fullscreen
+            };
 
             mAutocloseWindowsCheckbox = new LabeledCheckBox(mOptionsContainer, "AutocloseWindowsCheckbox")
             {
                 Text = Strings.Options.AutocloseWindows
             };
 
-            mEditKeybindingsBtn =
-                new Button(mOptionsContainer, "KeybindingsButton") { Text = Strings.Controls.edit };
+            mEditKeybindingsBtn = new Button(mOptionsContainer, "KeybindingsButton") {Text = Strings.Controls.edit};
             mEditKeybindingsBtn.Clicked += EditKeybindingsButton_Clicked;
 
             //Options - Sound Label
             mSoundLabel = new Label(mOptionsContainer, "SoundLabel");
-            mSoundLabel.SetText(Strings.Options.soundvolume.ToString( 100));
+            mSoundLabel.SetText(Strings.Options.soundvolume.ToString(100));
 
             //Options - Sound Slider
             mSoundSlider = new HorizontalSlider(mOptionsContainer, "SoundSlider");
@@ -144,7 +165,7 @@ namespace Intersect.Client.Interface.Shared
 
             //Options - Music Label
             mMusicLabel = new Label(mOptionsContainer, "MusicLabel");
-            mMusicLabel.SetText(Strings.Options.musicvolume.ToString( 100));
+            mMusicLabel.SetText(Strings.Options.musicvolume.ToString(100));
 
             //Options - Music Slider
             mMusicSlider = new HorizontalSlider(mOptionsContainer, "MusicSlider");
@@ -185,6 +206,7 @@ namespace Intersect.Client.Interface.Shared
                     AutoSizeToContents = true,
                     Font = defaultFont
                 };
+
                 label.SetBounds(8, 8 + offset, 0, 24);
                 label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
 
@@ -195,6 +217,7 @@ namespace Intersect.Client.Interface.Shared
                     UserData = control,
                     Font = defaultFont
                 };
+
                 key1.Clicked += Key1_Clicked;
 
                 var key2 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Control), control)}Button2")
@@ -204,6 +227,7 @@ namespace Intersect.Client.Interface.Shared
                     UserData = control,
                     Font = defaultFont
                 };
+
                 key2.Clicked += Key2_Clicked;
 
                 mKeyButtons.Add(control, new[] {key1, key2});
@@ -224,7 +248,10 @@ namespace Intersect.Client.Interface.Shared
             Input.KeyDown += OnKeyDown;
             Input.MouseDown += OnKeyDown;
 
-            mOptionsPanel.LoadJsonUi(mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mOptionsPanel.LoadJsonUi(
+                mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu,
+                Graphics.Renderer.GetResolutionString()
+            );
 
             CloseKeybindings();
         }
@@ -265,8 +292,13 @@ namespace Intersect.Client.Interface.Shared
                 mRestoreKeybindingsButton.Show();
                 foreach (Control control in Enum.GetValues(typeof(Control)))
                 {
-                    mKeyButtons[control][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
-                    mKeyButtons[control][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
+                    mKeyButtons[control][0].Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
+
+                    mKeyButtons[control][1].Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
                 }
             }
         }
@@ -289,8 +321,13 @@ namespace Intersect.Client.Interface.Shared
             mEdittingControls.ResetDefaults();
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
-                mKeyButtons[control][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
-                mKeyButtons[control][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
+                mKeyButtons[control][0].Text =
+                    Strings.Keys.keydict[
+                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
+
+                mKeyButtons[control][1].Text =
+                    Strings.Keys.keydict[
+                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
             }
         }
 
@@ -311,12 +348,19 @@ namespace Intersect.Client.Interface.Shared
                 mEdittingControls.UpdateControl(mEdittingControl, mEdittingKey, key);
                 if (mEdittingKey == 1)
                 {
-                    mEdittingButton.Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key1).ToLower()];
+                    mEdittingButton.Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key1)
+                                .ToLower()];
                 }
                 else
                 {
-                    mEdittingButton.Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2).ToLower()];
+                    mEdittingButton.Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2)
+                                .ToLower()];
                 }
+
                 mEdittingButton.PlayHoverSound();
                 mEdittingButton = null;
                 Interface.GwenInput.HandleInput = true;
@@ -338,44 +382,53 @@ namespace Intersect.Client.Interface.Shared
             {
                 mOptionsPanel.MakeModal(true);
             }
+
             mPreviousMusicVolume = Globals.Database.MusicVolume;
             mPreviousSoundVolume = Globals.Database.SoundVolume;
             mEdittingControls = new Controls(Controls.ActiveControls);
             if (Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
-                mResolutionList.SelectByText(
-                    Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
+                mResolutionList.SelectByText(Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
             }
+
             switch (Globals.Database.TargetFps)
             {
                 case -1: //Unlimited
                     mFpsList.SelectByText(Strings.Options.unlimitedfps);
+
                     break;
                 case 0: //VSYNC
                     mFpsList.SelectByText(Strings.Options.vsync);
+
                     break;
                 case 1:
                     mFpsList.SelectByText(Strings.Options.fps30);
+
                     break;
                 case 2:
                     mFpsList.SelectByText(Strings.Options.fps60);
+
                     break;
                 case 3:
                     mFpsList.SelectByText(Strings.Options.fps90);
+
                     break;
                 case 4:
                     mFpsList.SelectByText(Strings.Options.fps120);
+
                     break;
                 default:
                     mFpsList.SelectByText(Strings.Options.vsync);
+
                     break;
             }
+
             mAutocloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
             mFullscreen.IsChecked = Globals.Database.FullScreen;
             mMusicSlider.Value = Globals.Database.MusicVolume;
             mSoundSlider.Value = Globals.Database.SoundVolume;
-            mMusicLabel.Text = Strings.Options.musicvolume.ToString( (int)mMusicSlider.Value);
-            mSoundLabel.Text = Strings.Options.soundvolume.ToString( (int)mSoundSlider.Value);
+            mMusicLabel.Text = Strings.Options.musicvolume.ToString((int) mMusicSlider.Value);
+            mSoundLabel.Text = Strings.Options.soundvolume.ToString((int) mSoundSlider.Value);
             mOptionsPanel.IsHidden = false;
         }
 
@@ -390,6 +443,7 @@ namespace Intersect.Client.Interface.Shared
             {
                 mOptionsPanel.RemoveModal();
             }
+
             mOptionsPanel.IsHidden = true;
         }
 
@@ -412,37 +466,43 @@ namespace Intersect.Client.Interface.Shared
 
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mMusicLabel.Text = Strings.Options.musicvolume.ToString((int)mMusicSlider.Value);
+            mMusicLabel.Text = Strings.Options.musicvolume.ToString((int) mMusicSlider.Value);
             Globals.Database.MusicVolume = (int) mMusicSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mSoundLabel.Text = Strings.Options.soundvolume.ToString((int)mSoundSlider.Value);
+            mSoundLabel.Text = Strings.Options.soundvolume.ToString((int) mSoundSlider.Value);
             Globals.Database.SoundVolume = (int) mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
         void ApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            bool shouldReset = false;
+            var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
             var myModes = Graphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count; i++)
             {
                 if (resolution.Text == myModes[i])
                 {
-                    if (Globals.Database.TargetResolution != i) shouldReset = true;
+                    if (Globals.Database.TargetResolution != i)
+                    {
+                        shouldReset = true;
+                    }
+
                     Globals.Database.TargetResolution = i;
                 }
             }
+
             Globals.Database.HideOthersOnWindowOpen = mAutocloseWindowsCheckbox.IsChecked;
             if (Globals.Database.FullScreen != mFullscreen.IsChecked)
             {
                 Globals.Database.FullScreen = mFullscreen.IsChecked;
                 shouldReset = true;
             }
+
             var newFps = 0;
             if (mFpsList.SelectedItem.Text == Strings.Options.unlimitedfps)
             {
@@ -470,11 +530,16 @@ namespace Intersect.Client.Interface.Shared
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
             }
+
             Globals.Database.MusicVolume = (int) mMusicSlider.Value;
             Globals.Database.SoundVolume = (int) mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
-            if (shouldReset) Graphics.Renderer.Init();
+            if (shouldReset)
+            {
+                Graphics.Renderer.Init();
+            }
+
             if (Globals.GameState == GameStates.InGame)
             {
                 Hide();
@@ -485,5 +550,7 @@ namespace Intersect.Client.Interface.Shared
                 mMainMenu.Show();
             }
         }
+
     }
+
 }

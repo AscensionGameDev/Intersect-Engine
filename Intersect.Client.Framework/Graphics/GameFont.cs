@@ -1,8 +1,11 @@
 ﻿namespace Intersect.Client.Framework.Graphics
 {
+
     public abstract class GameFont
     {
+
         private string mFontName = @"";
+
         private int mFontSize = 12;
 
         public GameFont(string fontName, int fontSize)
@@ -25,8 +28,14 @@
 
         public static string ToString(GameFont font)
         {
-            if (font == null) return "";
+            if (font == null)
+            {
+                return "";
+            }
+
             return font.GetName() + "," + font.GetSize();
         }
+
     }
+
 }

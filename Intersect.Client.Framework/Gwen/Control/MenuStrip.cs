@@ -1,16 +1,17 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Menu strip.
     /// </summary>
     public class MenuStrip : Menu
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MenuStrip" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public MenuStrip(Base parent)
-            : base(parent)
+        public MenuStrip(Base parent) : base(parent)
         {
             SetBounds(0, 0, 200, 22);
             Dock = Pos.Top;
@@ -68,5 +69,7 @@
             item.IsOnStrip = true;
             item.HoverEnter += OnHoverItem;
         }
+
     }
+
 }

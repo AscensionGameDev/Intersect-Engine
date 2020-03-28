@@ -14,8 +14,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Web.RestApi.Configuration
 {
+
     public struct CorsConfiguration
     {
+
         public string Origin { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -29,28 +31,29 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(SingleOrArrayConverter<string>))]
         public List<string> ExposedHeaders { get; set; }
+
     }
 
     public static class CorsConfigurationExtensions
     {
+
         public static CorsOptions AsCorsOptions(this CorsConfiguration corsConfiguration)
-            => new CorsOptions { PolicyProvider = corsConfiguration.AsOwinPolicyProvider() };
+        {
+            return new CorsOptions {PolicyProvider = corsConfiguration.AsOwinPolicyProvider()};
+        }
 
         public static ICorsPolicyProvider AsOwinPolicyProvider(this CorsConfiguration corsConfiguration)
         {
             var attribute = new CorsPolicyProvider
             {
-                PolicyResolver = context =>
-                    Task.FromResult(
-                        CreatePolicy(
-                            corsConfiguration.Origin,
-                            string.Join(",", corsConfiguration.Methods ?? new List<string>()),
-                            string.Join(",", corsConfiguration.Headers ?? new List<string>()),
-                            string.Join(",", corsConfiguration.ExposedHeaders ?? new List<string>())
-                        )
+                PolicyResolver = context => Task.FromResult(
+                    CreatePolicy(
+                        corsConfiguration.Origin, string.Join(",", corsConfiguration.Methods ?? new List<string>()),
+                        string.Join(",", corsConfiguration.Headers ?? new List<string>()),
+                        string.Join(",", corsConfiguration.ExposedHeaders ?? new List<string>())
                     )
+                )
             };
-
 
             return attribute;
         }
@@ -104,13 +107,17 @@ namespace Intersect.Server.Web.RestApi.Configuration
             return policy;
         }
 
-        private static void AddCommaSeparatedValuesToCollection(string commaSeparatedValues, [NotNull] ICollection<string> collection)
+        private static void AddCommaSeparatedValuesToCollection(
+            string commaSeparatedValues,
+            [NotNull] ICollection<string> collection
+        )
         {
-            commaSeparatedValues?
-                .Split(',')
+            commaSeparatedValues?.Split(',')
                 .Where(part => !string.IsNullOrWhiteSpace(part?.Trim()))
                 .ToList()
                 .ForEach(collection.Add);
         }
+
     }
+
 }

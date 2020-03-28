@@ -1,16 +1,21 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Linear-interpolated HSV color box.
     /// </summary>
     public class ColorLerpBox : Base
     {
+
         private Point mCursorPos;
+
         private bool mDepressed;
+
         private float mHue;
 
         /// <summary>
@@ -50,8 +55,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public static Color Lerp(Color toColor, Color fromColor, float amount)
         {
-            Color delta = toColor.Subtract(fromColor);
+            var delta = toColor.Subtract(fromColor);
             delta = delta.Multiply(amount);
+
             return fromColor.Add(delta);
         }
 
@@ -62,7 +68,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="onlyHue">Deetrmines whether to only set H value (not SV).</param>
         public void SetColor(Color value, bool onlyHue = true)
         {
-            Hsv hsv = value.ToHsv();
+            var hsv = value.ToHsv();
             mHue = hsv.H;
 
             if (!onlyHue)
@@ -70,10 +76,13 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mCursorPos.X = (int) (hsv.s * Width);
                 mCursorPos.Y = (int) ((1 - hsv.V) * Height);
             }
+
             Invalidate();
 
             if (ColorChanged != null)
+            {
                 ColorChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -88,19 +97,32 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (mDepressed)
             {
                 mCursorPos = CanvasPosToLocal(new Point(x, y));
+
                 //Do we have clamp?
                 if (mCursorPos.X < 0)
+                {
                     mCursorPos.X = 0;
+                }
+
                 if (mCursorPos.X > Width)
+                {
                     mCursorPos.X = Width;
+                }
 
                 if (mCursorPos.Y < 0)
+                {
                     mCursorPos.Y = 0;
+                }
+
                 if (mCursorPos.Y > Height)
+                {
                     mCursorPos.Y = Height;
+                }
 
                 if (ColorChanged != null)
+                {
                     ColorChanged.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -115,9 +137,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.OnMouseClickedLeft(x, y, down);
             mDepressed = down;
             if (down)
+            {
                 InputHandler.MouseFocus = this;
+            }
             else
+            {
                 InputHandler.MouseFocus = null;
+            }
 
             OnMouseMoved(x, y, 0, 0);
         }
@@ -130,10 +156,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Color value.</returns>
         private Color GetColorAt(int x, int y)
         {
-            float xPercent = (x / (float) Width);
-            float yPercent = 1 - (y / (float) Height);
+            var xPercent = x / (float) Width;
+            var yPercent = 1 - y / (float) Height;
 
-            Color result = Util.HsvToColor(mHue, xPercent, yPercent);
+            var result = Util.HsvToColor(mHue, xPercent, yPercent);
 
             return result;
         }
@@ -158,17 +184,23 @@ namespace Intersect.Client.Framework.Gwen.Control
             skin.Renderer.DrawColor = Color.Black;
             skin.Renderer.DrawLinedRect(RenderBounds);
 
-            Color selected = SelectedColor;
+            var selected = SelectedColor;
             if ((selected.R + selected.G + selected.B) / 3 < 170)
+            {
                 skin.Renderer.DrawColor = Color.White;
+            }
             else
+            {
                 skin.Renderer.DrawColor = Color.Black;
+            }
 
-            Rectangle testRect = new Rectangle(mCursorPos.X - 3, mCursorPos.Y - 3, 6, 6);
+            var testRect = new Rectangle(mCursorPos.X - 3, mCursorPos.Y - 3, 6, 6);
 
             skin.Renderer.DrawShavedCornerRect(testRect);
 
             base.Render(skin);
         }
+
     }
+
 }

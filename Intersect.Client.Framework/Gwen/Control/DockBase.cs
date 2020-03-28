@@ -1,34 +1,42 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Base for dockable containers.
     /// </summary>
     public class DockBase : Base
     {
+
         private DockBase mBottom;
 
         // Only CHILD dockpanels have a tabcontrol.
         private DockedTabControl mDockedTabControl;
 
         private bool mDrawHover;
+
         private bool mDropFar;
+
         private Rectangle mHoverRect;
+
         private DockBase mLeft;
+
         private DockBase mRight;
+
         private Resizer mSizer;
+
         private DockBase mTop;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DockBase" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public DockBase(Base parent)
-            : base(parent)
+        public DockBase(Base parent) : base(parent)
         {
             Padding = Padding.One;
             SetSize(200, 200);
@@ -65,12 +73,30 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                if (mDockedTabControl != null && mDockedTabControl.TabCount > 0) return false;
+                if (mDockedTabControl != null && mDockedTabControl.TabCount > 0)
+                {
+                    return false;
+                }
 
-                if (mLeft != null && !mLeft.IsEmpty) return false;
-                if (mRight != null && !mRight.IsEmpty) return false;
-                if (mTop != null && !mTop.IsEmpty) return false;
-                if (mBottom != null && !mBottom.IsEmpty) return false;
+                if (mLeft != null && !mLeft.IsEmpty)
+                {
+                    return false;
+                }
+
+                if (mRight != null && !mRight.IsEmpty)
+                {
+                    return false;
+                }
+
+                if (mTop != null && !mTop.IsEmpty)
+                {
+                    return false;
+                }
+
+                if (mBottom != null && !mBottom.IsEmpty)
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -106,14 +132,32 @@ namespace Intersect.Client.Framework.Gwen.Control
             Dock = pos;
 
             Pos sizeDir;
-            if (pos == Pos.Right) sizeDir = Pos.Left;
-            else if (pos == Pos.Left) sizeDir = Pos.Right;
-            else if (pos == Pos.Top) sizeDir = Pos.Bottom;
-            else if (pos == Pos.Bottom) sizeDir = Pos.Top;
-            else throw new ArgumentException("Invalid dock", "pos");
+            if (pos == Pos.Right)
+            {
+                sizeDir = Pos.Left;
+            }
+            else if (pos == Pos.Left)
+            {
+                sizeDir = Pos.Right;
+            }
+            else if (pos == Pos.Top)
+            {
+                sizeDir = Pos.Bottom;
+            }
+            else if (pos == Pos.Bottom)
+            {
+                sizeDir = Pos.Top;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid dock", "pos");
+            }
 
             if (mSizer != null)
+            {
                 mSizer.Dispose();
+            }
+
             mSizer = new Resizer(this);
             mSizer.Dock = sizeDir;
             mSizer.ResizeDir = sizeDir;
@@ -145,7 +189,9 @@ namespace Intersect.Client.Framework.Gwen.Control
                         mLeft = new DockBase(this);
                         mLeft.SetupChildDock(pos);
                     }
+
                     dock = mLeft;
+
                     break;
 
                 case Pos.Right:
@@ -154,7 +200,9 @@ namespace Intersect.Client.Framework.Gwen.Control
                         mRight = new DockBase(this);
                         mRight.SetupChildDock(pos);
                     }
+
                     dock = mRight;
+
                     break;
 
                 case Pos.Top:
@@ -163,7 +211,9 @@ namespace Intersect.Client.Framework.Gwen.Control
                         mTop = new DockBase(this);
                         mTop.SetupChildDock(pos);
                     }
+
                     dock = mTop;
+
                     break;
 
                 case Pos.Bottom:
@@ -172,12 +222,16 @@ namespace Intersect.Client.Framework.Gwen.Control
                         mBottom = new DockBase(this);
                         mBottom.SetupChildDock(pos);
                     }
+
                     dock = mBottom;
+
                     break;
             }
 
             if (dock != null)
+            {
                 dock.IsHidden = false;
+            }
 
             return dock;
         }
@@ -190,27 +244,40 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Dock direction.</returns>
         protected virtual Pos GetDroppedTabDirection(int x, int y)
         {
-            int w = Width;
-            int h = Height;
-            float top = y / (float) h;
-            float left = x / (float) w;
-            float right = (w - x) / (float) w;
-            float bottom = (h - y) / (float) h;
-            float minimum = Math.Min(Math.Min(Math.Min(top, left), right), bottom);
+            var w = Width;
+            var h = Height;
+            var top = y / (float) h;
+            var left = x / (float) w;
+            var right = (w - x) / (float) w;
+            var bottom = (h - y) / (float) h;
+            var minimum = Math.Min(Math.Min(Math.Min(top, left), right), bottom);
 
-            mDropFar = (minimum < 0.2f);
+            mDropFar = minimum < 0.2f;
 
             if (minimum > 0.3f)
+            {
                 return Pos.Fill;
+            }
 
             if (top == minimum && (null == mTop || mTop.IsHidden))
+            {
                 return Pos.Top;
+            }
+
             if (left == minimum && (null == mLeft || mLeft.IsHidden))
+            {
                 return Pos.Left;
+            }
+
             if (right == minimum && (null == mRight || mRight.IsHidden))
+            {
                 return Pos.Right;
+            }
+
             if (bottom == minimum && (null == mBottom || mBottom.IsHidden))
+            {
                 return Pos.Bottom;
+            }
 
             return Pos.Fill;
         }
@@ -219,51 +286,68 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             // A TAB button dropped 
             if (p.Name == "TabButtonMove")
+            {
                 return true;
+            }
 
             // a TAB window dropped
             if (p.Name == "TabWindowMove")
+            {
                 return true;
+            }
 
             return false;
         }
 
         public override bool DragAndDrop_HandleDrop(Package p, int x, int y)
         {
-            Point pos = CanvasPosToLocal(new Point(x, y));
-            Pos dir = GetDroppedTabDirection(pos.X, pos.Y);
+            var pos = CanvasPosToLocal(new Point(x, y));
+            var dir = GetDroppedTabDirection(pos.X, pos.Y);
 
-            DockedTabControl addTo = mDockedTabControl;
+            var addTo = mDockedTabControl;
             if (dir == Pos.Fill && addTo == null)
+            {
                 return false;
+            }
 
             if (dir != Pos.Fill)
             {
-                DockBase dock = GetChildDock(dir);
+                var dock = GetChildDock(dir);
                 addTo = dock.mDockedTabControl;
 
                 if (!mDropFar)
+                {
                     dock.BringToFront();
+                }
                 else
+                {
                     dock.SendToBack();
+                }
             }
 
             if (p.Name == "TabButtonMove")
             {
-                TabButton tabButton = DragAndDrop.SourceControl as TabButton;
+                var tabButton = DragAndDrop.SourceControl as TabButton;
                 if (null == tabButton)
+                {
                     return false;
+                }
 
                 addTo.AddPage(tabButton);
             }
 
             if (p.Name == "TabWindowMove")
             {
-                DockedTabControl tabControl = DragAndDrop.SourceControl as DockedTabControl;
+                var tabControl = DragAndDrop.SourceControl as DockedTabControl;
                 if (null == tabControl)
+                {
                     return false;
+                }
+
                 if (tabControl == addTo)
+                {
                     return false;
+                }
 
                 tabControl.MoveTabsTo(addTo);
             }
@@ -281,41 +365,62 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected virtual void DoRedundancyCheck()
         {
-            if (!IsEmpty) return;
+            if (!IsEmpty)
+            {
+                return;
+            }
 
-            DockBase pDockParent = Parent as DockBase;
-            if (null == pDockParent) return;
+            var pDockParent = Parent as DockBase;
+            if (null == pDockParent)
+            {
+                return;
+            }
 
             pDockParent.OnRedundantChildDock(this);
         }
 
         protected virtual void DoConsolidateCheck()
         {
-            if (IsEmpty) return;
-            if (null == mDockedTabControl) return;
-            if (mDockedTabControl.TabCount > 0) return;
+            if (IsEmpty)
+            {
+                return;
+            }
+
+            if (null == mDockedTabControl)
+            {
+                return;
+            }
+
+            if (mDockedTabControl.TabCount > 0)
+            {
+                return;
+            }
 
             if (mBottom != null && !mBottom.IsEmpty)
             {
                 mBottom.mDockedTabControl.MoveTabsTo(mDockedTabControl);
+
                 return;
             }
 
             if (mTop != null && !mTop.IsEmpty)
             {
                 mTop.mDockedTabControl.MoveTabsTo(mDockedTabControl);
+
                 return;
             }
 
             if (mLeft != null && !mLeft.IsEmpty)
             {
                 mLeft.mDockedTabControl.MoveTabsTo(mDockedTabControl);
+
                 return;
             }
 
             if (mRight != null && !mRight.IsEmpty)
             {
                 mRight.mDockedTabControl.MoveTabsTo(mDockedTabControl);
+
                 return;
             }
         }
@@ -339,24 +444,26 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         public override void DragAndDrop_Hover(Package p, int x, int y)
         {
-            Point pos = CanvasPosToLocal(new Point(x, y));
-            Pos dir = GetDroppedTabDirection(pos.X, pos.Y);
+            var pos = CanvasPosToLocal(new Point(x, y));
+            var dir = GetDroppedTabDirection(pos.X, pos.Y);
 
             if (dir == Pos.Fill)
             {
                 if (null == mDockedTabControl)
                 {
                     mHoverRect = Rectangle.Empty;
+
                     return;
                 }
 
                 mHoverRect = InnerBounds;
+
                 return;
             }
 
             mHoverRect = RenderBounds;
 
-            int helpBarWidth = 0;
+            var helpBarWidth = 0;
 
             if (dir == Pos.Left)
             {
@@ -420,14 +527,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void RenderOver(Skin.Base skin)
         {
             if (!mDrawHover)
+            {
                 return;
+            }
 
-            Renderer.Base render = skin.Renderer;
+            var render = skin.Renderer;
             render.DrawColor = Color.FromArgb(20, 255, 200, 255);
             render.DrawFilledRect(RenderBounds);
 
             if (mHoverRect.Width == 0)
+            {
                 return;
+            }
 
             render.DrawColor = Color.FromArgb(100, 255, 200, 255);
             render.DrawFilledRect(mHoverRect);
@@ -435,5 +546,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             render.DrawColor = Color.FromArgb(200, 255, 200, 255);
             render.DrawLinedRect(mHoverRect);
         }
+
     }
+
 }

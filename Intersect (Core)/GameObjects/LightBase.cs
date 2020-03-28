@@ -1,24 +1,10 @@
 ﻿namespace Intersect.GameObjects
 {
+
     public class LightBase
     {
-        public Color Color { get; set; }
 
-        public float Expand { get; set; }
-
-        public byte Intensity { get; set; }
-
-        public int OffsetX { get; set; }
-
-        public int OffsetY { get; set; }
-
-        public int Size { get; set; }
-
-        public int TileX { get; set; }
-
-        public int TileY { get; set; }
-
-        public LightBase() : this(-1, -1) {}
+        public LightBase() : this(-1, -1) { }
 
         public LightBase(int x, int y)
         {
@@ -40,7 +26,16 @@
             Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
 
-        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color color)
+        public LightBase(
+            int tileX,
+            int tileY,
+            int offsetX,
+            int offsetY,
+            byte intensity,
+            int size,
+            float expand,
+            Color color
+        )
         {
             TileX = tileX;
             TileY = tileY;
@@ -51,5 +46,23 @@
             Expand = expand;
             Color = color;
         }
+
+        public Color Color { get; set; }
+
+        public float Expand { get; set; }
+
+        public byte Intensity { get; set; }
+
+        public int OffsetX { get; set; }
+
+        public int OffsetY { get; set; }
+
+        public int Size { get; set; }
+
+        public int TileX { get; set; }
+
+        public int TileY { get; set; }
+
     }
+
 }

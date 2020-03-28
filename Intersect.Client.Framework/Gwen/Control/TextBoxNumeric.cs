@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Numeric text box - accepts only float numbers.
     /// </summary>
     public class TextBoxNumeric : TextBox
     {
+
         /// <summary>
         ///     Current numeric value.
         /// </summary>
@@ -16,7 +18,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="TextBoxNumeric" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TextBoxNumeric(Base parent, string name = "") : base(parent,name)
+        public TextBoxNumeric(Base parent, string name = "") : base(parent, name)
         {
             AutoSizeToContents = false;
             SetText("0", false);
@@ -38,8 +40,12 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual bool IsTextAllowed(string str)
         {
             if (str == "" || str == "-")
+            {
                 return true; // annoying if single - is not allowed
+            }
+
             float d;
+
             return float.TryParse(str, out d);
         }
 
@@ -51,7 +57,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>True if allowed.</returns>
         protected override bool IsTextAllowed(string text, int position)
         {
-            string newText = Text.Insert(position, text);
+            var newText = Text.Insert(position, text);
+
             return IsTextAllowed(newText);
         }
 
@@ -64,10 +71,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (String.IsNullOrEmpty(Text) || Text == "-")
             {
                 mValue = 0;
+
                 //SetText("0");
             }
             else
+            {
                 mValue = float.Parse(Text);
+            }
+
             base.OnTextChanged();
         }
 
@@ -79,7 +90,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override void SetText(string str, bool doEvents = true)
         {
             if (IsTextAllowed(str))
+            {
                 base.SetText(str, doEvents);
+            }
         }
+
     }
+
 }

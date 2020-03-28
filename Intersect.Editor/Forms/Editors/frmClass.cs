@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
@@ -16,15 +17,19 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmClass : EditorForm
     {
+
         private List<ClassBase> mChanged = new List<ClassBase>();
+
         private string mCopiedItem;
+
         private ClassBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
 
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmClass()
         {
@@ -78,21 +83,32 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstClasses.SelectedNode != null && lstClasses.SelectedNode.Tag != null) lstClasses.SelectedNode.Text = txtName.Text;
+            if (lstClasses.SelectedNode != null && lstClasses.SelectedNode.Tag != null)
+            {
+                lstClasses.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
         private void UpdateSpellList(bool keepIndex = true)
         {
             // Refresh List
-            int n = lstSpells.SelectedIndex;
+            var n = lstSpells.SelectedIndex;
             lstSpells.Items.Clear();
-            for (int i = 0; i < mEditorItem.Spells.Count; i++)
+            for (var i = 0; i < mEditorItem.Spells.Count; i++)
             {
-                lstSpells.Items.Add(Strings.ClassEditor.spellitem.ToString(i + 1,
-                    SpellBase.GetName(mEditorItem.Spells[i].Id), mEditorItem.Spells[i].Level));
+                lstSpells.Items.Add(
+                    Strings.ClassEditor.spellitem.ToString(
+                        i + 1, SpellBase.GetName(mEditorItem.Spells[i].Id), mEditorItem.Spells[i].Level
+                    )
+                );
             }
-            if (keepIndex) lstSpells.SelectedIndex = n;
+
+            if (keepIndex)
+            {
+                lstSpells.SelectedIndex = n;
+            }
         }
 
         private void btnAddSpell_Click(object sender, EventArgs e)
@@ -109,7 +125,11 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnRemoveSpell_Click(object sender, EventArgs e)
         {
-            if (lstSpells.SelectedIndex == -1) return;
+            if (lstSpells.SelectedIndex == -1)
+            {
+                return;
+            }
+
             mEditorItem.Spells.RemoveAt(lstSpells.SelectedIndex);
             lstSpells.Items.RemoveAt(lstSpells.SelectedIndex);
 
@@ -132,8 +152,10 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = mEditorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = mEditorItem.BaseStat[(int) Stats.Speed];
-                nudBaseHP.Value = Math.Max(Math.Min(mEditorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum),
-                    nudBaseHP.Minimum);
+                nudBaseHP.Value = Math.Max(
+                    Math.Min(mEditorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum
+                );
+
                 nudBaseMana.Value = mEditorItem.BaseVital[(int) Vitals.Mana];
                 nudPoints.Value = mEditorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(mEditorItem.Locked);
@@ -143,12 +165,11 @@ namespace Intersect.Editor.Forms.Editors
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
-                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
+                nudCritMultiplier.Value = (decimal) mEditorItem.CritMultiplier;
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
-                cmbAttackAnimation.SelectedIndex =
-                    AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
                 cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
@@ -173,7 +194,7 @@ namespace Intersect.Editor.Forms.Editors
                 UpdateIncreases();
 
                 UpdateSpellList(false);
-                
+
                 cmbSpell.SelectedIndex = -1;
 
                 // Don't select if there are no Spells, to avoid crashes.
@@ -195,8 +216,10 @@ namespace Intersect.Editor.Forms.Editors
                 if (lstSprites.Items.Count > 0)
                 {
                     lstSprites.SelectedIndex = 0;
-                    cmbSprite.SelectedIndex =
-                        cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Sprite));
+                    cmbSprite.SelectedIndex = cmbSprite.FindString(
+                        TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Sprite)
+                    );
+
                     if (mEditorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                     {
                         rbMale.Checked = true;
@@ -207,19 +230,22 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == mEditorItem.SpawnMapId)
                     {
                         cmbWarpMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 if (cmbWarpMap.SelectedIndex == -1)
                 {
                     cmbWarpMap.SelectedIndex = 0;
                     mEditorItem.SpawnMapId = MapList.OrderedMaps[0].MapId;
                 }
+
                 nudX.Value = mEditorItem.SpawnX;
                 nudY.Value = mEditorItem.SpawnY;
                 cmbDirection.SelectedIndex = mEditorItem.SpawnDir;
@@ -238,6 +264,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -245,7 +272,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
-            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
+            );
+
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
@@ -259,10 +289,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
-            for (int x = 0; x < Options.MaxStats; x++)
+            for (var x = 0; x < Options.MaxStats; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
+
             nudAttack.Maximum = Options.MaxStatValue;
             nudMag.Maximum = Options.MaxStatValue;
             nudDef.Maximum = Options.MaxStatValue;
@@ -289,15 +320,16 @@ namespace Intersect.Editor.Forms.Editors
             chkLocked.Text = Strings.ClassEditor.locked;
 
             grpSpawnPoint.Text = Strings.ClassEditor.spawnpoint;
-            lblMap.Text = Strings.Warping.map.ToString( "");
-            lblX.Text = Strings.Warping.x.ToString( "");
+            lblMap.Text = Strings.Warping.map.ToString("");
+            lblX.Text = Strings.Warping.x.ToString("");
             lblY.Text = Strings.Warping.y;
-            lblDir.Text = Strings.Warping.direction.ToString( "");
+            lblDir.Text = Strings.Warping.direction.ToString("");
             cmbDirection.Items.Clear();
             for (var i = 0; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             grpSprite.Text = Strings.ClassEditor.spriteface;
@@ -343,10 +375,11 @@ namespace Intersect.Editor.Forms.Editors
             lblCritMultiplier.Text = Strings.ClassEditor.critmultiplier;
             lblDamageType.Text = Strings.ClassEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
+            for (var i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
+
             lblScalingStat.Text = Strings.ClassEditor.scalingstat;
             lblScalingAmount.Text = Strings.ClassEditor.scalingamount;
             lblAttackAnimation.Text = Strings.ClassEditor.attackanimation;
@@ -367,21 +400,34 @@ namespace Intersect.Editor.Forms.Editors
             rdoStaticIncrease.Text = Strings.ClassEditor.staticboost;
             rdoPercentageIncrease.Text = Strings.ClassEditor.percentageboost;
             lblHpIncrease.Text = Strings.ClassEditor.hpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblMpIncrease.Text = Strings.ClassEditor.mpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblStrengthIncrease.Text = Strings.ClassEditor.attackboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblArmorIncrease.Text = Strings.ClassEditor.armorboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblSpeedIncrease.Text = Strings.ClassEditor.speedboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblMagicIncrease.Text = Strings.ClassEditor.abilitypowerboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblMagicResistIncrease.Text = Strings.ClassEditor.magicresistboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
-            lblPointsIncrease.Text = Strings.ClassEditor.pointsboost;
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
 
+            lblMpIncrease.Text = Strings.ClassEditor.mpboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblStrengthIncrease.Text = Strings.ClassEditor.attackboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblArmorIncrease.Text = Strings.ClassEditor.armorboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblSpeedIncrease.Text = Strings.ClassEditor.speedboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblMagicIncrease.Text = Strings.ClassEditor.abilitypowerboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblMagicResistIncrease.Text = Strings.ClassEditor.magicresistboost.ToString(
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
+            lblPointsIncrease.Text = Strings.ClassEditor.pointsboost;
 
             //Exp Grid
             btnExpGrid.Text = Strings.ClassEditor.expgrid;
@@ -395,7 +441,6 @@ namespace Intersect.Editor.Forms.Editors
             levelCol.HeaderText = Strings.ClassEditor.gridlevel;
             levelCol.ReadOnly = true;
             levelCol.SortMode = DataGridViewColumnSortMode.NotSortable;
-
 
             var tnlCol = new DataGridViewTextBoxColumn();
             tnlCol.HeaderText = Strings.ClassEditor.gridtnl;
@@ -426,15 +471,17 @@ namespace Intersect.Editor.Forms.Editors
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstClasses.SelectedNode != null && lstClasses.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstClasses.SelectedNode.Tag;
+                selectedId = (Guid) lstClasses.SelectedNode.Tag;
             }
+
             lstClasses.Nodes.Clear();
-            
+
             cmbWarpMap.Items.Clear();
-            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+            for (var i = 0; i < MapList.OrderedMaps.Count; i++)
             {
                 cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
             }
+
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
 
@@ -442,11 +489,14 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ClassBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ClassBase)itm.Value).Folder) && !mFolders.Contains(((ClassBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ClassBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((ClassBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((ClassBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ClassBase)itm.Value).Folder))
-                        mKnownFolders.Add(((ClassBase)itm.Value).Folder);
+                    mFolders.Add(((ClassBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ClassBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((ClassBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -482,7 +532,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -498,28 +550,40 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstClasses.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstClasses.SelectedNode;
 
-            if (!btnChronological.Checked) lstClasses.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstClasses.Sort();
+            }
 
             lstClasses.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void lstSprites_Click(object sender, EventArgs e)
         {
             if (lstSprites.Items.Count > 0)
             {
-                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Sprite));
-                cmbFace.SelectedIndex = cmbFace.FindString(TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Face));
+                cmbSprite.SelectedIndex = cmbSprite.FindString(
+                    TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Sprite)
+                );
+
+                cmbFace.SelectedIndex = cmbFace.FindString(
+                    TextUtils.NullToNone(mEditorItem.Sprites[lstSprites.SelectedIndex].Face)
+                );
+
                 if (mEditorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                 {
                     rbMale.Checked = true;
@@ -559,6 +623,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 RefreshSpriteList();
             }
+
             DrawSprite();
         }
 
@@ -567,20 +632,30 @@ namespace Intersect.Editor.Forms.Editors
             // Refresh List
             var n = lstSprites.SelectedIndex;
             lstSprites.Items.Clear();
-            for (int i = 0; i < mEditorItem.Sprites.Count; i++)
+            for (var i = 0; i < mEditorItem.Sprites.Count; i++)
             {
                 if (mEditorItem.Sprites[i].Gender == 0)
                 {
-                    lstSprites.Items.Add(Strings.ClassEditor.spriteitemmale.ToString( i + 1,
-                        TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)));
+                    lstSprites.Items.Add(
+                        Strings.ClassEditor.spriteitemmale.ToString(
+                            i + 1, TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)
+                        )
+                    );
                 }
                 else
                 {
-                    lstSprites.Items.Add(Strings.ClassEditor.spriteitemfemale.ToString( i + 1,
-                        TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)));
+                    lstSprites.Items.Add(
+                        Strings.ClassEditor.spriteitemfemale.ToString(
+                            i + 1, TextUtils.NullToNone(mEditorItem.Sprites[i].Sprite)
+                        )
+                    );
                 }
             }
-            if (saveSpot) lstSprites.SelectedIndex = n;
+
+            if (saveSpot)
+            {
+                lstSprites.SelectedIndex = n;
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -596,12 +671,19 @@ namespace Intersect.Editor.Forms.Editors
 
             if (n.Gender == 0)
             {
-                lstSprites.Items.Add(Strings.ClassEditor.spriteitemmale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
+                lstSprites.Items.Add(
+                    Strings.ClassEditor.spriteitemmale.ToString(
+                        mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)
+                    )
+                );
             }
             else
             {
                 lstSprites.Items.Add(
-                    Strings.ClassEditor.spriteitemfemale.ToString(mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)));
+                    Strings.ClassEditor.spriteitemfemale.ToString(
+                        mEditorItem.Sprites.Count, TextUtils.NullToNone(n.Sprite)
+                    )
+                );
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
@@ -610,7 +692,11 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (lstSprites.SelectedIndex == -1) return;
+            if (lstSprites.SelectedIndex == -1)
+            {
+                return;
+            }
+
             mEditorItem.Sprites.RemoveAt(lstSprites.SelectedIndex);
             lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
 
@@ -632,11 +718,15 @@ namespace Intersect.Editor.Forms.Editors
                 if (File.Exists("resources/entities/" + cmbSprite.Text))
                 {
                     var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
-                    gfx.DrawImage(img, new Rectangle(0, 0, img.Width / 4, img.Height / 4),
-                        new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel);
+                    gfx.DrawImage(
+                        img, new Rectangle(0, 0, img.Width / 4, img.Height / 4),
+                        new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel
+                    );
+
                     img.Dispose();
                 }
             }
+
             gfx.Dispose();
             picSprite.BackgroundImage = picSpriteBmp;
 
@@ -648,31 +738,39 @@ namespace Intersect.Editor.Forms.Editors
                 if (File.Exists("resources/faces/" + cmbFace.Text))
                 {
                     var img = Image.FromFile("resources/faces/" + cmbFace.Text);
-                    gfx.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height),
-                        new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
+                    gfx.DrawImage(
+                        img, new Rectangle(0, 0, img.Width, img.Height), new Rectangle(0, 0, img.Width, img.Height),
+                        GraphicsUnit.Pixel
+                    );
+
                     img.Dispose();
                 }
             }
+
             gfx.Dispose();
             picFace.BackgroundImage = picFaceBmp;
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
-            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudX.Value,
-                (int) nudY.Value);
+            var frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.SelectTile(
+                MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudX.Value, (int) nudY.Value
+            );
+
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 nudX.Value = frmWarpSelection.GetX();
                 nudY.Value = frmWarpSelection.GetY();
                 mEditorItem.SpawnMapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
@@ -683,14 +781,22 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbWarpMap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (mEditorItem == null) return;
+            if (mEditorItem == null)
+            {
+                return;
+            }
+
             mEditorItem.SpawnMapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
         }
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (mEditorItem == null) return;
-            mEditorItem.SpawnDir = (byte)cmbDirection.SelectedIndex;
+            if (mEditorItem == null)
+            {
+                return;
+            }
+
+            mEditorItem.SpawnDir = (byte) cmbDirection.SelectedIndex;
         }
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)
@@ -701,6 +807,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 RefreshSpriteList();
             }
+
             DrawSprite();
         }
 
@@ -735,29 +842,48 @@ namespace Intersect.Editor.Forms.Editors
             nudHpIncrease.Value = Math.Min(nudHpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Health]);
             nudMpIncrease.Value = Math.Min(nudMpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Mana]);
 
-            nudStrengthIncrease.Value = Math.Min(nudStrengthIncrease.Maximum,
-                mEditorItem.StatIncrease[(int) Stats.Attack]);
+            nudStrengthIncrease.Value = Math.Min(
+                nudStrengthIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Attack]
+            );
+
             nudArmorIncrease.Value = Math.Min(nudArmorIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Defense]);
-            nudMagicIncrease.Value = Math.Min(nudMagicIncrease.Maximum,
-                mEditorItem.StatIncrease[(int) Stats.AbilityPower]);
-            nudMagicResistIncrease.Value = Math.Min(nudMagicResistIncrease.Maximum,
-                mEditorItem.StatIncrease[(int) Stats.MagicResist]);
+            nudMagicIncrease.Value = Math.Min(
+                nudMagicIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.AbilityPower]
+            );
+
+            nudMagicResistIncrease.Value = Math.Min(
+                nudMagicResistIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.MagicResist]
+            );
+
             nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Speed]);
 
             lblHpIncrease.Text = Strings.ClassEditor.hpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblMpIncrease.Text = Strings.ClassEditor.mpboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblStrengthIncrease.Text = Strings.ClassEditor.attackboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblArmorIncrease.Text = Strings.ClassEditor.armorboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblSpeedIncrease.Text = Strings.ClassEditor.speedboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblMagicIncrease.Text = Strings.ClassEditor.abilitypowerboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
+
             lblMagicResistIncrease.Text = Strings.ClassEditor.magicresistboost.ToString(
-                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
+                rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
+            );
 
             nudPointsIncrease.Value = mEditorItem.PointIncrease;
         }
@@ -783,8 +909,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstClasses.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ClassEditor.deleteprompt,
-                        Strings.ClassEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ClassEditor.deleteprompt, Strings.ClassEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -814,8 +942,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ClassEditor.undoprompt,
-                        Strings.ClassEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ClassEditor.undoprompt, Strings.ClassEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -876,7 +1006,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            mEditorItem.AttackAnimation =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -909,7 +1040,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Scaling = (int) (nudScaling.Value);
+            mEditorItem.Scaling = (int) nudScaling.Value;
         }
 
         private void nudX_ValueChanged(object sender, EventArgs e)
@@ -1058,20 +1189,32 @@ namespace Intersect.Editor.Forms.Editors
             var spawnItems = mEditorItem.Items.ToArray();
             foreach (var spawnItem in spawnItems)
             {
-                if (ItemBase.Get(spawnItem.Id) == null) mEditorItem.Items.Remove(spawnItem);
+                if (ItemBase.Get(spawnItem.Id) == null)
+                {
+                    mEditorItem.Items.Remove(spawnItem);
+                }
             }
-            for (int i = 0; i < mEditorItem.Items.Count; i++)
+
+            for (var i = 0; i < mEditorItem.Items.Count; i++)
             {
                 if (mEditorItem.Items[i].Id != Guid.Empty)
                 {
-                    lstSpawnItems.Items.Add(Strings.ClassEditor.spawnitemdisplay.ToString(ItemBase.GetName(mEditorItem.Items[i].Id), mEditorItem.Items[i].Quantity));
+                    lstSpawnItems.Items.Add(
+                        Strings.ClassEditor.spawnitemdisplay.ToString(
+                            ItemBase.GetName(mEditorItem.Items[i].Id), mEditorItem.Items[i].Quantity
+                        )
+                    );
                 }
                 else
                 {
                     lstSpawnItems.Items.Add(TextUtils.None);
                 }
             }
-            if (keepIndex && index < lstSpawnItems.Items.Count) lstSpawnItems.SelectedIndex = index;
+
+            if (keepIndex && index < lstSpawnItems.Items.Count)
+            {
+                lstSpawnItems.SelectedIndex = index;
+            }
         }
 
         private void cmbSpawnItem_SelectedIndexChanged(object sender, EventArgs e)
@@ -1080,13 +1223,18 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Items[lstSpawnItems.SelectedIndex].Id = ItemBase.IdFromList(cmbSpawnItem.SelectedIndex - 1);
             }
+
             UpdateSpawnItemValues(true);
         }
 
         private void nudSpawnItemAmount_ValueChanged(object sender, EventArgs e)
         {
-            if (lstSpawnItems.SelectedIndex < lstSpawnItems.Items.Count) return;
-            mEditorItem.Items[(int)lstSpawnItems.SelectedIndex].Quantity = (int)nudSpawnItemAmount.Value;
+            if (lstSpawnItems.SelectedIndex < lstSpawnItems.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Items[(int) lstSpawnItems.SelectedIndex].Quantity = (int) nudSpawnItemAmount.Value;
             UpdateSpawnItemValues(true);
         }
 
@@ -1103,7 +1251,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Items.Add(new ClassItem());
             mEditorItem.Items[mEditorItem.Items.Count - 1].Id = ItemBase.IdFromList(cmbSpawnItem.SelectedIndex - 1);
-            mEditorItem.Items[mEditorItem.Items.Count - 1].Quantity = (int)nudSpawnItemAmount.Value;
+            mEditorItem.Items[mEditorItem.Items.Count - 1].Quantity = (int) nudSpawnItemAmount.Value;
 
             UpdateSpawnItemValues();
         }
@@ -1112,16 +1260,17 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpawnItems.SelectedIndex > -1)
             {
-                int i = lstSpawnItems.SelectedIndex;
+                var i = lstSpawnItems.SelectedIndex;
                 lstSpawnItems.Items.RemoveAt(i);
                 mEditorItem.Items.RemoveAt(i);
             }
+
             UpdateSpawnItemValues(true);
         }
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
+            mEditorItem.CritMultiplier = (double) nudCritMultiplier.Value;
         }
 
         private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -1132,7 +1281,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+            mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
         }
 
         #region "Exp Grid"
@@ -1144,7 +1293,7 @@ namespace Intersect.Editor.Forms.Editors
 
             expGrid.Rows.Clear();
 
-            for (int i = 1; i <= Options.MaxLevel; i++)
+            for (var i = 1; i <= Options.MaxLevel; i++)
             {
                 var index = expGrid.Rows.Add(i.ToString(), "", "");
                 var row = expGrid.Rows[index];
@@ -1157,30 +1306,48 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateExpGridValues(int start, int end = -1)
         {
-            if (end == -1) end = Options.MaxLevel;
-            if (start > end) return;
-            if (start < 1) start = 1;
-            for (int i = start; i <= end; i++)
+            if (end == -1)
+            {
+                end = Options.MaxLevel;
+            }
+
+            if (start > end)
+            {
+                return;
+            }
+
+            if (start < 1)
+            {
+                start = 1;
+            }
+
+            for (var i = start; i <= end; i++)
             {
                 if (i < Options.MaxLevel)
                 {
                     if (mEditorItem.ExperienceOverrides.ContainsKey(i))
                     {
-                        expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(mEditorItem.ExperienceOverrides[i], expGrid.Rows[i-1].Cells[1].ValueType);
+                        expGrid.Rows[i - 1].Cells[1].Value = Convert.ChangeType(
+                            mEditorItem.ExperienceOverrides[i], expGrid.Rows[i - 1].Cells[1].ValueType
+                        );
+
                         var style = expGrid.Rows[i - 1].Cells[1].InheritedStyle;
                         style.Font = new Font(style.Font, FontStyle.Bold);
                         expGrid.Rows[i - 1].Cells[1].Style.ApplyStyle(style);
                     }
                     else
                     {
-                        expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(mEditorItem.ExperienceCurve.Calculate(i), expGrid.Rows[i-1].Cells[1].ValueType);
-                        expGrid.Rows[i - 1].Cells[1].Style.ApplyStyle(expGrid.Rows[i-1].Cells[0].InheritedStyle);
+                        expGrid.Rows[i - 1].Cells[1].Value = Convert.ChangeType(
+                            mEditorItem.ExperienceCurve.Calculate(i), expGrid.Rows[i - 1].Cells[1].ValueType
+                        );
+
+                        expGrid.Rows[i - 1].Cells[1].Style.ApplyStyle(expGrid.Rows[i - 1].Cells[0].InheritedStyle);
                     }
                 }
                 else
                 {
-                    expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(0, expGrid.Rows[i-1].Cells[1].ValueType);
-                    expGrid.Rows[i-1].Cells[1].ReadOnly = true;
+                    expGrid.Rows[i - 1].Cells[1].Value = Convert.ChangeType(0, expGrid.Rows[i - 1].Cells[1].ValueType);
+                    expGrid.Rows[i - 1].Cells[1].ReadOnly = true;
                 }
 
                 if (i == 1)
@@ -1189,7 +1356,11 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 else
                 {
-                    expGrid.Rows[i - 1].Cells[2].Value = Convert.ChangeType(long.Parse(expGrid.Rows[i - 2].Cells[2].Value.ToString()) + long.Parse(expGrid.Rows[i - 2].Cells[1].Value.ToString()), expGrid.Rows[i - 1].Cells[2].ValueType);
+                    expGrid.Rows[i - 1].Cells[2].Value = Convert.ChangeType(
+                        long.Parse(expGrid.Rows[i - 2].Cells[2].Value.ToString()) +
+                        long.Parse(expGrid.Rows[i - 2].Cells[1].Value.ToString()),
+                        expGrid.Rows[i - 1].Cells[2].ValueType
+                    );
                 }
             }
         }
@@ -1201,13 +1372,15 @@ namespace Intersect.Editor.Forms.Editors
 
         private void expGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && expGrid.CurrentCell != null && expGrid.CurrentCell.IsInEditMode == false)
+            if (e.Button == MouseButtons.Right &&
+                expGrid.CurrentCell != null &&
+                expGrid.CurrentCell.IsInEditMode == false)
             {
                 var cell = expGrid.CurrentCell;
                 if (cell != null)
                 {
-                    Rectangle r = cell.DataGridView.GetCellDisplayRectangle(cell.ColumnIndex, cell.RowIndex, false);
-                    System.Drawing.Point p = new System.Drawing.Point(r.X + r.Width, r.Y + r.Height);
+                    var r = cell.DataGridView.GetCellDisplayRectangle(cell.ColumnIndex, cell.RowIndex, false);
+                    var p = new System.Drawing.Point(r.X + r.Width, r.Y + r.Height);
                     mnuExpGrid.Show((DataGridView) sender, p);
                 }
             }
@@ -1215,10 +1388,16 @@ namespace Intersect.Editor.Forms.Editors
 
         private void expGrid_SelectionChanged(object sender, EventArgs e)
         {
-            if (expGrid.Rows.Count <= 0) return;
+            if (expGrid.Rows.Count <= 0)
+            {
+                return;
+            }
+
             var sel = expGrid.SelectedCells;
             if (sel.Count == 0)
+            {
                 expGrid.Rows[0].Cells[1].Selected = true;
+            }
             else
             {
                 var selection = sel[0];
@@ -1233,17 +1412,17 @@ namespace Intersect.Editor.Forms.Editors
         {
             try
             {
-                string s = Clipboard.GetText();
-                string[] lines = s.Split('\n');
+                var s = Clipboard.GetText();
+                var lines = s.Split('\n');
                 int iFail = 0, iRow = expGrid.CurrentCell.RowIndex;
-                int iCol = expGrid.CurrentCell.ColumnIndex;
+                var iCol = expGrid.CurrentCell.ColumnIndex;
                 DataGridViewCell oCell;
-                foreach (string line in lines)
+                foreach (var line in lines)
                 {
                     if (iRow < expGrid.RowCount && line.Length > 0)
                     {
-                        string[] sCells = line.Split('\t');
-                        for (int i = 0; i < 1; ++i)
+                        var sCells = line.Split('\t');
+                        for (var i = 0; i < 1; ++i)
                         {
                             if (iCol + i < this.expGrid.ColumnCount)
                             {
@@ -1252,7 +1431,7 @@ namespace Intersect.Editor.Forms.Editors
                                 {
                                     if (oCell.Value.ToString() != sCells[i])
                                     {
-                                        int val = 0;
+                                        var val = 0;
                                         if (int.TryParse(sCells[i], out val))
                                         {
                                             if (val > 0)
@@ -1262,23 +1441,30 @@ namespace Intersect.Editor.Forms.Editors
                                         }
                                     }
                                     else
+                                    {
                                         iFail++;
+                                    }
+
                                     //only traps a fail if the data has changed 
                                     //and you are pasting into a read only cell
                                 }
                             }
                             else
-                            { break; }
+                            {
+                                break;
+                            }
                         }
+
                         iRow++;
                     }
                     else
-                    { break; }
+                    {
+                        break;
+                    }
                 }
             }
             catch (Exception)
             {
-
                 return;
             }
         }
@@ -1286,7 +1472,7 @@ namespace Intersect.Editor.Forms.Editors
         private void expGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             e.Control.KeyPress -= new KeyPressEventHandler(expGrid_KeyPress);
-            TextBox tb = e.Control as TextBox;
+            var tb = e.Control as TextBox;
             if (tb != null)
             {
                 tb.KeyPress += new KeyPressEventHandler(expGrid_KeyPress);
@@ -1353,6 +1539,7 @@ namespace Intersect.Editor.Forms.Editors
                         {
                             mEditorItem.ExperienceOverrides.Remove(level);
                         }
+
                         UpdateExpGridValues(level);
                     }
                 }
@@ -1362,10 +1549,15 @@ namespace Intersect.Editor.Forms.Editors
         #endregion
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.ClassEditor.folderprompt, Strings.ClassEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.ClassEditor.folderprompt, Strings.ClassEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -1390,6 +1582,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstClasses.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -1408,20 +1601,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstClasses_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstClasses.SelectedNode == null || lstClasses.SelectedNode.Tag == null) return;
-            mEditorItem = ClassBase.Get((Guid)lstClasses.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstClasses.SelectedNode == null || lstClasses.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = ClassBase.Get((Guid) lstClasses.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -1463,18 +1670,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ClassEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.ClassEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.ClassEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
-
 
         #endregion
 
-
     }
+
 }

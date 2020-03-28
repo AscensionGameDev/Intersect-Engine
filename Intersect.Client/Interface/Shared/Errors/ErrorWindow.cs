@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
@@ -11,8 +8,10 @@ using Intersect.Client.Interface.Game;
 
 namespace Intersect.Client.Interface.Shared.Errors
 {
+
     class ErrorWindow
     {
+
         List<InputBox> mErrorWindows = new List<InputBox>();
 
         public ErrorWindow(Canvas gameCanvas, Canvas menuCanvas, string error, string header)
@@ -23,13 +22,16 @@ namespace Intersect.Client.Interface.Shared.Errors
 
         private void CreateErrorWindow(Canvas canvas, string error, string header, GameContentManager.UI stage)
         {
-            var window = new InputBox(header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas, stage);
+            var window = new InputBox(
+                header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas, stage
+            );
+
             mErrorWindows.Add(window);
         }
 
         private void OkayClicked(Object sender, EventArgs args)
         {
-            foreach (InputBox window in mErrorWindows)
+            foreach (var window in mErrorWindows)
             {
                 window.Dispose();
             }
@@ -42,8 +44,12 @@ namespace Intersect.Client.Interface.Shared.Errors
 
         protected virtual void ErrorBox_Resized(Base sender, EventArgs arguments)
         {
-            sender.SetPosition(Graphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2);
+            sender.SetPosition(
+                Graphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
+                Graphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2
+            );
         }
+
     }
+
 }

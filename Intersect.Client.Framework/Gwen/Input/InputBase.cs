@@ -2,11 +2,16 @@
 
 namespace Intersect.Client.Framework.Gwen.Input
 {
+
     public abstract class InputBase
     {
+
         public bool HandleInput = true;
+
         private Canvas mCanvas;
+
         private int mMouseX;
+
         private int mMouseY;
 
         public InputBase()
@@ -37,5 +42,7 @@ namespace Intersect.Client.Framework.Gwen.Input
         ///     Main entrypoint for processing input events. Call from your RenderWindow's event handlers.
         /// </summary>
         public abstract bool ProcessMessage(object message);
+
     }
+
 }

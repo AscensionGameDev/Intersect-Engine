@@ -1,15 +1,14 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Extensions
 {
+
     [TestFixture]
     public class GameObjectInfoAttributeTests
     {
+
         [Test]
         public void GameObjectInfoAttributeTest()
         {
@@ -21,5 +20,7 @@ namespace Intersect.Extensions
             Assert.AreEqual(type, gameObjectInfo.Type);
             Assert.AreEqual(table, gameObjectInfo.Table);
         }
+
     }
+
 }

@@ -5,8 +5,10 @@ using Intersect.Logging;
 
 namespace Intersect.Server.Web.RestApi.Extensions
 {
+
     public static class HttpStatusCodeExtensions
     {
+
         public static LogLevel ToIntersectLogLevel(this HttpStatusCode httpStatusCode, HttpMethod httpMethod = null)
         {
             // 1xx
@@ -22,7 +24,7 @@ namespace Intersect.Server.Web.RestApi.Extensions
                 {
                     return LogLevel.Debug;
                 }
-                
+
                 return LogLevel.Info;
             }
 
@@ -41,7 +43,9 @@ namespace Intersect.Server.Web.RestApi.Extensions
                 case HttpStatusCode.RequestUriTooLong:
                 case HttpStatusCode.UnsupportedMediaType:
                 case HttpStatusCode.RequestedRangeNotSatisfiable:
-                    if (httpMethod == HttpMethod.Get || httpMethod == HttpMethod.Head || httpMethod == HttpMethod.Options)
+                    if (httpMethod == HttpMethod.Get ||
+                        httpMethod == HttpMethod.Head ||
+                        httpMethod == HttpMethod.Options)
                     {
                         return LogLevel.Info;
                     }
@@ -54,14 +58,16 @@ namespace Intersect.Server.Web.RestApi.Extensions
                 case HttpStatusCode.ProxyAuthenticationRequired:
                 case HttpStatusCode.Conflict:
                 case HttpStatusCode.Gone:
-                    if (httpMethod == HttpMethod.Get || httpMethod == HttpMethod.Head || httpMethod == HttpMethod.Options)
+                    if (httpMethod == HttpMethod.Get ||
+                        httpMethod == HttpMethod.Head ||
+                        httpMethod == HttpMethod.Options)
                     {
                         return LogLevel.Warn;
                     }
 
                     return LogLevel.Error;
 
-                case (HttpStatusCode)429:
+                case (HttpStatusCode) 429:
                     return LogLevel.Error;
             }
 
@@ -74,5 +80,7 @@ namespace Intersect.Server.Web.RestApi.Extensions
 
             return LogLevel.Error;
         }
+
     }
+
 }

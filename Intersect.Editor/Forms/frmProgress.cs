@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 
 namespace Intersect.Editor.Forms
 {
+
     public partial class FrmProgress : Form
     {
+
         private int mProgressVal;
+
         private bool mShouldClose;
+
         private bool mShowCancelBtn;
+
         private string mStatusText;
 
         public FrmProgress()
@@ -64,5 +70,7 @@ namespace Intersect.Editor.Forms
                 }
             }
         }
+
     }
+
 }

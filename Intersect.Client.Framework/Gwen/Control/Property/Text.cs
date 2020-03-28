@@ -1,10 +1,12 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control.Property
 {
+
     /// <summary>
     ///     Text property.
     /// </summary>
     public class Text : Base
     {
+
         protected readonly TextBox mTextBox;
 
         /// <summary>
@@ -47,5 +49,7 @@
         {
             mTextBox.SetText(value, fireEvents);
         }
+
     }
+
 }

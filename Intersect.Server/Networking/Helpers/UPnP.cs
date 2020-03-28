@@ -2,18 +2,25 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Intersect.Logging;
 using Intersect.Server.Localization;
+
 using Open.Nat;
 
 namespace Intersect.Server.Networking.Helpers
 {
+
     public static class UpnP
     {
+
         private static NatDevice sDevice;
+
         private static string sExternalIp;
-        private static bool sPortForwarded;
+
         private static StringBuilder sLog = new StringBuilder();
+
+        private static bool sPortForwarded;
 
         public static async Task<NatDevice> ConnectNatDevice()
         {
@@ -32,6 +39,7 @@ namespace Intersect.Server.Networking.Helpers
                 sLog.AppendLine(Strings.Upnp.initializationfailed);
                 sLog.AppendLine("UPnP Initialization Error: " + exception.ToString());
             }
+
             return null;
         }
 
@@ -50,18 +58,20 @@ namespace Intersect.Server.Networking.Helpers
                     await sDevice.DeletePortMapAsync(map);
                 }
 
-                await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port,"Intersect Engine"));
+                await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port, "Intersect Engine"));
                 switch (protocol)
                 {
                     case Protocol.Tcp:
                         Log.Pretty.Info(Strings.Upnp.forwardedtcp.ToString(port));
                         sLog.AppendLine(Strings.Upnp.forwardedtcp.ToString(port));
+
                         break;
 
                     case Protocol.Udp:
                         Log.Pretty.Info(Strings.Upnp.forwardedudp.ToString(port));
                         sLog.AppendLine(Strings.Upnp.forwardedudp.ToString(port));
                         sPortForwarded = true;
+
                         break;
 
                     default:
@@ -76,18 +86,21 @@ namespace Intersect.Server.Networking.Helpers
                         Log.Pretty.Warn(Strings.Upnp.failedforwardingtcp.ToString(port));
                         Log.Warn("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
                         sLog.AppendLine("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
+
                         break;
 
                     case Protocol.Udp:
                         Log.Pretty.Warn(Strings.Upnp.failedforwardingudp.ToString(port));
                         Log.Warn("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
                         sLog.AppendLine("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
+
                         break;
 
                     default:
                         throw new ArgumentOutOfRangeException(nameof(protocol), protocol, null);
                 }
             }
+
             return null;
         }
 
@@ -105,5 +118,7 @@ namespace Intersect.Server.Networking.Helpers
         {
             return sLog.ToString();
         }
+
     }
+
 }

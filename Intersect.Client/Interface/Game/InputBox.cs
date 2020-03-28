@@ -9,38 +9,72 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class InputBox
     {
+
         public enum InputType
         {
+
             OkayOnly,
+
             YesNo,
+
             NumericInput,
+
             TextInput,
+
         }
 
+        private GameContentManager.UI _uiStage;
+
         private bool mInitialized = false;
+
         private InputType mInputType;
 
         private WindowControl mMyWindow;
+
         private Button mNoButton;
-        private Button mOkayButton;
-        private string mPrompt = "";
-        private Label mPromptLabel;
+
         private TextBoxNumeric mNumericTextbox;
+
         private ImagePanel mNumericTextboxBg;
+
+        private Button mOkayButton;
+
+        private string mPrompt = "";
+
+        private Label mPromptLabel;
+
         private TextBox mTextbox;
+
         private ImagePanel mTextboxBg;
-        private GameContentManager.UI _uiStage;
+
         private Button mYesButton;
-        public object UserData;
-        public float Value;
+
         public string TextValue;
 
-        public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
-            EventHandler cancelClicked, object userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
+        public object UserData;
+
+        public float Value;
+
+        public InputBox(
+            string title,
+            string prompt,
+            bool modal,
+            InputType inputtype,
+            EventHandler okayYesSubmitClicked,
+            EventHandler cancelClicked,
+            object userData,
+            Base parent = null,
+            GameContentManager.UI stage = GameContentManager.UI.InGame
+        )
         {
-            if (parent == null) parent = Interface.GameUi.GameCanvas;
+            if (parent == null)
+            {
+                parent = Interface.GameUi.GameCanvas;
+            }
+
             OkayEventHandler = okayYesSubmitClicked;
             CancelEventHandler = cancelClicked;
             this.UserData = userData;
@@ -55,11 +89,17 @@ namespace Intersect.Client.Interface.Game
 
             mNumericTextboxBg = new ImagePanel(mMyWindow, "Textbox");
             mNumericTextbox = new TextBoxNumeric(mNumericTextboxBg, "TextboxText");
-            if (inputtype == InputType.NumericInput) mNumericTextbox.Focus();
+            if (inputtype == InputType.NumericInput)
+            {
+                mNumericTextbox.Focus();
+            }
 
             mTextboxBg = new ImagePanel(mMyWindow, "Textbox");
             mTextbox = new TextBox(mTextboxBg, "TextboxText");
-            if (inputtype == InputType.TextInput) mTextbox.Focus();
+            if (inputtype == InputType.TextInput)
+            {
+                mTextbox.Focus();
+            }
 
             if (inputtype != InputType.NumericInput)
             {
@@ -92,8 +132,8 @@ namespace Intersect.Client.Interface.Game
             {
                 mMyWindow.LoadJsonUi(_uiStage, Graphics.Renderer.GetResolutionString(), true);
                 var text = Interface.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
-                int y = mPromptLabel.Y;
-                foreach (string s in text)
+                var y = mPromptLabel.Y;
+                foreach (var s in text)
                 {
                     var label = new Label(mMyWindow)
                     {
@@ -101,6 +141,7 @@ namespace Intersect.Client.Interface.Game
                         TextColorOverride = mPromptLabel.TextColor,
                         Font = mPromptLabel.Font
                     };
+
                     label.SetPosition(mPromptLabel.X, y);
                     y += label.Height;
                     Align.CenterHorizontally(label);
@@ -116,6 +157,7 @@ namespace Intersect.Client.Interface.Game
                         mNoButton.Show();
                         mNumericTextboxBg.Hide();
                         mTextboxBg.Hide();
+
                         break;
                     case InputType.OkayOnly:
                         mOkayButton.Show();
@@ -123,6 +165,7 @@ namespace Intersect.Client.Interface.Game
                         mNoButton.Hide();
                         mNumericTextboxBg.Hide();
                         mTextboxBg.Hide();
+
                         break;
                     case InputType.NumericInput:
                         mOkayButton.Hide();
@@ -130,6 +173,7 @@ namespace Intersect.Client.Interface.Game
                         mNoButton.Show();
                         mNumericTextboxBg.Show();
                         mTextboxBg.Hide();
+
                         break;
                     case InputType.TextInput:
                         mOkayButton.Hide();
@@ -137,8 +181,10 @@ namespace Intersect.Client.Interface.Game
                         mNoButton.Show();
                         mNumericTextboxBg.Hide();
                         mTextboxBg.Show();
+
                         break;
                 }
+
                 mMyWindow.Show();
                 mMyWindow.Focus();
                 mInitialized = true;
@@ -146,6 +192,7 @@ namespace Intersect.Client.Interface.Game
         }
 
         private event EventHandler OkayEventHandler;
+
         private event EventHandler CancelEventHandler;
 
         void cancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -154,14 +201,17 @@ namespace Intersect.Client.Interface.Game
             {
                 Value = mNumericTextbox.Value;
             }
+
             if (mTextbox != null)
             {
                 TextValue = mTextbox.Text;
             }
+
             if (CancelEventHandler != null)
             {
                 CancelEventHandler(this, EventArgs.Empty);
             }
+
             Dispose();
         }
 
@@ -171,14 +221,17 @@ namespace Intersect.Client.Interface.Game
             {
                 Value = mNumericTextbox.Value;
             }
+
             if (mTextbox != null)
             {
                 TextValue = mTextbox.Text;
             }
+
             if (OkayEventHandler != null)
             {
                 OkayEventHandler(this, EventArgs.Empty);
             }
+
             Dispose();
         }
 
@@ -188,5 +241,7 @@ namespace Intersect.Client.Interface.Game
             mMyWindow.Parent.RemoveChild(mMyWindow, false);
             mMyWindow.Dispose();
         }
+
     }
+
 }

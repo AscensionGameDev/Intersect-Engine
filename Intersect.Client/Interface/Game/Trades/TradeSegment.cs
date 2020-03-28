@@ -7,18 +7,26 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game.Trades
 {
+
     public class TradeSegment
     {
+
         private static int sItemXPadding = 4;
+
         private static int sItemYPadding = 4;
 
-        public ScrollControl ItemContainer;
-        private ImagePanel mItemTemplate;
         public Label GoldValue;
+
+        public ScrollControl ItemContainer;
+
         public List<TradeItem> Items = new List<TradeItem>();
 
-        public int MyIndex;
+        private ImagePanel mItemTemplate;
+
         private TradingWindow mParent;
+
+        public int MyIndex;
+
         public List<Label> Values = new List<Label>();
 
         public TradeSegment(TradingWindow parent, WindowControl tradeWindow, int index)
@@ -37,7 +45,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
             GoldValue = new Label(tradeWindow, prefix + "GoldValue")
             {
-                Text = Strings.Trading.value.ToString( 0)
+                Text = Strings.Trading.value.ToString(0)
             };
         }
 
@@ -48,7 +56,8 @@ namespace Intersect.Client.Interface.Game.Trades
             {
                 prefix = "Their";
             }
-            for (int i = 0; i < Options.MaxInvItems; i++)
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 Items.Add(new TradeItem(mParent, i, index));
                 Items[i].Container = new ImagePanel(ItemContainer, prefix + "TradeItem");
@@ -61,12 +70,20 @@ namespace Intersect.Client.Interface.Game.Trades
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (ItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (ItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i]
+                    .Container.SetPosition(
+                        i %
+                        (ItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Width + xPadding) +
+                        xPadding,
+                        i /
+                        (ItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Height + yPadding) +
+                        yPadding
+                    );
             }
         }
+
     }
+
 }

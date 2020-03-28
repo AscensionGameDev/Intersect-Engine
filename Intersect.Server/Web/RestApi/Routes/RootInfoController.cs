@@ -1,16 +1,16 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Server.Web.RestApi.Routes
 {
+
     [RoutePrefix("info")]
     public class RootInfoController : ApiController
     {
-        [NotNull]
-        private static string[] DiscoveredVersions { get; }
 
         static RootInfoController()
         {
@@ -23,6 +23,9 @@ namespace Intersect.Server.Web.RestApi.Routes
                 .Where(ns => !string.IsNullOrWhiteSpace(ns))
                 .ToArray();
         }
+
+        [NotNull]
+        private static string[] DiscoveredVersions { get; }
 
         [Route]
         [HttpGet]
@@ -43,5 +46,7 @@ namespace Intersect.Server.Web.RestApi.Routes
         {
             return DiscoveredVersions;
         }
+
     }
+
 }

@@ -19,8 +19,25 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Intersect.Server.Database.GameData
 {
+
     public class GameContext : IntersectDbContext<GameContext>
     {
+
+        public GameContext() : base(DefaultConnectionStringBuilder)
+        {
+            Current = this;
+        }
+
+        public GameContext(
+            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType,
+            Intersect.Logging.Logger logger = null,
+            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+        ) : base(connectionStringBuilder, databaseType, false, logger, logLevel)
+        {
+            Current = this;
+        }
+
         [NotNull]
         public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
             new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
@@ -32,6 +49,7 @@ namespace Intersect.Server.Database.GameData
 
         //Crafting
         public DbSet<CraftBase> Crafts { get; set; }
+
         public DbSet<CraftingTableBase> CraftingTables { get; set; }
 
         //Classes
@@ -45,6 +63,7 @@ namespace Intersect.Server.Database.GameData
 
         //Maps
         public DbSet<MapInstance> Maps { get; set; }
+
         public DbSet<MapList> MapFolders { get; set; }
 
         //NPCs
@@ -67,6 +86,7 @@ namespace Intersect.Server.Database.GameData
 
         //Variables
         public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
+
         public DbSet<ServerVariableBase> ServerVariables { get; set; }
 
         //Tilesets
@@ -74,19 +94,6 @@ namespace Intersect.Server.Database.GameData
 
         //Time
         public DbSet<TimeBase> Time { get; set; }
-
-        public GameContext() : base(DefaultConnectionStringBuilder)
-        {
-            Current = this;
-        }
-
-        public GameContext(
-            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType, Intersect.Logging.Logger logger = null, Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, false, logger, logLevel)
-        {
-            Current = this;
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -103,24 +110,25 @@ namespace Intersect.Server.Database.GameData
         internal static class Queries
         {
 
-            [NotNull]
-            internal static readonly Func<GameContext, int, int, IEnumerable<ServerVariableBase>> ServerVariables =
+            [NotNull] internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
                 EF.CompileQuery(
-                    (GameContext context, int page, int count) =>
-                        context.ServerVariables
-                            .OrderBy(variable => variable.Id.ToString())
-                            .Skip(page * count)
-                            .Take(count)
+                    (GameContext context, Guid id) =>
+                        context.ServerVariables.FirstOrDefault(variable => variable.Id == id)
                 ) ??
                 throw new InvalidOperationException();
 
             [NotNull]
-            internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
-                EF.CompileQuery((GameContext context, Guid id) =>
-                    context.ServerVariables
-                        .FirstOrDefault(variable => variable.Id == id))
-                ?? throw new InvalidOperationException();
+            internal static readonly Func<GameContext, int, int, IEnumerable<ServerVariableBase>> ServerVariables =
+                EF.CompileQuery(
+                    (GameContext context, int page, int count) => context.ServerVariables
+                        .OrderBy(variable => variable.Id.ToString())
+                        .Skip(page * count)
+                        .Take(count)
+                ) ??
+                throw new InvalidOperationException();
 
         }
+
     }
+
 }

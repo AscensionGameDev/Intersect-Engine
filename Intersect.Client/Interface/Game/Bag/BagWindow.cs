@@ -11,19 +11,22 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bag
 {
+
     public class BagWindow
     {
+
         private static int sItemXPadding = 4;
 
         private static int sItemYPadding = 4;
+
+        public List<BagItem> Items = new List<BagItem>();
 
         //Controls
         private WindowControl mBagWindow;
 
         private ScrollControl mItemContainer;
-        private List<Label> mValues = new List<Label>();
 
-        public List<BagItem> Items = new List<BagItem>();
+        private List<Label> mValues = new List<Label>();
 
         //Init
         public BagWindow(Canvas gameCanvas)
@@ -42,15 +45,9 @@ namespace Intersect.Client.Interface.Game.Bag
 
         //Location
         //Location
-        public int X
-        {
-            get { return mBagWindow.X; }
-        }
+        public int X => mBagWindow.X;
 
-        public int Y
-        {
-            get { return mBagWindow.Y; }
-        }
+        public int Y => mBagWindow.Y;
 
         public void Close()
         {
@@ -73,7 +70,8 @@ namespace Intersect.Client.Interface.Game.Bag
             {
                 return;
             }
-            for (int i = 0; i < Globals.Bag.Length; i++)
+
+            for (var i = 0; i < Globals.Bag.Length; i++)
             {
                 if (Globals.Bag[i] != null && Globals.Bag[i].ItemId != Guid.Empty)
                 {
@@ -97,6 +95,7 @@ namespace Intersect.Client.Interface.Game.Bag
                             Items[i].Pnl.IsHidden = true;
                             mValues[i].IsHidden = true;
                         }
+
                         Items[i].Update();
                     }
                 }
@@ -110,7 +109,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         private void InitItemContainer()
         {
-            for (int i = 0; i < Globals.Bag.Length; i++)
+            for (var i = 0; i < Globals.Bag.Length; i++)
             {
                 Items.Add(new BagItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "BagItem");
@@ -122,24 +121,33 @@ namespace Intersect.Client.Interface.Game.Bag
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i]
+                    .Container.SetPosition(
+                        i %
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Width + xPadding) +
+                        xPadding,
+                        i /
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Height + yPadding) +
+                        yPadding
+                    );
             }
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = mBagWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
                 Y = mBagWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
                 Width = mBagWindow.Width + sItemXPadding,
                 Height = mBagWindow.Height + sItemYPadding
             };
+
             return rect;
         }
+
     }
+
 }

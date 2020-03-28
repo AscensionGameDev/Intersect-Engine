@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Interface.Game;
 using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared.Errors
 {
+
     public class ErrorHandler
     {
+
         //Controls
         private List<ErrorWindow> mErrors = new List<ErrorWindow>();
 
@@ -30,13 +28,19 @@ namespace Intersect.Client.Interface.Shared.Errors
         {
             if (Interface.MsgboxErrors.Count > 0)
             {
-                mErrors.Add(new ErrorWindow(mGameCanvas, mMenuCanvas, Interface.MsgboxErrors[0].Value,
-                    !string.IsNullOrEmpty(Interface.MsgboxErrors[0].Key)
-                        ? Interface.MsgboxErrors[0].Key
-                        : Strings.Errors.title.ToString()));
+                mErrors.Add(
+                    new ErrorWindow(
+                        mGameCanvas, mMenuCanvas, Interface.MsgboxErrors[0].Value,
+                        !string.IsNullOrEmpty(Interface.MsgboxErrors[0].Key)
+                            ? Interface.MsgboxErrors[0].Key
+                            : Strings.Errors.title.ToString()
+                    )
+                );
+
                 Interface.MsgboxErrors.RemoveAt(0);
             }
-            for (int i = 0; i < mErrors.Count; i++)
+
+            for (var i = 0; i < mErrors.Count; i++)
             {
                 if (!mErrors[i].Update())
                 {
@@ -44,6 +48,7 @@ namespace Intersect.Client.Interface.Shared.Errors
                 }
             }
         }
+
     }
 
 }

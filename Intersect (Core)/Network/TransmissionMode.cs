@@ -1,7 +1,9 @@
 ﻿namespace Intersect.Network
 {
+
     public enum TransmissionMode
     {
+
         /// <summary>
         ///     Guarantees that all packets will be transmitted successfully
         ///     and will be received and processed in the order they are sent.
@@ -19,5 +21,7 @@
         ///     Makes no guarantees about anything.
         /// </summary>
         Any
+
     }
+
 }

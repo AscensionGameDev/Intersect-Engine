@@ -10,24 +10,26 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal class ApiGrantCommand : TargetUserCommand
     {
-        [NotNull]
-        private VariableArgument<string> Role => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         public ApiGrantCommand() : base(
-            Strings.Commands.ApiGrant,
-            Strings.Commands.Arguments.TargetApi,
+            Strings.Commands.ApiGrant, Strings.Commands.Arguments.TargetApi,
             new VariableArgument<string>(Strings.Commands.Arguments.ApiRole, RequiredIfNotHelp, true)
         )
         {
         }
+
+        [NotNull]
+        private VariableArgument<string> Role => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)
         {
             if (target == null)
             {
                 Console.WriteLine($@"    {Strings.Account.notfound}");
+
                 return;
             }
 
@@ -41,9 +43,10 @@ namespace Intersect.Server.Core.Commands
             if (!target.Power.Api)
             {
                 Console.WriteLine(Strings.Commandoutput.apirolenotgranted.ToString(role, target.Name));
+
                 return;
             }
-            
+
             if (string.Equals("users.query", role, StringComparison.OrdinalIgnoreCase))
             {
                 target.Power.ApiRoles.UserQuery = true;
@@ -57,6 +60,7 @@ namespace Intersect.Server.Core.Commands
                 else
                 {
                     Console.WriteLine(Strings.Commandoutput.apiroleprereq.ToString(role, "users.query"));
+
                     return;
                 }
             }
@@ -64,6 +68,7 @@ namespace Intersect.Server.Core.Commands
             {
                 //Role Not Found
                 Console.WriteLine(Strings.Commandoutput.apirolenotfound.ToString(role));
+
                 return;
             }
 
@@ -71,5 +76,7 @@ namespace Intersect.Server.Core.Commands
 
             Console.WriteLine(Strings.Commandoutput.apirolegranted.ToString(target.Name, role));
         }
+
     }
+
 }

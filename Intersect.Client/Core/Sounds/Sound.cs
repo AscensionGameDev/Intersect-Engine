@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
@@ -10,20 +6,30 @@ using Intersect.Client.General;
 
 namespace Intersect.Client.Core.Sounds
 {
+
     public class Sound
     {
-        protected GameAudioInstance mSound;
-        protected string mFilename;
-        protected bool mLoop;
-        protected float mVolume;
+
         public bool Loaded;
+
+        protected string mFilename;
+
+        protected bool mLoop;
+
+        protected GameAudioInstance mSound;
+
+        protected float mVolume;
 
         public Sound(string filename, bool loop)
         {
-            if (String.IsNullOrEmpty(filename)) return;
+            if (String.IsNullOrEmpty(filename))
+            {
+                return;
+            }
+
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mLoop = loop;
-            GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
+            var sound = Globals.ContentManager.GetSound(mFilename);
             if (sound != null)
             {
                 mSound = sound.CreateInstance();
@@ -31,6 +37,19 @@ namespace Intersect.Client.Core.Sounds
                 mSound.SetVolume(Globals.Database.SoundVolume);
                 mSound.Play();
                 Loaded = true;
+            }
+        }
+
+        public bool Loop
+        {
+            get => mLoop;
+            set
+            {
+                mLoop = value;
+                if (mSound != null)
+                {
+                    mSound.IsLooping = mLoop;
+                }
             }
         }
 
@@ -47,8 +66,8 @@ namespace Intersect.Client.Core.Sounds
             }
 
             Stop();
-            return false;
 
+            return false;
         }
 
         public virtual void Stop()
@@ -62,17 +81,6 @@ namespace Intersect.Client.Core.Sounds
             Loaded = false;
         }
 
-        public bool Loop
-        {
-            get => mLoop;
-            set
-            {
-                mLoop = value;
-                if (mSound != null)
-                {
-                    mSound.IsLooping = mLoop;
-                }
-            }
-        }
     }
+
 }

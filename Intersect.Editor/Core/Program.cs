@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Logging;
@@ -12,8 +13,10 @@ using Intersect.Logging;
 // ReSharper disable once CheckNamespace
 namespace Intersect.Editor
 {
+
     public static class Program
     {
+
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
@@ -32,13 +35,14 @@ namespace Intersect.Editor
 
             //Place sqlite3.dll where it's needed.
             var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
-            using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Intersect.Editor.Resources." + dllname))
+            using (var resourceStream = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("Intersect.Editor.Resources." + dllname))
             {
                 Debug.Assert(resourceStream != null, "resourceStream != null");
                 using (var fileStream = new FileStream("sqlite3.dll", FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     var data = new byte[resourceStream.Length];
-                    resourceStream.Read(data, 0, (int)resourceStream.Length);
+                    resourceStream.Read(data, 0, (int) resourceStream.Length);
                     fileStream.Write(data, 0, data.Length);
                 }
             }
@@ -63,8 +67,13 @@ namespace Intersect.Editor
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
-            MessageBox.Show(@"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log");
+            MessageBox.Show(
+                @"The Intersect Editor has encountered an error and must close. Error information can be found in logs/errors.log"
+            );
+
             Environment.Exit(1);
         }
+
     }
+
 }

@@ -11,31 +11,44 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class ItemDescWindow
     {
+
         ImagePanel mDescWindow;
 
-        public ItemDescWindow([NotNull] ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "", string valueLabel = "", bool centerHorizontally = false)
+        public ItemDescWindow(
+            [NotNull] ItemBase item,
+            int amount,
+            int x,
+            int y,
+            int[] statBuffs,
+            string titleOverride = "",
+            string valueLabel = "",
+            bool centerHorizontally = false
+        )
         {
             var title = titleOverride;
             if (string.IsNullOrWhiteSpace(title))
+            {
                 title = item.Name;
+            }
 
             mDescWindow = new ImagePanel(Interface.GameUi.GameCanvas, "ItemDescWindow");
             if (item != null && item.ItemType == ItemTypes.Equipment)
             {
                 mDescWindow.Name = "ItemDescWindowExpanded";
             }
-            
+
             if (item != null)
             {
-                ImagePanel icon = new ImagePanel(mDescWindow, "ItemIcon");
+                var icon = new ImagePanel(mDescWindow, "ItemIcon");
 
-                Label itemName = new Label(mDescWindow, "ItemNameLabel");
+                var itemName = new Label(mDescWindow, "ItemNameLabel");
                 itemName.Text = title;
 
-                Label itemQuantity = new Label(mDescWindow, "ItemQuantityLabel");
-                
+                var itemQuantity = new Label(mDescWindow, "ItemQuantityLabel");
+
                 if (amount > 1)
                 {
                     itemQuantity.Text += amount.ToString("N0").Replace(",", Strings.Numbers.comma);
@@ -43,13 +56,15 @@ namespace Intersect.Client.Interface.Game
 
                 itemName.AddAlignment(Alignments.CenterH);
 
-                Label itemType = new Label(mDescWindow, "ItemTypeLabel");
-                Label itemValue = new Label(mDescWindow, "ItemValueLabel");
+                var itemType = new Label(mDescWindow, "ItemTypeLabel");
+                var itemValue = new Label(mDescWindow, "ItemValueLabel");
 
-                itemType.Text = Strings.ItemDesc.itemtypes[(int)item.ItemType];
+                itemType.Text = Strings.ItemDesc.itemtypes[(int) item.ItemType];
                 itemValue.SetText(valueLabel);
 
-                if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot >= 0 && item.EquipmentSlot < Options.EquipmentSlots.Count)
+                if (item.ItemType == ItemTypes.Equipment &&
+                    item.EquipmentSlot >= 0 &&
+                    item.EquipmentSlot < Options.EquipmentSlots.Count)
                 {
                     itemType.Text = Options.EquipmentSlots[item.EquipmentSlot];
                     if (item.EquipmentSlot == Options.WeaponIndex && item.TwoHanded)
@@ -61,7 +76,9 @@ namespace Intersect.Client.Interface.Game
                 if (item.Rarity > 0)
                 {
                     itemType.Text += " - " + Strings.ItemDesc.rarity[item.Rarity];
-                    Color rarity = CustomColors.Items.Rarities.ContainsKey(item.Rarity) ? CustomColors.Items.Rarities[item.Rarity] : Color.White;
+                    var rarity = CustomColors.Items.Rarities.ContainsKey(item.Rarity)
+                        ? CustomColors.Items.Rarities[item.Rarity]
+                        : Color.White;
 
                     itemType.TextColorOverride.R = rarity.R;
                     itemType.TextColorOverride.G = rarity.G;
@@ -69,39 +86,55 @@ namespace Intersect.Client.Interface.Game
                     itemType.TextColorOverride.A = rarity.A;
                 }
 
-                RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
+                var itemDesc = new RichLabel(mDescWindow, "ItemDescription");
                 var itemDescText = new Label(mDescWindow, "ItemDescText");
                 itemDescText.Font = itemDescText.Parent.Skin.DefaultFont;
                 var itemStatsText = new Label(mDescWindow, item.ItemType == ItemTypes.Equipment ? "ItemStatsText" : "");
                 itemStatsText.Font = itemStatsText.Parent.Skin.DefaultFont;
-                RichLabel itemStats = new RichLabel(mDescWindow, item.ItemType == ItemTypes.Equipment ? "ItemStats" : "");
+                var itemStats = new RichLabel(mDescWindow, item.ItemType == ItemTypes.Equipment ? "ItemStats" : "");
                 itemDescText.IsHidden = true;
                 itemStatsText.IsHidden = true;
+
                 //Load this up now so we know what color to make the text when filling out the desc
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
                 if (item.Description.Length > 0)
                 {
-                    itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Description), itemDesc.RenderColor,itemDescText.CurAlignments.Count > 0 ? itemDescText.CurAlignments[0] : Alignments.Left,itemDescText.Font);
+                    itemDesc.AddText(
+                        Strings.ItemDesc.desc.ToString(item.Description), itemDesc.RenderColor,
+                        itemDescText.CurAlignments.Count > 0 ? itemDescText.CurAlignments[0] : Alignments.Left,
+                        itemDescText.Font
+                    );
+
                     itemDesc.AddLineBreak();
                     itemDesc.AddLineBreak();
                 }
 
-                string stats = "";
+                var stats = "";
                 if (item.ItemType == ItemTypes.Equipment)
                 {
                     stats = Strings.ItemDesc.bonuses;
-                    itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                    itemStats.AddText(
+                        stats, itemStats.RenderColor,
+                        itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+                        itemDescText.Font
+                    );
+
                     itemStats.AddLineBreak();
                     if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot == Options.WeaponIndex)
                     {
-                        stats = Strings.ItemDesc.damage.ToString( item.Damage);
-                        itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                        stats = Strings.ItemDesc.damage.ToString(item.Damage);
+                        itemStats.AddText(
+                            stats, itemStats.RenderColor,
+                            itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+                            itemDescText.Font
+                        );
+
                         itemStats.AddLineBreak();
                     }
 
-                    for (int i = 0; i < (int)Vitals.VitalCount; i++)
+                    for (var i = 0; i < (int) Vitals.VitalCount; i++)
                     {
-                        string bonus = item.VitalsGiven[i].ToString();
+                        var bonus = item.VitalsGiven[i].ToString();
                         if (item.PercentageVitalsGiven[i] > 0)
                         {
                             if (item.VitalsGiven[i] > 0)
@@ -117,16 +150,21 @@ namespace Intersect.Client.Interface.Game
                         }
 
                         var vitals = Strings.ItemDesc.vitals[i].ToString(bonus);
-                        itemStats.AddText(vitals, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                        itemStats.AddText(
+                            vitals, itemStats.RenderColor,
+                            itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+                            itemDescText.Font
+                        );
+
                         itemStats.AddLineBreak();
                     }
 
                     if (statBuffs != null)
                     {
-                        for (int i = 0; i < Options.MaxStats; i++)
+                        for (var i = 0; i < Options.MaxStats; i++)
                         {
                             var flatStat = item.StatsGiven[i] + statBuffs[i];
-                            string bonus = flatStat.ToString();
+                            var bonus = flatStat.ToString();
 
                             if (item.PercentageStatsGiven[i] > 0)
                             {
@@ -143,15 +181,29 @@ namespace Intersect.Client.Interface.Game
                             }
 
                             stats = Strings.ItemDesc.stats[i].ToString(bonus);
-                            itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                            itemStats.AddText(
+                                stats, itemStats.RenderColor,
+                                itemStatsText.CurAlignments.Count > 0
+                                    ? itemStatsText.CurAlignments[0]
+                                    : Alignments.Left, itemDescText.Font
+                            );
+
                             itemStats.AddLineBreak();
                         }
                     }
                 }
 
-                if (item.ItemType == ItemTypes.Equipment && item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
+                if (item.ItemType == ItemTypes.Equipment &&
+                    item.Effect.Type != EffectType.None &&
+                    item.Effect.Percentage > 0)
                 {
-                    itemStats.AddText(Strings.ItemDesc.effect.ToString( item.Effect.Percentage,  Strings.ItemDesc.effects[(int)item.Effect.Type - 1]), itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                    itemStats.AddText(
+                        Strings.ItemDesc.effect.ToString(
+                            item.Effect.Percentage, Strings.ItemDesc.effects[(int) item.Effect.Type - 1]
+                        ), itemStats.RenderColor,
+                        itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+                        itemDescText.Font
+                    );
                 }
 
                 //Load Again for positioning purposes.
@@ -161,6 +213,7 @@ namespace Intersect.Client.Interface.Game
                 {
                     icon.Texture = itemTex;
                 }
+
                 itemDesc.SizeToChildren(false, true);
                 itemStats.SizeToChildren(false, true);
                 itemDescText.IsHidden = true;
@@ -181,5 +234,7 @@ namespace Intersect.Client.Interface.Game
             Interface.GameUi?.GameCanvas?.RemoveChild(mDescWindow, false);
             mDescWindow.Dispose();
         }
+
     }
+
 }

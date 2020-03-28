@@ -1,4 +1,7 @@
-﻿using Intersect.Enums;
+﻿using System;
+using System.IO;
+
+using Intersect.Enums;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
@@ -9,24 +12,26 @@ using NCalc;
 
 using Newtonsoft.Json;
 
-using System;
-using System.IO;
-
-using Formatting = Newtonsoft.Json.Formatting;
-
 namespace Intersect.Server.General
 {
+
     public class Formulas
     {
-        public Formula ExpFormula = new Formula("BaseExp * Power(Gain, Level)");
-
-        private static Formulas mFormulas;
 
         private const string FORMULAS_FILE = "resources/formulas.json";
 
-        public string PhysicalDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_Defense))";
-        public string MagicDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_MagicResist))";
-        public string TrueDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025)";
+        private static Formulas mFormulas;
+
+        public Formula ExpFormula = new Formula("BaseExp * Power(Gain, Level)");
+
+        public string MagicDamage =
+            "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_MagicResist))";
+
+        public string PhysicalDamage =
+            "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_Defense))";
+
+        public string TrueDamage =
+            "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025)";
 
         public static void LoadFormulas()
         {
@@ -37,6 +42,7 @@ namespace Intersect.Server.General
                 {
                     mFormulas = JsonConvert.DeserializeObject<Formulas>(File.ReadAllText(FORMULAS_FILE));
                 }
+
                 File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(mFormulas, Formatting.Indented));
             }
             catch (Exception ex)
@@ -45,8 +51,15 @@ namespace Intersect.Server.General
             }
         }
 
-        public static int CalculateDamage(int baseDamage, DamageType damageType, Stats scalingStat, int scaling,
-            double critMultiplier, Entity attacker, Entity victim)
+        public static int CalculateDamage(
+            int baseDamage,
+            DamageType damageType,
+            Stats scalingStat,
+            int scaling,
+            double critMultiplier,
+            Entity attacker,
+            Entity victim
+        )
         {
             if (mFormulas == null)
             {
@@ -82,18 +95,22 @@ namespace Intersect.Server.General
             {
                 case DamageType.Physical:
                     expressionString = mFormulas.PhysicalDamage;
+
                     break;
                 case DamageType.Magic:
                     expressionString = mFormulas.MagicDamage;
+
                     break;
                 case DamageType.True:
                     expressionString = mFormulas.TrueDamage;
+
                     break;
                 default:
                     expressionString = mFormulas.TrueDamage;
+
                     break;
             }
-            
+
             var expression = new Expression(expressionString);
             var negate = false;
             if (baseDamage < 0)
@@ -142,7 +159,7 @@ namespace Intersect.Server.General
                     result = -result;
                 }
 
-                return (int)Math.Round(result);
+                return (int) Math.Round(result);
             }
             catch (Exception ex)
             {
@@ -157,16 +174,25 @@ namespace Intersect.Server.General
                 throw new ArgumentNullException(nameof(args.Parameters));
             }
 
-            var parameters = args.EvaluateParameters() ?? throw new NullReferenceException($"{nameof(args.EvaluateParameters)}() returned null.");
+            var parameters = args.EvaluateParameters() ??
+                             throw new NullReferenceException($"{nameof(args.EvaluateParameters)}() returned null.");
 
             if (parameters.Length < 2)
             {
                 throw new ArgumentException($"{nameof(Random)}() requires 2 numerical parameters.");
             }
 
-            var min = (int) Math.Round((double) (parameters[0] ?? throw new NullReferenceException("First parameter is null.")));
-            var max = (int)Math.Round((double)(parameters[1] ?? throw new NullReferenceException("First parameter is null.")));
+            var min = (int) Math.Round(
+                (double) (parameters[0] ?? throw new NullReferenceException("First parameter is null."))
+            );
+
+            var max = (int) Math.Round(
+                (double) (parameters[1] ?? throw new NullReferenceException("First parameter is null."))
+            );
+
             return min >= max ? min : Globals.Rand.Next(min, max + 1);
         }
+
     }
+
 }

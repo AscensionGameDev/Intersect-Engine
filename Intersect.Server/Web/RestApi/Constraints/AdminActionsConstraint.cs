@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Constraints
 {
+
     internal sealed class AdminActionsConstraint : IHttpRouteConstraint
     {
 
@@ -27,8 +28,10 @@ namespace Intersect.Server.Web.RestApi.Constraints
             }
 
             var stringValue = value as string ?? Convert.ToString(value);
+
             return Enum.TryParse<AdminActions>(stringValue, out _);
         }
 
     }
+
 }

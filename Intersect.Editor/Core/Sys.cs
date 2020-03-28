@@ -2,8 +2,10 @@
 
 namespace Intersect.Editor.Core
 {
+
     public class Sys
     {
+
         public Stopwatch StopWatch = new Stopwatch();
 
         public Sys()
@@ -15,5 +17,7 @@ namespace Intersect.Editor.Core
         {
             return StopWatch.ElapsedMilliseconds;
         }
+
     }
+
 }

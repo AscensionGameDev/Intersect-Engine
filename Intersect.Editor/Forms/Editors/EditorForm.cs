@@ -1,15 +1,20 @@
 using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Logging;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public class EditorForm : Form
     {
-        private bool mClosing = false;
+
         protected bool mChangingName = false;
+
+        private bool mClosing = false;
+
         protected EditorForm()
         {
             ApplyHooks();
@@ -19,14 +24,24 @@ namespace Intersect.Editor.Forms.Editors
         {
             PacketHandler.GameObjectUpdatedDelegate = type =>
             {
-                if (IsDisposed || mClosing || Disposing) return;
+                if (IsDisposed || mClosing || Disposing)
+                {
+                    return;
+                }
+
                 var action = (Action<GameObjectType>) FireGameObjectUpdatedDelegate;
                 try
                 {
                     if (!this.Disposing && !this.IsDisposed)
                     {
-                        if (InvokeRequired) Invoke(action, type);
-                        else action(type);
+                        if (InvokeRequired)
+                        {
+                            Invoke(action, type);
+                        }
+                        else
+                        {
+                            action(type);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -34,6 +49,7 @@ namespace Intersect.Editor.Forms.Editors
                     Log.Debug(e);
                 }
             };
+
             this.Closing += EditorForm_Closing;
         }
 
@@ -44,7 +60,11 @@ namespace Intersect.Editor.Forms.Editors
 
         private void FireGameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (IsDisposed || mClosing || Disposing) return;
+            if (IsDisposed || mClosing || Disposing)
+            {
+                return;
+            }
+
             GameObjectUpdatedDelegate(type);
         }
 
@@ -54,16 +74,18 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorForm));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorForm));
             this.SuspendLayout();
+
             // 
             // EditorForm
             // 
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = (System.Drawing.Icon) resources.GetObject("$this.Icon");
             this.Name = "EditorForm";
             this.ResumeLayout(false);
-
         }
+
     }
+
 }

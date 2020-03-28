@@ -10,20 +10,25 @@ using Intersect.Client.Networking;
 
 namespace Intersect.Client.Interface.Game
 {
+
     class FriendsWindow
     {
+
         private Button mAddButton;
+
         private Button mAddPopupButton;
+
         private ListBox mFriends;
 
         //Controls
         private WindowControl mFriendsWindow;
 
         private TextBox mSearchTextbox;
-        private ImagePanel mTextboxContainer;
 
         //Temp variables
         private string mTempName;
+
+        private ImagePanel mTextboxContainer;
 
         //Init
         public FriendsWindow(Canvas gameCanvas)
@@ -99,6 +104,7 @@ namespace Intersect.Client.Interface.Game
                 {
                     row.SetTextColor(Color.Red);
                 }
+
                 row.RenderColor = new Color(50, 255, 255, 255);
             }
         }
@@ -113,9 +119,10 @@ namespace Intersect.Client.Interface.Game
 
         void addPopupButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            InputBox iBox = new InputBox(Strings.Friends.addfriend,
-                Strings.Friends.addfriendprompt,
-                true, InputBox.InputType.TextInput, AddFriend, null, 0);
+            var iBox = new InputBox(
+                Strings.Friends.addfriend, Strings.Friends.addfriendprompt, true, InputBox.InputType.TextInput,
+                AddFriend, null, 0
+            );
         }
 
         void friends_Clicked(Base sender, ClickedEventArgs arguments)
@@ -140,9 +147,10 @@ namespace Intersect.Client.Interface.Game
             var row = (ListBoxRow) sender;
             mTempName = (string) row.UserData;
 
-            InputBox iBox = new InputBox(Strings.Friends.removefriend,
-                Strings.Friends.removefriendprompt.ToString(mTempName),
-                true, InputBox.InputType.YesNo, RemoveFriend, null, 0);
+            var iBox = new InputBox(
+                Strings.Friends.removefriend, Strings.Friends.removefriendprompt.ToString(mTempName), true,
+                InputBox.InputType.YesNo, RemoveFriend, null, 0
+            );
         }
 
         private void RemoveFriend(Object sender, EventArgs e)
@@ -158,5 +166,7 @@ namespace Intersect.Client.Interface.Game
                 PacketSender.SendAddFriend(ibox.TextValue);
             }
         }
+
     }
+
 }

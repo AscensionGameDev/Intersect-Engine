@@ -1,39 +1,49 @@
 using System;
 using System.Drawing;
 using System.IO;
-using Intersect.Config;
+
 using Intersect.Configuration;
 
 using Mono.Data.Sqlite;
 
 namespace Intersect.Editor
 {
+
     public static class Database
     {
+
         private const string DB_FILENAME = "resources/mapcache.db";
+
+        private const string MAP_CACHE_DATA = "data";
+
+        private const string MAP_CACHE_ID = "id";
+
+        private const string MAP_CACHE_REVISION = "revision";
 
         //Map Table Constants
         private const string MAP_CACHE_TABLE = "mapcache";
 
-        private const string MAP_CACHE_ID = "id";
-        private const string MAP_CACHE_REVISION = "revision";
-        private const string MAP_CACHE_DATA = "data";
+        private const string OPTION_ID = "id";
+
+        private const string OPTION_NAME = "name";
 
         //Options Constants
         private const string OPTION_TABLE = "Options";
 
-        private const string OPTION_ID = "id";
-        private const string OPTION_NAME = "name";
         private const string OPTION_VALUE = "value";
-        private static SqliteConnection sDbConnection;
 
         //Grid Variables
         public static bool GridHideDarkness;
 
         public static bool GridHideFog;
+
         public static bool GridHideOverlay;
+
         public static bool GridHideResources;
+
         public static int GridLightColor = System.Drawing.Color.White.ToArgb();
+
+        private static SqliteConnection sDbConnection;
 
         //Options File
         public static void LoadOptions()
@@ -50,14 +60,23 @@ namespace Intersect.Editor
         //Map Cache DB
         public static void InitMapCache()
         {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            if (!Directory.Exists("resources"))
+            {
+                Directory.CreateDirectory("resources");
+            }
+
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
-            if (!File.Exists(DB_FILENAME)) CreateDatabase();
+            if (!File.Exists(DB_FILENAME))
+            {
+                CreateDatabase();
+            }
+
             if (sDbConnection == null)
             {
                 sDbConnection = new SqliteConnection("Data Source=" + DB_FILENAME + ",Version=3");
                 sDbConnection.Open();
             }
+
             GridHideDarkness = GetOptionBool("HideDarkness");
             GridHideFog = GetOptionBool("HideFog");
             GridHideOverlay = GetOptionBool("HideOverlay");
@@ -75,11 +94,17 @@ namespace Intersect.Editor
 
         public static void CreateOptionsTable()
         {
-            var cmd = "CREATE TABLE " + OPTION_TABLE + " ("
-                      + OPTION_ID + " INTEGER PRIMARY KEY,"
-                      + OPTION_NAME + " TEXT UNIQUE,"
-                      + OPTION_VALUE + " TEXT"
-                      + ");";
+            var cmd = "CREATE TABLE " +
+                      OPTION_TABLE +
+                      " (" +
+                      OPTION_ID +
+                      " INTEGER PRIMARY KEY," +
+                      OPTION_NAME +
+                      " TEXT UNIQUE," +
+                      OPTION_VALUE +
+                      " TEXT" +
+                      ");";
+
             using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -98,10 +123,21 @@ namespace Intersect.Editor
 
         public static void SaveOption(string name, string value)
         {
-            var query = "INSERT OR REPLACE into " + OPTION_TABLE + " (" + OPTION_NAME + "," +
-                        OPTION_VALUE + ")" + " VALUES " + " (@" +
-                        OPTION_NAME + ",@" + OPTION_VALUE + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            var query = "INSERT OR REPLACE into " +
+                        OPTION_TABLE +
+                        " (" +
+                        OPTION_NAME +
+                        "," +
+                        OPTION_VALUE +
+                        ")" +
+                        " VALUES " +
+                        " (@" +
+                        OPTION_NAME +
+                        ",@" +
+                        OPTION_VALUE +
+                        ");";
+
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value));
@@ -112,7 +148,7 @@ namespace Intersect.Editor
         public static string GetOptionStr(string name)
         {
             var query = "SELECT * from " + OPTION_TABLE + " WHERE " + OPTION_NAME + "=@" + OPTION_NAME + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
                 var dataReader = cmd.ExecuteReader();
@@ -121,10 +157,12 @@ namespace Intersect.Editor
                     if (dataReader[OPTION_VALUE].GetType() != typeof(DBNull))
                     {
                         var data = (string) dataReader[OPTION_VALUE];
+
                         return data;
                     }
                 }
             }
+
             return "";
         }
 
@@ -135,6 +173,7 @@ namespace Intersect.Editor
             {
                 return Convert.ToInt32(opt);
             }
+
             return -1;
         }
 
@@ -145,16 +184,23 @@ namespace Intersect.Editor
             {
                 return Convert.ToBoolean(opt);
             }
+
             return false;
         }
 
         public static void CreateMapCacheTable()
         {
-            var cmd = "CREATE TABLE " + MAP_CACHE_TABLE + " ("
-                      + MAP_CACHE_ID + " TEXT PRIMARY KEY,"
-                      + MAP_CACHE_REVISION + " INTEGER,"
-                      + MAP_CACHE_DATA + " BLOB"
-                      + ");";
+            var cmd = "CREATE TABLE " +
+                      MAP_CACHE_TABLE +
+                      " (" +
+                      MAP_CACHE_ID +
+                      " TEXT PRIMARY KEY," +
+                      MAP_CACHE_REVISION +
+                      " INTEGER," +
+                      MAP_CACHE_DATA +
+                      " BLOB" +
+                      ");";
+
             using (var createCommand = sDbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;
@@ -170,23 +216,27 @@ namespace Intersect.Editor
                 using (var ms = new MemoryStream(data))
                 {
                     var bmp = new Bitmap(Image.FromStream(ms), w, h);
+
                     //Gonna do really sketchy probably broken math here -- yolo
-                    int[] imgData = new int[bmp.Width * bmp.Height];
+                    var imgData = new int[bmp.Width * bmp.Height];
 
                     unsafe
                     {
                         // lock bitmap
-                        System.Drawing.Imaging.BitmapData origdata =
-                            bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                                System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+                        var origdata = bmp.LockBits(
+                            new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                            bmp.PixelFormat
+                        );
 
-                        uint* byteData = (uint*) origdata.Scan0;
+                        var byteData = (uint*) origdata.Scan0;
 
                         // Switch bgra -> rgba
-                        for (int i = 0; i < imgData.Length; i++)
+                        for (var i = 0; i < imgData.Length; i++)
                         {
-                            byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) |
-                                          (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                            byteData[i] = (byteData[i] & 0x000000ff) << 16 |
+                                          (byteData[i] & 0x0000FF00) |
+                                          (byteData[i] & 0x00FF0000) >> 16 |
+                                          (byteData[i] & 0xFF000000);
                         }
 
                         // copy data
@@ -198,11 +248,13 @@ namespace Intersect.Editor
                         bmp.UnlockBits(origdata);
                     }
 
-                    byte[] result = new byte[imgData.Length * sizeof(int)];
+                    var result = new byte[imgData.Length * sizeof(int)];
                     Buffer.BlockCopy(imgData, 0, result, 0, result.Length);
+
                     return imgData;
                 }
             }
+
             return null;
         }
 
@@ -216,6 +268,7 @@ namespace Intersect.Editor
                     return Image.FromStream(ms);
                 }
             }
+
             return null;
         }
 
@@ -227,32 +280,50 @@ namespace Intersect.Editor
                 query += " AND " + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION;
             }
 
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 if (revision > -1)
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision.ToString()));
                 }
+
                 var dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
                     if (dataReader[MAP_CACHE_DATA].GetType() != typeof(DBNull))
                     {
                         var data = (byte[]) dataReader[MAP_CACHE_DATA];
+
                         return data;
                     }
                 }
             }
+
             return null;
         }
 
         public static void SaveMapCache(Guid id, int revision, byte[] data)
         {
-            var query = "INSERT OR REPLACE into " + MAP_CACHE_TABLE + " (" + MAP_CACHE_ID + "," +
-                        MAP_CACHE_REVISION + "," + MAP_CACHE_DATA + ")" + " VALUES " + " (@" +
-                        MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            var query = "INSERT OR REPLACE into " +
+                        MAP_CACHE_TABLE +
+                        " (" +
+                        MAP_CACHE_ID +
+                        "," +
+                        MAP_CACHE_REVISION +
+                        "," +
+                        MAP_CACHE_DATA +
+                        ")" +
+                        " VALUES " +
+                        " (@" +
+                        MAP_CACHE_ID +
+                        ",@" +
+                        MAP_CACHE_REVISION +
+                        ",@" +
+                        MAP_CACHE_DATA +
+                        ");";
+
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision));
@@ -264,15 +335,25 @@ namespace Intersect.Editor
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 }
+
                 cmd.ExecuteNonQuery();
             }
         }
 
         public static void ClearMapCache(Guid id)
         {
-            var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " +
-                        MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            var query = "UPDATE " +
+                        MAP_CACHE_TABLE +
+                        " SET " +
+                        MAP_CACHE_DATA +
+                        " = @" +
+                        MAP_CACHE_DATA +
+                        " WHERE " +
+                        MAP_CACHE_ID +
+                        " = @" +
+                        MAP_CACHE_ID;
+
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
@@ -283,11 +364,13 @@ namespace Intersect.Editor
         public static void ClearAllMapCache()
         {
             var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA;
-            using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
+            using (var cmd = new SqliteCommand(query, sDbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 cmd.ExecuteNonQuery();
             }
         }
+
     }
+
 }

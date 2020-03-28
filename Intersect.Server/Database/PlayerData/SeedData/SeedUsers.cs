@@ -1,21 +1,26 @@
-﻿using Intersect.Server.Database.PlayerData.Security;
-using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 
 using Intersect.Enums;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
+
+using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.PlayerData.SeedData
 {
+
     public class SeedUsers : SeedData<User>
     {
+
         private static string GenerateSalt([NotNull] RandomNumberGenerator rng)
         {
             var buffer = new byte[32];
             rng.GetBytes(buffer);
+
             return BitConverter.ToString(buffer).Replace("-", "");
         }
 
@@ -26,6 +31,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                 var hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(password));
                 var salted = $@"{BitConverter.ToString(hash).Replace("-", "")}{salt}";
                 var saltedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(salted));
+
                 return BitConverter.ToString(saltedHash).Replace("-", "");
             }
         }
@@ -117,7 +123,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                     player.SetVital(Vitals.Health, 10);
                     player.SetVital(Vitals.Mana, 10);
 
-                    for (var i = 0; i < (int)Stats.StatCount; i++)
+                    for (var i = 0; i < (int) Stats.StatCount; i++)
                     {
                         player.Stat[i].BaseStat = 0;
                     }
@@ -127,14 +133,21 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                 }
             }
         }
+
     }
 
     public static class RandomNumberGeneratorExtensions
     {
-        public static int NextInt([NotNull] this RandomNumberGenerator rng, int min = int.MinValue, int max = int.MaxValue)
+
+        public static int NextInt(
+            [NotNull] this RandomNumberGenerator rng,
+            int min = int.MinValue,
+            int max = int.MaxValue
+        )
         {
             var buffer = new byte[4];
             rng.GetBytes(buffer);
+
             return Math.Max(Math.Min(BitConverter.ToInt32(buffer, 0), max), min);
         }
 
@@ -142,7 +155,10 @@ namespace Intersect.Server.Database.PlayerData.SeedData
         {
             var buffer = new byte[4];
             rng.GetBytes(buffer);
+
             return BitConverter.ToUInt32(buffer, 0);
         }
+
     }
+
 }

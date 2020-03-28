@@ -1,13 +1,16 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     CollapsibleList control. Groups CollapsibleCategory controls.
     /// </summary>
     public class CollapsibleList : ScrollControl
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="CollapsibleList" /> class.
         /// </summary>
@@ -36,16 +39,20 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public Button GetSelectedButton()
         {
-            foreach (Base child in Children)
+            foreach (var child in Children)
             {
-                CollapsibleCategory cat = child as CollapsibleCategory;
+                var cat = child as CollapsibleCategory;
                 if (cat == null)
+                {
                     continue;
+                }
 
-                Button button = cat.GetSelectedButton();
+                var button = cat.GetSelectedButton();
 
                 if (button != null)
+                {
                     return button;
+                }
             }
 
             return null;
@@ -62,6 +69,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             category.Margin = new Margin(1, 0, 1, 1);
             category.Selected += OnCategorySelected;
             category.Collapsed += OnCategoryCollapsed;
+
             // this relies on fact that category.m_List is set to its parent
         }
 
@@ -72,9 +80,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public virtual CollapsibleCategory Add(string categoryName)
         {
-            CollapsibleCategory cat = new CollapsibleCategory(this);
+            var cat = new CollapsibleCategory(this);
             cat.Text = categoryName;
             Add(cat);
+
             return cat;
         }
 
@@ -93,11 +102,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void UnselectAll()
         {
-            foreach (Base child in Children)
+            foreach (var child in Children)
             {
-                CollapsibleCategory cat = child as CollapsibleCategory;
+                var cat = child as CollapsibleCategory;
                 if (cat == null)
+                {
                     continue;
+                }
 
                 cat.UnselectAll();
             }
@@ -109,11 +120,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="control">Event source: <see cref="CollapsibleList" />.</param>
         protected virtual void OnCategorySelected(Base control, EventArgs args)
         {
-            CollapsibleCategory cat = control as CollapsibleCategory;
-            if (cat == null) return;
+            var cat = control as CollapsibleCategory;
+            if (cat == null)
+            {
+                return;
+            }
 
             if (ItemSelected != null)
+            {
                 ItemSelected.Invoke(this, new ItemSelectedEventArgs(cat));
+            }
         }
 
         /// <summary>
@@ -122,11 +138,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="control">Event source: <see cref="CollapsibleCategory" />.</param>
         protected virtual void OnCategoryCollapsed(Base control, EventArgs args)
         {
-            CollapsibleCategory cat = control as CollapsibleCategory;
-            if (cat == null) return;
+            var cat = control as CollapsibleCategory;
+            if (cat == null)
+            {
+                return;
+            }
 
             if (CategoryCollapsed != null)
+            {
                 CategoryCollapsed.Invoke(control, EventArgs.Empty);
+            }
         }
+
     }
+
 }

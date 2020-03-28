@@ -13,8 +13,13 @@ using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect.Client.Interface.Game
 {
+
     class AdminWindow
     {
+
+        //Graphics
+        public ImagePanel FacePanel;
+
         private ComboBox mAccessDropdown;
 
         private Label mAccessLabel;
@@ -28,20 +33,22 @@ namespace Intersect.Client.Interface.Game
         BanMuteBox mBanMuteWindow;
 
         private CheckBox mChkChronological;
-        private ComboBox mFaceDropdown;
-        private Label mFaceLabel;
 
-        //Graphics
-        public ImagePanel FacePanel;
+        private ComboBox mFaceDropdown;
+
+        private Label mFaceLabel;
 
         //Player Mod Buttons
         private Button mKickButton;
 
         private Button mKillButton;
+
         private Label mLblChronological;
 
         private TreeControl mMapList;
+
         private Label mMapListLabel;
+
         private Button mMuteButton;
 
         //Player Mod Labels
@@ -51,24 +58,37 @@ namespace Intersect.Client.Interface.Game
         private TextBox mNameTextbox;
 
         private Button mSetFaceButton;
+
         private Button mSetPowerButton;
+
         private Button mSetSpriteButton;
-        public ImagePanel SpriteContainer;
+
         private ComboBox mSpriteDropdown;
+
         private Label mSpriteLabel;
-        public ImagePanel SpritePanel;
+
         private Button mUnbanButton;
+
         private Button mUnmuteButton;
+
         private Button mWarpMeToButton;
+
         private Button mWarpToMeButton;
+
+        public ImagePanel SpriteContainer;
+
+        public ImagePanel SpritePanel;
 
         //Init
         public AdminWindow(Canvas gameCanvas)
         {
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title);
             mAdminWindow.SetSize(200, 540);
-            mAdminWindow.SetPosition(Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2);
+            mAdminWindow.SetPosition(
+                Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
+                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
+            );
+
             mAdminWindow.DisableResizing();
             mAdminWindow.Margin = Margin.Zero;
             mAdminWindow.Padding = Padding.Zero;
@@ -86,6 +106,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.warp2me
             };
+
             mWarpToMeButton.SetBounds(6, 44, 80, 18);
             mWarpToMeButton.Clicked += _warpToMeButton_Clicked;
 
@@ -93,6 +114,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.warpme2
             };
+
             mWarpMeToButton.SetBounds(6, 64, 80, 18);
             mWarpMeToButton.Clicked += _warpMeToButton_Clicked;
 
@@ -100,6 +122,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.kick
             };
+
             mKickButton.SetBounds(90, 44, 50, 18);
             mKickButton.Clicked += _kickButton_Clicked;
 
@@ -107,6 +130,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.kill
             };
+
             mKillButton.SetBounds(144, 44, 50, 18);
             mKillButton.Clicked += _killButton_Clicked;
 
@@ -114,6 +138,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.ban
             };
+
             mBanButton.SetBounds(90, 64, 50, 18);
             mBanButton.Clicked += _banButton_Clicked;
 
@@ -121,6 +146,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.unban
             };
+
             mUnbanButton.SetBounds(90, 84, 50, 18);
             mUnbanButton.Clicked += _unbanButton_Clicked;
 
@@ -128,6 +154,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.mute
             };
+
             mMuteButton.SetBounds(144, 64, 50, 18);
             mMuteButton.Clicked += _muteButton_Clicked;
 
@@ -135,6 +162,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.unmute
             };
+
             mUnmuteButton.SetBounds(144, 84, 50, 18);
             mUnmuteButton.Clicked += _unmuteButton_Clicked;
 
@@ -145,20 +173,20 @@ namespace Intersect.Client.Interface.Game
             mSpriteDropdown = new ComboBox(mAdminWindow);
             mSpriteDropdown.SetBounds(6, 128, 80, 18);
             mSpriteDropdown.AddItem(Strings.Admin.none);
-            var sprites =
-                Globals.ContentManager.GetTextureNames(
-                    GameContentManager.TextureType.Entity);
+            var sprites = Globals.ContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
             {
                 mSpriteDropdown.AddItem(sprite);
             }
+
             mSpriteDropdown.ItemSelected += _spriteDropdown_ItemSelected;
 
             mSetSpriteButton = new Button(mAdminWindow)
             {
                 Text = Strings.Admin.setsprite
             };
+
             mSetSpriteButton.SetBounds(6, 148, 80, 18);
             mSetSpriteButton.Clicked += _setSpriteButton_Clicked;
 
@@ -174,20 +202,20 @@ namespace Intersect.Client.Interface.Game
             mFaceDropdown = new ComboBox(mAdminWindow);
             mFaceDropdown.SetBounds(6, 188, 80, 18);
             mFaceDropdown.AddItem(Strings.Admin.none);
-            var faces =
-                Globals.ContentManager.GetTextureNames(
-                    GameContentManager.TextureType.Face);
+            var faces = Globals.ContentManager.GetTextureNames(GameContentManager.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
             {
                 mFaceDropdown.AddItem(face);
             }
+
             mFaceDropdown.ItemSelected += _faceDropdown_ItemSelected;
 
             mSetFaceButton = new Button(mAdminWindow)
             {
                 Text = Strings.Admin.setface
             };
+
             mSetFaceButton.SetBounds(6, 208, 80, 18);
             mSetFaceButton.Clicked += _setFaceButton_Clicked;
 
@@ -209,6 +237,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.setpower
             };
+
             mSetPowerButton.SetBounds(6, 268, 80, 18);
             mSetPowerButton.Clicked += _setPowerButton_Clicked;
 
@@ -217,6 +246,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.maplist
             };
+
             mMapListLabel.SetPosition(4f, 294);
 
             mChkChronological = new CheckBox(mAdminWindow);
@@ -228,6 +258,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.Admin.chronological
             };
+
             mLblChronological.SetPosition(mChkChronological.X - 30, 294);
 
             UpdateMapList();
@@ -235,9 +266,10 @@ namespace Intersect.Client.Interface.Game
 
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            SpritePanel.Texture =
-                Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Entity, mSpriteDropdown.Text);
+            SpritePanel.Texture = Globals.ContentManager.GetTexture(
+                GameContentManager.TextureType.Entity, mSpriteDropdown.Text
+            );
+
             if (SpritePanel.Texture != null)
             {
                 SpritePanel.SetUv(0, 0, .25f, .25f);
@@ -249,9 +281,9 @@ namespace Intersect.Client.Interface.Game
 
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            FacePanel.Texture =
-                Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Face, mFaceDropdown.Text);
+            FacePanel.Texture = Globals.ContentManager.GetTexture(
+                GameContentManager.TextureType.Face, mFaceDropdown.Text
+            );
         }
 
         //Methods
@@ -281,30 +313,30 @@ namespace Intersect.Client.Interface.Game
             TreeNode tmpNode;
             if (mChkChronological.IsChecked)
             {
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     tmpNode = mMapList.AddNode(MapList.OrderedMaps[i].Name);
-                    tmpNode.UserData = (MapList.OrderedMaps[i]).MapId;
+                    tmpNode.UserData = MapList.OrderedMaps[i].MapId;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
                 }
             }
             else
             {
-                for (int i = 0; i < mapList.Items.Count; i++)
+                for (var i = 0; i < mapList.Items.Count; i++)
                 {
                     if (mapList.Items[i].GetType() == typeof(MapListFolder))
                     {
                         if (parent == null)
                         {
                             tmpNode = mMapList.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListFolder) mapList.Items[i]);
+                            tmpNode.UserData = (MapListFolder) mapList.Items[i];
                             AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode);
                         }
                         else
                         {
                             tmpNode = parent.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListFolder) mapList.Items[i]);
+                            tmpNode.UserData = (MapListFolder) mapList.Items[i];
                             AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode);
                         }
                     }
@@ -365,20 +397,32 @@ namespace Intersect.Client.Interface.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                mBanMuteWindow = new BanMuteBox(Strings.Admin.mutecaption.ToString(mNameTextbox.Text),
-                    Strings.Admin.muteprompt.ToString( mNameTextbox.Text), true, MuteUser);
+                mBanMuteWindow = new BanMuteBox(
+                    Strings.Admin.mutecaption.ToString(mNameTextbox.Text),
+                    Strings.Admin.muteprompt.ToString(mNameTextbox.Text), true, MuteUser
+                );
             }
         }
 
         void MuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction(new MuteAction(mNameTextbox.Text,mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
+            PacketSender.SendAdminAction(
+                new MuteAction(
+                    mNameTextbox.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()
+                )
+            );
+
             mBanMuteWindow.Dispose();
         }
 
         void BanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction(new BanAction(mNameTextbox.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
+            PacketSender.SendAdminAction(
+                new BanAction(
+                    mNameTextbox.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()
+                )
+            );
+
             mBanMuteWindow.Dispose();
         }
 
@@ -387,8 +431,10 @@ namespace Intersect.Client.Interface.Game
             if (mNameTextbox.Text.Trim().Length > 0 &&
                 mNameTextbox.Text.Trim().ToLower() != Globals.Me.Name.Trim().ToLower())
             {
-                mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString( mNameTextbox.Text),
-                    Strings.Admin.banprompt.ToString( mNameTextbox.Text), true, BanUser);
+                mBanMuteWindow = new BanMuteBox(
+                    Strings.Admin.bancaption.ToString(mNameTextbox.Text),
+                    Strings.Admin.banprompt.ToString(mNameTextbox.Text), true, BanUser
+                );
             }
         }
 
@@ -404,9 +450,11 @@ namespace Intersect.Client.Interface.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(Strings.Admin.unmutecaption.ToString( mNameTextbox.Text),
-                    Strings.Admin.unmuteprompt.ToString( mNameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser,
-                    null, -1);
+                var confirmWindow = new InputBox(
+                    Strings.Admin.unmutecaption.ToString(mNameTextbox.Text),
+                    Strings.Admin.unmuteprompt.ToString(mNameTextbox.Text), true, InputBox.InputType.YesNo, UnmuteUser,
+                    null, -1
+                );
             }
         }
 
@@ -414,9 +462,11 @@ namespace Intersect.Client.Interface.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(Strings.Admin.unbancaption.ToString( mNameTextbox.Text),
-                    Strings.Admin.unbanprompt.ToString( mNameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser,
-                    null, -1);
+                var confirmWindow = new InputBox(
+                    Strings.Admin.unbancaption.ToString(mNameTextbox.Text),
+                    Strings.Admin.unbanprompt.ToString(mNameTextbox.Text), true, InputBox.InputType.YesNo, UnbanUser,
+                    null, -1
+                );
             }
         }
 
@@ -442,7 +492,9 @@ namespace Intersect.Client.Interface.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction(new SetAccessAction(mNameTextbox.Text, mAccessDropdown.SelectedItem.UserData.ToString()));
+                PacketSender.SendAdminAction(
+                    new SetAccessAction(mNameTextbox.Text, mAccessDropdown.SelectedItem.UserData.ToString())
+                );
             }
         }
 
@@ -453,7 +505,7 @@ namespace Intersect.Client.Interface.Game
 
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendAdminAction(new WarpToMapAction((Guid)((TreeNode) sender).UserData));
+            PacketSender.SendAdminAction(new WarpToMapAction((Guid) ((TreeNode) sender).UserData));
         }
 
         public void Update()
@@ -474,5 +526,7 @@ namespace Intersect.Client.Interface.Game
         {
             mAdminWindow.IsHidden = true;
         }
+
     }
+
 }

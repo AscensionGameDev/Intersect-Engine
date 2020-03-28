@@ -1,27 +1,38 @@
 ﻿using System;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Localization
 {
+
     public class LocalizedStringConverter : JsonConverter<LocalizedString>
     {
+
         public override void WriteJson([NotNull] JsonWriter writer, LocalizedString value, JsonSerializer serializer)
         {
             writer.WriteValue(value?.ToString());
         }
 
-        public override LocalizedString ReadJson([NotNull] JsonReader reader, Type objectType, LocalizedString existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override LocalizedString ReadJson(
+            [NotNull] JsonReader reader,
+            Type objectType,
+            LocalizedString existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             return reader.Value as string;
         }
+
     }
 
     [Serializable]
     public class LocalizedString : Localized
     {
-        [NotNull]
-        private readonly string mValue;
+
+        [NotNull] private readonly string mValue;
 
         public LocalizedString([NotNull] string value)
         {
@@ -55,5 +66,7 @@ namespace Intersect.Localization
                 return "Format Exception!";
             }
         }
+
     }
+
 }

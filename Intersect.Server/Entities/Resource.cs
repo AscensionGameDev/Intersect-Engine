@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -11,12 +12,14 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Entities
 {
+
     public class Resource : Entity
     {
-        public bool IsDead;
 
         // Resource Number
         public ResourceBase Base;
+
+        public bool IsDead;
 
         //Respawn
         public long RespawnTime = 0;
@@ -26,8 +29,13 @@ namespace Intersect.Server.Entities
             Base = resource;
             Name = resource.Name;
             Sprite = resource.Initial.Graphic;
-            SetMaxVital(Vitals.Health, Globals.Rand.Next(Math.Min(1, resource.MinHp),
-                Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1));
+            SetMaxVital(
+                Vitals.Health,
+                Globals.Rand.Next(
+                    Math.Min(1, resource.MinHp), Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1
+                )
+            );
+
             RestoreVital(Vitals.Health);
             Passable = resource.WalkableBefore;
             HideName = true;
@@ -50,9 +58,13 @@ namespace Intersect.Server.Entities
             {
                 SpawnResourceItems(killer);
                 if (Base.AnimationId != Guid.Empty)
-                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y,
-                        (int) Directions.Up);
+                {
+                    PacketSender.SendAnimationToProximity(
+                        Base.AnimationId, -1, Guid.Empty, MapId, (byte) X, (byte) Y, (int) Directions.Up
+                    );
+                }
             }
+
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendEntityPositionToAll(this);
         }
@@ -60,8 +72,12 @@ namespace Intersect.Server.Entities
         public void Spawn()
         {
             Sprite = Base.Initial.Graphic;
-            if (Base.MaxHp < Base.MinHp) Base.MaxHp = Base.MinHp;
-            SetMaxVital(Vitals.Health,Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
+            if (Base.MaxHp < Base.MinHp)
+            {
+                Base.MaxHp = Base.MinHp;
+            }
+
+            SetMaxVital(Vitals.Health, Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
             RestoreVital(Vitals.Health);
             Passable = Base.WalkableBefore;
             Items.Clear();
@@ -73,7 +89,7 @@ namespace Intersect.Server.Entities
                 if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
-                    slot.Set(new Item(drop.ItemId,drop.Quantity));
+                    slot.Set(new Item(drop.ItemId, drop.Quantity));
                     Items.Add(slot);
                     itemSlot++;
                 }
@@ -89,9 +105,9 @@ namespace Intersect.Server.Entities
         {
             //Find tile to spawn items
             var tiles = new List<TileHelper>();
-            for (int x = X - 1; x <= X + 1; x++)
+            for (var x = X - 1; x <= X + 1; x++)
             {
-                for (int y = Y - 1; y <= Y + 1; y++)
+                for (var y = Y - 1; y <= Y + 1; y++)
                 {
                     var tileHelper = new TileHelper(MapId, x, y);
                     if (tileHelper.TryFix())
@@ -117,22 +133,27 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
+
             if (tiles.Count > 0)
             {
                 TileHelper selectedTile = null;
+
                 //Prefer the players tile, otherwise choose randomly
-                for (int i = 0; i < tiles.Count; i++)
+                for (var i = 0; i < tiles.Count; i++)
                 {
-                    if (tiles[i].GetMapId() == killer.MapId && tiles[i].GetX() == killer.X &&
+                    if (tiles[i].GetMapId() == killer.MapId &&
+                        tiles[i].GetX() == killer.X &&
                         tiles[i].GetY() == killer.Y)
                     {
                         selectedTile = tiles[i];
                     }
                 }
+
                 if (selectedTile == null)
                 {
                     selectedTile = tiles[Globals.Rand.Next(0, tiles.Count)];
                 }
+
                 // Drop items
                 foreach (var item in Items)
                 {
@@ -143,6 +164,7 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
+
             Items.Clear();
         }
 
@@ -151,17 +173,22 @@ namespace Intersect.Server.Entities
             //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
             if (!IsDead)
             {
-                if (Base == null) return;
+                if (Base == null)
+                {
+                    return;
+                }
 
                 var vital = Vitals.Health;
 
-                var vitalId = (int)vital;
+                var vitalId = (int) vital;
                 var vitalValue = GetVital(vital);
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue < maxVitalValue)
                 {
                     var vitalRegenRate = Base.VitalRegen / 100f;
-                    var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
+                    var regenValue = (int) Math.Max(1, maxVitalValue * vitalRegenRate) *
+                                     Math.Abs(Math.Sign(vitalRegenRate));
+
                     AddVital(vital, regenValue);
                 }
             }
@@ -169,17 +196,22 @@ namespace Intersect.Server.Entities
 
         public override bool IsPassable()
         {
-            return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
+            return IsDead & Base.WalkableAfter || !IsDead && Base.WalkableBefore;
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
-            if (packet == null) packet = new ResourceEntityPacket();
+            if (packet == null)
+            {
+                packet = new ResourceEntityPacket();
+            }
+
             packet = base.EntityPacket(packet, forPlayer);
 
-            var pkt = (ResourceEntityPacket)packet;
+            var pkt = (ResourceEntityPacket) packet;
             pkt.ResourceId = Base.Id;
             pkt.IsDead = IsDead;
+
             return pkt;
         }
 
@@ -187,5 +219,7 @@ namespace Intersect.Server.Entities
         {
             return EntityTypes.Resource;
         }
+
     }
+
 }

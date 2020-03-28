@@ -2,32 +2,40 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Image container.
     /// </summary>
     public class ImagePanel : Base
     {
+
         private readonly float[] mUv;
-        private Modal mModal;
-        private Base mOldParent;
-        private GameTexture mTexture;
-        private string mTextureFilename;
 
         //Sound Effects
         protected string mHoverSound;
+
         protected string mLeftMouseClickSound;
+
+        private Modal mModal;
+
+        private Base mOldParent;
+
         protected string mRightMouseClickSound;
+
+        private GameTexture mTexture;
+
+        private string mTextureFilename;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ImagePanel" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ImagePanel(Base parent, string name = "")
-            : base(parent)
+        public ImagePanel(Base parent, string name = "") : base(parent)
         {
             mUv = new float[4];
             mTexture = null;
@@ -37,21 +45,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             this.Clicked += ImagePanel_Clicked;
             this.RightClicked += ImagePanel_RightClicked;
             this.HoverEnter += ImagePanel_HoverEnter;
-        }
-
-        private void ImagePanel_HoverEnter(Base sender, System.EventArgs arguments)
-        {
-            PlaySound(mHoverSound);
-        }
-
-        private void ImagePanel_RightClicked(Base sender, EventArguments.ClickedEventArgs arguments)
-        {
-            PlaySound(mRightMouseClickSound);
-        }
-
-        private void ImagePanel_Clicked(Base sender, EventArguments.ClickedEventArgs arguments)
-        {
-            PlaySound(mLeftMouseClickSound);
         }
 
         /// <summary>
@@ -73,6 +66,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             set => mTextureFilename = value;
         }
 
+        private void ImagePanel_HoverEnter(Base sender, System.EventArgs arguments)
+        {
+            PlaySound(mHoverSound);
+        }
+
+        private void ImagePanel_RightClicked(Base sender, EventArguments.ClickedEventArgs arguments)
+        {
+            PlaySound(mRightMouseClickSound);
+        }
+
+        private void ImagePanel_Clicked(Base sender, EventArguments.ClickedEventArgs arguments)
+        {
+            PlaySound(mLeftMouseClickSound);
+        }
+
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -80,7 +88,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.Dispose();
         }
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -88,6 +96,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("HoverSound", mHoverSound);
             obj.Add("LeftMouseClickSound", mLeftMouseClickSound);
             obj.Add("RightMouseClickSound", mRightMouseClickSound);
+
             return base.FixJson(obj);
         }
 
@@ -96,13 +105,27 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.LoadJson(obj);
             if (obj["Texture"] != null)
             {
-                Texture = GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["Texture"]);
+                Texture = GameContentManager.Current.GetTexture(
+                    GameContentManager.TextureType.Gui, (string) obj["Texture"]
+                );
+
                 TextureFilename = (string) obj["Texture"];
             }
 
-            if (obj["HoverSound"] != null) mHoverSound = (string)obj["HoverSound"];
-            if (obj["LeftMouseClickSound"] != null) mLeftMouseClickSound = (string)obj["LeftMouseClickSound"];
-            if (obj["RightMouseClickSound"] != null) mRightMouseClickSound = (string)obj["RightMouseClickSound"];
+            if (obj["HoverSound"] != null)
+            {
+                mHoverSound = (string) obj["HoverSound"];
+            }
+
+            if (obj["LeftMouseClickSound"] != null)
+            {
+                mLeftMouseClickSound = (string) obj["LeftMouseClickSound"];
+            }
+
+            if (obj["RightMouseClickSound"] != null)
+            {
+                mRightMouseClickSound = (string) obj["RightMouseClickSound"];
+            }
         }
 
         /// <summary>
@@ -121,12 +144,36 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void SetTextureRect(int x, int y, int w, int h)
         {
-            if (mTexture == null) return;
-            if (x < 0) x = 0;
-            if (y < 0) y = 0;
-            if (w <= 0) w = mTexture.GetWidth();
-            if (h <= 0) h = mTexture.GetHeight();
-            if (x + w > mTexture.GetWidth() || y + h > mTexture.GetHeight()) return;
+            if (mTexture == null)
+            {
+                return;
+            }
+
+            if (x < 0)
+            {
+                x = 0;
+            }
+
+            if (y < 0)
+            {
+                y = 0;
+            }
+
+            if (w <= 0)
+            {
+                w = mTexture.GetWidth();
+            }
+
+            if (h <= 0)
+            {
+                h = mTexture.GetHeight();
+            }
+
+            if (x + w > mTexture.GetWidth() || y + h > mTexture.GetHeight())
+            {
+                return;
+            }
+
             mUv[0] = (float) x / (float) mTexture.GetWidth();
             mUv[1] = (float) y / (float) mTexture.GetHeight();
             mUv[2] = (float) (x + w) / (float) mTexture.GetWidth();
@@ -139,8 +186,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 return new Rectangle(0, 0, 0, 0);
             }
-            return new Rectangle((int) (mUv[0] * mTexture.GetWidth()), (int) (mUv[1] * mTexture.GetHeight()),
-                (int) ((mUv[2] - mUv[0]) * mTexture.GetWidth()), (int) ((mUv[3] - mUv[1]) * mTexture.GetWidth()));
+
+            return new Rectangle(
+                (int) (mUv[0] * mTexture.GetWidth()), (int) (mUv[1] * mTexture.GetHeight()),
+                (int) ((mUv[2] - mUv[0]) * mTexture.GetWidth()), (int) ((mUv[3] - mUv[1]) * mTexture.GetWidth())
+            );
         }
 
         /// <summary>
@@ -151,8 +201,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.Render(skin);
             skin.Renderer.DrawColor = base.RenderColor;
-            skin.Renderer.DrawTexturedRect(mTexture, RenderBounds, base.RenderColor, mUv[0], mUv[1], mUv[2],
-                mUv[3]);
+            skin.Renderer.DrawTexturedRect(mTexture, RenderBounds, base.RenderColor, mUv[0], mUv[1], mUv[2], mUv[3]);
         }
 
         /// <summary>
@@ -160,10 +209,12 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void SizeToContents()
         {
-            if (mTexture == null) return;
+            if (mTexture == null)
+            {
+                return;
+            }
 
-            SetSize((int) (mTexture.GetWidth() * (mUv[2] - mUv[0])),
-                (int) (mTexture.GetHeight() * (mUv[3] - mUv[1])));
+            SetSize((int) (mTexture.GetWidth() * (mUv[2] - mUv[0])), (int) (mTexture.GetHeight() * (mUv[3] - mUv[1])));
         }
 
         /// <summary>
@@ -184,7 +235,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeySpace(bool down)
         {
             if (down)
+            {
                 base.OnMouseClickedLeft(0, 0, true);
+            }
+
             return true;
         }
 
@@ -194,22 +248,32 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="dim">Determines whether all the background should be dimmed.</param>
         public void MakeModal(bool dim = false)
         {
-            if (mModal != null) return;
+            if (mModal != null)
+            {
+                return;
+            }
 
             mModal = new Modal(GetCanvas())
             {
                 ShouldDrawBackground = dim
             };
+
             mOldParent = Parent;
             Parent = mModal;
         }
 
         public void RemoveModal()
         {
-            if (mModal == null) return;
+            if (mModal == null)
+            {
+                return;
+            }
+
             Parent = mOldParent;
             GetCanvas()?.RemoveChild(mModal, false);
             mModal = null;
         }
+
     }
+
 }

@@ -15,9 +15,11 @@ using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public abstract partial class CommonExperiments<TExperiments> : IFlagProvider
         where TExperiments : CommonExperiments<TExperiments>
     {
+
         private static readonly Guid NamespaceId = Guid.Parse("c68012b3-d666-4204-84eb-4976f2b570ab");
 
         [NotNull] private readonly IDictionary<Guid, PropertyInfo> mFlagsById;
@@ -30,6 +32,32 @@ namespace Intersect.Core.ExperimentalFeatures
             mFlagsByName = new Dictionary<string, PropertyInfo>();
 
             RegisterPropertiesAndAliases();
+        }
+
+        public bool IsEnabled(Guid flagId)
+        {
+            return mFlagsById.TryGetValue(flagId, out var property) &&
+                   property.GetValue(this) is IExperimentalFlag flag &&
+                   flag.Enabled;
+        }
+
+        public bool IsEnabled(string flagName)
+        {
+            return mFlagsByName.TryGetValue(flagName, out var property) &&
+                   property.GetValue(this) is IExperimentalFlag flag &&
+                   flag.Enabled;
+        }
+
+        public bool TryGet(Guid flagId, out IExperimentalFlag flag)
+        {
+            return ValueUtils.SetDefault(TryGetProperty(flagId, out var property), out flag) &&
+                   property.TryGetValue(this, out flag);
+        }
+
+        public bool TryGet(string flagName, out IExperimentalFlag flag)
+        {
+            return ValueUtils.SetDefault(TryGetProperty(flagName, out var property), out flag) &&
+                   property.TryGetValue(this, out flag);
         }
 
         private void RegisterPropertiesAndAliases()
@@ -51,6 +79,7 @@ namespace Intersect.Core.ExperimentalFeatures
                     if (aliasAttribute != null)
                     {
                         aliasProperties.Add((property, aliasAttribute));
+
                         return;
                     }
 
@@ -96,45 +125,51 @@ namespace Intersect.Core.ExperimentalFeatures
             );
         }
 
-        public bool Disable(IExperimentalFlag flag) => TrySet(flag, false);
+        public bool Disable(IExperimentalFlag flag)
+        {
+            return TrySet(flag, false);
+        }
 
-        public bool Disable(Guid flagId) => TrySet(flagId, false);
+        public bool Disable(Guid flagId)
+        {
+            return TrySet(flagId, false);
+        }
 
-        public bool Disable([NotNull] string flagName) => TrySet(flagName, false);
+        public bool Disable([NotNull] string flagName)
+        {
+            return TrySet(flagName, false);
+        }
 
-        public bool Enable([NotNull] IExperimentalFlag flag) => TrySet(flag, true);
+        public bool Enable([NotNull] IExperimentalFlag flag)
+        {
+            return TrySet(flag, true);
+        }
 
-        public bool Enable(Guid flagId) => TrySet(flagId, true);
+        public bool Enable(Guid flagId)
+        {
+            return TrySet(flagId, true);
+        }
 
-        public bool Enable([NotNull] string flagName) => TrySet(flagName, true);
+        public bool Enable([NotNull] string flagName)
+        {
+            return TrySet(flagName, true);
+        }
 
-        public bool IsEnabled(Guid flagId) =>
-            mFlagsById.TryGetValue(flagId, out var property) &&
-            property.GetValue(this) is IExperimentalFlag flag &&
-            flag.Enabled;
+        protected bool TryGetProperty(IExperimentalFlag flag, out PropertyInfo flagPropertyInfo)
+        {
+            return mFlagsById.TryGetValue(flag.Guid, out flagPropertyInfo);
+        }
 
-        public bool IsEnabled(string flagName) =>
-            mFlagsByName.TryGetValue(flagName, out var property) &&
-            property.GetValue(this) is IExperimentalFlag flag &&
-            flag.Enabled;
+        protected bool TryGetProperty(Guid flagId, out PropertyInfo flagPropertyInfo)
+        {
+            return mFlagsById.TryGetValue(flagId, out flagPropertyInfo);
+        }
 
-        public bool TryGet(Guid flagId, out IExperimentalFlag flag) =>
-            ValueUtils.SetDefault(TryGetProperty(flagId, out var property), out flag) &&
-            property.TryGetValue(this, out flag);
-
-        public bool TryGet(string flagName, out IExperimentalFlag flag) =>
-            ValueUtils.SetDefault(TryGetProperty(flagName, out var property), out flag) &&
-            property.TryGetValue(this, out flag);
-
-        protected bool TryGetProperty(IExperimentalFlag flag, out PropertyInfo flagPropertyInfo) =>
-            mFlagsById.TryGetValue(flag.Guid, out flagPropertyInfo);
-
-        protected bool TryGetProperty(Guid flagId, out PropertyInfo flagPropertyInfo) =>
-            mFlagsById.TryGetValue(flagId, out flagPropertyInfo);
-
-        protected bool TryGetProperty([NotNull] string flagName, out PropertyInfo flagPropertyInfo) =>
-            ValueUtils.SetDefault(!string.IsNullOrWhiteSpace(flagName), out flagPropertyInfo) &&
-            mFlagsByName.TryGetValue(flagName.ToLowerInvariant(), out flagPropertyInfo);
+        protected bool TryGetProperty([NotNull] string flagName, out PropertyInfo flagPropertyInfo)
+        {
+            return ValueUtils.SetDefault(!string.IsNullOrWhiteSpace(flagName), out flagPropertyInfo) &&
+                   mFlagsByName.TryGetValue(flagName.ToLowerInvariant(), out flagPropertyInfo);
+        }
 
         private bool InternalTrySet(PropertyInfo property, [NotNull] IExperimentalFlag flag, bool enabled)
         {
@@ -151,20 +186,28 @@ namespace Intersect.Core.ExperimentalFeatures
 
             property.SetValue(this, flag.With(enabled));
             Save();
+
             return true;
         }
 
-        public bool TrySet([NotNull] IExperimentalFlag flag, bool enabled) => InternalTrySet(null, flag, enabled);
+        public bool TrySet([NotNull] IExperimentalFlag flag, bool enabled)
+        {
+            return InternalTrySet(null, flag, enabled);
+        }
 
-        public bool TrySet(Guid flagId, bool enabled) =>
-            TryGetProperty(flagId, out var property) &&
-            property.GetValue(this) is IExperimentalFlag flag &&
-            InternalTrySet(property, flag, enabled);
+        public bool TrySet(Guid flagId, bool enabled)
+        {
+            return TryGetProperty(flagId, out var property) &&
+                   property.GetValue(this) is IExperimentalFlag flag &&
+                   InternalTrySet(property, flag, enabled);
+        }
 
-        public bool TrySet([NotNull] string flagName, bool enabled) =>
-            TryGetProperty(flagName, out var property) &&
-            property.GetValue(this) is IExperimentalFlag flag &&
-            InternalTrySet(property, flag, enabled);
+        public bool TrySet([NotNull] string flagName, bool enabled)
+        {
+            return TryGetProperty(flagName, out var property) &&
+                   property.GetValue(this) is IExperimentalFlag flag &&
+                   InternalTrySet(property, flag, enabled);
+        }
 
         protected virtual bool Load()
         {
@@ -191,6 +234,7 @@ namespace Intersect.Core.ExperimentalFeatures
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 return false;
             }
         }
@@ -213,5 +257,7 @@ namespace Intersect.Core.ExperimentalFeatures
                 Log.Error(exception);
             }
         }
+
     }
+
 }

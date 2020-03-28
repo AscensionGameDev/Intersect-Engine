@@ -1,14 +1,23 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
+using JetBrains.Annotations;
+
 namespace Intersect.IO
 {
+
     public class ConsoleWriter : TextWriter
     {
+
+        public ConsoleWriter([NotNull] ConsoleContext context, [NotNull] TextWriter textWriter)
+        {
+            Context = context;
+            TextWriter = textWriter;
+        }
+
         [NotNull]
         protected ConsoleContext Context { get; }
 
@@ -21,18 +30,17 @@ namespace Intersect.IO
 
         public override IFormatProvider FormatProvider => TextWriter.FormatProvider;
 
-        public override string NewLine {
+        public override string NewLine
+        {
             get => TextWriter.NewLine;
             set => TextWriter.NewLine = value;
         }
 
-        public ConsoleWriter(
-            [NotNull] ConsoleContext context,
-            [NotNull] TextWriter textWriter
-        )
+        public override void WriteLine()
         {
-            Context = context;
-            TextWriter = textWriter;
+            Context.ResetWaitCursor(TextWriter.Write);
+            TextWriter.WriteLine();
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #region Passthrough
@@ -236,6 +244,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -247,6 +256,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -258,6 +268,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -308,13 +319,6 @@ namespace Intersect.IO
         }
 
         #endregion
-
-        public override void WriteLine()
-        {
-            Context.ResetWaitCursor(TextWriter.Write);
-            TextWriter.WriteLine();
-            Context.WritePrefix(TextWriter.Write);
-        }
 
         #region WriteLine(value)
 
@@ -407,6 +411,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -418,6 +423,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -429,6 +435,7 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
@@ -440,9 +447,12 @@ namespace Intersect.IO
             {
                 await task;
             }
+
             await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         #endregion
+
     }
+
 }

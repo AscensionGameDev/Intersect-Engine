@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandOpenShop : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private OpenShopCommand mMyCommand;
 
         public EventCommandOpenShop(OpenShopCommand refCommand, FrmEvent editor)
@@ -33,7 +37,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbShop.SelectedIndex > -1)
+            {
                 mMyCommand.ShopId = ShopBase.IdFromList(cmbShop.SelectedIndex);
+            }
+
             mEventEditor.FinishCommandEdit();
         }
 
@@ -41,5 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

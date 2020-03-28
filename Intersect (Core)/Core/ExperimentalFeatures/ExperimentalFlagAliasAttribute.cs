@@ -4,10 +4,10 @@ using JetBrains.Annotations;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ExperimentalFlagAliasAttribute : Attribute
     {
-        [NotNull] public string Of { get; }
 
         public ExperimentalFlagAliasAttribute([NotNull] string of)
         {
@@ -18,5 +18,10 @@ namespace Intersect.Core.ExperimentalFeatures
 
             Of = of;
         }
+
+        [NotNull]
+        public string Of { get; }
+
     }
+
 }

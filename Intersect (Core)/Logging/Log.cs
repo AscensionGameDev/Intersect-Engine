@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 
 using Intersect.Logging.Output;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
@@ -18,32 +19,43 @@ namespace Intersect.Logging
             Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
 
         [NotNull]
-        public static string SuggestFilename(DateTime? time = null, [CanBeNull] string prefix = null, [CanBeNull] string extensionPrefix = null) =>
-            $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
+        public static string SuggestFilename(
+            DateTime? time = null,
+            [CanBeNull] string prefix = null,
+            [CanBeNull] string extensionPrefix = null
+        )
+        {
+            return
+                $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
+        }
 
         #region Global
 
         static Log()
         {
             var outputs = ImmutableList.Create<ILogOutput>(
-                new FileOutput(),
-                new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error),
-                new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error)
-            ) ?? throw new InvalidOperationException();
+                              new FileOutput(), new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error),
+                              new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error)
+                          ) ??
+                          throw new InvalidOperationException();
 
-            Pretty = new Logger(new LogConfiguration
-            {
-                Pretty = true,
-                LogLevel = LogConfiguration.Default.LogLevel,
-                Outputs = outputs
-            });
+            Pretty = new Logger(
+                new LogConfiguration
+                {
+                    Pretty = true,
+                    LogLevel = LogConfiguration.Default.LogLevel,
+                    Outputs = outputs
+                }
+            );
 
-            Default = new Logger(new LogConfiguration
-            {
-                Pretty = false,
-                LogLevel = LogConfiguration.Default.LogLevel,
-                Outputs = outputs
-            });
+            Default = new Logger(
+                new LogConfiguration
+                {
+                    Pretty = false,
+                    LogLevel = LogConfiguration.Default.LogLevel,
+                    Outputs = outputs
+                }
+            );
         }
 
         [NotNull]

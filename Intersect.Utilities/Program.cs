@@ -5,13 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+
 using Intersect.Enums;
 using Intersect.Utilities.Scripts;
 
 namespace Intersect.Utilities
 {
+
     class Program
     {
+
         private static readonly IDictionary<string, Script> Scripts;
 
         static Program()
@@ -60,18 +63,6 @@ namespace Intersect.Utilities
             }
         }
 
-        private enum ByteEnum : byte
-        {
-            X,
-            Z
-        }
-
-        private enum IntEnum : int
-        {
-            O,
-            P
-        }
-
         static void Main(string[] args)
         {
             {
@@ -81,7 +72,7 @@ namespace Intersect.Utilities
                 var iet = typeof(IntEnum);
                 var toParseA = "Admin";
                 var toParseN = "2";
-                switch ((object)Access.Admin)
+                switch ((object) Access.Admin)
                 {
                     case byte dbyte:
                         return;
@@ -95,8 +86,10 @@ namespace Intersect.Utilities
                     default:
                         return;
                 }
+
                 return;
             }
+
             {
                 Console.InputHistoryEnabled = true;
                 Console.WaitPrefix = "> ";
@@ -111,6 +104,7 @@ namespace Intersect.Utilities
                     Console.WriteLine("Received: " + line);
                 }
             }
+
             return;
 
             //Enumerators();
@@ -119,25 +113,33 @@ namespace Intersect.Utilities
             //return;
 
             NameOfGeneric<Program>();
+
             return;
 
-            new Thread(() =>
-            {
-                Thread.Sleep(1000);
-                Console.WriteLine("321Test123");
-            }).Start();
+            new Thread(
+                () =>
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("321Test123");
+                }
+            ).Start();
+
             Console.WaitPrefix = "> ";
             Console.WriteLine("Test");
             Console.ReadLine(true);
             Console.Write("1234Test4321");
-            new Thread(() =>
-            {
-                Thread.Sleep(1000);
-                Console.WriteLine("xyzzy90210");
-                Thread.Sleep(1000);
-                Console.WriteLine("noonoo");
-            }).Start();
+            new Thread(
+                () =>
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("xyzzy90210");
+                    Thread.Sleep(1000);
+                    Console.WriteLine("noonoo");
+                }
+            ).Start();
+
             Console.ReadLine(true);
+
             return;
 
             if (Scripts.Count < 1)
@@ -150,24 +152,33 @@ namespace Intersect.Utilities
             for (;;)
             {
                 var line = Console.ReadLine();
-                if (line == null) break;
-                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (line == null)
+                {
+                    break;
+                }
+
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
 
                 var match = Script.CommandRegex.Match(line);
                 var scriptName = match.Groups[1].Value;
-                if (!Scripts.TryGetValue(scriptName, out Script script))
+                if (!Scripts.TryGetValue(scriptName, out var script))
                 {
                     Console.Error?.WriteLine($"No available script with name '{scriptName}'.");
+
                     continue;
                 }
 
                 var scriptArgsGroup = match.Groups[2];
                 var scriptArgsList = new List<string>(scriptArgsGroup.Captures.Count);
                 scriptArgsList.AddRange(
-                    from Capture capture
-                    in scriptArgsGroup.Captures
+                    from Capture capture in scriptArgsGroup.Captures
                     where !string.IsNullOrWhiteSpace(capture?.Value)
-                    select capture.Value);
+                    select capture.Value
+                );
+
                 var scriptArgs = scriptArgsList.ToArray();
 
                 var result = script.Run(args, scriptArgs);
@@ -175,20 +186,43 @@ namespace Intersect.Utilities
                 {
                     case 0:
                         Console.Out?.WriteLine(result.Message ?? $"'{scriptName}' completed.");
+
                         break;
 
                     default:
                         Console.Error?.WriteLine($"'{scriptName}' failed with exit code {result.Code}.");
                         Console.Error?.WriteLine(result.Message);
                         if (result.Exception != null)
+                        {
                             Console.Error?.WriteLine(result.Exception.StackTrace);
+                        }
+
                         break;
                 }
             }
         }
 
+        private enum ByteEnum : byte
+        {
+
+            X,
+
+            Z
+
+        }
+
+        private enum IntEnum : int
+        {
+
+            O,
+
+            P
+
+        }
+
         class Decorator : TextWriter
         {
+
             private TextWriter mWriter;
 
             public Decorator(TextWriter writer)
@@ -196,8 +230,7 @@ namespace Intersect.Utilities
                 mWriter = writer;
             }
 
-            public override Encoding Encoding
-                => mWriter.Encoding;
+            public override Encoding Encoding => mWriter.Encoding;
 
             public override void WriteLine(string value)
             {
@@ -206,6 +239,9 @@ namespace Intersect.Utilities
                 mWriter.WriteLine(value);
                 Console.ForegroundColor = color;
             }
+
         }
+
     }
+
 }

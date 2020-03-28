@@ -4,22 +4,23 @@ using System.Globalization;
 
 namespace Intersect.Server.Core
 {
+
     /// <summary>
     /// Please do not modify this without JC's approval! If namespaces are referenced that are not SYSTEM.* then the server won't run cross platform.
     /// If you want to add startup instructions see Classes/ServerStart.cs
     /// </summary>
     public static class Program
     {
+
         [STAThread]
         public static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             try
             {
-                Type
-                    .GetType("Intersect.Server.Core.Bootstrapper")?
-                    .GetMethod("Start")?
-                    .Invoke(null, new object[] {args});
+                Type.GetType("Intersect.Server.Core.Bootstrapper")
+                    ?.GetMethod("Start")
+                    ?.Invoke(null, new object[] {args});
             }
             catch (Exception exception)
             {
@@ -29,12 +30,16 @@ namespace Intersect.Server.Core
                 var staticMethodInfo = type.GetMethod("OnUnhandledException");
                 Debug.Assert(staticMethodInfo != null, nameof(staticMethodInfo) + " != null");
 
-                staticMethodInfo.Invoke(null, new object[]
-                {
-                    null,
-                    new UnhandledExceptionEventArgs(exception.InnerException ?? exception, true)
-                });
+                staticMethodInfo.Invoke(
+                    null, new object[]
+                    {
+                        null,
+                        new UnhandledExceptionEventArgs(exception.InnerException ?? exception, true)
+                    }
+                );
             }
         }
+
     }
+
 }

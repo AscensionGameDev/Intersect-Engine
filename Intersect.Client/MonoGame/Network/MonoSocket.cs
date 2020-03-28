@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+
 using Intersect.Client.Framework.Network;
-using Intersect.Client.Networking;
-using Intersect.Config;
 using Intersect.Configuration;
 using Intersect.Logging;
-using Intersect.Logging.Output;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
-using Intersect.Network.Packets;
 
 namespace Intersect.Client.MonoGame.Network
 {
+
     public class MonoSocket : GameSocket
     {
+
         public static ClientNetwork ClientLidgrenNetwork;
-        public static ConcurrentQueue<KeyValuePair<IConnection,IPacket>> PacketQueue = new ConcurrentQueue<KeyValuePair<IConnection,IPacket>>();
+
+        public static ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue =
+            new ConcurrentQueue<KeyValuePair<IConnection, IPacket>>();
 
         public MonoSocket()
         {
@@ -42,7 +42,11 @@ namespace Intersect.Client.MonoGame.Network
                 ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
             }
 
-            if (ClientLidgrenNetwork == null) return;
+            if (ClientLidgrenNetwork == null)
+            {
+                return;
+            }
+
             ClientLidgrenNetwork.Handler = AddPacketToQueue;
             ClientLidgrenNetwork.OnConnected += delegate { OnConnected(); };
             ClientLidgrenNetwork.OnDisconnected += delegate { OnDisconnected(); };
@@ -64,16 +68,17 @@ namespace Intersect.Client.MonoGame.Network
 
         public static bool AddPacketToQueue(IConnection connection, IPacket packet)
         {
-            PacketQueue.Enqueue(new KeyValuePair<IConnection, IPacket>(connection,packet));
+            PacketQueue.Enqueue(new KeyValuePair<IConnection, IPacket>(connection, packet));
+
             return true;
         }
 
         public override void Update()
         {
             var packetCount = PacketQueue.Count;
-            for (int i = 0; i < packetCount; i++)
+            for (var i = 0; i < packetCount; i++)
             {
-                KeyValuePair<IConnection,IPacket> dequeued;
+                KeyValuePair<IConnection, IPacket> dequeued;
                 if (PacketQueue.TryDequeue(out dequeued))
                 {
                     OnDataReceived(dequeued.Value);
@@ -93,11 +98,16 @@ namespace Intersect.Client.MonoGame.Network
             ClientLidgrenNetwork = null;
         }
 
-        public override bool IsConnected() => ClientLidgrenNetwork?.IsConnected ?? false;
+        public override bool IsConnected()
+        {
+            return ClientLidgrenNetwork?.IsConnected ?? false;
+        }
 
         public override int Ping()
         {
             return ClientLidgrenNetwork?.Ping ?? -1;
         }
+
     }
+
 }

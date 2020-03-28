@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Intersect.Logging
 {
+
     public static class MemoryDump
     {
+
         private static string sDumpDirectory;
 
         static MemoryDump()
@@ -22,15 +24,22 @@ namespace Intersect.Logging
         private static void EnsureDirectory()
         {
             if (!Directory.Exists(DumpDirectory))
+            {
                 Directory.CreateDirectory(DumpDirectory);
+            }
         }
 
         private static string GetDumpFilename()
-            => Path.Combine(DumpDirectory, $"{DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log");
+        {
+            return Path.Combine(DumpDirectory, $"{DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log");
+        }
 
         public static bool Dump(byte[] data)
         {
-            if (data == null) throw new ArgumentNullException();
+            if (data == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             var written = false;
             using (var writeStream = new FileStream(GetDumpFilename(), FileMode.CreateNew, FileAccess.Write))
@@ -54,7 +63,10 @@ namespace Intersect.Logging
 
         public static bool Dump(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException();
+            if (stream == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             var written = false;
             using (var writeStream = new FileStream(GetDumpFilename(), FileMode.CreateNew, FileAccess.Write))
@@ -64,7 +76,9 @@ namespace Intersect.Logging
                     int read;
                     var buffer = new byte[4096];
                     while (0 < (read = stream.Read(buffer, 0, 4096)))
+                    {
                         writeStream.Write(buffer, 0, read);
+                    }
 
                     written = true;
                 }
@@ -79,5 +93,7 @@ namespace Intersect.Logging
 
             return written;
         }
+
     }
+
 }

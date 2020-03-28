@@ -1,20 +1,21 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Vertical scrollbar.
     /// </summary>
     public class VerticalScrollBar : ScrollBar
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="VerticalScrollBar" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public VerticalScrollBar(Base parent)
-            : base(parent)
+        public VerticalScrollBar(Base parent) : base(parent)
         {
             mBar.IsVertical = true;
 
@@ -51,9 +52,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             get
             {
                 if (mDepressed)
+                {
                     return mViewableContentSize / mContentSize;
+                }
                 else
+                {
                     return base.NudgeAmount;
+                }
             }
             set => base.NudgeAmount = value;
         }
@@ -75,14 +80,19 @@ namespace Intersect.Client.Framework.Gwen.Control
             mBar.Width = ButtonSize;
             mBar.Padding = new Padding(0, ButtonSize, 0, ButtonSize);
 
-            float barHeight = 0.0f;
-            if (mContentSize > 0.0f) barHeight = (mViewableContentSize / mContentSize) * (Height - (ButtonSize * 2));
+            var barHeight = 0.0f;
+            if (mContentSize > 0.0f)
+            {
+                barHeight = mViewableContentSize / mContentSize * (Height - ButtonSize * 2);
+            }
 
             if (barHeight < ButtonSize * 0.5f)
+            {
                 barHeight = (int) (ButtonSize * 0.5f);
+            }
 
-            mBar.Height = (int) (barHeight);
-            mBar.IsHidden = Height - (ButtonSize * 2) <= barHeight;
+            mBar.Height = (int) barHeight;
+            mBar.IsHidden = Height - ButtonSize * 2 <= barHeight;
 
             //Based on our last scroll amount, produce a position for the bar
             if (!mBar.IsHeld)
@@ -135,11 +145,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
             else
             {
-                Point clickPos = CanvasPosToLocal(new Point(x, y));
+                var clickPos = CanvasPosToLocal(new Point(x, y));
                 if (clickPos.Y < mBar.Y)
+                {
                     NudgeUp(this, EventArgs.Empty);
+                }
                 else if (clickPos.Y > mBar.Y + mBar.Height)
+                {
                     NudgeDown(this, EventArgs.Empty);
+                }
 
                 mDepressed = false;
                 InputHandler.MouseFocus = null;
@@ -148,7 +162,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected override float CalculateScrolledAmount()
         {
-            return (float) (mBar.Y - ButtonSize) / (Height - mBar.Height - (ButtonSize * 2));
+            return (float) (mBar.Y - ButtonSize) / (Height - mBar.Height - ButtonSize * 2);
         }
 
         /// <summary>
@@ -162,11 +176,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             value = Util.Clamp(value, 0, 1);
 
             if (!base.SetScrollAmount(value, forceUpdate))
+            {
                 return false;
+            }
 
             if (forceUpdate)
             {
-                int newY = (int) (ButtonSize + (value * ((Height - mBar.Height) - (ButtonSize * 2))));
+                var newY = (int) (ButtonSize + value * (Height - mBar.Height - ButtonSize * 2));
                 mBar.MoveTo(mBar.X, newY);
             }
 
@@ -185,7 +201,11 @@ namespace Intersect.Client.Framework.Gwen.Control
                 base.OnBarMoved(control, EventArgs.Empty);
             }
             else
+            {
                 InvalidateParent();
+            }
         }
+
     }
+
 }

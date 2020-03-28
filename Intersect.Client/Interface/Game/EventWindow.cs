@@ -1,6 +1,5 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -10,12 +9,18 @@ using Intersect.Client.Networking;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class EventWindow
     {
+
         private ScrollControl mEventDialogArea;
+
         private ScrollControl mEventDialogAreaNoFace;
+
         private RichLabel mEventDialogLabel;
+
         private RichLabel mEventDialogLabelNoFace;
+
         private Label mEventDialogLabelNoFaceTemplate;
 
         private Label mEventDialogLabelTemplate;
@@ -24,9 +29,13 @@ namespace Intersect.Client.Interface.Game
         private ImagePanel mEventDialogWindow;
 
         private ImagePanel mEventFace;
+
         private Button mEventResponse1;
+
         private Button mEventResponse2;
+
         private Button mEventResponse3;
+
         private Button mEventResponse4;
 
         //Init
@@ -71,22 +80,29 @@ namespace Intersect.Client.Interface.Game
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();
                     mEventDialogWindow.BringToFront();
-                    GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
-                        Globals.EventDialogs[0].Face);
+                    var faceTex = Globals.ContentManager.GetTexture(
+                        GameContentManager.TextureType.Face, Globals.EventDialogs[0].Face
+                    );
 
-                    int responseCount = 0;
-                    int maxResponse = 1;
-                    if (Globals.EventDialogs[0].Opt1.Length > 0) responseCount++;
+                    var responseCount = 0;
+                    var maxResponse = 1;
+                    if (Globals.EventDialogs[0].Opt1.Length > 0)
+                    {
+                        responseCount++;
+                    }
+
                     if (Globals.EventDialogs[0].Opt2.Length > 0)
                     {
                         responseCount++;
                         maxResponse = 2;
                     }
+
                     if (Globals.EventDialogs[0].Opt3.Length > 0)
                     {
                         responseCount++;
                         maxResponse = 3;
                     }
+
                     if (Globals.EventDialogs[0].Opt4.Length > 0)
                     {
                         responseCount++;
@@ -102,17 +118,20 @@ namespace Intersect.Client.Interface.Game
                         case 1:
                             mEventDialogWindow.Name = "EventDialogWindow_1Response";
                             mEventResponse1.Name = "Response1Button";
+
                             break;
                         case 2:
                             mEventDialogWindow.Name = "EventDialogWindow_2Responses";
                             mEventResponse1.Name = "Response1Button";
                             mEventResponse2.Name = "Response2Button";
+
                             break;
                         case 3:
                             mEventDialogWindow.Name = "EventDialogWindow_3Responses";
                             mEventResponse1.Name = "Response1Button";
                             mEventResponse2.Name = "Response2Button";
                             mEventResponse3.Name = "Response3Button";
+
                             break;
                         case 4:
                             mEventDialogWindow.Name = "EventDialogWindow_4Responses";
@@ -120,10 +139,13 @@ namespace Intersect.Client.Interface.Game
                             mEventResponse2.Name = "Response2Button";
                             mEventResponse3.Name = "Response3Button";
                             mEventResponse4.Name = "Response4Button";
+
                             break;
                     }
 
-                    mEventDialogWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    mEventDialogWindow.LoadJsonUi(
+                        GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString()
+                    );
 
                     if (faceTex != null)
                     {
@@ -158,6 +180,7 @@ namespace Intersect.Client.Interface.Game
                         {
                             mEventResponse1.Hide();
                         }
+
                         if (Globals.EventDialogs[0].Opt2 != "")
                         {
                             mEventResponse2.Show();
@@ -167,6 +190,7 @@ namespace Intersect.Client.Interface.Game
                         {
                             mEventResponse2.Hide();
                         }
+
                         if (Globals.EventDialogs[0].Opt3 != "")
                         {
                             mEventResponse3.Show();
@@ -176,6 +200,7 @@ namespace Intersect.Client.Interface.Game
                         {
                             mEventResponse3.Hide();
                         }
+
                         if (Globals.EventDialogs[0].Opt4 != "")
                         {
                             mEventResponse4.Show();
@@ -186,18 +211,24 @@ namespace Intersect.Client.Interface.Game
                             mEventResponse4.Hide();
                         }
                     }
-                    mEventDialogWindow.SetSize(mEventDialogWindow.Texture.GetWidth(),
-                        mEventDialogWindow.Texture.GetHeight());
+
+                    mEventDialogWindow.SetSize(
+                        mEventDialogWindow.Texture.GetWidth(), mEventDialogWindow.Texture.GetHeight()
+                    );
 
                     if (faceTex != null)
                     {
                         mEventDialogLabel.ClearText();
                         mEventDialogLabel.Width = mEventDialogArea.Width -
                                                   mEventDialogArea.GetVerticalScrollBar().Width;
-                        mEventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, mEventDialogLabelTemplate.TextColor,
+
+                        mEventDialogLabel.AddText(
+                            Globals.EventDialogs[0].Prompt, mEventDialogLabelTemplate.TextColor,
                             mEventDialogLabelTemplate.CurAlignments.Count > 0
                                 ? mEventDialogLabelTemplate.CurAlignments[0]
-                                : Alignments.Left, mEventDialogLabelTemplate.Font);
+                                : Alignments.Left, mEventDialogLabelTemplate.Font
+                        );
+
                         mEventDialogLabel.SizeToChildren(false, true);
                         mEventDialogArea.ScrollToTop();
                     }
@@ -206,11 +237,14 @@ namespace Intersect.Client.Interface.Game
                         mEventDialogLabelNoFace.ClearText();
                         mEventDialogLabelNoFace.Width = mEventDialogAreaNoFace.Width -
                                                         mEventDialogAreaNoFace.GetVerticalScrollBar().Width;
-                        mEventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt,
-                            mEventDialogLabelNoFaceTemplate.TextColor,
+
+                        mEventDialogLabelNoFace.AddText(
+                            Globals.EventDialogs[0].Prompt, mEventDialogLabelNoFaceTemplate.TextColor,
                             mEventDialogLabelNoFaceTemplate.CurAlignments.Count > 0
                                 ? mEventDialogLabelNoFaceTemplate.CurAlignments[0]
-                                : Alignments.Left, mEventDialogLabelNoFaceTemplate.Font);
+                                : Alignments.Left, mEventDialogLabelNoFaceTemplate.Font
+                        );
+
                         mEventDialogLabelNoFace.SizeToChildren(false, true);
                         mEventDialogAreaNoFace.ScrollToTop();
                     }
@@ -222,7 +256,11 @@ namespace Intersect.Client.Interface.Game
         void EventResponse4_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var ed = Globals.EventDialogs[0];
-            if (ed.ResponseSent != 0) return;
+            if (ed.ResponseSent != 0)
+            {
+                return;
+            }
+
             PacketSender.SendEventResponse(4, ed);
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
@@ -232,7 +270,11 @@ namespace Intersect.Client.Interface.Game
         void EventResponse3_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var ed = Globals.EventDialogs[0];
-            if (ed.ResponseSent != 0) return;
+            if (ed.ResponseSent != 0)
+            {
+                return;
+            }
+
             PacketSender.SendEventResponse(3, ed);
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
@@ -242,7 +284,11 @@ namespace Intersect.Client.Interface.Game
         void EventResponse2_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var ed = Globals.EventDialogs[0];
-            if (ed.ResponseSent != 0) return;
+            if (ed.ResponseSent != 0)
+            {
+                return;
+            }
+
             PacketSender.SendEventResponse(2, ed);
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
@@ -252,11 +298,17 @@ namespace Intersect.Client.Interface.Game
         void EventResponse1_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var ed = Globals.EventDialogs[0];
-            if (ed.ResponseSent != 0) return;
+            if (ed.ResponseSent != 0)
+            {
+                return;
+            }
+
             PacketSender.SendEventResponse(1, ed);
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
         }
+
     }
+
 }

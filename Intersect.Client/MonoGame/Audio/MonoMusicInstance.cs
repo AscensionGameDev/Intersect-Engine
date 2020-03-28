@@ -1,17 +1,21 @@
-﻿using Intersect.Client.General;
+﻿using System;
+
+using Intersect.Client.General;
 
 using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework.Media;
 
-using System;
-
 namespace Intersect.Client.MonoGame.Audio
 {
+
     public class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
     {
-        private bool mDisposed;
+
         private readonly Song mSong;
+
+        private bool mDisposed;
+
         private int mVolume;
 
         // ReSharper disable once SuggestBaseTypeForParameter
@@ -19,46 +23,6 @@ namespace Intersect.Client.MonoGame.Audio
         {
             mSong = source.LoadSong();
         }
-
-        public override void Play()
-        {
-            if (mSong != null)
-                MediaPlayer.Play(mSong);
-        }
-
-        public override void Pause()
-        {
-            MediaPlayer.Pause();
-        }
-
-        public override void Stop()
-        {
-            MediaPlayer.Stop();
-        }
-
-        public override void SetVolume(int volume, bool isMusic = false)
-        {
-            mVolume = volume;
-            try
-            {
-                MediaPlayer.Volume = (mVolume * (Globals.Database.MusicVolume / 100f) / 100f);
-            }
-            catch (NullReferenceException)
-            {
-                // song changed while changing volume
-            }
-            catch (Exception)
-            {
-                // device not ready
-            }
-        }
-
-        public override int GetVolume()
-        {
-            return mVolume;
-        }
-
-        protected override void InternalLoopSet() => MediaPlayer.IsRepeating = IsLooping;
 
         public override AudioInstanceState State
         {
@@ -83,6 +47,51 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
+        public override void Play()
+        {
+            if (mSong != null)
+            {
+                MediaPlayer.Play(mSong);
+            }
+        }
+
+        public override void Pause()
+        {
+            MediaPlayer.Pause();
+        }
+
+        public override void Stop()
+        {
+            MediaPlayer.Stop();
+        }
+
+        public override void SetVolume(int volume, bool isMusic = false)
+        {
+            mVolume = volume;
+            try
+            {
+                MediaPlayer.Volume = mVolume * (Globals.Database.MusicVolume / 100f) / 100f;
+            }
+            catch (NullReferenceException)
+            {
+                // song changed while changing volume
+            }
+            catch (Exception)
+            {
+                // device not ready
+            }
+        }
+
+        public override int GetVolume()
+        {
+            return mVolume;
+        }
+
+        protected override void InternalLoopSet()
+        {
+            MediaPlayer.IsRepeating = IsLooping;
+        }
+
         public override void Dispose()
         {
             mDisposed = true;
@@ -100,7 +109,10 @@ namespace Intersect.Client.MonoGame.Audio
         ~MonoMusicInstance()
         {
             mDisposed = true;
+
             //We don't want to call MediaPlayer.Stop() here because it's static and another song has likely started playing.
         }
+
     }
+
 }

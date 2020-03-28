@@ -7,13 +7,20 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Content
 {
+
     public class Texture
     {
+
         private int mHeight = -1;
+
         private long mLastAccessTime;
+
         private bool mLoadError;
+
         private string mPath = "";
+
         private Texture2D mTex;
+
         private int mWidth = -1;
 
         public Texture(string path)
@@ -55,12 +62,17 @@ namespace Intersect.Editor.Content
             ResetAccessTime();
             if (mWidth == -1)
             {
-                if (mTex == null) LoadTexture();
+                if (mTex == null)
+                {
+                    LoadTexture();
+                }
+
                 if (mLoadError)
                 {
                     mWidth = 0;
                 }
             }
+
             return mWidth;
         }
 
@@ -69,19 +81,28 @@ namespace Intersect.Editor.Content
             ResetAccessTime();
             if (mHeight == -1)
             {
-                if (mTex == null) LoadTexture();
+                if (mTex == null)
+                {
+                    LoadTexture();
+                }
+
                 if (mLoadError)
                 {
                     mHeight = 0;
                 }
             }
+
             return mHeight;
         }
 
         public Texture2D GetTexture()
         {
             ResetAccessTime();
-            if (mTex == null) LoadTexture();
+            if (mTex == null)
+            {
+                LoadTexture();
+            }
+
             return mTex;
         }
 
@@ -96,5 +117,7 @@ namespace Intersect.Editor.Content
                 }
             }
         }
+
     }
+
 }

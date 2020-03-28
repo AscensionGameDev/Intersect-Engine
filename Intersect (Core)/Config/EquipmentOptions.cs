@@ -5,10 +5,14 @@ using System.Runtime.Serialization;
 
 namespace Intersect.Config
 {
+
     public class EquipmentOptions
     {
-        public int WeaponSlot = 2;
+
+        public PaperdollOptions Paperdoll = new PaperdollOptions();
+
         public int ShieldSlot = 3;
+
         public List<string> Slots = new List<string>()
         {
             "Helmet",
@@ -18,8 +22,6 @@ namespace Intersect.Config
             "Boots",
         };
 
-        public PaperdollOptions Paperdoll = new PaperdollOptions();
-
         public List<string> ToolTypes = new List<string>()
         {
             "Axe",
@@ -27,6 +29,8 @@ namespace Intersect.Config
             "Shovel",
             "Fishing Rod"
         };
+
+        public int WeaponSlot = 2;
 
         [OnDeserializing]
         internal void OnDeserializingMethod(StreamingContext context)
@@ -49,11 +53,15 @@ namespace Intersect.Config
             {
                 throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
             }
+
             if (ShieldSlot < -1 || ShieldSlot > Slots.Count - 1)
             {
                 throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
             }
+
             Paperdoll.Validate(this);
         }
+
     }
+
 }

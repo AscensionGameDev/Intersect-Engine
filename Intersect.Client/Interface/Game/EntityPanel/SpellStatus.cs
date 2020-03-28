@@ -3,7 +3,6 @@
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -11,21 +10,27 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
+
     public class SpellStatus
     {
+
+        public ImagePanel Container;
+
+        private Guid mCurrentSpellId;
+
         private SpellDescWindow mDescWindow;
+
+        private Framework.Gwen.Control.Label mDurationLabel;
 
         //Drag/Drop References
         private EntityBox mEntityBox;
 
-        public ImagePanel Container;
-        private Guid mCurrentSpellId;
-
         private Status mStatus;
-        public ImagePanel Pnl;
-        private Framework.Gwen.Control.Label mDurationLabel;
 
         private string mTexLoaded = "";
+
+        public ImagePanel Pnl;
+
         public Framework.Gwen.Control.Label TimeLabel;
 
         public SpellStatus(EntityBox entityBox, Status status)
@@ -58,18 +63,23 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            mDescWindow = new SpellDescWindow(mStatus.SpellId,  mEntityBox.EntityWindow.X + Pnl.X + 16, mEntityBox.EntityWindow.Y + Container.Parent.Y +  Container.Bottom + 2, true);
+
+            mDescWindow = new SpellDescWindow(
+                mStatus.SpellId, mEntityBox.EntityWindow.X + Pnl.X + 16,
+                mEntityBox.EntityWindow.Y + Container.Parent.Y + Container.Bottom + 2, true
+            );
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect
+            var rect = new FloatRect
             {
                 X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
+
             return rect;
         }
 
@@ -84,22 +94,31 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 var remaining = mStatus.RemainingMs();
                 var spell = SpellBase.Get(mStatus.SpellId);
-                var secondsRemaining = ((float) remaining / 1000f);
+                var secondsRemaining = (float) remaining / 1000f;
                 if (secondsRemaining > 10f)
                 {
-                    mDurationLabel.Text = Strings.EntityBox.cooldown.ToString(((float)remaining / 1000f).ToString("N0"));
+                    mDurationLabel.Text =
+                        Strings.EntityBox.cooldown.ToString(((float) remaining / 1000f).ToString("N0"));
                 }
                 else
                 {
-                    mDurationLabel.Text = Strings.EntityBox.cooldown.ToString(((float)remaining / 1000f).ToString("N1").Replace(".",Strings.Numbers.dec));
+                    mDurationLabel.Text = Strings.EntityBox.cooldown.ToString(
+                        ((float) remaining / 1000f).ToString("N1").Replace(".", Strings.Numbers.dec)
+                    );
                 }
-                if (((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Icon) || mCurrentSpellId != mStatus.SpellId) && remaining > 0)
+
+                if ((mTexLoaded != "" && spell == null ||
+                     spell != null && mTexLoaded != spell.Icon ||
+                     mCurrentSpellId != mStatus.SpellId) &&
+                    remaining > 0)
                 {
                     Container.Show();
                     if (spell != null)
                     {
-                        GameTexture spellTex =
-                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+                        var spellTex = Globals.ContentManager.GetTexture(
+                            GameContentManager.TextureType.Spell, spell.Icon
+                        );
+
                         if (spellTex != null)
                         {
                             Pnl.Texture = spellTex;
@@ -112,6 +131,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                                 Pnl.Texture = null;
                             }
                         }
+
                         mTexLoaded = spell.Icon;
                         mCurrentSpellId = mStatus.SpellId;
                     }
@@ -121,6 +141,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         {
                             Pnl.Texture = null;
                         }
+
                         mTexLoaded = "";
                     }
                 }
@@ -130,10 +151,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     {
                         Pnl.Texture = null;
                     }
+
                     Container.Hide();
                     mTexLoaded = "";
                 }
             }
         }
+
     }
+
 }

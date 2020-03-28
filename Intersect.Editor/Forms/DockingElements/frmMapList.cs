@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
+
     public partial class FrmMapList : DockContent
     {
+
         public FrmMapList()
         {
             InitializeComponent();
@@ -24,13 +29,17 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                if (Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                    DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialogue,
-                        Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (Globals.CurrentMap != null &&
+                    Globals.CurrentMap.Changed() &&
+                    DarkMessageBox.ShowInformation(
+                        Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     SaveMap();
                 }
+
                 Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapId);
             }
         }
@@ -46,6 +55,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     Globals.MapEditorWindow.PlaceSelection();
                 }
             }
+
             PacketSender.SendMap(Globals.CurrentMap);
         }
 
@@ -91,8 +101,10 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.MapList.selecttorename, Strings.MapList.rename,
-                    DarkDialogButton.Ok, Properties.Resources.Icon);
+                DarkMessageBox.ShowError(
+                    Strings.MapList.selecttorename, Strings.MapList.rename, DarkDialogButton.Ok,
+                    Properties.Resources.Icon
+                );
             }
             else
             {
@@ -104,15 +116,17 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                DarkMessageBox.ShowError(Strings.MapList.selecttodelete, Strings.MapList.delete,
-                    DarkDialogButton.Ok, Properties.Resources.Icon);
+                DarkMessageBox.ShowError(
+                    Strings.MapList.selecttodelete, Strings.MapList.delete, DarkDialogButton.Ok,
+                    Properties.Resources.Icon
+                );
             }
             else
             {
-                if (
-                    DarkMessageBox.ShowWarning(
-                        Strings.MapList.deleteconfirm.ToString( ((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
-                        Strings.MapList.delete, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.MapList.deleteconfirm.ToString(((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
+                        Strings.MapList.delete, DarkDialogButton.YesNo, Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDelete((MapListItem) mapTreeList.list.SelectedNode.Tag);
@@ -129,24 +143,32 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void btnNewMap_Click(object sender, EventArgs e)
         {
-            if (
-                DarkMessageBox.ShowWarning(Strings.Mapping.newmap, Strings.Mapping.newmapcaption,
-                    DarkDialogButton.YesNo, Properties.Resources.Icon) != DialogResult.Yes) return;
+            if (DarkMessageBox.ShowWarning(
+                    Strings.Mapping.newmap, Strings.Mapping.newmapcaption, DarkDialogButton.YesNo,
+                    Properties.Resources.Icon
+                ) !=
+                DialogResult.Yes)
+            {
+                return;
+            }
+
             if (Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialogue,
-                    Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowInformation(
+                    Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
+                    Properties.Resources.Icon
+                ) ==
                 DialogResult.Yes)
             {
                 SaveMap();
             }
+
             if (mapTreeList.list.SelectedNode == null)
             {
                 PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id,
-                    (MapListItem) mapTreeList.list.SelectedNode.Tag);
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id, (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
 
@@ -166,9 +188,11 @@ namespace Intersect.Editor.Forms.DockingElements
             var node = mapTreeList.list.SelectedNode;
             if (node != null && node.Tag.GetType() == typeof(MapListMap))
             {
-                var id = ((MapListMap)node.Tag).MapId;
+                var id = ((MapListMap) node.Tag).MapId;
                 Clipboard.SetText(id.ToString());
             }
         }
+
     }
+
 }

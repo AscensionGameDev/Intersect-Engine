@@ -8,10 +8,12 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Admin.Actions
 {
+
     public static class ActionProcessing
     {
+
         //BanAction
-        public static void ProcessAction(Client client, Player player, BanAction action) 
+        public static void ProcessAction(Client client, Player player, BanAction action)
         {
             var target = DbInterface.GetPlayer(action.Name);
             if (target != null)
@@ -20,12 +22,15 @@ namespace Intersect.Server.Admin.Actions
                 {
                     if (action.BanIp == true)
                     {
-                        Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
+                        Ban.Add(
+                            target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? ""
+                        );
                     }
                     else
                     {
                         Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
+
                     target.Client?.Disconnect();
                     PacketSender.SendChatMsg(player, Strings.Account.banned.ToString(target.Name), Color.Red);
                 }
@@ -80,7 +85,9 @@ namespace Intersect.Server.Admin.Actions
                 {
                     if (action.BanIp == true)
                     {
-                        Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
+                        Mute.Add(
+                            target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? ""
+                        );
                     }
                     else
                     {
@@ -107,8 +114,10 @@ namespace Intersect.Server.Admin.Actions
             if (client == null || target == null || target.Client == null)
             {
                 PacketSender.SendChatMsg(player, Strings.Player.offline);
+
                 return;
             }
+
             if (action.Name.Trim().ToLower() != player.Name.Trim().ToLower())
             {
                 if (client.Power.IsAdmin)
@@ -137,7 +146,6 @@ namespace Intersect.Server.Admin.Actions
                     {
                         PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(target.Name));
                     }
-
                 }
                 else
                 {
@@ -171,7 +179,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-               target.Sprite = action.Sprite;
+                target.Sprite = action.Sprite;
                 PacketSender.SendEntityDataToProximity(target);
             }
             else
@@ -215,7 +223,7 @@ namespace Intersect.Server.Admin.Actions
                 else
                 {
                     PacketSender.SendChatMsg(player, Strings.Account.notfound.ToString(action.Name));
-                } 
+                }
             }
         }
 
@@ -225,7 +233,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                player.Warp(target.MapId, (byte)target.X, (byte)target.Y);
+                player.Warp(target.MapId, (byte) target.X, (byte) target.Y);
                 PacketSender.SendChatMsg(player, Strings.Player.warpedto.ToString(target.Name));
                 PacketSender.SendChatMsg(target, Strings.Player.warpedtoyou.ToString(player.Name));
             }
@@ -244,7 +252,7 @@ namespace Intersect.Server.Admin.Actions
         //WarpToMapAction
         public static void ProcessAction(Client client, Player player, WarpToMapAction action)
         {
-            player.Warp(action.MapId, (byte)player.X, (byte)player.Y);
+            player.Warp(action.MapId, (byte) player.X, (byte) player.Y);
         }
 
         //WarpToMeAction
@@ -253,7 +261,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                target.Warp(player.MapId, (byte)player.X, (byte)player.Y);
+                target.Warp(player.MapId, (byte) player.X, (byte) player.Y);
                 PacketSender.SendChatMsg(player, Strings.Player.haswarpedto.ToString(target.Name), player.Name);
                 PacketSender.SendChatMsg(target, Strings.Player.beenwarpedto.ToString(player.Name), player.Name);
             }
@@ -262,5 +270,7 @@ namespace Intersect.Server.Admin.Actions
                 PacketSender.SendChatMsg(player, Strings.Player.offline);
             }
         }
+
     }
+
 }

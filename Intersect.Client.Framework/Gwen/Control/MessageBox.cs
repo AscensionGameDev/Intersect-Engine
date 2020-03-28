@@ -2,12 +2,15 @@
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Simple message box.
     /// </summary>
     public class MessageBox : WindowControl
     {
+
         private readonly Button mButton;
+
         private readonly Label mLabel; // should be rich label with maxwidth = parent
 
         /// <summary>
@@ -21,8 +24,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="parent">Parent control.</param>
         /// <param name="text">Message to display.</param>
         /// <param name="caption">Window caption.</param>
-        public MessageBox(Base parent, string text, string caption = "")
-            : base(parent, caption, true)
+        public MessageBox(Base parent, string text, string caption = "") : base(parent, caption, true)
         {
             DeleteOnClose = true;
 
@@ -45,7 +47,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         private void DismissedHandler(Base control, EventArgs args)
         {
             if (Dismissed != null)
+            {
                 Dismissed.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -67,5 +71,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             mLabel.SetTextScale(scale);
         }
+
     }
+
 }

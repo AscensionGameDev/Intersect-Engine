@@ -4,27 +4,40 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
-using Intersect.Client.Networking;
 
 namespace Intersect.Client.Interface.Game
 {
+
     class DebugMenu
     {
+
         //Controls
         private WindowControl mDebugWindow;
 
         private Label mDrawsLabel;
+
         private Label mEntitiesDrawnLabel;
+
         private Label mEntitiesLabel;
+
         private Label mFpsLabel;
+
         private Label mLightsDrawnLabel;
+
         private Label mMapLabel;
+
         private Label mMapsDrawnLabel;
+
         private Label mMapsLoadedLabel;
+
         private Label mPingLabel;
+
         private Label mTimeLabel;
+
         private Label mXLabel;
+
         private Label mYLabel;
+
         private Label mZLabel;
 
         //Init
@@ -80,28 +93,32 @@ namespace Intersect.Client.Interface.Game
 
         public void Update()
         {
-            mFpsLabel.Text = Strings.Debug.fps.ToString( Graphics.Renderer.GetFps());
+            mFpsLabel.Text = Strings.Debug.fps.ToString(Graphics.Renderer.GetFps());
             mPingLabel.Text = Strings.Debug.ping.ToString(Networking.Network.Ping);
-            mDrawsLabel.Text = Strings.Debug.draws.ToString( Graphics.DrawCalls);
+            mDrawsLabel.Text = Strings.Debug.draws.ToString(Graphics.DrawCalls);
             if (MapInstance.Get(Globals.Me.CurrentMap) != null)
             {
-                mMapLabel.Text = Strings.Debug.map.ToString(
-                    MapInstance.Get(Globals.Me.CurrentMap).Name);
-                mXLabel.Text = Strings.Debug.x.ToString( Globals.Me.X);
-                mYLabel.Text = Strings.Debug.y.ToString( Globals.Me.Y);
-                mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.Z);
+                mMapLabel.Text = Strings.Debug.map.ToString(MapInstance.Get(Globals.Me.CurrentMap).Name);
+                mXLabel.Text = Strings.Debug.x.ToString(Globals.Me.X);
+                mYLabel.Text = Strings.Debug.y.ToString(Globals.Me.Y);
+                mZLabel.Text = Strings.Debug.z.ToString(Globals.Me.Z);
             }
-            int entityCount = Globals.Entities.Count;
+
+            var entityCount = Globals.Entities.Count;
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                if (map != null) entityCount += map.LocalEntities.Count;
+                if (map != null)
+                {
+                    entityCount += map.LocalEntities.Count;
+                }
             }
-            mEntitiesLabel.Text = Strings.Debug.knownentities.ToString( Globals.Entities.Count);
-            mMapsLoadedLabel.Text = Strings.Debug.knownmaps.ToString( MapInstance.Lookup.Count);
-            mMapsDrawnLabel.Text = Strings.Debug.mapsdrawn.ToString( Graphics.MapsDrawn);
-            mEntitiesDrawnLabel.Text = Strings.Debug.entitiesdrawn.ToString( +Graphics.EntitiesDrawn);
-            mLightsDrawnLabel.Text = Strings.Debug.lightsdrawn.ToString( Graphics.LightsDrawn);
-            mTimeLabel.Text = Strings.Debug.time.ToString( Time.GetTime());
+
+            mEntitiesLabel.Text = Strings.Debug.knownentities.ToString(Globals.Entities.Count);
+            mMapsLoadedLabel.Text = Strings.Debug.knownmaps.ToString(MapInstance.Lookup.Count);
+            mMapsDrawnLabel.Text = Strings.Debug.mapsdrawn.ToString(Graphics.MapsDrawn);
+            mEntitiesDrawnLabel.Text = Strings.Debug.entitiesdrawn.ToString(+Graphics.EntitiesDrawn);
+            mLightsDrawnLabel.Text = Strings.Debug.lightsdrawn.ToString(Graphics.LightsDrawn);
+            mTimeLabel.Text = Strings.Debug.time.ToString(Time.GetTime());
         }
 
         public void Show()
@@ -118,5 +135,7 @@ namespace Intersect.Client.Interface.Game
         {
             mDebugWindow.IsHidden = true;
         }
+
     }
+
 }

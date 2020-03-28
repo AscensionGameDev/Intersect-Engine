@@ -1,5 +1,6 @@
 ﻿namespace Intersect.Server.Web.RestApi.Payloads
 {
+
     public struct PagingInfo
     {
 
@@ -8,4 +9,5 @@
         public int Count { get; set; }
 
     }
+
 }

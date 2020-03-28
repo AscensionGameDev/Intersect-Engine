@@ -3,11 +3,11 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class MakePublicCommand : ServerCommand
     {
-        public MakePublicCommand() : base(
-            Strings.Commands.MakePublic
-        )
+
+        public MakePublicCommand() : base(Strings.Commands.MakePublic)
         {
         }
 
@@ -17,5 +17,7 @@ namespace Intersect.Server.Core.Commands
             Options.AdminOnly = false;
             Options.SaveToDisk();
         }
+
     }
+
 }

@@ -8,17 +8,21 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class MenuGuiBase
     {
+
+        private static MainMenu.NetworkStatusHandler sNetworkStatusChanged;
+
         private readonly Canvas mMenuCanvas;
 
-        public MainMenu MainMenu;
-        private bool mShouldReset;
-
         [NotNull] private readonly ImagePanel mServerStatusArea;
+
         [NotNull] private readonly Label mServerStatusLabel;
-        
-        private static MainMenu.NetworkStatusHandler sNetworkStatusChanged;
+
+        public MainMenu MainMenu;
+
+        private bool mShouldReset;
 
         public MenuGuiBase(Canvas myCanvas)
         {
@@ -29,6 +33,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
             };
+
             mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
             MainMenu.NetworkStatusChanged += HandleNetworkStatusChanged;
         }
@@ -46,7 +51,8 @@ namespace Intersect.Client.Interface.Menu
 
         private void HandleNetworkStatusChanged()
         {
-            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString());
+            mServerStatusLabel.Text =
+                Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString());
         }
 
         public void Draw()
@@ -56,6 +62,7 @@ namespace Intersect.Client.Interface.Menu
                 MainMenu.Reset();
                 mShouldReset = false;
             }
+
             MainMenu.Update();
             mMenuCanvas.RenderCanvas();
         }
@@ -68,7 +75,12 @@ namespace Intersect.Client.Interface.Menu
         //Dispose
         public void Dispose()
         {
-            if (mMenuCanvas != null) mMenuCanvas.Dispose();
+            if (mMenuCanvas != null)
+            {
+                mMenuCanvas.Dispose();
+            }
         }
+
     }
+
 }

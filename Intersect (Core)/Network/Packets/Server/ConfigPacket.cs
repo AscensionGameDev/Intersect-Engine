@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect.Network.Packets.Server
+﻿namespace Intersect.Network.Packets.Server
 {
+
     public class ConfigPacket : CerasPacket
     {
-        public string Config { get; set; }
 
         public ConfigPacket(string config)
         {
             Config = config;
         }
+
+        public string Config { get; set; }
+
     }
+
 }

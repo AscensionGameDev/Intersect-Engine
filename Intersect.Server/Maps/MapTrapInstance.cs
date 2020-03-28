@@ -1,30 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Intersect.GameObjects;
-using Intersect.Network.Packets.Client;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
-using Intersect.Server.Networking;
 
 namespace Intersect.Server.Classes.Maps
 {
+
     public class MapTrapInstance
     {
-        public Entity Owner;
-        public SpellBase ParentSpell;
+
+        private long Duration;
 
         public Guid MapId;
-        public byte X;
-        public byte Y;
-        public byte Z;
+
+        public Entity Owner;
+
+        public SpellBase ParentSpell;
 
         public bool Triggered = false;
 
-        private long Duration;
+        public byte X;
+
+        public byte Y;
+
+        public byte Z;
 
         public MapTrapInstance(Entity owner, SpellBase parentSpell, Guid mapId, byte x, byte y, byte z)
         {
@@ -46,9 +47,12 @@ namespace Intersect.Server.Classes.Maps
                     if (entity.GetType() == typeof(Player) && Owner.GetType() == typeof(Player))
                     {
                         //Don't detonate on yourself and party members on non-friendly spells!
-                        if (Owner == entity || ((Player)Owner).InParty((Player)entity))
+                        if (Owner == entity || ((Player) Owner).InParty((Player) entity))
                         {
-                            if (!ParentSpell.Combat.Friendly) return;
+                            if (!ParentSpell.Combat.Friendly)
+                            {
+                                return;
+                            }
                         }
                     }
 
@@ -61,10 +65,16 @@ namespace Intersect.Server.Classes.Maps
         public void Update()
         {
             if (Triggered)
+            {
                 MapInstance.Get(MapId).RemoveTrap(this);
+            }
 
             if (Globals.Timing.TimeMs > Duration)
+            {
                 MapInstance.Get(MapId).RemoveTrap(this);
+            }
         }
+
     }
+
 }

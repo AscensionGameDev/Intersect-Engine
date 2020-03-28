@@ -1,12 +1,15 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+
 using Intersect.Client.Framework.Sys;
 
 namespace Intersect.Client.MonoGame.System
 {
+
     public class MonoSystem : GameSystem
     {
+
         public Stopwatch StopWatch = new Stopwatch();
+
         public long TotalMilliseconds;
 
         public MonoSystem()
@@ -38,5 +41,7 @@ namespace Intersect.Client.MonoGame.System
         {
             Console.WriteLine(error);
         }
+
     }
+
 }

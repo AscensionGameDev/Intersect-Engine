@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+
 using Intersect.Logging;
 using Intersect.Network.Packets;
+
 using Lidgren.Network;
 
 namespace Intersect.Network
 {
+
     public sealed class LidgrenConnection : AbstractConnection
     {
+
         private byte[] mAesKey;
+
         private byte[] mHandshakeSecret;
 
         private byte[] mRsaSecret;
 
-        public LidgrenConnection(INetwork network, NetConnection connection, byte[] aesKey)
-            : this(network, Guid.NewGuid(), connection, aesKey)
+        public LidgrenConnection(INetwork network, NetConnection connection, byte[] aesKey) : this(
+            network, Guid.NewGuid(), connection, aesKey
+        )
         {
         }
 
@@ -25,8 +31,7 @@ namespace Intersect.Network
             CreateRsa(rsaParameters);
         }
 
-        public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] aesKey)
-            : base(guid)
+        public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] aesKey) : base(guid)
         {
             Network = network;
             NetConnection = netConnection ?? throw new ArgumentNullException();
@@ -35,9 +40,13 @@ namespace Intersect.Network
             CreateAes();
         }
 
-        public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] handshakeSecret,
-            RSAParameters rsaParameters)
-            : base(guid)
+        public LidgrenConnection(
+            INetwork network,
+            Guid guid,
+            NetConnection netConnection,
+            byte[] handshakeSecret,
+            RSAParameters rsaParameters
+        ) : base(guid)
         {
             Network = network;
             NetConnection = netConnection;
@@ -46,11 +55,15 @@ namespace Intersect.Network
         }
 
         public INetwork Network { get; }
+
         public NetConnection NetConnection { get; }
+
         public RSACryptoServiceProvider Rsa { get; private set; }
+
         public NetAESEncryption Aes { get; private set; }
 
         public override string Ip => NetConnection?.RemoteEndPoint?.Address?.ToString();
+
         public override int Port => NetConnection?.RemoteEndPoint?.Port ?? -1;
 
         private void CreateRsa(RSAParameters rsaParameters)
@@ -61,22 +74,45 @@ namespace Intersect.Network
 
         private void CreateAes()
         {
-            if (NetConnection == null) throw new ArgumentNullException();
-            if (mAesKey == null) throw new ArgumentNullException();
+            if (NetConnection == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (mAesKey == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             Aes = new NetAESEncryption(NetConnection.Peer, mAesKey, 0, mAesKey.Length);
         }
 
         public bool HandleApproval(ApprovalPacket approval)
         {
-            if (approval == null) throw new ArgumentNullException();
-            if (approval.HandshakeSecret == null) throw new ArgumentNullException();
-            if (approval.AesKey == null) throw new ArgumentNullException();
-            if (mHandshakeSecret == null) throw new ArgumentNullException();
+            if (approval == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (approval.HandshakeSecret == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (approval.AesKey == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (mHandshakeSecret == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             if (!mHandshakeSecret.SequenceEqual(approval.HandshakeSecret))
             {
                 Log.Error("Bad handshake secret received from server.");
+
                 return false;
             }
 
@@ -94,6 +130,10 @@ namespace Intersect.Network
         }
 
         public override bool Send(IPacket packet)
-            => Network?.Send(this, packet) ?? false;
+        {
+            return Network?.Send(this, packet) ?? false;
+        }
+
     }
+
 }

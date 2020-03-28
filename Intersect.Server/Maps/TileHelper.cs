@@ -1,15 +1,18 @@
 ﻿using System;
+
 using Intersect.Enums;
 using Intersect.Server.Database;
 
 namespace Intersect.Server.Maps
 {
-    using DbInterface = DbInterface;
 
     public class TileHelper
     {
+
         private Guid mMapId;
+
         private int mTileX;
+
         private int mTileY;
 
         /// <summary>
@@ -36,31 +39,45 @@ namespace Intersect.Server.Maps
         {
             mTileX += xOffset;
             mTileY += yOffset;
+
             return TryFix();
         }
 
         public bool TryFix()
         {
-            int oldTileX = mTileX;
-            int oldTileY = mTileY;
-            if (Fix()) return true;
+            var oldTileX = mTileX;
+            var oldTileY = mTileY;
+            if (Fix())
+            {
+                return true;
+            }
+
             mTileX = oldTileX;
             mTileY = oldTileY;
+
             return false;
         }
 
         public bool Matches(TileHelper other)
         {
-            if (GetMapId() == other.GetMapId() && GetX() == other.GetX() && GetY() == other.GetY()) return true;
+            if (GetMapId() == other.GetMapId() && GetX() == other.GetX() && GetY() == other.GetY())
+            {
+                return true;
+            }
+
             return false;
         }
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
-            int grid = MapInstance.Get(mMapId).MapGrid;
-            int gridX = MapInstance.Get(mMapId).MapGridX;
-            int gridY = MapInstance.Get(mMapId).MapGridY;
+            if (!MapInstance.Lookup.Keys.Contains(mMapId))
+            {
+                return false;
+            }
+
+            var grid = MapInstance.Get(mMapId).MapGrid;
+            var gridX = MapInstance.Get(mMapId).MapGridX;
+            var gridY = MapInstance.Get(mMapId).MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
@@ -68,8 +85,10 @@ namespace Intersect.Server.Maps
                     {
                         mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
+
                         return true;
                     }
+
                     return false;
                 case (int) Directions.Down:
                     if (gridY + 1 < DbInterface.MapGrids[grid].Height &&
@@ -77,16 +96,20 @@ namespace Intersect.Server.Maps
                     {
                         mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
+
                         return true;
                     }
+
                     return false;
                 case (int) Directions.Left:
                     if (gridX > 0 && DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY] != Guid.Empty)
                     {
                         mMapId = DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
+
                         return true;
                     }
+
                     return false;
                 case (int) Directions.Right:
                     if (gridX + 1 < DbInterface.MapGrids[grid].Width &&
@@ -94,8 +117,10 @@ namespace Intersect.Server.Maps
                     {
                         mMapId = DbInterface.MapGrids[grid].MyGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
+
                         return true;
                     }
+
                     return false;
                 default:
                     return false;
@@ -104,24 +129,44 @@ namespace Intersect.Server.Maps
 
         private bool Fix()
         {
-            if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
-            MapInstance curMap = MapInstance.Get(mMapId);
+            if (!MapInstance.Lookup.Keys.Contains(mMapId))
+            {
+                return false;
+            }
+
+            var curMap = MapInstance.Get(mMapId);
             while (mTileX < 0)
             {
-                if (!TransitionMaps((int) Directions.Left)) return false;
+                if (!TransitionMaps((int) Directions.Left))
+                {
+                    return false;
+                }
             }
+
             while (mTileY < 0)
             {
-                if (!TransitionMaps((int) Directions.Up)) return false;
+                if (!TransitionMaps((int) Directions.Up))
+                {
+                    return false;
+                }
             }
+
             while (mTileX >= Options.MapWidth)
             {
-                if (!TransitionMaps((int) Directions.Right)) return false;
+                if (!TransitionMaps((int) Directions.Right))
+                {
+                    return false;
+                }
             }
+
             while (mTileY >= Options.MapHeight)
             {
-                if (!TransitionMaps((int) Directions.Down)) return false;
+                if (!TransitionMaps((int) Directions.Down))
+                {
+                    return false;
+                }
             }
+
             return true;
         }
 
@@ -137,20 +182,34 @@ namespace Intersect.Server.Maps
 
         public byte GetX()
         {
-            return (byte)mTileX;
+            return (byte) mTileX;
         }
 
         public byte GetY()
         {
-            return (byte)mTileY;
+            return (byte) mTileY;
         }
 
         public static bool IsTileValid(Guid mapId, int tileX, int tileY)
         {
-            if (!MapInstance.Lookup.Keys.Contains(mapId)) return false;
-            if (tileX < 0 || tileX >= Options.MapWidth) return false;
-            if (tileY < 0 || tileY >= Options.MapHeight) return false;
+            if (!MapInstance.Lookup.Keys.Contains(mapId))
+            {
+                return false;
+            }
+
+            if (tileX < 0 || tileX >= Options.MapWidth)
+            {
+                return false;
+            }
+
+            if (tileY < 0 || tileY >= Options.MapHeight)
+            {
+                return false;
+            }
+
             return true;
         }
+
     }
+
 }

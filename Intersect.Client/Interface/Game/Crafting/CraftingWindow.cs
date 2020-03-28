@@ -22,9 +22,13 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         private static int sItemYPadding = 4;
 
+        public bool Crafting;
+
         private ImagePanel mBar;
 
         private ImagePanel mBarContainer;
+
+        private long mBarTimer;
 
         private RecipeItem mCombinedItem;
 
@@ -33,6 +37,8 @@ namespace Intersect.Client.Interface.Game.Crafting
         private Button mCraft;
 
         private ImagePanel mCraftedItemTemplate;
+
+        private Guid mCraftId;
 
         //Controls
         private WindowControl mCraftWindow;
@@ -55,12 +61,6 @@ namespace Intersect.Client.Interface.Game.Crafting
         private ListBox mRecipes;
 
         private List<Label> mValues = new List<Label>();
-
-        private long mBarTimer;
-
-        private Guid mCraftId;
-
-        public bool Crafting;
 
         public CraftingWindow(Canvas gameCanvas)
         {
@@ -103,15 +103,9 @@ namespace Intersect.Client.Interface.Game.Crafting
         }
 
         //Location
-        public int X
-        {
-            get { return mCraftWindow.X; }
-        }
+        public int X => mCraftWindow.X;
 
-        public int Y
-        {
-            get { return mCraftWindow.Y; }
-        }
+        public int Y => mCraftWindow.Y;
 
         private void LoadCraftItems(Guid id)
         {
@@ -129,12 +123,16 @@ namespace Intersect.Client.Interface.Game.Crafting
             }
 
             if (!Globals.ActiveCraftingTable.Crafts.Contains(id))
+            {
                 return;
+            }
 
             var craft = Globals.ActiveCraftingTable.Crafts.Get(id);
 
             if (craft == null)
+            {
                 return;
+            }
 
             mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.ItemId, 0))
             {
@@ -144,20 +142,20 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCombinedItem.Setup("CraftedItemIcon");
             mCombinedValue = new Label(mCombinedItem.Container, "CraftedItemQuantity");
 
-            mCombinedItem.Container.LoadJsonUi(
-                GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString()
-            );
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             mCombinedItem.LoadItem();
             mCombinedValue.Show();
             var quantity = Math.Max(craft.Quantity, 1);
             var itm = ItemBase.Get(craft.ItemId);
             if (itm == null || !itm.IsStackable)
+            {
                 quantity = 1;
+            }
 
             mCombinedValue.Text = quantity.ToString();
 
-            for (int i = 0; i < mItems.Count; i++)
+            for (var i = 0; i < mItems.Count; i++)
             {
                 //Clear the old item description box
                 if (mItems[i].DescWindow != null)
@@ -172,7 +170,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mValues.Clear();
 
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
-            Dictionary<Guid, int> itemdict = new Dictionary<Guid, int>();
+            var itemdict = new Dictionary<Guid, int>();
             foreach (var item in Globals.Me.Inventory)
             {
                 if (item != null)
@@ -188,7 +186,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 }
             }
 
-            for (int i = 0; i < craft.Ingredients.Count; i++)
+            for (var i = 0; i < craft.Ingredients.Count; i++)
             {
                 mItems.Add(new RecipeItem(this, craft.Ingredients[i]));
                 mItems[i].Container = new ImagePanel(mItemContainer, "CraftingIngredient");
@@ -205,8 +203,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
 
-                mItems[i]
-                    .Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 mItems[i].LoadItem();
 
@@ -214,14 +211,14 @@ namespace Intersect.Client.Interface.Game.Crafting
                 var yPadding = mItems[i].Container.Margin.Top + mItems[i].Container.Margin.Bottom;
                 mItems[i]
                     .Container.SetPosition(
-                        (i %
-                         ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
-                          (mItems[i].Container.Width + xPadding))) *
+                        i %
+                        ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+                         (mItems[i].Container.Width + xPadding)) *
                         (mItems[i].Container.Width + xPadding) +
                         xPadding,
-                        (i /
-                         ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
-                          (mItems[i].Container.Width + xPadding))) *
+                        i /
+                        ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+                         (mItems[i].Container.Width + xPadding)) *
                         (mItems[i].Container.Height + yPadding) +
                         yPadding
                     );
@@ -231,7 +228,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             if (Crafting)
             {
                 var cancraft = true;
-                foreach (CraftIngredient c in CraftBase.Get(mCraftId).Ingredients)
+                foreach (var c in CraftBase.Get(mCraftId).Ingredients)
                 {
                     if (itemdict.ContainsKey(c.ItemId))
                     {
@@ -368,7 +365,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                         continue;
                     }
 
-                    var tmpRow = mRecipes?.AddRow((i + 1) + ") " + ItemBase.GetName(activeCraft.ItemId));
+                    var tmpRow = mRecipes?.AddRow(i + 1 + ") " + ItemBase.GetName(activeCraft.ItemId));
                     if (tmpRow == null)
                     {
                         continue;

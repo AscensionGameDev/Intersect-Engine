@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
@@ -9,6 +10,7 @@ using Intersect.Server.Web.RestApi.Payloads;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
+
     [RoutePrefix("chat")]
     [ConfigurableAuthorize]
     public sealed class ChatController : ApiController
@@ -21,7 +23,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             try
             {
-                PacketSender.SendGlobalMsg(chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.AnnouncementChat, chatMessage.Target);
+                PacketSender.SendGlobalMsg(
+                    chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.AnnouncementChat, chatMessage.Target
+                );
 
                 return new
                 {
@@ -41,10 +45,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
+                );
             }
 
-            var client = Globals.Clients.Find(lookupClient => string.Equals(lookupKey.Name, lookupClient?.Entity?.Name, StringComparison.OrdinalIgnoreCase));
+            var client = Globals.Clients.Find(
+                lookupClient => string.Equals(
+                    lookupKey.Name, lookupClient?.Entity?.Name, StringComparison.OrdinalIgnoreCase
+                )
+            );
+
             if (client == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player found for '{lookupKey}'.");
@@ -52,7 +63,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             try
             {
-                PacketSender.SendChatMsg(client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.PlayerMsg, chatMessage.Target);
+                PacketSender.SendChatMsg(
+                    client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.PlayerMsg,
+                    chatMessage.Target
+                );
 
                 return new
                 {
@@ -78,7 +92,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             try
             {
-                if (PacketSender.SendProximityMsg(chatMessage.Message, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target))
+                if (PacketSender.SendProximityMsg(
+                    chatMessage.Message, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target
+                ))
                 {
                     return new
                     {
@@ -99,4 +115,5 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         // TODO: "party" message endpoint?
 
     }
+
 }

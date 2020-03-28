@@ -6,20 +6,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Logging.Microsoft.Extensions.Logging
 {
+
     public class IntersectLoggerFactory : ILoggerFactory
     {
-
-        public static IntersectLoggerFactory Create([NotNull] string name) => Instances.GetInstance(name);
-
-        private static IntersectLoggerFactory DoCreateFactory() => new IntersectLoggerFactory();
-
-        [NotNull]
-        public static NamedInstanceStore<IntersectLoggerFactory> Instances { get; } =
-            new NamedInstanceStore<IntersectLoggerFactory>(DoCreateFactory);
 
         private IntersectLoggerFactory()
         {
         }
+
+        [NotNull]
+        public static NamedInstanceStore<IntersectLoggerFactory> Instances { get; } =
+            new NamedInstanceStore<IntersectLoggerFactory>(DoCreateFactory);
 
         /// <inheritdoc />
         public void Dispose()
@@ -27,13 +24,26 @@ namespace Intersect.Logging.Microsoft.Extensions.Logging
         }
 
         /// <inheritdoc />
-        public global::Microsoft.Extensions.Logging.ILogger CreateLogger(string categoryName) =>
-            new IntersectLogger(categoryName);
+        public global::Microsoft.Extensions.Logging.ILogger CreateLogger(string categoryName)
+        {
+            return new IntersectLogger(categoryName);
+        }
 
         /// <inheritdoc />
         public void AddProvider(ILoggerProvider provider)
         {
         }
 
+        public static IntersectLoggerFactory Create([NotNull] string name)
+        {
+            return Instances.GetInstance(name);
+        }
+
+        private static IntersectLoggerFactory DoCreateFactory()
+        {
+            return new IntersectLoggerFactory();
+        }
+
     }
+
 }

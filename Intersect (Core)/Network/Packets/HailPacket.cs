@@ -1,16 +1,18 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Security.Cryptography;
-using Intersect.Logging;
+
 using Intersect.Memory;
+
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif
 
 namespace Intersect.Network.Packets
 {
+
     public class HailPacket : ConnectionPacket
     {
+
         private byte[] mEncryptedHail;
 
         private RSAParameters mRsaParameters;
@@ -19,17 +21,18 @@ namespace Intersect.Network.Packets
 
         public HailPacket()
         {
-
         }
 
-        public HailPacket(RSACryptoServiceProvider rsa)
-            : base(rsa, null)
+        public HailPacket(RSACryptoServiceProvider rsa) : base(rsa, null)
         {
         }
 
-        public HailPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] versionData,
-            RSAParameters rsaParameters)
-            : base(rsa, handshakeSecret)
+        public HailPacket(
+            RSACryptoServiceProvider rsa,
+            byte[] handshakeSecret,
+            byte[] versionData,
+            RSAParameters rsaParameters
+        ) : base(rsa, handshakeSecret)
         {
             VersionData = versionData;
             RsaParameters = rsaParameters;
@@ -70,5 +73,7 @@ namespace Intersect.Network.Packets
             get => mRsaParameters;
             set => mRsaParameters = value;
         }
+
     }
+
 }

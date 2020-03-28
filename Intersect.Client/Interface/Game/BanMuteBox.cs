@@ -8,15 +8,24 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game
 {
+
     public class BanMuteBox
     {
+
         private ComboBox mDurationBox;
+
         private Label mDurationLabel;
+
         private CheckBox mIpCheckbox;
+
         private Label mIpLabel;
+
         private WindowControl mMyWindow;
+
         private TextBox mReasonBox;
+
         private Label mReasonLabel;
+
         private TextBoxNumeric mTextbox;
 
         public BanMuteBox(string title, string prompt, bool modal, EventHandler okayClicked)
@@ -25,24 +34,28 @@ namespace Intersect.Client.Interface.Game
 
             mMyWindow = new WindowControl(Interface.GameUi.GameCanvas, title, modal);
             mMyWindow.SetSize(500, 150);
-            mMyWindow.SetPosition(Graphics.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2);
+            mMyWindow.SetPosition(
+                Graphics.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
+                Graphics.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2
+            );
+
             mMyWindow.IsClosable = false;
             mMyWindow.DisableResizing();
             mMyWindow.Margin = Margin.Zero;
             mMyWindow.Padding = Padding.Zero;
             Interface.InputBlockingElements.Add(mMyWindow);
 
-            Label promptLabel = new Label(mMyWindow);
+            var promptLabel = new Label(mMyWindow);
             promptLabel.SetText(prompt);
             promptLabel.SetPosition(mMyWindow.Width / 2 - promptLabel.Width / 2, 8);
 
-            int y = promptLabel.Y + promptLabel.Height + 8;
+            var y = promptLabel.Y + promptLabel.Height + 8;
 
             mReasonLabel = new Label(mMyWindow)
             {
                 Text = Strings.BanMute.reason
             };
+
             mReasonLabel.SetPosition(100, y);
 
             mReasonBox = new TextBox(mMyWindow);
@@ -55,6 +68,7 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.BanMute.duration
             };
+
             mDurationLabel.SetPosition(100, y);
 
             mDurationBox = new ComboBox(mMyWindow);
@@ -72,23 +86,23 @@ namespace Intersect.Client.Interface.Game
             mDurationBox.AddItem(Strings.BanMute.oneyear).UserData = "1 year";
             mDurationBox.AddItem(Strings.BanMute.forever).UserData = "Indefinitely";
 
-
             mIpLabel = new Label(mMyWindow)
             {
                 Text = Strings.BanMute.ip
             };
+
             mIpLabel.SetPosition(320, y);
 
             mIpCheckbox = new CheckBox(mMyWindow);
             mIpCheckbox.SetPosition(400 - mIpCheckbox.Width, y);
 
-            Button okayBtn = new Button(mMyWindow);
+            var okayBtn = new Button(mMyWindow);
             okayBtn.SetSize(86, 22);
             okayBtn.SetText(Strings.BanMute.ok);
             okayBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2, 90);
             okayBtn.Clicked += okayBtn_Clicked;
 
-            Button cancelBtn = new Button(mMyWindow);
+            var cancelBtn = new Button(mMyWindow);
             cancelBtn.SetSize(86, 22);
             cancelBtn.SetText(Strings.BanMute.cancel);
             cancelBtn.Clicked += CancelBtn_Clicked;
@@ -108,6 +122,7 @@ namespace Intersect.Client.Interface.Game
             {
                 OkayEventHandler(this, EventArgs.Empty);
             }
+
             mMyWindow.Close();
         }
 
@@ -145,6 +160,7 @@ namespace Intersect.Client.Interface.Game
                 case "Indefinitely":
                     return 999999;
             }
+
             return 1;
         }
 
@@ -157,5 +173,7 @@ namespace Intersect.Client.Interface.Game
         {
             return mIpCheckbox.IsChecked;
         }
+
     }
+
 }

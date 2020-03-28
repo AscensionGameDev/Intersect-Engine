@@ -1,21 +1,24 @@
-﻿using Ceras;
-
-using Intersect.Logging;
-
-using K4os.Compression.LZ4;
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 
+using Ceras;
+
+using Intersect.Logging;
+
 using JetBrains.Annotations;
+
+using K4os.Compression.LZ4;
 
 namespace Intersect.Network
 {
+
     public class Ceras
     {
-        [NotNull] private readonly SerializerConfig mSerializerConfig;
+
         [NotNull] private readonly CerasSerializer mSerializer;
+
+        [NotNull] private readonly SerializerConfig mSerializerConfig;
 
         public Ceras(bool forNetworking = true)
         {
@@ -71,6 +74,7 @@ namespace Intersect.Network
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 return null;
             }
         }
@@ -87,6 +91,7 @@ namespace Intersect.Network
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 return default(T);
             }
         }
@@ -105,5 +110,7 @@ namespace Intersect.Network
         {
             return Deserialize<T>(LZ4Pickler.Unpickle(data));
         }
+
     }
+
 }

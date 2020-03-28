@@ -1,10 +1,10 @@
-﻿
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 using Microsoft.Owin.Logging;
 
 namespace Intersect.Server.Web.RestApi.Logging
 {
+
     internal sealed class IntersectLoggerFactory : ILoggerFactory
     {
 
@@ -15,4 +15,5 @@ namespace Intersect.Server.Web.RestApi.Logging
         }
 
     }
+
 }

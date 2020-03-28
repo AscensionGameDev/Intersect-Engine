@@ -14,29 +14,35 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Shop
 {
+
     public class ShopItem
     {
-        private int mCurrentItem = -2;
-        private ItemDescWindow mDescWindow;
-        private bool mIsEquipped;
-
-        //Slot info
-        private int mMySlot;
-
-        //Drag/Drop References
-        private ShopWindow mShopWindow;
 
         public ImagePanel Container;
+
+        private int mCurrentItem = -2;
+
+        private ItemDescWindow mDescWindow;
+
+        private bool mIsEquipped;
 
         //Mouse Event Variables
         private bool mMouseOver;
 
         private int mMouseX = -1;
+
         private int mMouseY = -1;
-        public ImagePanel Pnl;
+
+        //Slot info
+        private int mMySlot;
 
         //Textures
         private GameRenderTexture mSfTex;
+
+        //Drag/Drop References
+        private ShopWindow mShopWindow;
+
+        public ImagePanel Pnl;
 
         public ShopItem(ShopWindow shopWindow, int index)
         {
@@ -61,9 +67,10 @@ namespace Intersect.Client.Interface.Game.Shop
             {
                 if (item.IsStackable)
                 {
-                    InputBox iBox = new InputBox(Strings.Shop.buyitem,
-                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.NumericInput,
-                        BuyItemInputBoxOkay, null, mMySlot);
+                    var iBox = new InputBox(
+                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
+                        InputBox.InputType.NumericInput, BuyItemInputBoxOkay, null, mMySlot
+                    );
                 }
                 else
                 {
@@ -77,7 +84,7 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
@@ -87,10 +94,10 @@ namespace Intersect.Client.Interface.Game.Shop
 
         private void BuyItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendBuyItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendBuyItem((int) ((InputBox) sender).UserData, value);
             }
         }
 
@@ -108,35 +115,49 @@ namespace Intersect.Client.Interface.Game.Shop
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (InputHandler.MouseFocus != null) return;
+            if (InputHandler.MouseFocus != null)
+            {
+                return;
+            }
+
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return;
             }
+
             if (mDescWindow != null)
             {
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
+
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
-                mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "", Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name));
+            {
+                mDescWindow = new ItemDescWindow(
+                    Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "",
+                    Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
+                );
+            }
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
+
             return rect;
         }
 
         public void Update()
         {
         }
+
     }
+
 }

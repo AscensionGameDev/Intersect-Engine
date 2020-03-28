@@ -1,14 +1,19 @@
 ﻿using System;
+
 using Intersect.GameObjects;
 using Intersect.Server.Networking;
 
 namespace Intersect.Server.General
 {
+
     public static class Time
     {
+
         private static DateTime sGameTime;
-        private static long sUpdateTime;
+
         private static int sTimeRange;
+
+        private static long sUpdateTime;
 
         public static void Init()
         {
@@ -19,9 +24,12 @@ namespace Intersect.Server.General
             }
             else
             {
-                sGameTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                    Globals.Rand.Next(0, 24), Globals.Rand.Next(0, 60), Globals.Rand.Next(0, 60));
+                sGameTime = new DateTime(
+                    DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, Globals.Rand.Next(0, 24),
+                    Globals.Rand.Next(0, 60), Globals.Rand.Next(0, 60)
+                );
             }
+
             sTimeRange = -1;
             sUpdateTime = 0;
         }
@@ -34,6 +42,7 @@ namespace Intersect.Server.General
                 if (!timeBase.SyncTime)
                 {
                     sGameTime = sGameTime.Add(new TimeSpan(0, 0, 0, 0, (int) (1000 * timeBase.Rate)));
+
                     //Not sure if Rate is negative if time will go backwards but we can hope!
                 }
                 else
@@ -43,12 +52,13 @@ namespace Intersect.Server.General
 
                 //Calculate what "timeRange" we should be in, if we're not then switch and notify the world
                 //Gonna do this by minutes
-                int minuteOfDay = sGameTime.Hour * 60 + sGameTime.Minute;
-                int expectedRange = (int) Math.Floor(minuteOfDay / (float) timeBase.RangeInterval);
+                var minuteOfDay = sGameTime.Hour * 60 + sGameTime.Minute;
+                var expectedRange = (int) Math.Floor(minuteOfDay / (float) timeBase.RangeInterval);
 
                 if (expectedRange != sTimeRange)
                 {
                     sTimeRange = expectedRange;
+
                     //Send the Update to everyone!
                     PacketSender.SendTimeToAll();
                 }
@@ -71,5 +81,7 @@ namespace Intersect.Server.General
         {
             return sGameTime;
         }
+
     }
+
 }

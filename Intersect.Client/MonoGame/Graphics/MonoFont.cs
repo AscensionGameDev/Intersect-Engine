@@ -1,18 +1,23 @@
 ﻿using System;
+
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Logging;
+
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
+
     public class MonoFont : GameFont
     {
+
         private SpriteFont mFont;
 
-        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager)
-            : base(fontName, fontSize)
+        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(
+            fontName, fontSize
+        )
         {
             try
             {
@@ -29,5 +34,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             return mFont;
         }
+
     }
+
 }

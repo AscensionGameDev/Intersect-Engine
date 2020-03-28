@@ -2,9 +2,12 @@
 
 namespace Intersect.Client.Entities.Events
 {
+
     public class Hold
     {
+
         public Guid EventId;
+
         public Guid MapId;
 
         public Hold(Guid eventId, Guid mapId)
@@ -12,5 +15,7 @@ namespace Intersect.Client.Entities.Events
             EventId = eventId;
             MapId = mapId;
         }
+
     }
+
 }

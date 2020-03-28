@@ -1,7 +1,7 @@
-﻿using JetBrains.Annotations;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
@@ -13,6 +13,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         public static List<TSlot> Sort<TSlot>([NotNull] List<TSlot> slots) where TSlot : ISlot
         {
             slots.Sort(CompareSlotIndex);
+
             return slots;
         }
 

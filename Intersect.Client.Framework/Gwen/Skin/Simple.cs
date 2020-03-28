@@ -1,32 +1,49 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Gwen.Skin
 {
+
     /// <summary>
     ///     Simple skin (non-textured). Deprecated and incomplete, do not use.
     /// </summary>
     [Obsolete]
     public class Simple : Skin.Base
     {
+
         private readonly Color mColBgDark;
+
         private readonly Color mColBorderColor;
+
         private readonly Color mColControl;
+
         private readonly Color mColControlBright;
+
         private readonly Color mColControlDark;
+
         private readonly Color mColControlDarker;
+
         private readonly Color mColControlOutlineLight;
+
         private readonly Color mColControlOutlineLighter;
+
         private readonly Color mColControlOutlineNormal;
+
         private readonly Color mColHighlightBg;
+
         private readonly Color mColHighlightBorder;
+
         private readonly Color mColModal;
+
         private readonly Color mColToolTipBackground;
+
         private readonly Color mColToolTipBorder;
 
         public Simple(Renderer.Base renderer) : base(renderer)
         {
             mColBorderColor = Color.FromArgb(255, 80, 80, 80);
+
             //m_colBG = Color.FromArgb(255, 248, 248, 248);
             mColBgDark = Color.FromArgb(255, 235, 235, 235);
 
@@ -52,15 +69,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
-            int w = control.Width;
-            int h = control.Height;
+            var w = control.Width;
+            var h = control.Height;
 
             DrawButton(w, h, depressed, hovered);
         }
 
         public override void DrawMenuItem(Control.Base control, bool submenuOpen, bool isChecked)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
             if (submenuOpen || control.IsHovered)
             {
                 mRenderer.DrawColor = mColHighlightBg;
@@ -74,15 +91,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
             {
                 mRenderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
 
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
         }
 
         public override void DrawMenuStrip(Control.Base control)
         {
-            int w = control.Width;
-            int h = control.Height;
+            var w = control.Width;
+            var h = control.Height;
 
             mRenderer.DrawColor = Color.FromArgb(255, 246, 248, 252);
             mRenderer.DrawFilledRect(new Rectangle(0, 0, w, h));
@@ -95,8 +112,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawMenu(Control.Base control, bool paddingDisabled)
         {
-            int w = control.Width;
-            int h = control.Height;
+            var w = control.Width;
+            var h = control.Height;
 
             mRenderer.DrawColor = mColControlBright;
             mRenderer.DrawFilledRect(new Rectangle(0, 0, w, h));
@@ -113,11 +130,11 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawShadow(Control.Base control)
         {
-            int w = control.Width;
-            int h = control.Height;
+            var w = control.Width;
+            var h = control.Height;
 
-            int x = 4;
-            int y = 6;
+            var x = 4;
+            var y = 6;
 
             mRenderer.DrawColor = Color.FromArgb(10, 0, 0, 0);
 
@@ -130,15 +147,33 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawButton(int w, int h, bool depressed, bool bHovered, bool bSquared = false)
         {
-            if (depressed) mRenderer.DrawColor = mColControlDark;
-            else if (bHovered) mRenderer.DrawColor = mColControlBright;
-            else mRenderer.DrawColor = mColControl;
+            if (depressed)
+            {
+                mRenderer.DrawColor = mColControlDark;
+            }
+            else if (bHovered)
+            {
+                mRenderer.DrawColor = mColControlBright;
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControl;
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(1, 1, w - 2, h - 2));
 
-            if (depressed) mRenderer.DrawColor = mColControlDark;
-            else if (bHovered) mRenderer.DrawColor = mColControl;
-            else mRenderer.DrawColor = mColControlDark;
+            if (depressed)
+            {
+                mRenderer.DrawColor = mColControlDark;
+            }
+            else if (bHovered)
+            {
+                mRenderer.DrawColor = mColControl;
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlDark;
+            }
 
             mRenderer.DrawFilledRect(Util.FloatRect(1, h * 0.5f, w - 2, h * 0.5f - 2));
 
@@ -150,6 +185,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             {
                 mRenderer.DrawColor = mColControlDarker;
             }
+
             mRenderer.DrawShavedCornerRect(new Rectangle(1, 1, w - 2, h - 2), bSquared);
 
             // Border
@@ -159,17 +195,29 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawRadioButton(Control.Base control, bool selected, bool depressed)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             // Inside colour
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 220, 242, 254);
-            else mRenderer.DrawColor = mColControlBright;
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 220, 242, 254);
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlBright;
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(1, 1, rect.Width - 2, rect.Height - 2));
 
             // Border
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 85, 130, 164);
-            else mRenderer.DrawColor = mColControlOutlineLight;
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 85, 130, 164);
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlOutlineLight;
+            }
 
             mRenderer.DrawShavedCornerRect(rect);
 
@@ -178,8 +226,14 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + 2, rect.Y + 2, rect.Width * 0.3f, rect.Height - 4));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + 2, rect.Y + 2, rect.Width - 4, rect.Height * 0.3f));
 
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 121, 198, 249);
-            else mRenderer.DrawColor = Color.FromArgb(50, 0, 50, 60);
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 121, 198, 249);
+            }
+            else
+            {
+                mRenderer.DrawColor = Color.FromArgb(50, 0, 50, 60);
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 2, rect.Y + 3, 1, rect.Height - 5));
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 3, rect.Y + 2, rect.Width - 5, 1));
@@ -193,17 +247,29 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawCheckBox(Control.Base control, bool selected, bool depressed)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             // Inside colour
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 220, 242, 254);
-            else mRenderer.DrawColor = mColControlBright;
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 220, 242, 254);
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlBright;
+            }
 
             mRenderer.DrawFilledRect(rect);
 
             // Border
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 85, 130, 164);
-            else mRenderer.DrawColor = mColControlOutlineLight;
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 85, 130, 164);
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlOutlineLight;
+            }
 
             mRenderer.DrawLinedRect(rect);
 
@@ -212,8 +278,14 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + 2, rect.Y + 2, rect.Width * 0.3f, rect.Height - 4));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + 2, rect.Y + 2, rect.Width - 4, rect.Height * 0.3f));
 
-            if (control.IsHovered) mRenderer.DrawColor = Color.FromArgb(255, 121, 198, 249);
-            else mRenderer.DrawColor = Color.FromArgb(50, 0, 50, 60);
+            if (control.IsHovered)
+            {
+                mRenderer.DrawColor = Color.FromArgb(255, 121, 198, 249);
+            }
+            else
+            {
+                mRenderer.DrawColor = Color.FromArgb(50, 0, 50, 60);
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 2, rect.Y + 2, 1, rect.Height - 4));
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 2, rect.Y + 2, rect.Width - 4, 1));
@@ -221,52 +293,56 @@ namespace Intersect.Client.Framework.Gwen.Skin
             if (depressed)
             {
                 mRenderer.DrawColor = Color.FromArgb(255, 100, 100, 100);
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
             else if (selected)
             {
                 mRenderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
         }
 
         public override void DrawGroupBox(Control.Base control, int textStart, int textHeight, int textWidth)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             rect.Y += (int) (textHeight * 0.5f);
             rect.Height -= (int) (textHeight * 0.5f);
 
-            Color colDarker = Color.FromArgb(50, 0, 50, 60);
-            Color colLighter = Color.FromArgb(150, 255, 255, 255);
+            var colDarker = Color.FromArgb(50, 0, 50, 60);
+            var colLighter = Color.FromArgb(150, 255, 255, 255);
 
             mRenderer.DrawColor = colLighter;
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + 1, textStart - 3, 1));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y + 1,
-                rect.Width - textStart + textWidth - 2, 1));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, (rect.Y + rect.Height) - 1, rect.Width - 2, 1));
+            mRenderer.DrawFilledRect(
+                new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y + 1, rect.Width - textStart + textWidth - 2, 1)
+            );
+
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - 1, rect.Width - 2, 1));
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + 1, 1, rect.Height));
-            mRenderer.DrawFilledRect(new Rectangle((rect.X + rect.Width) - 2, rect.Y + 1, 1, rect.Height - 1));
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - 2, rect.Y + 1, 1, rect.Height - 1));
 
             mRenderer.DrawColor = colDarker;
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y, textStart - 3, 1));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y,
-                rect.Width - textStart - textWidth - 2, 1));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, (rect.Y + rect.Height) - 1, rect.Width - 2, 1));
+            mRenderer.DrawFilledRect(
+                new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y, rect.Width - textStart - textWidth - 2, 1)
+            );
+
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - 1, rect.Width - 2, 1));
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X, rect.Y + 1, 1, rect.Height - 1));
-            mRenderer.DrawFilledRect(new Rectangle((rect.X + rect.Width) - 1, rect.Y + 1, 1, rect.Height - 1));
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - 1, rect.Y + 1, 1, rect.Height - 1));
         }
 
         public override void DrawTextBox(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
-            bool bHasFocus = control.HasFocus;
+            var rect = control.RenderBounds;
+            var bHasFocus = control.HasFocus;
 
             // Box inside
             mRenderer.DrawColor = Color.FromArgb(255, 255, 255, 255);
@@ -277,8 +353,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawFilledRect(new Rectangle(rect.X, rect.Y + 1, 1, rect.Height - 2));
 
             mRenderer.DrawColor = mColControlOutlineLighter;
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, (rect.Y + rect.Height) - 1, rect.Width - 2, 1));
-            mRenderer.DrawFilledRect(new Rectangle((rect.X + rect.Width) - 1, rect.Y + 1, 1, rect.Height - 2));
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - 1, rect.Width - 2, 1));
+            mRenderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - 1, rect.Y + 1, 1, rect.Height - 2));
 
             if (bHasFocus)
             {
@@ -289,16 +365,28 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawTabButton(Control.Base control, bool active, Pos dir)
         {
-            Rectangle rect = control.RenderBounds;
-            bool bHovered = control.IsHovered;
+            var rect = control.RenderBounds;
+            var bHovered = control.IsHovered;
 
-            if (bHovered) mRenderer.DrawColor = mColControlBright;
-            else mRenderer.DrawColor = mColControl;
+            if (bHovered)
+            {
+                mRenderer.DrawColor = mColControlBright;
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControl;
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(1, 1, rect.Width - 2, rect.Height - 1));
 
-            if (bHovered) mRenderer.DrawColor = mColControl;
-            else mRenderer.DrawColor = mColControlDark;
+            if (bHovered)
+            {
+                mRenderer.DrawColor = mColControl;
+            }
+            else
+            {
+                mRenderer.DrawColor = mColControlDark;
+            }
 
             mRenderer.DrawFilledRect(Util.FloatRect(1, rect.Height * 0.5f, rect.Width - 2, rect.Height * 0.5f - 1));
 
@@ -312,7 +400,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawTabControl(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             mRenderer.DrawColor = mColControl;
             mRenderer.DrawFilledRect(rect);
@@ -326,30 +414,42 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawWindow(Control.Base control, int topHeight, bool inFocus)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             // Titlebar
             if (inFocus)
+            {
                 mRenderer.DrawColor = Color.FromArgb(230, 87, 164, 232);
+            }
             else
-                mRenderer.DrawColor = Color.FromArgb(230, (int) (87 * 0.70f), (int) (164 * 0.70f),
-                    (int) (232 * 0.70f));
+            {
+                mRenderer.DrawColor = Color.FromArgb(230, (int) (87 * 0.70f), (int) (164 * 0.70f), (int) (232 * 0.70f));
+            }
 
-            int iBorderSize = 5;
+            var iBorderSize = 5;
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + 1, rect.Width - 2, topHeight - 1));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + topHeight - 1, iBorderSize,
-                rect.Height - 2 - topHeight));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - iBorderSize, rect.Y + topHeight - 1,
-                iBorderSize,
-                rect.Height - 2 - topHeight));
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - iBorderSize, rect.Width - 2,
-                iBorderSize));
+            mRenderer.DrawFilledRect(
+                new Rectangle(rect.X + 1, rect.Y + topHeight - 1, iBorderSize, rect.Height - 2 - topHeight)
+            );
+
+            mRenderer.DrawFilledRect(
+                new Rectangle(
+                    rect.X + rect.Width - iBorderSize, rect.Y + topHeight - 1, iBorderSize, rect.Height - 2 - topHeight
+                )
+            );
+
+            mRenderer.DrawFilledRect(
+                new Rectangle(rect.X + 1, rect.Y + rect.Height - iBorderSize, rect.Width - 2, iBorderSize)
+            );
 
             // Main inner
             mRenderer.DrawColor = Color.FromArgb(230, mColControlDark.R, mColControlDark.G, mColControlDark.B);
-            mRenderer.DrawFilledRect(new Rectangle(rect.X + iBorderSize + 1, rect.Y + topHeight,
-                rect.Width - iBorderSize * 2 - 2,
-                rect.Height - topHeight - iBorderSize - 1));
+            mRenderer.DrawFilledRect(
+                new Rectangle(
+                    rect.X + iBorderSize + 1, rect.Y + topHeight, rect.Width - iBorderSize * 2 - 2,
+                    rect.Height - topHeight - iBorderSize - 1
+                )
+            );
 
             // Light inner border
             mRenderer.DrawColor = Color.FromArgb(100, 255, 255, 255);
@@ -360,8 +460,12 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             // Inside border
             mRenderer.DrawColor = mColControlOutlineNormal;
-            mRenderer.DrawLinedRect(new Rectangle(rect.X + iBorderSize, rect.Y + topHeight - 1, rect.Width - 10,
-                rect.Height - topHeight - (iBorderSize - 1)));
+            mRenderer.DrawLinedRect(
+                new Rectangle(
+                    rect.X + iBorderSize, rect.Y + topHeight - 1, rect.Width - 10,
+                    rect.Height - topHeight - (iBorderSize - 1)
+                )
+            );
 
             // Dark outer border
             mRenderer.DrawColor = mColBorderColor;
@@ -376,18 +480,23 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawHighlight(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
             mRenderer.DrawColor = Color.FromArgb(255, 255, 100, 255);
             mRenderer.DrawFilledRect(rect);
         }
 
         public override void DrawScrollBar(Control.Base control, bool horizontal, bool depressed)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
             if (depressed)
+            {
                 mRenderer.DrawColor = mColControlDarker;
+            }
             else
+            {
                 mRenderer.DrawColor = mColControlBright;
+            }
+
             mRenderer.DrawFilledRect(rect);
         }
 
@@ -399,7 +508,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawTabTitleBar(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             mRenderer.DrawColor = Color.FromArgb(255, 177, 193, 214);
             mRenderer.DrawFilledRect(rect);
@@ -411,8 +520,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawProgressBar(Control.Base control, bool horizontal, float progress)
         {
-            Rectangle rect = control.RenderBounds;
-            Color fillColour = Color.FromArgb(255, 0, 211, 40);
+            var rect = control.RenderBounds;
+            var fillColour = Color.FromArgb(255, 0, 211, 40);
 
             if (horizontal)
             {
@@ -435,8 +544,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
                 //Top half
                 mRenderer.DrawColor = fillColour;
-                mRenderer.DrawFilledRect(Util.FloatRect(1, 1 + (rect.Height * (1 - progress)), rect.Width - 2,
-                    rect.Height * progress - 2));
+                mRenderer.DrawFilledRect(
+                    Util.FloatRect(1, 1 + rect.Height * (1 - progress), rect.Width - 2, rect.Height * progress - 2)
+                );
 
                 mRenderer.DrawColor = Color.FromArgb(150, 255, 255, 255);
                 mRenderer.DrawFilledRect(Util.FloatRect(1, 1, rect.Width * 0.45f, rect.Height - 2));
@@ -454,7 +564,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawListBox(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             mRenderer.DrawColor = mColControlBright;
             mRenderer.DrawFilledRect(rect);
@@ -465,7 +575,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawListBoxLine(Control.Base control, bool selected, bool even)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             if (selected)
             {
@@ -481,8 +591,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawSlider(Control.Base control, bool horizontal, int numNotches, int barSize)
         {
-            Rectangle rect = control.RenderBounds;
-            Rectangle notchRect = rect;
+            var rect = control.RenderBounds;
+            var notchRect = rect;
 
             if (horizontal)
             {
@@ -509,7 +619,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawKeyboardHighlight(Control.Base control, Rectangle r, int iOffset)
         {
-            Rectangle rect = r;
+            var rect = r;
 
             rect.X += iOffset;
             rect.Y += iOffset;
@@ -517,20 +627,22 @@ namespace Intersect.Client.Framework.Gwen.Skin
             rect.Height -= iOffset * 2;
 
             //draw the top and bottom
-            bool skip = true;
-            for (int i = 0; i < rect.Width * 0.5; i++)
+            var skip = true;
+            for (var i = 0; i < rect.Width * 0.5; i++)
             {
                 mRenderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
                 if (!skip)
                 {
-                    mRenderer.DrawPixel(rect.X + (i * 2), rect.Y);
-                    mRenderer.DrawPixel(rect.X + (i * 2), rect.Y + rect.Height - 1);
+                    mRenderer.DrawPixel(rect.X + i * 2, rect.Y);
+                    mRenderer.DrawPixel(rect.X + i * 2, rect.Y + rect.Height - 1);
                 }
                 else
+                {
                     skip = false;
+                }
             }
 
-            for (int i = 0; i < rect.Height * 0.5; i++)
+            for (var i = 0; i < rect.Height * 0.5; i++)
             {
                 mRenderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
                 mRenderer.DrawPixel(rect.X, rect.Y + i * 2);
@@ -540,7 +652,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawToolTip(Control.Base control)
         {
-            Rectangle rct = control.RenderBounds;
+            var rct = control.RenderBounds;
             rct.X -= 3;
             rct.Y -= 3;
             rct.Width += 6;
@@ -553,29 +665,51 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawLinedRect(rct);
         }
 
-        public override void DrawScrollButton(Control.Base control, Pos direction, bool depressed, bool hovered,
-            bool disabled)
+        public override void DrawScrollButton(
+            Control.Base control,
+            Pos direction,
+            bool depressed,
+            bool hovered,
+            bool disabled
+        )
         {
             DrawButton(control, depressed, false, false);
 
             mRenderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
 
-            if (direction == Pos.Top) DrawArrowUp(r);
-            else if (direction == Pos.Bottom) DrawArrowDown(r);
-            else if (direction == Pos.Left) DrawArrowLeft(r);
-            else DrawArrowRight(r);
+            if (direction == Pos.Top)
+            {
+                DrawArrowUp(r);
+            }
+            else if (direction == Pos.Bottom)
+            {
+                DrawArrowDown(r);
+            }
+            else if (direction == Pos.Left)
+            {
+                DrawArrowLeft(r);
+            }
+            else
+            {
+                DrawArrowRight(r);
+            }
         }
 
-        public override void DrawComboBoxArrow(Control.Base control, bool hovered, bool depressed, bool open,
-            bool disabled)
+        public override void DrawComboBoxArrow(
+            Control.Base control,
+            bool hovered,
+            bool depressed,
+            bool open,
+            bool disabled
+        )
         {
             //DrawButton( control.Width, control.Height, depressed, false, true );
 
             mRenderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
             DrawArrowDown(r);
         }
 
@@ -585,15 +719,21 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             mRenderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            var r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
 
-            if (up) DrawArrowUp(r);
-            else DrawArrowDown(r);
+            if (up)
+            {
+                DrawArrowUp(r);
+            }
+            else
+            {
+                DrawArrowDown(r);
+            }
         }
 
         public override void DrawTreeButton(Control.Base control, bool open)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
             rect.X += 2;
             rect.Y += 2;
             rect.Width -= 4;
@@ -608,14 +748,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawColor = mColBorderColor;
 
             if (!open) // ! because the button shows intention, not the current state
+            {
                 mRenderer.DrawFilledRect(new Rectangle(rect.X + rect.Width / 2, rect.Y + 2, 1, rect.Height - 4));
+            }
 
             mRenderer.DrawFilledRect(new Rectangle(rect.X + 2, rect.Y + rect.Height / 2, rect.Width - 4, 1));
         }
 
         public override void DrawTreeControl(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             mRenderer.DrawColor = mColControlBright;
             mRenderer.DrawFilledRect(rect);
@@ -624,8 +766,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawLinedRect(rect);
         }
 
-        public override void DrawTreeNode(Control.Base ctrl, bool open, bool selected, int labelHeight, int labelWidth,
-            int halfWay, int lastBranch, bool isRoot)
+        public override void DrawTreeNode(
+            Control.Base ctrl,
+            bool open,
+            bool selected,
+            int labelHeight,
+            int labelWidth,
+            int halfWay,
+            int lastBranch,
+            bool isRoot
+        )
         {
             if (selected)
             {
@@ -645,7 +795,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawColorDisplay(Control.Base control, Color color)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
 
             if (color.A != 255)
             {
@@ -655,8 +805,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 Renderer.DrawColor = Color.FromArgb(128, 128, 128, 128);
 
                 Renderer.DrawFilledRect(Util.FloatRect(0, 0, rect.Width * 0.5f, rect.Height * 0.5f));
-                Renderer.DrawFilledRect(Util.FloatRect(rect.Width * 0.5f, rect.Height * 0.5f, rect.Width * 0.5f,
-                    rect.Height * 0.5f));
+                Renderer.DrawFilledRect(
+                    Util.FloatRect(rect.Width * 0.5f, rect.Height * 0.5f, rect.Width * 0.5f, rect.Height * 0.5f)
+                );
             }
 
             Renderer.DrawColor = color;
@@ -670,7 +821,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
             if (control.ShouldDrawBackground)
             {
-                Rectangle rect = control.RenderBounds;
+                var rect = control.RenderBounds;
                 Renderer.DrawColor = mColModal;
                 Renderer.DrawFilledRect(rect);
             }
@@ -678,7 +829,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawMenuDivider(Control.Base control)
         {
-            Rectangle rect = control.RenderBounds;
+            var rect = control.RenderBounds;
             Renderer.DrawColor = mColBgDark;
             Renderer.DrawFilledRect(rect);
             Renderer.DrawColor = mColControlDarker;
@@ -706,5 +857,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
         }
 
         #endregion
+
     }
+
 }

@@ -6,39 +6,50 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Logging;
 using Intersect.Server.General;
+using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
-using Strings = Intersect.Server.Localization.Strings;
-
 namespace Intersect.Server.Entities.Events
 {
+
     public class Event
     {
-        public Guid Id;
 
         public EventBase BaseEvent;
 
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
-        public int X;
-        public int Y;
-        public EventPageInstance[] GlobalPageInstance;
-        public bool HoldingPlayer;
-        public bool Global;
-        public Guid MapId;
-        public Player Player;
-        public int PageIndex;
-        public EventPageInstance PageInstance;
 
-        //Special conditions
-        public bool PlayerHasDied;
-        public int SpawnX;
-        public int SpawnY;
-        public long WaitTimer;
+        public bool Global;
+
+        public EventPageInstance[] GlobalPageInstance;
+
+        public bool HoldingPlayer;
+
+        public Guid Id;
+
+        public Guid MapId;
 
         private Dictionary<string, string> mParams = new Dictionary<string, string>();
 
-        public bool[] SelfSwitch { get; set; }
+        public int PageIndex;
+
+        public EventPageInstance PageInstance;
+
+        public Player Player;
+
+        //Special conditions
+        public bool PlayerHasDied;
+
+        public int SpawnX;
+
+        public int SpawnY;
+
+        public long WaitTimer;
+
+        public int X;
+
+        public int Y;
 
         public Event(Guid instanceId, Guid map, Player player, EventBase baseEvent)
         {
@@ -52,7 +63,7 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
         }
 
-        public Event(Guid instanceId, EventBase baseEvent,Guid map) //Global constructor
+        public Event(Guid instanceId, EventBase baseEvent, Guid map) //Global constructor
         {
             Id = instanceId;
             Global = true;
@@ -60,13 +71,15 @@ namespace Intersect.Server.Entities.Events
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
-            X = (byte)baseEvent.SpawnX;
+            X = (byte) baseEvent.SpawnX;
             Y = baseEvent.SpawnY;
-            for (int i = 0; i < BaseEvent.Pages.Count; i++)
+            for (var i = 0; i < BaseEvent.Pages.Count; i++)
             {
                 GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, null);
             }
         }
+
+        public bool[] SelfSwitch { get; set; }
 
         public void Update(long timeMs)
         {
@@ -87,32 +100,61 @@ namespace Intersect.Server.Entities.Events
                         PacketSender.SendReleasePlayer(Player, Id);
                         HoldingPlayer = false;
                     }
+
                     sendLeave = true;
                 }
                 else
                 {
                     if (!Global)
-                        PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
+                    {
+                        PageInstance.Update(
+                            CallStack.Count > 0, timeMs
+                        ); //Process movement and stuff that is client specific
+                    }
 
                     //Check to see if we should process event commands
                     if (CallStack.Count > 0)
                     {
                         var curStack = CallStack.Peek();
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && Player.InShop == null) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && Player.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && Player.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !Player.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer && WaitTimer < Globals.Timing.TimeMs) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && Player.InShop == null)
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting &&
+                            Player.CraftingTableId == Guid.Empty)
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && Player.InBank == false)
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest &&
+                            !Player.QuestOffers.Contains(((StartQuestCommand) curStack.WaitingOnCommand).QuestId))
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer &&
+                            WaitTimer < Globals.Timing.TimeMs)
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
                         var commandsExecuted = 0;
-                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn() && commandsExecuted < Options.EventWatchdogKillThreshhold)
+                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None &&
+                               !PageInstance.ShouldDespawn() &&
+                               commandsExecuted < Options.EventWatchdogKillThreshhold)
                         {
                             if (curStack.WaitingForRoute != Guid.Empty)
                             {
                                 if (curStack.WaitingForRoute == Player.Id)
                                 {
                                     if (Player.MoveRoute == null ||
-                                        (Player.MoveRoute.Complete &&
-                                         Player.MoveTimer < Globals.Timing.TimeMs))
+                                        Player.MoveRoute.Complete && Player.MoveTimer < Globals.Timing.TimeMs)
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -123,17 +165,31 @@ namespace Intersect.Server.Entities.Events
                                     //Check if the exist exists && if the move route is completed.
                                     foreach (var evt in Player.EventLookup.Values)
                                     {
-                                        if (evt.MapId == curStack.WaitingForRouteMap && evt.BaseEvent.Id == curStack.WaitingForRoute)
+                                        if (evt.MapId == curStack.WaitingForRouteMap &&
+                                            evt.BaseEvent.Id == curStack.WaitingForRoute)
                                         {
-                                            if (evt.PageInstance == null) break;
-                                            if (!evt.PageInstance.MoveRoute.Complete) break;
+                                            if (evt.PageInstance == null)
+                                            {
+                                                break;
+                                            }
+
+                                            if (!evt.PageInstance.MoveRoute.Complete)
+                                            {
+                                                break;
+                                            }
+
                                             curStack.WaitingForRoute = Guid.Empty;
                                             curStack.WaitingForRouteMap = Guid.Empty;
+
                                             break;
                                         }
                                     }
                                 }
-                                if (curStack.WaitingForRoute != Guid.Empty) break;
+
+                                if (curStack.WaitingForRoute != Guid.Empty)
+                                {
+                                    break;
+                                }
                             }
                             else
                             {
@@ -145,7 +201,7 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     if (WaitTimer < Globals.Timing.TimeMs)
                                     {
-                                        CommandProcessing.ProcessCommand(curStack.Command,Player,this);
+                                        CommandProcessing.ProcessCommand(curStack.Command, Player, this);
                                         commandsExecuted++;
                                     }
                                     else
@@ -153,12 +209,15 @@ namespace Intersect.Server.Entities.Events
                                         break;
                                     }
                                 }
+
                                 if (CallStack.Count == 0)
                                 {
                                     PlayerHasDied = false;
+
                                     break;
                                 }
                             }
+
                             curStack = CallStack.Peek();
                         }
 
@@ -170,7 +229,9 @@ namespace Intersect.Server.Entities.Events
                                 Log.Error(Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name));
                                 if (Player.Power.IsModerator)
                                 {
-                                    PacketSender.SendChatMsg(Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red);
+                                    PacketSender.SendChatMsg(
+                                        Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red
+                                    );
                                 }
                             }
                             else
@@ -179,7 +240,10 @@ namespace Intersect.Server.Entities.Events
                                 Log.Error(Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name));
                                 if (Player.Power.IsModerator)
                                 {
-                                    PacketSender.SendChatMsg(Player, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name), Color.Red);
+                                    PacketSender.SendChatMsg(
+                                        Player, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name),
+                                        Color.Red
+                                    );
                                 }
                             }
                         }
@@ -198,15 +262,19 @@ namespace Intersect.Server.Entities.Events
             if (PageInstance == null)
             {
                 //Try to Spawn a PageInstance.. if we can
-                for (int i = BaseEvent.Pages.Count - 1; i >= 0; i--)
+                for (var i = BaseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if (Conditions.CanSpawnPage(BaseEvent.Pages[i],Player,this))
+                    if (Conditions.CanSpawnPage(BaseEvent.Pages[i], Player, this))
                     {
                         if (Global)
                         {
                             if (MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i],BaseEvent.Id,MapId, this, Player, MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                PageInstance = new EventPageInstance(
+                                    BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, this, Player,
+                                    MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]
+                                );
+
                                 sendLeave = false;
                                 PageIndex = i;
                             }
@@ -217,6 +285,7 @@ namespace Intersect.Server.Entities.Events
                             sendLeave = false;
                             PageIndex = i;
                         }
+
                         break;
                     }
                 }
@@ -270,7 +339,7 @@ namespace Intersect.Server.Entities.Events
                 prams.Add("plyrLvl", player.Level.ToString());
 
                 //Vitals
-                for (int i = 0; i < player.GetVitals().Length; i++)
+                for (var i = 0; i < player.GetVitals().Length; i++)
                 {
                     prams.Add("plyrVit" + i, player.GetVital(i).ToString());
                     prams.Add("plyrMaxVit" + i, player.GetMaxVital(i).ToString());
@@ -278,16 +347,11 @@ namespace Intersect.Server.Entities.Events
 
                 //Stats
                 var stats = player.GetStatValues();
-                for (int i = 0; i < stats.Length; i++)
+                for (var i = 0; i < stats.Length; i++)
                 {
                     prams.Add("plyrStat" + i, stats[i].ToString());
                 }
-
-
-
             }
-
-
 
             return prams;
         }
@@ -312,8 +376,12 @@ namespace Intersect.Server.Entities.Events
             var prams = GetParams(player);
 
             foreach (var pair in prams)
-                if (string.Equals(pair.Key, key,StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals(pair.Key, key, StringComparison.OrdinalIgnoreCase))
+                {
                     return pair.Value;
+                }
+            }
 
             return "";
         }
@@ -326,8 +394,12 @@ namespace Intersect.Server.Entities.Events
             {
                 output += "\t\t\t\"" + p.Key + "\":\t\t\"" + p.Value + "\"," + Environment.NewLine;
             }
+
             output += "}";
+
             return output;
         }
+
     }
+
 }

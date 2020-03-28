@@ -1,21 +1,20 @@
 ﻿using Intersect.Localization;
-using Intersect.Server.Localization;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
+
     public class MissingArgumentError : ParserError
     {
-        [NotNull]
-        public string ArgumentName { get; }
 
-        protected MissingArgumentError(
-            [NotNull] string argumentName,
-            [NotNull] string message
-        ) : base(message)
+        protected MissingArgumentError([NotNull] string argumentName, [NotNull] string message) : base(message)
         {
             ArgumentName = argumentName;
         }
+
+        [NotNull]
+        public string ArgumentName { get; }
 
         [NotNull]
         public static MissingArgumentError Create(
@@ -37,5 +36,7 @@ namespace Intersect.Server.Core.CommandParsing.Errors
         {
             return new MissingArgumentError(argumentName, message.ToString(prefix, argumentName, commandName));
         }
+
     }
+
 }

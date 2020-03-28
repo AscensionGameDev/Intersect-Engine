@@ -2,6 +2,7 @@
 
 namespace Intersect.Extensions
 {
+
     public static class DateTimeExtensions
     {
 
@@ -46,5 +47,7 @@ namespace Intersect.Extensions
 
             return dateTimeUtc - UnixEpoch;
         }
+
     }
+
 }

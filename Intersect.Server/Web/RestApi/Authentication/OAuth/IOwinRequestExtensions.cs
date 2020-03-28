@@ -47,11 +47,13 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
         [NotNull]
         public static async Task<IEnumerable<string>> JsonBodyToEncodedParameterStrings(
             [NotNull] this IOwinRequest owinRequest
-        ) =>
-            (await owinRequest.JsonBodyToMap()).Select(
+        )
+        {
+            return (await owinRequest.JsonBodyToMap()).Select(
                 parameter =>
                     $"{HttpUtility.UrlEncode((string) parameter.Key)}={HttpUtility.UrlEncode((string) parameter.Value)}"
             );
+        }
 
     }
 

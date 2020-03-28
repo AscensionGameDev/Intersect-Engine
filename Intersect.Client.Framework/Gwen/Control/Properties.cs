@@ -1,22 +1,24 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Properties table.
     /// </summary>
     public class Properties : Base
     {
+
         private readonly SplitterBar mSplitterBar;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Properties" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Properties(Base parent)
-            : base(parent)
+        public Properties(Base parent) : base(parent)
         {
             mSplitterBar = new SplitterBar(this);
             mSplitterBar.SetPosition(80, 0);
@@ -29,6 +31,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Returns the width of the first column (property names).
         /// </summary>
         public int SplitWidth
+
             // todo: rename?
             => mSplitterBar.X;
 
@@ -82,7 +85,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, Property.Base prop, string value = "")
         {
-            PropertyRow row = new PropertyRow(this, prop);
+            var row = new PropertyRow(this, prop);
             row.Dock = Pos.Top;
             row.Label = label;
             row.ValueChanged += OnRowValueChanged;
@@ -90,13 +93,16 @@ namespace Intersect.Client.Framework.Gwen.Control
             prop.SetValue(value, true);
 
             mSplitterBar.BringToFront();
+
             return row;
         }
 
         private void OnRowValueChanged(Base control, EventArgs args)
         {
             if (ValueChanged != null)
+            {
                 ValueChanged.Invoke(control, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -106,5 +112,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             mInnerPanel.DeleteAllChildren();
         }
+
     }
+
 }

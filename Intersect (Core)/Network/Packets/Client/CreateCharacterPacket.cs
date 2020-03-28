@@ -1,16 +1,14 @@
-﻿using Intersect.Collections;
-using Intersect.GameObjects;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Intersect.Collections;
+using Intersect.GameObjects;
 
 namespace Intersect.Network.Packets.Client
 {
+
     public class CreateCharacterPacket : CerasPacket
     {
-        public string Name { get; set; }
-        public Guid ClassId { get; set; }
-        public int Sprite { get; set; }
 
         public CreateCharacterPacket(string name, Guid classId, int sprite)
         {
@@ -18,6 +16,12 @@ namespace Intersect.Network.Packets.Client
             ClassId = classId;
             Sprite = sprite;
         }
+
+        public string Name { get; set; }
+
+        public Guid ClassId { get; set; }
+
+        public int Sprite { get; set; }
 
         public override Dictionary<string, SanitizedValue<object>> Sanitize()
         {
@@ -33,5 +37,7 @@ namespace Intersect.Network.Packets.Client
 
             return sanitizer.Sanitized;
         }
+
     }
+
 }

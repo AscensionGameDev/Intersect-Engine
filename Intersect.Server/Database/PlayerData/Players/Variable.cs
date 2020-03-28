@@ -1,26 +1,28 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.Enums;
+
 using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Logging;
 using Intersect.Server.Entities;
 
 using JetBrains.Annotations;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
+
     public class Variable : IPlayerOwned
     {
+
+        public Variable() : this(Guid.Empty) { }
+
+        public Variable(Guid id)
+        {
+            VariableId = id;
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
         public Guid Id { get; protected set; }
-
-        [JsonIgnore]
-        public Guid PlayerId { get; protected set; }
-
-        [JsonIgnore] public virtual Player Player { get; protected set; }
 
         public Guid VariableId { get; protected set; }
 
@@ -47,11 +49,12 @@ namespace Intersect.Server.Database.PlayerData.Players
             }
         }
 
-        public Variable() : this(Guid.Empty) { }
+        [JsonIgnore]
+        public Guid PlayerId { get; protected set; }
 
-        public Variable(Guid id)
-        {
-            VariableId = id;
-        }
+        [JsonIgnore]
+        public virtual Player Player { get; protected set; }
+
     }
+
 }

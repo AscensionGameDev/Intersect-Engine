@@ -14,41 +14,54 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
 {
+
     public class CreateCharacterWindow
     {
+
+        private Button mBackButton;
+
         private ImagePanel mCharacterContainer;
 
         private ImagePanel mCharacterNameBackground;
+
         private ImagePanel mCharacterPortrait;
 
         //Image
         private string mCharacterPortraitImg = "";
 
         private Label mCharCreationHeader;
-        private Label mHintLabel;
-        private Label mHint2Label;
 
         //Controls
         private ImagePanel mCharCreationPanel;
 
         private Label mCharnameLabel;
+
         private TextBox mCharnameTextbox;
 
         private ImagePanel mClassBackground;
+
         private ComboBox mClassCombobox;
+
         private Label mClassLabel;
+
         private Button mCreateButton;
-        private Button mBackButton;
+
         private int mDisplaySpriteIndex = -1;
+
         private LabeledCheckBox mFemaleChk;
+
         private List<KeyValuePair<int, ClassSprite>> mFemaleSprites = new List<KeyValuePair<int, ClassSprite>>();
 
         private ImagePanel mGenderBackground;
+
         private Label mGenderLabel;
+
+        private Label mHint2Label;
+
+        private Label mHintLabel;
 
         //Parent
         private MainMenu mMainMenu;
-        private SelectCharacterWindow mSelectCharacterWindow;
 
         private LabeledCheckBox mMaleChk;
 
@@ -56,12 +69,18 @@ namespace Intersect.Client.Interface.Menu
         private List<KeyValuePair<int, ClassSprite>> mMaleSprites = new List<KeyValuePair<int, ClassSprite>>();
 
         private Button mNextSpriteButton;
+
         private Button mPrevSpriteButton;
 
-        public bool IsHidden => mCharCreationPanel.IsHidden;
+        private SelectCharacterWindow mSelectCharacterWindow;
 
         //Init
-        public CreateCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel, SelectCharacterWindow selectCharacterWindow)
+        public CreateCharacterWindow(
+            Canvas parent,
+            MainMenu mainMenu,
+            ImagePanel parentPanel,
+            SelectCharacterWindow selectCharacterWindow
+        )
         {
             //Assign References
             mMainMenu = mainMenu;
@@ -134,16 +153,17 @@ namespace Intersect.Client.Interface.Menu
             {
                 Text = Strings.CharacterCreation.male
             };
+
             mMaleChk.IsChecked = true;
             mMaleChk.Checked += maleChk_Checked;
             mMaleChk.UnChecked += femaleChk_Checked; // If you notice this, feel free to hate us ;)
 
             //Female Checkbox
-            mFemaleChk =
-                new LabeledCheckBox(mGenderBackground, "FemaleCheckbox")
-                {
-                    Text = Strings.CharacterCreation.female
-                };
+            mFemaleChk = new LabeledCheckBox(mGenderBackground, "FemaleCheckbox")
+            {
+                Text = Strings.CharacterCreation.female
+            };
+
             mFemaleChk.Checked += femaleChk_Checked;
             mFemaleChk.UnChecked += maleChk_Checked;
 
@@ -160,6 +180,8 @@ namespace Intersect.Client.Interface.Menu
             mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
+        public bool IsHidden => mCharCreationPanel.IsHidden;
+
         public void Init()
         {
             mClassCombobox.DeleteAll();
@@ -172,6 +194,7 @@ namespace Intersect.Client.Interface.Menu
                     classCount++;
                 }
             }
+
             LoadClass();
             UpdateDisplay();
         }
@@ -183,6 +206,7 @@ namespace Intersect.Client.Interface.Menu
                 Hide();
                 mMainMenu.Show();
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+
                 return;
             }
         }
@@ -198,50 +222,73 @@ namespace Intersect.Client.Interface.Menu
                 {
                     if (mMaleChk.IsChecked)
                     {
-                        mCharacterPortrait.Texture =
-                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
-                                mMaleSprites[mDisplaySpriteIndex].Value.Face);
+                        mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                            GameContentManager.TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
+                        );
+
                         if (mCharacterPortrait.Texture == null)
                         {
-                            mCharacterPortrait.Texture =
-                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
-                                    mMaleSprites[mDisplaySpriteIndex].Value.Sprite);
+                            mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                                GameContentManager.TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
+                            );
+
                             isFace = false;
                         }
                     }
                     else
                     {
-                        mCharacterPortrait.Texture =
-                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
-                                mFemaleSprites[mDisplaySpriteIndex].Value.Face);
+                        mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                            GameContentManager.TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
+                        );
+
                         if (mCharacterPortrait.Texture == null)
                         {
-                            mCharacterPortrait.Texture =
-                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
-                                    mFemaleSprites[mDisplaySpriteIndex].Value.Sprite);
+                            mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                                GameContentManager.TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
+                            );
+
                             isFace = false;
                         }
                     }
+
                     if (mCharacterPortrait.Texture != null)
                     {
                         if (isFace)
                         {
-                            mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
-                            var scale = Math.Min(
-                                mCharacterContainer.InnerWidth / (double)mCharacterPortrait.Texture.GetWidth(),
-                                mCharacterContainer.InnerHeight / (double)mCharacterPortrait.Texture.GetHeight()
+                            mCharacterPortrait.SetTextureRect(
+                                0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
                             );
-                            mCharacterPortrait.SetSize((int)(mCharacterPortrait.Texture.GetWidth() * scale), (int)(mCharacterPortrait.Texture.GetHeight() * scale));
-                            mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
+
+                            var scale = Math.Min(
+                                mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
+                                mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
+                            );
+
+                            mCharacterPortrait.SetSize(
+                                (int) (mCharacterPortrait.Texture.GetWidth() * scale),
+                                (int) (mCharacterPortrait.Texture.GetHeight() * scale)
+                            );
+
+                            mCharacterPortrait.SetPosition(
+                                mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                                mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                            );
                         }
                         else
                         {
-                            mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth() / 4,
-                                mCharacterPortrait.Texture.GetHeight() / 4);
-                            mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth() / 4,
-                                mCharacterPortrait.Texture.GetHeight() / 4);
-                            mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
-                                mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
+                            mCharacterPortrait.SetTextureRect(
+                                0, 0, mCharacterPortrait.Texture.GetWidth() / 4,
+                                mCharacterPortrait.Texture.GetHeight() / 4
+                            );
+
+                            mCharacterPortrait.SetSize(
+                                mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                            );
+
+                            mCharacterPortrait.SetPosition(
+                                mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+                                mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+                            );
                         }
                     }
                 }
@@ -264,7 +311,11 @@ namespace Intersect.Client.Interface.Menu
 
         private ClassBase GetClass()
         {
-            if (mClassCombobox.SelectedItem == null) return null;
+            if (mClassCombobox.SelectedItem == null)
+            {
+                return null;
+            }
+
             foreach (var cls in ClassBase.Lookup)
             {
                 if (mClassCombobox.SelectedItem.Text == cls.Value.Name && !((ClassBase) cls.Value).Locked)
@@ -272,18 +323,19 @@ namespace Intersect.Client.Interface.Menu
                     return (ClassBase) cls.Value;
                 }
             }
+
             return null;
         }
 
         private void LoadClass()
         {
-            ClassBase cls = GetClass();
+            var cls = GetClass();
             mMaleSprites.Clear();
             mFemaleSprites.Clear();
             mDisplaySpriteIndex = -1;
             if (cls != null)
             {
-                for (int i = 0; i < cls.Sprites.Count; i++)
+                for (var i = 0; i < cls.Sprites.Count; i++)
                 {
                     if (cls.Sprites[i].Gender == 0)
                     {
@@ -295,6 +347,7 @@ namespace Intersect.Client.Interface.Menu
                     }
                 }
             }
+
             ResetSprite();
         }
 
@@ -367,6 +420,7 @@ namespace Intersect.Client.Interface.Menu
                     mDisplaySpriteIndex = -1;
                 }
             }
+
             UpdateDisplay();
         }
 
@@ -401,6 +455,7 @@ namespace Intersect.Client.Interface.Menu
                     mDisplaySpriteIndex = -1;
                 }
             }
+
             UpdateDisplay();
         }
 
@@ -410,25 +465,28 @@ namespace Intersect.Client.Interface.Menu
             {
                 return;
             }
+
             if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.username))
             {
                 if (mMaleChk.IsChecked)
                 {
-                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,
-                        mMaleSprites[mDisplaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(
+                        mCharnameTextbox.Text, GetClass().Id, mMaleSprites[mDisplaySpriteIndex].Key
+                    );
                 }
                 else
                 {
-                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,
-                        mFemaleSprites[mDisplaySpriteIndex].Key);
+                    PacketSender.SendCreateCharacter(
+                        mCharnameTextbox.Text, GetClass().Id, mFemaleSprites[mDisplaySpriteIndex].Key
+                    );
                 }
+
                 Globals.WaitingOnServer = true;
                 ChatboxMsg.ClearMessages();
             }
             else
             {
-                Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>("", Strings.CharacterCreation.invalidname));
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.CharacterCreation.invalidname));
             }
         }
 
@@ -493,5 +551,7 @@ namespace Intersect.Client.Interface.Menu
                 mSelectCharacterWindow.Show();
             }
         }
+
     }
+
 }

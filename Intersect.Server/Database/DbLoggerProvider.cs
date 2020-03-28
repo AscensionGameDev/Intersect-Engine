@@ -2,10 +2,13 @@
 
 namespace Intersect.Server.Database
 {
+
     public class DbLoggerProvider : ILoggerProvider
     {
-        private DbLogger _logger;
+
         private Intersect.Logging.Logger _intersectLogger;
+
+        private DbLogger _logger;
 
         public DbLoggerProvider(Intersect.Logging.Logger intersectLogger)
         {
@@ -14,7 +17,11 @@ namespace Intersect.Server.Database
 
         public ILogger CreateLogger(string categoryName)
         {
-            if (_logger == null) _logger = new DbLogger(_intersectLogger);
+            if (_logger == null)
+            {
+                _logger = new DbLogger(_intersectLogger);
+            }
+
             return _logger;
         }
 
@@ -22,5 +29,7 @@ namespace Intersect.Server.Database
         {
             _logger = null;
         }
+
     }
+
 }

@@ -9,19 +9,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.Logging
 {
+
     public class LoggingContext : IntersectDbContext<LoggingContext>
     {
-        [NotNull]
-        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-            new SqliteConnectionStringBuilder(@"Data Source=resources/logging.db");
-
-        [NotNull] public DbSet<RequestLog> RequestLogs { get; set; }
 
         public LoggingContext() : this(DefaultConnectionStringBuilder) { }
 
         /// <inheritdoc />
-        public LoggingContext([NotNull] DbConnectionStringBuilder connectionStringBuilder, DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite)
-            : base(connectionStringBuilder, databaseType, true) { }
+        public LoggingContext(
+            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite
+        ) : base(connectionStringBuilder, databaseType, true)
+        {
+        }
+
+        [NotNull]
+        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
+            new SqliteConnectionStringBuilder(@"Data Source=resources/logging.db");
+
+        [NotNull]
+        public DbSet<RequestLog> RequestLogs { get; set; }
 
         protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
         {
@@ -29,5 +36,7 @@ namespace Intersect.Server.Database.Logging
 
             modelBuilder.ApplyConfiguration(new RequestLog.Mapper());
         }
+
     }
+
 }

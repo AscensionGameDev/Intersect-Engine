@@ -11,14 +11,12 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 
-using Newtonsoft.Json;
-
-using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
-
 namespace Intersect.Editor.Maps
 {
+
     public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
+
         private static MapInstances sLookup;
 
         //Map Attributes
@@ -44,11 +42,12 @@ namespace Intersect.Editor.Maps
                     MapGridX = ((MapInstance) mapStruct).MapGridX;
                     MapGridY = ((MapInstance) mapStruct).MapGridY;
                 }
+
                 InitAutotiles();
             }
         }
 
-        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+        public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
 
         //World Position
         public int MapGridX { get; set; }
@@ -71,6 +70,7 @@ namespace Intersect.Editor.Maps
                     Left = left;
                     Right = right;
                 }
+
                 Autotiles = new MapAutotiles(this);
 
                 //Initialize Local Events
@@ -92,8 +92,9 @@ namespace Intersect.Editor.Maps
             {
                 Layers = mCeras.Decompress<TileArray[]>(packet);
             }
-			InitAutotiles();
-		}
+
+            InitAutotiles();
+        }
 
         public void SaveStateAsUnchanged()
         {
@@ -124,20 +125,26 @@ namespace Intersect.Editor.Maps
             if (mLoadedState != null)
             {
                 var newData = SaveInternal();
+
                 return !newData.Matches(mLoadedState);
             }
+
             return true;
         }
 
         //Attribute/Animations
         public Animation GetAttributeAnimation(MapAttribute attr, Guid animId)
         {
-            if (attr == null) return null;
+            if (attr == null)
+            {
+                return null;
+            }
+
             if (!mAttributeAnimInstances.ContainsKey(attr))
             {
-                mAttributeAnimInstances.Add(attr,
-                    new Animation(AnimationBase.Get(animId), true));
+                mAttributeAnimInstances.Add(attr, new Animation(AnimationBase.Get(animId), true));
             }
+
             return mAttributeAnimInstances[attr];
         }
 
@@ -148,7 +155,7 @@ namespace Intersect.Editor.Maps
                 mAttributeAnimInstances[attribute] = animationInstance;
             }
         }
-        
+
         public override byte[] GetAttributeData()
         {
             return mCeras.Compress(Attributes);
@@ -162,23 +169,30 @@ namespace Intersect.Editor.Maps
                 {
                     if (Globals.MapGrid.Contains(Id))
                     {
-                        for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                        for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
-                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                            for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 &&
-                                    y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
+                                if (x >= 0 &&
+                                    x < Globals.MapGrid.GridWidth &&
+                                    y >= 0 &&
+                                    y < Globals.MapGrid.GridHeight &&
+                                    Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
                                 {
                                     var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                    if (needMap == null) return;
+                                    if (needMap == null)
+                                    {
+                                        return;
+                                    }
                                 }
                             }
                         }
                     }
+
                     //We have everything, let's screenshot!
                     var prevMap = Globals.CurrentMap;
                     Globals.CurrentMap = this;
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         lock (Graphics.GraphicsLock)
                         {
@@ -186,24 +200,30 @@ namespace Intersect.Editor.Maps
                             screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }
+
                         Database.SaveMapCache(Id, Revision, ms.ToArray());
                     }
+
                     Globals.CurrentMap = prevMap;
                     Globals.MapsToScreenshot.Remove(Id);
 
                     //See if this map is around our current map, if not let's delete it
                     if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                     {
-                        for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                        for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
-                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                            for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].MapId == Id) return;
+                                    if (Globals.MapGrid.Grid[x, y].MapId == Id)
+                                    {
+                                        return;
+                                    }
                                 }
                             }
                         }
+
                         Delete();
                     }
                 }
@@ -213,12 +233,12 @@ namespace Intersect.Editor.Maps
         //Helper Functions
         public override MapBase[,] GenerateAutotileGrid()
         {
-            MapBase[,] mapBase = new MapBase[3, 3];
+            var mapBase = new MapBase[3, 3];
             if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
-                for (int x = -1; x <= 1; x++)
+                for (var x = -1; x <= 1; x++)
                 {
-                    for (int y = -1; y <= 1; y++)
+                    for (var y = -1; y <= 1; y++)
                     {
                         var x1 = MapGridX + x;
                         var y1 = MapGridY + y;
@@ -236,7 +256,9 @@ namespace Intersect.Editor.Maps
                     }
                 }
             }
+
             mapBase[1, 1] = this;
+
             return mapBase;
         }
 
@@ -252,16 +274,19 @@ namespace Intersect.Editor.Maps
         {
             if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
-                for (int x = -1; x <= 1; x++)
+                for (var x = -1; x <= 1; x++)
                 {
-                    for (int y = -1; y <= 1; y++)
+                    for (var y = -1; y <= 1; y++)
                     {
                         var x1 = MapGridX + x;
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
                             var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
-                            if (map != null && map != this) map.InitAutotiles();
+                            if (map != null && map != this)
+                            {
+                                map.InitAutotiles();
+                            }
                         }
                     }
                 }
@@ -270,7 +295,11 @@ namespace Intersect.Editor.Maps
 
         public EventBase FindEventAt(int x, int y)
         {
-            if (LocalEvents.Count <= 0) return null;
+            if (LocalEvents.Count <= 0)
+            {
+                return null;
+            }
+
             foreach (var t in LocalEvents.Values)
             {
                 if (t.SpawnX == x && t.SpawnY == y)
@@ -278,12 +307,17 @@ namespace Intersect.Editor.Maps
                     return t;
                 }
             }
+
             return null;
         }
 
         public LightBase FindLightAt(int x, int y)
         {
-            if (Lights.Count <= 0) return null;
+            if (Lights.Count <= 0)
+            {
+                return null;
+            }
+
             foreach (var t in Lights)
             {
                 if (t.TileX == x && t.TileY == y)
@@ -291,12 +325,17 @@ namespace Intersect.Editor.Maps
                     return t;
                 }
             }
+
             return null;
         }
 
         public NpcSpawn FindSpawnAt(int x, int y)
         {
-            if (Spawns.Count <= 0) return null;
+            if (Spawns.Count <= 0)
+            {
+                return null;
+            }
+
             foreach (var t in Spawns)
             {
                 if (t.X == x && t.Y == y)
@@ -304,6 +343,7 @@ namespace Intersect.Editor.Maps
                     return t;
                 }
             }
+
             return null;
         }
 
@@ -312,10 +352,15 @@ namespace Intersect.Editor.Maps
             return MapInstance.Lookup.Get<MapInstance>(id);
         }
 
-        public override void Delete() => Lookup?.Delete(this);
+        public override void Delete()
+        {
+            Lookup?.Delete(this);
+        }
 
         public void Dispose()
         {
         }
+
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using Intersect.Client;
-using Intersect.Client.Utilities;
+﻿using Intersect.Client.Utilities;
 
 using NUnit.Framework;
 

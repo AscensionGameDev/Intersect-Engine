@@ -19,8 +19,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
+
     public static class Beta6Migration
     {
+
         private static readonly Ceras mCeras = new Ceras(false);
 
         public static void Run(GameContext context)
@@ -38,7 +40,6 @@ namespace Intersect.Server.Database.GameData.Migrations
             FixVariableCommandsAndConditions(context, "Resources", "HarvestingRequirements");
             FixVariableCommandsAndConditions(context, "Quests", "Requirements");
             FixVariableCommandsAndConditions(context, "Items", "UsageRequirements");
-
         }
 
         private static void FixVariableCommandsAndConditions(GameContext context, string table, string column)
@@ -77,7 +78,9 @@ namespace Intersect.Server.Database.GameData.Migrations
                     updateCmd.Transaction = trans;
                     foreach (var update in updates)
                     {
-                        updateCmd.CommandText += "UPDATE " + table + " SET " + column + " = @json" + i + " WHERE Id = @Id" + i + ";";
+                        updateCmd.CommandText +=
+                            "UPDATE " + table + " SET " + column + " = @json" + i + " WHERE Id = @Id" + i + ";";
+
                         if (context.Database.ProviderName.Contains("Sqlite"))
                         {
                             updateCmd.Parameters.Add(new SqliteParameter("@Id" + i, update.Key));
@@ -88,6 +91,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                             updateCmd.Parameters.Add(new MySqlParameter("@Id" + i, update.Key));
                             updateCmd.Parameters.Add(new MySqlParameter("@json" + i, update.Value));
                         }
+
                         i++;
                         currentCount++;
 
@@ -99,9 +103,11 @@ namespace Intersect.Server.Database.GameData.Migrations
                             currentCount = 0;
                         }
                     }
+
                     updateCmd.ExecuteNonQuery();
                     updateCmd.Parameters.Clear();
                 }
+
                 trans.Commit();
             }
 
@@ -113,6 +119,7 @@ namespace Intersect.Server.Database.GameData.Migrations
             var obj = JArray.Parse(json);
             ParseJson(obj);
             var newJson = obj.ToString(Formatting.None);
+
             return newJson;
         }
 
@@ -123,7 +130,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                 if (child.Type == JTokenType.Object)
                 {
                     //Stuff
-                    var childObj = (JObject)child;
+                    var childObj = (JObject) child;
 
                     var type = child["$type"];
                     if (type != null)
@@ -137,6 +144,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
 
                             case "Intersect.GameObjects.Events.Commands.SetVariableCommand, Intersect Core":
@@ -146,6 +154,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
                             case "Intersect.GameObjects.Events.PlayerVariableCondition, Intersect Core":
                                 var newNode2 = ConvertPlayerVariableCondition(childObj);
@@ -154,6 +163,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
                             case "Intersect.GameObjects.Events.PlayerSwitchCondition, Intersect Core":
                                 var newNode3 = ConvertPlayerSwitchCondition(childObj);
@@ -162,6 +172,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
                             case "Intersect.GameObjects.Events.ServerVariableCondition, Intersect Core":
                                 var newNode4 = ConvertGlobalVariableCondition(childObj);
@@ -170,6 +181,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
                             case "Intersect.GameObjects.Events.ServerSwitchCondition, Intersect Core":
                                 var newNode5 = ConvertGlobalSwitchCondition(childObj);
@@ -178,6 +190,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 {
                                     childObj.Add(node.Key, node.Value);
                                 }
+
                                 break;
                             default:
                                 break;
@@ -196,11 +209,10 @@ namespace Intersect.Server.Database.GameData.Migrations
                         }
                         catch (Exception ex)
                         {
-
                         }
-
                     }
                 }
+
                 ParseJson(child);
             }
         }
@@ -220,7 +232,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new SetVariableCommand();
 
             if (obj.ContainsKey("SwitchId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["SwitchId"].ToString());
+            }
 
             if (obj.ContainsKey("SwitchType") && int.Parse(obj["SwitchType"].ToString()) == 1)
             {
@@ -252,7 +266,15 @@ namespace Intersect.Server.Database.GameData.Migrations
                 mod.Value = false;
             }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(EventCommand), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(EventCommand),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
@@ -271,7 +293,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new SetVariableCommand();
 
             if (obj.ContainsKey("VariableId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["VariableId"].ToString());
+            }
 
             if (obj.ContainsKey("VariableType") && int.Parse(obj["VariableType"].ToString()) == 1)
             {
@@ -294,16 +318,38 @@ namespace Intersect.Server.Database.GameData.Migrations
             var mod = new IntegerVariableMod();
             cmd.Modification = mod;
 
-            if (obj.ContainsKey("Value")) mod.Value = long.Parse(obj["Value"].ToString());
-            if (obj.ContainsKey("DupVariableId")) mod.DuplicateVariableId = Guid.Parse(obj["DupVariableId"].ToString());
-            if (obj.ContainsKey("HighValue")) mod.HighValue = long.Parse(obj["HighValue"].ToString());
-            if (obj.ContainsKey("ModType")) mod.ModType = (VariableMods)int.Parse(obj["ModType"].ToString());
+            if (obj.ContainsKey("Value"))
+            {
+                mod.Value = long.Parse(obj["Value"].ToString());
+            }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(EventCommand), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            if (obj.ContainsKey("DupVariableId"))
+            {
+                mod.DuplicateVariableId = Guid.Parse(obj["DupVariableId"].ToString());
+            }
+
+            if (obj.ContainsKey("HighValue"))
+            {
+                mod.HighValue = long.Parse(obj["HighValue"].ToString());
+            }
+
+            if (obj.ContainsKey("ModType"))
+            {
+                mod.ModType = (VariableMods) int.Parse(obj["ModType"].ToString());
+            }
+
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(EventCommand),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
-
 
         //OLD
         //public class PlayerSwitchCondition : Condition
@@ -318,7 +364,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new VariableIsCondition();
 
             if (obj.ContainsKey("SwitchId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["SwitchId"].ToString());
+            }
 
             cmd.VariableType = VariableTypes.PlayerVariable;
 
@@ -332,7 +380,15 @@ namespace Intersect.Server.Database.GameData.Migrations
                 comp.Value = bool.Parse(obj["Value"].ToString());
             }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(Condition), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(Condition),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
@@ -350,7 +406,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new VariableIsCondition();
 
             if (obj.ContainsKey("SwitchId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["SwitchId"].ToString());
+            }
 
             cmd.VariableType = VariableTypes.ServerVariable;
 
@@ -364,7 +422,15 @@ namespace Intersect.Server.Database.GameData.Migrations
                 comp.Value = bool.Parse(obj["Value"].ToString());
             }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(Condition), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(Condition),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
@@ -385,7 +451,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new VariableIsCondition();
 
             if (obj.ContainsKey("VariableId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["VariableId"].ToString());
+            }
 
             cmd.VariableType = VariableTypes.PlayerVariable;
 
@@ -393,13 +461,19 @@ namespace Intersect.Server.Database.GameData.Migrations
             cmd.Comparison = comp;
 
             if (obj.ContainsKey("Value"))
+            {
                 comp.Value = long.Parse(obj["Value"].ToString());
+            }
 
             if (obj.ContainsKey("CompareVariableId"))
+            {
                 comp.CompareVariableId = Guid.Parse(obj["CompareVariableId"].ToString());
+            }
 
             if (obj.ContainsKey("Comparator"))
-                comp.Comparator = (VariableComparators)int.Parse(obj["Comparator"].ToString());
+            {
+                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+            }
 
             if (!obj.ContainsKey("CompareType"))
             {
@@ -417,7 +491,15 @@ namespace Intersect.Server.Database.GameData.Migrations
                 }
             }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(Condition), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(Condition),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
@@ -438,7 +520,9 @@ namespace Intersect.Server.Database.GameData.Migrations
             var cmd = new VariableIsCondition();
 
             if (obj.ContainsKey("VariableId"))
+            {
                 cmd.VariableId = Guid.Parse(obj["VariableId"].ToString());
+            }
 
             cmd.VariableType = VariableTypes.ServerVariable;
 
@@ -446,13 +530,19 @@ namespace Intersect.Server.Database.GameData.Migrations
             cmd.Comparison = comp;
 
             if (obj.ContainsKey("Value"))
+            {
                 comp.Value = long.Parse(obj["Value"].ToString());
+            }
 
             if (obj.ContainsKey("CompareVariableId"))
+            {
                 comp.CompareVariableId = Guid.Parse(obj["CompareVariableId"].ToString());
+            }
 
             if (obj.ContainsKey("Comparator"))
-                comp.Comparator = (VariableComparators)int.Parse(obj["Comparator"].ToString());
+            {
+                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+            }
 
             if (!obj.ContainsKey("CompareType"))
             {
@@ -470,7 +560,15 @@ namespace Intersect.Server.Database.GameData.Migrations
                 }
             }
 
-            var newJson = JsonConvert.SerializeObject(cmd, typeof(Condition), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            var newJson = JsonConvert.SerializeObject(
+                cmd, typeof(Condition),
+                new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                }
+            );
 
             return JObject.Parse(newJson);
         }
@@ -488,12 +586,21 @@ namespace Intersect.Server.Database.GameData.Migrations
                 {
                     var id = reader["Id"];
 
-                    var tileData = (byte[])reader["TileData"];
+                    var tileData = (byte[]) reader["TileData"];
                     var newTileData = ReencodeTileData(tileData);
 
-
-                    var attributeData = (byte[])reader["Attributes"];
-                    var newAttributeData = mCeras.Compress(JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Decompress(attributeData)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace }));
+                    var attributeData = (byte[]) reader["Attributes"];
+                    var newAttributeData = mCeras.Compress(
+                        JsonConvert.DeserializeObject<MapAttribute[,]>(
+                            System.Text.Encoding.UTF8.GetString(Decompress(attributeData)),
+                            new JsonSerializerSettings()
+                            {
+                                TypeNameHandling = TypeNameHandling.Auto,
+                                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                                ObjectCreationHandling = ObjectCreationHandling.Replace
+                            }
+                        )
+                    );
 
                     updates.Add(new Tuple<object, byte[], byte[]>(id, newAttributeData, newTileData));
                 }
@@ -513,19 +620,27 @@ namespace Intersect.Server.Database.GameData.Migrations
                     var currentCount = 0;
                     foreach (var update in updates)
                     {
-                        updateCmd.CommandText += "UPDATE Maps SET Attributes = @Attributes" + i + ", TileData = @TileData" + i + " WHERE Id = @Id" + i + ";";
+                        updateCmd.CommandText += "UPDATE Maps SET Attributes = @Attributes" +
+                                                 i +
+                                                 ", TileData = @TileData" +
+                                                 i +
+                                                 " WHERE Id = @Id" +
+                                                 i +
+                                                 ";";
+
                         if (context.Database.ProviderName.Contains("Sqlite"))
                         {
-                            updateCmd.Parameters.Add(new SqliteParameter("@Id" + i, (object)update.Item1));
-                            updateCmd.Parameters.Add(new SqliteParameter("@Attributes" + i, (byte[])update.Item2));
-                            updateCmd.Parameters.Add(new SqliteParameter("@TileData" + i, (byte[])update.Item3));
+                            updateCmd.Parameters.Add(new SqliteParameter("@Id" + i, (object) update.Item1));
+                            updateCmd.Parameters.Add(new SqliteParameter("@Attributes" + i, (byte[]) update.Item2));
+                            updateCmd.Parameters.Add(new SqliteParameter("@TileData" + i, (byte[]) update.Item3));
                         }
                         else
                         {
-                            updateCmd.Parameters.Add(new MySqlParameter("@Id" + i, (object)update.Item1));
-                            updateCmd.Parameters.Add(new MySqlParameter("@Attributes" + i, (byte[])update.Item2));
-                            updateCmd.Parameters.Add(new MySqlParameter("@TileData" + i, (byte[])update.Item3));
+                            updateCmd.Parameters.Add(new MySqlParameter("@Id" + i, (object) update.Item1));
+                            updateCmd.Parameters.Add(new MySqlParameter("@Attributes" + i, (byte[]) update.Item2));
+                            updateCmd.Parameters.Add(new MySqlParameter("@TileData" + i, (byte[]) update.Item3));
                         }
+
                         i++;
                         currentCount++;
 
@@ -537,11 +652,14 @@ namespace Intersect.Server.Database.GameData.Migrations
                             currentCount = 0;
                         }
                     }
+
                     updateCmd.ExecuteNonQuery();
                     updateCmd.Parameters.Clear();
                 }
+
                 trans.Commit();
             }
+
             connection.Close();
         }
 
@@ -557,7 +675,16 @@ namespace Intersect.Server.Database.GameData.Migrations
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y].TilesetId = new Guid(new Byte[16] { data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++] });
+                        Layers[i].Tiles[x, y].TilesetId = new Guid(
+                            new Byte[16]
+                            {
+                                data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++],
+                                data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++],
+                                data[readPos++], data[readPos++], data[readPos++], data[readPos++], data[readPos++],
+                                data[readPos++]
+                            }
+                        );
+
                         Layers[i].Tiles[x, y].X = BitConverter.ToInt32(data, readPos);
                         readPos += 4;
                         Layers[i].Tiles[x, y].Y = BitConverter.ToInt32(data, readPos);
@@ -566,25 +693,34 @@ namespace Intersect.Server.Database.GameData.Migrations
                     }
                 }
             }
-            return mCeras.Compress(Layers); ;
+
+            return mCeras.Compress(Layers);
+            ;
         }
 
         private static byte[] Decompress(byte[] data)
         {
             var len = BitConverter.ToInt32(data, 0);
             var compressedData = new byte[data.Length - 4];
-            for (int i = 4; i < data.Length; i++)
-                compressedData[i - 4] = data[i];
-            var decompessed = new byte[len];
-            using (MemoryStream ms = new MemoryStream(compressedData))
+            for (var i = 4; i < data.Length; i++)
             {
-                using (DeflateStream decompressionStream = new DeflateStream(ms, CompressionMode.Decompress))
+                compressedData[i - 4] = data[i];
+            }
+
+            var decompessed = new byte[len];
+            using (var ms = new MemoryStream(compressedData))
+            {
+                using (var decompressionStream = new DeflateStream(ms, CompressionMode.Decompress))
                 {
                     decompressionStream.Read(decompessed, 0, decompessed.Length);
                 }
+
                 return decompessed;
             }
+
             return null;
         }
+
     }
+
 }

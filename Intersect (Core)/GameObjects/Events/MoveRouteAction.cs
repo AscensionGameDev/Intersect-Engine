@@ -2,18 +2,23 @@
 
 namespace Intersect.GameObjects.Events
 {
+
     public class MoveRouteAction
     {
+
         public Guid AnimationId { get; set; }
+
         public EventGraphic Graphic { get; set; }
+
         public MoveRouteEnum Type { get; set; }
 
         public MoveRouteAction Copy()
         {
-            MoveRouteAction copy = new MoveRouteAction()
+            var copy = new MoveRouteAction()
             {
                 Type = Type
             };
+
             if (Type == MoveRouteEnum.SetGraphic)
             {
                 copy.Graphic = new EventGraphic();
@@ -23,7 +28,10 @@ namespace Intersect.GameObjects.Events
             {
                 copy.AnimationId = AnimationId;
             }
+
             return copy;
         }
+
     }
+
 }

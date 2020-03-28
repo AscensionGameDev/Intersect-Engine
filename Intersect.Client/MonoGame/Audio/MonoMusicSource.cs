@@ -1,14 +1,18 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
+
 using Microsoft.Xna.Framework.Media;
 
 namespace Intersect.Client.MonoGame.Audio
 {
+
     public class MonoMusicSource : GameAudioSource
     {
+
         private readonly string mPath;
 
         public MonoMusicSource(string path)
@@ -16,7 +20,10 @@ namespace Intersect.Client.MonoGame.Audio
             mPath = path;
         }
 
-        public override GameAudioInstance CreateInstance() => new MonoMusicInstance(this);
+        public override GameAudioInstance CreateInstance()
+        {
+            return new MonoMusicInstance(this);
+        }
 
         public Song LoadSong()
         {
@@ -29,11 +36,17 @@ namespace Intersect.Client.MonoGame.Audio
                 catch (Exception exception)
                 {
                     Log.Error($"Error loading '{mPath}'.", exception);
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)));
+                    ChatboxMsg.AddMessage(
+                        new ChatboxMsg(
+                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
+                        )
+                    );
                 }
             }
+
             return null;
         }
 
     }
+
 }

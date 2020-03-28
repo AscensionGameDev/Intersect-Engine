@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using DarkUI.Controls;
 using DarkUI.Forms;
 
@@ -18,14 +19,19 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmSpell : EditorForm
     {
+
         private List<SpellBase> mChanged = new List<SpellBase>();
+
         private string mCopiedItem;
+
         private SpellBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmSpell()
         {
@@ -139,10 +145,11 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.SpellEditor.name;
             lblType.Text = Strings.SpellEditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.types.Count; i++)
+            for (var i = 0; i < Strings.SpellEditor.types.Count; i++)
             {
                 cmbType.Items.Add(Strings.SpellEditor.types[i]);
             }
+
             lblIcon.Text = Strings.SpellEditor.icon;
             lblDesc.Text = Strings.SpellEditor.description;
             lblCastAnimation.Text = Strings.SpellEditor.castanimation;
@@ -161,10 +168,11 @@ namespace Intersect.Editor.Forms.Editors
             grpTargetInfo.Text = Strings.SpellEditor.targetting;
             lblTargetType.Text = Strings.SpellEditor.targettype;
             cmbTargetType.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.targettypes.Count; i++)
+            for (var i = 0; i < Strings.SpellEditor.targettypes.Count; i++)
             {
                 cmbTargetType.Items.Add(Strings.SpellEditor.targettypes[i]);
             }
+
             lblCastRange.Text = Strings.SpellEditor.castrange;
             lblProjectile.Text = Strings.SpellEditor.projectile;
             lblHitRadius.Text = Strings.SpellEditor.hitradius;
@@ -179,10 +187,11 @@ namespace Intersect.Editor.Forms.Editors
             lblManaDamage.Text = Strings.SpellEditor.mpdamage;
             chkFriendly.Text = Strings.SpellEditor.friendly;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
+            for (var i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
+
             lblScalingStat.Text = Strings.SpellEditor.scalingstat;
             lblScaling.Text = Strings.SpellEditor.scalingamount;
 
@@ -202,14 +211,15 @@ namespace Intersect.Editor.Forms.Editors
             grpEffect.Text = Strings.SpellEditor.effectgroup;
             lblEffect.Text = Strings.SpellEditor.effectlabel;
             cmbExtraEffect.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.effects.Count; i++)
+            for (var i = 0; i < Strings.SpellEditor.effects.Count; i++)
             {
                 cmbExtraEffect.Items.Add(Strings.SpellEditor.effects[i]);
             }
+
             lblSprite.Text = Strings.SpellEditor.transformsprite;
 
             grpDash.Text = Strings.SpellEditor.dash;
-            lblRange.Text = Strings.SpellEditor.dashrange.ToString( scrlRange.Value);
+            lblRange.Text = Strings.SpellEditor.dashrange.ToString(scrlRange.Value);
             grpDashCollisions.Text = Strings.SpellEditor.dashcollisions;
             chkIgnoreMapBlocks.Text = Strings.SpellEditor.ignoreblocks;
             chkIgnoreActiveResources.Text = Strings.SpellEditor.ignoreactiveresources;
@@ -217,15 +227,16 @@ namespace Intersect.Editor.Forms.Editors
             chkIgnoreZDimensionBlocks.Text = Strings.SpellEditor.ignorezdimension;
 
             grpWarp.Text = Strings.SpellEditor.warptomap;
-            lblMap.Text = Strings.Warping.map.ToString( "");
-            lblX.Text = Strings.Warping.x.ToString( "");
-            lblY.Text = Strings.Warping.y.ToString( "");
-            lblWarpDir.Text = Strings.Warping.direction.ToString( "");
+            lblMap.Text = Strings.Warping.map.ToString("");
+            lblX.Text = Strings.Warping.x.ToString("");
+            lblY.Text = Strings.Warping.y.ToString("");
+            lblWarpDir.Text = Strings.Warping.direction.ToString("");
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             grpEvent.Text = Strings.SpellEditor.Event;
@@ -248,7 +259,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 txtDesc.Text = mEditorItem.Description;
-                cmbType.SelectedIndex = (int)mEditorItem.SpellType;
+                cmbType.SelectedIndex = (int) mEditorItem.SpellType;
 
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
@@ -265,6 +276,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
                 }
+
                 nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
                 nudMpCost.Value = mEditorItem.VitalCost[(int) Vitals.Mana];
 
@@ -279,6 +291,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -291,12 +304,13 @@ namespace Intersect.Editor.Forms.Editors
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell || cmbType.SelectedIndex == (int)SpellTypes.WarpTo ||
-                cmbType.SelectedIndex == (int)SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell ||
+                cmbType.SelectedIndex == (int) SpellTypes.WarpTo ||
+                cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
-                cmbTargetType.SelectedIndex = (int)mEditorItem.Combat.TargetType;
+                cmbTargetType.SelectedIndex = (int) mEditorItem.Combat.TargetType;
                 UpdateTargetTypePanel();
 
                 nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Health];
@@ -309,35 +323,37 @@ namespace Intersect.Editor.Forms.Editors
                 nudMR.Value = mEditorItem.Combat.StatDiff[(int) Stats.MagicResist];
 
                 nudStrPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Attack];
-                nudDefPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int)Stats.Defense];
-                nudMagPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int)Stats.AbilityPower];
-                nudMRPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int)Stats.MagicResist];
-                nudSpdPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int)Stats.Speed];
+                nudDefPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Defense];
+                nudMagPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.AbilityPower];
+                nudMRPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.MagicResist];
+                nudSpdPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Speed];
 
                 chkFriendly.Checked = Convert.ToBoolean(mEditorItem.Combat.Friendly);
                 cmbDamageType.SelectedIndex = mEditorItem.Combat.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.Combat.ScalingStat;
                 nudScaling.Value = mEditorItem.Combat.Scaling;
                 nudCritChance.Value = mEditorItem.Combat.CritChance;
-                nudCritMultiplier.Value = (decimal)mEditorItem.Combat.CritMultiplier;
+                nudCritMultiplier.Value = (decimal) mEditorItem.Combat.CritMultiplier;
 
                 chkHOTDOT.Checked = mEditorItem.Combat.HoTDoT;
                 nudBuffDuration.Value = mEditorItem.Combat.Duration;
                 nudTick.Value = mEditorItem.Combat.HotDotInterval;
-                cmbExtraEffect.SelectedIndex = (int)mEditorItem.Combat.Effect;
+                cmbExtraEffect.SelectedIndex = (int) mEditorItem.Combat.Effect;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
             }
             else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
             {
                 grpWarp.Show();
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == mEditorItem.Warp.MapId)
                     {
                         cmbWarpMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 nudWarpX.Value = mEditorItem.Warp.X;
                 nudWarpY.Value = mEditorItem.Warp.Y;
                 cmbDirection.SelectedIndex = mEditorItem.Warp.Dir;
@@ -352,16 +368,17 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreInactiveResources.Checked = mEditorItem.Dash.IgnoreInactiveResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.Dash.IgnoreZDimensionAttributes;
             }
+
             if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
             }
 
-            if (cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
+            if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = (int)SpellTargetTypes.Single;
+                cmbTargetType.SelectedIndex = (int) SpellTargetTypes.Single;
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
@@ -390,6 +407,7 @@ namespace Intersect.Editor.Forms.Editors
                     nudHitRadius.Value = mEditorItem.Combat.HitRadius;
                 }
             }
+
             if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.AoE &&
                 cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
             {
@@ -397,29 +415,33 @@ namespace Intersect.Editor.Forms.Editors
                 nudHitRadius.Show();
                 nudHitRadius.Value = mEditorItem.Combat.HitRadius;
             }
+
             if (cmbTargetType.SelectedIndex < (int) SpellTargetTypes.Self)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = mEditorItem.Combat.CastRange;
             }
+
             if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Projectile)
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex =  ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
+                cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
             }
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.OnHit)
+
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
             {
                 lblDuration.Show();
                 nudDuration.Show();
                 nudDuration.Value = mEditorItem.Combat.OnHitDuration;
             }
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Trap)
+
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
             {
-              lblDuration.Show();
-              nudDuration.Show();
-              nudDuration.Value = mEditorItem.Combat.TrapDuration;
+                lblDuration.Show();
+                nudDuration.Show();
+                nudDuration.Value = mEditorItem.Combat.TrapDuration;
             }
         }
 
@@ -427,15 +449,19 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstSpells.SelectedNode != null && lstSpells.SelectedNode.Tag != null) lstSpells.SelectedNode.Text = txtName.Text;
+            if (lstSpells.SelectedNode != null && lstSpells.SelectedNode.Tag != null)
+            {
+                lstSpells.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbType.SelectedIndex != (int)mEditorItem.SpellType)
+            if (cmbType.SelectedIndex != (int) mEditorItem.SpellType)
             {
-                mEditorItem.SpellType = (SpellTypes)cmbType.SelectedIndex;
+                mEditorItem.SpellType = (SpellTypes) cmbType.SelectedIndex;
                 UpdateSpellTypePanels();
             }
         }
@@ -445,12 +471,14 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Icon = cmbSprite.Text;
             picSpell.BackgroundImage?.Dispose();
             picSpell.BackgroundImage = null;
-            picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0 ? Image.FromFile("resources/spells/" + cmbSprite.Text) : null;
+            picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0
+                ? Image.FromFile("resources/spells/" + cmbSprite.Text)
+                : null;
         }
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.TargetType = (SpellTargetTypes)cmbTargetType.SelectedIndex;
+            mEditorItem.Combat.TargetType = (SpellTargetTypes) cmbTargetType.SelectedIndex;
             UpdateTargetTypePanel();
         }
 
@@ -466,7 +494,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.Effect = (StatusTypes)cmbExtraEffect.SelectedIndex;
+            mEditorItem.Combat.Effect = (StatusTypes) cmbExtraEffect.SelectedIndex;
 
             lblSprite.Visible = false;
             cmbTransform.Visible = false;
@@ -478,16 +506,22 @@ namespace Intersect.Editor.Forms.Editors
                 cmbTransform.Visible = true;
                 picSprite.Visible = true;
 
-                cmbTransform.SelectedIndex = cmbTransform.FindString(TextUtils.NullToNone(mEditorItem.Combat.TransformSprite));
+                cmbTransform.SelectedIndex =
+                    cmbTransform.FindString(TextUtils.NullToNone(mEditorItem.Combat.TransformSprite));
+
                 if (cmbTransform.SelectedIndex > 0)
                 {
-                    Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
+                    var bmp = new Bitmap(picSprite.Width, picSprite.Height);
                     var g = Graphics.FromImage(bmp);
-                    Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
-                    g.DrawImage(src,
-                        new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8,
-                            src.Width / 4, src.Height / 4),
-                        new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
+                    var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
+                    g.DrawImage(
+                        src,
+                        new Rectangle(
+                            picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
+                            src.Height / 4
+                        ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                    );
+
                     g.Dispose();
                     src.Dispose();
                     picSprite.BackgroundImage = bmp;
@@ -506,7 +540,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlRange_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblRange.Text = Strings.SpellEditor.dashrange.ToString( scrlRange.Value);
+            lblRange.Text = Strings.SpellEditor.dashrange.ToString(scrlRange.Value);
             mEditorItem.Combat.CastRange = scrlRange.Value;
         }
 
@@ -535,13 +569,17 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Combat.TransformSprite = cmbTransform.Text;
             if (cmbTransform.SelectedIndex > 0)
             {
-                Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
+                var bmp = new Bitmap(picSprite.Width, picSprite.Height);
                 var g = Graphics.FromImage(bmp);
-                Image src = Image.FromFile("resources/entities/" + cmbTransform.Text);
-                g.DrawImage(src,
-                    new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8,
-                        src.Width / 4, src.Height / 4),
-                    new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
+                var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
+                g.DrawImage(
+                    src,
+                    new Rectangle(
+                        picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
+                        src.Height / 4
+                    ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                );
+
                 g.Dispose();
                 src.Dispose();
                 picSprite.BackgroundImage = bmp;
@@ -561,8 +599,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstSpells.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.SpellEditor.deleteprompt,
-                        Strings.SpellEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.SpellEditor.deleteprompt, Strings.SpellEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -592,8 +632,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.SpellEditor.undoprompt,
-                        Strings.SpellEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.SpellEditor.undoprompt, Strings.SpellEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -695,21 +737,25 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
-            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
-                (int) nudWarpY.Value);
+            var frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.SelectTile(
+                MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value, (int) nudWarpY.Value
+            );
+
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         mEditorItem.Warp.MapId = MapList.OrderedMaps[i].MapId;
+
                         break;
                     }
                 }
+
                 nudWarpX.Value = frmWarpSelection.GetX();
                 mEditorItem.Warp.X = frmWarpSelection.GetX();
                 nudWarpY.Value = frmWarpSelection.GetY();
@@ -737,7 +783,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Warp.Dir = (byte)cmbDirection.SelectedIndex;
+            mEditorItem.Warp.Dir = (byte) cmbDirection.SelectedIndex;
         }
 
         private void nudCastDuration_ValueChanged(object sender, EventArgs e)
@@ -802,27 +848,27 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int)Stats.Attack] = (int)nudStrPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Attack] = (int) nudStrPercentage.Value;
         }
 
         private void nudMagPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int)Stats.AbilityPower] = (int)nudMagPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stats.AbilityPower] = (int) nudMagPercentage.Value;
         }
 
         private void nudDefPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int)Stats.Defense] = (int)nudDefPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Defense] = (int) nudDefPercentage.Value;
         }
 
         private void nudMRPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int)Stats.MagicResist] = (int)nudMRPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stats.MagicResist] = (int) nudMRPercentage.Value;
         }
 
         private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int)Stats.Speed] = (int)nudSpdPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Speed] = (int) nudSpdPercentage.Value;
         }
 
         private void nudBuffDuration_ValueChanged(object sender, EventArgs e)
@@ -852,18 +898,19 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.CritMultiplier = (double)nudCritMultiplier.Value;
+            mEditorItem.Combat.CritMultiplier = (double) nudCritMultiplier.Value;
         }
 
         private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
         {
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.OnHit)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
             {
-                mEditorItem.Combat.OnHitDuration = (int)nudDuration.Value;
+                mEditorItem.Combat.OnHitDuration = (int) nudDuration.Value;
             }
-            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Trap)
+
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
             {
-                mEditorItem.Combat.TrapDuration = (int)nudDuration.Value;
+                mEditorItem.Combat.TrapDuration = (int) nudDuration.Value;
             }
         }
 
@@ -873,14 +920,16 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstSpells.SelectedNode != null && lstSpells.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstSpells.SelectedNode.Tag;
+                selectedId = (Guid) lstSpells.SelectedNode.Tag;
             }
+
             lstSpells.Nodes.Clear();
 
             cmbScalingStat.Items.Clear();
@@ -893,11 +942,14 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in SpellBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((SpellBase)itm.Value).Folder) && !mFolders.Contains(((SpellBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((SpellBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((SpellBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((SpellBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((SpellBase)itm.Value).Folder))
-                        mKnownFolders.Add(((SpellBase)itm.Value).Folder);
+                    mFolders.Add(((SpellBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((SpellBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((SpellBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -933,7 +985,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -949,26 +1003,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstSpells.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstSpells.SelectedNode;
 
-            if (!btnChronological.Checked) lstSpells.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstSpells.Sort();
+            }
 
             lstSpells.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.SpellEditor.folderprompt, Strings.SpellEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.SpellEditor.folderprompt, Strings.SpellEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -993,6 +1057,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstSpells.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -1011,20 +1076,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstSpells_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstSpells.SelectedNode == null || lstSpells.SelectedNode.Tag == null) return;
-            mEditorItem = SpellBase.Get((Guid)lstSpells.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstSpells.SelectedNode == null || lstSpells.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = SpellBase.Get((Guid) lstSpells.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -1066,15 +1145,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.SpellEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.SpellEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.SpellEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

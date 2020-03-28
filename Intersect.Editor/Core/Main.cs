@@ -8,20 +8,28 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
-using Intersect.Editor.Networking;
 
 namespace Intersect.Editor.Core
 {
+
     public static class Main
     {
-        private static int sFps;
-        private static int sFpsCount;
-        private static long sFpsTime;
-        private static FrmMain sMyForm;
+
         private static long sAnimationTimer = Globals.System.GetTimeMs();
-        private static long sWaterfallTimer = Globals.System.GetTimeMs();
+
+        private static int sFps;
+
+        private static int sFpsCount;
+
+        private static long sFpsTime;
+
         private static Thread sMapThread;
+
+        private static FrmMain sMyForm;
+
         private static FrmProgress sProgressForm;
+
+        private static long sWaterfallTimer = Globals.System.GetTimeMs();
 
         public static void StartLoop()
         {
@@ -35,6 +43,7 @@ namespace Intersect.Editor.Core
             {
                 sMapThread = new Thread(UpdateMaps);
                 sMapThread.Start();
+
                 // drawing loop
                 while (sMyForm.Visible) // loop while the window is open
                 {
@@ -50,7 +59,12 @@ namespace Intersect.Editor.Core
             {
                 Globals.ResourceEditor.Render();
             }
-            if (Globals.MapGrid == null) return;
+
+            if (Globals.MapGrid == null)
+            {
+                return;
+            }
+
             lock (Globals.MapGrid.GetMapGridLock())
             {
                 Graphics.Render();
@@ -70,8 +84,10 @@ namespace Intersect.Editor.Core
                 {
                     Globals.WaterfallFrame = 0;
                 }
+
                 sWaterfallTimer = Globals.System.GetTimeMs() + 500;
             }
+
             if (sAnimationTimer < Globals.System.GetTimeMs())
             {
                 Globals.AutotileFrame++;
@@ -79,6 +95,7 @@ namespace Intersect.Editor.Core
                 {
                     Globals.AutotileFrame = 0;
                 }
+
                 sAnimationTimer = Globals.System.GetTimeMs() + 600;
             }
 
@@ -96,6 +113,7 @@ namespace Intersect.Editor.Core
                 sFpsCount = 0;
                 sFpsTime = Globals.System.GetTimeMs() + 1000;
             }
+
             Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
         }
 
@@ -103,15 +121,16 @@ namespace Intersect.Editor.Core
         {
             while (!Globals.ClosingEditor)
             {
-                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false && sMyForm.InvokeRequired)
+                if (Globals.MapsToScreenshot.Count > 0 &&
+                    Globals.FetchingMapPreviews == false &&
+                    sMyForm.InvokeRequired)
                 {
-                    if (sProgressForm == null || sProgressForm.IsDisposed ||
-                        sProgressForm.Visible == false)
+                    if (sProgressForm == null || sProgressForm.IsDisposed || sProgressForm.Visible == false)
                     {
                         sProgressForm = new FrmProgress();
 
                         sProgressForm.SetTitle(Strings.MapCacheProgress.title);
-                        new Task((() => Globals.MainForm.ShowDialogForm(sProgressForm))).Start();
+                        new Task(() => Globals.MainForm.ShowDialogForm(sProgressForm)).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
                             try
@@ -120,34 +139,49 @@ namespace Intersect.Editor.Core
                                 foreach (MapInstance map in maps)
                                 {
                                     if (!sMyForm.Disposing && sProgressForm.IsHandleCreated)
+                                    {
                                         sProgressForm.BeginInvoke(
-                                            (Action)
-                                            (() =>
-                                                sProgressForm.SetProgress(Strings.MapCacheProgress.remaining.ToString(Globals.MapsToScreenshot.Count), -1, false)));
+                                            (Action) (() => sProgressForm.SetProgress(
+                                                Strings.MapCacheProgress.remaining.ToString(
+                                                    Globals.MapsToScreenshot.Count
+                                                ), -1, false
+                                            ))
+                                        );
+                                    }
+
                                     if (map != null)
                                     {
                                         map.Update();
                                     }
+
                                     Networking.Network.Update();
                                     Application.DoEvents();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Logging.Log.Error(ex,"JC's Solution for UpdateMaps collection was modified bug did not work!");
+                                Logging.Log.Error(
+                                    ex, "JC's Solution for UpdateMaps collection was modified bug did not work!"
+                                );
                             }
+
                             Thread.Sleep(50);
                         }
+
                         Globals.MapGrid.ResetForm();
                         while (!sProgressForm.IsHandleCreated)
                         {
                             Thread.Sleep(50);
                         }
+
                         sProgressForm.BeginInvoke(new Action(() => sProgressForm.Close()));
                     }
                 }
+
                 Thread.Sleep(100);
             }
         }
+
     }
+
 }

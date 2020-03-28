@@ -4,22 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
+
 using Intersect.Server.Web.RestApi.Routes;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.RouteProviders
 {
+
     internal sealed class VersionedRouteProvider : DefaultDirectRouteProvider
     {
-        [NotNull]
-        public static string DefaultRootNamespace =>
-            typeof(RootInfoController).Namespace ?? throw new InvalidOperationException();
-
-        [NotNull]
-        public string RootNamespace { get; }
-
-        [NotNull]
-        public string Prefix { get; }
 
         public VersionedRouteProvider() : this(DefaultRootNamespace)
         {
@@ -31,36 +25,58 @@ namespace Intersect.Server.Web.RestApi.RouteProviders
             Prefix = prefix;
         }
 
+        [NotNull]
+        public static string DefaultRootNamespace =>
+            typeof(RootInfoController).Namespace ?? throw new InvalidOperationException();
+
+        [NotNull]
+        public string RootNamespace { get; }
+
+        [NotNull]
+        public string Prefix { get; }
+
         protected override IReadOnlyList<IDirectRouteFactory> GetActionRouteFactories(
-            HttpActionDescriptor actionDescriptor)
+            HttpActionDescriptor actionDescriptor
+        )
         {
             return base.GetActionRouteFactories(actionDescriptor);
         }
 
-        protected override IReadOnlyList<RouteEntry> GetActionDirectRoutes(HttpActionDescriptor actionDescriptor,
-            IReadOnlyList<IDirectRouteFactory> factories, IInlineConstraintResolver constraintResolver)
+        protected override IReadOnlyList<RouteEntry> GetActionDirectRoutes(
+            HttpActionDescriptor actionDescriptor,
+            IReadOnlyList<IDirectRouteFactory> factories,
+            IInlineConstraintResolver constraintResolver
+        )
         {
             return base.GetActionDirectRoutes(actionDescriptor, factories, constraintResolver);
         }
 
         protected override IReadOnlyList<IDirectRouteFactory> GetControllerRouteFactories(
-            HttpControllerDescriptor controllerDescriptor)
+            HttpControllerDescriptor controllerDescriptor
+        )
         {
             return base.GetControllerRouteFactories(controllerDescriptor);
         }
 
-        public override IReadOnlyList<RouteEntry> GetDirectRoutes(HttpControllerDescriptor controllerDescriptor,
-            IReadOnlyList<HttpActionDescriptor> actionDescriptors, IInlineConstraintResolver constraintResolver)
+        public override IReadOnlyList<RouteEntry> GetDirectRoutes(
+            HttpControllerDescriptor controllerDescriptor,
+            IReadOnlyList<HttpActionDescriptor> actionDescriptors,
+            IInlineConstraintResolver constraintResolver
+        )
         {
             return base.GetDirectRoutes(controllerDescriptor, actionDescriptors, constraintResolver);
         }
 
         protected override IReadOnlyList<RouteEntry> GetControllerDirectRoutes(
-            HttpControllerDescriptor controllerDescriptor, IReadOnlyList<HttpActionDescriptor> actionDescriptors,
-            IReadOnlyList<IDirectRouteFactory> factories, IInlineConstraintResolver constraintResolver)
+            HttpControllerDescriptor controllerDescriptor,
+            IReadOnlyList<HttpActionDescriptor> actionDescriptors,
+            IReadOnlyList<IDirectRouteFactory> factories,
+            IInlineConstraintResolver constraintResolver
+        )
         {
-            return base.GetControllerDirectRoutes(controllerDescriptor, actionDescriptors, factories,
-                constraintResolver);
+            return base.GetControllerDirectRoutes(
+                controllerDescriptor, actionDescriptors, factories, constraintResolver
+            );
         }
 
         protected override string GetRoutePrefix([NotNull] HttpControllerDescriptor controllerDescriptor)
@@ -71,14 +87,15 @@ namespace Intersect.Server.Web.RestApi.RouteProviders
             var namespaceSegments =
                 controllerType?.Namespace?.Replace(RootNamespace, "").Split('.') ?? new string[] { };
 
-            namespaceSegments
-                .Where(segment => !string.IsNullOrWhiteSpace(segment))
+            namespaceSegments.Where(segment => !string.IsNullOrWhiteSpace(segment))
                 .ToList()
-                .ForEach(segment =>
-                {
-                    prefixBuilder.Append('/');
-                    prefixBuilder.Append(segment?.ToLower());
-                });
+                .ForEach(
+                    segment =>
+                    {
+                        prefixBuilder.Append('/');
+                        prefixBuilder.Append(segment?.ToLower());
+                    }
+                );
 
             var prefix = base.GetRoutePrefix(controllerDescriptor)?.Trim();
 
@@ -92,5 +109,7 @@ namespace Intersect.Server.Web.RestApi.RouteProviders
 
             return prefixBuilder.ToString();
         }
+
     }
+
 }

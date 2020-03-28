@@ -6,40 +6,60 @@ using Intersect.GameObjects.Maps;
 
 namespace Intersect.Enums
 {
+
     public enum GameObjectType
     {
-        [GameObjectInfo(typeof(AnimationBase), "animations")] Animation = 0,
 
-        [GameObjectInfo(typeof(ClassBase), "classes")] Class,
+        [GameObjectInfo(typeof(AnimationBase), "animations")]
+        Animation = 0,
 
-        [GameObjectInfo(typeof(ItemBase), "items")] Item,
+        [GameObjectInfo(typeof(ClassBase), "classes")]
+        Class,
 
-        [GameObjectInfo(typeof(NpcBase), "npcs")] Npc,
+        [GameObjectInfo(typeof(ItemBase), "items")]
+        Item,
 
-        [GameObjectInfo(typeof(ProjectileBase), "projectiles")] Projectile,
+        [GameObjectInfo(typeof(NpcBase), "npcs")]
+        Npc,
 
-        [GameObjectInfo(typeof(QuestBase), "quests")] Quest,
+        [GameObjectInfo(typeof(ProjectileBase), "projectiles")]
+        Projectile,
 
-        [GameObjectInfo(typeof(ResourceBase), "resources")] Resource,
+        [GameObjectInfo(typeof(QuestBase), "quests")]
+        Quest,
 
-        [GameObjectInfo(typeof(ShopBase), "shops")] Shop,
+        [GameObjectInfo(typeof(ResourceBase), "resources")]
+        Resource,
 
-        [GameObjectInfo(typeof(SpellBase), "spells")] Spell,
+        [GameObjectInfo(typeof(ShopBase), "shops")]
+        Shop,
 
-        [GameObjectInfo(typeof(CraftingTableBase), "crafting_tables")] CraftTables,
+        [GameObjectInfo(typeof(SpellBase), "spells")]
+        Spell,
 
-        [GameObjectInfo(typeof(CraftBase), "crafts")] Crafts,
+        [GameObjectInfo(typeof(CraftingTableBase), "crafting_tables")]
+        CraftTables,
 
-        [GameObjectInfo(typeof(MapBase), "maps")] Map,
+        [GameObjectInfo(typeof(CraftBase), "crafts")]
+        Crafts,
 
-        [GameObjectInfo(typeof(EventBase), "events")] Event,
+        [GameObjectInfo(typeof(MapBase), "maps")]
+        Map,
 
-        [GameObjectInfo(typeof(PlayerVariableBase), "player_variables")] PlayerVariable,
+        [GameObjectInfo(typeof(EventBase), "events")]
+        Event,
 
-        [GameObjectInfo(typeof(ServerVariableBase), "server_variables")] ServerVariable,
+        [GameObjectInfo(typeof(PlayerVariableBase), "player_variables")]
+        PlayerVariable,
 
-        [GameObjectInfo(typeof(TilesetBase), "tilesets")] Tileset,
+        [GameObjectInfo(typeof(ServerVariableBase), "server_variables")]
+        ServerVariable,
+
+        [GameObjectInfo(typeof(TilesetBase), "tilesets")]
+        Tileset,
 
         [GameObjectInfo(typeof(TimeBase), "")] Time
+
     }
+
 }

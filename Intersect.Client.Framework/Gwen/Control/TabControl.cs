@@ -1,25 +1,29 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Control with multiple tabs that can be reordered and dragged.
     /// </summary>
     public class TabControl : Base
     {
+
         private readonly ScrollBarButton[] mScroll;
+
         private readonly TabStrip mTabStrip;
+
         private TabButton mCurrentButton;
+
         private int mScrollOffset;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TabControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TabControl(Base parent)
-            : base(parent)
+        public TabControl(Base parent) : base(parent)
         {
             mScroll = new ScrollBarButton[2];
             mScrollOffset = 0;
@@ -105,12 +109,13 @@ namespace Intersect.Client.Framework.Gwen.Control
                 page.Parent = this;
             }
 
-            TabButton button = new TabButton(mTabStrip);
+            var button = new TabButton(mTabStrip);
             button.SetText(label);
             button.Page = page;
             button.IsTabable = false;
 
             AddPage(button);
+
             return button;
         }
 
@@ -120,7 +125,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="button">Page to add. (well, it's a TabButton which is a parent to the page).</param>
         public void AddPage(TabButton button)
         {
-            Base page = button.Page;
+            var page = button.Page;
             page.Parent = this;
             page.IsHidden = true;
             page.Margin = new Margin(6, 6, 6, 6);
@@ -130,7 +135,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             button.Dock = Pos.Left;
             button.SizeToContents();
             if (button.TabControl != null)
+            {
                 button.TabControl.UnsubscribeTabEvent(button);
+            }
+
             button.TabControl = this;
             button.Clicked += OnTabPressed;
 
@@ -140,7 +148,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             if (TabAdded != null)
+            {
                 TabAdded.Invoke(this, EventArgs.Empty);
+            }
 
             Invalidate();
         }
@@ -156,22 +166,31 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="control">Event source (TabButton).</param>
         internal virtual void OnTabPressed(Base control, EventArgs args)
         {
-            TabButton button = control as TabButton;
-            if (null == button) return;
+            var button = control as TabButton;
+            if (null == button)
+            {
+                return;
+            }
 
-            Base page = button.Page;
-            if (null == page) return;
+            var page = button.Page;
+            if (null == page)
+            {
+                return;
+            }
 
             if (mCurrentButton == button)
+            {
                 return;
+            }
 
             if (null != mCurrentButton)
             {
-                Base page2 = mCurrentButton.Page;
+                var page2 = mCurrentButton.Page;
                 if (page2 != null)
                 {
                     page2.IsHidden = true;
                 }
+
                 mCurrentButton.Redraw();
                 mCurrentButton = null;
             }
@@ -201,30 +220,37 @@ namespace Intersect.Client.Framework.Gwen.Control
         internal virtual void OnLoseTab(TabButton button)
         {
             if (mCurrentButton == button)
+            {
                 mCurrentButton = null;
+            }
 
             //TODO: Select a tab if any exist.
 
             if (TabRemoved != null)
+            {
                 TabRemoved.Invoke(this, EventArgs.Empty);
+            }
 
             Invalidate();
         }
 
         private void HandleOverflow()
         {
-            Point tabsSize = mTabStrip.GetChildrenSize();
+            var tabsSize = mTabStrip.GetChildrenSize();
 
             // Only enable the scrollers if the tabs are at the top.
             // This is a limitation we should explore.
             // Really TabControl should have derivitives for tabs placed elsewhere where we could specialize 
             // some functions like this for each direction.
-            bool needed = tabsSize.X > Width && mTabStrip.Dock == Pos.Top;
+            var needed = tabsSize.X > Width && mTabStrip.Dock == Pos.Top;
 
             mScroll[0].IsHidden = !needed;
             mScroll[1].IsHidden = !needed;
 
-            if (!needed) return;
+            if (!needed)
+            {
+                return;
+            }
 
             mScrollOffset = Util.Clamp(mScrollOffset, 0, tabsSize.X - Width + 32);
 
@@ -253,5 +279,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             mScrollOffset += 120;
         }
+
     }
+
 }

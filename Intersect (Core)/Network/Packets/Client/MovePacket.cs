@@ -2,12 +2,9 @@
 
 namespace Intersect.Network.Packets.Client
 {
+
     public class MovePacket : CerasPacket
     {
-        public Guid MapId { get; set; }
-        public byte X { get; set; }
-        public byte Y { get; set; }
-        public byte Dir { get; set; }
 
         public MovePacket(Guid mapId, byte x, byte y, byte dir)
         {
@@ -16,5 +13,15 @@ namespace Intersect.Network.Packets.Client
             Y = y;
             Dir = dir;
         }
+
+        public Guid MapId { get; set; }
+
+        public byte X { get; set; }
+
+        public byte Y { get; set; }
+
+        public byte Dir { get; set; }
+
     }
+
 }

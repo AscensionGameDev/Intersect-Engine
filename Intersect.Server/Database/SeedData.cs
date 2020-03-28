@@ -6,9 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database
 {
-    public abstract class SeedData<TType>
-        where TType : class
+
+    public abstract class SeedData<TType> where TType : class
     {
+
         public void SeedIfEmpty([NotNull] ISeedableContext context)
         {
             var dbSet = context.GetDbSet<TType>();
@@ -27,5 +28,7 @@ namespace Intersect.Server.Database
         }
 
         public abstract void Seed([NotNull] DbSet<TType> dbSet);
+
     }
+
 }

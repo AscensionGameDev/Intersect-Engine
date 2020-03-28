@@ -1,27 +1,30 @@
-﻿using Intersect.Logging;
-using Intersect.Security.Claims;
-
-using JetBrains.Annotations;
-using Microsoft.Owin.Security.Infrastructure;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Intersect.Logging;
+using Intersect.Security.Claims;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.RestApi.Configuration;
+
+using JetBrains.Annotations;
+
+using Microsoft.Owin.Security.Infrastructure;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
     internal class RefreshTokenProvider : AuthenticationTokenProvider
     {
-        [NotNull] private ApiConfiguration Configuration { get; }
 
         public RefreshTokenProvider([NotNull] ApiConfiguration configuration)
         {
             Configuration = configuration;
         }
+
+        [NotNull]
+        private ApiConfiguration Configuration { get; }
 
         public override async Task CreateAsync([NotNull] AuthenticationTokenCreateContext context)
         {
@@ -44,7 +47,9 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             if (!Guid.TryParse(identity.FindFirst(IntersectClaimTypes.ClientId)?.Value, out var clientId))
             {
-                Log.Diagnostic("Received invalid client id '{0}'.", identity.FindFirst(IntersectClaimTypes.UserId)?.Value);
+                Log.Diagnostic(
+                    "Received invalid client id '{0}'.", identity.FindFirst(IntersectClaimTypes.UserId)?.Value
+                );
             }
 
             var identifier = identity.FindFirst(IntersectClaimTypes.UserId)?.Value;
@@ -61,9 +66,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             var ticketId = context.OwinContext.Get<Guid>("ticket_id");
             if (ticketId == Guid.Empty)
             {
-                identity
-                    .FindAll(IntersectClaimTypes.TicketId)?
-                    .ToList()
+                identity.FindAll(IntersectClaimTypes.TicketId)
+                    ?.ToList()
                     .ForEach(
                         claim =>
                         {
@@ -121,5 +125,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             context?.DeserializeTicket(refreshToken.Ticket);
         }
+
     }
+
 }

@@ -11,8 +11,10 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game.Hotbar
 {
+
     public class HotBarWindow
     {
+
         //Controls
         public ImagePanel HotbarWindow;
 
@@ -27,23 +29,30 @@ namespace Intersect.Client.Interface.Game.Hotbar
             InitHotbarItems();
             HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].EquipPanel.Texture == null)
+                {
                     Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                }
             }
         }
 
         private void InitHotbarItems()
         {
-            int x = 12;
-            for (int i = 0; i < Options.MaxHotbar; i++)
+            var x = 12;
+            for (var i = 0; i < Options.MaxHotbar; i++)
             {
-                Items.Add(new HotbarItem((byte)i, HotbarWindow));
+                Items.Add(new HotbarItem((byte) i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
                 Items[i].Setup();
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
-                Items[i].KeyLabel.SetText(Strings.Keys.keydict[Enum.GetName(typeof(Keys), Controls.ActiveControls.ControlMapping[Control.Hotkey1 + i].Key1).ToLower()]);
+                Items[i]
+                    .KeyLabel.SetText(
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), Controls.ActiveControls.ControlMapping[Control.Hotkey1 + i].Key1)
+                                .ToLower()]
+                    );
             }
         }
 
@@ -53,7 +62,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
             {
                 return;
             }
-            for (int i = 0; i < Options.MaxHotbar; i++)
+
+            for (var i = 0; i < Options.MaxHotbar; i++)
             {
                 Items[i].Update();
             }
@@ -61,14 +71,17 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
                 Y = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = HotbarWindow.Width,
                 Height = HotbarWindow.Height
             };
+
             return rect;
         }
+
     }
+
 }

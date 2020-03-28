@@ -7,11 +7,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.ErrorHandling
 {
+
     [Serializable]
     public struct ExceptionInfo
     {
+
         public int DataKeys { get; }
-        
+
         public int MessageLength { get; }
 
         public int StackTraceLength { get; }
@@ -39,24 +41,37 @@ namespace Intersect.ErrorHandling
         }
 
         [NotNull]
-        public static implicit operator JObject(ExceptionInfo exceptionInfo) => new JObject
+        public static implicit operator JObject(ExceptionInfo exceptionInfo)
         {
-            [nameof(DataKeys)] = exceptionInfo.DataKeys,
-            [nameof(MessageLength)] = exceptionInfo.MessageLength,
-            [nameof(StackTraceLength)] = exceptionInfo.StackTraceLength,
-            [nameof(InnerException)] = exceptionInfo.InnerException,
-            [nameof(Source)] = exceptionInfo.Source,
-            [nameof(TargetSite)] = exceptionInfo.TargetSite,
-            [nameof(TargetSiteDeclaringType)] = exceptionInfo.TargetSiteDeclaringType,
-            [nameof(Type)] = exceptionInfo.Type
-        };
+            return new JObject
+            {
+                [nameof(DataKeys)] = exceptionInfo.DataKeys,
+                [nameof(MessageLength)] = exceptionInfo.MessageLength,
+                [nameof(StackTraceLength)] = exceptionInfo.StackTraceLength,
+                [nameof(InnerException)] = exceptionInfo.InnerException,
+                [nameof(Source)] = exceptionInfo.Source,
+                [nameof(TargetSite)] = exceptionInfo.TargetSite,
+                [nameof(TargetSiteDeclaringType)] = exceptionInfo.TargetSiteDeclaringType,
+                [nameof(Type)] = exceptionInfo.Type
+            };
+        }
 
         [NotNull]
-        public static implicit operator string(ExceptionInfo exceptionInfo) => exceptionInfo.ToString();
+        public static implicit operator string(ExceptionInfo exceptionInfo)
+        {
+            return exceptionInfo.ToString();
+        }
 
-        public override string ToString() => ((JObject) this).ToString(Formatting.None) ?? base.ToString();
+        public override string ToString()
+        {
+            return ((JObject) this).ToString(Formatting.None) ?? base.ToString();
+        }
 
-        public string ToString(Formatting formatting) => ((JObject) this).ToString(formatting);
+        public string ToString(Formatting formatting)
+        {
+            return ((JObject) this).ToString(formatting);
+        }
 
     }
+
 }

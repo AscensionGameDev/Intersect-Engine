@@ -19,6 +19,8 @@ namespace Intersect.Server.Database.Logging
     public class RequestLog
     {
 
+        private string mMethod;
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
         [Key]
@@ -28,8 +30,6 @@ namespace Intersect.Server.Database.Logging
 
         [JsonConverter(typeof(StringEnumConverter))]
         public LogLevel Level { get; set; }
-
-        private string mMethod;
 
         public string Method
         {

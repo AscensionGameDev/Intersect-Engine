@@ -44,21 +44,9 @@ using System.Text;
  */
 namespace Intersect.Utilities
 {
+
     public class AlphanumComparator : IComparer
     {
-        private enum ChunkType { Alphanumeric, Numeric }
-
-        private static bool InChunk(char ch, char otherCh)
-        {
-            var type = ChunkType.Alphanumeric;
-
-            if (char.IsDigit(otherCh))
-            {
-                type = ChunkType.Numeric;
-            }
-
-            return (type != ChunkType.Alphanumeric || !char.IsDigit(ch)) && (type != ChunkType.Numeric || char.IsDigit(ch));
-        }
 
         public int Compare(object x, object y)
         {
@@ -73,7 +61,7 @@ namespace Intersect.Utilities
             var thisMarker = 0;
             var thatMarker = 0;
 
-            while ((thisMarker < s1.Length) || (thatMarker < s2.Length))
+            while (thisMarker < s1.Length || thatMarker < s2.Length)
             {
                 if (thisMarker >= s1.Length)
                 {
@@ -91,7 +79,7 @@ namespace Intersect.Utilities
                 var thisChunk = new StringBuilder();
                 var thatChunk = new StringBuilder();
 
-                while ((thisMarker < s1.Length) && (thisChunk.Length == 0 || InChunk(thisCh, thisChunk[0])))
+                while (thisMarker < s1.Length && (thisChunk.Length == 0 || InChunk(thisCh, thisChunk[0])))
                 {
                     thisChunk.Append(thisCh);
                     thisMarker++;
@@ -102,7 +90,7 @@ namespace Intersect.Utilities
                     }
                 }
 
-                while ((thatMarker < s2.Length) && (thatChunk.Length == 0 || InChunk(thatCh, thatChunk[0])))
+                while (thatMarker < s2.Length && (thatChunk.Length == 0 || InChunk(thatCh, thatChunk[0])))
                 {
                     thatChunk.Append(thatCh);
                     thatMarker++;
@@ -114,6 +102,7 @@ namespace Intersect.Utilities
                 }
 
                 var result = 0;
+
                 // If both chunks contain numeric characters, sort them numerically
                 if (char.IsDigit(thisChunk[0]) && char.IsDigit(thatChunk[0]))
                 {
@@ -143,5 +132,29 @@ namespace Intersect.Utilities
 
             return 0;
         }
+
+        private static bool InChunk(char ch, char otherCh)
+        {
+            var type = ChunkType.Alphanumeric;
+
+            if (char.IsDigit(otherCh))
+            {
+                type = ChunkType.Numeric;
+            }
+
+            return (type != ChunkType.Alphanumeric || !char.IsDigit(ch)) &&
+                   (type != ChunkType.Numeric || char.IsDigit(ch));
+        }
+
+        private enum ChunkType
+        {
+
+            Alphanumeric,
+
+            Numeric
+
+        }
+
     }
+
 }

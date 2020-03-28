@@ -1,14 +1,18 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+
 using Intersect.Memory;
 using Intersect.Network.Crypto.Formats;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Network.Crypto
 {
+
     public abstract class EncryptionKey
     {
+
         protected EncryptionKey(KeyFormat format)
         {
             Format = format;
@@ -80,10 +84,12 @@ namespace Intersect.Network.Crypto
                 {
                     case KeyFormat.Aes:
                         encryptionKey = new AesKey();
+
                         break;
 
                     case KeyFormat.Rsa:
                         encryptionKey = new RsaKey();
+
                         break;
 
                     default:
@@ -115,5 +121,7 @@ namespace Intersect.Network.Crypto
 
             return castedKey;
         }
+
     }
+
 }

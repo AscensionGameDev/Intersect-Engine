@@ -2,8 +2,6 @@
 
 using MathNet.Numerics.Random;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using NUnit.Framework;
 
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
@@ -16,17 +14,69 @@ namespace Intersect.Extensions
     {
 
         [Test]
-        public void NextLongTest()
+        public void NextDecimalMaximumTest()
         {
-            var byteGenerator = new Random();
             var random = new MockRandom();
-            var buffer = new byte[8];
-            for (var i = 0; i < 100; i++)
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(-1));
+        }
+
+        [Test]
+        public void NextDecimalMinimumMaximumTest()
+        {
+            var random = new MockRandom();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(1, 0));
+        }
+
+        [Test]
+        public void NextDoubleMaximumTest()
+        {
+            var random = new MockRandom();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(-1));
+        }
+
+        [Test]
+        public void NextDoubleMinimumMaximumTest()
+        {
+            var random = new MockRandom();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(1, 0));
+        }
+
+        [Test]
+        public void NextDoubleTest()
+        {
+            var random = new MockRandom
             {
-                byteGenerator.NextBytes(buffer);
-                random.MockNextBytes = buffer;
-                Assert.AreEqual(BitConverter.ToInt64(buffer, 0), random.NextLong());
-            }
+                MockNextDouble = double.NegativeInfinity
+            };
+
+            var nextDouble = random.NextDouble();
+            Assert.IsTrue(double.IsNegativeInfinity(nextDouble), $@"Expected negative infinity, got {nextDouble}.");
+        }
+
+        [Test]
+        public void NextFloatMaximumTest()
+        {
+            var random = new MockRandom();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(-1));
+        }
+
+        [Test]
+        public void NextFloatMinimumMaximumTest()
+        {
+            var random = new MockRandom();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(1, 0));
+        }
+
+        [Test]
+        public void NextFloatTest()
+        {
+            var random = new MockRandom
+            {
+                MockNextDouble = float.NegativeInfinity
+            };
+
+            var nextFloat = random.NextFloat();
+            Assert.IsTrue(float.IsNegativeInfinity(nextFloat), $@"Expected negative infinity, got {nextFloat}.");
         }
 
         [Test]
@@ -61,7 +111,7 @@ namespace Intersect.Extensions
         }
 
         [Test]
-        public void NextULongTest()
+        public void NextLongTest()
         {
             var byteGenerator = new Random();
             var random = new MockRandom();
@@ -70,7 +120,7 @@ namespace Intersect.Extensions
             {
                 byteGenerator.NextBytes(buffer);
                 random.MockNextBytes = buffer;
-                Assert.AreEqual(BitConverter.ToUInt64(buffer, 0), random.NextULong());
+                Assert.AreEqual(BitConverter.ToInt64(buffer, 0), random.NextLong());
             }
         }
 
@@ -104,69 +154,17 @@ namespace Intersect.Extensions
         }
 
         [Test]
-        public void NextDecimalMaximumTest()
+        public void NextULongTest()
         {
+            var byteGenerator = new Random();
             var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(-1));
-        }
-
-        [Test]
-        public void NextDecimalMinimumMaximumTest()
-        {
-            var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(1, 0));
-        }
-
-        [Test]
-        public void NextDoubleTest()
-        {
-            var random = new MockRandom
+            var buffer = new byte[8];
+            for (var i = 0; i < 100; i++)
             {
-                MockNextDouble = double.NegativeInfinity
-            };
-
-            var nextDouble = random.NextDouble();
-            Assert.IsTrue(double.IsNegativeInfinity(nextDouble), $@"Expected negative infinity, got {nextDouble}.");
-        }
-
-        [Test]
-        public void NextDoubleMaximumTest()
-        {
-            var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(-1));
-        }
-
-        [Test]
-        public void NextDoubleMinimumMaximumTest()
-        {
-            var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(1, 0));
-        }
-
-        [Test]
-        public void NextFloatTest()
-        {
-            var random = new MockRandom
-            {
-                MockNextDouble = float.NegativeInfinity
-            };
-
-            var nextFloat = random.NextFloat();
-            Assert.IsTrue(float.IsNegativeInfinity(nextFloat), $@"Expected negative infinity, got {nextFloat}.");
-        }
-
-        [Test]
-        public void NextFloatMaximumTest()
-        {
-            var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(-1));
-        }
-
-        [Test]
-        public void NextFloatMinimumMaximumTest()
-        {
-            var random = new MockRandom();
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(1, 0));
+                byteGenerator.NextBytes(buffer);
+                random.MockNextBytes = buffer;
+                Assert.AreEqual(BitConverter.ToUInt64(buffer, 0), random.NextULong());
+            }
         }
 
     }
@@ -197,6 +195,7 @@ namespace Intersect.Extensions
                 if (MockNextBytes == null || i >= MockNextBytes.Length)
                 {
                     buffer[i] = 0;
+
                     continue;
                 }
 

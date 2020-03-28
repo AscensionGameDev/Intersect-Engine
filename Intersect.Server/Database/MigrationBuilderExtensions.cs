@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Config;
-using Intersect.Logging;
 
 using JetBrains.Annotations;
 
@@ -15,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace Intersect.Server.Database
 {
+
     public static class MigrationBuilderExtensions
     {
 
@@ -44,9 +41,14 @@ namespace Intersect.Server.Database
         public static OperationBuilder<SqlOperation> Sql(
             [NotNull] this MigrationBuilder migrationBuilder,
             [NotNull] params (DatabaseOptions.DatabaseType DatabaseType, string Sql)[] conditionalQueries
-        ) => migrationBuilder.Sql(conditionalQueries.Select(
-            conditionalQuery => (conditionalQuery.DatabaseType, conditionalQuery.Sql, false)
-        ).ToArray());
+        )
+        {
+            return migrationBuilder.Sql(
+                conditionalQueries
+                    .Select(conditionalQuery => (conditionalQuery.DatabaseType, conditionalQuery.Sql, false))
+                    .ToArray()
+            );
+        }
 
         /// <summary>
         /// 
@@ -58,7 +60,9 @@ namespace Intersect.Server.Database
         [NotNull]
         public static OperationBuilder<SqlOperation> Sql(
             [NotNull] this MigrationBuilder migrationBuilder,
-            [NotNull] params (DatabaseOptions.DatabaseType DatabaseType, string Sql, bool SuppressTransaction)[] conditionalQueries
+            [NotNull]
+            params (DatabaseOptions.DatabaseType DatabaseType, string Sql, bool SuppressTransaction)[]
+                conditionalQueries
         )
         {
             OperationBuilder<SqlOperation> operationBuilder = null;
@@ -80,4 +84,5 @@ namespace Intersect.Server.Database
         }
 
     }
+
 }

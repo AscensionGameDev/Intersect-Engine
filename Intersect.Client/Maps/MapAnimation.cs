@@ -3,10 +3,14 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Maps
 {
+
     public class MapAnimation : Animation
     {
+
         private int mDir;
+
         private int mTileX;
+
         private int mTileY;
 
         public MapAnimation(AnimationBase animBase, int tileX, int tileY, int dir) : base(animBase, false)
@@ -15,5 +19,7 @@ namespace Intersect.Client.Maps
             mTileY = tileY;
             mDir = dir;
         }
+
     }
+
 }

@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Intersect.Client.General;
+﻿using Intersect.Client.General;
 
 namespace Intersect.Client.Maps
 {
+
     public class ActionMessage
     {
+
         public Color Clr = new Color();
+
         public MapInstance Map;
+
         public string Msg = "";
+
         public long TransmittionTimer;
+
         public int X;
+
         public long XOffset;
+
         public int Y;
 
         public ActionMessage(MapInstance map, int x, int y, string message, Color color)
@@ -36,5 +38,7 @@ namespace Intersect.Client.Maps
                 Map.ActionMsgs.Remove(this);
             }
         }
+
     }
+
 }

@@ -13,15 +13,17 @@ using Microsoft.Owin;
 
 namespace Intersect.Server.Web.RestApi.Middleware
 {
+
     public class IntersectRequestLoggingMiddleware : OwinMiddleware
     {
-        public LogLevel LogLevel { get; set; }
 
         /// <inheritdoc />
         public IntersectRequestLoggingMiddleware(OwinMiddleware next, LogLevel logLevel = LogLevel.Info) : base(next)
         {
             LogLevel = logLevel;
         }
+
+        public LogLevel LogLevel { get; set; }
 
         /// <inheritdoc />
         public override async Task Invoke(IOwinContext owinContext)
@@ -130,8 +132,11 @@ namespace Intersect.Server.Web.RestApi.Middleware
             catch (Exception exception)
             {
                 Log.Error(exception);
+
                 throw;
             }
         }
+
     }
+
 }

@@ -1,29 +1,36 @@
 ﻿using System;
 using System.Linq;
+
 using Intersect.Client.Framework.GenericClasses;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Base for controls whose interior can be scrolled.
     /// </summary>
     public class ScrollControl : Base
     {
+
         protected readonly ScrollBar mHorizontalScrollBar;
 
         protected readonly ScrollBar mVerticalScrollBar;
+
         private bool mAutoHideBars;
+
         private bool mCanScrollH;
+
         private bool mCanScrollV;
+
         private bool mUpdatingScrollbars;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ScrollControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ScrollControl(Base parent, string name = "")
-            : base(parent, name)
+        public ScrollControl(Base parent, string name = "") : base(parent, name)
         {
             MouseInputEnabled = false;
 
@@ -82,7 +89,9 @@ namespace Intersect.Client.Framework.Gwen.Control
                     mHorizontalScrollBar.SetScrollAmount(0, true);
                     mHorizontalScrollBar.IsDisabled = true;
                     if (mAutoHideBars)
+                    {
                         mHorizontalScrollBar.IsHidden = true;
+                    }
                 }
                 else
                 {
@@ -101,7 +110,9 @@ namespace Intersect.Client.Framework.Gwen.Control
                     mVerticalScrollBar.SetScrollAmount(0, true);
                     mVerticalScrollBar.IsDisabled = true;
                     if (mAutoHideBars)
+                    {
                         mVerticalScrollBar.IsHidden = true;
+                    }
                 }
                 else
                 {
@@ -110,7 +121,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             }
         }
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -120,18 +131,42 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("InnerPanel", mInnerPanel.GetJson());
             obj.Add("HorizontalScrollBar", mHorizontalScrollBar.GetJson());
             obj.Add("VerticalScrollBar", mVerticalScrollBar.GetJson());
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["CanScrollH"] != null) mCanScrollH = (bool)obj["CanScrollH"];
-            if (obj["CanScrollV"] != null) mCanScrollV = (bool)obj["CanScrollV"];
-            if (obj["AutoHideBars"] != null) mAutoHideBars = (bool)obj["AutoHideBars"];
-            if (obj["InnerPanel"] != null) mInnerPanel.LoadJson(obj["InnerPanel"]);
-            if (obj["HorizontalScrollBar"] != null) mHorizontalScrollBar.LoadJson(obj["HorizontalScrollBar"]);
-            if (obj["VerticalScrollBar"] != null) mVerticalScrollBar.LoadJson(obj["VerticalScrollBar"]);
+            if (obj["CanScrollH"] != null)
+            {
+                mCanScrollH = (bool) obj["CanScrollH"];
+            }
+
+            if (obj["CanScrollV"] != null)
+            {
+                mCanScrollV = (bool) obj["CanScrollV"];
+            }
+
+            if (obj["AutoHideBars"] != null)
+            {
+                mAutoHideBars = (bool) obj["AutoHideBars"];
+            }
+
+            if (obj["InnerPanel"] != null)
+            {
+                mInnerPanel.LoadJson(obj["InnerPanel"]);
+            }
+
+            if (obj["HorizontalScrollBar"] != null)
+            {
+                mHorizontalScrollBar.LoadJson(obj["HorizontalScrollBar"]);
+            }
+
+            if (obj["VerticalScrollBar"] != null)
+            {
+                mVerticalScrollBar.LoadJson(obj["VerticalScrollBar"]);
+            }
         }
 
         /// <summary>
@@ -192,15 +227,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (CanScrollV && mVerticalScrollBar.IsVisible)
             {
                 if (mVerticalScrollBar.SetScrollAmount(
-                    mVerticalScrollBar.ScrollAmount - mVerticalScrollBar.NudgeAmount * (delta / 60.0f), true))
+                    mVerticalScrollBar.ScrollAmount - mVerticalScrollBar.NudgeAmount * (delta / 60.0f), true
+                ))
+                {
                     return true;
+                }
             }
 
             if (CanScrollH && mHorizontalScrollBar.IsVisible)
             {
                 if (mHorizontalScrollBar.SetScrollAmount(
-                    mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f), true))
+                    mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f), true
+                ))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -213,7 +254,6 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void Render(Skin.Base skin)
         {
 #if false // Debug render - this shouldn't render ANYTHING REALLY - it should be up to the parent!
-
     Gwen::Rect rect = GetRenderBounds();
     Gwen::Renderer::Base* render = skin->GetRender();
 
@@ -232,13 +272,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (!mUpdatingScrollbars)
             {
                 if (mInnerPanel == null)
+                {
                     return;
+                }
 
                 mUpdatingScrollbars = true;
 
                 //Get the max size of all our children together
-                int childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
-                int childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
+                var childrenWidth = Children.Count > 0 ? Children.Max(x => x.Right) : 0;
+                var childrenHeight = Children.Count > 0 ? Children.Max(x => x.Bottom) : 0;
 
                 if (mCanScrollH)
                 {
@@ -246,27 +288,36 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
                 else
                 {
-                    mInnerPanel.SetSize(Width - (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width),
-                        Math.Max(Height, childrenHeight));
+                    mInnerPanel.SetSize(
+                        Width - (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width),
+                        Math.Max(Height, childrenHeight)
+                    );
                 }
 
-                float wPercent = Width /
-                                 (float) (childrenWidth + (mVerticalScrollBar.IsHidden
-                                              ? 0
-                                              : mVerticalScrollBar.Width));
-                float hPercent = Height /
-                                 (float)
-                                 (childrenHeight + (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height));
+                var wPercent = Width /
+                               (float) (childrenWidth + (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width));
+
+                var hPercent = Height /
+                               (float) (childrenHeight +
+                                        (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height));
 
                 if (mCanScrollV)
+                {
                     VScrollRequired = hPercent >= 1;
+                }
                 else
+                {
                     mVerticalScrollBar.IsHidden = true;
+                }
 
                 if (mCanScrollH)
+                {
                     HScrollRequired = wPercent >= 1;
+                }
                 else
+                {
                     mHorizontalScrollBar.IsHidden = true;
+                }
 
                 mVerticalScrollBar.ContentSize = mInnerPanel.Height;
                 mVerticalScrollBar.ViewableContentSize =
@@ -276,24 +327,25 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mHorizontalScrollBar.ViewableContentSize =
                     Width - (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width);
 
-                int newInnerPanelPosX = 0;
-                int newInnerPanelPosY = 0;
+                var newInnerPanelPosX = 0;
+                var newInnerPanelPosY = 0;
 
                 if (CanScrollV && !mVerticalScrollBar.IsHidden)
                 {
                     newInnerPanelPosY =
-                        (int) (
-                            -((mInnerPanel.Height) - Height +
-                              (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height)) *
-                            mVerticalScrollBar.ScrollAmount);
+                        (int) (-(mInnerPanel.Height -
+                                 Height +
+                                 (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height)) *
+                               mVerticalScrollBar.ScrollAmount);
                 }
+
                 if (CanScrollH && !mHorizontalScrollBar.IsHidden)
                 {
                     newInnerPanelPosX =
-                        (int) (
-                            -((mInnerPanel.Width) - Width +
-                              (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width)) *
-                            mHorizontalScrollBar.ScrollAmount);
+                        (int) (-(mInnerPanel.Width -
+                                 Width +
+                                 (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width)) *
+                               mHorizontalScrollBar.ScrollAmount);
                 }
 
                 mInnerPanel.SetPosition(newInnerPanelPosX, newInnerPanelPosY);
@@ -304,7 +356,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         public virtual void ScrollToBottom()
         {
             if (!CanScrollV)
+            {
                 return;
+            }
 
             UpdateScrollBars();
             mVerticalScrollBar.ScrollToBottom();
@@ -351,5 +405,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             return mHorizontalScrollBar;
         }
+
     }
+
 }

@@ -3,35 +3,49 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Editor.Content;
 
 using Newtonsoft.Json.Linq;
+
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Intersect.Editor.Classes.ContentManagement
 {
+
     public class TexturePacker
     {
-        public int binWidth = 0;
-        public int binHeight = 0;
-        public bool allowRotations;
-
-        public List<Rectangle> usedRectangles = new List<Rectangle>();
-        public List<Rectangle> freeRectangles = new List<Rectangle>();
-        public Dictionary<Texture, Rectangle> textures = new Dictionary<Texture, Rectangle>();
 
         public enum FreeRectChoiceHeuristic
         {
-            RectBestShortSideFit, ///< -BSSF: Positions the rectangle against the short side of a free rectangle into which it fits the best.
-            RectBestLongSideFit, ///< -BLSF: Positions the rectangle against the long side of a free rectangle into which it fits the best.
-            RectBestAreaFit, ///< -BAF: Positions the rectangle into the smallest free rect into which it fits.
-            RectBottomLeftRule, ///< -BL: Does the Tetris placement.
+
+            RectBestShortSideFit,
+
+            ///< -BSSF: Positions the rectangle against the short side of a free rectangle into which it fits the best.
+            RectBestLongSideFit,
+
+            ///< -BLSF: Positions the rectangle against the long side of a free rectangle into which it fits the best.
+            RectBestAreaFit,
+
+            ///< -BAF: Positions the rectangle into the smallest free rect into which it fits.
+            RectBottomLeftRule,
+
+            ///< -BL: Does the Tetris placement.
             RectContactPointRule ///< -CP: Choosest the placement where the rectangle touches other rects as much as possible.
+
         };
+
+        public bool allowRotations;
+
+        public int binHeight = 0;
+
+        public int binWidth = 0;
+
+        public List<Rectangle> freeRectangles = new List<Rectangle>();
+
+        public Dictionary<Texture, Rectangle> textures = new Dictionary<Texture, Rectangle>();
+
+        public List<Rectangle> usedRectangles = new List<Rectangle>();
 
         public TexturePacker(int width, int height, bool rotations = true)
         {
@@ -44,7 +58,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             binHeight = height;
             allowRotations = rotations;
 
-            Rectangle n = new Rectangle();
+            var n = new Rectangle();
             n.X = 0;
             n.Y = 0;
             n.Width = width;
@@ -61,9 +75,11 @@ namespace Intersect.Editor.Classes.ContentManagement
             var rect = Insert(tex.GetWidth(), tex.GetHeight(), FreeRectChoiceHeuristic.RectBestAreaFit);
             if (rect.Height > 0)
             {
-                textures.Add(tex,rect);
+                textures.Add(tex, rect);
+
                 return true;
             }
+
             return false;
         }
 
@@ -78,7 +94,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             foreach (var tex in textures)
             {
                 var frame = new JObject();
-                frame.Add("filename",tex.Key.GetPath());
+                frame.Add("filename", tex.Key.GetPath());
                 var t = Image.FromFile(tex.Key.GetPath());
 
                 var spriteSourceSize = new JObject();
@@ -103,7 +119,11 @@ namespace Intersect.Editor.Classes.ContentManagement
                 {
                     frame["rotated"] = false;
                 }
-                g.DrawImage(t, new RectangleF(tex.Value.X,tex.Value.Y,tex.Value.Width,tex.Value.Height), new RectangleF(0, 0, t.Width, t.Height), GraphicsUnit.Pixel);
+
+                g.DrawImage(
+                    t, new RectangleF(tex.Value.X, tex.Value.Y, tex.Value.Width, tex.Value.Height),
+                    new RectangleF(0, 0, t.Width, t.Height), GraphicsUnit.Pixel
+                );
 
                 var frameRect = new JObject();
                 frameRect["x"] = tex.Value.X;
@@ -112,18 +132,31 @@ namespace Intersect.Editor.Classes.ContentManagement
                 frameRect["h"] = tex.Value.Height;
                 frame["frame"] = frameRect;
 
-                if (tex.Value.Right > maxUsedWidth) maxUsedWidth = tex.Value.Right;
-                if (tex.Value.Bottom > maxUsedHeight) maxUsedHeight = tex.Value.Bottom;
+                if (tex.Value.Right > maxUsedWidth)
+                {
+                    maxUsedWidth = tex.Value.Right;
+                }
+
+                if (tex.Value.Bottom > maxUsedHeight)
+                {
+                    maxUsedHeight = tex.Value.Bottom;
+                }
+
                 t.Dispose();
 
                 frames.Add(frame);
             }
+
             g.Dispose();
             if (maxUsedWidth > 0 && maxUsedHeight > 0)
             {
                 var croppedImg = new Bitmap(maxUsedWidth, maxUsedHeight);
                 var g1 = Graphics.FromImage(croppedImg);
-                g1.DrawImage(img, new RectangleF(0, 0, maxUsedWidth, maxUsedHeight), new RectangleF(0, 0, maxUsedWidth, maxUsedHeight), GraphicsUnit.Pixel);
+                g1.DrawImage(
+                    img, new RectangleF(0, 0, maxUsedWidth, maxUsedHeight),
+                    new RectangleF(0, 0, maxUsedWidth, maxUsedHeight), GraphicsUnit.Pixel
+                );
+
                 g1.Dispose();
                 var size = new JObject();
                 size["w"] = croppedImg.Width;
@@ -133,38 +166,56 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 //Create Metadata
                 var jobj = new JObject();
-                jobj.Add(new JProperty("frames",frames));
+                jobj.Add(new JProperty("frames", frames));
 
                 var meta = new JObject();
                 meta["image"] = index + ".png";
                 meta["size"] = size;
-                jobj.Add(new JProperty("meta",meta));
+                jobj.Add(new JProperty("meta", meta));
+
                 //Save Metadata
                 File.WriteAllText(Path.Combine("resources", "packs", index + ".json"), jobj.ToString());
             }
-            img.Dispose();
 
+            img.Dispose();
         }
 
         public Rectangle Insert(int width, int height, FreeRectChoiceHeuristic method)
         {
-            Rectangle newNode = new Rectangle();
-            int score1 = 0; // Unused in this function. We don't need to know the score after finding the position.
-            int score2 = 0;
+            var newNode = new Rectangle();
+            var score1 = 0; // Unused in this function. We don't need to know the score after finding the position.
+            var score2 = 0;
             switch (method)
             {
-                case FreeRectChoiceHeuristic.RectBestShortSideFit: newNode = FindPositionForNewNodeBestShortSideFit(width, height, ref score1, ref score2); break;
-                case FreeRectChoiceHeuristic.RectBottomLeftRule: newNode = FindPositionForNewNodeBottomLeft(width, height, ref score1, ref score2); break;
-                case FreeRectChoiceHeuristic.RectContactPointRule: newNode = FindPositionForNewNodeContactPoint(width, height, ref score1); break;
-                case FreeRectChoiceHeuristic.RectBestLongSideFit: newNode = FindPositionForNewNodeBestLongSideFit(width, height, ref score2, ref score1); break;
-                case FreeRectChoiceHeuristic.RectBestAreaFit: newNode = FindPositionForNewNodeBestAreaFit(width, height, ref score1, ref score2); break;
+                case FreeRectChoiceHeuristic.RectBestShortSideFit:
+                    newNode = FindPositionForNewNodeBestShortSideFit(width, height, ref score1, ref score2);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectBottomLeftRule:
+                    newNode = FindPositionForNewNodeBottomLeft(width, height, ref score1, ref score2);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectContactPointRule:
+                    newNode = FindPositionForNewNodeContactPoint(width, height, ref score1);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectBestLongSideFit:
+                    newNode = FindPositionForNewNodeBestLongSideFit(width, height, ref score2, ref score1);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectBestAreaFit:
+                    newNode = FindPositionForNewNodeBestAreaFit(width, height, ref score1, ref score2);
+
+                    break;
             }
 
             if (newNode.Height == 0)
+            {
                 return newNode;
+            }
 
-            int numRectanglesToProcess = freeRectangles.Count;
-            for (int i = 0; i < numRectanglesToProcess; ++i)
+            var numRectanglesToProcess = freeRectangles.Count;
+            for (var i = 0; i < numRectanglesToProcess; ++i)
             {
                 if (SplitFreeNode(freeRectangles[i], ref newNode))
                 {
@@ -177,6 +228,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             PruneFreeList();
 
             usedRectangles.Add(newNode);
+
             return newNode;
         }
 
@@ -186,18 +238,20 @@ namespace Intersect.Editor.Classes.ContentManagement
 
             while (rects.Count > 0)
             {
-                int bestScore1 = int.MaxValue;
-                int bestScore2 = int.MaxValue;
-                int bestRectIndex = -1;
-                Rectangle bestNode = new Rectangle();
+                var bestScore1 = int.MaxValue;
+                var bestScore2 = int.MaxValue;
+                var bestRectIndex = -1;
+                var bestNode = new Rectangle();
 
-                for (int i = 0; i < rects.Count; ++i)
+                for (var i = 0; i < rects.Count; ++i)
                 {
-                    int score1 = 0;
-                    int score2 = 0;
-                    Rectangle newNode = ScoreRect((int)rects[i].Width, (int)rects[i].Height, method, ref score1, ref score2);
+                    var score1 = 0;
+                    var score2 = 0;
+                    var newNode = ScoreRect(
+                        (int) rects[i].Width, (int) rects[i].Height, method, ref score1, ref score2
+                    );
 
-                    if (score1 < bestScore1 || (score1 == bestScore1 && score2 < bestScore2))
+                    if (score1 < bestScore1 || score1 == bestScore1 && score2 < bestScore2)
                     {
                         bestScore1 = score1;
                         bestScore2 = score2;
@@ -207,7 +261,9 @@ namespace Intersect.Editor.Classes.ContentManagement
                 }
 
                 if (bestRectIndex == -1)
+                {
                     return;
+                }
 
                 PlaceRect(bestNode);
                 rects.RemoveAt(bestRectIndex);
@@ -216,8 +272,8 @@ namespace Intersect.Editor.Classes.ContentManagement
 
         void PlaceRect(Rectangle node)
         {
-            int numRectanglesToProcess = freeRectangles.Count;
-            for (int i = 0; i < numRectanglesToProcess; ++i)
+            var numRectanglesToProcess = freeRectangles.Count;
+            for (var i = 0; i < numRectanglesToProcess; ++i)
             {
                 if (SplitFreeNode(freeRectangles[i], ref node))
                 {
@@ -234,19 +290,32 @@ namespace Intersect.Editor.Classes.ContentManagement
 
         Rectangle ScoreRect(int width, int height, FreeRectChoiceHeuristic method, ref int score1, ref int score2)
         {
-            Rectangle newNode = new Rectangle();
+            var newNode = new Rectangle();
             score1 = int.MaxValue;
             score2 = int.MaxValue;
             switch (method)
             {
-                case FreeRectChoiceHeuristic.RectBestShortSideFit: newNode = FindPositionForNewNodeBestShortSideFit(width, height, ref score1, ref score2); break;
-                case FreeRectChoiceHeuristic.RectBottomLeftRule: newNode = FindPositionForNewNodeBottomLeft(width, height, ref score1, ref score2); break;
+                case FreeRectChoiceHeuristic.RectBestShortSideFit:
+                    newNode = FindPositionForNewNodeBestShortSideFit(width, height, ref score1, ref score2);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectBottomLeftRule:
+                    newNode = FindPositionForNewNodeBottomLeft(width, height, ref score1, ref score2);
+
+                    break;
                 case FreeRectChoiceHeuristic.RectContactPointRule:
                     newNode = FindPositionForNewNodeContactPoint(width, height, ref score1);
                     score1 = -score1; // Reverse since we are minimizing, but for contact point score bigger is better.
+
                     break;
-                case FreeRectChoiceHeuristic.RectBestLongSideFit: newNode = FindPositionForNewNodeBestLongSideFit(width, height, ref score2, ref score1); break;
-                case FreeRectChoiceHeuristic.RectBestAreaFit: newNode = FindPositionForNewNodeBestAreaFit(width, height, ref score1, ref score2); break;
+                case FreeRectChoiceHeuristic.RectBestLongSideFit:
+                    newNode = FindPositionForNewNodeBestLongSideFit(width, height, ref score2, ref score1);
+
+                    break;
+                case FreeRectChoiceHeuristic.RectBestAreaFit:
+                    newNode = FindPositionForNewNodeBestAreaFit(width, height, ref score1, ref score2);
+
+                    break;
             }
 
             // Cannot fit the current rectangle.
@@ -263,70 +332,82 @@ namespace Intersect.Editor.Classes.ContentManagement
         public float Occupancy()
         {
             ulong usedSurfaceArea = 0;
-            for (int i = 0; i < usedRectangles.Count; ++i)
-                usedSurfaceArea += (uint)usedRectangles[i].Width * (uint)usedRectangles[i].Height;
+            for (var i = 0; i < usedRectangles.Count; ++i)
+            {
+                usedSurfaceArea += (uint) usedRectangles[i].Width * (uint) usedRectangles[i].Height;
+            }
 
-            return (float)usedSurfaceArea / (binWidth * binHeight);
+            return (float) usedSurfaceArea / (binWidth * binHeight);
         }
 
         Rectangle FindPositionForNewNodeBottomLeft(int width, int height, ref int bestY, ref int bestX)
         {
-            Rectangle bestNode = new Rectangle();
+            var bestNode = new Rectangle();
+
             //memset(bestNode, 0, sizeof(Rect));
 
             bestY = int.MaxValue;
 
-            for (int i = 0; i < freeRectangles.Count; ++i)
+            for (var i = 0; i < freeRectangles.Count; ++i)
             {
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    int topSideY = (int)freeRectangles[i].Y + height;
-                    if (topSideY < bestY || (topSideY == bestY && freeRectangles[i].X < bestX))
+                    var topSideY = (int) freeRectangles[i].Y + height;
+                    if (topSideY < bestY || topSideY == bestY && freeRectangles[i].X < bestX)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
                         bestNode.Width = width;
                         bestNode.Height = height;
                         bestY = topSideY;
-                        bestX = (int)freeRectangles[i].X;
+                        bestX = (int) freeRectangles[i].X;
                     }
                 }
+
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    int topSideY = (int)freeRectangles[i].Y + width;
-                    if (topSideY < bestY || (topSideY == bestY && freeRectangles[i].X < bestX))
+                    var topSideY = (int) freeRectangles[i].Y + width;
+                    if (topSideY < bestY || topSideY == bestY && freeRectangles[i].X < bestX)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
                         bestNode.Width = height;
                         bestNode.Height = width;
                         bestY = topSideY;
-                        bestX = (int)freeRectangles[i].X;
+                        bestX = (int) freeRectangles[i].X;
                     }
                 }
             }
+
             return bestNode;
         }
 
-        Rectangle FindPositionForNewNodeBestShortSideFit(int width, int height, ref int bestShortSideFit, ref int bestLongSideFit)
+        Rectangle FindPositionForNewNodeBestShortSideFit(
+            int width,
+            int height,
+            ref int bestShortSideFit,
+            ref int bestLongSideFit
+        )
         {
-            Rectangle bestNode = new Rectangle();
+            var bestNode = new Rectangle();
+
             //memset(&bestNode, 0, sizeof(Rect));
 
             bestShortSideFit = int.MaxValue;
 
-            for (int i = 0; i < freeRectangles.Count; ++i)
+            for (var i = 0; i < freeRectangles.Count; ++i)
             {
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    int leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
-                    int leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
-                    int shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
-                    int longSideFit = Math.Max(leftoverHoriz, leftoverVert);
+                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
+                    var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
-                    if (shortSideFit < bestShortSideFit || (shortSideFit == bestShortSideFit && longSideFit < bestLongSideFit))
+                    if (shortSideFit < bestShortSideFit ||
+                        shortSideFit == bestShortSideFit && longSideFit < bestLongSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -339,12 +420,13 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    int flippedLeftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
-                    int flippedLeftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
-                    int flippedShortSideFit = Math.Min(flippedLeftoverHoriz, flippedLeftoverVert);
-                    int flippedLongSideFit = Math.Max(flippedLeftoverHoriz, flippedLeftoverVert);
+                    var flippedLeftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
+                    var flippedLeftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var flippedShortSideFit = Math.Min(flippedLeftoverHoriz, flippedLeftoverVert);
+                    var flippedLongSideFit = Math.Max(flippedLeftoverHoriz, flippedLeftoverVert);
 
-                    if (flippedShortSideFit < bestShortSideFit || (flippedShortSideFit == bestShortSideFit && flippedLongSideFit < bestLongSideFit))
+                    if (flippedShortSideFit < bestShortSideFit ||
+                        flippedShortSideFit == bestShortSideFit && flippedLongSideFit < bestLongSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -355,27 +437,35 @@ namespace Intersect.Editor.Classes.ContentManagement
                     }
                 }
             }
+
             return bestNode;
         }
 
-        Rectangle FindPositionForNewNodeBestLongSideFit(int width, int height, ref int bestShortSideFit, ref int bestLongSideFit)
+        Rectangle FindPositionForNewNodeBestLongSideFit(
+            int width,
+            int height,
+            ref int bestShortSideFit,
+            ref int bestLongSideFit
+        )
         {
-            Rectangle bestNode = new Rectangle();
+            var bestNode = new Rectangle();
+
             //memset(&bestNode, 0, sizeof(Rect));
 
             bestLongSideFit = int.MaxValue;
 
-            for (int i = 0; i < freeRectangles.Count; ++i)
+            for (var i = 0; i < freeRectangles.Count; ++i)
             {
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    int leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
-                    int leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
-                    int shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
-                    int longSideFit = Math.Max(leftoverHoriz, leftoverVert);
+                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
+                    var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
-                    if (longSideFit < bestLongSideFit || (longSideFit == bestLongSideFit && shortSideFit < bestShortSideFit))
+                    if (longSideFit < bestLongSideFit ||
+                        longSideFit == bestLongSideFit && shortSideFit < bestShortSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -388,12 +478,13 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    int leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
-                    int leftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
-                    int shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
-                    int longSideFit = Math.Max(leftoverHoriz, leftoverVert);
+                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
+                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
+                    var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
-                    if (longSideFit < bestLongSideFit || (longSideFit == bestLongSideFit && shortSideFit < bestShortSideFit))
+                    if (longSideFit < bestLongSideFit ||
+                        longSideFit == bestLongSideFit && shortSideFit < bestShortSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -404,28 +495,35 @@ namespace Intersect.Editor.Classes.ContentManagement
                     }
                 }
             }
+
             return bestNode;
         }
 
-        Rectangle FindPositionForNewNodeBestAreaFit(int width, int height, ref int bestAreaFit, ref int bestShortSideFit)
+        Rectangle FindPositionForNewNodeBestAreaFit(
+            int width,
+            int height,
+            ref int bestAreaFit,
+            ref int bestShortSideFit
+        )
         {
-            Rectangle bestNode = new Rectangle();
+            var bestNode = new Rectangle();
+
             //memset(&bestNode, 0, sizeof(Rect));
 
             bestAreaFit = int.MaxValue;
 
-            for (int i = 0; i < freeRectangles.Count; ++i)
+            for (var i = 0; i < freeRectangles.Count; ++i)
             {
-                int areaFit = (int)freeRectangles[i].Width * (int)freeRectangles[i].Height - width * height;
+                var areaFit = (int) freeRectangles[i].Width * (int) freeRectangles[i].Height - width * height;
 
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    int leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
-                    int leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
-                    int shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
+                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
 
-                    if (areaFit < bestAreaFit || (areaFit == bestAreaFit && shortSideFit < bestShortSideFit))
+                    if (areaFit < bestAreaFit || areaFit == bestAreaFit && shortSideFit < bestShortSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -438,11 +536,11 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    int leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
-                    int leftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
-                    int shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
+                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
+                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
 
-                    if (areaFit < bestAreaFit || (areaFit == bestAreaFit && shortSideFit < bestShortSideFit))
+                    if (areaFit < bestAreaFit || areaFit == bestAreaFit && shortSideFit < bestShortSideFit)
                     {
                         bestNode.X = freeRectangles[i].X;
                         bestNode.Y = freeRectangles[i].Y;
@@ -453,6 +551,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                     }
                 }
             }
+
             return bestNode;
         }
 
@@ -460,80 +559,113 @@ namespace Intersect.Editor.Classes.ContentManagement
         int CommonIntervalLength(int i1start, int i1end, int i2start, int i2end)
         {
             if (i1end < i2start || i2end < i1start)
+            {
                 return 0;
+            }
+
             return Math.Min(i1end, i2end) - Math.Max(i1start, i2start);
         }
 
         int ContactPointScoreNode(int x, int y, int width, int height)
         {
-            int score = 0;
+            var score = 0;
 
             if (x == 0 || x + width == binWidth)
+            {
                 score += height;
-            if (y == 0 || y + height == binHeight)
-                score += width;
+            }
 
-            for (int i = 0; i < usedRectangles.Count; ++i)
+            if (y == 0 || y + height == binHeight)
+            {
+                score += width;
+            }
+
+            for (var i = 0; i < usedRectangles.Count; ++i)
             {
                 if (usedRectangles[i].X == x + width || usedRectangles[i].X + usedRectangles[i].Width == x)
-                    score += CommonIntervalLength((int)usedRectangles[i].Y, (int)usedRectangles[i].Y + (int)usedRectangles[i].Height, y, y + height);
+                {
+                    score += CommonIntervalLength(
+                        (int) usedRectangles[i].Y, (int) usedRectangles[i].Y + (int) usedRectangles[i].Height, y,
+                        y + height
+                    );
+                }
+
                 if (usedRectangles[i].Y == y + height || usedRectangles[i].Y + usedRectangles[i].Height == y)
-                    score += CommonIntervalLength((int)usedRectangles[i].X, (int)usedRectangles[i].X + (int)usedRectangles[i].Width, x, x + width);
+                {
+                    score += CommonIntervalLength(
+                        (int) usedRectangles[i].X, (int) usedRectangles[i].X + (int) usedRectangles[i].Width, x,
+                        x + width
+                    );
+                }
             }
+
             return score;
         }
 
         Rectangle FindPositionForNewNodeContactPoint(int width, int height, ref int bestContactScore)
         {
-            Rectangle bestNode = new Rectangle();
+            var bestNode = new Rectangle();
+
             //memset(&bestNode, 0, sizeof(Rect));
 
             bestContactScore = -1;
 
-            for (int i = 0; i < freeRectangles.Count; ++i)
+            for (var i = 0; i < freeRectangles.Count; ++i)
             {
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    int score = ContactPointScoreNode((int)freeRectangles[i].X, (int)freeRectangles[i].Y, width, height);
+                    var score = ContactPointScoreNode(
+                        (int) freeRectangles[i].X, (int) freeRectangles[i].Y, width, height
+                    );
+
                     if (score > bestContactScore)
                     {
-                        bestNode.X = (int)freeRectangles[i].X;
-                        bestNode.Y = (int)freeRectangles[i].Y;
+                        bestNode.X = (int) freeRectangles[i].X;
+                        bestNode.Y = (int) freeRectangles[i].Y;
                         bestNode.Width = width;
                         bestNode.Height = height;
                         bestContactScore = score;
                     }
                 }
+
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    int score = ContactPointScoreNode((int)freeRectangles[i].X, (int)freeRectangles[i].Y, height, width);
+                    var score = ContactPointScoreNode(
+                        (int) freeRectangles[i].X, (int) freeRectangles[i].Y, height, width
+                    );
+
                     if (score > bestContactScore)
                     {
-                        bestNode.X = (int)freeRectangles[i].X;
-                        bestNode.Y = (int)freeRectangles[i].Y;
+                        bestNode.X = (int) freeRectangles[i].X;
+                        bestNode.Y = (int) freeRectangles[i].Y;
                         bestNode.Width = height;
                         bestNode.Height = width;
                         bestContactScore = score;
                     }
                 }
             }
+
             return bestNode;
         }
 
         bool SplitFreeNode(Rectangle freeNode, ref Rectangle usedNode)
         {
             // Test with SAT if the rectangles even intersect.
-            if (usedNode.X >= freeNode.X + freeNode.Width || usedNode.X + usedNode.Width <= freeNode.X ||
-                usedNode.Y >= freeNode.Y + freeNode.Height || usedNode.Y + usedNode.Height <= freeNode.Y)
+            if (usedNode.X >= freeNode.X + freeNode.Width ||
+                usedNode.X + usedNode.Width <= freeNode.X ||
+                usedNode.Y >= freeNode.Y + freeNode.Height ||
+                usedNode.Y + usedNode.Height <= freeNode.Y)
+            {
                 return false;
+            }
 
             if (usedNode.X < freeNode.X + freeNode.Width && usedNode.X + usedNode.Width > freeNode.X)
             {
                 // New node at the top side of the used node.
                 if (usedNode.Y > freeNode.Y && usedNode.Y < freeNode.Y + freeNode.Height)
                 {
-                    Rectangle newNode = freeNode;
+                    var newNode = freeNode;
                     newNode.Height = usedNode.Y - newNode.Y;
                     freeRectangles.Add(newNode);
                 }
@@ -541,7 +673,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // New node at the bottom side of the used node.
                 if (usedNode.Y + usedNode.Height < freeNode.Y + freeNode.Height)
                 {
-                    Rectangle newNode = freeNode;
+                    var newNode = freeNode;
                     newNode.Y = usedNode.Y + usedNode.Height;
                     newNode.Height = freeNode.Y + freeNode.Height - (usedNode.Y + usedNode.Height);
                     freeRectangles.Add(newNode);
@@ -553,7 +685,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // New node at the left side of the used node.
                 if (usedNode.X > freeNode.X && usedNode.X < freeNode.X + freeNode.Width)
                 {
-                    Rectangle newNode = freeNode;
+                    var newNode = freeNode;
                     newNode.Width = usedNode.X - newNode.X;
                     freeRectangles.Add(newNode);
                 }
@@ -561,7 +693,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // New node at the right side of the used node.
                 if (usedNode.X + usedNode.Width < freeNode.X + freeNode.Width)
                 {
-                    Rectangle newNode = freeNode;
+                    var newNode = freeNode;
                     newNode.X = usedNode.X + usedNode.Width;
                     newNode.Width = freeNode.X + freeNode.Width - (usedNode.X + usedNode.Width);
                     freeRectangles.Add(newNode);
@@ -573,28 +705,30 @@ namespace Intersect.Editor.Classes.ContentManagement
 
         void PruneFreeList()
         {
-            for (int i = 0; i < freeRectangles.Count; ++i)
-                for (int j = i + 1; j < freeRectangles.Count; ++j)
+            for (var i = 0; i < freeRectangles.Count; ++i)
+            for (var j = i + 1; j < freeRectangles.Count; ++j)
+            {
+                if (IsContainedIn(freeRectangles[i], freeRectangles[j]))
                 {
-                    if (IsContainedIn(freeRectangles[i], freeRectangles[j]))
-                    {
-                        freeRectangles.RemoveAt(i);
-                        --i;
-                        break;
-                    }
-                    if (IsContainedIn(freeRectangles[j], freeRectangles[i]))
-                    {
-                        freeRectangles.RemoveAt(j);
-                        --j;
-                    }
+                    freeRectangles.RemoveAt(i);
+                    --i;
+
+                    break;
                 }
+
+                if (IsContainedIn(freeRectangles[j], freeRectangles[i]))
+                {
+                    freeRectangles.RemoveAt(j);
+                    --j;
+                }
+            }
         }
 
         bool IsContainedIn(Rectangle a, Rectangle b)
         {
-            return a.X >= b.X && a.Y >= b.Y
-                && a.X + a.Width <= b.X + b.Width
-                && a.Y + a.Height <= b.Y + b.Height;
+            return a.X >= b.X && a.Y >= b.Y && a.X + a.Width <= b.X + b.Width && a.Y + a.Height <= b.Y + b.Height;
         }
+
     }
+
 }

@@ -2,6 +2,7 @@
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Text box with masked text.
     /// </summary>
@@ -10,15 +11,16 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// </remarks>
     public class TextBoxPassword : TextBox
     {
+
         private string mMask;
+
         private char mMaskCharacter;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TextBoxPassword" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TextBoxPassword(Base parent, string name = "")
-            : base(parent, name)
+        public TextBoxPassword(Base parent, string name = "") : base(parent, name)
         {
             mMaskCharacter = '*';
         }
@@ -40,8 +42,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             mMask = new String(MaskCharacter, Text.Length);
             TextOverride = mMask;
             base.OnTextChanged();
+
             //Really hacky way to make sure the size for the mask is calculated.
             base.Children[0].SizeToChildren();
         }
+
     }
+
 }

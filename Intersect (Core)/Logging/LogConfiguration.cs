@@ -3,15 +3,36 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+
 using Intersect.Immutability;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public sealed class LogConfiguration
     {
+
+        [NotNull] private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
+
+        [NotNull] private static readonly ImmutableList<ILogFormatter> DefaultFormatters =
+            ImmutableList.Create<ILogFormatter>() ?? throw new InvalidOperationException();
+
+        [NotNull] private static readonly ImmutableList<ILogOutput> DefaultOutputs =
+            ImmutableList.Create<ILogOutput>() ?? throw new InvalidOperationException();
+
+        private Immutable<IReadOnlyList<ILogFormatter>> mFormatters;
+
+        private Immutable<LogLevel> mLogLevel;
+
+        private Immutable<IReadOnlyList<ILogOutput>> mOutputs;
+
+        private Immutable<bool> mPretty;
+
+        private Immutable<string> mTag;
 
         [NotNull]
         public static LogConfiguration Default => new LogConfiguration
@@ -29,17 +50,6 @@ namespace Intersect.Logging
             Tag = null
         };
 
-        [NotNull] private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
-
-        [NotNull] private static readonly ImmutableList<ILogFormatter> DefaultFormatters = ImmutableList.Create<ILogFormatter>() ?? throw new InvalidOperationException();
-        [NotNull] private static readonly ImmutableList<ILogOutput> DefaultOutputs = ImmutableList.Create<ILogOutput>() ?? throw new InvalidOperationException();
-
-        private Immutable<IReadOnlyList<ILogFormatter>> mFormatters;
-        private Immutable<LogLevel> mLogLevel;
-        private Immutable<IReadOnlyList<ILogOutput>> mOutputs;
-        private Immutable<bool> mPretty;
-        private Immutable<string> mTag;
-
         [NotNull]
         public ILogFormatter Formatter => mFormatters.Value?.FirstOrDefault() ?? DefaultFormatter;
 
@@ -50,7 +60,8 @@ namespace Intersect.Logging
             set => mFormatters.Value = value;
         }
 
-        public LogLevel LogLevel {
+        public LogLevel LogLevel
+        {
             get => mLogLevel;
             set => mLogLevel.Value = value;
         }
@@ -79,5 +90,7 @@ namespace Intersect.Logging
         {
             return MemberwiseClone() as LogConfiguration ?? throw new InvalidOperationException();
         }
+
     }
+
 }

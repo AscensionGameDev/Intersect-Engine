@@ -1,81 +1,43 @@
-using Intersect.Enums;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
-using Intersect.Server.Localization;
-using Lidgren.Network;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-
-using Intersect.Network.Packets;
-using Intersect.Server.Database;
 
 namespace Intersect.Server.Networking
 {
-    using DbInterface = DbInterface;
 
     public class Client
     {
-        //Game Incorperation Variables
-        public string Name => User?.Name;
-        public string Email => User?.Email;
-        public Guid Id => User?.Id ?? Guid.Empty;
-        public string Password => User?.Password;
-        public string Salt => User?.Salt;
-        public bool Banned { get; set; }
-
-        //Security/Flooding Variables
-        public long AccountAttempts { get; set; }
-        public long TimeoutMs { get; set; }
-
-        public long PacketTimer { get; set; }
-        public bool PacketFloodDetect { get; set; }
-        public long PacketCount { get; set; }
-        public long FloodDetects { get; set; }
-        public bool FloodKicked { get; set; }
-
-        public long TotalFloodDetects { get; set; }
-        
-
-        public UserRights Power
-        {
-            get => User?.Power ?? UserRights.None;
-            set
-            {
-                if (User == null) return;
-                User.Power = value;
-            }
-        }
-
-        public User User { get; private set; }
-
-        public List<Player> Characters => User?.Players;
-
-        private long mConnectionTimeout;
-
-        private long mConnectTime;
-        protected long mTimeout = 20000; //20 seconds
-
-        //Network Variables
-        private IConnection mConnection;
 
         public Guid EditorMap = Guid.Empty;
-        public Player Entity { get; set; }
 
         //Client Properties
         public bool IsEditor;
 
+        //Network Variables
+        private IConnection mConnection;
+
+        private long mConnectionTimeout;
+
+        private long mConnectTime;
+
+        private bool mDebugPackets = false;
+
+        private int mPacketCount = 0;
+
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
+
+        protected long mTimeout = 20000; //20 seconds
 
         //Sent Maps
         public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
-        
 
         public Client(IConnection connection = null)
         {
@@ -84,6 +46,56 @@ namespace Intersect.Server.Networking
             mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
             PacketSender.SendServerConfig(this);
         }
+
+        //Game Incorperation Variables
+        public string Name => User?.Name;
+
+        public string Email => User?.Email;
+
+        public Guid Id => User?.Id ?? Guid.Empty;
+
+        public string Password => User?.Password;
+
+        public string Salt => User?.Salt;
+
+        public bool Banned { get; set; }
+
+        //Security/Flooding Variables
+        public long AccountAttempts { get; set; }
+
+        public long TimeoutMs { get; set; }
+
+        public long PacketTimer { get; set; }
+
+        public bool PacketFloodDetect { get; set; }
+
+        public long PacketCount { get; set; }
+
+        public long FloodDetects { get; set; }
+
+        public bool FloodKicked { get; set; }
+
+        public long TotalFloodDetects { get; set; }
+
+        public UserRights Power
+        {
+            get => User?.Power ?? UserRights.None;
+            set
+            {
+                if (User == null)
+                {
+                    return;
+                }
+
+                User.Power = value;
+            }
+        }
+
+        public User User { get; private set; }
+
+        public List<Player> Characters => User?.Players;
+
+        public Player Entity { get; set; }
 
         public void SetUser(User user)
         {
@@ -103,9 +115,6 @@ namespace Intersect.Server.Networking
             Entity.LastOnline = DateTime.Now;
             Entity.Client = this;
         }
-
-        private int mPacketCount = 0;
-        private bool mDebugPackets = false;
 
         public void SendPacket(CerasPacket packet)
         {
@@ -129,6 +138,7 @@ namespace Intersect.Server.Networking
             {
                 Logout();
                 mConnection.Dispose();
+
                 return;
             }
         }
@@ -140,7 +150,10 @@ namespace Intersect.Server.Networking
 
         public string GetIp()
         {
-            if (!IsConnected()) return "";
+            if (!IsConnected())
+            {
+                return "";
+            }
 
             return mConnection.Ip;
         }
@@ -153,6 +166,7 @@ namespace Intersect.Server.Networking
                 Globals.Clients.Add(client);
                 Globals.ClientLookup.Add(connection.Guid, client);
             }
+
             return client;
         }
 
@@ -166,7 +180,7 @@ namespace Intersect.Server.Networking
             Entity.LastOnline = DateTime.Now;
 
             DbInterface.SavePlayerDatabaseAsync();
-           
+
             Entity.TryLogout();
 
             Entity.Client = null;
@@ -175,10 +189,16 @@ namespace Intersect.Server.Networking
 
         public static void RemoveBeta4Client(IConnection connection)
         {
-            if (connection == null) return;
+            if (connection == null)
+            {
+                return;
+            }
 
             var client = FindBeta4Client(connection);
-            if (client == null) return;
+            if (client == null)
+            {
+                return;
+            }
 
             lock (Globals.ClientLock)
             {
@@ -186,11 +206,14 @@ namespace Intersect.Server.Networking
                 Globals.ClientLookup.Remove(connection.Guid);
             }
 
-            Log.Debug(string.IsNullOrWhiteSpace(client.Name)
-                //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
-                // TODO: Transmit client information on network start so we can determine editor vs client
-                ? $"Client disconnected ([menu])"
-                : $"Client disconnected ({client.Name}->{client.Entity?.Name ?? "[editor]"})");
+            Log.Debug(
+                string.IsNullOrWhiteSpace(client.Name)
+
+                    //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
+                    // TODO: Transmit client information on network start so we can determine editor vs client
+                    ? $"Client disconnected ([menu])"
+                    : $"Client disconnected ({client.Name}->{client.Entity?.Name ?? "[editor]"})"
+            );
 
             client.Logout();
         }
@@ -217,5 +240,7 @@ namespace Intersect.Server.Networking
                 TimeoutMs += 1000 * AccountAttempts;
             }
         }
+
     }
+
 }

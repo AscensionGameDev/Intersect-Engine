@@ -1,14 +1,14 @@
-﻿using Intersect.Client.Framework.GenericClasses;
-
-namespace Intersect.Client.Framework.Graphics
+﻿namespace Intersect.Client.Framework.Graphics
 {
+
     public abstract class GameRenderTexture : GameTexture
     {
-        public static int RenderTextureCount { get; set; } = 0;
 
         public GameRenderTexture(int width, int height)
         {
         }
+
+        public static int RenderTextureCount { get; set; } = 0;
 
         /// <summary>
         ///     Called before a frame is drawn, if the renderer must re-created or anything it does it here.
@@ -34,5 +34,7 @@ namespace Intersect.Client.Framework.Graphics
         public abstract override object GetTexture();
 
         public abstract void Dispose();
+
     }
+
 }

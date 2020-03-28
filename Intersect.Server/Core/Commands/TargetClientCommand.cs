@@ -1,15 +1,19 @@
-﻿using Intersect.Localization;
+﻿using System;
+
+using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
+
 using JetBrains.Annotations;
-using System;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal abstract class TargetClientCommand : TargettedCommand<Client>
     {
+
         protected TargetClientCommand(
             [NotNull] LocaleCommand command,
             [NotNull] LocaleArgument argument,
@@ -25,11 +29,16 @@ namespace Intersect.Server.Core.Commands
                 return null;
             }
 
-            return Globals.Clients.Find(client =>
-            {
-                var playerName = client?.Entity?.Name;
-                return string.Equals(playerName, targetName, StringComparison.OrdinalIgnoreCase);
-            });
+            return Globals.Clients.Find(
+                client =>
+                {
+                    var playerName = client?.Entity?.Name;
+
+                    return string.Equals(playerName, targetName, StringComparison.OrdinalIgnoreCase);
+                }
+            );
         }
+
     }
+
 }

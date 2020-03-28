@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Threading;
+
 using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Gwen.Platform
 {
+
     /// <summary>
     ///     Platform-agnostic utility functions.
     /// </summary>
     public static class Neutral
     {
+
         private static DateTime sFirstTime = DateTime.Now;
 
         /// <summary>
@@ -27,24 +30,30 @@ namespace Intersect.Client.Framework.Gwen.Platform
         public static string GetClipboardText()
         {
             // code from http://forums.getpaint.net/index.php?/topic/13712-trouble-accessing-the-clipboard/page__view__findpost__p__226140
-            string ret = String.Empty;
-            Thread staThread = new Thread(
+            var ret = String.Empty;
+            var staThread = new Thread(
                 () =>
                 {
                     try
                     {
                         if (!Clipboard.ContainsText())
+                        {
                             return;
+                        }
+
                         ret = Clipboard.GetText();
                     }
                     catch (Exception)
                     {
                         return;
                     }
-                });
+                }
+            );
+
             staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
+
             // at this point either you have clipboard data or an exception
             return ret;
         }
@@ -56,8 +65,8 @@ namespace Intersect.Client.Framework.Gwen.Platform
         /// <returns>True if succeeded.</returns>
         public static bool SetClipboardText(string text)
         {
-            bool ret = false;
-            Thread staThread = new Thread(
+            var ret = false;
+            var staThread = new Thread(
                 () =>
                 {
                     try
@@ -69,10 +78,13 @@ namespace Intersect.Client.Framework.Gwen.Platform
                     {
                         return;
                     }
-                });
+                }
+            );
+
             staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
+
             // at this point either you have clipboard data or an exception
             return ret;
         }
@@ -90,7 +102,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
             //  which will grow stale (time difference > 1s) after ~3,168,888 years 
             //  (that's gotta be good enough, right?)
             //P.S. someone fix those numbers if I'm wrong.
-            return (float) ((DateTime.Now - sFirstTime).TotalSeconds);
+            return (float) (DateTime.Now - sFirstTime).TotalSeconds;
         }
 
         /// <summary>
@@ -112,6 +124,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 CheckPathExists = true,
                 Multiselect = false
             };
+
             if (dialog.ShowDialog() == DialogResult.Ok)
             {
                 if (callback != null)
@@ -125,6 +138,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 {
                     callback(String.Empty);
                 }
+
                 return false;
             }
 
@@ -150,6 +164,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 CheckPathExists = true,
                 OverwritePrompt = true
             };
+
             if (dialog.ShowDialog() == DialogResult.Ok)
             {
                 if (callback != null)
@@ -163,10 +178,13 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 {
                     callback(String.Empty);
                 }
+
                 return false;
             }
 
             return true;
         }
+
     }
+
 }

@@ -2,11 +2,16 @@
 
 namespace Intersect.Client.Framework.GenericClasses
 {
+
     public struct Rectangle
     {
+
         private int mX;
+
         private int mY;
+
         private int mWidth;
+
         private int mHeight;
 
         public int X
@@ -56,32 +61,29 @@ namespace Intersect.Client.Framework.GenericClasses
             // MS.NET returns a non-empty rectangle if the two rectangles
             // touch each other
             if (!a.IntersectsWithInclusive(b))
+            {
                 return Empty;
+            }
 
             return Rectangle.FromLtrb(
-                Math.Max(a.Left, b.Left),
-                Math.Max(a.Top, b.Top),
-                Math.Min(a.Right, b.Right),
-                Math.Min(a.Bottom, b.Bottom));
+                Math.Max(a.Left, b.Left), Math.Max(a.Top, b.Top), Math.Min(a.Right, b.Right),
+                Math.Min(a.Bottom, b.Bottom)
+            );
         }
 
-        public static Rectangle FromLtrb(int left, int top,
-            int right, int bottom)
+        public static Rectangle FromLtrb(int left, int top, int right, int bottom)
         {
-            return new Rectangle(left, top, right - left,
-                bottom - top);
+            return new Rectangle(left, top, right - left, bottom - top);
         }
 
         public bool IntersectsWith(Rectangle rect)
         {
-            return !((Left >= rect.Right) || (Right <= rect.Left) ||
-                     (Top >= rect.Bottom) || (Bottom <= rect.Top));
+            return !(Left >= rect.Right || Right <= rect.Left || Top >= rect.Bottom || Bottom <= rect.Top);
         }
 
         private bool IntersectsWithInclusive(Rectangle r)
         {
-            return !((Left > r.Right) || (Right < r.Left) ||
-                     (Top > r.Bottom) || (Bottom < r.Top));
+            return !(Left > r.Right || Right < r.Left || Top > r.Bottom || Bottom < r.Top);
         }
 
         /// <summary>
@@ -92,8 +94,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// </remarks>
         public bool Contains(int x, int y)
         {
-            return ((x >= Left) && (x < Right) &&
-                    (y >= Top) && (y < Bottom));
+            return x >= Left && x < Right && y >= Top && y < Bottom;
         }
 
         public void Reset()
@@ -122,12 +123,21 @@ namespace Intersect.Client.Framework.GenericClasses
 
         public static Rectangle FromString(string rect)
         {
-            if (string.IsNullOrEmpty(rect)) return Rectangle.Empty;
-            string[] strs = rect.Split(",".ToCharArray());
-            int[] parts = new int[strs.Length];
-            for (int i = 0; i < strs.Length; i++)
+            if (string.IsNullOrEmpty(rect))
+            {
+                return Rectangle.Empty;
+            }
+
+            var strs = rect.Split(",".ToCharArray());
+            var parts = new int[strs.Length];
+            for (var i = 0; i < strs.Length; i++)
+            {
                 parts[i] = int.Parse(strs[i]);
+            }
+
             return new Rectangle(parts[0], parts[1], parts[2], parts[3]);
         }
+
     }
+
 }

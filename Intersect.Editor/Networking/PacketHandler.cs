@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 using Intersect.Editor.Content;
@@ -16,22 +12,29 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 
 namespace Intersect.Editor.Networking
 {
+
     public static class PacketHandler
     {
+
         public delegate void GameObjectUpdated(GameObjectType type);
+
         public delegate void MapUpdated();
+
         public static GameObjectUpdated GameObjectUpdatedDelegate;
+
         public static MapUpdated MapUpdatedDelegate;
 
         public static bool HandlePacket(IConnection connection, IPacket packet)
         {
             if (packet is CerasPacket)
-                HandlePacket((dynamic)packet);
+            {
+                HandlePacket((dynamic) packet);
+            }
+
             return true;
         }
 
@@ -68,6 +71,7 @@ namespace Intersect.Editor.Networking
                     {
                         Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
                     }
+
                     MapInstance.Get(packet.MapId).Delete();
                 }
             }
@@ -90,9 +94,11 @@ namespace Intersect.Editor.Networking
                         {
                             Globals.CurrentMap = map;
                         }
+
                         MapInstance.Get(packet.MapId).Delete();
                     }
                 }
+
                 MapInstance.Lookup.Set(packet.MapId, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
@@ -103,9 +109,13 @@ namespace Intersect.Editor.Networking
                 {
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
-                        Guid currentMapId = Globals.CurrentMap.Id;
+                        var currentMapId = Globals.CurrentMap.Id;
                         var img = Database.LoadMapCacheLegacy(packet.MapId, map.Revision);
-                        if (img == null &&  !Globals.MapsToScreenshot.Contains(packet.MapId)) Globals.MapsToScreenshot.Add(packet.MapId);
+                        if (img == null && !Globals.MapsToScreenshot.Contains(packet.MapId))
+                        {
+                            Globals.MapsToScreenshot.Add(packet.MapId);
+                        }
+
                         img?.Dispose();
                         if (Globals.FetchingMapPreviews)
                         {
@@ -115,53 +125,70 @@ namespace Intersect.Editor.Networking
                                 if (Globals.MapsToFetch.Count == 0)
                                 {
                                     Globals.FetchingMapPreviews = false;
-                                    Globals.PreviewProgressForm.BeginInvoke((MethodInvoker)delegate { Globals.PreviewProgressForm.Dispose(); });
+                                    Globals.PreviewProgressForm.BeginInvoke(
+                                        (MethodInvoker) delegate { Globals.PreviewProgressForm.Dispose(); }
+                                    );
                                 }
                                 else
                                 {
                                     //TODO Localize
                                     Globals.PreviewProgressForm.SetProgress(
-                                        "Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" +
+                                        "Fetching Maps: " +
+                                        (Globals.FetchCount - Globals.MapsToFetch.Count) +
+                                        "/" +
                                         Globals.FetchCount,
-                                        (int)
-                                        (((float) (Globals.FetchCount - Globals.MapsToFetch.Count) /
-                                          (float) Globals.FetchCount) * 100f), false);
+                                        (int) ((float) (Globals.FetchCount - Globals.MapsToFetch.Count) /
+                                               (float) Globals.FetchCount *
+                                               100f), false
+                                    );
                                 }
                             }
                         }
+
                         Globals.CurrentMap = MapInstance.Get(currentMapId);
                     }
-                    if (packet.MapId != Globals.LoadingMap) return;
+
+                    if (packet.MapId != Globals.LoadingMap)
+                    {
+                        return;
+                    }
+
                     Globals.CurrentMap = MapInstance.Get(Globals.LoadingMap);
                     MapUpdatedDelegate();
                     if (map.Up != Guid.Empty)
                     {
                         PacketSender.SendNeedMap(map.Up);
                     }
+
                     if (map.Down != Guid.Empty)
                     {
                         PacketSender.SendNeedMap(map.Down);
                     }
+
                     if (map.Left != Guid.Empty)
                     {
                         PacketSender.SendNeedMap(map.Left);
                     }
+
                     if (map.Right != Guid.Empty)
                     {
                         PacketSender.SendNeedMap(map.Right);
                     }
                 }
+
                 if (Globals.CurrentMap.Id == packet.MapId && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                    for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var needMap = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                 if (needMap == null && Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
+                                {
                                     PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].MapId);
+                                }
                             }
                         }
                     }
@@ -176,11 +203,13 @@ namespace Intersect.Editor.Networking
             {
                 HandlePacket((dynamic) obj);
             }
+
             Globals.HasGameData = true;
             if (!Globals.InEditor && Globals.HasGameData && Globals.CurrentMap != null)
             {
                 Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
             }
+
             GameContentManager.LoadTilesets();
         }
 
@@ -199,15 +228,15 @@ namespace Intersect.Editor.Networking
             {
                 Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
             }
+
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, Guid.Empty, null);
             Globals.MapPropertiesWindow?.BeginInvoke(Globals.MapPropertiesWindow.UpdatePropertiesDelegate);
-
         }
 
         //ErrorMessagePacket
         private static void HandlePacket(ErrorMessagePacket packet)
         {
-            MessageBox.Show(packet.Error,packet.Header, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(packet.Error, packet.Header, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         //MapGridPacket
@@ -218,22 +247,24 @@ namespace Intersect.Editor.Networking
                 Globals.MapGrid.Load(packet.EditorGrid);
                 if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                    for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                         {
                             if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                             {
                                 var needMap = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                 if (needMap == null && Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
+                                {
                                     PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].MapId);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        
+
         //GameObjectPacket
         private static void HandlePacket(GameObjectPacket packet)
         {
@@ -241,7 +272,10 @@ namespace Intersect.Editor.Networking
             var deleted = packet.Deleted;
             var json = "";
             if (!packet.Deleted)
+            {
                 json = packet.Data;
+            }
+
             switch (packet.Type)
             {
                 case GameObjectType.Animation:
@@ -261,12 +295,18 @@ namespace Intersect.Editor.Networking
                         catch (Exception exception)
                         {
                             Log.Error($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
-                            if (exception.InnerException != null) Log.Error(exception.InnerException);
+                            if (exception.InnerException != null)
+                            {
+                                Log.Error(exception.InnerException);
+                            }
+
                             Log.Error(exception);
                             Log.Error($"{nameof(id)}={id},{nameof(anim)}={anim}");
+
                             throw;
                         }
                     }
+
                     break;
                 case GameObjectType.Class:
                     if (deleted)
@@ -280,6 +320,7 @@ namespace Intersect.Editor.Networking
                         cls.Load(json);
                         ClassBase.Lookup.Set(id, cls);
                     }
+
                     break;
                 case GameObjectType.Item:
                     if (deleted)
@@ -293,6 +334,7 @@ namespace Intersect.Editor.Networking
                         itm.Load(json);
                         ItemBase.Lookup.Set(id, itm);
                     }
+
                     break;
                 case GameObjectType.Npc:
                     if (deleted)
@@ -306,6 +348,7 @@ namespace Intersect.Editor.Networking
                         npc.Load(json);
                         NpcBase.Lookup.Set(id, npc);
                     }
+
                     break;
                 case GameObjectType.Projectile:
                     if (deleted)
@@ -319,6 +362,7 @@ namespace Intersect.Editor.Networking
                         proj.Load(json);
                         ProjectileBase.Lookup.Set(id, proj);
                     }
+
                     break;
                 case GameObjectType.Quest:
                     if (deleted)
@@ -331,9 +375,13 @@ namespace Intersect.Editor.Networking
                         var qst = new QuestBase(id);
                         qst.Load(json);
                         foreach (var tsk in qst.Tasks)
-                            qst.OriginalTaskEventIds.Add(tsk.Id,tsk.CompletionEventId);
+                        {
+                            qst.OriginalTaskEventIds.Add(tsk.Id, tsk.CompletionEventId);
+                        }
+
                         QuestBase.Lookup.Set(id, qst);
                     }
+
                     break;
                 case GameObjectType.Resource:
                     if (deleted)
@@ -347,6 +395,7 @@ namespace Intersect.Editor.Networking
                         res.Load(json);
                         ResourceBase.Lookup.Set(id, res);
                     }
+
                     break;
                 case GameObjectType.Shop:
                     if (deleted)
@@ -360,6 +409,7 @@ namespace Intersect.Editor.Networking
                         shp.Load(json);
                         ShopBase.Lookup.Set(id, shp);
                     }
+
                     break;
                 case GameObjectType.Spell:
                     if (deleted)
@@ -373,6 +423,7 @@ namespace Intersect.Editor.Networking
                         spl.Load(json);
                         SpellBase.Lookup.Set(id, spl);
                     }
+
                     break;
                 case GameObjectType.CraftTables:
                     if (deleted)
@@ -386,6 +437,7 @@ namespace Intersect.Editor.Networking
                         cft.Load(json);
                         CraftingTableBase.Lookup.Set(id, cft);
                     }
+
                     break;
                 case GameObjectType.Crafts:
                     if (deleted)
@@ -399,6 +451,7 @@ namespace Intersect.Editor.Networking
                         cft.Load(json);
                         CraftBase.Lookup.Set(id, cft);
                     }
+
                     break;
                 case GameObjectType.Map:
                     //Handled in a different packet
@@ -419,7 +472,11 @@ namespace Intersect.Editor.Networking
                         EventBase.Lookup.Set(id, evt);
                     }
 
-                    if (!wasCommon) return;
+                    if (!wasCommon)
+                    {
+                        return;
+                    }
+
                     break;
                 case GameObjectType.PlayerVariable:
                     if (deleted)
@@ -433,6 +490,7 @@ namespace Intersect.Editor.Networking
                         pvar.Load(json);
                         PlayerVariableBase.Lookup.Set(id, pvar);
                     }
+
                     break;
                 case GameObjectType.ServerVariable:
                     if (deleted)
@@ -446,16 +504,22 @@ namespace Intersect.Editor.Networking
                         svar.Load(json);
                         ServerVariableBase.Lookup.Set(id, svar);
                     }
+
                     break;
                 case GameObjectType.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(json);
                     TilesetBase.Lookup.Set(id, obj);
-                    if (Globals.HasGameData && !packet.AnotherFollowing) GameContentManager.LoadTilesets();
+                    if (Globals.HasGameData && !packet.AnotherFollowing)
+                    {
+                        GameContentManager.LoadTilesets();
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             GameObjectUpdatedDelegate?.Invoke(packet.Type);
         }
 
@@ -470,5 +534,7 @@ namespace Intersect.Editor.Networking
         {
             TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
         }
+
     }
+
 }

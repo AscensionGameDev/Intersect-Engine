@@ -11,19 +11,22 @@ using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bank
 {
+
     public class BankWindow
     {
+
         private static int sItemXPadding = 4;
 
         private static int sItemYPadding = 4;
+
+        public List<BankItem> Items = new List<BankItem>();
 
         //Controls
         private WindowControl mBankWindow;
 
         private ScrollControl mItemContainer;
-        private List<Label> mValues = new List<Label>();
 
-        public List<BankItem> Items = new List<BankItem>();
+        private List<Label> mValues = new List<Label>();
 
         //Location
         public int X;
@@ -65,9 +68,10 @@ namespace Intersect.Client.Interface.Game.Bank
             {
                 return;
             }
+
             X = mBankWindow.X;
             Y = mBankWindow.Y;
-            for (int i = 0; i < Options.MaxBankSlots; i++)
+            for (var i = 0; i < Options.MaxBankSlots; i++)
             {
                 if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
                 {
@@ -90,6 +94,7 @@ namespace Intersect.Client.Interface.Game.Bank
                             Items[i].Pnl.IsHidden = true;
                             mValues[i].IsHidden = true;
                         }
+
                         Items[i].Update();
                     }
                 }
@@ -103,7 +108,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private void InitItemContainer()
         {
-            for (int i = 0; i < Options.MaxBankSlots; i++)
+            for (var i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
@@ -116,24 +121,33 @@ namespace Intersect.Client.Interface.Game.Bank
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                Items[i]
+                    .Container.SetPosition(
+                        i %
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Width + xPadding) +
+                        xPadding,
+                        i /
+                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                        (Items[i].Container.Height + yPadding) +
+                        yPadding
+                    );
             }
         }
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            var rect = new FloatRect()
             {
                 X = mBankWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
                 Y = mBankWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
                 Width = mBankWindow.Width + sItemXPadding,
                 Height = mBankWindow.Height + sItemYPadding
             };
+
             return rect;
         }
+
     }
+
 }

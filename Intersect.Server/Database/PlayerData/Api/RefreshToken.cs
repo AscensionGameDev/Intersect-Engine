@@ -94,6 +94,7 @@ namespace Intersect.Server.Database.PlayerData.Api
                 {
                     return null;
                 }
+
                 return DbInterface.GetPlayerContext()?.RefreshTokens.Find(id);
             }
         }
@@ -113,8 +114,7 @@ namespace Intersect.Server.Database.PlayerData.Api
                 }
 
                 var playerContext = DbInterface.GetPlayerContext();
-                var refreshToken = playerContext?.RefreshTokens?
-                    .Where(queryToken => queryToken.TicketId == ticketId)
+                var refreshToken = playerContext?.RefreshTokens?.Where(queryToken => queryToken.TicketId == ticketId)
                     .FirstOrDefault();
 
                 if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
@@ -126,6 +126,7 @@ namespace Intersect.Server.Database.PlayerData.Api
                     Remove(refreshToken, true);
                 }
             }
+
             return null;
         }
 
@@ -143,7 +144,8 @@ namespace Intersect.Server.Database.PlayerData.Api
                     return null;
                 }
 
-                var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
+                var tokenQuery = DbInterface.GetPlayerContext()
+                    ?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
 
                 return tokenQuery.AsEnumerable()?.ToList();
             }
@@ -163,7 +165,8 @@ namespace Intersect.Server.Database.PlayerData.Api
                     return null;
                 }
 
-                var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
+                var tokenQuery = DbInterface.GetPlayerContext()
+                    ?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
 
                 return tokenQuery.AsEnumerable()?.ToList();
             }
@@ -183,7 +186,8 @@ namespace Intersect.Server.Database.PlayerData.Api
                     return null;
                 }
 
-                var token = DbInterface.GetPlayerContext()?.RefreshTokens?.First(queryToken => queryToken.UserId == userId);
+                var token = DbInterface.GetPlayerContext()
+                    ?.RefreshTokens?.First(queryToken => queryToken.UserId == userId);
 
                 return token;
             }

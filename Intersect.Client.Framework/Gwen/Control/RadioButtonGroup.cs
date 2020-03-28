@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Linq;
+
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Radio button group.
     /// </summary>
     public class RadioButtonGroup : GroupBox
     {
+
         private LabeledRadioButton mSelected;
 
         /// <summary>
@@ -67,7 +70,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public virtual LabeledRadioButton AddOption(string text, string optionName)
         {
-            LabeledRadioButton lrb = new LabeledRadioButton(this);
+            var lrb = new LabeledRadioButton(this);
             lrb.Name = optionName;
             lrb.Text = text;
             lrb.RadioButton.Checked += OnRadioClicked;
@@ -77,6 +80,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             lrb.IsTabable = true;
 
             Invalidate();
+
             return lrb;
         }
 
@@ -86,13 +90,17 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="fromPanel">Event source.</param>
         protected virtual void OnRadioClicked(Base fromPanel, EventArgs args)
         {
-            RadioButton @checked = fromPanel as RadioButton;
-            foreach (LabeledRadioButton rb in Children.OfType<LabeledRadioButton>()) // todo: optimize
+            var @checked = fromPanel as RadioButton;
+            foreach (var rb in Children.OfType<LabeledRadioButton>()) // todo: optimize
             {
                 if (rb.RadioButton == @checked)
+                {
                     mSelected = rb;
+                }
                 else
+                {
                     rb.RadioButton.IsChecked = false;
+                }
             }
 
             OnChanged(mSelected);
@@ -120,7 +128,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnChanged(Base newTarget)
         {
             if (SelectionChanged != null)
+            {
                 SelectionChanged.Invoke(this, new ItemSelectedEventArgs(newTarget));
+            }
         }
 
         /// <summary>
@@ -130,9 +140,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetSelection(int index)
         {
             if (index < 0 || index >= Children.Count)
+            {
                 return;
+            }
 
             (Children[index] as LabeledRadioButton).RadioButton.Press();
         }
+
     }
+
 }

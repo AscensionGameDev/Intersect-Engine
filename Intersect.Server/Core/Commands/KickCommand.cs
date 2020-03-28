@@ -4,12 +4,11 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class KickCommand : TargetClientCommand
     {
-        public KickCommand() : base(
-            Strings.Commands.Kick,
-            Strings.Commands.Arguments.TargetKick
-        )
+
+        public KickCommand() : base(Strings.Commands.Kick, Strings.Commands.Arguments.TargetKick)
         {
         }
 
@@ -18,6 +17,7 @@ namespace Intersect.Server.Core.Commands
             if (target?.Entity == null)
             {
                 Console.WriteLine($@"    {Strings.Player.offline}");
+
                 return;
             }
 
@@ -26,5 +26,7 @@ namespace Intersect.Server.Core.Commands
             PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(name));
             Console.WriteLine($@"    {Strings.Player.serverkicked.ToString(name)}");
         }
+
     }
+
 }

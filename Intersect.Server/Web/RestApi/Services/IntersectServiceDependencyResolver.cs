@@ -1,26 +1,19 @@
-﻿using Intersect.Server.Web.RestApi.Configuration;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Dependencies;
 
+using Intersect.Server.Web.RestApi.Configuration;
+
+using JetBrains.Annotations;
+
 namespace Intersect.Server.Web.RestApi.Services
 {
 
     internal sealed class IntersectServiceDependencyResolver : IDependencyResolver
     {
-
-        [NotNull]
-        private Dictionary<Type, object> ResolvedDependencies { get; }
-
-        [NotNull]
-        public HttpConfiguration HttpConfiguration { get; }
-
-        [NotNull]
-        public ApiConfiguration ApiConfiguration { get; }
 
         public IntersectServiceDependencyResolver(
             [NotNull] ApiConfiguration apiConfiguration,
@@ -31,6 +24,15 @@ namespace Intersect.Server.Web.RestApi.Services
             ApiConfiguration = apiConfiguration;
             HttpConfiguration = httpConfiguration;
         }
+
+        [NotNull]
+        private Dictionary<Type, object> ResolvedDependencies { get; }
+
+        [NotNull]
+        public HttpConfiguration HttpConfiguration { get; }
+
+        [NotNull]
+        public ApiConfiguration ApiConfiguration { get; }
 
         /// <inheritdoc />
         public void Dispose()
@@ -50,16 +52,18 @@ namespace Intersect.Server.Web.RestApi.Services
             var definitionType = serviceType;
             if (serviceType.IsAbstract || serviceType.IsInterface)
             {
-                definitionType = Assembly
-                    .GetAssembly(thisType)?
-                    .DefinedTypes?
-                    .Where(typeInfo => typeInfo?.Namespace?.StartsWith(thisType.Namespace ?? "") ?? false)
+                definitionType = Assembly.GetAssembly(thisType)
+                    ?.DefinedTypes
+                    ?.Where(typeInfo => typeInfo?.Namespace?.StartsWith(thisType.Namespace ?? "") ?? false)
                     .FirstOrDefault(typeInfo => serviceType.IsAssignableFrom(typeInfo.AsType()));
             }
 
-            var constructor = definitionType?.GetConstructor(new[] { typeof(ApiConfiguration), typeof(HttpConfiguration) });
-            var constructedService = constructor?.Invoke(new object[] { ApiConfiguration, HttpConfiguration });
+            var constructor =
+                definitionType?.GetConstructor(new[] {typeof(ApiConfiguration), typeof(HttpConfiguration)});
+
+            var constructedService = constructor?.Invoke(new object[] {ApiConfiguration, HttpConfiguration});
             ResolvedDependencies[serviceType] = constructedService;
+
             return constructedService;
         }
 

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
 using Intersect.Enums;
-using JetBrains.Annotations;
 
 namespace Intersect.Utilities
 {
+
     public class GameObjectTypeException : Exception
     {
+
         public GameObjectTypeException() : base()
         {
         }
@@ -19,10 +17,12 @@ namespace Intersect.Utilities
         public GameObjectTypeException(string message) : base(message)
         {
         }
+
     }
 
     public static class GameObjectTypeUtils
     {
+
         private static readonly IDictionary<string, GameObjectType> mNameToTypeCache;
 
         static GameObjectTypeUtils()
@@ -55,6 +55,7 @@ namespace Intersect.Utilities
             if (mNameToTypeCache.TryGetValue(name.ToLower(), out type))
             {
                 mNameToTypeCache[name.ToLower()] = type;
+
                 return type;
             }
 
@@ -62,10 +63,13 @@ namespace Intersect.Utilities
             if (mNameToTypeCache.TryGetValue(name.ToUpper(), out type))
             {
                 mNameToTypeCache[name.ToUpper()] = type;
+
                 return type;
             }
 
             throw new GameObjectTypeException($"GameObjectType with name '{name}' not found.");
         }
+
     }
+
 }
