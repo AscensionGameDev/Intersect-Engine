@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -7,9 +8,12 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandChatboxText : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private AddChatboxTextCommand mMyCommand;
 
         public EventCommandChatboxText(AddChatboxTextCommand refCommand, FrmEvent editor)
@@ -24,9 +28,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbColor.Items.Add(Globals.GetColorName(color));
             }
+
             cmbColor.SelectedIndex = cmbColor.Items.IndexOf(mMyCommand.Color);
-            if (cmbColor.SelectedIndex == -1) cmbColor.SelectedIndex = 0;
-            cmbChannel.SelectedIndex = (int)mMyCommand.Channel;
+            if (cmbColor.SelectedIndex == -1)
+            {
+                cmbColor.SelectedIndex = 0;
+            }
+
+            cmbChannel.SelectedIndex = (int) mMyCommand.Channel;
         }
 
         private void InitLocalization()
@@ -37,10 +46,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblChannel.Text = Strings.EventChatboxText.channel;
             lblCommands.Text = Strings.EventChatboxText.commands;
             cmbChannel.Items.Clear();
-            for (int i = 0; i < Strings.EventChatboxText.channels.Count; i++)
+            for (var i = 0; i < Strings.EventChatboxText.channels.Count; i++)
             {
                 cmbChannel.Items.Add(Strings.EventChatboxText.channels[i]);
             }
+
             btnSave.Text = Strings.EventChatboxText.okay;
             btnCancel.Text = Strings.EventChatboxText.cancel;
         }
@@ -49,7 +59,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mMyCommand.Text = txtAddText.Text;
             mMyCommand.Color = cmbColor.Text;
-            mMyCommand.Channel= (ChatboxChannel)cmbChannel.SelectedIndex;
+            mMyCommand.Channel = (ChatboxChannel) cmbChannel.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -61,7 +71,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void lblCommands_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
+            );
         }
+
     }
+
 }

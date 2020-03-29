@@ -4,12 +4,11 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class UnbanCommand : TargetUserCommand
     {
-        public UnbanCommand() : base(
-            Strings.Commands.Unban,
-            Strings.Commands.Arguments.TargetUnban
-        )
+
+        public UnbanCommand() : base(Strings.Commands.Unban, Strings.Commands.Arguments.TargetUnban)
         {
         }
 
@@ -18,11 +17,14 @@ namespace Intersect.Server.Core.Commands
             if (target == null)
             {
                 Console.WriteLine($@"    {Strings.Account.notfound.ToString(result.Find(Target))}");
+
                 return;
             }
 
             Ban.Remove(target);
             Console.WriteLine($@"    {Strings.Account.unbanned.ToString(target.Name)}");
         }
+
     }
+
 }

@@ -1,22 +1,24 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Grab point for resizing.
     /// </summary>
     public class Resizer : Dragger
     {
+
         private Pos mResizeDir;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Resizer" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Resizer(Base parent)
-            : base(parent)
+        public Resizer(Base parent) : base(parent)
         {
             mResizeDir = Pos.Left;
             MouseInputEnabled = true;
@@ -33,26 +35,33 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 mResizeDir = value;
 
-                if ((0 != (value & Pos.Left) && 0 != (value & Pos.Top)) ||
-                    (0 != (value & Pos.Right) && 0 != (value & Pos.Bottom)))
+                if (0 != (value & Pos.Left) && 0 != (value & Pos.Top) ||
+                    0 != (value & Pos.Right) && 0 != (value & Pos.Bottom))
                 {
                     Cursor = Cursors.SizeNwse;
+
                     return;
                 }
-                if ((0 != (value & Pos.Right) && 0 != (value & Pos.Top)) ||
-                    (0 != (value & Pos.Left) && 0 != (value & Pos.Bottom)))
+
+                if (0 != (value & Pos.Right) && 0 != (value & Pos.Top) ||
+                    0 != (value & Pos.Left) && 0 != (value & Pos.Bottom))
                 {
                     Cursor = Cursors.SizeNesw;
+
                     return;
                 }
+
                 if (0 != (value & Pos.Right) || 0 != (value & Pos.Left))
                 {
                     Cursor = Cursors.SizeWe;
+
                     return;
                 }
+
                 if (0 != (value & Pos.Top) || 0 != (value & Pos.Bottom))
                 {
                     Cursor = Cursors.SizeNs;
+
                     return;
                 }
             }
@@ -72,17 +81,24 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <param name="dy">Y change.</param>
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
-            if (null == mTarget) return;
-            if (!mHeld) return;
+            if (null == mTarget)
+            {
+                return;
+            }
 
-            Rectangle oldBounds = mTarget.Bounds;
-            Rectangle bounds = mTarget.Bounds;
+            if (!mHeld)
+            {
+                return;
+            }
 
-            Point min = mTarget.MinimumSize;
+            var oldBounds = mTarget.Bounds;
+            var bounds = mTarget.Bounds;
 
-            Point pCursorPos = mTarget.CanvasPosToLocal(new Point(x, y));
+            var min = mTarget.MinimumSize;
 
-            Point delta = mTarget.LocalPosToCanvas(mHoldPos);
+            var pCursorPos = mTarget.CanvasPosToLocal(new Point(x, y));
+
+            var delta = mTarget.LocalPosToCanvas(mHoldPos);
             delta.X -= x;
             delta.Y -= y;
 
@@ -96,7 +112,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
 
                 if (bounds.Width < min.X)
                 {
-                    int diff = min.X - bounds.Width;
+                    var diff = min.X - bounds.Width;
                     bounds.Width += diff;
                     bounds.X -= diff;
                 }
@@ -112,7 +128,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
 
                 if (bounds.Height < min.Y)
                 {
-                    int diff = min.Y - bounds.Height;
+                    var diff = min.Y - bounds.Height;
                     bounds.Height += diff;
                     bounds.Y -= diff;
                 }
@@ -126,10 +142,14 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
                 // I actually think this might be a big hack around the way this control works with regards
                 // to the holdpos being on the parent panel.
 
-                int woff = bounds.Width - mHoldPos.X;
-                int diff = bounds.Width;
+                var woff = bounds.Width - mHoldPos.X;
+                var diff = bounds.Width;
                 bounds.Width = pCursorPos.X + woff;
-                if (bounds.Width < min.X) bounds.Width = min.X;
+                if (bounds.Width < min.X)
+                {
+                    bounds.Width = min.X;
+                }
+
                 diff -= bounds.Width;
 
                 mHoldPos.X -= diff;
@@ -137,10 +157,14 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
 
             if (0 != (mResizeDir & Pos.Bottom))
             {
-                int hoff = bounds.Height - mHoldPos.Y;
-                int diff = bounds.Height;
+                var hoff = bounds.Height - mHoldPos.Y;
+                var diff = bounds.Height;
                 bounds.Height = pCursorPos.Y + hoff;
-                if (bounds.Height < min.Y) bounds.Height = min.Y;
+                if (bounds.Height < min.Y)
+                {
+                    bounds.Height = min.Y;
+                }
+
                 diff -= bounds.Height;
 
                 mHoldPos.Y -= diff;
@@ -149,7 +173,11 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             mTarget.SetBounds(bounds);
 
             if (Resized != null)
+            {
                 Resized.Invoke(this, EventArgs.Empty);
+            }
         }
+
     }
+
 }

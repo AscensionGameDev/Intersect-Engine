@@ -2,17 +2,18 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Divider menu item.
     /// </summary>
     public class MenuDivider : Base
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MenuDivider" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public MenuDivider(Base parent)
-            : base(parent)
+        public MenuDivider(Base parent) : base(parent)
         {
             Height = 1;
         }
@@ -25,5 +26,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawMenuDivider(this);
         }
+
     }
+
 }

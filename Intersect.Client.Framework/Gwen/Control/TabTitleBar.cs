@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Titlebar for DockedTabControl.
     /// </summary>
     public class TabTitleBar : Label
     {
+
         public TabTitleBar(Base parent) : base(parent)
         {
             AutoSizeToContents = false;
@@ -37,5 +39,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             Text = button.Text;
             SizeToContents();
         }
+
     }
+
 }

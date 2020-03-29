@@ -1,22 +1,25 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Tree control.
     /// </summary>
     public class TreeControl : TreeNode
     {
+
         private readonly ScrollControl mScrollControl;
+
         private bool mMultiSelect;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TreeControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TreeControl(Base parent)
-            : base(parent)
+        public TreeControl(Base parent) : base(parent)
         {
             mTreeControl = this;
 
@@ -58,7 +61,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void Render(Skin.Base skin)
         {
             if (ShouldDrawBackground)
+            {
                 skin.DrawTreeControl(this);
+            }
         }
 
         /// <summary>
@@ -69,7 +74,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void OnChildBoundsChanged(Rectangle oldChildBounds, Base child)
         {
             if (mScrollControl != null)
+            {
                 mScrollControl.UpdateScrollBars();
+            }
         }
 
         /// <summary>
@@ -96,7 +103,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnNodeSelected(Base control, EventArgs args)
         {
             if (!mMultiSelect /*|| InputHandler.InputHandler.IsKeyDown(Key.Control)*/)
+            {
                 UnselectAll();
+            }
         }
+
     }
+
 }

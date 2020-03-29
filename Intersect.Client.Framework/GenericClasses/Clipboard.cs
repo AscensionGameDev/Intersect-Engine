@@ -1,7 +1,9 @@
 ﻿namespace Intersect.Client.Framework.GenericClasses
 {
+
     public static class Clipboard
     {
+
         private static string sValue = null;
 
         public static bool ContainsText()
@@ -15,6 +17,7 @@
             {
                 return sValue;
             }
+
             return "";
         }
 
@@ -22,5 +25,7 @@
         {
             sValue = text;
         }
+
     }
+
 }

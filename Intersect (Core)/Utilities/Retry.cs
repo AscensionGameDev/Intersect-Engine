@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+
 using Intersect.Logging;
 
 namespace Intersect.Utilities
 {
+
     public static class Retry
     {
+
         public delegate bool TryParameterlessAction<TResult>(out TResult result);
 
         private static void DumpExceptions(List<Exception> exceptions)
@@ -20,7 +23,7 @@ namespace Intersect.Utilities
             long retryCount = -1,
             bool suppressExceptions = true,
             int consecutiveFailuresUntilAbort = 10
-            )
+        )
         {
             if (retryInterval.TotalMilliseconds < 1000)
             {
@@ -38,7 +41,7 @@ namespace Intersect.Utilities
             }
 
             var result = default(TResult);
-            
+
             var caughtExceptions = new List<Exception>();
             var consecutiveExceptions = 0;
             var retriesRemaining = retryCount;
@@ -62,18 +65,24 @@ namespace Intersect.Utilities
                     if (++consecutiveExceptions >= consecutiveFailuresUntilAbort)
                     {
                         DumpExceptions(caughtExceptions);
+
                         throw new OperationCanceledException("Failed too many times consecutively, aborting.");
                     }
                 }
 
                 if (--retriesRemaining == 0)
+                {
                     break;
+                }
             }
 
             if (caughtExceptions.Count <= 0 || suppressExceptions)
+            {
                 return result;
+            }
 
             DumpExceptions(caughtExceptions);
+
             throw caughtExceptions.FindLast(e => true) ?? new InvalidOperationException("Bad Retry state!");
         }
 
@@ -85,7 +94,12 @@ namespace Intersect.Utilities
             int consecutiveFailuresUntilAbort = 10
         )
         {
-            return Execute(action, new TimeSpan(retryIntervalMs * TimeSpan.TicksPerMillisecond), retryCount, suppressExceptions, consecutiveFailuresUntilAbort);
+            return Execute(
+                action, new TimeSpan(retryIntervalMs * TimeSpan.TicksPerMillisecond), retryCount, suppressExceptions,
+                consecutiveFailuresUntilAbort
+            );
         }
+
     }
+
 }

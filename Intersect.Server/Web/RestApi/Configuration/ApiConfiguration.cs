@@ -1,10 +1,4 @@
-﻿using Intersect.Configuration;
-
-using JetBrains.Annotations;
-
-using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -12,9 +6,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Server.Web.RestApi.Authentication.OAuth;
 
+using JetBrains.Annotations;
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 using WebApiThrottle;
@@ -129,36 +127,30 @@ namespace Intersect.Server.Web.RestApi.Configuration
 #endif
 
         [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include
+            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
         )]
         [DefaultValue(DefaultRefreshTokenLifetime)]
         public uint RefreshTokenLifetime { get; private set; } = DefaultRefreshTokenLifetime;
 
         [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include
+            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
         )]
         public ThrottlePolicy ThrottlePolicy { get; private set; } = DefaultThrottlePolicy;
 
         [JsonProperty(
-             NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
+            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
         )]
         [DefaultValue(IntersectThrottlingHandler.DefaultFallbackClientKey)]
         public string FallbackClientKey { get; private set; } = IntersectThrottlingHandler.DefaultFallbackClientKey;
 
         [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include,
+            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include,
             ItemConverterType = typeof(StringEnumConverter)
         )]
         [DefaultValue(DefaultRequestLogLevel)]
         public LogLevel RequestLogLevel { get; set; } = DefaultRequestLogLevel;
 
-        [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore
-        )]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue(false)]
         public bool RequestLogging { get; set; }
 
@@ -186,12 +178,16 @@ namespace Intersect.Server.Web.RestApi.Configuration
         #region I/O
 
         /// <inheritdoc />
-        public ApiConfiguration Load(string filePath = DefaultPath, bool failQuietly = false) =>
-            ConfigurationHelper.Load(this, filePath, failQuietly);
+        public ApiConfiguration Load(string filePath = DefaultPath, bool failQuietly = false)
+        {
+            return ConfigurationHelper.Load(this, filePath, failQuietly);
+        }
 
         /// <inheritdoc />
-        public ApiConfiguration Save(string filePath = DefaultPath, bool failQuietly = false) =>
-            ConfigurationHelper.Save(this, filePath, failQuietly);
+        public ApiConfiguration Save(string filePath = DefaultPath, bool failQuietly = false)
+        {
+            return ConfigurationHelper.Save(this, filePath, failQuietly);
+        }
 
         #endregion
 

@@ -1,26 +1,36 @@
 ﻿using System;
+
 using Intersect.Logging;
 
 namespace Intersect.Network
 {
+
     public abstract class AbstractConnection : IConnection
     {
-        private bool mDisposed;
 
-        public Ceras Ceras { get; } = new Ceras(true);
+        private bool mDisposed;
 
         protected AbstractConnection(Guid? guid = null)
         {
-            if (!guid.HasValue) guid = Guid.NewGuid();
+            if (!guid.HasValue)
+            {
+                guid = Guid.NewGuid();
+            }
 
             Guid = guid.Value;
         }
+
+        public Ceras Ceras { get; } = new Ceras(true);
 
         public virtual void Dispose()
         {
             lock (this)
             {
-                if (mDisposed) return;
+                if (mDisposed)
+                {
+                    return;
+                }
+
                 mDisposed = true;
             }
         }
@@ -30,6 +40,7 @@ namespace Intersect.Network
         public bool IsConnected { get; private set; }
 
         public abstract string Ip { get; }
+
         public abstract int Port { get; }
 
         public abstract bool Send(IPacket packet);
@@ -52,5 +63,7 @@ namespace Intersect.Network
 
             Log.Debug($"Connectioned terminated to remote [{Guid}/{Ip}:{Port}].");
         }
+
     }
+
 }

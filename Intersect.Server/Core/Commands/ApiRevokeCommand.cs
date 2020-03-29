@@ -1,31 +1,35 @@
 ﻿using System;
-using Intersect.Enums;
+
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Localization;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal class ApiRevokeCommand : TargetUserCommand
     {
-        [NotNull]
-        private VariableArgument<string> Role => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         public ApiRevokeCommand() : base(
-            Strings.Commands.ApiRevoke,
-            Strings.Commands.Arguments.TargetApi,
+            Strings.Commands.ApiRevoke, Strings.Commands.Arguments.TargetApi,
             new VariableArgument<string>(Strings.Commands.Arguments.ApiRole, RequiredIfNotHelp, true)
         )
         {
         }
+
+        [NotNull]
+        private VariableArgument<string> Role => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)
         {
             if (target == null)
             {
                 Console.WriteLine($@"    {Strings.Account.notfound}");
+
                 return;
             }
 
@@ -49,6 +53,7 @@ namespace Intersect.Server.Core.Commands
             {
                 //Role Not Found
                 Console.WriteLine(Strings.Commandoutput.apirolenotfound.ToString(role));
+
                 return;
             }
 
@@ -56,5 +61,7 @@ namespace Intersect.Server.Core.Commands
 
             Console.WriteLine(Strings.Commandoutput.apirolerevoked.ToString(target.Name, role));
         }
+
     }
+
 }

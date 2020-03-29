@@ -2,8 +2,10 @@
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public interface IExperimentalFlag : IEquatable<IExperimentalFlag>
     {
+
         Guid Guid { get; }
 
         string Name { get; }
@@ -16,5 +18,7 @@ namespace Intersect.Core.ExperimentalFeatures
         /// <param name="enabled">the new enablement state</param>
         /// <returns>a clone of this flag with the new enablement state</returns>
         IExperimentalFlag With(bool enabled);
+
     }
+
 }

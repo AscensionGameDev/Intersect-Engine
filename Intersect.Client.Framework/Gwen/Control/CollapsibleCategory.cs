@@ -1,15 +1,19 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     CollapsibleCategory control. Used in CollapsibleList.
     /// </summary>
     public class CollapsibleCategory : Base
     {
+
         private readonly Button mHeaderButton;
+
         private readonly CollapsibleList mList;
 
         /// <summary>
@@ -63,14 +67,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public Button GetSelectedButton()
         {
-            foreach (Base child in Children)
+            foreach (var child in Children)
             {
-                CategoryButton button = child as CategoryButton;
+                var button = child as CategoryButton;
                 if (button == null)
+                {
                     continue;
+                }
 
                 if (button.ToggleState)
+                {
                     return button;
+                }
             }
 
             return null;
@@ -83,7 +91,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnHeaderToggle(Base control, EventArgs args)
         {
             if (Collapsed != null)
+            {
                 Collapsed.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -92,8 +102,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="control">Event source.</param>
         protected virtual void OnSelected(Base control, EventArgs args)
         {
-            CategoryButton child = control as CategoryButton;
-            if (child == null) return;
+            var child = control as CategoryButton;
+            if (child == null)
+            {
+                return;
+            }
 
             if (mList != null)
             {
@@ -107,7 +120,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             child.ToggleState = true;
 
             if (Selected != null)
+            {
                 Selected.Invoke(this, new ItemSelectedEventArgs(control));
+            }
         }
 
         /// <summary>
@@ -117,7 +132,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public Button Add(string name)
         {
-            CategoryButton button = new CategoryButton(this);
+            var button = new CategoryButton(this);
             button.Text = name;
             button.Dock = Pos.Top;
             button.SizeToContents();
@@ -143,11 +158,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public void UnselectAll()
         {
-            foreach (Base child in Children)
+            foreach (var child in Children)
             {
-                CategoryButton button = child as CategoryButton;
+                var button = child as CategoryButton;
                 if (button == null)
+                {
                     continue;
+                }
 
                 button.ToggleState = false;
             }
@@ -169,17 +186,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             // alternate row coloring
-            bool b = true;
-            foreach (Base child in Children)
+            var b = true;
+            foreach (var child in Children)
             {
-                CategoryButton button = child as CategoryButton;
+                var button = child as CategoryButton;
                 if (button == null)
+                {
                     continue;
+                }
 
                 button.mAlt = b;
                 button.UpdateColors();
                 b = !b;
             }
         }
+
     }
+
 }

@@ -2,17 +2,18 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Splitter bar.
     /// </summary>
     public class SplitterBar : Dragger
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SplitterBar" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public SplitterBar(Base parent)
-            : base(parent)
+        public SplitterBar(Base parent) : base(parent)
         {
             Target = this;
             RestrictToParent = true;
@@ -25,7 +26,9 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         protected override void Render(Skin.Base skin)
         {
             if (ShouldDrawBackground)
+            {
                 skin.DrawButton(this, true, false, IsDisabled);
+            }
         }
 
         /// <summary>
@@ -36,5 +39,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             MoveTo(X, Y);
         }
+
     }
+
 }

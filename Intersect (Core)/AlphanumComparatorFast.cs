@@ -4,13 +4,21 @@ using System.Collections.Generic;
 
 namespace Intersect
 {
+
     public class AlphanumComparatorFast : IComparer, IComparer<string>
     {
-        public int Compare(object x, object y) => Compare(x as string, y as string);
+
+        public int Compare(object x, object y)
+        {
+            return Compare(x as string, y as string);
+        }
 
         public int Compare(string x, string y)
         {
-            if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y)) return 0;
+            if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+            {
+                return 0;
+            }
 
             var len1 = x.Length;
             var len2 = y.Length;
@@ -87,7 +95,10 @@ namespace Intersect
                     return result;
                 }
             }
+
             return len1 - len2;
         }
+
     }
+
 }

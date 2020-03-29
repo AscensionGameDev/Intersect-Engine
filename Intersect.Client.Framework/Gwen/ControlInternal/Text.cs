@@ -1,18 +1,23 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Displays text. Always sized to contents.
     /// </summary>
     public class Text : Base
     {
+
         private GameFont mFont;
+
         private float mScale = 1f;
+
         private bool mShadow = false;
+
         private string mString;
 
         /// <summary>
@@ -24,8 +29,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         ///     Initializes a new instance of the <see cref="Text" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Text(Base parent, string name = "")
-            : base(parent, name)
+        public Text(Base parent, string name = "") : base(parent, name)
         {
             mFont = Skin.DefaultFont;
             mString = String.Empty;
@@ -96,12 +100,19 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            if (Length == 0 || Font == null) return;
+            if (Length == 0 || Font == null)
+            {
+                return;
+            }
 
             if (TextColorOverride.A == 0)
+            {
                 skin.Renderer.DrawColor = TextColor;
+            }
             else
+            {
                 skin.Renderer.DrawColor = TextColorOverride;
+            }
 
             skin.Renderer.RenderText(Font, Point.Empty, TextOverride ?? String, mScale);
 
@@ -161,9 +172,11 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         public void SizeToContents()
         {
             if (String == null || Font == null)
+            {
                 return;
+            }
 
-            Point p = new Point(1, 10);
+            var p = new Point(1, 10);
 
             if (Length > 0)
             {
@@ -175,7 +188,9 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             }
 
             if (p.X == Width && p.Y == Height)
+            {
                 return;
+            }
 
             SetSize(p.X, p.Y);
             Invalidate();
@@ -194,8 +209,8 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
                 return new Point(0, 0);
             }
 
-            string sub = (TextOverride ?? String).Substring(0, index);
-            Point p = Skin.Renderer.MeasureText(Font, sub);
+            var sub = (TextOverride ?? String).Substring(0, index);
+            var p = Skin.Renderer.MeasureText(Font, sub);
 
             //if(p.Y >= Font.Size)
             //	p = new Point(p.X, p.Y - Font.Size);
@@ -211,16 +226,18 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <returns>Character index.</returns>
         public int GetClosestCharacter(Point p)
         {
-            int distance = MAX_COORD;
-            int c = 0;
+            var distance = MAX_COORD;
+            var c = 0;
 
-            for (int i = 0; i < String.Length + 1; i++)
+            for (var i = 0; i < String.Length + 1; i++)
             {
-                Point cp = GetCharacterPosition(i);
-                int dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // this isn't proper // [omeg] todo: sqrt
+                var cp = GetCharacterPosition(i);
+                var dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // this isn't proper // [omeg] todo: sqrt
 
                 if (dist > distance)
+                {
                     continue;
+                }
 
                 distance = dist;
                 c = i;
@@ -228,5 +245,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
 
             return c;
         }
+
     }
+
 }

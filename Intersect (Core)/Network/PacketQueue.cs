@@ -4,13 +4,17 @@ using System.Threading;
 
 namespace Intersect.Network
 {
+
     // TODO : Auto-stale packet deletion
     public sealed class PacketQueue : IDisposable
     {
+
         private readonly object mDequeLock;
 
         private readonly Queue<IPacket> mQueue;
+
         private readonly object mQueueLock;
+
         private bool mDisposed;
 
         public PacketQueue()
@@ -24,11 +28,25 @@ namespace Intersect.Network
 
         public void Dispose()
         {
-            if (mDisposed) return;
+            if (mDisposed)
+            {
+                return;
+            }
 
-            if (mQueue != null) Monitor.PulseAll(mQueue);
-            if (mQueueLock != null) Monitor.PulseAll(mQueueLock);
-            if (mDequeLock != null) Monitor.PulseAll(mDequeLock);
+            if (mQueue != null)
+            {
+                Monitor.PulseAll(mQueue);
+            }
+
+            if (mQueueLock != null)
+            {
+                Monitor.PulseAll(mQueueLock);
+            }
+
+            if (mDequeLock != null)
+            {
+                Monitor.PulseAll(mDequeLock);
+            }
 
             mDisposed = true;
         }
@@ -48,15 +66,26 @@ namespace Intersect.Network
 
         public bool Enqueue(IPacket packet)
         {
-            if (mDisposed) return false;
+            if (mDisposed)
+            {
+                return false;
+            }
 
-            if (mQueueLock == null) throw new ArgumentNullException();
-            if (mQueue == null) throw new ArgumentNullException();
+            if (mQueueLock == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (mQueue == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             //Log.Debug("Waiting on queue lock...");
             lock (mQueueLock)
             {
                 mQueue.Enqueue(packet);
+
                 //Log.Debug($"enqueuedSize={mQueue.Count}");
                 Monitor.Pulse(mQueueLock);
             }
@@ -66,9 +95,20 @@ namespace Intersect.Network
 
         public bool TryNext(out IPacket packet)
         {
-            if (mDequeLock == null) throw new ArgumentNullException();
-            if (mQueueLock == null) throw new ArgumentNullException();
-            if (mQueue == null) throw new ArgumentNullException();
+            if (mDequeLock == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (mQueueLock == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (mQueue == null)
+            {
+                throw new ArgumentNullException();
+            }
 
             //Log.Debug("Waiting on deque lock...");
             lock (mDequeLock)
@@ -87,17 +127,22 @@ namespace Intersect.Network
                     if (mQueue.Count < 1)
                     {
                         packet = null;
+
                         return false;
                     }
 
                     //Log.Debug($"size={mQueue.Count}");
                     packet = mQueue.Dequeue();
                     if (mQueue.Count > 0)
+                    {
                         Monitor.Pulse(mQueueLock);
+                    }
                 }
 
                 return true;
             }
         }
+
     }
+
 }

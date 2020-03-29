@@ -1,43 +1,62 @@
 ﻿using System;
+
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Base for controls that can be dragged by mouse.
     /// </summary>
     public class Dragger : Base
     {
+
         public enum ControlState
         {
+
             Normal = 0,
+
             Hovered,
+
             Clicked,
+
             Disabled,
+
         }
 
         private GameTexture mClickedImage;
-        private GameTexture mDisabledImage;
+
         private string mClickedImageFilename;
+
+        private GameTexture mDisabledImage;
+
         private string mDisabledImageFilename;
 
         protected bool mHeld;
+
         protected Point mHoldPos;
+
         private GameTexture mHoverImage;
-        private GameTexture mNormalImage;
+
         private string mHoverImageFilename;
-        private string mNormalImageFilename;
-        protected Base mTarget;
 
         //Sound Effects
         private string mHoverSound;
+
         private string mMouseDownSound;
+
         private string mMouseUpSound;
+
+        private GameTexture mNormalImage;
+
+        private string mNormalImageFilename;
+
+        protected Base mTarget;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Dragger" /> class.
@@ -73,19 +92,28 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
         protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
         {
-            if (null == mTarget) return;
+            if (null == mTarget)
+            {
+                return;
+            }
 
             if (down)
             {
                 mHeld = true;
+
                 //Play Mouse Down Sound
-                if (!automated) base.PlaySound(mMouseDownSound);
+                if (!automated)
+                {
+                    base.PlaySound(mMouseDownSound);
+                }
+
                 mHoldPos = mTarget.CanvasPosToLocal(new Point(x, y));
                 InputHandler.MouseFocus = this;
             }
             else
             {
                 mHeld = false;
+
                 //Play Mouse Up Sound
                 base.PlaySound(mMouseUpSound);
                 InputHandler.MouseFocus = null;
@@ -101,19 +129,30 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <param name="dy">Y change.</param>
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
-            if (null == mTarget) return;
-            if (!mHeld) return;
+            if (null == mTarget)
+            {
+                return;
+            }
 
-            Point p = new Point(x - mHoldPos.X, y - mHoldPos.Y);
+            if (!mHeld)
+            {
+                return;
+            }
+
+            var p = new Point(x - mHoldPos.X, y - mHoldPos.Y);
 
             // Translate to parent
             if (mTarget.Parent != null)
+            {
                 p = mTarget.Parent.CanvasPosToLocal(p);
+            }
 
             //m_Target->SetPosition( p.x, p.y );
             mTarget.MoveTo(p.X, p.Y);
             if (Dragged != null)
+            {
                 Dragged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -134,19 +173,63 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             obj.Add("HoverSound", mHoverSound);
             obj.Add("MouseUpSound", mMouseUpSound);
             obj.Add("MouseDownSound", mMouseDownSound);
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["NormalImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["NormalImage"]), (string)obj["NormalImage"], ControlState.Normal);
-            if (obj["HoveredImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["HoveredImage"]), (string)obj["HoveredImage"], ControlState.Hovered);
-            if (obj["ClickedImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["ClickedImage"]), (string)obj["ClickedImage"], ControlState.Clicked);
-            if (obj["DisabledImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["DisabledImage"]), (string)obj["DisabledImage"], ControlState.Disabled);
-            if (obj["HoverSound"] != null) mHoverSound = (string)obj["HoverSound"];
-            if (obj["MouseUpSound"] != null) mMouseUpSound = (string)obj["MouseUpSound"];
-            if (obj["MouseDownSound"] != null) mMouseDownSound = (string)obj["MouseDownSound"];
+            if (obj["NormalImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                    ), (string) obj["NormalImage"], ControlState.Normal
+                );
+            }
+
+            if (obj["HoveredImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["HoveredImage"]
+                    ), (string) obj["HoveredImage"], ControlState.Hovered
+                );
+            }
+
+            if (obj["ClickedImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["ClickedImage"]
+                    ), (string) obj["ClickedImage"], ControlState.Clicked
+                );
+            }
+
+            if (obj["DisabledImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                    ), (string) obj["DisabledImage"], ControlState.Disabled
+                );
+            }
+
+            if (obj["HoverSound"] != null)
+            {
+                mHoverSound = (string) obj["HoverSound"];
+            }
+
+            if (obj["MouseUpSound"] != null)
+            {
+                mMouseUpSound = (string) obj["MouseUpSound"];
+            }
+
+            if (obj["MouseDownSound"] != null)
+            {
+                mMouseDownSound = (string) obj["MouseDownSound"];
+            }
         }
 
         public string GetMouseUpSound()
@@ -165,18 +248,22 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
                 case ControlState.Normal:
                     mNormalImageFilename = fileName;
                     mNormalImage = texture;
+
                     break;
                 case ControlState.Hovered:
                     mHoverImageFilename = fileName;
                     mHoverImage = texture;
+
                     break;
                 case ControlState.Clicked:
                     mClickedImageFilename = fileName;
                     mClickedImage = texture;
+
                     break;
                 case ControlState.Disabled:
                     mDisabledImageFilename = fileName;
                     mDisabledImage = texture;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -220,8 +307,12 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         protected override void OnMouseEntered()
         {
             base.OnMouseEntered();
+
             //Play Mouse Entered Sound
-            if (ShouldDrawHover) base.PlaySound(mHoverSound);
+            if (ShouldDrawHover)
+            {
+                base.PlaySound(mHoverSound);
+            }
         }
 
         public void ClearSounds()
@@ -230,5 +321,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             mMouseDownSound = "";
             mMouseUpSound = "";
         }
+
     }
+
 }

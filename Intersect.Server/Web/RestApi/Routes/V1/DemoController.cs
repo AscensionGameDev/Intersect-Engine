@@ -1,5 +1,6 @@
-﻿using Intersect.Server.Web.RestApi.Attributes;
-using System.Web.Http;
+﻿using System.Web.Http;
+
+using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {

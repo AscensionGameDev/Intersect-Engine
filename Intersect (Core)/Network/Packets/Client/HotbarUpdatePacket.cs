@@ -1,10 +1,8 @@
 ﻿namespace Intersect.Network.Packets.Client
 {
+
     public class HotbarUpdatePacket : CerasPacket
     {
-        public byte HotbarSlot { get; set; } //Hotbar Slot
-        public sbyte Type { get; set; }
-        public int Index { get; set; } //Inv or Spell Index
 
         public HotbarUpdatePacket(byte slot, sbyte type, int itemIndex)
         {
@@ -12,5 +10,13 @@
             Type = type;
             Index = itemIndex;
         }
+
+        public byte HotbarSlot { get; set; } //Hotbar Slot
+
+        public sbyte Type { get; set; }
+
+        public int Index { get; set; } //Inv or Spell Index
+
     }
+
 }

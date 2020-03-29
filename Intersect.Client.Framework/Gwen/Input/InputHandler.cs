@@ -1,19 +1,21 @@
 ﻿using System.Linq;
 using System.Text;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Framework.Gwen.Input
 {
+
     /// <summary>
     ///     Input handling.
     /// </summary>
     public static class InputHandler
     {
+
         private static readonly KeyData KeyData = new KeyData();
+
         private static readonly float[] LastClickTime = new float[MaxMouseButtons];
-        private static Point sLastClickPos;
 
         /// <summary>
         ///     Control currently hovered by mouse.
@@ -34,6 +36,8 @@ namespace Intersect.Client.Framework.Gwen.Input
         ///     Current mouse position.
         /// </summary>
         public static Point MousePosition; // not property to allow modification of Point fields
+
+        private static Point sLastClickPos;
 
         /// <summary>
         ///     Maximum number of mouse buttons supported.
@@ -93,32 +97,51 @@ namespace Intersect.Client.Framework.Gwen.Input
         /// <returns>True if the key was handled.</returns>
         public static bool DoSpecialKeys(Base canvas, char chr)
         {
-            if (null == KeyboardFocus) return false;
-            if (KeyboardFocus.GetCanvas() != canvas) return false;
-            if (!KeyboardFocus.IsVisible) return false;
-            if (!IsControlDown) return false;
+            if (null == KeyboardFocus)
+            {
+                return false;
+            }
+
+            if (KeyboardFocus.GetCanvas() != canvas)
+            {
+                return false;
+            }
+
+            if (!KeyboardFocus.IsVisible)
+            {
+                return false;
+            }
+
+            if (!IsControlDown)
+            {
+                return false;
+            }
 
             if (chr == 'C' || chr == 'c')
             {
                 KeyboardFocus.InputCopy(null);
+
                 return true;
             }
 
             if (chr == 'V' || chr == 'v')
             {
                 KeyboardFocus.InputPaste(null);
+
                 return true;
             }
 
             if (chr == 'X' || chr == 'x')
             {
                 KeyboardFocus.InputCut(null);
+
                 return true;
             }
 
             if (chr == 'A' || chr == 'a')
             {
                 KeyboardFocus.InputSelectAll(null);
+
                 return true;
             }
 
@@ -134,26 +157,38 @@ namespace Intersect.Client.Framework.Gwen.Input
         public static bool HandleAccelerator(Base canvas, char chr)
         {
             //Build the accelerator search string
-            StringBuilder accelString = new StringBuilder();
+            var accelString = new StringBuilder();
             if (IsControlDown)
+            {
                 accelString.Append("CTRL+");
+            }
+
             if (IsShiftDown)
+            {
                 accelString.Append("SHIFT+");
+            }
+
             // [omeg] todo: alt?
 
             accelString.Append(chr);
-            string acc = accelString.ToString();
+            var acc = accelString.ToString();
 
             //Debug::Msg("Accelerator string :%S\n", accelString.c_str());)
 
             if (KeyboardFocus != null && KeyboardFocus.HandleAccelerator(acc))
+            {
                 return true;
+            }
 
             if (MouseFocus != null && MouseFocus.HandleAccelerator(acc))
+            {
                 return true;
+            }
 
             if (canvas.HandleAccelerator(acc))
+            {
                 return true;
+            }
 
             return false;
         }
@@ -182,24 +217,36 @@ namespace Intersect.Client.Framework.Gwen.Input
         public static void OnCanvasThink(Base control)
         {
             if (MouseFocus != null && !MouseFocus.IsVisible)
+            {
                 MouseFocus = null;
+            }
 
             if (KeyboardFocus != null && (!KeyboardFocus.IsVisible || !KeyboardFocus.KeyboardInputEnabled))
+            {
                 KeyboardFocus = null;
+            }
 
-            if (null == KeyboardFocus) return;
-            if (KeyboardFocus.GetCanvas() != control) return;
+            if (null == KeyboardFocus)
+            {
+                return;
+            }
 
-            float time = Platform.Neutral.GetTimeInSeconds();
+            if (KeyboardFocus.GetCanvas() != control)
+            {
+                return;
+            }
+
+            var time = Platform.Neutral.GetTimeInSeconds();
 
             //
             // Simulate Key-Repeats
             //
-            for (int i = 0; i < (int) Key.Count; i++)
+            for (var i = 0; i < (int) Key.Count; i++)
             {
                 if (KeyData.KeyState[i] && KeyData.Target != KeyboardFocus)
                 {
                     KeyData.KeyState[i] = false;
+
                     continue;
                 }
 
@@ -231,27 +278,48 @@ namespace Intersect.Client.Framework.Gwen.Input
                 canvas.CloseMenus();
             }
 
-            if (null == HoveredControl) return false;
-            if (HoveredControl.GetCanvas() != canvas) return false;
-            if (!HoveredControl.IsVisible) return false;
-            if (HoveredControl == canvas) return false;
+            if (null == HoveredControl)
+            {
+                return false;
+            }
+
+            if (HoveredControl.GetCanvas() != canvas)
+            {
+                return false;
+            }
+
+            if (!HoveredControl.IsVisible)
+            {
+                return false;
+            }
+
+            if (HoveredControl == canvas)
+            {
+                return false;
+            }
 
             if (mouseButton > MaxMouseButtons)
+            {
                 return false;
+            }
 
             if (mouseButton == 0)
+            {
                 KeyData.LeftMouseDown = down;
+            }
             else if (mouseButton == 1)
+            {
                 KeyData.RightMouseDown = down;
+            }
 
             // Double click.
             // Todo: Shouldn't double click if mouse has moved significantly
-            bool isDoubleClick = false;
+            var isDoubleClick = false;
 
             if (down &&
                 sLastClickPos.X == MousePosition.X &&
                 sLastClickPos.Y == MousePosition.Y &&
-                (Platform.Neutral.GetTimeInSeconds() - LastClickTime[mouseButton]) < DoubleClickSpeed)
+                Platform.Neutral.GetTimeInSeconds() - LastClickTime[mouseButton] < DoubleClickSpeed)
             {
                 isDoubleClick = true;
             }
@@ -274,7 +342,9 @@ namespace Intersect.Client.Framework.Gwen.Input
             // This is basically so that Windows can pop themselves
             // to the top when one of their children have been clicked.
             if (down)
+            {
                 HoveredControl.Touch();
+            }
 
 #if GWEN_HOOKSYSTEM
             if (bDown)
@@ -290,21 +360,33 @@ namespace Intersect.Client.Framework.Gwen.Input
                 case 0:
                 {
                     if (DragAndDrop.OnMouseButton(HoveredControl, MousePosition.X, MousePosition.Y, down))
+                    {
                         return true;
+                    }
 
                     if (isDoubleClick)
+                    {
                         HoveredControl.InputMouseDoubleClickedLeft(MousePosition.X, MousePosition.Y);
+                    }
                     else
+                    {
                         HoveredControl.InputMouseClickedLeft(MousePosition.X, MousePosition.Y, down);
+                    }
+
                     return true;
                 }
 
                 case 1:
                 {
                     if (isDoubleClick)
+                    {
                         HoveredControl.InputMouseDoubleClickedRight(MousePosition.X, MousePosition.Y);
+                    }
                     else
+                    {
                         HoveredControl.InputMouseClickedRight(MousePosition.X, MousePosition.Y, down);
+                    }
+
                     return true;
                 }
             }
@@ -321,11 +403,22 @@ namespace Intersect.Client.Framework.Gwen.Input
         /// <returns>True if handled.</returns>
         public static bool OnKeyEvent(Base canvas, Key key, bool down)
         {
-            if (null == KeyboardFocus) return false;
-            if (KeyboardFocus.GetCanvas() != canvas) return false;
-            if (!KeyboardFocus.IsVisible) return false;
+            if (null == KeyboardFocus)
+            {
+                return false;
+            }
 
-            int iKey = (int) key;
+            if (KeyboardFocus.GetCanvas() != canvas)
+            {
+                return false;
+            }
+
+            if (!KeyboardFocus.IsVisible)
+            {
+                return false;
+            }
+
+            var iKey = (int) key;
             if (down)
             {
                 if (!KeyData.KeyState[iKey])
@@ -356,7 +449,7 @@ namespace Intersect.Client.Framework.Gwen.Input
 
         private static void UpdateHoveredControl(Base inCanvas)
         {
-            Base hovered = inCanvas.GetControlAt(MousePosition.X, MousePosition.Y);
+            var hovered = inCanvas.GetControlAt(MousePosition.X, MousePosition.Y);
 
             if (hovered != HoveredControl)
             {
@@ -383,13 +476,18 @@ namespace Intersect.Client.Framework.Gwen.Input
                     HoveredControl = null;
                     oldHover.Redraw();
                 }
+
                 HoveredControl = MouseFocus;
             }
         }
 
         private static void FindKeyboardFocus(Base control)
         {
-            if (null == control) return;
+            if (null == control)
+            {
+                return;
+            }
+
             if (control.KeyboardInputEnabled)
             {
                 //Make sure none of our children have keyboard focus first - todo recursive
@@ -399,11 +497,15 @@ namespace Intersect.Client.Framework.Gwen.Input
                 }
 
                 control.Focus();
+
                 return;
             }
 
             FindKeyboardFocus(control.Parent);
+
             return;
         }
+
     }
+
 }

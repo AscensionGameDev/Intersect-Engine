@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Immutable;
+
 using Intersect.Localization;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
+
     public class EnumArgument<TValue> : CommandArgument<TValue>
     {
-        public ImmutableArray<TValue> AllowedValues { get; }
 
         public EnumArgument(
             [NotNull] LocaleArgument localization,
@@ -79,9 +76,13 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
         }
 
+        public ImmutableArray<TValue> AllowedValues { get; }
+
         public override bool IsValueAllowed(object value)
         {
             return value is TValue castedValue && AllowedValues.Contains(castedValue);
         }
+
     }
+
 }

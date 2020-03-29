@@ -19,6 +19,10 @@ namespace Intersect.Server.Web.RestApi.Attributes
     internal class ConfigurableAuthorizeAttribute : AuthorizeAttribute
     {
 
+        public ConfigurableAuthorizeAttribute() : base()
+        {
+        }
+
         [NotNull]
         protected IEnumerable<string> InternalRoles =>
             Roles?.Split(',').Where(role => !string.IsNullOrWhiteSpace(role)).Select(role => role.Trim()) ??
@@ -68,10 +72,6 @@ namespace Intersect.Server.Web.RestApi.Attributes
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {
             base.HandleUnauthorizedRequest(actionContext);
-        }
-
-        public ConfigurableAuthorizeAttribute() : base()
-        {
         }
 
     }

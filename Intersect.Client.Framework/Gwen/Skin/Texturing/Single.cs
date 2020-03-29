@@ -3,14 +3,19 @@ using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 {
+
     /// <summary>
     ///     Single textured element.
     /// </summary>
     public struct Single
     {
+
         private readonly GameTexture mTexture;
+
         private readonly float[] mUv;
+
         private readonly int mWidth;
+
         private readonly int mHeight;
 
         public Single(GameTexture texture, float x, float y, float w, float h)
@@ -43,7 +48,9 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
         public void Draw(Renderer.Base render, Rectangle r, Color col)
         {
             if (mTexture == null)
+            {
                 return;
+            }
 
             render.DrawColor = col;
             render.DrawTexturedRect(mTexture, r, col, mUv[0], mUv[1], mUv[2], mUv[3]);
@@ -52,7 +59,9 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
         public void DrawCenter(Renderer.Base render, Rectangle r)
         {
             if (mTexture == null)
+            {
                 return;
+            }
 
             DrawCenter(render, r, Color.White);
         }
@@ -66,5 +75,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 
             Draw(render, r, col);
         }
+
     }
+
 }

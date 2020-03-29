@@ -1,36 +1,52 @@
 ﻿using System;
 using System.Linq;
+
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Movable window with title bar.
     /// </summary>
     public class WindowControl : ResizableControl
     {
+
         public enum ControlState
         {
+
             Active = 0,
+
             Inactive,
+
         }
 
         private readonly CloseButton mCloseButton;
+
         private readonly Label mTitle;
+
         private readonly Dragger mTitleBar;
+
         private Color mActiveColor;
 
         private GameTexture mActiveImage;
-        private bool mDeleteOnClose;
-        private Color mInactiveColor;
-        private GameTexture mInactiveImage;
+
         private string mActiveImageFilename;
+
+        private bool mDeleteOnClose;
+
+        private Color mInactiveColor;
+
+        private GameTexture mInactiveImage;
+
         private string mInactiveImageFilename;
+
         private Modal mModal;
+
         private Base mOldParent;
 
         /// <summary>
@@ -39,8 +55,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="parent">Parent control.</param>
         /// <param name="caption">Window caption.</param>
         /// <param name="modal">Determines whether the window should be modal.</param>
-        public WindowControl(Base parent, string title = "", bool modal = false, string name = "")
-            : base(parent, name)
+        public WindowControl(Base parent, string title = "", bool modal = false, string name = "") : base(parent, name)
         {
             mTitleBar = new Dragger(this);
             mTitleBar.Height = 24;
@@ -74,7 +89,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             KeyboardInputEnabled = false;
 
             if (modal)
+            {
                 MakeModal();
+            }
         }
 
         /// <summary>
@@ -113,7 +130,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             set
             {
                 if (!value)
+                {
                     BringToFront();
+                }
+
                 base.IsHidden = value;
             }
         }
@@ -138,26 +158,67 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("Title", mTitle.GetJson());
             obj.Add("CloseButton", mCloseButton.GetJson());
             obj.Add("InnerPanel", mInnerPanel.GetJson());
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["ActiveImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["ActiveImage"]), (string)obj["ActiveImage"], ControlState.Active);
-            if (obj["InactiveImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["InactiveImage"]), (string)obj["InactiveImage"], ControlState.Inactive);
-            if (obj["ActiveColor"] != null) mActiveColor = Color.FromString((string)obj["ActiveColor"]);
-            if (obj["InactiveColor"] != null) mInactiveColor = Color.FromString((string)obj["InactiveColor"]);
-            if (obj["Closable"] != null) IsClosable = (bool)obj["Closable"];
-            if (obj["Titlebar"] != null) mTitleBar.LoadJson(obj["Titlebar"]);
-            if (obj["Title"] != null) mTitle.LoadJson(obj["Title"]);
+            if (obj["ActiveImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["ActiveImage"]
+                    ), (string) obj["ActiveImage"], ControlState.Active
+                );
+            }
+
+            if (obj["InactiveImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["InactiveImage"]
+                    ), (string) obj["InactiveImage"], ControlState.Inactive
+                );
+            }
+
+            if (obj["ActiveColor"] != null)
+            {
+                mActiveColor = Color.FromString((string) obj["ActiveColor"]);
+            }
+
+            if (obj["InactiveColor"] != null)
+            {
+                mInactiveColor = Color.FromString((string) obj["InactiveColor"]);
+            }
+
+            if (obj["Closable"] != null)
+            {
+                IsClosable = (bool) obj["Closable"];
+            }
+
+            if (obj["Titlebar"] != null)
+            {
+                mTitleBar.LoadJson(obj["Titlebar"]);
+            }
+
+            if (obj["Title"] != null)
+            {
+                mTitle.LoadJson(obj["Title"]);
+            }
+
             if (obj["CloseButton"] != null)
             {
                 mCloseButton.Alignment = Pos.None;
                 mCloseButton.Dock = Pos.None;
                 mCloseButton.LoadJson(obj["CloseButton"]);
             }
-            if (obj["InnerPanel"] != null) mInnerPanel.LoadJson(obj["InnerPanel"]);
+
+            if (obj["InnerPanel"] != null)
+            {
+                mInnerPanel.LoadJson(obj["InnerPanel"]);
+            }
         }
 
         public override void ProcessAlignments()
@@ -200,16 +261,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void MakeModal(bool dim = false)
         {
             if (mModal != null)
+            {
                 return;
+            }
 
             mModal = new Modal(GetCanvas());
             mOldParent = Parent;
             Parent = mModal;
 
             if (dim)
+            {
                 mModal.ShouldDrawBackground = true;
+            }
             else
+            {
                 mModal.ShouldDrawBackground = false;
+            }
         }
 
         public void RemoveModal()
@@ -228,8 +295,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            bool hasFocus = IsOnTop;
-            Color clr = GetTextColor(ControlState.Active);
+            var hasFocus = IsOnTop;
+            var clr = GetTextColor(ControlState.Active);
             if (clr == null && !hasFocus)
             {
                 clr = GetTextColor(ControlState.Inactive);
@@ -294,8 +361,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetFont(GameFont font)
         {
             mTitle.Font = font;
-            mTitle.Padding = new Padding(8,
-                (mTitleBar.Height - Skin.Renderer.MeasureText(mTitle.Font, "L", 1).Y) / 2, 0, 0);
+            mTitle.Padding = new Padding(
+                8, (mTitleBar.Height - Skin.Renderer.MeasureText(mTitle.Font, "L", 1).Y) / 2, 0, 0
+            );
         }
 
         public void SetTextColor(Color clr, ControlState state)
@@ -304,9 +372,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 case ControlState.Active:
                     mActiveColor = clr;
+
                     break;
                 case ControlState.Inactive:
                     mInactiveColor = clr;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -339,10 +409,12 @@ namespace Intersect.Client.Framework.Gwen.Control
                 case ControlState.Active:
                     mActiveImageFilename = fileName;
                     mActiveImage = texture;
+
                     break;
                 case ControlState.Inactive:
                     mInactiveImageFilename = fileName;
                     mInactiveImage = texture;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -374,5 +446,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return null;
             }
         }
+
     }
+
 }

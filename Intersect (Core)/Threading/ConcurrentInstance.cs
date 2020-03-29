@@ -1,25 +1,28 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+
 using Intersect.Logging;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Threading
 {
-    using JetBrains.Annotations;
-    using System;
-    using System.Threading;
 
     public class ConcurrentInstance<TInstance> where TInstance : class
     {
+
         [NotNull] private readonly object mLock;
 
         private TInstance mInstance;
-
-        [NotNull]
-        public TInstance Instance => mInstance ?? throw new InvalidOperationException();
 
         public ConcurrentInstance()
         {
             mLock = new object();
         }
+
+        [NotNull]
+        public TInstance Instance => mInstance ?? throw new InvalidOperationException();
 
         public void ClearWith([NotNull] TInstance instance, [NotNull] Action action)
         {
@@ -95,5 +98,7 @@ namespace Intersect.Threading
         {
             return concurrentInstance.mInstance;
         }
+
     }
+
 }

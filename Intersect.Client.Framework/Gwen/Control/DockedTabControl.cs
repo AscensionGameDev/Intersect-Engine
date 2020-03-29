@@ -1,18 +1,19 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Docked tab control.
     /// </summary>
     public class DockedTabControl : TabControl
     {
+
         private readonly TabTitleBar mTitleBar;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DockedTabControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public DockedTabControl(Base parent)
-            : base(parent)
+        public DockedTabControl(Base parent) : base(parent)
         {
             Dock = Pos.Fill;
 
@@ -36,7 +37,7 @@
         /// <param name="skin">Skin to use.</param>
         protected override void Layout(Skin.Base skin)
         {
-            TabStrip.IsHidden = (TabCount <= 1);
+            TabStrip.IsHidden = TabCount <= 1;
             UpdateTitleBar();
             base.Layout(skin);
         }
@@ -44,7 +45,9 @@
         private void UpdateTitleBar()
         {
             if (CurrentButton == null)
+            {
                 return;
+            }
 
             mTitleBar.UpdateFromTab(CurrentButton);
         }
@@ -54,6 +57,7 @@
             base.DragAndDrop_StartDragging(package, x, y);
 
             IsHidden = true;
+
             // This hiding our parent thing is kind of lousy.
             Parent.IsHidden = true;
         }
@@ -70,14 +74,20 @@
         public void MoveTabsTo(DockedTabControl target)
         {
             var children = TabStrip.Children.ToArray(); // copy because collection will be modified
-            foreach (Base child in children)
+            foreach (var child in children)
             {
-                TabButton button = child as TabButton;
+                var button = child as TabButton;
                 if (button == null)
+                {
                     continue;
+                }
+
                 target.AddPage(button);
             }
+
             Invalidate();
         }
+
     }
+
 }

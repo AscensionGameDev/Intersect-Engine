@@ -1,24 +1,36 @@
 ﻿using System;
 using System.Windows.Forms;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
+
 using Microsoft.Xna.Framework.Graphics;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
+
     public partial class FrmMapGrid : DockContent
     {
+
         //MonoGame Swap Chain
         private SwapChainRenderTarget mChain;
 
         private bool mDragging;
+
         private int mDragX;
+
         private int mDragY;
+
         private int mPosX;
+
         private int mPosY;
+
         private ToolTip mToolTip = new ToolTip();
+
         private MapGridItem mToolTipItem;
 
         public FrmMapGrid()
@@ -31,8 +43,12 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             CreateSwapChain();
             if (Globals.MapGrid == null)
-                Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem, unlinkMapToolStripMenuItem,
-                    recacheMapToolStripMenuItem, contextMenuStrip);
+            {
+                Globals.MapGrid = new MapGrid(
+                    linkMapToolStripMenuItem, unlinkMapToolStripMenuItem, recacheMapToolStripMenuItem, contextMenuStrip
+                );
+            }
+
             InitLocalization();
         }
 
@@ -62,17 +78,20 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     mChain.Dispose();
                 }
-                if (EditorGraphics.GetGraphicsDevice() != null)
+
+                if (Graphics.GetGraphicsDevice() != null)
                 {
                     if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                     {
                         if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
-                            mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
-                                pnlMapGrid.Handle,
-                                pnlMapGrid.Width, pnlMapGrid.Height, false, SurfaceFormat.Color,
-                                DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                            EditorGraphics.SetMapGridChain(mChain);
+                            mChain = new SwapChainRenderTarget(
+                                Graphics.GetGraphicsDevice(), pnlMapGrid.Handle, pnlMapGrid.Width, pnlMapGrid.Height,
+                                false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents,
+                                PresentInterval.Immediate
+                            );
+
+                            Graphics.SetMapGridChain(mChain);
                         }
                     }
                 }
@@ -104,6 +123,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 mDragX = e.X;
                 mDragY = e.Y;
             }
+
             if (mToolTip.Active && mToolTipItem != null)
             {
                 if (Globals.MapGrid.GetItemAt(mPosX, mPosY) != mToolTipItem)
@@ -183,36 +203,43 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, 120);
+                var args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, 120);
                 PnlMapGrid_MouseWheel(null, args);
             }
             else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract)
             {
-                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, -120);
+                var args = new MouseEventArgs(MouseButtons.None, 0, mPosX, mPosY, -120);
                 PnlMapGrid_MouseWheel(null, args);
             }
+
             var xDiff = 0;
             var yDiff = 0;
             if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
             {
                 yDiff -= 20;
             }
+
             if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
             {
                 yDiff += 20;
             }
+
             if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
             {
                 xDiff -= 20;
             }
+
             if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
             {
                 xDiff += 20;
             }
+
             if (xDiff != 0 || yDiff != 0)
             {
                 Globals.MapGrid.Move(xDiff, yDiff);
             }
         }
+
     }
+
 }

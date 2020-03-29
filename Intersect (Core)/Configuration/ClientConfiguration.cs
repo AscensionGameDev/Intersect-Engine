@@ -5,10 +5,9 @@ using System.Runtime.Serialization;
 
 using JetBrains.Annotations;
 
-using Newtonsoft.Json;
-
 namespace Intersect.Configuration
 {
+
     /// <inheritdoc />
     /// <summary>
     /// Client configuration options
@@ -17,6 +16,24 @@ namespace Intersect.Configuration
     {
 
         public const string DefaultPath = @"resources/config.json";
+
+        /// <inheritdoc />
+        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false)
+        {
+            return ConfigurationHelper.Load(this, filePath, failQuietly);
+        }
+
+        /// <inheritdoc />
+        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false)
+        {
+            return ConfigurationHelper.Save(this, filePath, failQuietly);
+        }
+
+        [NotNull]
+        public static ClientConfiguration LoadAndSave([CanBeNull] string filePath = null)
+        {
+            return ConfigurationHelper.LoadSafely(Instance, filePath);
+        }
 
         #region Constants
 
@@ -38,7 +55,8 @@ namespace Intersect.Configuration
 
         #region Static Properties and Methods
 
-        [NotNull] public static ClientConfiguration Instance { get; } = new ClientConfiguration();
+        [NotNull]
+        public static ClientConfiguration Instance { get; } = new ClientConfiguration();
 
         public void Validate()
         {
@@ -125,17 +143,6 @@ namespace Intersect.Configuration
 
         #endregion
 
-        /// <inheritdoc />
-        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false) =>
-            ConfigurationHelper.Load(this, filePath, failQuietly);
-
-        /// <inheritdoc />
-        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false) =>
-            ConfigurationHelper.Save(this, filePath, failQuietly);
-
-        [NotNull]
-        public static ClientConfiguration LoadAndSave([CanBeNull] string filePath = null) =>
-            ConfigurationHelper.LoadSafely(Instance, filePath);
-
     }
+
 }

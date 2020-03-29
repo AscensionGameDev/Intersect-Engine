@@ -2,11 +2,16 @@
 
 namespace Intersect.Client.Framework.GenericClasses
 {
+
     public struct FloatRect
     {
+
         private float mX;
+
         private float mY;
+
         private float mWidth;
+
         private float mHeight;
 
         public float X
@@ -56,32 +61,29 @@ namespace Intersect.Client.Framework.GenericClasses
             // MS.NET returns a non-empty rectangle if the two rectangles
             // touch each other
             if (!a.IntersectsWithInclusive(b))
+            {
                 return Empty;
+            }
 
             return FloatRect.FromLtrb(
-                Math.Max(a.Left, b.Left),
-                Math.Max(a.Top, b.Top),
-                Math.Min(a.Right, b.Right),
-                Math.Min(a.Bottom, b.Bottom));
+                Math.Max(a.Left, b.Left), Math.Max(a.Top, b.Top), Math.Min(a.Right, b.Right),
+                Math.Min(a.Bottom, b.Bottom)
+            );
         }
 
-        public static FloatRect FromLtrb(float left, float top,
-            float right, float bottom)
+        public static FloatRect FromLtrb(float left, float top, float right, float bottom)
         {
-            return new FloatRect(left, top, right - left,
-                bottom - top);
+            return new FloatRect(left, top, right - left, bottom - top);
         }
 
         public bool IntersectsWith(FloatRect rect)
         {
-            return !((Left >= rect.Right) || (Right <= rect.Left) ||
-                     (Top >= rect.Bottom) || (Bottom <= rect.Top));
+            return !(Left >= rect.Right || Right <= rect.Left || Top >= rect.Bottom || Bottom <= rect.Top);
         }
 
         private bool IntersectsWithInclusive(FloatRect r)
         {
-            return !((Left > r.Right) || (Right < r.Left) ||
-                     (Top > r.Bottom) || (Bottom < r.Top));
+            return !(Left > r.Right || Right < r.Left || Top > r.Bottom || Bottom < r.Top);
         }
 
         public void Reset()
@@ -100,8 +102,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// </remarks>
         public bool Contains(float x, float y)
         {
-            return ((x >= Left) && (x < Right) &&
-                    (y >= Top) && (y < Bottom));
+            return x >= Left && x < Right && y >= Top && y < Bottom;
         }
 
         /// <summary>
@@ -114,5 +115,7 @@ namespace Intersect.Client.Framework.GenericClasses
         {
             return Contains(pt.X, pt.Y);
         }
+
     }
+
 }

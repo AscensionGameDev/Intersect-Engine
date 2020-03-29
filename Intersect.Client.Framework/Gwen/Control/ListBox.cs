@@ -7,37 +7,46 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     ListBox control.
     /// </summary>
     public class ListBox : ScrollControl
     {
-        private readonly List<ListBoxRow> mSelectedRows;
-        private readonly Table mTable;
-        private bool mIsToggle;
 
-        private bool mMultiSelect;
-        private Pos mOldDock; // used while autosizing
-        private bool mSizeToContents;
+        private readonly List<ListBoxRow> mSelectedRows;
+
+        private readonly Table mTable;
 
         private GameFont mFont;
+
         private string mFontInfo;
+
+        private bool mIsToggle;
+
+        protected string mItemClickSound;
 
         //Sound Effects
         protected string mItemHoverSound;
-        protected string mItemClickSound;
+
         protected string mItemRightClickSound;
+
+        private bool mMultiSelect;
+
+        private Pos mOldDock; // used while autosizing
+
+        private bool mSizeToContents;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ListBox" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ListBox(Base parent, string name = "")
-            : base(parent, name)
+        public ListBox(Base parent, string name = "") : base(parent, name)
         {
             mSelectedRows = new List<ListBoxRow>();
 
@@ -65,7 +74,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mMultiSelect = value;
                 if (value)
+                {
                     IsToggle = true;
+                }
             }
         }
 
@@ -97,11 +108,12 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                List<TableRow> tmp = new List<TableRow>();
-                foreach (ListBoxRow row in mSelectedRows)
+                var tmp = new List<TableRow>();
+                foreach (var row in mSelectedRows)
                 {
                     tmp.Add((TableRow) row);
                 }
+
                 return tmp;
             }
         }
@@ -114,7 +126,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             get
             {
                 if (mSelectedRows.Count == 0)
+                {
                     return null;
+                }
+
                 return mSelectedRows[0];
             }
             set
@@ -142,7 +157,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var selected = SelectedRow;
                 if (selected == null)
+                {
                     return -1;
+                }
+
                 return mTable.GetRowIndex(selected);
             }
             set => SelectRow(value);
@@ -170,7 +188,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Invoked whan a row has beed unselected.
         /// </summary>
         public event GwenEventHandler<ItemSelectedEventArgs> RowUnselected;
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -181,23 +199,47 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("ItemHoverSound", mItemHoverSound);
             obj.Add("ItemClickSound", mItemClickSound);
             obj.Add("ItemRightClickSound", mItemRightClickSound);
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["SizeToContents"] != null) mSizeToContents = (bool)obj["SizeToContents"];
-            if (obj["MultiSelect"] != null) AllowMultiSelect = (bool)obj["MultiSelect"];
-            if (obj["IsToggle"] != null) IsToggle = (bool)obj["IsToggle"];
-            if (obj["ItemHoverSound"] != null) mItemHoverSound = (string)obj["ItemHoverSound"];
-            if (obj["ItemClickSound"] != null) mItemClickSound = (string)obj["ItemClickSound"];
-            if (obj["ItemRightClickSound"] != null) mItemRightClickSound = (string)obj["ItemRightClickSound"];
+            if (obj["SizeToContents"] != null)
+            {
+                mSizeToContents = (bool) obj["SizeToContents"];
+            }
+
+            if (obj["MultiSelect"] != null)
+            {
+                AllowMultiSelect = (bool) obj["MultiSelect"];
+            }
+
+            if (obj["IsToggle"] != null)
+            {
+                IsToggle = (bool) obj["IsToggle"];
+            }
+
+            if (obj["ItemHoverSound"] != null)
+            {
+                mItemHoverSound = (string) obj["ItemHoverSound"];
+            }
+
+            if (obj["ItemClickSound"] != null)
+            {
+                mItemClickSound = (string) obj["ItemClickSound"];
+            }
+
+            if (obj["ItemRightClickSound"] != null)
+            {
+                mItemRightClickSound = (string) obj["ItemRightClickSound"];
+            }
 
             if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
             {
-                var fontArr = ((string)obj["Font"]).Split(',');
-                mFontInfo = (string)obj["Font"];
+                var fontArr = ((string) obj["Font"]).Split(',');
+                mFontInfo = (string) obj["Font"];
                 mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
@@ -222,7 +264,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SelectRow(int index, bool clearOthers = false)
         {
             if (index < 0 || index >= mTable.RowCount)
+            {
                 return;
+            }
 
             SelectRow(mTable.Children[index], clearOthers);
         }
@@ -235,7 +279,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SelectRows(string rowText, bool clearOthers = false)
         {
             var rows = mTable.Children.OfType<ListBoxRow>().Where(x => x.Text == rowText);
-            foreach (ListBoxRow row in rows)
+            foreach (var row in rows)
             {
                 SelectRow(row, clearOthers);
             }
@@ -247,11 +291,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="pattern">Regex pattern to search for.</param>
         /// <param name="regexOptions">Regex options.</param>
         /// <param name="clearOthers">Determines whether to deselect previously selected rows.</param>
-        public void SelectRowsByRegex(string pattern, RegexOptions regexOptions = RegexOptions.None,
-            bool clearOthers = false)
+        public void SelectRowsByRegex(
+            string pattern,
+            RegexOptions regexOptions = RegexOptions.None,
+            bool clearOthers = false
+        )
         {
             var rows = mTable.Children.OfType<ListBoxRow>().Where(x => Regex.IsMatch(x.Text, pattern));
-            foreach (ListBoxRow row in rows)
+            foreach (var row in rows)
             {
                 SelectRow(row, clearOthers);
             }
@@ -265,17 +312,23 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SelectRow(Base control, bool clearOthers = false)
         {
             if (!AllowMultiSelect || clearOthers)
+            {
                 UnselectAll();
+            }
 
-            ListBoxRow row = control as ListBoxRow;
+            var row = control as ListBoxRow;
             if (row == null)
+            {
                 return;
+            }
 
             // TODO: make sure this is one of our rows!
             row.IsSelected = true;
             mSelectedRows.Add(row);
             if (RowSelected != null)
+            {
                 RowSelected.Invoke(this, new ItemSelectedEventArgs(row));
+            }
         }
 
         /// <summary>
@@ -326,7 +379,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public ListBoxRow AddRow(string label, string name, Object userData)
         {
-            ListBoxRow row = new ListBoxRow(this);
+            var row = new ListBoxRow(this);
             mTable.AddRow(row);
 
             row.SetCellText(0, label);
@@ -340,7 +393,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             row.RightClickSound = mItemRightClickSound;
 
             if (mFont != null)
+            {
                 row.SetTextFont(mFont);
+            }
 
             mTable.SizeToContents(Width);
 
@@ -372,12 +427,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void UnselectAll()
         {
-            foreach (ListBoxRow row in mSelectedRows)
+            foreach (var row in mSelectedRows)
             {
                 row.IsSelected = false;
                 if (RowUnselected != null)
+                {
                     RowUnselected.Invoke(this, new ItemSelectedEventArgs(row));
+                }
             }
+
             mSelectedRows.Clear();
         }
 
@@ -391,7 +449,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             mSelectedRows.Remove(row);
 
             if (RowUnselected != null)
+            {
                 RowUnselected.Invoke(this, new ItemSelectedEventArgs(row));
+            }
         }
 
         /// <summary>
@@ -401,15 +461,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnRowSelected(Base control, ItemSelectedEventArgs args)
         {
             // [omeg] changed default behavior
-            bool clear = false; // !InputHandler.InputHandler.IsShiftDown;
-            ListBoxRow row = args.SelectedItem as ListBoxRow;
+            var clear = false; // !InputHandler.InputHandler.IsShiftDown;
+            var row = args.SelectedItem as ListBoxRow;
             if (row == null)
+            {
                 return;
+            }
 
             if (row.IsSelected)
             {
                 if (IsToggle)
+                {
                     UnselectRow(row);
+                }
             }
             else
             {
@@ -429,6 +493,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SizeToContents()
         {
             mSizeToContents = true;
+
             // docking interferes with autosizing so we disable it until sizing is done
             mOldDock = mTable.Dock;
             mTable.Dock = Pos.None;
@@ -458,6 +523,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (item.Text == text)
                 {
                     SelectedRow = item;
+
                     return;
                 }
             }
@@ -475,6 +541,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (item.Name == name)
                 {
                     SelectedRow = item;
+
                     return;
                 }
             }
@@ -497,12 +564,14 @@ namespace Intersect.Client.Framework.Gwen.Control
                     if (item.UserData == null)
                     {
                         SelectedRow = item;
+
                         return;
                     }
                 }
                 else if (userdata.Equals(item.UserData))
                 {
                     SelectedRow = item;
+
                     return;
                 }
             }
@@ -512,5 +581,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             return base.mVerticalScrollBar;
         }
+
     }
+
 }

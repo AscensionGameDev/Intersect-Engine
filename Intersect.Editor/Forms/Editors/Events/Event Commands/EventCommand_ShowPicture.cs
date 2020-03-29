@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommand_ShowPicture : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private ShowPictureCommand mMyCommand;
 
         public EventCommand_ShowPicture(ShowPictureCommand refCommand, FrmEvent editor)
@@ -17,14 +21,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             cmbPicture.Items.Clear();
-            cmbPicture.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+            cmbPicture.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image)
+            );
+
             if (cmbPicture.Items.IndexOf(mMyCommand.File) > -1)
             {
                 cmbPicture.SelectedIndex = cmbPicture.Items.IndexOf(mMyCommand.File);
             }
             else
             {
-                if (cmbPicture.Items.Count > 0) cmbPicture.SelectedIndex = 0;
+                if (cmbPicture.Items.Count > 0)
+                {
+                    cmbPicture.SelectedIndex = 0;
+                }
             }
 
             cmbSize.Items.Clear();
@@ -68,5 +78,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

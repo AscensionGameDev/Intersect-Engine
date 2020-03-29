@@ -1,15 +1,16 @@
 ﻿using System.Linq;
+
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class OnlineListCommand : ServerCommand
     {
-        public OnlineListCommand() : base(
-            Strings.Commands.OnlineList
-        )
+
+        public OnlineListCommand() : base(Strings.Commands.OnlineList)
         {
         }
 
@@ -23,10 +24,10 @@ namespace Intersect.Server.Core.Commands
             columnWidths[2] -= 2;
             var formatLine = string.Join("| ", columnWidths.Select((width, column) => $"{{{column},{-width}}}"));
 
-            Console.WriteLine(formatLine,
-                Strings.Commandoutput.listid,
-                Strings.Commandoutput.listaccount,
-                Strings.Commandoutput.listcharacter);
+            Console.WriteLine(
+                formatLine, Strings.Commandoutput.listid, Strings.Commandoutput.listaccount,
+                Strings.Commandoutput.listcharacter
+            );
 
             Console.WriteLine(new string('-', bufferWidth));
 
@@ -41,5 +42,7 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine(formatLine, "#" + i, Globals.Clients[i].Name, name);
             }
         }
+
     }
+
 }

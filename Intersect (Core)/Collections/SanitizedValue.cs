@@ -1,7 +1,9 @@
 ﻿namespace Intersect.Collections
 {
+
     public struct SanitizedValue<T>
     {
+
         public T Before { get; }
 
         public T After { get; }
@@ -11,5 +13,7 @@
             Before = before;
             After = after;
         }
+
     }
+
 }

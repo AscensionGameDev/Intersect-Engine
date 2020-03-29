@@ -7,15 +7,16 @@ namespace Intersect.Network.Packets
 
     public class SlotQuantityPacket : CerasPacket
     {
-        public int Slot { get; set; }
-
-        public int Quantity { get; set; }
 
         public SlotQuantityPacket(int slot, int quantity)
         {
             Slot = slot;
             Quantity = quantity;
         }
+
+        public int Slot { get; set; }
+
+        public int Quantity { get; set; }
 
         public override bool IsValid => Slot >= 0 && Quantity >= 0;
 
@@ -28,6 +29,7 @@ namespace Intersect.Network.Packets
 
             return sanitizer.Sanitized;
         }
+
     }
 
 }

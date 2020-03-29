@@ -2,11 +2,11 @@
 
 namespace Intersect.Extensions
 {
+
     public static class LogLevelExtensions
     {
-        public static Logging.LogLevel AsIntersectLogLevel(
-            this Microsoft.Extensions.Logging.LogLevel logLevel
-        )
+
+        public static Logging.LogLevel AsIntersectLogLevel(this Microsoft.Extensions.Logging.LogLevel logLevel)
         {
             switch (logLevel)
             {
@@ -34,5 +34,7 @@ namespace Intersect.Extensions
                     throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null);
             }
         }
+
     }
+
 }

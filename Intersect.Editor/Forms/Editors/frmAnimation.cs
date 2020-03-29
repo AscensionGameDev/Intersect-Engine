@@ -2,40 +2,52 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
+
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmAnimation : EditorForm
     {
+
         private List<AnimationBase> mChanged = new List<AnimationBase>();
+
         private string mCopiedItem;
+
         private AnimationBase mEditorItem;
 
-        private int mLowerFrame;
+        private List<string> mExpandedFolders = new List<string>();
 
-        private bool mPlayLower;
-        private bool mPlayUpper;
-        private int mUpperFrame;
+        private List<string> mKnownFolders = new List<string>();
+
         private RenderTarget2D mLowerDarkness;
+
+        private int mLowerFrame;
 
         //Mono Rendering Variables
         private SwapChainRenderTarget mLowerWindow;
 
-        private RenderTarget2D mUpperDarkness;
-        private SwapChainRenderTarget mUpperWindow;
+        private bool mPlayLower;
 
-        private List<string> mKnownFolders = new List<string>();
-        private List<string> mExpandedFolders = new List<string>();
+        private bool mPlayUpper;
+
+        private RenderTarget2D mUpperDarkness;
+
+        private int mUpperFrame;
+
+        private SwapChainRenderTarget mUpperWindow;
 
         public FrmAnimation()
         {
@@ -47,9 +59,17 @@ namespace Intersect.Editor.Forms.Editors
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type != GameObjectType.Animation) return;
+            if (type != GameObjectType.Animation)
+            {
+                return;
+            }
+
             InitEditor();
-            if (mEditorItem == null || AnimationBase.Lookup.Values.Contains(mEditorItem)) return;
+            if (mEditorItem == null || AnimationBase.Lookup.Values.Contains(mEditorItem))
+            {
+                return;
+            }
+
             mEditorItem = null;
             UpdateEditor();
         }
@@ -92,20 +112,28 @@ namespace Intersect.Editor.Forms.Editors
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add(Strings.General.none);
             cmbLowerGraphic.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation));
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
+            );
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add(Strings.General.none);
             cmbUpperGraphic.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation));
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
+            );
 
-            mLowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picLowerAnimation.Handle,
-                picLowerAnimation.Width, picLowerAnimation.Height);
-            mUpperWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picUpperAnimation.Handle,
-                picUpperAnimation.Width, picUpperAnimation.Height);
-            mLowerDarkness = EditorGraphics.CreateRenderTexture(picLowerAnimation.Width, picLowerAnimation.Height);
-            mUpperDarkness = EditorGraphics.CreateRenderTexture(picUpperAnimation.Width, picUpperAnimation.Height);
+            mLowerWindow = new SwapChainRenderTarget(
+                Core.Graphics.GetGraphicsDevice(), picLowerAnimation.Handle, picLowerAnimation.Width,
+                picLowerAnimation.Height
+            );
+
+            mUpperWindow = new SwapChainRenderTarget(
+                Core.Graphics.GetGraphicsDevice(), picUpperAnimation.Handle, picUpperAnimation.Width,
+                picUpperAnimation.Height
+            );
+
+            mLowerDarkness = Core.Graphics.CreateRenderTexture(picLowerAnimation.Width, picLowerAnimation.Height);
+            mUpperDarkness = Core.Graphics.CreateRenderTexture(picUpperAnimation.Width, picUpperAnimation.Height);
 
             InitLocalization();
             UpdateEditor();
@@ -126,7 +154,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.AnimationEditor.name;
             lblSound.Text = Strings.AnimationEditor.sound;
             chkCompleteSoundPlayback.Text = Strings.AnimationEditor.soundcomplete;
-            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString( scrlDarkness.Value);
+            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString(scrlDarkness.Value);
             btnSwap.Text = Strings.AnimationEditor.swap;
 
             grpLower.Text = Strings.AnimationEditor.lowergroup;
@@ -137,7 +165,7 @@ namespace Intersect.Editor.Forms.Editors
             lblLowerFrameDuration.Text = Strings.AnimationEditor.lowerframeduration;
             lblLowerLoopCount.Text = Strings.AnimationEditor.lowerloopcount;
             grpLowerPlayback.Text = Strings.AnimationEditor.lowerplayback;
-            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString( scrlLowerFrame.Value);
+            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString(scrlLowerFrame.Value);
             btnPlayLower.Text = Strings.AnimationEditor.lowerplay;
             grpLowerFrameOpts.Text = Strings.AnimationEditor.lowerframeoptions;
             btnLowerClone.Text = Strings.AnimationEditor.lowerclone;
@@ -152,7 +180,7 @@ namespace Intersect.Editor.Forms.Editors
             lblUpperFrameDuration.Text = Strings.AnimationEditor.upperframeduration;
             lblUpperLoopCount.Text = Strings.AnimationEditor.upperloopcount;
             grpUpperPlayback.Text = Strings.AnimationEditor.upperplayback;
-            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString( scrlUpperFrame.Value);
+            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString(scrlUpperFrame.Value);
             btnPlayUpper.Text = Strings.AnimationEditor.upperplay;
             grpUpperFrameOpts.Text = Strings.AnimationEditor.upperframeoptions;
             btnUpperClone.Text = Strings.AnimationEditor.upperclone;
@@ -180,7 +208,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(mEditorItem.Sound));
                 chkCompleteSoundPlayback.Checked = mEditorItem.CompleteSound;
 
-                cmbLowerGraphic.SelectedIndex = cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
+                cmbLowerGraphic.SelectedIndex =
+                    cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
 
                 nudLowerHorizontalFrames.Value = mEditorItem.Lower.XFrames;
                 nudLowerVerticalFrames.Value = mEditorItem.Lower.YFrames;
@@ -191,7 +220,8 @@ namespace Intersect.Editor.Forms.Editors
                 tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
                 nudLowerLoopCount.Value = mEditorItem.Lower.LoopCount;
 
-                cmbUpperGraphic.SelectedIndex = cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.Upper.Sprite));
+                cmbUpperGraphic.SelectedIndex =
+                    cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.Upper.Sprite));
 
                 nudUpperHorizontalFrames.Value = mEditorItem.Upper.XFrames;
                 nudUpperVerticalFrames.Value = mEditorItem.Upper.YFrames;
@@ -223,6 +253,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -230,7 +261,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstAnimations.SelectedNode != null && lstAnimations.SelectedNode.Tag != null) lstAnimations.SelectedNode.Text = txtName.Text;
+            if (lstAnimations.SelectedNode != null && lstAnimations.SelectedNode.Tag != null)
+            {
+                lstAnimations.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
@@ -273,7 +308,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem.Lower.Lights == null || mEditorItem.Lower.FrameCount != mEditorItem.Lower.Lights.Length)
             {
                 newArray = new LightBase[mEditorItem.Lower.FrameCount];
-                for (int i = 0; i < newArray.Length; i++)
+                for (var i = 0; i < newArray.Length; i++)
                 {
                     if (mEditorItem.Lower.Lights != null && i < mEditorItem.Lower.Lights.Length)
                     {
@@ -284,6 +319,7 @@ namespace Intersect.Editor.Forms.Editors
                         newArray[i] = new LightBase(-1, -1);
                     }
                 }
+
                 mEditorItem.Lower.Lights = newArray;
             }
         }
@@ -295,7 +331,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem.Upper.Lights == null || mEditorItem.Upper.FrameCount != mEditorItem.Upper.Lights.Length)
             {
                 newArray = new LightBase[mEditorItem.Upper.FrameCount];
-                for (int i = 0; i < newArray.Length; i++)
+                for (var i = 0; i < newArray.Length; i++)
                 {
                     if (mEditorItem.Upper.Lights != null && i < mEditorItem.Upper.Lights.Length)
                     {
@@ -306,37 +342,50 @@ namespace Intersect.Editor.Forms.Editors
                         newArray[i] = new LightBase(-1, -1);
                     }
                 }
+
                 mEditorItem.Upper.Lights = newArray;
             }
         }
 
         void DrawLowerFrame()
         {
-            if (mLowerWindow == null || mEditorItem == null) return;
-            if (!mPlayLower) mLowerFrame = scrlLowerFrame.Value - 1;
-            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-            EditorGraphics.EndSpriteBatch();
+            if (mLowerWindow == null || mEditorItem == null)
+            {
+                return;
+            }
+
+            if (!mPlayLower)
+            {
+                mLowerFrame = scrlLowerFrame.Value - 1;
+            }
+
+            var graphicsDevice = Core.Graphics.GetGraphicsDevice();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mLowerDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (mLowerFrame < mEditorItem.Lower.Lights.Length)
             {
-                EditorGraphics.DrawLight(
-                    picLowerAnimation.Width / 2 +
-                    mEditorItem.Lower.Lights[mLowerFrame].OffsetX,
-                    picLowerAnimation.Height / 2 +
-                    mEditorItem.Lower.Lights[mLowerFrame].OffsetY,
-                    mEditorItem.Lower.Lights[mLowerFrame], mLowerDarkness);
+                Core.Graphics.DrawLight(
+                    picLowerAnimation.Width / 2 + mEditorItem.Lower.Lights[mLowerFrame].OffsetX,
+                    picLowerAnimation.Height / 2 + mEditorItem.Lower.Lights[mLowerFrame].OffsetY,
+                    mEditorItem.Lower.Lights[mLowerFrame], mLowerDarkness
+                );
             }
-            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+
+            Core.Graphics.DrawTexture(
+                Core.Graphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mLowerDarkness.Width, mLowerDarkness.Height),
-                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
-                    255), mLowerDarkness,
-                BlendState.Additive);
-            EditorGraphics.EndSpriteBatch();
+                System.Drawing.Color.FromArgb((byte) ((float) (100 - scrlDarkness.Value) / 100f * 255), 255, 255, 255),
+                mLowerDarkness, BlendState.Additive
+            );
+
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mLowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-            Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                cmbLowerGraphic.Text);
+            var animTexture = GameContentManager.GetTexture(
+                GameContentManager.TextureType.Animation, cmbLowerGraphic.Text
+            );
+
             if (animTexture != null)
             {
                 long w = animTexture.Width / (int) nudLowerHorizontalFrames.Value;
@@ -344,45 +393,63 @@ namespace Intersect.Editor.Forms.Editors
                 long x = 0;
                 if (mLowerFrame > 0)
                 {
-                    x = (mLowerFrame % (int) nudLowerHorizontalFrames.Value) * w;
+                    x = mLowerFrame % (int) nudLowerHorizontalFrames.Value * w;
                 }
-                long y = (int) Math.Floor(mLowerFrame / nudLowerHorizontalFrames.Value) * h;
-                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
-                    new RectangleF(picLowerAnimation.Width / 2 - (int) w / 2,
-                        (int) picLowerAnimation.Height / 2 - (int) h / 2, w, h), mLowerWindow);
+
+                var y = (int) Math.Floor(mLowerFrame / nudLowerHorizontalFrames.Value) * h;
+                Core.Graphics.DrawTexture(
+                    animTexture, new RectangleF(x, y, w, h),
+                    new RectangleF(
+                        picLowerAnimation.Width / 2 - (int) w / 2, (int) picLowerAnimation.Height / 2 - (int) h / 2, w,
+                        h
+                    ), mLowerWindow
+                );
             }
-            EditorGraphics.DrawTexture(mLowerDarkness, 0, 0, mLowerWindow, EditorGraphics.MultiplyState);
-            EditorGraphics.EndSpriteBatch();
+
+            Core.Graphics.DrawTexture(mLowerDarkness, 0, 0, mLowerWindow, Core.Graphics.MultiplyState);
+            Core.Graphics.EndSpriteBatch();
             mLowerWindow.Present();
         }
 
         void DrawUpperFrame()
         {
-            if (mUpperWindow == null || mEditorItem == null) return;
-            if (!mPlayUpper) mUpperFrame = scrlUpperFrame.Value - 1;
-            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-            EditorGraphics.EndSpriteBatch();
+            if (mUpperWindow == null || mEditorItem == null)
+            {
+                return;
+            }
+
+            if (!mPlayUpper)
+            {
+                mUpperFrame = scrlUpperFrame.Value - 1;
+            }
+
+            var graphicsDevice = Core.Graphics.GetGraphicsDevice();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mUpperDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (mUpperFrame < mEditorItem.Upper.Lights.Length)
             {
-                EditorGraphics.DrawLight(
-                    picUpperAnimation.Width / 2 +
-                    mEditorItem.Upper.Lights[mUpperFrame].OffsetX,
-                    picUpperAnimation.Height / 2 +
-                    mEditorItem.Upper.Lights[mUpperFrame].OffsetY,
-                    mEditorItem.Upper.Lights[mUpperFrame], mUpperDarkness);
+                Core.Graphics.DrawLight(
+                    picUpperAnimation.Width / 2 + mEditorItem.Upper.Lights[mUpperFrame].OffsetX,
+                    picUpperAnimation.Height / 2 + mEditorItem.Upper.Lights[mUpperFrame].OffsetY,
+                    mEditorItem.Upper.Lights[mUpperFrame], mUpperDarkness
+                );
             }
-            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+
+            Core.Graphics.DrawTexture(
+                Core.Graphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mUpperDarkness.Width, mUpperDarkness.Height),
-                System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
-                    255), mUpperDarkness,
-                BlendState.Additive);
-            EditorGraphics.EndSpriteBatch();
+                System.Drawing.Color.FromArgb((byte) ((float) (100 - scrlDarkness.Value) / 100f * 255), 255, 255, 255),
+                mUpperDarkness, BlendState.Additive
+            );
+
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mUpperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-            Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                cmbUpperGraphic.Text);
+            var animTexture = GameContentManager.GetTexture(
+                GameContentManager.TextureType.Animation, cmbUpperGraphic.Text
+            );
+
             if (animTexture != null)
             {
                 long w = animTexture.Width / (int) nudUpperHorizontalFrames.Value;
@@ -390,15 +457,21 @@ namespace Intersect.Editor.Forms.Editors
                 long x = 0;
                 if (mUpperFrame > 0)
                 {
-                    x = (mUpperFrame % (int) nudUpperHorizontalFrames.Value) * w;
+                    x = mUpperFrame % (int) nudUpperHorizontalFrames.Value * w;
                 }
-                long y = (int) Math.Floor(mUpperFrame / nudUpperHorizontalFrames.Value) * h;
-                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
-                    new RectangleF(picUpperAnimation.Width / 2 - (int) w / 2,
-                        (int) picUpperAnimation.Height / 2 - (int) h / 2, w, h), mUpperWindow);
+
+                var y = (int) Math.Floor(mUpperFrame / nudUpperHorizontalFrames.Value) * h;
+                Core.Graphics.DrawTexture(
+                    animTexture, new RectangleF(x, y, w, h),
+                    new RectangleF(
+                        picUpperAnimation.Width / 2 - (int) w / 2, (int) picUpperAnimation.Height / 2 - (int) h / 2, w,
+                        h
+                    ), mUpperWindow
+                );
             }
-            EditorGraphics.DrawTexture(mUpperDarkness, 0, 0, mUpperWindow, EditorGraphics.MultiplyState);
-            EditorGraphics.EndSpriteBatch();
+
+            Core.Graphics.DrawTexture(mUpperDarkness, 0, 0, mUpperWindow, Core.Graphics.MultiplyState);
+            Core.Graphics.EndSpriteBatch();
             mUpperWindow.Present();
         }
 
@@ -421,7 +494,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlLowerFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString( scrlLowerFrame.Value);
+            lblLowerFrame.Text = Strings.AnimationEditor.lowerframe.ToString(scrlLowerFrame.Value);
             LoadLowerLight();
             DrawLowerFrame();
         }
@@ -440,7 +513,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlUpperFrame_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString( scrlUpperFrame.Value);
+            lblUpperFrame.Text = Strings.AnimationEditor.upperframe.ToString(scrlUpperFrame.Value);
             LoadUpperLight();
             DrawUpperFrame();
         }
@@ -464,6 +537,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Lower.Lights[scrlLowerFrame.Value - 1] =
                     new LightBase(mEditorItem.Lower.Lights[scrlLowerFrame.Value - 2]);
+
                 LoadLowerLight();
                 DrawLowerFrame();
             }
@@ -488,6 +562,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Upper.Lights[scrlUpperFrame.Value - 1] =
                     new LightBase(mEditorItem.Upper.Lights[scrlUpperFrame.Value - 2]);
+
                 LoadUpperLight();
                 DrawUpperFrame();
             }
@@ -495,19 +570,19 @@ namespace Intersect.Editor.Forms.Editors
 
         private void scrlDarkness_Scroll(object sender, ScrollValueEventArgs e)
         {
-            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString( scrlDarkness.Value);
+            labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString(scrlDarkness.Value);
         }
 
         private void btnSwap_Click(object sender, EventArgs e)
         {
-            string lowerAnimSprite = mEditorItem.Lower.Sprite;
-            int lowerAnimXFrames = mEditorItem.Lower.XFrames;
-            int lowerAnimYFrames = mEditorItem.Lower.YFrames;
-            int lowerAnimFrameCount = mEditorItem.Lower.FrameCount;
-            int lowerAnimFrameSpeed = mEditorItem.Lower.FrameSpeed;
-            int lowerAnimLoopCount = mEditorItem.Lower.LoopCount;
-            bool disableLowerRotations = mEditorItem.Lower.DisableRotations;
-            LightBase[] lowerLights = mEditorItem.Lower.Lights;
+            var lowerAnimSprite = mEditorItem.Lower.Sprite;
+            var lowerAnimXFrames = mEditorItem.Lower.XFrames;
+            var lowerAnimYFrames = mEditorItem.Lower.YFrames;
+            var lowerAnimFrameCount = mEditorItem.Lower.FrameCount;
+            var lowerAnimFrameSpeed = mEditorItem.Lower.FrameSpeed;
+            var lowerAnimLoopCount = mEditorItem.Lower.LoopCount;
+            var disableLowerRotations = mEditorItem.Lower.DisableRotations;
+            var lowerLights = mEditorItem.Lower.Lights;
             mEditorItem.Lower.Sprite = mEditorItem.Upper.Sprite;
             mEditorItem.Lower.XFrames = mEditorItem.Upper.XFrames;
             mEditorItem.Lower.YFrames = mEditorItem.Upper.YFrames;
@@ -516,7 +591,6 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Lower.LoopCount = mEditorItem.Upper.LoopCount;
             mEditorItem.Lower.Lights = mEditorItem.Upper.Lights;
             mEditorItem.Lower.DisableRotations = mEditorItem.Upper.DisableRotations;
-
 
             mEditorItem.Upper.Sprite = lowerAnimSprite;
             mEditorItem.Upper.XFrames = lowerAnimXFrames;
@@ -542,9 +616,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstAnimations.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.AnimationEditor.deleteprompt,
-                        Strings.AnimationEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.AnimationEditor.deleteprompt, Strings.AnimationEditor.deletetitle,
+                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -574,9 +649,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.AnimationEditor.undoprompt,
-                        Strings.AnimationEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.AnimationEditor.undoprompt, Strings.AnimationEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -716,25 +792,30 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstAnimations.SelectedNode != null && lstAnimations.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstAnimations.SelectedNode.Tag;
+                selectedId = (Guid) lstAnimations.SelectedNode.Tag;
             }
+
             lstAnimations.Nodes.Clear();
 
             //Collect folders
             var mFolders = new List<string>();
             foreach (var anim in AnimationBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((AnimationBase)anim.Value).Folder) && !mFolders.Contains(((AnimationBase)anim.Value).Folder))
+                if (!string.IsNullOrEmpty(((AnimationBase) anim.Value).Folder) &&
+                    !mFolders.Contains(((AnimationBase) anim.Value).Folder))
                 {
-                    mFolders.Add(((AnimationBase)anim.Value).Folder);
-                    if (!mKnownFolders.Contains(((AnimationBase)anim.Value).Folder))
-                        mKnownFolders.Add(((AnimationBase)anim.Value).Folder);
+                    mFolders.Add(((AnimationBase) anim.Value).Folder);
+                    if (!mKnownFolders.Contains(((AnimationBase) anim.Value).Folder))
+                    {
+                        mKnownFolders.Add(((AnimationBase) anim.Value).Folder);
+                    }
                 }
             }
 
@@ -770,7 +851,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -786,25 +869,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstAnimations.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstAnimations.SelectedNode;
 
-            if (!btnChronological.Checked) lstAnimations.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstAnimations.Sort();
+            }
 
             lstAnimations.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.AnimationEditor.folderprompt, Strings.AnimationEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.AnimationEditor.folderprompt, Strings.AnimationEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -829,6 +923,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstAnimations.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -847,20 +942,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstAnimations_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstAnimations.SelectedNode == null || lstAnimations.SelectedNode.Tag == null) return;
-            mEditorItem = AnimationBase.Get((Guid)lstAnimations.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstAnimations.SelectedNode == null || lstAnimations.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = AnimationBase.Get((Guid) lstAnimations.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -902,15 +1011,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.AnimationEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.AnimationEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.AnimationEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

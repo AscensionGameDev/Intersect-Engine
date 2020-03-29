@@ -2,18 +2,24 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+
 using Intersect.Logging;
+
 using JetBrains.Annotations;
+
 using Lidgren.Network;
 
 namespace Intersect.Network
 {
+
     public class ClientNetwork : AbstractNetwork, IClient
     {
+
         private readonly LidgrenInterface mLidgrenInterface;
 
-        public ClientNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters)
-            : base(configuration)
+        public ClientNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
+            configuration
+        )
         {
             Guid = Guid.Empty;
 
@@ -29,11 +35,15 @@ namespace Intersect.Network
         }
 
         public HandleConnectionEvent OnConnected { get; set; }
+
         public HandleConnectionEvent OnConnectionApproved { get; set; }
+
         public HandleConnectionEvent OnConnectionDenied { get; set; }
+
         public HandleConnectionEvent OnDisconnected { get; set; }
 
         public bool IsConnected { get; private set; }
+
         public bool IsServerOnline { get; }
 
         public int Ping
@@ -41,28 +51,48 @@ namespace Intersect.Network
             get
             {
                 var connection = FindConnection<LidgrenConnection>(Guid.Empty);
+
                 //Log.Debug($"connection={connection},ping={connection?.NetConnection?.AverageRoundtripTime ?? -1}");
-                if (connection == null) return -1;
+                if (connection == null)
+                {
+                    return -1;
+                }
+
                 return (int) (1000 * connection.NetConnection.AverageRoundtripTime);
             }
         }
 
         public bool Connect()
         {
-            if (IsConnected) Disconnect("client_starting_connection");
-            if (mLidgrenInterface == null) return false;
+            if (IsConnected)
+            {
+                Disconnect("client_starting_connection");
+            }
+
+            if (mLidgrenInterface == null)
+            {
+                return false;
+            }
+
             StartInterfaces();
+
             return true;
         }
 
         public override bool Send(IPacket packet)
-            => mLidgrenInterface?.SendPacket(packet) ?? false;
+        {
+            return mLidgrenInterface?.SendPacket(packet) ?? false;
+        }
 
         public override bool Send(IConnection connection, IPacket packet)
-            => Send(packet);
+        {
+            return Send(packet);
+        }
 
         public override bool Send(ICollection<IConnection> connections, IPacket packet)
-            => Send(packet);
+        {
+            return Send(packet);
+        }
 
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
         {
@@ -95,11 +125,16 @@ namespace Intersect.Network
             StopInterfaces("closing");
         }
 
-        internal void AssignGuid(Guid guid) => Guid = guid;
+        internal void AssignGuid(Guid guid)
+        {
+            Guid = guid;
+        }
 
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {
             return new ConcurrentDictionary<TKey, TValue>();
         }
+
     }
+
 }

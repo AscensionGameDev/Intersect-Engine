@@ -1,15 +1,17 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Localization
 {
+
     public class LocaleDictionary<TKey, TValue> : Localized, IDictionary<TKey, TValue>
-        where TKey : IComparable<TKey>
-        where TValue : Localized
+        where TKey : IComparable<TKey> where TValue : Localized
     {
+
         [NotNull] private readonly IDictionary<TKey, TValue> mDefaults;
 
         [NotNull] private readonly IDictionary<TKey, TValue> mValues;
@@ -36,11 +38,29 @@ namespace Intersect.Localization
                 );
         }
 
+        [NotNull]
+        private ICollection<KeyValuePair<TKey, TValue>> Pairs =>
+            Keys.Select(
+                    key =>
+                    {
+                        if (key == null)
+                        {
+                            throw new ArgumentNullException(nameof(key));
+                        }
+
+                        if (mValues.TryGetValue(key, out var value) || mDefaults.TryGetValue(key, out value))
+                        {
+                            return new KeyValuePair<TKey, TValue>(key, value);
+                        }
+
+                        throw new InvalidOperationException();
+                    }
+                )
+                .ToList();
+
         public TValue this[TKey key]
         {
-            get => mValues.TryGetValue(key, out var backingValue)
-                ? backingValue
-                : mDefaults[key];
+            get => mValues.TryGetValue(key, out var backingValue) ? backingValue : mDefaults[key];
 
             set
             {
@@ -59,35 +79,20 @@ namespace Intersect.Localization
 
         public bool IsReadOnly => true;
 
-        [NotNull]
-        private ICollection<KeyValuePair<TKey, TValue>> Pairs =>
-            Keys.Select(key =>
-            {
-                if (key == null)
-                {
-                    throw new ArgumentNullException(nameof(key));
-                }
-
-                if (mValues.TryGetValue(key, out var value) ||
-                    mDefaults.TryGetValue(key, out value))
-                {
-                    return new KeyValuePair<TKey, TValue>(key, value);
-                }
-
-                throw new InvalidOperationException();
-            }).ToList();
-
         public ICollection<TKey> Keys => mDefaults.Keys;
 
-        public ICollection<TValue> Values => Keys.Select(key =>
-        {
-            if (key == null)
-            {
-                throw new InvalidOperationException();
-            }
+        public ICollection<TValue> Values => Keys.Select(
+                key =>
+                {
+                    if (key == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
 
-            return this[key];
-        }).ToList();
+                    return this[key];
+                }
+            )
+            .ToList();
 
         public bool ContainsKey(TKey key)
         {
@@ -150,5 +155,7 @@ namespace Intersect.Localization
         {
             return mValues.Remove(item);
         }
+
     }
+
 }

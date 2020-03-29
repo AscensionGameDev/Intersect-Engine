@@ -3,17 +3,18 @@ using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Modal control for windows.
     /// </summary>
     public class Modal : Base
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Modal" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Modal(Base parent)
-            : base(parent)
+        public Modal(Base parent) : base(parent)
         {
             KeyboardInputEnabled = true;
             MouseInputEnabled = true;
@@ -39,5 +40,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawModalControl(this);
         }
+
     }
+
 }

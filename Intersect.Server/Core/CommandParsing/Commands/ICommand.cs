@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Immutable;
+
 using Intersect.Core;
 using Intersect.Server.Core.CommandParsing.Arguments;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Commands
 {
+
     public interface ICommand
     {
+
         [NotNull]
         ImmutableList<ICommandArgument> Arguments { get; }
 
@@ -36,7 +40,12 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         void Handle([NotNull] IApplicationContext context, [NotNull] ParserResult result);
 
         [NotNull]
-        string FormatUsage([NotNull] ParserSettings parserSettings, ParserContext parserContext,
-            bool formatPrint = false);
+        string FormatUsage(
+            [NotNull] ParserSettings parserSettings,
+            ParserContext parserContext,
+            bool formatPrint = false
+        );
+
     }
+
 }

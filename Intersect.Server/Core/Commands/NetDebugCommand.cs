@@ -4,11 +4,11 @@ using Intersect.Server.Networking.Helpers;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class NetDebugCommand : ServerCommand
     {
-        public NetDebugCommand() : base(
-            Strings.Commands.NetDebug
-        )
+
+        public NetDebugCommand() : base(Strings.Commands.NetDebug)
         {
         }
 
@@ -16,5 +16,7 @@ namespace Intersect.Server.Core.Commands
         {
             NetDebug.GenerateDebugFile();
         }
+
     }
+
 }

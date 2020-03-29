@@ -2,19 +2,20 @@
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     List box row (selectable).
     /// </summary>
     public class ListBoxRow : TableRow
     {
+
         private bool mSelected;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ListBoxRow" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ListBoxRow(Base parent)
-            : base(parent)
+        public ListBoxRow(Base parent) : base(parent)
         {
             MouseInputEnabled = true;
             IsSelected = false;
@@ -53,5 +54,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 OnRowSelected();
             }
         }
+
     }
+
 }

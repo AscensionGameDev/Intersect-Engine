@@ -2,11 +2,14 @@
 
 namespace Intersect.Client.Framework.GenericClasses
 {
+
     public struct Pointf
     {
+
         private const float TOLERANCE = 0.001f;
 
         public float X { get; set; }
+
         public float Y { get; set; }
 
         public Pointf(float x, float y)
@@ -19,7 +22,7 @@ namespace Intersect.Client.Framework.GenericClasses
         {
             if (obj is Pointf)
             {
-                return ((Pointf) obj) == this;
+                return (Pointf) obj == this;
             }
 
             return false;
@@ -46,5 +49,7 @@ namespace Intersect.Client.Framework.GenericClasses
         {
             return Math.Abs(left.X - right.X) < TOLERANCE && Math.Abs(left.Y - right.Y) < TOLERANCE;
         }
+
     }
+
 }

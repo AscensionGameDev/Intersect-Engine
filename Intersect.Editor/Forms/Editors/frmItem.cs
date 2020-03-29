@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -10,18 +12,22 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Utilities;
-using System.Linq;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmItem : EditorForm
     {
+
         private List<ItemBase> mChanged = new List<ItemBase>();
+
         private string mCopiedItem;
+
         private ItemBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmItem()
         {
@@ -42,7 +48,8 @@ namespace Intersect.Editor.Forms.Editors
                     UpdateEditor();
                 }
             }
-            else if (type == GameObjectType.Class || type == GameObjectType.Projectile ||
+            else if (type == GameObjectType.Class ||
+                     type == GameObjectType.Projectile ||
                      type == GameObjectType.Animation ||
                      type == GameObjectType.Spell)
             {
@@ -89,7 +96,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
-            for (int x = 0; x < Options.MaxStats; x++)
+            for (var x = 0; x < Options.MaxStats; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -110,7 +117,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbMalePaperdoll.Items.Add(Strings.General.none);
             cmbFemalePaperdoll.Items.Clear();
             cmbFemalePaperdoll.Items.Add(Strings.General.none);
-            string[] paperdollnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
+            var paperdollnames =
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
+
             for (var i = 0; i < paperdollnames.Length; i++)
             {
                 cmbMalePaperdoll.Items.Add(paperdollnames[i]);
@@ -147,10 +156,11 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.ItemEditor.name;
             lblType.Text = Strings.ItemEditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.types.Count; i++)
+            for (var i = 0; i < Strings.ItemEditor.types.Count; i++)
             {
                 cmbType.Items.Add(Strings.ItemEditor.types[i]);
             }
+
             lblDesc.Text = Strings.ItemEditor.description;
             lblPic.Text = Strings.ItemEditor.picture;
             lblPrice.Text = Strings.ItemEditor.price;
@@ -160,7 +170,7 @@ namespace Intersect.Editor.Forms.Editors
             btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
             cmbRarity.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.rarity.Count; i++)
+            for (var i = 0; i < Strings.ItemEditor.rarity.Count; i++)
             {
                 cmbRarity.Items.Add(Strings.ItemEditor.rarity[i]);
             }
@@ -178,7 +188,7 @@ namespace Intersect.Editor.Forms.Editors
             lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
             lblEquipmentAnimation.Text = Strings.ItemEditor.equipmentanimation;
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
+            for (var i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
             {
                 cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }
@@ -190,10 +200,11 @@ namespace Intersect.Editor.Forms.Editors
             lblCritMultiplier.Text = Strings.ItemEditor.critmultiplier;
             lblDamageType.Text = Strings.ItemEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
+            for (var i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
+
             lblScalingStat.Text = Strings.ItemEditor.scalingstat;
             lblScalingAmount.Text = Strings.ItemEditor.scalingamount;
             lblAttackAnimation.Text = Strings.ItemEditor.attackanimation;
@@ -219,7 +230,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbAttackSpeedModifier.Items.Add(val.ToString());
             }
-            
+
             lblMalePaperdoll.Text = Strings.ItemEditor.malepaperdoll;
             lblFemalePaperdoll.Text = Strings.ItemEditor.femalepaperdoll;
 
@@ -237,10 +248,11 @@ namespace Intersect.Editor.Forms.Editors
             lblVital.Text = Strings.ItemEditor.vital;
             lblInterval.Text = Strings.ItemEditor.consumeamount;
             cmbConsume.Items.Clear();
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
+
             cmbConsume.Items.Add(Strings.Combat.exp);
 
             //Searching/Sorting
@@ -288,7 +300,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
-                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
+                nudCritMultiplier.Value = (decimal) mEditorItem.CritMultiplier;
                 cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
@@ -296,21 +308,28 @@ namespace Intersect.Editor.Forms.Editors
                 chkBound.Checked = Convert.ToBoolean(mEditorItem.Bound);
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
-                cmbAttackAnimation.SelectedIndex =
-                    AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == ItemTypes.Equipment)
-                    cmbEquipmentBonus.SelectedIndex = (int)mEditorItem.Effect.Type;
+                {
+                    cmbEquipmentBonus.SelectedIndex = (int) mEditorItem.Effect.Type;
+                }
+
                 nudEffectPercent.Value = mEditorItem.Effect.Percentage;
                 chk2Hand.Checked = mEditorItem.TwoHanded;
-                cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
-                cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
+                cmbMalePaperdoll.SelectedIndex =
+                    cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
+
+                cmbFemalePaperdoll.SelectedIndex =
+                    cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
+
                 if (mEditorItem.ItemType == ItemTypes.Consumable)
                 {
                     cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
                     nudInterval.Value = mEditorItem.Consumable.Value;
                     nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 }
+
                 picItem.BackgroundImage?.Dispose();
                 picItem.BackgroundImage = null;
                 if (cmbPic.SelectedIndex > 0)
@@ -322,14 +341,16 @@ namespace Intersect.Editor.Forms.Editors
                 picMalePaperdoll.BackgroundImage = null;
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
-                    picMalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                    picMalePaperdoll.BackgroundImage =
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
                 }
 
                 picFemalePaperdoll.BackgroundImage?.Dispose();
                 picFemalePaperdoll.BackgroundImage = null;
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
-                    picFemalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                    picFemalePaperdoll.BackgroundImage =
+                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
                 }
 
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
@@ -351,6 +372,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -407,6 +429,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     mEditorItem.EquipmentSlot = 0;
                 }
+
                 cmbEquipmentSlot.SelectedIndex = mEditorItem.EquipmentSlot;
                 cmbEquipmentBonus.SelectedIndex = (int) mEditorItem.Effect.Type;
             }
@@ -430,7 +453,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstItems.SelectedNode != null && lstItems.SelectedNode.Tag != null) lstItems.SelectedNode.Text = txtName.Text;
+            if (lstItems.SelectedNode != null && lstItems.SelectedNode.Tag != null)
+            {
+                lstItems.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
@@ -457,7 +484,8 @@ namespace Intersect.Editor.Forms.Editors
             picMalePaperdoll.BackgroundImage = null;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
-                picMalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                picMalePaperdoll.BackgroundImage =
+                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
             }
         }
 
@@ -511,7 +539,8 @@ namespace Intersect.Editor.Forms.Editors
             picFemalePaperdoll.BackgroundImage = null;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
-                picFemalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                picFemalePaperdoll.BackgroundImage =
+                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
             }
         }
 
@@ -524,8 +553,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstItems.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ItemEditor.deleteprompt,
-                        Strings.ItemEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ItemEditor.deleteprompt, Strings.ItemEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -555,8 +586,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ItemEditor.undoprompt,
-                        Strings.ItemEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ItemEditor.undoprompt, Strings.ItemEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -617,7 +650,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            mEditorItem.AttackAnimation =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -713,27 +747,27 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[0] = (int)nudStrPercentage.Value;
+            mEditorItem.PercentageStatsGiven[0] = (int) nudStrPercentage.Value;
         }
 
         private void nudMagPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[1] = (int)nudMagPercentage.Value;
+            mEditorItem.PercentageStatsGiven[1] = (int) nudMagPercentage.Value;
         }
 
         private void nudDefPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[2] = (int)nudDefPercentage.Value;
+            mEditorItem.PercentageStatsGiven[2] = (int) nudDefPercentage.Value;
         }
 
         private void nudMRPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[3] = (int)nudMRPercentage.Value;
+            mEditorItem.PercentageStatsGiven[3] = (int) nudMRPercentage.Value;
         }
 
         private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[4] = (int)nudSpdPercentage.Value;
+            mEditorItem.PercentageStatsGiven[4] = (int) nudSpdPercentage.Value;
         }
 
         private void nudBag_ValueChanged(object sender, EventArgs e)
@@ -748,7 +782,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudIntervalPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Consumable.Percentage = (int)nudIntervalPercentage.Value;
+            mEditorItem.Consumable.Percentage = (int) nudIntervalPercentage.Value;
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)
@@ -763,47 +797,48 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
+            mEditorItem.CritMultiplier = (double) nudCritMultiplier.Value;
         }
 
         private void nudCooldown_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Cooldown = (int)nudCooldown.Value;
+            mEditorItem.Cooldown = (int) nudCooldown.Value;
         }
 
         private void nudHealthBonus_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsGiven[0] = (int)nudHealthBonus.Value;
+            mEditorItem.VitalsGiven[0] = (int) nudHealthBonus.Value;
         }
 
         private void nudManaBonus_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsGiven[1] = (int)nudManaBonus.Value;
+            mEditorItem.VitalsGiven[1] = (int) nudManaBonus.Value;
         }
 
         private void nudHPPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageVitalsGiven[0] = (int)nudHPPercentage.Value;
+            mEditorItem.PercentageVitalsGiven[0] = (int) nudHPPercentage.Value;
         }
 
         private void nudMPPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageVitalsGiven[1] = (int)nudMPPercentage.Value;
+            mEditorItem.PercentageVitalsGiven[1] = (int) nudMPPercentage.Value;
         }
 
         private void nudHPRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsRegen[0] = (int)nudHPRegen.Value;
-    }
+            mEditorItem.VitalsRegen[0] = (int) nudHPRegen.Value;
+        }
 
         private void nudMpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsRegen[1] = (int)nudMpRegen.Value;
+            mEditorItem.VitalsRegen[1] = (int) nudMpRegen.Value;
         }
 
         private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.EquipmentAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
+            mEditorItem.EquipmentAnimation =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
         }
 
         private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -814,7 +849,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+            mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
         }
 
         private void chkQuickCast_CheckedChanged(object sender, EventArgs e)
@@ -833,14 +868,16 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
-        { 
+        {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstItems.SelectedNode != null && lstItems.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstItems.SelectedNode.Tag;
+                selectedId = (Guid) lstItems.SelectedNode.Tag;
             }
+
             lstItems.Nodes.Clear();
 
             cmbEquipmentSlot.Items.Clear();
@@ -849,10 +886,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbToolType.Items.Add(Strings.General.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
+            for (var i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
             {
                 cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }
+
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.Add(Strings.General.none);
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
@@ -861,11 +899,14 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ItemBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ItemBase)itm.Value).Folder) && !mFolders.Contains(((ItemBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ItemBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((ItemBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((ItemBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ItemBase)itm.Value).Folder))
-                        mKnownFolders.Add(((ItemBase)itm.Value).Folder);
+                    mFolders.Add(((ItemBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ItemBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((ItemBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -901,7 +942,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -917,26 +960,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstItems.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstItems.SelectedNode;
 
-            if (!btnChronological.Checked) lstItems.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstItems.Sort();
+            }
 
             lstItems.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.ItemEditor.folderprompt, Strings.ItemEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.ItemEditor.folderprompt, Strings.ItemEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -961,6 +1014,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstItems.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -979,20 +1033,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstItems_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstItems.SelectedNode == null || lstItems.SelectedNode.Tag == null) return;
-            mEditorItem = ItemBase.Get((Guid)lstItems.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstItems.SelectedNode == null || lstItems.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = ItemBase.Get((Guid) lstItems.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -1040,10 +1108,13 @@ namespace Intersect.Editor.Forms.Editors
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.ItemEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
-    #endregion
+        #endregion
 
-  }
+    }
+
 }

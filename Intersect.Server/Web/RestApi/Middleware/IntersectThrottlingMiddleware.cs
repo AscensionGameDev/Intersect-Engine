@@ -15,17 +15,30 @@ namespace Intersect.Server.Web.RestApi.Middleware
     public class IntersectThrottlingMiddleware : ThrottlingMiddleware
     {
 
-        [NotNull] public const string DefaultHeader = "X-Intersect-ApiKey";
+        [NotNull] private const string DefaultAuthorizedFallbackClientKey = "authorized";
 
         [NotNull] public const string DefaultFallbackClientKey = "test";
 
-        [NotNull] private const string DefaultAuthorizedFallbackClientKey = "authorized";
+        [NotNull] public const string DefaultHeader = "X-Intersect-ApiKey";
 
         [NotNull] public static readonly IThrottleRepository DefaultRepository = new MemoryCacheRepository();
 
+        [NotNull] private string mFallbackClientKey;
+
         [NotNull] private string mHeader;
 
-        [NotNull] private string mFallbackClientKey;
+        /// <inheritdoc />
+        public IntersectThrottlingMiddleware(
+            OwinMiddleware next,
+            ThrottlePolicy policy,
+            string header,
+            string fallbackClientKey,
+            IThrottleRepository throttleRepository
+        ) : base(next, policy, null, throttleRepository ?? DefaultRepository, null, null)
+        {
+            mHeader = header ?? DefaultHeader;
+            mFallbackClientKey = fallbackClientKey ?? DefaultFallbackClientKey;
+        }
 
         [NotNull]
         public string Header
@@ -51,19 +64,6 @@ namespace Intersect.Server.Web.RestApi.Middleware
                     mFallbackClientKey = value;
                 }
             }
-        }
-
-        /// <inheritdoc />
-        public IntersectThrottlingMiddleware(
-            OwinMiddleware next,
-            ThrottlePolicy policy,
-            string header,
-            string fallbackClientKey,
-            IThrottleRepository throttleRepository
-        ) : base(next, policy, null, throttleRepository ?? DefaultRepository, null, null)
-        {
-            mHeader = header ?? DefaultHeader;
-            mFallbackClientKey = fallbackClientKey ?? DefaultFallbackClientKey;
         }
 
         protected override RequestIdentity SetIdentity([NotNull] IOwinRequest request)

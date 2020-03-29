@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandEquipItems : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private EquipItemCommand mMyCommand;
 
         public EventCommandEquipItems(EquipItemCommand refCommand, FrmEvent editor)
@@ -16,7 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitializeComponent();
             mMyCommand = refCommand;
             mEventEditor = editor;
- 
+
             InitLocalization();
             cmbItem.Items.Clear();
             cmbItem.Items.AddRange(ItemBase.Names);
@@ -40,5 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

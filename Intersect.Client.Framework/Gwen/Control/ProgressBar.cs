@@ -1,20 +1,23 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Progress bar.
     /// </summary>
     public class ProgressBar : Label
     {
+
         private bool mAutoLabel;
+
         private bool mHorizontal;
+
         private float mProgress;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProgressBar" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ProgressBar(Base parent)
-            : base(parent)
+        public ProgressBar(Base parent) : base(parent)
         {
             AutoSizeToContents = false;
 
@@ -45,14 +48,19 @@
             set
             {
                 if (value < 0)
+                {
                     value = 0;
+                }
+
                 if (value > 1)
+                {
                     value = 1;
+                }
 
                 mProgress = value;
                 if (mAutoLabel)
                 {
-                    int displayVal = (int) (mProgress * 100);
+                    var displayVal = (int) (mProgress * 100);
                     Text = displayVal.ToString() + "%";
                 }
             }
@@ -75,5 +83,7 @@
         {
             skin.DrawProgressBar(this, mHorizontal, mProgress);
         }
+
     }
+
 }

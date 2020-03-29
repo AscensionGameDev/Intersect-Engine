@@ -10,13 +10,14 @@ using WebApiThrottle;
 
 namespace Intersect.Server.Web.RestApi
 {
+
     // TODO: Probably a good idea to remove this since it was replaced with middleware
     public class IntersectThrottlingHandler : ThrottlingHandler
     {
 
-        [NotNull] public const string DefaultFallbackClientKey = "test";
-
         [NotNull] public const string DefaultAuthorizedFallbackClientKey = "authorized";
+
+        [NotNull] public const string DefaultFallbackClientKey = "test";
 
         public string Header { get; set; }
 
@@ -35,7 +36,8 @@ namespace Intersect.Server.Web.RestApi
                 clientKey = clientKeys.FirstOrDefault();
             }
 
-            if (string.IsNullOrWhiteSpace(clientKey) && request.Headers.TryGetValues("Authorization", out var authorizationHeaders))
+            if (string.IsNullOrWhiteSpace(clientKey) &&
+                request.Headers.TryGetValues("Authorization", out var authorizationHeaders))
             {
                 if (authorizationHeaders.Any(HeaderHelper.IsValidAuthorizationBearerHeader))
                 {
@@ -50,5 +52,7 @@ namespace Intersect.Server.Web.RestApi
                 Endpoint = request.RequestUri?.AbsolutePath
             };
         }
+
     }
+
 }

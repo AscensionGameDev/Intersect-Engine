@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
 
 using Intersect.Extensions;
 using Intersect.Logging.Output;
@@ -11,26 +10,39 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Logging.Microsoft.Extensions.Logging
 {
+
     internal sealed class IntersectLogger : global::Microsoft.Extensions.Logging.ILogger
     {
+
+        public IntersectLogger([CanBeNull] string name)
+        {
+            Name = string.IsNullOrWhiteSpace(name) ? "INTERSECT" : name;
+            Logger = new Logger(
+                new LogConfiguration
+                {
+                    Tag = Name,
+                    Outputs = ImmutableList.Create(
+                                  new FileOutput(Intersect.Logging.Log.SuggestFilename(null, null, Name + ".ext"))
+                              ) ??
+                              throw new InvalidOperationException()
+                }
+            );
+        }
+
         [NotNull]
         public Logger Logger { get; }
 
         [NotNull]
         public string Name { get; }
 
-        public IntersectLogger([CanBeNull] string name)
-        {
-            Name = string.IsNullOrWhiteSpace(name) ? "INTERSECT" : name;
-            Logger = new Logger(new LogConfiguration
-            {
-                Tag = Name,
-                Outputs = ImmutableList.Create(new FileOutput(Intersect.Logging.Log.SuggestFilename(null, null, Name + ".ext"))) ?? throw new InvalidOperationException()
-            });
-        }
-
         /// <inheritdoc />
-        public void Log<TState>(global::Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(
+            global::Microsoft.Extensions.Logging.LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception exception,
+            Func<TState, Exception, string> formatter
+        )
         {
             if (!IsEnabled(logLevel))
             {
@@ -47,10 +59,17 @@ namespace Intersect.Logging.Microsoft.Extensions.Logging
         }
 
         /// <inheritdoc />
-        public bool IsEnabled(global::Microsoft.Extensions.Logging.LogLevel logLevel) => logLevel.AsIntersectLogLevel() < Logger.Configuration.LogLevel;
+        public bool IsEnabled(global::Microsoft.Extensions.Logging.LogLevel logLevel)
+        {
+            return logLevel.AsIntersectLogLevel() < Logger.Configuration.LogLevel;
+        }
 
         /// <inheritdoc />
-        public IDisposable BeginScope<TState>(TState state) => new IntersectLogScope();
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return new IntersectLogScope();
+        }
 
     }
+
 }

@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
+
 using Intersect.Memory;
+
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif
 
 namespace Intersect.Network.Packets
 {
+
     public class ApprovalPacket : ConnectionPacket
     {
+
         private const int SIZE_AES_KEY = 32;
+
         private const int SIZE_GUID = 16;
 
         private byte[] mAesKey;
@@ -21,11 +26,11 @@ namespace Intersect.Network.Packets
 
         public ApprovalPacket()
         {
-
         }
 
-        public ApprovalPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] aesKey, Guid guid)
-            : base(rsa, handshakeSecret)
+        public ApprovalPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] aesKey, Guid guid) : base(
+            rsa, handshakeSecret
+        )
         {
             AesKey = aesKey;
             Guid = guid;
@@ -57,5 +62,7 @@ namespace Intersect.Network.Packets
             get => mAesKey;
             set => mAesKey = value;
         }
+
     }
+
 }

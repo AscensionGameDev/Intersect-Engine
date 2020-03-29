@@ -3,11 +3,11 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class MakePrivateCommand : ServerCommand
     {
-        public MakePrivateCommand() : base(
-            Strings.Commands.MakePrivate
-        )
+
+        public MakePrivateCommand() : base(Strings.Commands.MakePrivate)
         {
         }
 
@@ -17,5 +17,7 @@ namespace Intersect.Server.Core.Commands
             Options.AdminOnly = true;
             Options.SaveToDisk();
         }
+
     }
+
 }

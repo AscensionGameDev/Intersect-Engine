@@ -1,29 +1,37 @@
 ﻿using System;
-using System.Linq;
+
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Base class for scrollbars.
     /// </summary>
     public class ScrollBar : Base
     {
+
         protected readonly ScrollBarBar mBar;
+
         protected readonly ScrollBarButton[] mScrollButton;
+
+        private string mBackgroundTemplateFilename;
+
+        private GameTexture mBackgroundTemplateTex;
+
         protected float mContentSize;
 
         protected bool mDepressed;
-        protected float mNudgeAmount;
-        protected float mScrollAmount;
-        protected float mViewableContentSize;
 
-        private GameTexture mBackgroundTemplateTex;
-        private string mBackgroundTemplateFilename;
+        protected float mNudgeAmount;
+
+        protected float mScrollAmount;
+
+        protected float mViewableContentSize;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ScrollBar" /> class.
@@ -75,7 +83,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mContentSize;
             set
             {
-                if (mContentSize != value) Invalidate();
+                if (mContentSize != value)
+                {
+                    Invalidate();
+                }
+
                 mContentSize = value;
             }
         }
@@ -85,7 +97,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mViewableContentSize;
             set
             {
-                if (mViewableContentSize != value) Invalidate();
+                if (mViewableContentSize != value)
+                {
+                    Invalidate();
+                }
+
                 mViewableContentSize = value;
             }
         }
@@ -99,7 +115,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Invoked when the bar is moved.
         /// </summary>
         public event GwenEventHandler<EventArgs> BarMoved;
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -107,16 +123,36 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("UpOrLeftButton", mScrollButton[0].GetJson());
             obj.Add("Bar", mBar.GetJson());
             obj.Add("DownOrRightButton", mScrollButton[1].GetJson());
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["BackgroundTemplate"] != null) SetBackgroundTemplate(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["BackgroundTemplate"]), (string)obj["BackgroundTemplate"]);
-            if (obj["UpOrLeftButton"] != null) mScrollButton[0].LoadJson(obj["UpOrLeftButton"]);
-            if (obj["Bar"] != null) mBar.LoadJson(obj["Bar"]);
-            if (obj["DownOrRightButton"] != null) mScrollButton[1].LoadJson(obj["DownOrRightButton"]);
+            if (obj["BackgroundTemplate"] != null)
+            {
+                SetBackgroundTemplate(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["BackgroundTemplate"]
+                    ), (string) obj["BackgroundTemplate"]
+                );
+            }
+
+            if (obj["UpOrLeftButton"] != null)
+            {
+                mScrollButton[0].LoadJson(obj["UpOrLeftButton"]);
+            }
+
+            if (obj["Bar"] != null)
+            {
+                mBar.LoadJson(obj["Bar"]);
+            }
+
+            if (obj["DownOrRightButton"] != null)
+            {
+                mScrollButton[1].LoadJson(obj["DownOrRightButton"]);
+            }
         }
 
         public GameTexture GetTemplate()
@@ -135,7 +171,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             mBackgroundTemplateTex = texture;
         }
 
-
         /// <summary>
         ///     Sets the scroll amount (0-1).
         /// </summary>
@@ -145,10 +180,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         public virtual bool SetScrollAmount(float value, bool forceUpdate = false)
         {
             if (mScrollAmount == value && !forceUpdate)
+            {
                 return false;
+            }
+
             mScrollAmount = value;
             Invalidate();
             OnBarMoved(this, EventArgs.Empty);
+
             return true;
         }
 
@@ -178,7 +217,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnBarMoved(Base control, EventArgs args)
         {
             if (BarMoved != null)
+            {
                 BarMoved.Invoke(this, EventArgs.Empty);
+            }
         }
 
         protected virtual float CalculateScrolledAmount()
@@ -209,13 +250,14 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         public ScrollBarButton GetScrollBarButton(Pos direction)
         {
-            for (int i = 0; i < mScrollButton.Length; i++)
+            for (var i = 0; i < mScrollButton.Length; i++)
             {
                 if (mScrollButton[i].GetDirection() == direction)
                 {
                     return mScrollButton[i];
                 }
             }
+
             return null;
         }
 
@@ -228,5 +270,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             return mBar.GetImage(state);
         }
+
     }
+
 }

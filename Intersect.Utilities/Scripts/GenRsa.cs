@@ -1,11 +1,14 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
+
 using Intersect.Network.Crypto.Formats;
 
 namespace Intersect.Utilities.Scripts
 {
+
     public class GenRsa : Script
     {
+
         public override Result Run(string[] environmentArgs, string[] commandArgs)
         {
             var bits = 2048;
@@ -70,5 +73,7 @@ namespace Intersect.Utilities.Scripts
 
             return new Result();
         }
+
     }
+
 }

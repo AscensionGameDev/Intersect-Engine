@@ -1,52 +1,71 @@
 ﻿using System;
+
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Button control.
     /// </summary>
     public class Button : Label
     {
+
         public enum ControlState
         {
+
             Normal = 0,
+
             Hovered,
+
             Clicked,
+
             Disabled,
+
         }
 
         private bool mCenterImage;
-        private string mClickedImageFilename;
+
         private GameTexture mClickedImage;
 
+        private string mClickedImageFilename;
+
+        protected string mClickSound;
+
         private bool mDepressed;
+
         private GameTexture mDisabledImage;
-        private GameTexture mHoverImage;
-        private GameTexture mNormalImage;
+
         private string mDisabledImageFilename;
+
+        private GameTexture mHoverImage;
+
         private string mHoverImageFilename;
-        private string mNormalImageFilename;
-        private bool mToggle;
-        private bool mToggleStatus;
 
         //Sound Effects
         protected string mHoverSound;
-        protected string mMouseDownSound;
-        protected string mMouseUpSound;
-        protected string mClickSound;
 
+        protected string mMouseDownSound;
+
+        protected string mMouseUpSound;
+
+        private GameTexture mNormalImage;
+
+        private string mNormalImageFilename;
+
+        private bool mToggle;
+
+        private bool mToggleStatus;
 
         /// <summary>
         ///     Control constructor.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Button(Base parent, string name = "")
-            : base(parent, name)
+        public Button(Base parent, string name = "") : base(parent, name)
         {
             AutoSizeToContents = false;
             SetSize(100, 20);
@@ -65,7 +84,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             set
             {
                 if (mDepressed == value)
+                {
                     return;
+                }
+
                 mDepressed = value;
                 Redraw();
             }
@@ -88,23 +110,36 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mToggleStatus;
             set
             {
-                if (!mToggle) return;
-                if (mToggleStatus == value) return;
+                if (!mToggle)
+                {
+                    return;
+                }
+
+                if (mToggleStatus == value)
+                {
+                    return;
+                }
 
                 mToggleStatus = value;
 
                 if (Toggled != null)
+                {
                     Toggled.Invoke(this, EventArgs.Empty);
+                }
 
                 if (mToggleStatus)
                 {
                     if (ToggledOn != null)
+                    {
                         ToggledOn.Invoke(this, EventArgs.Empty);
+                    }
                 }
                 else
                 {
                     if (ToggledOff != null)
+                    {
                         ToggledOff.Invoke(this, EventArgs.Empty);
+                    }
                 }
 
                 Redraw();
@@ -135,7 +170,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Invoked when the button's toggle state has changed to Off.
         /// </summary>
         public event GwenEventHandler<EventArgs> ToggledOff;
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -146,6 +181,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 obj.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
                 obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
             }
+
             obj.Add("CenterImage", mCenterImage);
             if (this.GetType() != typeof(ComboBox))
             {
@@ -154,24 +190,75 @@ namespace Intersect.Client.Framework.Gwen.Control
                 obj.Add("MouseDownSound", mMouseDownSound);
                 obj.Add("ClickSound", mClickSound);
             }
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["NormalImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["NormalImage"]), (string)obj["NormalImage"], ControlState.Normal);
-            if (obj["HoveredImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["HoveredImage"]), (string)obj["HoveredImage"], ControlState.Hovered);
-            if (obj["ClickedImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["ClickedImage"]), (string)obj["ClickedImage"], ControlState.Clicked);
-            if (obj["DisabledImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["DisabledImage"]), (string)obj["DisabledImage"], ControlState.Disabled);
-            if (obj["CenterImage"] != null) mCenterImage = (bool)obj["CenterImage"];
+            if (obj["NormalImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                    ), (string) obj["NormalImage"], ControlState.Normal
+                );
+            }
+
+            if (obj["HoveredImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["HoveredImage"]
+                    ), (string) obj["HoveredImage"], ControlState.Hovered
+                );
+            }
+
+            if (obj["ClickedImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["ClickedImage"]
+                    ), (string) obj["ClickedImage"], ControlState.Clicked
+                );
+            }
+
+            if (obj["DisabledImage"] != null)
+            {
+                SetImage(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                    ), (string) obj["DisabledImage"], ControlState.Disabled
+                );
+            }
+
+            if (obj["CenterImage"] != null)
+            {
+                mCenterImage = (bool) obj["CenterImage"];
+            }
 
             if (this.GetType() != typeof(ComboBox) && this.GetType() != typeof(CheckBox))
             {
-                if (obj["HoverSound"] != null) mHoverSound = (string) obj["HoverSound"];
-                if (obj["MouseUpSound"] != null) mMouseUpSound = (string) obj["MouseUpSound"];
-                if (obj["MouseDownSound"] != null) mMouseDownSound = (string) obj["MouseDownSound"];
-                if (obj["ClickSound"] != null) mClickSound = (string) obj["ClickSound"];
+                if (obj["HoverSound"] != null)
+                {
+                    mHoverSound = (string) obj["HoverSound"];
+                }
+
+                if (obj["MouseUpSound"] != null)
+                {
+                    mMouseUpSound = (string) obj["MouseUpSound"];
+                }
+
+                if (obj["MouseDownSound"] != null)
+                {
+                    mMouseDownSound = (string) obj["MouseDownSound"];
+                }
+
+                if (obj["ClickSound"] != null)
+                {
+                    mClickSound = (string) obj["ClickSound"];
+                }
             }
         }
 
@@ -214,11 +301,13 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (ShouldDrawBackground)
             {
-                bool drawDepressed = IsDepressed && IsHovered;
+                var drawDepressed = IsDepressed && IsHovered;
                 if (IsToggle)
+                {
                     drawDepressed = drawDepressed || ToggleState;
+                }
 
-                bool bDrawHovered = IsHovered && ShouldDrawHover;
+                var bDrawHovered = IsHovered && ShouldDrawHover;
 
                 skin.DrawButton(this, drawDepressed, bDrawHovered, IsDisabled);
             }
@@ -237,10 +326,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 IsDepressed = true;
                 InputHandler.MouseFocus = this;
+
                 //Play Mouse Down Sound
                 base.PlaySound(mMouseDownSound);
                 if (Pressed != null)
+                {
                     Pressed.Invoke(this, EventArgs.Empty);
+                }
             }
             else
             {
@@ -250,12 +342,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                     base.PlaySound(mClickSound);
                     OnClicked(x, y);
                 }
+
                 //Play Mouse Up Sound
                 base.PlaySound(mMouseUpSound);
                 IsDepressed = false;
                 InputHandler.MouseFocus = null;
                 if (Released != null)
+                {
                     Released.Invoke(this, EventArgs.Empty);
+                }
             }
 
             Redraw();
@@ -267,7 +362,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnClicked(int x, int y)
         {
             if (IsDisabled)
+            {
                 return;
+            }
 
             if (IsToggle)
             {
@@ -287,6 +384,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override bool OnKeySpace(bool down)
         {
             return base.OnKeySpace(down);
+
             //if (down)
             //    OnClicked(0, 0);
             //return true;
@@ -314,7 +412,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public override void UpdateColors()
         {
-            Color textColor = GetTextColor(Label.ControlState.Normal);
+            var textColor = GetTextColor(Label.ControlState.Normal);
             if (IsDisabled && GetTextColor(Label.ControlState.Disabled) != null)
             {
                 textColor = GetTextColor(Label.ControlState.Disabled);
@@ -323,27 +421,32 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 textColor = GetTextColor(Label.ControlState.Hovered);
             }
+
             if (textColor != null)
             {
                 TextColor = textColor;
+
                 return;
             }
 
             if (IsDisabled)
             {
                 TextColor = Skin.Colors.Button.Disabled;
+
                 return;
             }
 
             if (IsDepressed || ToggleState)
             {
                 TextColor = Skin.Colors.Button.Down;
+
                 return;
             }
 
             if (IsHovered)
             {
                 TextColor = Skin.Colors.Button.Hover;
+
                 return;
             }
 
@@ -377,18 +480,22 @@ namespace Intersect.Client.Framework.Gwen.Control
                 case ControlState.Normal:
                     mNormalImageFilename = fileName;
                     mNormalImage = texture;
+
                     break;
                 case ControlState.Hovered:
                     mHoverImageFilename = fileName;
                     mHoverImage = texture;
+
                     break;
                 case ControlState.Clicked:
                     mClickedImageFilename = fileName;
                     mClickedImage = texture;
+
                     break;
                 case ControlState.Disabled:
                     mDisabledImageFilename = fileName;
                     mDisabledImage = texture;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
@@ -432,13 +539,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void OnMouseEntered()
         {
             base.OnMouseEntered();
+
             //Play Mouse Entered Sound
-            if (ShouldDrawHover) base.PlaySound(mHoverSound);
+            if (ShouldDrawHover)
+            {
+                base.PlaySound(mHoverSound);
+            }
         }
 
         public void SetHoverSound(string sound)
         {
             mHoverSound = sound;
         }
+
     }
+
 }

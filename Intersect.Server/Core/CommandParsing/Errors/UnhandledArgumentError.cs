@@ -1,22 +1,12 @@
 ﻿using Intersect.Localization;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
+
     public class UnhandledArgumentError : ParserError
     {
-        [NotNull]
-        public string CommandName { get; }
-
-        [CanBeNull]
-        public string ArgumentName { get; }
-
-        public int Position { get; }
-
-        [CanBeNull]
-        public string Value { get; }
-
-        public bool Positional => string.IsNullOrWhiteSpace(ArgumentName);
 
         protected UnhandledArgumentError(
             [NotNull] string commandName,
@@ -41,6 +31,19 @@ namespace Intersect.Server.Core.CommandParsing.Errors
         }
 
         [NotNull]
+        public string CommandName { get; }
+
+        [CanBeNull]
+        public string ArgumentName { get; }
+
+        public int Position { get; }
+
+        [CanBeNull]
+        public string Value { get; }
+
+        public bool Positional => string.IsNullOrWhiteSpace(ArgumentName);
+
+        [NotNull]
         public static UnhandledArgumentError Create(
             [NotNull] string commandName,
             [NotNull] string argumentName,
@@ -58,7 +61,11 @@ namespace Intersect.Server.Core.CommandParsing.Errors
             [NotNull] LocalizedString message
         )
         {
-            return new UnhandledArgumentError(commandName, position, argumentValue, message.ToString(argumentValue, position, commandName));
+            return new UnhandledArgumentError(
+                commandName, position, argumentValue, message.ToString(argumentValue, position, commandName)
+            );
         }
+
     }
+
 }

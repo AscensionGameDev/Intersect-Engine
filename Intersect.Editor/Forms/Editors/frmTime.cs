@@ -2,7 +2,9 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+
 using DarkUI.Controls;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -10,11 +12,15 @@ using Intersect.GameObjects;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmTime : Form
     {
+
         private TimeBase mBackupTime;
-        private TimeBase mYTime;
+
         private Bitmap mTileBackbuffer;
+
+        private TimeBase mYTime;
 
         public FrmTime()
         {
@@ -29,10 +35,11 @@ namespace Intersect.Editor.Forms.Editors
             grpSettings.Text = Strings.TimeEditor.settings;
             lblIntervals.Text = Strings.TimeEditor.interval;
             cmbIntervals.Items.Clear();
-            for (int i = 0; i < Strings.TimeEditor.intervals.Count; i++)
+            for (var i = 0; i < Strings.TimeEditor.intervals.Count; i++)
             {
                 cmbIntervals.Items.Add(Strings.TimeEditor.intervals[i]);
             }
+
             chkSync.Text = Strings.TimeEditor.sync;
             lblRate.Text = Strings.TimeEditor.rate;
             lblRateSuffix.Text = Strings.TimeEditor.ratesuffix;
@@ -52,9 +59,10 @@ namespace Intersect.Editor.Forms.Editors
 
             mTileBackbuffer = new Bitmap(pnlColor.Width, pnlColor.Height);
             UpdateList(TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex));
-            typeof(Panel).InvokeMember("DoubleBuffered",
-                BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                null, pnlColor, new object[] {true});
+            typeof(Panel).InvokeMember(
+                "DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
+                pnlColor, new object[] {true}
+            );
 
             chkSync.Checked = mYTime.SyncTime;
             txtTimeRate.Text = mYTime.Rate.ToString();
@@ -78,7 +86,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             lstTimes.Items.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
-            for (int i = 0; i < 1440; i += duration)
+            for (var i = 0; i < 1440; i += duration)
             {
                 var addRange = time.ToString("h:mm:ss tt") + " " + Strings.TimeEditor.to + " ";
                 time = time.AddMinutes(duration);
@@ -101,13 +109,15 @@ namespace Intersect.Editor.Forms.Editors
 
         private void pnlColor_Paint(object sender, PaintEventArgs e)
         {
-            var g = Graphics.FromImage(mTileBackbuffer);
+            var g = System.Drawing.Graphics.FromImage(mTileBackbuffer);
             g.Clear(System.Drawing.Color.Transparent);
             g.DrawImage(pnlColor.BackgroundImage, new System.Drawing.Point(0, 0));
-            Brush brush =
-                new SolidBrush(System.Drawing.Color.FromArgb(scrlAlpha.Value, pnlColor.BackColor.R,
-                    pnlColor.BackColor.G,
-                    pnlColor.BackColor.B));
+            Brush brush = new SolidBrush(
+                System.Drawing.Color.FromArgb(
+                    scrlAlpha.Value, pnlColor.BackColor.R, pnlColor.BackColor.G, pnlColor.BackColor.B
+                )
+            );
+
             g.FillRectangle(brush, new Rectangle(0, 0, pnlColor.Width, pnlColor.Height));
             e.Graphics.DrawImage(mTileBackbuffer, new System.Drawing.Point(0, 0));
         }
@@ -115,7 +125,7 @@ namespace Intersect.Editor.Forms.Editors
         private void scrlAlpha_Scroll(object sender, ScrollValueEventArgs e)
         {
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
-            lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness.ToString());
+            lblBrightness.Text = Strings.TimeEditor.brightness.ToString(brightness.ToString());
             mYTime.DaylightHues[lstTimes.SelectedIndex].A = (byte) scrlAlpha.Value;
             pnlColor.Refresh();
         }
@@ -125,15 +135,21 @@ namespace Intersect.Editor.Forms.Editors
             if (lstTimes.SelectedIndex == -1)
             {
                 grpRangeOptions.Hide();
+
                 return;
             }
+
             grpRangeOptions.Show();
-            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, mYTime.DaylightHues[lstTimes.SelectedIndex].R, mYTime.DaylightHues[lstTimes.SelectedIndex].G, mYTime.DaylightHues[lstTimes.SelectedIndex].B);
+            pnlColor.BackColor = System.Drawing.Color.FromArgb(
+                255, mYTime.DaylightHues[lstTimes.SelectedIndex].R, mYTime.DaylightHues[lstTimes.SelectedIndex].G,
+                mYTime.DaylightHues[lstTimes.SelectedIndex].B
+            );
+
             scrlAlpha.Value = mYTime.DaylightHues[lstTimes.SelectedIndex].A;
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
-            lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness);
+            lblBrightness.Text = Strings.TimeEditor.brightness.ToString(brightness);
             pnlColor.Refresh();
-            EditorGraphics.LightColor = mYTime.DaylightHues[lstTimes.SelectedIndex];
+            Core.Graphics.LightColor = mYTime.DaylightHues[lstTimes.SelectedIndex];
         }
 
         private void chkSync_CheckedChanged(object sender, EventArgs e)
@@ -144,7 +160,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtTimeRate_TextChanged(object sender, EventArgs e)
         {
-            if (float.TryParse(txtTimeRate.Text, out float val))
+            if (float.TryParse(txtTimeRate.Text, out var val))
             {
                 mYTime.Rate = val;
             }
@@ -165,5 +181,7 @@ namespace Intersect.Editor.Forms.Editors
             Globals.CurrentEditor = -1;
             Dispose();
         }
+
     }
+
 }

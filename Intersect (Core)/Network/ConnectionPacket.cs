@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-using Intersect.Network.Packets;
-
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif
 
 namespace Intersect.Network
 {
+
     public abstract class ConnectionPacket : CerasPacket
     {
+
         protected const int SIZE_HANDSHAKE_SECRET = 32;
 
         protected readonly RSACryptoServiceProvider mRsa;
@@ -19,7 +19,6 @@ namespace Intersect.Network
 
         protected ConnectionPacket()
         {
-
         }
 
         protected ConnectionPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret)
@@ -50,5 +49,7 @@ namespace Intersect.Network
             Log.Diagnostic($"Q: {BitConverter.ToString(parameters.Q)}");
 #endif
         }
+
     }
+
 }

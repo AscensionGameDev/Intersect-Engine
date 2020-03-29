@@ -9,10 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Extensions
 {
+
     public static class EnumerableExtensions
     {
 
-        public static IEnumerable<TValue> Sort<TValue>([NotNull] this IEnumerable<TValue> queryable, IReadOnlyCollection<Sort> sort)
+        public static IEnumerable<TValue> Sort<TValue>(
+            [NotNull] this IEnumerable<TValue> queryable,
+            IReadOnlyCollection<Sort> sort
+        )
         {
             if (sort == null || sort.Count < 1)
             {
@@ -28,15 +32,22 @@ namespace Intersect.Server.Extensions
                     continue;
                 }
 
-                object OrderLambda(TValue entity) => EF.Property<object>(entity, sortPair.By);
+                object OrderLambda(TValue entity)
+                {
+                    return EF.Property<object>(entity, sortPair.By);
+                }
 
                 if (sortPair.Direction == SortDirection.Ascending)
                 {
-                    sorted = orderedOnce ? ((IOrderedEnumerable<TValue>) sorted).ThenBy(OrderLambda) : sorted.OrderBy(OrderLambda);
+                    sorted = orderedOnce
+                        ? ((IOrderedEnumerable<TValue>) sorted).ThenBy(OrderLambda)
+                        : sorted.OrderBy(OrderLambda);
                 }
                 else
                 {
-                    sorted = orderedOnce ? ((IOrderedEnumerable<TValue>) sorted).ThenByDescending(OrderLambda) : sorted.OrderByDescending(OrderLambda);
+                    sorted = orderedOnce
+                        ? ((IOrderedEnumerable<TValue>) sorted).ThenByDescending(OrderLambda)
+                        : sorted.OrderByDescending(OrderLambda);
                 }
 
                 orderedOnce = true;
@@ -46,4 +57,5 @@ namespace Intersect.Server.Extensions
         }
 
     }
+
 }

@@ -1,16 +1,22 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Single property row.
     /// </summary>
     public class PropertyRow : Base
     {
+
         private readonly Label mLabel;
+
         private readonly Property.Base mProperty;
+
         private bool mLastEditing;
+
         private bool mLastHover;
 
         /// <summary>
@@ -18,10 +24,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="parent">Parent control.</param>
         /// <param name="prop">Property control associated with this row.</param>
-        public PropertyRow(Base parent, Property.Base prop)
-            : base(parent)
+        public PropertyRow(Base parent, Property.Base prop) : base(parent)
         {
-            PropertyRowLabel label = new PropertyRowLabel(this);
+            var label = new PropertyRowLabel(this);
             label.Dock = Pos.Left;
             label.Alignment = Pos.Left | Pos.Top;
             label.Margin = new Margin(2, 2, 0, 0);
@@ -50,7 +55,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Indicates whether the control is hovered by mouse pointer.
         /// </summary>
-        public override bool IsHovered => base.IsHovered || (mProperty != null && mProperty.IsHovered);
+        public override bool IsHovered => base.IsHovered || mProperty != null && mProperty.IsHovered;
 
         /// <summary>
         ///     Property name.
@@ -95,8 +100,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Layout(Skin.Base skin)
         {
-            Properties parent = Parent as Properties;
-            if (null == parent) return;
+            var parent = Parent as Properties;
+            if (null == parent)
+            {
+                return;
+            }
 
             mLabel.Width = parent.SplitWidth;
 
@@ -109,7 +117,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnValueChanged(Base control, EventArgs args)
         {
             if (ValueChanged != null)
+            {
                 ValueChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void OnEditingChanged()
@@ -121,5 +131,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             mLabel.Redraw();
         }
+
     }
+
 }

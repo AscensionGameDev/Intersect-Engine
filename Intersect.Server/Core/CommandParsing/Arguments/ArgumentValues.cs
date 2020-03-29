@@ -3,40 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
+
     public sealed class ArgumentValues : IEnumerable<object>
     {
+
         [NotNull] private readonly IList<object> mValues;
 
-        [NotNull]
-        public string ArgumentName { get; }
-
-        public object Value => mValues.FirstOrDefault();
-
-        [NotNull]
-        public IList<object> Values => mValues.ToImmutableList() ?? throw new InvalidOperationException();
-
-        public bool IsEmpty => mValues.Count < 1;
-
-        public bool IsImplicit { get; }
-
-        public ArgumentValues(
-            [NotNull] string argumentName,
-            [CanBeNull] params object[] values
+        public ArgumentValues([NotNull] string argumentName, [CanBeNull] params object[] values) : this(
+            argumentName, values.AsEnumerable()
         )
-            : this(argumentName, values.AsEnumerable())
         {
         }
 
-        public ArgumentValues(
-            [NotNull] string argumentName,
-            bool isImplicit,
-            [CanBeNull] params object[] values
-        )
-            : this(argumentName, values.AsEnumerable(), isImplicit)
+        public ArgumentValues([NotNull] string argumentName, bool isImplicit, [CanBeNull] params object[] values) :
+            this(argumentName, values.AsEnumerable(), isImplicit)
         {
         }
 
@@ -51,9 +36,27 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             IsImplicit = isImplicit;
         }
 
-        public IEnumerator<object> GetEnumerator() => mValues.GetEnumerator();
+        [NotNull]
+        public string ArgumentName { get; }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public object Value => mValues.FirstOrDefault();
+
+        [NotNull]
+        public IList<object> Values => mValues.ToImmutableList() ?? throw new InvalidOperationException();
+
+        public bool IsEmpty => mValues.Count < 1;
+
+        public bool IsImplicit { get; }
+
+        public IEnumerator<object> GetEnumerator()
+        {
+            return mValues.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         public TValue ToTypedValue<TValue>(int index = 0)
         {
@@ -69,5 +72,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         {
             return mValues.Select(value => value is TValue typedValue ? typedValue : default(TValue)).ToImmutableList();
         }
+
     }
+
 }

@@ -1,27 +1,46 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout
 {
+
     /// <summary>
     ///     Single table row.
     /// </summary>
     public class TableRow : Base
     {
+
         // [omeg] todo: get rid of this
         public const int MAX_COLUMNS = 5;
 
         private readonly Label[] mColumns;
 
+        protected string mClickSound;
+
         private int mColumnCount;
+
         private bool mEvenRow;
 
         //Sound Effects
         protected string mHoverSound;
-        protected string mClickSound;
+
         protected string mRightClickSound;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TableRow" /> class.
+        /// </summary>
+        /// <param name="parent">Parent control.</param>
+        public TableRow(Base parent) : base(parent)
+        {
+            mColumns = new Label[MAX_COLUMNS];
+            mColumnCount = 0;
+            KeyboardInputEnabled = true;
+            this.Clicked += TableRow_Clicked;
+            this.RightClicked += TableRow_RightClicked;
+            this.HoverEnter += TableRow_HoverEnter;
+        }
 
         public string HoverSound
         {
@@ -39,36 +58,6 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         {
             get => mRightClickSound;
             set => mRightClickSound = value;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TableRow" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public TableRow(Base parent)
-            : base(parent)
-        {
-            mColumns = new Label[MAX_COLUMNS];
-            mColumnCount = 0;
-            KeyboardInputEnabled = true;
-            this.Clicked += TableRow_Clicked;
-            this.RightClicked += TableRow_RightClicked;
-            this.HoverEnter += TableRow_HoverEnter;
-        }
-
-        private void TableRow_HoverEnter(Base sender, EventArgs arguments)
-        {
-            PlaySound(mHoverSound);
-        }
-
-        private void TableRow_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
-            PlaySound(mRightClickSound);
-        }
-
-        private void TableRow_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            PlaySound(mClickSound);
         }
 
         /// <summary>
@@ -98,6 +87,21 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             set => SetCellText(0, value);
         }
 
+        private void TableRow_HoverEnter(Base sender, EventArgs arguments)
+        {
+            PlaySound(mHoverSound);
+        }
+
+        private void TableRow_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            PlaySound(mRightClickSound);
+        }
+
+        private void TableRow_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PlaySound(mClickSound);
+        }
+
         internal Label GetColumn(int index)
         {
             return mColumns[index];
@@ -114,12 +118,17 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <param name="columnCount">Number of columns.</param>
         protected void SetColumnCount(int columnCount)
         {
-            if (columnCount == mColumnCount) return;
+            if (columnCount == mColumnCount)
+            {
+                return;
+            }
 
             if (columnCount >= MAX_COLUMNS)
+            {
                 throw new ArgumentException("Invalid column count", "columnCount");
+            }
 
-            for (int i = 0; i < MAX_COLUMNS; i++)
+            for (var i = 0; i < MAX_COLUMNS; i++)
             {
                 if (i < columnCount)
                 {
@@ -158,9 +167,14 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public void SetColumnWidth(int column, int width)
         {
             if (null == mColumns[column])
+            {
                 return;
+            }
+
             if (mColumns[column].Width == width)
+            {
                 return;
+            }
 
             mColumns[column].Width = width;
         }
@@ -173,7 +187,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public void SetCellText(int column, string text)
         {
             if (null == mColumns[column])
+            {
                 return;
+            }
 
             mColumns[column].Text = text;
         }
@@ -187,7 +203,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public void SetCellContents(int column, Base control, bool enableMouseInput = false)
         {
             if (null == mColumns[column])
+            {
                 return;
+            }
 
             control.Parent = mColumns[column];
             mColumns[column].MouseInputEnabled = enableMouseInput;
@@ -206,7 +224,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         protected virtual void OnRowSelected()
         {
             if (Selected != null)
+            {
                 Selected.Invoke(this, new ItemSelectedEventArgs(this));
+            }
         }
 
         /// <summary>
@@ -214,13 +234,15 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// </summary>
         public void SizeToContents()
         {
-            int width = 0;
-            int height = 0;
+            var width = 0;
+            var height = 0;
 
-            for (int i = 0; i < mColumnCount; i++)
+            for (var i = 0; i < mColumnCount; i++)
             {
                 if (null == mColumns[i])
+                {
                     continue;
+                }
 
                 // Note, more than 1 child here, because the 
                 // label has a child built in ( The Text )
@@ -249,18 +271,26 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <param name="color">Text color.</param>
         public void SetTextColor(Color color)
         {
-            for (int i = 0; i < mColumnCount; i++)
+            for (var i = 0; i < mColumnCount; i++)
             {
-                if (null == mColumns[i]) continue;
+                if (null == mColumns[i])
+                {
+                    continue;
+                }
+
                 mColumns[i].TextColorOverride = color;
             }
         }
 
         public void SetTextFont(GameFont font)
         {
-            for (int i = 0; i < mColumnCount; i++)
+            for (var i = 0; i < mColumnCount; i++)
             {
-                if (null == mColumns[i]) continue;
+                if (null == mColumns[i])
+                {
+                    continue;
+                }
+
                 mColumns[i].Font = font;
             }
         }
@@ -283,5 +313,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         {
             Platform.Neutral.SetClipboardText(Text);
         }
+
     }
+
 }

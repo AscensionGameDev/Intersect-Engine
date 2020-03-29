@@ -2,12 +2,15 @@
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout
 {
+
     /// <summary>
     ///     Base splitter class.
     /// </summary>
     public class Splitter : Base
     {
+
         private readonly Base[] mPanel;
+
         private readonly bool[] mScale;
 
         /// <summary>
@@ -31,7 +34,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public void SetPanel(int panelIndex, Base panel, bool noScale = false)
         {
             if (panelIndex < 0 || panelIndex > 1)
+            {
                 throw new ArgumentException("Invalid panel index", "panelIndex");
+            }
 
             mPanel[panelIndex] = panel;
             mScale[panelIndex] = !noScale;
@@ -50,7 +55,10 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         Base GetPanel(int panelIndex)
         {
             if (panelIndex < 0 || panelIndex > 1)
+            {
                 throw new ArgumentException("Invalid panel index", "panelIndex");
+            }
+
             return mPanel[panelIndex];
         }
 
@@ -65,26 +73,33 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
 
         protected virtual void LayoutVertical(Skin.Base skin)
         {
-            int w = Width;
-            int h = Height;
+            var w = Width;
+            var h = Height;
 
             if (mPanel[0] != null)
             {
-                Margin m = mPanel[0].Margin;
+                var m = mPanel[0].Margin;
                 if (mScale[0])
-                    mPanel[0].SetBounds(m.Left, m.Top, w - m.Left - m.Right, (h * 0.5f) - m.Top - m.Bottom);
+                {
+                    mPanel[0].SetBounds(m.Left, m.Top, w - m.Left - m.Right, h * 0.5f - m.Top - m.Bottom);
+                }
                 else
+                {
                     mPanel[0].Position(Pos.Center, 0, (int) (h * -0.25f));
+                }
             }
 
             if (mPanel[1] != null)
             {
-                Margin m = mPanel[1].Margin;
+                var m = mPanel[1].Margin;
                 if (mScale[1])
-                    mPanel[1].SetBounds(m.Left, m.Top + (h * 0.5f), w - m.Left - m.Right,
-                        (h * 0.5f) - m.Top - m.Bottom);
+                {
+                    mPanel[1].SetBounds(m.Left, m.Top + h * 0.5f, w - m.Left - m.Right, h * 0.5f - m.Top - m.Bottom);
+                }
                 else
+                {
                     mPanel[1].Position(Pos.Center, 0, (int) (h * 0.25f));
+                }
             }
         }
 
@@ -92,5 +107,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         {
             throw new NotImplementedException();
         }
+
     }
+
 }

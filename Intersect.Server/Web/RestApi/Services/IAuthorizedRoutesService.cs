@@ -1,8 +1,10 @@
-﻿using JetBrains.Annotations;
-using System.Web.Http.Dependencies;
+﻿using System.Web.Http.Dependencies;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Services
 {
+
     internal interface IAuthorizedRoutesService
     {
 
@@ -13,10 +15,13 @@ namespace Intersect.Server.Web.RestApi.Services
     internal static class ServiceCollectionExtensions
     {
 
-        public static IAuthorizedRoutesService GetAuthorizedRoutes([NotNull] this IDependencyResolver dependencyResolver)
+        public static IAuthorizedRoutesService GetAuthorizedRoutes(
+            [NotNull] this IDependencyResolver dependencyResolver
+        )
         {
             return dependencyResolver.GetService(typeof(IAuthorizedRoutesService)) as IAuthorizedRoutesService;
         }
 
     }
+
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using DarkUI.Controls;
+
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects.Events.Commands;
@@ -8,9 +10,12 @@ using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandWarp : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private WarpCommand mMyCommand;
 
         public EventCommandWarp(WarpCommand refCommand, FrmEvent editor)
@@ -20,7 +25,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbMap.Items.Clear();
-            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+            for (var i = 0; i < MapList.OrderedMaps.Count; i++)
             {
                 cmbMap.Items.Add(MapList.OrderedMaps[i].Name);
                 if (MapList.OrderedMaps[i].MapId == mMyCommand.MapId)
@@ -28,32 +33,35 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbMap.SelectedIndex = i;
                 }
             }
+
             if (cmbMap.SelectedIndex == -1)
             {
                 cmbMap.SelectedIndex = 0;
             }
+
             scrlX.Maximum = Options.MapWidth - 1;
             scrlY.Maximum = Options.MapHeight - 1;
             scrlX.Value = mMyCommand.X;
             scrlY.Value = mMyCommand.Y;
             lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
             lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
-            cmbDirection.SelectedIndex = (int)mMyCommand.Direction;
+            cmbDirection.SelectedIndex = (int) mMyCommand.Direction;
         }
 
         private void InitLocalization()
         {
             grpWarp.Text = Strings.EventWarp.title;
-            lblMap.Text = Strings.Warping.map.ToString( "");
-            lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
-            lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
-            lblDir.Text = Strings.Warping.direction.ToString( "");
+            lblMap.Text = Strings.Warping.map.ToString("");
+            lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
+            lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
+            lblDir.Text = Strings.Warping.direction.ToString("");
             btnVisual.Text = Strings.Warping.visual;
             cmbDirection.Items.Clear();
-            for (int i = -1; i < 4; i++)
+            for (var i = -1; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+
             btnSave.Text = Strings.EventWarp.okay;
             btnCancel.Text = Strings.EventWarp.cancel;
         }
@@ -61,9 +69,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
-            mMyCommand.X = (byte)scrlX.Value;
-            mMyCommand.Y = (byte)scrlY.Value;
-            mMyCommand.Direction = (WarpDirection)cmbDirection.SelectedIndex;
+            mMyCommand.X = (byte) scrlX.Value;
+            mMyCommand.Y = (byte) scrlY.Value;
+            mMyCommand.Direction = (WarpDirection) cmbDirection.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -84,24 +92,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnVisual_Click(object sender, EventArgs e)
         {
-            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, scrlX.Value,
-                scrlY.Value);
+            var frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, scrlX.Value, scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 scrlX.Value = frmWarpSelection.GetX();
                 scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
-                lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
+                lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
+                lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
             }
         }
 
@@ -128,5 +137,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void label21_Click(object sender, EventArgs e)
         {
         }
+
     }
+
 }

@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Window close button.
     /// </summary>
     public class CloseButton : Button
     {
+
         private readonly WindowControl mWindow;
 
         /// <summary>
@@ -14,8 +16,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// </summary>
         /// <param name="parent">Parent control.</param>
         /// <param name="owner">Window that owns this button.</param>
-        public CloseButton(Base parent, WindowControl owner, string name = "")
-            : base(parent, name)
+        public CloseButton(Base parent, WindowControl owner, string name = "") : base(parent, name)
         {
             mWindow = owner;
         }
@@ -28,5 +29,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawWindowCloseButton(this, IsDepressed && IsHovered, IsHovered && ShouldDrawHover, !mWindow.IsOnTop);
         }
+
     }
+
 }

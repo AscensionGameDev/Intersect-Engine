@@ -1,36 +1,33 @@
-﻿using Intersect.Logging;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
+using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
 using Intersect.Server.Core.Commands;
 using Intersect.Server.Localization;
 using Intersect.Threading;
+
 using JetBrains.Annotations;
-using System.Linq;
-using Intersect.Server.Core.CommandParsing.Commands;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Core
 {
+
     internal sealed class ServerConsole : Threaded
     {
+
         private readonly object mInputLock = new object();
 
         private bool mDoNotContinue;
 
-        [NotNull]
-        public CommandParser Parser { get; }
-
-        public ServerConsole(): base("ServerConsole")
+        public ServerConsole() : base("ServerConsole")
         {
             Console.WaitPrefix = "> ";
 
-            Parser = new CommandParser(
-                new ParserSettings(
-                    localization: Strings.Commands.Parsing
-                )
-            );
+            Parser = new CommandParser(new ParserSettings(localization: Strings.Commands.Parsing));
 
             Parser.Register<AnnouncementCommand>();
             Parser.Register<ApiCommand>();
@@ -56,6 +53,9 @@ namespace Intersect.Server.Core
             Parser.Register<UnmuteCommand>();
         }
 
+        [NotNull]
+        public CommandParser Parser { get; }
+
         public void Wait(bool doNotContinue = false)
         {
             mDoNotContinue = mDoNotContinue || doNotContinue;
@@ -69,8 +69,8 @@ namespace Intersect.Server.Core
         protected override void ThreadStart()
         {
             Console.WriteLine(Strings.Intro.consoleactive);
-            try {
-
+            try
+            {
                 while (ServerContext.Instance.IsRunning && !mDoNotContinue)
                 {
                     string line;
@@ -91,6 +91,7 @@ namespace Intersect.Server.Core
                     if (line == null)
                     {
                         ServerContext.Instance.RequestShutdown();
+
                         break;
                     }
 
@@ -104,32 +105,35 @@ namespace Intersect.Server.Core
                     if (result.Missing.IsEmpty)
                     {
                         var fatalError = false;
-                        result.Errors.ForEach(error =>
-                        {
-                            if (error == null)
+                        result.Errors.ForEach(
+                            error =>
                             {
-                                return;
-                            }
+                                if (error == null)
+                                {
+                                    return;
+                                }
 
-                            fatalError = error.IsFatal;
-                            if (error is MissingArgumentError)
-                            {
-                                return;
-                            }
+                                fatalError = error.IsFatal;
+                                if (error is MissingArgumentError)
+                                {
+                                    return;
+                                }
 
-                            if (error.Exception != null)
-                            {
-                                Log.Warn(error.Exception);
-                            }
+                                if (error.Exception != null)
+                                {
+                                    Log.Warn(error.Exception);
+                                }
 
-                            Console.WriteLine(error.Message);
-                        });
+                                Console.WriteLine(error.Message);
+                            }
+                        );
 
                         if (!fatalError)
                         {
                             if (!shouldHelp)
                             {
                                 result.Command?.Handle(ServerContext.Instance, result);
+
                                 continue;
                             }
                         }
@@ -139,12 +143,15 @@ namespace Intersect.Server.Core
                         Console.WriteLine(
                             Strings.Commands.Parsing.Errors.MissingArguments.ToString(
                                 string.Join(
-                                    Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter,
-                                    result.Missing.Select(argument =>
+                                    Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter, result.Missing.Select(
+                                        argument =>
                                         {
-                                            var typeName = argument?.ValueType.Name ?? Strings.Commands.Parsing.TypeUnknown;
-                                            if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName,
-                                                out var localizedType))
+                                            var typeName =
+                                                argument?.ValueType.Name ?? Strings.Commands.Parsing.TypeUnknown;
+
+                                            if (Strings.Commands.Parsing.TypeNames.TryGetValue(
+                                                typeName, out var localizedType
+                                            ))
                                             {
                                                 typeName = localizedType;
                                             }
@@ -177,53 +184,64 @@ namespace Intersect.Server.Core
                     var requiredBuffer = command.Arguments.Count == 1
                         ? ""
                         : new string(' ', Strings.Commands.RequiredInfo.ToString().Length);
-                    command.UnsortedArguments.ForEach(argument =>
-                    {
-                        if (argument == null)
+
+                    command.UnsortedArguments.ForEach(
+                        argument =>
                         {
-                            return;
+                            if (argument == null)
+                            {
+                                return;
+                            }
+
+                            var shortName = argument.HasShortName ? argument.ShortName.ToString() : null;
+                            var name = argument.Name;
+
+                            var typeName = argument.ValueType.Name;
+                            if (argument.IsFlag)
+                            {
+                                typeName = Strings.Commands.FlagInfo;
+                            }
+                            else if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName, out var localizedType))
+                            {
+                                typeName = localizedType;
+                            }
+
+                            if (!argument.IsPositional)
+                            {
+                                shortName = Parser.Settings.PrefixShort + shortName;
+                                name = Parser.Settings.PrefixLong + name;
+                            }
+
+                            var names = string.Join(
+                                ", ",
+                                new[] {shortName, name}.Where(nameString => !string.IsNullOrWhiteSpace(nameString))
+                            );
+
+                            var required = argument.IsRequiredByDefault
+                                ? Strings.Commands.RequiredInfo.ToString()
+                                : requiredBuffer;
+
+                            var descriptionSegment = string.IsNullOrEmpty(argument.Description)
+                                ? ""
+                                : $@" - {argument.Description}";
+
+                            Console.WriteLine($@"    {names,-16} {typeName,-12} {required}{descriptionSegment}");
                         }
-
-                        var shortName = argument.HasShortName ? argument.ShortName.ToString() : null;
-                        var name = argument.Name;
-
-                        var typeName = argument.ValueType.Name;
-                        if (argument.IsFlag)
-                        {
-                            typeName = Strings.Commands.FlagInfo;
-                        }
-                        else if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName, out var localizedType))
-                        {
-                            typeName = localizedType;
-                        }
-
-                        if (!argument.IsPositional)
-                        {
-                            shortName = Parser.Settings.PrefixShort + shortName;
-                            name = Parser.Settings.PrefixLong + name;
-                        }
-
-                        var names = string.Join(
-                            ", ", new[] { shortName, name }.Where(nameString => !string.IsNullOrWhiteSpace(nameString))
-                        );
-
-                        var required = argument.IsRequiredByDefault
-                            ? Strings.Commands.RequiredInfo.ToString()
-                            : requiredBuffer;
-
-                        var descriptionSegment =
-                            string.IsNullOrEmpty(argument.Description) ? "" : $@" - {argument.Description}";
-
-                        Console.WriteLine($@"    {names,-16} {typeName,-12} {required}{descriptionSegment}");
-                    });
+                    );
 
                     Console.WriteLine();
                 }
             }
             catch (Exception ex)
             {
-                Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                Task.Factory.StartNew(
+                    () => Bootstrapper.OnUnhandledException(
+                        Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
+                    )
+                );
             }
         }
+
     }
+
 }

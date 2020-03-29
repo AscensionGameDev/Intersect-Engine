@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandPlayBgs : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private PlaySoundCommand mMyCommand;
 
         public EventCommandPlayBgs(PlaySoundCommand refCommand, FrmEvent editor)
@@ -53,5 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
+
     }
+
 }

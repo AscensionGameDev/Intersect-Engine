@@ -1,15 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Utilities
 {
+
     [TestFixture]
     public class TextUtilsTests
     {
-        private string mNone;
 
         [SetUp]
         public void SaveState()
@@ -23,21 +21,7 @@ namespace Intersect.Utilities
             TextUtils.None = mNone;
         }
 
-        [Test]
-        public void StaticConstructor()
-        {
-            Assert.AreEqual("None", TextUtils.None);
-        }
-
-        [Test]
-        public void StripToLowerTest()
-        {
-            Assert.AreEqual("test", TextUtils.StripToLower("test"));
-            Assert.AreEqual("test", TextUtils.StripToLower("Test"));
-            Assert.AreEqual("test", TextUtils.StripToLower("TeSt"));
-            Assert.AreEqual("test", TextUtils.StripToLower("TEST"));
-            Assert.AreEqual("test", TextUtils.StripToLower(" T e S t "));
-        }
+        private string mNone;
 
         [Test]
         public void IsNoneTest()
@@ -94,12 +78,30 @@ namespace Intersect.Utilities
             Assert.AreEqual("Intersect", TextUtils.SanitizeNone("Intersect"));
 
             TextUtils.None = "Nessuno";
-            
+
             Assert.IsNull(TextUtils.SanitizeNone(null));
             Assert.IsNull(TextUtils.SanitizeNone(" n o n e "));
             Assert.IsNull(TextUtils.SanitizeNone("Nessuno"));
             Assert.IsNull(TextUtils.SanitizeNone("Nessuno"));
             Assert.AreEqual("Intersect", TextUtils.SanitizeNone("Intersect"));
         }
+
+        [Test]
+        public void StaticConstructor()
+        {
+            Assert.AreEqual("None", TextUtils.None);
+        }
+
+        [Test]
+        public void StripToLowerTest()
+        {
+            Assert.AreEqual("test", TextUtils.StripToLower("test"));
+            Assert.AreEqual("test", TextUtils.StripToLower("Test"));
+            Assert.AreEqual("test", TextUtils.StripToLower("TeSt"));
+            Assert.AreEqual("test", TextUtils.StripToLower("TEST"));
+            Assert.AreEqual("test", TextUtils.StripToLower(" T e S t "));
+        }
+
     }
+
 }

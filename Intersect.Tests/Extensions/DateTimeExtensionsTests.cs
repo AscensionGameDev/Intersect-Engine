@@ -7,42 +7,43 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Extensions
 {
+
     [TestFixture]
     public class DateTimeExtensionsTests
     {
-        [Test]
-        public void TestUnixEpoch()
-        {
-            var unixEpoch = DateTimeExtensions.UnixEpoch;
-            Assert.AreEqual(1970, unixEpoch.Year);
-            Assert.AreEqual(1, unixEpoch.Month);
-            Assert.AreEqual(1, unixEpoch.Day);
-            Assert.AreEqual(0, unixEpoch.Hour);
-            Assert.AreEqual(0, unixEpoch.Minute);
-            Assert.AreEqual(0, unixEpoch.Second);
-            Assert.AreEqual(0, unixEpoch.Millisecond);
-        }
 
         private static IEnumerable<object[]> Data
         {
             get
             {
-                yield return new object[] { new DateTime(0, DateTimeKind.Unspecified) };
-                yield return new object[] { new DateTime(0, DateTimeKind.Local) };
-                yield return new object[] { new DateTime(0, DateTimeKind.Utc) };
+                yield return new object[] {new DateTime(0, DateTimeKind.Unspecified)};
+                yield return new object[] {new DateTime(0, DateTimeKind.Local)};
+                yield return new object[] {new DateTime(0, DateTimeKind.Utc)};
 
-                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified) };
-                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local) };
-                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc) };
+                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified)};
+                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local)};
+                yield return new object[] {new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc)};
 
-                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified) };
-                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local) };
-                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc) };
+                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified)};
+                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local)};
+                yield return new object[] {new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc)};
 
                 var random = new Random();
-                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Unspecified) };
-                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local) };
-                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc) };
+
+                yield return new object[]
+                {
+                    new DateTime(
+                        random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Unspecified
+                    )
+                };
+
+                yield return new object[]
+                {
+                    new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local)
+                };
+
+                yield return new object[]
+                    {new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc)};
             }
         }
 
@@ -71,6 +72,7 @@ namespace Intersect.Extensions
                     Assert.AreEqual(dateTime.Ticks, convertedUnspecified.Ticks);
                     Assert.AreEqual(DateTimeKind.Utc, convertedUtc.Kind);
                     Assert.AreEqual(dateTime.Ticks, convertedUnspecified.Ticks);
+
                     break;
 
                 case DateTimeKind.Unspecified:
@@ -88,13 +90,27 @@ namespace Intersect.Extensions
                     Assert.AreEqual(dateTime.Ticks, convertedLocal.Ticks);
                     Assert.AreEqual(DateTimeKind.Unspecified, convertedUnspecified.Kind);
                     Assert.AreEqual(dateTime.Ticks, convertedUnspecified.Ticks);
+
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-
         }
+
+        [Test]
+        public void TestUnixEpoch()
+        {
+            var unixEpoch = DateTimeExtensions.UnixEpoch;
+            Assert.AreEqual(1970, unixEpoch.Year);
+            Assert.AreEqual(1, unixEpoch.Month);
+            Assert.AreEqual(1, unixEpoch.Day);
+            Assert.AreEqual(0, unixEpoch.Hour);
+            Assert.AreEqual(0, unixEpoch.Minute);
+            Assert.AreEqual(0, unixEpoch.Second);
+            Assert.AreEqual(0, unixEpoch.Millisecond);
+        }
+
     }
+
 }

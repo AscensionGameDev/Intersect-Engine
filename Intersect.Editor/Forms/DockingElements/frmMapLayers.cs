@@ -4,7 +4,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -12,31 +13,44 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
+
 using Microsoft.Xna.Framework.Graphics;
+
 using WeifenLuo.WinFormsUI.Docking;
-using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
+
     public enum LayerTabs
     {
+
         Tiles = 0,
+
         Attributes,
+
         Lights,
+
         Events,
+
         Npcs
+
     }
 
     public partial class FrmMapLayers : DockContent
     {
+
+        public LayerTabs CurrentTab = LayerTabs.Tiles;
+
+        public List<bool> LayerVisibility = new List<bool>();
+
         //MonoGame Swap Chain
         private SwapChainRenderTarget mChain;
 
         private int mLastTileLayer;
+
         private List<PictureBox> mMapLayers = new List<PictureBox>();
+
         private bool mTMouseDown;
-        public LayerTabs CurrentTab = LayerTabs.Tiles;
-        public List<bool> LayerVisibility = new List<bool>();
 
         public FrmMapLayers()
         {
@@ -61,6 +75,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 SetTileset(cmbTilesets.Items[0].ToString());
             }
+
             grpZDimension.Visible = Options.ZDimensionVisible;
             rbZDimension.Visible = Options.ZDimensionVisible;
             grpZResource.Visible = Options.ZDimensionVisible;
@@ -78,6 +93,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return;
             }
+
             mTMouseDown = true;
             Globals.CurSelX = (int) Math.Floor((double) e.X / Options.TileWidth);
             Globals.CurSelY = (int) Math.Floor((double) e.Y / Options.TileHeight);
@@ -87,36 +103,44 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.CurSelX = 0;
             }
+
             if (Globals.CurSelY < 0)
             {
                 Globals.CurSelY = 0;
             }
+
             switch (Globals.Autotilemode)
             {
                 case 1:
                 case 5:
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 2;
+
                     break;
                 case 2:
                     Globals.CurSelW = 0;
                     Globals.CurSelH = 0;
+
                     break;
                 case 3:
                     Globals.CurSelW = 5;
                     Globals.CurSelH = 2;
+
                     break;
                 case 4:
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 1;
+
                     break;
                 case 6:
                     Globals.CurSelW = 2;
                     Globals.CurSelH = 3;
+
                     break;
                 case 7:
                     Globals.CurSelW = 8;
                     Globals.CurSelH = 3;
+
                     break;
             }
         }
@@ -127,6 +151,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return;
             }
+
             if (mTMouseDown && Globals.Autotilemode == 0)
             {
                 var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
@@ -147,11 +172,13 @@ namespace Intersect.Editor.Forms.DockingElements
                 selX -= Math.Abs(selW);
                 selW = Math.Abs(selW);
             }
+
             if (selH < 0)
             {
                 selY -= Math.Abs(selH);
                 selH = Math.Abs(selH);
             }
+
             Globals.CurSelX = selX;
             Globals.CurSelY = selY;
             Globals.CurSelW = selW;
@@ -175,26 +202,32 @@ namespace Intersect.Editor.Forms.DockingElements
                 case 5:
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 2;
+
                     break;
                 case 2:
                     Globals.CurSelW = 0;
                     Globals.CurSelH = 0;
+
                     break;
                 case 3:
                     Globals.CurSelW = 5;
                     Globals.CurSelH = 2;
+
                     break;
                 case 4:
                     Globals.CurSelW = 1;
                     Globals.CurSelH = 1;
+
                     break;
                 case 6:
                     Globals.CurSelW = 2;
                     Globals.CurSelH = 3;
+
                     break;
                 case 7:
                     Globals.CurSelW = 8;
                     Globals.CurSelH = 3;
+
                     break;
             }
         }
@@ -215,10 +248,15 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                 }
             }
+
             if (TilesetBase.Lookup.Count > 0)
             {
-                if (Globals.MapLayersWindow.cmbTilesets.Items.Count > 0) Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = (TilesetBase)TilesetBase.Lookup.Values.ToArray()[0];
+                if (Globals.MapLayersWindow.cmbTilesets.Items.Count > 0)
+                {
+                    Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
+                }
+
+                Globals.CurrentTileset = (TilesetBase) TilesetBase.Lookup.Values.ToArray()[0];
             }
         }
 
@@ -232,13 +270,16 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (tileset.Value.Name.ToLower() == name.ToLower())
                 {
                     id = tileset.Key;
+
                     break;
                 }
             }
+
             if (id != Guid.Empty)
             {
                 tSet = TilesetBase.Get(id);
             }
+
             if (tSet != null)
             {
                 if (File.Exists("resources/tilesets/" + tSet.Name))
@@ -247,15 +288,14 @@ namespace Intersect.Editor.Forms.DockingElements
                     Globals.CurrentTileset = tSet;
                     Globals.CurSelX = 0;
                     Globals.CurSelY = 0;
-                    Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                        tSet.Name);
+                    var tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, tSet.Name);
                     if (tilesetTex != null)
                     {
                         picTileset.Width = tilesetTex.Width;
                         picTileset.Height = tilesetTex.Height;
                     }
 
-	                cmbTilesets.SelectedItem = name;
+                    cmbTilesets.SelectedItem = name;
                     CreateSwapChain();
                 }
             }
@@ -266,7 +306,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.CurrentLayer = index;
             if (index < Options.LayerCount)
             {
-                for (int i = 0; i < mMapLayers.Count; i++)
+                for (var i = 0; i < mMapLayers.Count; i++)
                 {
                     if (i == index)
                     {
@@ -295,12 +335,14 @@ namespace Intersect.Editor.Forms.DockingElements
                         }
                     }
                 }
+
                 mLastTileLayer = index;
             }
             else
             {
             }
-            EditorGraphics.TilePreviewUpdated = true;
+
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         //Mapping Attribute Functions
@@ -324,7 +366,10 @@ namespace Intersect.Editor.Forms.DockingElements
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
             cmbItemAttribute.Items.AddRange(ItemBase.Names);
-            if (cmbItemAttribute.Items.Count > 0) cmbItemAttribute.SelectedIndex = 0;
+            if (cmbItemAttribute.Items.Count > 0)
+            {
+                cmbItemAttribute.SelectedIndex = 0;
+            }
         }
 
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
@@ -348,13 +393,18 @@ namespace Intersect.Editor.Forms.DockingElements
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             cmbWarpMap.Items.Clear();
-            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+            for (var i = 0; i < MapList.OrderedMaps.Count; i++)
             {
                 cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
             }
+
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
-            if (!rbWarp.Checked) return;
+            if (!rbWarp.Checked)
+            {
+                return;
+            }
+
             HideAttributeMenus();
             grpWarp.Visible = true;
         }
@@ -373,8 +423,16 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             cmbResourceAttribute.Items.Clear();
             cmbResourceAttribute.Items.AddRange(ResourceBase.Names);
-            if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
-            if (!rbResource.Checked) return;
+            if (cmbResourceAttribute.Items.Count > 0)
+            {
+                cmbResourceAttribute.SelectedIndex = 0;
+            }
+
+            if (!rbResource.Checked)
+            {
+                return;
+            }
+
             HideAttributeMenus();
             grpResource.Visible = true;
         }
@@ -390,6 +448,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return 2;
             }
+
             return 0;
         }
 
@@ -403,6 +462,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return 2;
             }
+
             return 0;
         }
 
@@ -448,6 +508,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return (int) MapAttributes.Slide;
             }
+
             return (int) MapAttributes.Walkable;
         }
 
@@ -460,14 +521,16 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbItem.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Item);
-                ((MapItemAttribute)tmpMap.Attributes[x, y]).ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
-                ((MapItemAttribute)tmpMap.Attributes[x, y]).Quantity = (int) nudItemQuantity.Value;
+                ((MapItemAttribute) tmpMap.Attributes[x, y]).ItemId =
+                    ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
+
+                ((MapItemAttribute) tmpMap.Attributes[x, y]).Quantity = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.ZDimension);
-                ((MapZDimensionAttribute)tmpMap.Attributes[x, y]).GatewayTo = GetEditorDimensionGateway();
-                ((MapZDimensionAttribute)tmpMap.Attributes[x, y]).BlockedLevel = GetEditorDimensionBlock();
+                ((MapZDimensionAttribute) tmpMap.Attributes[x, y]).GatewayTo = GetEditorDimensionGateway();
+                ((MapZDimensionAttribute) tmpMap.Attributes[x, y]).BlockedLevel = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked)
             {
@@ -476,34 +539,39 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbWarp.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Warp);
-                ((MapWarpAttribute)tmpMap.Attributes[x, y]).MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
-                ((MapWarpAttribute)tmpMap.Attributes[x, y]).X = (byte) nudWarpX.Value;
-                ((MapWarpAttribute)tmpMap.Attributes[x, y]).Y = (byte) nudWarpY.Value;
-                ((MapWarpAttribute)tmpMap.Attributes[x, y]).Direction = (WarpDirection)(cmbDirection.SelectedIndex);
+                ((MapWarpAttribute) tmpMap.Attributes[x, y]).MapId =
+                    MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
+
+                ((MapWarpAttribute) tmpMap.Attributes[x, y]).X = (byte) nudWarpX.Value;
+                ((MapWarpAttribute) tmpMap.Attributes[x, y]).Y = (byte) nudWarpY.Value;
+                ((MapWarpAttribute) tmpMap.Attributes[x, y]).Direction = (WarpDirection) cmbDirection.SelectedIndex;
             }
             else if (rbSound.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Sound);
-                ((MapSoundAttribute)tmpMap.Attributes[x, y]).Distance = (byte) nudSoundDistance.Value;
-                ((MapSoundAttribute)tmpMap.Attributes[x, y]).File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                ((MapSoundAttribute) tmpMap.Attributes[x, y]).Distance = (byte) nudSoundDistance.Value;
+                ((MapSoundAttribute) tmpMap.Attributes[x, y]).File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
             else if (rbResource.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Resource);
-                ((MapResourceAttribute)tmpMap.Attributes[x, y]).ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+                ((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId =
+                    ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+
                 if (rbLevel1.Checked)
                 {
-                    ((MapResourceAttribute)tmpMap.Attributes[x, y]).SpawnLevel = 0;
+                    ((MapResourceAttribute) tmpMap.Attributes[x, y]).SpawnLevel = 0;
                 }
                 else
                 {
-                    ((MapResourceAttribute)tmpMap.Attributes[x, y]).SpawnLevel = 1;
+                    ((MapResourceAttribute) tmpMap.Attributes[x, y]).SpawnLevel = 1;
                 }
             }
             else if (rbAnimation.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Animation);
-                ((MapAnimationAttribute)tmpMap.Attributes[x, y]).AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                ((MapAnimationAttribute) tmpMap.Attributes[x, y]).AnimationId =
+                    AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked)
             {
@@ -512,7 +580,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbSlide.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Slide);
-                ((MapSlideAttribute)tmpMap.Attributes[x, y]).Direction = (byte)cmbSlideDir.SelectedIndex;
+                ((MapSlideAttribute) tmpMap.Attributes[x, y]).Direction = (byte) cmbSlideDir.SelectedIndex;
             }
         }
 
@@ -521,8 +589,10 @@ namespace Intersect.Editor.Forms.DockingElements
             if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
             {
                 tmpMap.Attributes[x, y] = null;
+
                 return true;
             }
+
             return false;
         }
 
@@ -534,13 +604,17 @@ namespace Intersect.Editor.Forms.DockingElements
 
             // Add the map NPCs
             lstMapNpcs.Items.Clear();
-            for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
+            for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
             {
                 lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
             }
 
             // Don't select if there are no NPCs, to avoid crashes.
-            if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
+            if (cmbNpc.Items.Count > 0)
+            {
+                cmbNpc.SelectedIndex = 0;
+            }
+
             cmbDir.SelectedIndex = 0;
             rbRandom.Checked = true;
             if (lstMapNpcs.Items.Count > 0)
@@ -548,7 +622,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 lstMapNpcs.SelectedIndex = 0;
                 if (lstMapNpcs.SelectedIndex < Globals.CurrentMap.Spawns.Count)
                 {
-                    cmbDir.SelectedIndex = (int)Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
+                    cmbDir.SelectedIndex = (int) Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
                     cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                     if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
@@ -591,7 +665,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                 // Refresh List
                 lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
+                for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
                     lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
                 }
@@ -607,8 +681,8 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
-                cmbNpc.SelectedIndex = NpcBase.ListIndex( Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
-                cmbDir.SelectedIndex = (int)Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
+                cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
+                cmbDir.SelectedIndex = (int) Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
                     rbDeclared.Checked = true;
@@ -634,26 +708,27 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = (NpcSpawnDirection)cmbDir.SelectedIndex;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction =
+                    (NpcSpawnDirection) cmbDir.SelectedIndex;
             }
         }
 
         private void cmbNpc_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int n = 0;
+            var n = 0;
 
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId =
-                    NpcBase.IdFromList(cmbNpc.SelectedIndex);
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
                 lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
+                for (var i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
                     lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
                 }
+
                 lstMapNpcs.SelectedIndex = n;
             }
         }
@@ -664,25 +739,30 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
-            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
-                (int) nudWarpY.Value);
+            var frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.SelectTile(
+                MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value, (int) nudWarpY.Value
+            );
+
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
                 cmbWarpMap.Items.Clear();
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
                 }
-                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+
+                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
+
                         break;
                     }
                 }
+
                 nudWarpX.Value = frmWarpSelection.GetX();
                 nudWarpY.Value = frmWarpSelection.GetY();
             }
@@ -692,8 +772,16 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             cmbAnimationAttribute.Items.Clear();
             cmbAnimationAttribute.Items.AddRange(AnimationBase.Names);
-            if (cmbAnimationAttribute.Items.Count > 0) cmbAnimationAttribute.SelectedIndex = 0;
-            if (!rbAnimation.Checked) return;
+            if (cmbAnimationAttribute.Items.Count > 0)
+            {
+                cmbAnimationAttribute.SelectedIndex = 0;
+            }
+
+            if (!rbAnimation.Checked)
+            {
+                return;
+            }
+
             HideAttributeMenus();
             grpAnimation.Visible = true;
         }
@@ -750,7 +838,7 @@ namespace Intersect.Editor.Forms.DockingElements
             grpSlide.Text = Strings.Attributes.slide;
             lblSlideDir.Text = Strings.Attributes.dir;
             cmbSlideDir.Items.Clear();
-            for (int i = -1; i < 4; i++)
+            for (var i = -1; i < 4; i++)
             {
                 cmbSlideDir.Items.Add(Strings.Directions.dir[i]);
             }
@@ -778,15 +866,16 @@ namespace Intersect.Editor.Forms.DockingElements
 
             //Warp
             grpWarp.Text = Strings.Attributes.warp;
-            lblMap.Text = Strings.Warping.map.ToString( "");
-            lblX.Text = Strings.Warping.x.ToString( "");
-            lblY.Text = Strings.Warping.y.ToString( "");
-            lblWarpDir.Text = Strings.Warping.direction.ToString( "");
+            lblMap.Text = Strings.Warping.map.ToString("");
+            lblX.Text = Strings.Warping.x.ToString("");
+            lblY.Text = Strings.Warping.y.ToString("");
+            lblWarpDir.Text = Strings.Warping.direction.ToString("");
             cmbDirection.Items.Clear();
-            for (int i = -1; i < 4; i++)
+            for (var i = -1; i < 4; i++)
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             //Resource
@@ -797,18 +886,17 @@ namespace Intersect.Editor.Forms.DockingElements
             rbLevel2.Text = Strings.Attributes.zlevel2;
 
             //NPCS Tab
-            grpSpawnLoc.Text = rbDeclared.Checked
-                ? Strings.NpcSpawns.spawndeclared
-                : Strings.NpcSpawns.spawnrandom;
+            grpSpawnLoc.Text = rbDeclared.Checked ? Strings.NpcSpawns.spawndeclared : Strings.NpcSpawns.spawnrandom;
             rbDeclared.Text = Strings.NpcSpawns.declaredlocation;
             rbRandom.Text = Strings.NpcSpawns.randomlocation;
             lblDir.Text = Strings.NpcSpawns.direction;
             cmbDir.Items.Clear();
             cmbDir.Items.Add(Strings.NpcSpawns.randomdirection);
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 cmbDir.Items.Add(Strings.Directions.dir[i]);
             }
+
             grpNpcList.Text = Strings.NpcSpawns.addremove;
             btnAddMapNpc.Text = Strings.NpcSpawns.add;
             btnRemoveMapNpc.Text = Strings.NpcSpawns.remove;
@@ -816,7 +904,7 @@ namespace Intersect.Editor.Forms.DockingElements
             lblEventInstructions.Text = Strings.MapLayers.eventinstructions;
             lblLightInstructions.Text = Strings.MapLayers.lightinstructions;
 
-            for (int i = 0; i < mMapLayers.Count; i++)
+            for (var i = 0; i < mMapLayers.Count; i++)
             {
                 mMapLayers[i].Text = Strings.Tiles.layers[i];
             }
@@ -835,12 +923,16 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     mChain.Dispose();
                 }
-                if (EditorGraphics.GetGraphicsDevice() != null)
+
+                if (Core.Graphics.GetGraphicsDevice() != null)
                 {
-                    mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
-                        picTileset.Width, picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
-                        RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                    EditorGraphics.SetTilesetChain(mChain);
+                    mChain = new SwapChainRenderTarget(
+                        Core.Graphics.GetGraphicsDevice(), picTileset.Handle, picTileset.Width, picTileset.Height,
+                        false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents,
+                        PresentInterval.Immediate
+                    );
+
+                    Core.Graphics.SetTilesetChain(mChain);
                 }
             }
         }
@@ -891,7 +983,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             SetLayer(mLastTileLayer);
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnTileHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Tiles;
             pnlTiles.Show();
@@ -902,7 +994,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnAttributeHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Attributes;
             pnlAttributes.Show();
@@ -914,9 +1006,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
+
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 1;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnLightsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Lights;
             pnlLights.Show();
@@ -928,9 +1021,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
+
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 2;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnEventsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Events;
             pnlEvents.Show();
@@ -942,9 +1036,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
+
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 3;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             RefreshNpcList();
             btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Npcs;
@@ -971,7 +1066,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void picMapLayer_MouseHover(object sender, EventArgs e)
         {
-            ToolTip tt = new ToolTip();
+            var tt = new ToolTip();
             tt.SetToolTip((PictureBox) sender, Strings.Tiles.layers[mMapLayers.IndexOf((PictureBox) sender)]);
         }
 
@@ -982,5 +1077,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 Clipboard.SetText(Globals.CurrentTileset.Id.ToString());
             }
         }
+
     }
+
 }

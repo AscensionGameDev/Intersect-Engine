@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandSetAccess : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private SetAccessCommand mMyCommand;
 
         public EventCommandSetAccess(SetAccessCommand refCommand, FrmEvent editor)
@@ -17,7 +21,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             InitLocalization();
-            cmbAccess.SelectedIndex = (int)mMyCommand.Access;
+            cmbAccess.SelectedIndex = (int) mMyCommand.Access;
         }
 
         private void InitLocalization()
@@ -34,7 +38,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Access = (Access)cmbAccess.SelectedIndex;
+            mMyCommand.Access = (Access) cmbAccess.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -42,5 +46,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

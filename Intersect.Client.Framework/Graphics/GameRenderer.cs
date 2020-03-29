@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Intersect.Client.Framework.GenericClasses;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Client.Framework.Graphics
 {
+
     public abstract class GameRenderer
     {
-        [NotNull] public List<Stream> ScreenshotRequests { get; }
 
         public GameRenderer()
         {
             ScreenshotRequests = new List<Stream>();
         }
+
+        [NotNull]
+        public List<Stream> ScreenshotRequests { get; }
 
         public abstract void Init();
 
@@ -38,14 +43,29 @@ namespace Intersect.Client.Framework.Graphics
         public abstract void Clear(Color color);
 
         public abstract void SetView(FloatRect view);
+
         public abstract FloatRect GetView();
 
         public abstract GameFont LoadFont(string filename);
 
-        public abstract void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
+        public abstract void DrawTexture(
+            GameTexture tex,
+            float sx,
+            float sy,
+            float sw,
+            float sh,
+            float tx,
+            float ty,
+            float tw,
+            float th,
             Color renderColor,
-            GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null, float rotationDegrees = 0.0f, bool isUi = false, bool drawImmediate = false);
+            GameRenderTexture renderTarget = null,
+            GameBlendModes blendMode = GameBlendModes.None,
+            GameShader shader = null,
+            float rotationDegrees = 0.0f,
+            bool isUi = false,
+            bool drawImmediate = false
+        );
 
         public abstract int GetFps();
 
@@ -58,16 +78,41 @@ namespace Intersect.Client.Framework.Graphics
         public abstract bool DisplayModeChanged();
 
         public abstract GameRenderTexture CreateRenderTexture(int width, int height);
+
         public abstract GameTexture LoadTexture(string filename);
+
         public abstract GameTexture GetWhiteTexture();
 
         public abstract Pointf MeasureText(string text, GameFont gameFont, float fontScale);
 
-        public abstract void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null);
-        public abstract void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect, Color borderColor = null);
+        public abstract void DrawString(
+            string text,
+            GameFont gameFont,
+            float x,
+            float y,
+            float fontScale,
+            Color fontColor,
+            bool worldPos = true,
+            GameRenderTexture renderTexture = null,
+            Color borderColor = null
+        );
+
+        public abstract void DrawString(
+            string text,
+            GameFont gameFont,
+            float x,
+            float y,
+            float fontScale,
+            Color fontColor,
+            bool worldPos,
+            GameRenderTexture renderTexture,
+            FloatRect clipRect,
+            Color borderColor = null
+        );
 
         //Buffers
         public abstract GameTileBuffer CreateTileBuffer();
+
         public abstract void DrawTileBuffer(GameTileBuffer buffer);
 
         public abstract void Close();
@@ -87,11 +132,16 @@ namespace Intersect.Client.Framework.Graphics
             string screenshotFile;
             do
             {
-                screenshotFile = Path.Combine(screenshotDir ?? "", $"{DateTime.Now:yyyyMMdd-HHmmssfff}{screenshotNumber}.png");
+                screenshotFile = Path.Combine(
+                    screenshotDir ?? "", $"{DateTime.Now:yyyyMMdd-HHmmssfff}{screenshotNumber}.png"
+                );
+
                 ++screenshotNumber;
             } while (File.Exists(screenshotFile) && screenshotNumber < 4);
 
             ScreenshotRequests.Add(File.OpenWrite(screenshotFile));
         }
+
     }
+
 }

@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
-using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandInput : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
-        private InputVariableCommand mMyCommand;
+
         bool mLoading = false;
+
+        private InputVariableCommand mMyCommand;
 
         public EventCommandInput(InputVariableCommand refCommand, FrmEvent editor)
         {
@@ -63,7 +64,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.VariableId);
 
                 if (cmbVariable.SelectedIndex != -1)
-                    UpdateMinMaxValues(PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type);
+                {
+                    UpdateMinMaxValues(
+                        PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    );
+                }
             }
             else
             {
@@ -71,7 +76,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.VariableId);
 
                 if (cmbVariable.SelectedIndex != -1)
-                    UpdateMinMaxValues(ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type);
+                {
+                    UpdateMinMaxValues(
+                        ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    );
+                }
             }
         }
 
@@ -88,16 +97,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 case Enums.VariableDataTypes.Number:
                     lblMinVal.Text = Strings.EventInput.minval;
                     lblMaxVal.Text = Strings.EventInput.maxval;
+
                     break;
                 case Enums.VariableDataTypes.String:
                     lblMinVal.Text = Strings.EventInput.minlength;
                     lblMaxVal.Text = Strings.EventInput.maxlength;
+
                     break;
                 case Enums.VariableDataTypes.Boolean:
                     lblMaxVal.Hide();
                     lblMinVal.Hide();
                     nudMaxVal.Hide();
                     nudMinVal.Hide();
+
                     break;
             }
         }
@@ -106,8 +118,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mMyCommand.Text = txtText.Text;
             mMyCommand.Title = txtTitle.Text;
-            mMyCommand.Maximum = (int)nudMaxVal.Value;
-            mMyCommand.Minimum = (int)nudMinVal.Value;
+            mMyCommand.Maximum = (int) nudMaxVal.Value;
+            mMyCommand.Minimum = (int) nudMinVal.Value;
 
             if (rdoPlayerVariables.Checked)
             {
@@ -131,31 +143,44 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void lblCommands_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
+            );
         }
 
         private void rdoGlobalVariables_CheckedChanged(object sender, EventArgs e)
         {
             LoadVariableList();
-            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0)
+            {
+                cmbVariable.SelectedIndex = 0;
+            }
         }
 
         private void rdoPlayerVariables_CheckedChanged(object sender, EventArgs e)
         {
             LoadVariableList();
-            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0)
+            {
+                cmbVariable.SelectedIndex = 0;
+            }
         }
 
         private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (rdoPlayerVariables.Checked)
             {
-                UpdateMinMaxValues(PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type);
+                UpdateMinMaxValues(
+                    PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                );
             }
             else
             {
-                UpdateMinMaxValues(ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type);
+                UpdateMinMaxValues(
+                    ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                );
             }
         }
+
     }
+
 }

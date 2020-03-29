@@ -1,12 +1,12 @@
-﻿using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
+
     public class Tokenizer
     {
-        [NotNull]
-        public TokenizerSettings Settings { get; }
 
         public Tokenizer() : this(TokenizerSettings.Default)
         {
@@ -16,6 +16,9 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
         {
             Settings = settings;
         }
+
+        [NotNull]
+        public TokenizerSettings Settings { get; }
 
         [NotNull]
         public IEnumerable<string> Tokenize([NotNull] string input)
@@ -56,7 +59,10 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
             position = next + 1;
 
             var length = next - start;
+
             return input.Substring(start, length);
         }
+
     }
+
 }

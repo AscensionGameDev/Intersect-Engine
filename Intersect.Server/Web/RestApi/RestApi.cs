@@ -1,4 +1,9 @@
-﻿using Intersect.Configuration;
+﻿using System;
+using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Routing;
+
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Localization;
@@ -7,21 +12,17 @@ using Intersect.Server.Web.RestApi.Authentication.OAuth;
 using Intersect.Server.Web.RestApi.Configuration;
 using Intersect.Server.Web.RestApi.Constraints;
 using Intersect.Server.Web.RestApi.Logging;
+using Intersect.Server.Web.RestApi.Middleware;
+using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
-using Intersect.Server.Web.RestApi.Payloads;
+
 using JetBrains.Annotations;
+
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;
+
 using Owin;
-using System;
-using System.Linq;
-using System.Web.Http;
-using System.Web.Http.Routing;
-
-using Intersect.Server.Web.RestApi.Middleware;
-
-using WebApiThrottle;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -29,21 +30,7 @@ namespace Intersect.Server.Web.RestApi
     internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
 
-        public ApiConfiguration Configuration { get; }
-
-        public bool Disposing { get; private set; }
-
-        public bool Disposed { get; private set; }
-
-        public bool IsStarted => mWebAppHandle != null;
-
         [CanBeNull] private IDisposable mWebAppHandle;
-
-        [NotNull]
-        public StartOptions StartOptions { get; }
-
-        [NotNull]
-        private AuthenticationProvider AuthenticationProvider { get; }
 
         public RestApi(ushort apiPort)
         {
@@ -62,25 +49,17 @@ namespace Intersect.Server.Web.RestApi
             AuthenticationProvider = new OAuthProvider(Configuration);
         }
 
-        public void Start()
-        {
-            if (!Configuration.Enabled)
-            {
-                return;
-            }
+        public bool Disposing { get; private set; }
 
-            try
-            {
-                mWebAppHandle = WebApp.Start(StartOptions, Configure);
-                System.Diagnostics.Trace.Listeners.Remove("HostingTraceListener");
-                StartOptions.Urls?.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(Strings.Intro.apifailed);
-                Log.Error(Strings.Intro.apifailed + Environment.NewLine + exception);
-            }
-        }
+        public bool Disposed { get; private set; }
+
+        public bool IsStarted => mWebAppHandle != null;
+
+        [NotNull]
+        public StartOptions StartOptions { get; }
+
+        [NotNull]
+        private AuthenticationProvider AuthenticationProvider { get; }
 
         public void Configure(IAppBuilder appBuilder)
         {
@@ -93,9 +72,8 @@ namespace Intersect.Server.Web.RestApi
                 throw new InvalidOperationException();
             }
 
-            Configuration.Cors
-                .Select(configuration => configuration.AsCorsOptions())?
-                .ToList()
+            Configuration.Cors.Select(configuration => configuration.AsCorsOptions())
+                ?.ToList()
                 .ForEach(corsOptions => appBuilder.UseCors(corsOptions));
 
             var constraintResolver = new DefaultInlineConstraintResolver();
@@ -120,12 +98,16 @@ namespace Intersect.Server.Web.RestApi
                 appBuilder.Use<IntersectRequestLoggingMiddleware>(Configuration.RequestLogLevel);
             }
 
-            appBuilder.Use<IntersectThrottlingMiddleware>(Configuration.ThrottlePolicy, null, Configuration.FallbackClientKey, null);
+            appBuilder.Use<IntersectThrottlingMiddleware>(
+                Configuration.ThrottlePolicy, null, Configuration.FallbackClientKey, null
+            );
 
             AuthenticationProvider.Configure(appBuilder);
 
             appBuilder.UseWebApi(config);
         }
+
+        public ApiConfiguration Configuration { get; }
 
         public void Dispose()
         {
@@ -141,6 +123,26 @@ namespace Intersect.Server.Web.RestApi
 
             mWebAppHandle?.Dispose();
             Disposed = true;
+        }
+
+        public void Start()
+        {
+            if (!Configuration.Enabled)
+            {
+                return;
+            }
+
+            try
+            {
+                mWebAppHandle = WebApp.Start(StartOptions, Configure);
+                System.Diagnostics.Trace.Listeners.Remove("HostingTraceListener");
+                StartOptions.Urls?.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(Strings.Intro.apifailed);
+                Log.Error(Strings.Intro.apifailed + Environment.NewLine + exception);
+            }
         }
 
     }

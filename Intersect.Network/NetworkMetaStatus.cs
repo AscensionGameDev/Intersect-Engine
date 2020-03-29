@@ -1,7 +1,9 @@
 ﻿namespace Intersect.Network
 {
+
     public enum NetworkMetaStatus
     {
+
         Unknown = 0,
 
         ConnectionEstablished = 1,
@@ -13,5 +15,7 @@
         HandshakeCompleted = 8,
 
         Connected = 16
+
     }
+
 }

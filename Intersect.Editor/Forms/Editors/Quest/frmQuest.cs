@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
+
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -13,14 +15,19 @@ using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
+
     public partial class FrmQuest : EditorForm
     {
+
         private List<QuestBase> mChanged = new List<QuestBase>();
+
         private string mCopiedItem;
+
         private QuestBase mEditorItem;
 
-        private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
+
+        private List<string> mKnownFolders = new List<string>();
 
         public FrmQuest()
         {
@@ -113,52 +120,56 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            mChanged?.ForEach(item =>
-            {
-                if (item == null)
+            mChanged?.ForEach(
+                item =>
                 {
-                    return;
-                }
-
-                foreach (var id in item.OriginalTaskEventIds.Keys)
-                {
-                    var found = false;
-                    for (int i = 0; i < item.Tasks.Count; i++)
-                    {
-                        if (item.Tasks[i].Id == id)
-                        {
-                            found = true;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        item.RemoveEvents.Add(item.OriginalTaskEventIds[id]);
-                    }
-                }
-
-                PacketSender.SendSaveObject(item);
-                PacketSender.SendSaveObject(item.StartEvent);
-                PacketSender.SendSaveObject(item.EndEvent);
-                item.Tasks?.ForEach(tsk =>
-                {
-                    if (tsk?.EditingEvent == null)
+                    if (item == null)
                     {
                         return;
                     }
 
-                    if (tsk.EditingEvent.Id != Guid.Empty)
+                    foreach (var id in item.OriginalTaskEventIds.Keys)
                     {
-                        PacketSender.SendSaveObject(tsk.EditingEvent);
+                        var found = false;
+                        for (var i = 0; i < item.Tasks.Count; i++)
+                        {
+                            if (item.Tasks[i].Id == id)
+                            {
+                                found = true;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            item.RemoveEvents.Add(item.OriginalTaskEventIds[id]);
+                        }
                     }
 
-                    tsk.EditingEvent.DeleteBackup();
-                });
+                    PacketSender.SendSaveObject(item);
+                    PacketSender.SendSaveObject(item.StartEvent);
+                    PacketSender.SendSaveObject(item.EndEvent);
+                    item.Tasks?.ForEach(
+                        tsk =>
+                        {
+                            if (tsk?.EditingEvent == null)
+                            {
+                                return;
+                            }
 
-                item.StartEvent?.DeleteBackup();
-                item.EndEvent?.DeleteBackup();
-                item.DeleteBackup();
-            });
+                            if (tsk.EditingEvent.Id != Guid.Empty)
+                            {
+                                PacketSender.SendSaveObject(tsk.EditingEvent);
+                            }
+
+                            tsk.EditingEvent.DeleteBackup();
+                        }
+                    );
+
+                    item.StartEvent?.DeleteBackup();
+                    item.EndEvent?.DeleteBackup();
+                    item.DeleteBackup();
+                }
+            );
 
             mEditorItem = null;
             Hide();
@@ -196,6 +207,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                         tsk.CompletionEvent?.MakeBackup();
                         tsk.EditingEvent = tsk.CompletionEvent;
                     }
+
                     mEditorItem.MakeBackup();
                 }
             }
@@ -203,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -212,6 +225,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             if (mEditorItem != null)
             {
                 mEditorItem.Name = txtName?.Text ?? "";
+
                 //Rename all events
                 if (mEditorItem.StartEvent != null)
                 {
@@ -228,15 +242,21 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     foreach (var tsk in mEditorItem.Tasks)
                     {
                         if (tsk.CompletionEvent != null)
+                        {
                             tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                        }
                     }
                 }
 
                 if (lstQuests != null)
                 {
-                    if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null) lstQuests.SelectedNode.Text = txtName?.Text ?? "";
+                    if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
+                    {
+                        lstQuests.SelectedNode.Text = txtName?.Text ?? "";
+                    }
                 }
             }
+
             mChangingName = false;
         }
 
@@ -264,8 +284,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void OpenQuestEvent(EventBase evt)
         {
-            FrmEvent editor = new FrmEvent(null) {MyEvent = evt};
-            editor.InitEditor(true,true, true);
+            var editor = new FrmEvent(null) {MyEvent = evt};
+            editor.InitEditor(true, true, true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();
@@ -274,7 +294,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-            questTask.EditingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
+            questTask.EditingEvent = new EventBase(Guid.Empty, Guid.Empty, 0, 0, false);
             questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
             mEditorItem.AddEvents.Add(questTask.Id, questTask.EditingEvent);
             if (OpenTaskEditor(questTask))
@@ -295,11 +315,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private bool OpenTaskEditor(QuestBase.QuestTask task)
         {
-            var cmdWindow = new QuestTaskEditor(mEditorItem,task);
+            var cmdWindow = new QuestTaskEditor(mEditorItem, task);
             var frm = new Form
             {
                 Text = Strings.TaskEditor.title
             };
+
             frm.Controls.Add(cmdWindow);
             frm.Size = new Size(0, 0);
             frm.AutoSize = true;
@@ -313,6 +334,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 return true;
             }
+
             return false;
         }
 
@@ -324,6 +346,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 {
                     mEditorItem.AddEvents.Remove(mEditorItem.Tasks[lstTasks.SelectedIndex].Id);
                 }
+
                 mEditorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
                 ListQuestTasks();
             }
@@ -401,8 +424,10 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mEditorItem != null && lstQuests.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.QuestEditor.deleteprompt,
-                        Strings.QuestEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.QuestEditor.deleteprompt, Strings.QuestEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -441,7 +466,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
                     if (mEditorItem.AddEvents.ContainsKey(oldId))
                     {
-                        mEditorItem.AddEvents.Add(tsk.Id,mEditorItem.AddEvents[oldId]);
+                        mEditorItem.AddEvents.Add(tsk.Id, mEditorItem.AddEvents[oldId]);
                         tsk.EditingEvent = mEditorItem.AddEvents[tsk.Id];
                         mEditorItem.AddEvents.Remove(oldId);
                     }
@@ -455,6 +480,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                         mEditorItem.AddEvents.Add(tsk.Id, tsk.EditingEvent);
                     }
                 }
+
                 UpdateEditor();
             }
         }
@@ -463,8 +489,10 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.QuestEditor.undoprompt,
-                        Strings.QuestEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.QuestEditor.undoprompt, Strings.QuestEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -530,25 +558,30 @@ namespace Intersect.Editor.Forms.Editors.Quest
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstQuests.SelectedNode.Tag;
+                selectedId = (Guid) lstQuests.SelectedNode.Tag;
             }
+
             lstQuests.Nodes.Clear();
 
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in QuestBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((QuestBase)itm.Value).Folder) && !mFolders.Contains(((QuestBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((QuestBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((QuestBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((QuestBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((QuestBase)itm.Value).Folder))
-                        mKnownFolders.Add(((QuestBase)itm.Value).Folder);
+                    mFolders.Add(((QuestBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((QuestBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((QuestBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -584,7 +617,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -600,26 +635,36 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstQuests.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstQuests.SelectedNode;
 
-            if (!btnChronological.Checked) lstQuests.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstQuests.Sort();
+            }
 
             lstQuests.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.QuestEditor.folderprompt, Strings.QuestEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.QuestEditor.folderprompt, Strings.QuestEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -644,6 +689,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstQuests.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -662,20 +708,34 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstQuests_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstQuests.SelectedNode == null || lstQuests.SelectedNode.Tag == null) return;
-            mEditorItem = QuestBase.Get((Guid)lstQuests.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstQuests.SelectedNode == null || lstQuests.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = QuestBase.Get((Guid) lstQuests.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -717,15 +777,20 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.QuestEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.QuestEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.QuestEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

@@ -3,31 +3,43 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Utilities;
 using Intersect.GameObjects.Events;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public partial class FrmResource : EditorForm
     {
+
         private List<ResourceBase> mChanged = new List<ResourceBase>();
+
         private string mCopiedItem;
+
         private ResourceBase mEditorItem;
+
         private Bitmap mEndBitmap;
+
         private Bitmap mEndGraphic;
+
+        private List<string> mExpandedFolders = new List<string>();
+
         private Bitmap mInitialBitmap;
+
         private Bitmap mInitialGraphic;
-        private bool mMouseDown;
 
         private List<string> mKnownFolders = new List<string>();
-        private List<string> mExpandedFolders = new List<string>();
+
+        private bool mMouseDown;
 
         //General Editting Variables
         bool mTMouseDown;
@@ -84,7 +96,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             mEndBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-            
+
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
@@ -99,23 +111,29 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbInitialSprite.Items.Clear();
             cmbInitialSprite.Items.Add(Strings.General.none);
-            string[] resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
+            var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             if (mEditorItem.Initial.GraphicFromTileset)
             {
                 resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tileset);
             }
-            for (int i = 0; i < resources.Length; i++)
+
+            for (var i = 0; i < resources.Length; i++)
             {
                 cmbInitialSprite.Items.Add(resources[i]);
             }
+
             if (mEditorItem != null)
             {
                 if (mEditorItem.Initial.Graphic != null && cmbInitialSprite.Items.Contains(mEditorItem.Initial.Graphic))
                 {
-                    cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.Initial.Graphic)));
+                    cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(
+                        TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.Initial.Graphic))
+                    );
+
                     return;
                 }
             }
+
             cmbInitialSprite.SelectedIndex = 0;
         }
 
@@ -123,23 +141,29 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbEndSprite.Items.Clear();
             cmbEndSprite.Items.Add(Strings.General.none);
-            string[] resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
+            var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             if (mEditorItem.Exhausted.GraphicFromTileset)
             {
                 resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tileset);
             }
-            for (int i = 0; i < resources.Length; i++)
+
+            for (var i = 0; i < resources.Length; i++)
             {
                 cmbEndSprite.Items.Add(resources[i]);
             }
+
             if (mEditorItem != null)
             {
                 if (mEditorItem.Exhausted.Graphic != null && cmbEndSprite.Items.Contains(mEditorItem.Exhausted.Graphic))
                 {
-                    cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.Exhausted.Graphic)));
+                    cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(
+                        TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.Exhausted.Graphic))
+                    );
+
                     return;
                 }
             }
+
             cmbEndSprite.SelectedIndex = 0;
         }
 
@@ -207,7 +231,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-                cmbAnimation.SelectedIndex =  AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
+                cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
                 nudMinHp.Value = mEditorItem.MinHp;
                 nudMaxHp.Value = mEditorItem.MaxHp;
                 chkWalkableBefore.Checked = mEditorItem.WalkableBefore;
@@ -217,6 +241,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
                 chkInitialBelowEntities.Checked = mEditorItem.Initial.RenderBelowEntities;
                 chkExhaustedBelowEntities.Checked = mEditorItem.Exhausted.RenderBelowEntities;
+
                 //Regen
                 nudHpRegen.Value = mEditorItem.VitalRegen;
                 PopulateInitialGraphicList();
@@ -233,6 +258,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+
             UpdateToolStripItems();
         }
 
@@ -244,20 +270,33 @@ namespace Intersect.Editor.Forms.Editors
             var drops = mEditorItem.Drops.ToArray();
             foreach (var drop in drops)
             {
-                if (ItemBase.Get(drop.ItemId) == null) mEditorItem.Drops.Remove(drop);
+                if (ItemBase.Get(drop.ItemId) == null)
+                {
+                    mEditorItem.Drops.Remove(drop);
+                }
             }
-            for (int i = 0; i < mEditorItem.Drops.Count; i++)
+
+            for (var i = 0; i < mEditorItem.Drops.Count; i++)
             {
                 if (mEditorItem.Drops[i].ItemId != Guid.Empty)
                 {
-                    lstDrops.Items.Add(Strings.ResourceEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity, mEditorItem.Drops[i].Chance));
+                    lstDrops.Items.Add(
+                        Strings.ResourceEditor.dropdisplay.ToString(
+                            ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity,
+                            mEditorItem.Drops[i].Chance
+                        )
+                    );
                 }
                 else
                 {
                     lstDrops.Items.Add(TextUtils.None);
                 }
             }
-            if (keepIndex && index < lstDrops.Items.Count) lstDrops.SelectedIndex = index;
+
+            if (keepIndex && index < lstDrops.Items.Count)
+            {
+                lstDrops.SelectedIndex = index;
+            }
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
@@ -287,7 +326,11 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 mEditorItem.Initial.Graphic = cmbInitialSprite.Text;
-                var graphic = Path.Combine("resources", mEditorItem.Initial.GraphicFromTileset ? "tilesets" : "resources", cmbInitialSprite.Text);
+                var graphic = Path.Combine(
+                    "resources", mEditorItem.Initial.GraphicFromTileset ? "tilesets" : "resources",
+                    cmbInitialSprite.Text
+                );
+
                 if (File.Exists(graphic))
                 {
                     mInitialGraphic = (Bitmap) Image.FromFile(graphic);
@@ -300,6 +343,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Initial.Graphic = null;
             }
+
             picInitialResource.Visible = mInitialGraphic != null;
             Render();
         }
@@ -311,7 +355,10 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 mEditorItem.Exhausted.Graphic = cmbEndSprite.Text;
-                var graphic = Path.Combine("resources", mEditorItem.Exhausted.GraphicFromTileset ? "tilesets" : "resources",cmbEndSprite.Text);
+                var graphic = Path.Combine(
+                    "resources", mEditorItem.Exhausted.GraphicFromTileset ? "tilesets" : "resources", cmbEndSprite.Text
+                );
+
                 if (File.Exists(graphic))
                 {
                     mEndGraphic = (Bitmap) Image.FromFile(graphic);
@@ -324,21 +371,29 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Exhausted.Graphic = null;
             }
+
             picEndResource.Visible = mEndGraphic != null;
             Render();
         }
 
         public void Render()
         {
-            if (mEditorItem == null) return;
+            if (mEditorItem == null)
+            {
+                return;
+            }
+
             // Initial Sprite
             var gfx = Graphics.FromImage(mInitialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
             if (cmbInitialSprite.SelectedIndex > 0 && mInitialGraphic != null)
             {
-                gfx.DrawImage(mInitialGraphic, new Rectangle(0, 0, mInitialGraphic.Width, mInitialGraphic.Height),
-                    new Rectangle(0, 0, mInitialGraphic.Width, mInitialGraphic.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(
+                    mInitialGraphic, new Rectangle(0, 0, mInitialGraphic.Width, mInitialGraphic.Height),
+                    new Rectangle(0, 0, mInitialGraphic.Width, mInitialGraphic.Height), GraphicsUnit.Pixel
+                );
             }
+
             if (mEditorItem.Initial.GraphicFromTileset)
             {
                 var selX = mEditorItem.Initial.X;
@@ -350,16 +405,22 @@ namespace Intersect.Editor.Forms.Editors
                     selX -= Math.Abs(selW);
                     selW = Math.Abs(selW);
                 }
+
                 if (selH < 0)
                 {
                     selY -= Math.Abs(selH);
                     selH = Math.Abs(selH);
                 }
-                gfx.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
-                    new Rectangle(selX * Options.TileWidth, selY * Options.TileHeight,
-                        Options.TileWidth + (selW * Options.TileWidth),
-                        Options.TileHeight + (selH * Options.TileHeight)));
+
+                gfx.DrawRectangle(
+                    new Pen(System.Drawing.Color.White, 2f),
+                    new Rectangle(
+                        selX * Options.TileWidth, selY * Options.TileHeight,
+                        Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight
+                    )
+                );
             }
+
             gfx.Dispose();
             gfx = picInitialResource.CreateGraphics();
             gfx.DrawImageUnscaled(mInitialBitmap, new System.Drawing.Point(0, 0));
@@ -371,9 +432,12 @@ namespace Intersect.Editor.Forms.Editors
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
             if (cmbEndSprite.SelectedIndex > 0 && mEndGraphic != null)
             {
-                gfx.DrawImage(mEndGraphic, new Rectangle(0, 0, mEndGraphic.Width, mEndGraphic.Height),
-                    new Rectangle(0, 0, mEndGraphic.Width, mEndGraphic.Height), GraphicsUnit.Pixel);
+                gfx.DrawImage(
+                    mEndGraphic, new Rectangle(0, 0, mEndGraphic.Width, mEndGraphic.Height),
+                    new Rectangle(0, 0, mEndGraphic.Width, mEndGraphic.Height), GraphicsUnit.Pixel
+                );
             }
+
             if (mEditorItem.Exhausted.GraphicFromTileset)
             {
                 var selX = mEditorItem.Exhausted.X;
@@ -385,16 +449,22 @@ namespace Intersect.Editor.Forms.Editors
                     selX -= Math.Abs(selW);
                     selW = Math.Abs(selW);
                 }
+
                 if (selH < 0)
                 {
                     selY -= Math.Abs(selH);
                     selH = Math.Abs(selH);
                 }
-                gfx.DrawRectangle(new Pen(System.Drawing.Color.White, 2f),
-                    new Rectangle(selX * Options.TileWidth, selY * Options.TileHeight,
-                        Options.TileWidth + (selW * Options.TileWidth),
-                        Options.TileHeight + (selH * Options.TileHeight)));
+
+                gfx.DrawRectangle(
+                    new Pen(System.Drawing.Color.White, 2f),
+                    new Rectangle(
+                        selX * Options.TileWidth, selY * Options.TileHeight,
+                        Options.TileWidth + selW * Options.TileWidth, Options.TileHeight + selH * Options.TileHeight
+                    )
+                );
             }
+
             gfx.Dispose();
             gfx = picEndResource.CreateGraphics();
             gfx.DrawImageUnscaled(mEndBitmap, new System.Drawing.Point(0, 0));
@@ -405,7 +475,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstResources.SelectedNode != null && lstResources.SelectedNode.Tag != null) lstResources.SelectedNode.Text = txtName.Text;
+            if (lstResources.SelectedNode != null && lstResources.SelectedNode.Tag != null)
+            {
+                lstResources.SelectedNode.Text = txtName.Text;
+            }
+
             mChangingName = false;
         }
 
@@ -428,9 +502,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstResources.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ResourceEditor.deleteprompt,
-                        Strings.ResourceEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ResourceEditor.deleteprompt, Strings.ResourceEditor.deletetitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -460,9 +535,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.ResourceEditor.undoprompt,
-                        Strings.ResourceEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(
+                        Strings.ResourceEditor.undoprompt, Strings.ResourceEditor.undotitle, DarkDialogButton.YesNo,
+                        Properties.Resources.Icon
+                    ) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();
@@ -542,20 +618,24 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.MaxHp = (int) nudMaxHp.Value;
         }
 
-
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
             {
                 mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
             }
+
             UpdateDropValues(true);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
-            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
             UpdateDropValues(true);
         }
 
@@ -565,7 +645,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
                 nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
-                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+                nudDropChance.Value = (decimal) mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
             }
         }
 
@@ -573,8 +653,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Drops.Add(new ResourceBase.ResourceDrop());
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int) nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double) nudDropChance.Value;
 
             UpdateDropValues();
         }
@@ -583,17 +663,22 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstDrops.SelectedIndex > -1)
             {
-                int i = lstDrops.SelectedIndex;
+                var i = lstDrops.SelectedIndex;
                 lstDrops.Items.RemoveAt(i);
                 mEditorItem.Drops.RemoveAt(i);
             }
+
             UpdateDropValues(true);
         }
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
-            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Chance = (double) nudDropChance.Value;
             UpdateDropValues(true);
         }
 
@@ -615,20 +700,27 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkInitialFromTileset.Checked) return;
+
+            if (!chkInitialFromTileset.Checked)
+            {
+                return;
+            }
+
             mMouseDown = true;
-            mEditorItem.Initial.X = (int)Math.Floor((double)e.X / Options.TileWidth);
-            mEditorItem.Initial.Y = (int)Math.Floor((double)e.Y / Options.TileHeight);
+            mEditorItem.Initial.X = (int) Math.Floor((double) e.X / Options.TileWidth);
+            mEditorItem.Initial.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
             mEditorItem.Initial.Width = 0;
             mEditorItem.Initial.Height = 0;
             if (mEditorItem.Initial.X < 0)
             {
                 mEditorItem.Initial.X = 0;
             }
+
             if (mEditorItem.Initial.Y < 0)
             {
                 mEditorItem.Initial.Y = 0;
             }
+
             Render();
         }
 
@@ -638,7 +730,12 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkInitialFromTileset.Checked) return;
+
+            if (!chkInitialFromTileset.Checked)
+            {
+                return;
+            }
+
             var selX = mEditorItem.Initial.X;
             var selY = mEditorItem.Initial.Y;
             var selW = mEditorItem.Initial.Width;
@@ -648,11 +745,13 @@ namespace Intersect.Editor.Forms.Editors
                 selX -= Math.Abs(selW);
                 selW = Math.Abs(selW);
             }
+
             if (selH < 0)
             {
                 selY -= Math.Abs(selH);
                 selH = Math.Abs(selH);
             }
+
             mEditorItem.Initial.X = selX;
             mEditorItem.Initial.Y = selY;
             mEditorItem.Initial.Width = selW;
@@ -667,14 +766,20 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkInitialFromTileset.Checked) return;
+
+            if (!chkInitialFromTileset.Checked)
+            {
+                return;
+            }
+
             if (mMouseDown)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
+                var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
+                var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
                 mEditorItem.Initial.Width = tmpX - mEditorItem.Initial.X;
                 mEditorItem.Initial.Height = tmpY - mEditorItem.Initial.Y;
             }
+
             Render();
         }
 
@@ -684,20 +789,27 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkExhaustedFromTileset.Checked) return;
+
+            if (!chkExhaustedFromTileset.Checked)
+            {
+                return;
+            }
+
             mMouseDown = true;
-            mEditorItem.Exhausted.X = (int)Math.Floor((double)e.X / Options.TileWidth);
-            mEditorItem.Exhausted.Y = (int)Math.Floor((double)e.Y / Options.TileHeight);
+            mEditorItem.Exhausted.X = (int) Math.Floor((double) e.X / Options.TileWidth);
+            mEditorItem.Exhausted.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
             mEditorItem.Exhausted.Width = 0;
             mEditorItem.Exhausted.Height = 0;
             if (mEditorItem.Exhausted.X < 0)
             {
                 mEditorItem.Exhausted.X = 0;
             }
+
             if (mEditorItem.Exhausted.Y < 0)
             {
                 mEditorItem.Exhausted.Y = 0;
             }
+
             Render();
         }
 
@@ -707,7 +819,12 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkExhaustedFromTileset.Checked) return;
+
+            if (!chkExhaustedFromTileset.Checked)
+            {
+                return;
+            }
+
             var selX = mEditorItem.Exhausted.X;
             var selY = mEditorItem.Exhausted.Y;
             var selW = mEditorItem.Exhausted.Width;
@@ -717,11 +834,13 @@ namespace Intersect.Editor.Forms.Editors
                 selX -= Math.Abs(selW);
                 selW = Math.Abs(selW);
             }
+
             if (selH < 0)
             {
                 selY -= Math.Abs(selH);
                 selH = Math.Abs(selH);
             }
+
             mEditorItem.Exhausted.X = selX;
             mEditorItem.Exhausted.Y = selY;
             mEditorItem.Exhausted.Width = selW;
@@ -736,20 +855,26 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-            if (!chkExhaustedFromTileset.Checked) return;
+
+            if (!chkExhaustedFromTileset.Checked)
+            {
+                return;
+            }
+
             if (mMouseDown)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
+                var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
+                var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
                 mEditorItem.Exhausted.Width = tmpX - mEditorItem.Exhausted.X;
                 mEditorItem.Exhausted.Height = tmpY - mEditorItem.Exhausted.Y;
             }
+
             Render();
         }
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen = (int)nudHpRegen.Value;
+            mEditorItem.VitalRegen = (int) nudHpRegen.Value;
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -768,14 +893,16 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
+
         public void InitEditor()
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
             if (lstResources.SelectedNode != null && lstResources.SelectedNode.Tag != null)
             {
-                selectedId = (Guid)lstResources.SelectedNode.Tag;
+                selectedId = (Guid) lstResources.SelectedNode.Tag;
             }
+
             lstResources.Nodes.Clear();
 
             cmbToolType.Items.Clear();
@@ -789,11 +916,14 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ResourceBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ResourceBase)itm.Value).Folder) && !mFolders.Contains(((ResourceBase)itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ResourceBase) itm.Value).Folder) &&
+                    !mFolders.Contains(((ResourceBase) itm.Value).Folder))
                 {
-                    mFolders.Add(((ResourceBase)itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ResourceBase)itm.Value).Folder))
-                        mKnownFolders.Add(((ResourceBase)itm.Value).Folder);
+                    mFolders.Add(((ResourceBase) itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ResourceBase) itm.Value).Folder))
+                    {
+                        mKnownFolders.Add(((ResourceBase) itm.Value).Folder);
+                    }
                 }
             }
 
@@ -829,7 +959,9 @@ namespace Intersect.Editor.Forms.Editors
                     var folderNode = folderNodes[folder];
                     folderNode.Nodes.Add(node);
                     if (itm.Key == selectedId)
+                    {
                         folderNode.Expand();
+                    }
                 }
                 else
                 {
@@ -845,26 +977,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 if (itm.Key == selectedId)
+                {
                     lstResources.SelectedNode = node;
+                }
             }
 
             var selectedNode = lstResources.SelectedNode;
 
-            if (!btnChronological.Checked) lstResources.Sort();
+            if (!btnChronological.Checked)
+            {
+                lstResources.Sort();
+            }
 
             lstResources.SelectedNode = selectedNode;
             foreach (var node in mExpandedFolders)
             {
                 if (folderNodes.ContainsKey(node))
+                {
                     folderNodes[node].Expand();
+                }
             }
-
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
             var folderName = "";
-            var result = DarkInputBox.ShowInformation(Strings.ResourceEditor.folderprompt, Strings.ResourceEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            var result = DarkInputBox.ShowInformation(
+                Strings.ResourceEditor.folderprompt, Strings.ResourceEditor.foldertitle, ref folderName,
+                DarkDialogButton.OkCancel
+            );
+
             if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
             {
                 if (!cmbFolder.Items.Contains(folderName))
@@ -889,6 +1031,7 @@ namespace Intersect.Editor.Forms.Editors
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }
                 }
+
                 var hitTest = lstResources.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {
@@ -907,20 +1050,34 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (node.IsExpanded)
                 {
-                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                    if (!mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Add(node.Text);
+                    }
                 }
                 else
                 {
-                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                    if (mExpandedFolders.Contains(node.Text))
+                    {
+                        mExpandedFolders.Remove(node.Text);
+                    }
                 }
             }
         }
 
         private void lstResources_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (mChangingName) return;
-            if (lstResources.SelectedNode == null || lstResources.SelectedNode.Tag == null) return;
-            mEditorItem = ResourceBase.Get((Guid)lstResources.SelectedNode.Tag);
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstResources.SelectedNode == null || lstResources.SelectedNode.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = ResourceBase.Get((Guid) lstResources.SelectedNode.Tag);
             UpdateEditor();
         }
 
@@ -962,15 +1119,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private bool CustomSearch()
         {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ResourceEditor.searchplaceholder;
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                   txtSearch.Text != Strings.ResourceEditor.searchplaceholder;
         }
 
         private void txtSearch_Click(object sender, EventArgs e)
         {
             if (txtSearch.Text == Strings.ResourceEditor.searchplaceholder)
+            {
                 txtSearch.SelectAll();
+            }
         }
 
         #endregion
+
     }
+
 }

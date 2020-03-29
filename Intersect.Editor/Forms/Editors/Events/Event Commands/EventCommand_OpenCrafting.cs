@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandOpenCraftingTable : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private OpenCraftingTableCommand mMyCommand;
 
         public EventCommandOpenCraftingTable(OpenCraftingTableCommand refCommand, FrmEvent editor)
@@ -33,7 +37,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbTable.SelectedIndex > -1)
+            {
                 mMyCommand.CraftingTableId = CraftingTableBase.IdFromList(cmbTable.SelectedIndex);
+            }
+
             mEventEditor.FinishCommandEdit();
         }
 
@@ -41,5 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

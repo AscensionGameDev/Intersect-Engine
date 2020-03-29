@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using Intersect.Editor.Forms.Editors.Events.Event_Commands;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Conditions;
@@ -8,24 +9,39 @@ using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors
 {
+
     public enum RequirementType
     {
+
         Item,
+
         Resource,
+
         Spell,
+
         Event,
+
         Quest,
+
         NpcFriend,
+
         NpcAttackOnSight,
+
         NpcDontAttackOnSight,
+
         NpcCanBeAttacked,
+
     }
 
     public partial class FrmDynamicRequirements : Form
     {
+
         private ConditionList mEdittingList;
+
         private ConditionLists mEdittingLists;
+
         private ConditionList mSourceList;
+
         private ConditionLists mSourceLists;
 
         public FrmDynamicRequirements(ConditionLists lists, RequirementType type)
@@ -45,34 +61,44 @@ namespace Intersect.Editor.Forms.Editors
             {
                 case RequirementType.Item:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsitem;
+
                     break;
                 case RequirementType.Resource:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsresource;
+
                     break;
                 case RequirementType.Spell:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsspell;
+
                     break;
                 case RequirementType.Event:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsevent;
+
                     break;
                 case RequirementType.Quest:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsquest;
+
                     break;
                 case RequirementType.NpcFriend:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcfriend;
+
                     break;
                 case RequirementType.NpcAttackOnSight:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcattackonsight;
+
                     break;
                 case RequirementType.NpcDontAttackOnSight:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcdontattackonsight;
+
                     break;
                 case RequirementType.NpcCanBeAttacked:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsnpccanbeattacked;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+
             btnAddList.Text = Strings.DynamicRequirements.addlist;
             btnRemoveList.Text = Strings.DynamicRequirements.removelist;
             btnSave.Text = Strings.DynamicRequirements.save;
@@ -88,7 +114,7 @@ namespace Intersect.Editor.Forms.Editors
             grpConditionLists.Show();
             grpConditionList.Hide();
             lstConditionLists.Items.Clear();
-            for (int i = 0; i < mEdittingLists.Lists.Count; i++)
+            for (var i = 0; i < mEdittingLists.Lists.Count; i++)
             {
                 lstConditionLists.Items.Add(mEdittingLists.Lists[i].Name);
             }
@@ -103,16 +129,21 @@ namespace Intersect.Editor.Forms.Editors
                 mSourceList = list;
                 mEdittingList = mSourceList;
             }
+
             txtListName.Text = list.Name;
-            for (int i = 0; i < list.Conditions.Count; i++)
+            for (var i = 0; i < list.Conditions.Count; i++)
             {
                 if (list.Conditions[i].Negated)
                 {
-                    lstConditions.Items.Add(Strings.EventConditionDesc.negated.ToString(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i])));
+                    lstConditions.Items.Add(
+                        Strings.EventConditionDesc.negated.ToString(
+                            Strings.GetEventConditionalDesc((dynamic) list.Conditions[i])
+                        )
+                    );
                 }
                 else
                 {
-                    lstConditions.Items.Add(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i]));
+                    lstConditions.Items.Add(Strings.GetEventConditionalDesc((dynamic) list.Conditions[i]));
                 }
             }
         }
@@ -141,7 +172,9 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEdittingList.Name = txtListName.Text;
                 if (mEdittingLists.Lists.IndexOf(mEdittingList) > -1)
+                {
                     lstConditionLists.Items[mEdittingLists.Lists.IndexOf(mEdittingList)] = txtListName.Text;
+                }
             }
         }
 
@@ -170,7 +203,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private Condition OpenConditionEditor(Condition condition)
         {
-            var cmdWindow = new EventCommandConditionalBranch(condition, null, null,null);
+            var cmdWindow = new EventCommandConditionalBranch(condition, null, null, null);
             var frm = new Form
             {
                 Text = Strings.DynamicRequirements.conditioneditor,
@@ -181,11 +214,16 @@ namespace Intersect.Editor.Forms.Editors
                 StartPosition = FormStartPosition.CenterParent,
                 BackColor = cmdWindow.BackColor
             };
+
             frm.Controls.Add(cmdWindow);
             cmdWindow.BringToFront();
             frm.TopMost = true;
             frm.ShowDialog();
-            if (cmdWindow.Cancelled) return null;
+            if (cmdWindow.Cancelled)
+            {
+                return null;
+            }
+
             return cmdWindow.Condition;
         }
 
@@ -211,12 +249,18 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstConditionLists_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete) btnRemoveList_Click(null, null);
+            if (e.KeyCode == Keys.Delete)
+            {
+                btnRemoveList_Click(null, null);
+            }
         }
 
         private void lstConditions_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete) btnRemoveCondition_Click(null, null);
+            if (e.KeyCode == Keys.Delete)
+            {
+                btnRemoveCondition_Click(null, null);
+            }
         }
 
         private void lstConditionLists_Click(object sender, EventArgs e)
@@ -226,5 +270,7 @@ namespace Intersect.Editor.Forms.Editors
                 UpdateConditions(mEdittingLists.Lists[lstConditionLists.SelectedIndex]);
             }
         }
+
     }
+
 }

@@ -1,8 +1,11 @@
 ﻿namespace Intersect
 {
+
     public struct Point
     {
+
         public int X { get; set; }
+
         public int Y { get; set; }
 
         public Point(int x, int y)
@@ -15,7 +18,7 @@
         {
             if (obj is Point)
             {
-                return ((Point)obj) == this;
+                return (Point) obj == this;
             }
 
             return false;
@@ -50,12 +53,21 @@
 
         public static Point FromString(string val)
         {
-            if (string.IsNullOrEmpty(val)) return Point.Empty;
-            string[] strs = val.Split(",".ToCharArray());
-            int[] parts = new int[strs.Length];
-            for (int i = 0; i < strs.Length; i++)
+            if (string.IsNullOrEmpty(val))
+            {
+                return Point.Empty;
+            }
+
+            var strs = val.Split(",".ToCharArray());
+            var parts = new int[strs.Length];
+            for (var i = 0; i < strs.Length; i++)
+            {
                 parts[i] = int.Parse(strs[i]);
+            }
+
             return new Point(parts[0], parts[1]);
         }
+
     }
+
 }

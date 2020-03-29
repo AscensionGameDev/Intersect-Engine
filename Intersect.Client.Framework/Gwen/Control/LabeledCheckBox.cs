@@ -1,25 +1,28 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     CheckBox with label.
     /// </summary>
     public class LabeledCheckBox : Base
     {
+
         private readonly CheckBox mCheckBox;
+
         private readonly Label mLabel;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="LabeledCheckBox" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public LabeledCheckBox(Base parent, string name = "")
-            : base(parent, name)
+        public LabeledCheckBox(Base parent, string name = "") : base(parent, name)
         {
             SetSize(200, 19);
             mCheckBox = new CheckBox(this);
@@ -74,6 +77,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             var obj = base.GetJson();
             obj.Add("Label", mLabel.GetJson());
             obj.Add("Checkbox", mCheckBox.GetJson());
+
             return base.FixJson(obj);
         }
 
@@ -101,16 +105,22 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (mCheckBox.IsChecked)
             {
                 if (Checked != null)
+                {
                     Checked.Invoke(this, EventArgs.Empty);
+                }
             }
             else
             {
                 if (UnChecked != null)
+                {
                     UnChecked.Invoke(this, EventArgs.Empty);
+                }
             }
 
             if (CheckChanged != null)
+            {
                 CheckChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void SetCheckSize(int w, int h)
@@ -149,8 +159,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.OnKeySpace(down);
             if (!down)
+            {
                 mCheckBox.IsChecked = !mCheckBox.IsChecked;
+            }
+
             return true;
         }
+
     }
+
 }

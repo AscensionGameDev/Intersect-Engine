@@ -4,16 +4,24 @@ using JetBrains.Annotations;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public struct ExperimentalFlagAlias : IExperimentalFlag
     {
+
         [NotNull] private readonly IFlagProvider mFlagProvider;
+
         [NotNull] private readonly string mTargetName;
 
         private Guid mCachedGuid;
 
-        [NotNull] public string Name { get; }
+        [NotNull]
+        public string Name { get; }
 
-        public ExperimentalFlagAlias([NotNull] IFlagProvider flagProvider, [NotNull] string targetName, [NotNull] string aliasName)
+        public ExperimentalFlagAlias(
+            [NotNull] IFlagProvider flagProvider,
+            [NotNull] string targetName,
+            [NotNull] string aliasName
+        )
         {
             if (string.IsNullOrWhiteSpace(targetName))
             {
@@ -33,7 +41,8 @@ namespace Intersect.Core.ExperimentalFeatures
         }
 
         /// <inheritdoc />
-        public Guid Guid {
+        public Guid Guid
+        {
             get
             {
                 if (mCachedGuid != default(Guid))
@@ -45,7 +54,7 @@ namespace Intersect.Core.ExperimentalFeatures
                 {
                     throw new ArgumentException(nameof(mTargetName));
                 }
-                
+
                 return mCachedGuid = flag.Guid;
             }
         }
@@ -54,7 +63,10 @@ namespace Intersect.Core.ExperimentalFeatures
         public bool Enabled => mFlagProvider.IsEnabled(Guid);
 
         /// <inheritdoc cref="IEquatable{T}" />
-        public bool Equals(IExperimentalFlag other) => Guid == other?.Guid && Enabled == other.Enabled;
+        public bool Equals(IExperimentalFlag other)
+        {
+            return Guid == other?.Guid && Enabled == other.Enabled;
+        }
 
         /// <inheritdoc />
         public IExperimentalFlag With(bool enabled)
@@ -66,5 +78,7 @@ namespace Intersect.Core.ExperimentalFeatures
 
             return flag.With(enabled);
         }
+
     }
+
 }

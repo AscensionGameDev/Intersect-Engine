@@ -1,14 +1,25 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
+
     public class TimeBase
     {
+
+        private static TimeBase sTimeBase = new TimeBase();
+
+        [NotMapped] public Color[] DaylightHues;
+
+        public TimeBase()
+        {
+            ResetColors();
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
-        private static TimeBase sTimeBase = new TimeBase();
 
         [JsonIgnore]
         [Column("DaylightHues")]
@@ -17,17 +28,12 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(DaylightHues, Formatting.None);
             protected set => DaylightHues = JsonConvert.DeserializeObject<Color[]>(value);
         }
-        [NotMapped]
-        public Color[] DaylightHues;
 
         public int RangeInterval { get; set; } = 720;
-        public float Rate { get; set; } = 1.0f;
-        public bool SyncTime { get; set; } = true;
 
-        public TimeBase()
-        {
-            ResetColors();
-        }
+        public float Rate { get; set; } = 1.0f;
+
+        public bool SyncTime { get; set; } = true;
 
         public void LoadFromJson(string json)
         {
@@ -47,7 +53,7 @@ namespace Intersect.GameObjects
         public void ResetColors()
         {
             DaylightHues = new Color[1440 / RangeInterval];
-            for (int i = 0; i < 1440 / RangeInterval; i++)
+            for (var i = 0; i < 1440 / RangeInterval; i++)
             {
                 DaylightHues[i] = new Color(255, 255, 255, 255);
             }
@@ -82,6 +88,7 @@ namespace Intersect.GameObjects
                 case 10: //10 minute span
                     return 11;
             }
+
             return 5;
         }
 
@@ -114,6 +121,7 @@ namespace Intersect.GameObjects
                 case 11: //10 minute span
                     return 10;
             }
+
             return 5;
         }
 
@@ -126,5 +134,7 @@ namespace Intersect.GameObjects
         {
             return sTimeBase;
         }
+
     }
+
 }

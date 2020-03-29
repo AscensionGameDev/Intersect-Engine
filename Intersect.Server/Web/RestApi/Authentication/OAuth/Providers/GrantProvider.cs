@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Intersect.Logging;
 using Intersect.Reflection;
 using Intersect.Security.Claims;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Configuration;
 
@@ -19,13 +20,14 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
     internal class GrantProvider : OAuthAuthorizationServerProvider
     {
-        [NotNull]
-        private ApiConfiguration Configuration { get; }
 
         public GrantProvider([NotNull] ApiConfiguration configuration)
         {
             Configuration = configuration;
         }
+
+        [NotNull]
+        private ApiConfiguration Configuration { get; }
 
         public override Task AuthorizationEndpointResponse(OAuthAuthorizationEndpointResponseContext context)
         {
@@ -58,7 +60,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
         }
 
         public override async Task GrantResourceOwnerCredentials(
-            [NotNull] OAuthGrantResourceOwnerCredentialsContext context)
+            [NotNull] OAuthGrantResourceOwnerCredentialsContext context
+        )
         {
             var owinContext = context.OwinContext;
             var options = context.Options;
@@ -80,6 +83,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 context.SetError("credentials_missing");
+
                 return;
             }
 
@@ -89,12 +93,14 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (!user?.IsPasswordValid(password.ToUpper().Trim()) ?? true)
             {
                 context.SetError("credentials_invalid");
+
                 return;
             }
 
             if (!user.Power?.Api ?? true)
             {
                 context.SetError("insufficient_permissions");
+
                 return;
             }
 
@@ -119,10 +125,31 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 if (user.Power.ApiRoles?.UserQuery ?? false)
                 {
                     identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).FullName));
-                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Ban))?.GetFullName()));
-                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Mute))?.GetFullName()));
-                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsBanned))?.GetFullName()));
-                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsMuted))?.GetFullName()));
+                    identity.AddClaim(
+                        new Claim(
+                            IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Ban))?.GetFullName()
+                        )
+                    );
+
+                    identity.AddClaim(
+                        new Claim(
+                            IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Mute))?.GetFullName()
+                        )
+                    );
+
+                    identity.AddClaim(
+                        new Claim(
+                            IntersectClaimTypes.AccessRead,
+                            typeof(User).GetProperty(nameof(User.IsBanned))?.GetFullName()
+                        )
+                    );
+
+                    identity.AddClaim(
+                        new Claim(
+                            IntersectClaimTypes.AccessRead,
+                            typeof(User).GetProperty(nameof(User.IsMuted))?.GetFullName()
+                        )
+                    );
                 }
             }
 
@@ -140,19 +167,22 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             var properties = context.Properties.Dictionary.ToList();
             var parameters = context.AdditionalResponseParameters;
-            properties.ForEach(pair =>
-            {
-                if (!string.IsNullOrWhiteSpace(pair.Key))
+            properties.ForEach(
+                pair =>
                 {
-                    parameters.Add(pair.Key, pair.Value);
+                    if (!string.IsNullOrWhiteSpace(pair.Key))
+                    {
+                        parameters.Add(pair.Key, pair.Value);
+                    }
                 }
-            });
+            );
 
             return Task.FromResult(0);
         }
 
         public override async Task ValidateClientAuthentication(
-            [NotNull] OAuthValidateClientAuthenticationContext context)
+            [NotNull] OAuthValidateClientAuthenticationContext context
+        )
         {
             var parameters = context.Parameters;
             var owinContext = context.OwinContext;
@@ -174,6 +204,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (string.IsNullOrWhiteSpace(grantType))
             {
                 context.SetError("grant_type_missing");
+
                 return;
             }
 
@@ -181,16 +212,21 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             {
                 case "password":
                     context.Validated();
+
                     return;
 
                 case "refresh_token":
                     context.Validated();
+
                     return;
 
                 default:
                     context.SetError("grant_type_invalid");
+
                     return;
             }
         }
+
     }
+
 }

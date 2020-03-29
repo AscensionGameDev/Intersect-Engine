@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -8,10 +9,14 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandVariable : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private bool mLoading;
+
         private SetVariableCommand mMyCommand;
 
         public EventCommandVariable(SetVariableCommand refCommand, FrmEvent editor)
@@ -42,6 +47,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 rdoPlayerVariable.Checked = true;
             }
+
             mLoading = false;
             InitEditor();
         }
@@ -49,7 +55,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitLocalization()
         {
             grpSetVariable.Text = Strings.EventSetVariable.title;
-           
+
             grpSelectVariable.Text = Strings.EventSetVariable.label;
             rdoGlobalVariable.Text = Strings.EventSetVariable.global;
             rdoPlayerVariable.Text = Strings.EventSetVariable.player;
@@ -87,13 +93,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblStringFind.Text = Strings.EventSetVariable.stringreplacefind;
             lblStringReplace.Text = Strings.EventSetVariable.stringreplacereplace;
             lblStringTextVariables.Text = Strings.EventSetVariable.stringtip;
-
         }
 
         private void InitEditor()
         {
             cmbVariable.Items.Clear();
-            int varCount = 0;
+            var varCount = 0;
             if (rdoPlayerVariable.Checked)
             {
                 cmbVariable.Items.AddRange(PlayerVariableBase.Names);
@@ -102,7 +107,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else
             {
                 cmbVariable.Items.AddRange(ServerVariableBase.Names);
-                cmbVariable.SelectedIndex =  ServerVariableBase.ListIndex(mMyCommand.VariableId);
+                cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.VariableId);
             }
 
             chkSyncParty.Checked = mMyCommand.SyncParty;
@@ -124,16 +129,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 if (rdoPlayerVariable.Checked)
                 {
                     var playerVar = PlayerVariableBase.FromList(cmbVariable.SelectedIndex);
-                    if (playerVar != null) varType = (byte)playerVar.Type;
-
+                    if (playerVar != null)
+                    {
+                        varType = (byte) playerVar.Type;
+                    }
                 }
                 else if (rdoGlobalVariable.Checked)
                 {
                     var serverVar = ServerVariableBase.FromList(cmbVariable.SelectedIndex);
-                    if (serverVar != null) varType = (byte)serverVar.Type;
+                    if (serverVar != null)
+                    {
+                        varType = (byte) serverVar.Type;
+                    }
                 }
             }
-            
+
             //Load the correct editor
             if (varType > 0)
             {
@@ -142,12 +152,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     case VariableDataTypes.Boolean:
                         grpBooleanVariable.Show();
                         TryLoadBooleanMod(mMyCommand.Modification);
+
                         break;
 
                     case VariableDataTypes.Integer:
                         grpNumericVariable.Show();
                         TryLoadNumericMod(mMyCommand.Modification);
                         UpdateNumericFormElements();
+
                         break;
 
                     case VariableDataTypes.Number:
@@ -156,16 +168,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     case VariableDataTypes.String:
                         grpStringVariable.Show();
                         TryLoadStringMod(mMyCommand.Modification);
+
                         break;
 
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
         }
-
-
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -175,6 +185,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mMyCommand.VariableType = VariableTypes.PlayerVariable;
                 mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
+
             if (rdoGlobalVariable.Checked)
             {
                 mMyCommand.VariableType = VariableTypes.ServerVariable;
@@ -222,31 +233,61 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor.CancelCommandEdit();
         }
 
-
-
         private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-            if (!mLoading) optNumericSet.Checked = true;
-            if (!mLoading) nudNumericValue.Value = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0)
+            {
+                cmbVariable.SelectedIndex = 0;
+            }
+
+            if (!mLoading)
+            {
+                optNumericSet.Checked = true;
+            }
+
+            if (!mLoading)
+            {
+                nudNumericValue.Value = 0;
+            }
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-            if (!mLoading) optNumericSet.Checked = true;
-            if (!mLoading) nudNumericValue.Value = 0;
+            if (!mLoading && cmbVariable.Items.Count > 0)
+            {
+                cmbVariable.SelectedIndex = 0;
+            }
+
+            if (!mLoading)
+            {
+                optNumericSet.Checked = true;
+            }
+
+            if (!mLoading)
+            {
+                nudNumericValue.Value = 0;
+            }
+        }
+
+        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateFormElements();
         }
 
         #region "Boolean Variable"
+
         private void TryLoadBooleanMod(VariableMod varMod)
         {
-            if (varMod == null) varMod = new BooleanVariableMod();
+            if (varMod == null)
+            {
+                varMod = new BooleanVariableMod();
+            }
+
             if (varMod.GetType() == typeof(BooleanVariableMod))
             {
-                var mod = (BooleanVariableMod)varMod;
+                var mod = (BooleanVariableMod) varMod;
 
                 optBooleanTrue.Checked = mod.Value;
                 optBooleanFalse.Checked = !mod.Value;
@@ -293,7 +334,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void TryLoadNumericMod(VariableMod varMod)
         {
-            if (varMod == null) varMod = new IntegerVariableMod();
+            if (varMod == null)
+            {
+                varMod = new IntegerVariableMod();
+            }
+
             if (varMod.GetType() == typeof(IntegerVariableMod))
             {
                 var mod = (IntegerVariableMod) varMod;
@@ -425,23 +470,23 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (optNumericSet.Checked && optNumericStaticVal.Checked)
             {
                 mod.ModType = VariableMods.Set;
-                mod.Value = (int)nudNumericValue.Value;
+                mod.Value = (int) nudNumericValue.Value;
             }
             else if (optNumericAdd.Checked && optNumericStaticVal.Checked)
             {
                 mod.ModType = VariableMods.Add;
-                mod.Value = (int)nudNumericValue.Value;
+                mod.Value = (int) nudNumericValue.Value;
             }
             else if (optNumericSubtract.Checked && optNumericStaticVal.Checked)
             {
                 mod.ModType = VariableMods.Subtract;
-                mod.Value = (int)nudNumericValue.Value;
+                mod.Value = (int) nudNumericValue.Value;
             }
             else if (optNumericRandom.Checked)
             {
                 mod.ModType = VariableMods.Random;
-                mod.Value = (int)nudLow.Value;
-                mod.HighValue = (int)nudHigh.Value;
+                mod.Value = (int) nudLow.Value;
+                mod.HighValue = (int) nudHigh.Value;
                 if (mod.HighValue < mod.Value)
                 {
                     var n = mod.Value;
@@ -467,6 +512,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     mod.ModType = VariableMods.SubtractPlayerVar;
                 }
+
                 mod.DuplicateVariableId = PlayerVariableBase.IdFromList(cmbNumericClonePlayerVar.SelectedIndex);
             }
             else if (optNumericCloneGlobalVar.Checked)
@@ -483,6 +529,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     mod.ModType = VariableMods.SubtractGlobalVar;
                 }
+
                 mod.DuplicateVariableId = ServerVariableBase.IdFromList(cmbNumericCloneGlobalVar.SelectedIndex);
             }
 
@@ -495,21 +542,27 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void TryLoadStringMod(VariableMod varMod)
         {
-            if (varMod == null) varMod = new StringVariableMod();
+            if (varMod == null)
+            {
+                varMod = new StringVariableMod();
+            }
+
             if (varMod.GetType() == typeof(StringVariableMod))
             {
-                var mod = (StringVariableMod)varMod;
+                var mod = (StringVariableMod) varMod;
 
                 switch (mod.ModType)
                 {
                     case VariableMods.Set:
                         optStaticString.Checked = true;
                         txtStringValue.Text = mod.Value;
+
                         break;
                     case VariableMods.Replace:
                         optReplaceString.Checked = true;
                         txtStringFind.Text = mod.Value;
                         txtStringReplace.Text = mod.Replace;
+
                         break;
                 }
             }
@@ -536,7 +589,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void lblStringTextVariables_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
+            );
         }
 
         private void UpdateStringFormElements()
@@ -557,9 +611,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         #endregion
 
-        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateFormElements();
-        }
     }
+
 }

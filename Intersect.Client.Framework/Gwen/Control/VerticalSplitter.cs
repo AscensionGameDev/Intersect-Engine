@@ -1,24 +1,29 @@
 ﻿using System;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     public class VerticalSplitter : Base
     {
+
         private readonly SplitterBar mHSplitter;
+
         private readonly Base[] mSections;
+
         private int mBarSize; // pixels
 
         private float mHVal; // 0-1
+
         private int mZoomedSection; // 0-3
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CrossSplitter" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public VerticalSplitter(Base parent)
-            : base(parent)
+        public VerticalSplitter(Base parent) : base(parent)
         {
             mSections = new Base[2];
 
@@ -88,12 +93,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetHValue(float value)
         {
             if (value <= 1f || value >= 0)
+            {
                 mHVal = value;
+            }
         }
 
         private void UpdateHSplitter()
         {
-            mHSplitter.MoveTo((Width - mHSplitter.Width) * (mHVal), mHSplitter.Y);
+            mHSplitter.MoveTo((Width - mHSplitter.Width) * mHVal, mHSplitter.Y);
         }
 
         protected void OnHorizontalMoved(Base control, EventArgs args)
@@ -120,10 +127,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (mZoomedSection == -1)
             {
                 if (mSections[0] != null)
+                {
                     mSections[0].SetBounds(0, 0, mHSplitter.X, Height);
+                }
 
                 if (mSections[1] != null)
+                {
                     mSections[1].SetBounds(mHSplitter.X + mBarSize, 0, Width - (mHSplitter.X + mBarSize), Height);
+                }
             }
             else
             {
@@ -166,17 +177,23 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected void OnZoomChanged()
         {
             if (ZoomChanged != null)
+            {
                 ZoomChanged.Invoke(this, EventArgs.Empty);
+            }
 
             if (mZoomedSection == -1)
             {
                 if (PanelUnZoomed != null)
+                {
                     PanelUnZoomed.Invoke(this, EventArgs.Empty);
+                }
             }
             else
             {
                 if (PanelZoomed != null)
+                {
                     PanelZoomed.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -190,15 +207,19 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (mSections[section] != null)
             {
-                for (int i = 0; i < 2; i++)
+                for (var i = 0; i < 2; i++)
                 {
                     if (i != section && mSections[i] != null)
+                    {
                         mSections[i].IsHidden = true;
+                    }
                 }
+
                 mZoomedSection = section;
 
                 Invalidate();
             }
+
             OnZoomChanged();
         }
 
@@ -209,14 +230,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             mZoomedSection = -1;
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 if (mSections[i] != null)
+                {
                     mSections[i].IsHidden = false;
+                }
             }
 
             Invalidate();
             OnZoomChanged();
         }
+
     }
+
 }

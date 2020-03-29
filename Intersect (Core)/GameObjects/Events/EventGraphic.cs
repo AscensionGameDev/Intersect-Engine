@@ -1,15 +1,21 @@
 ﻿using Intersect.Enums;
-using Intersect.Utilities;
 
 namespace Intersect.GameObjects.Events
 {
+
     public class EventGraphic
     {
-        public EventGraphicType Type;
+
         public string Filename;
+
         public int Height;
+
+        public EventGraphicType Type;
+
         public int Width;
+
         public int X;
+
         public int Y;
 
         public EventGraphic()
@@ -31,5 +37,7 @@ namespace Intersect.GameObjects.Events
             Width = toCopy.Width;
             Height = toCopy.Height;
         }
+
     }
+
 }

@@ -1,8 +1,11 @@
 ﻿namespace Intersect.Client.Framework.Gwen.Renderer
 {
+
     public interface ICacheToTexture
     {
+
         void Initialize();
+
         void ShutDown();
 
         /// <summary>
@@ -32,6 +35,9 @@
         void UpdateControlCacheTexture(Control.Base control);
 
         void DisposeCachedTexture(Control.Base control);
+
         void SetRenderer(Base renderer);
+
     }
+
 }

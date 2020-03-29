@@ -1,19 +1,48 @@
 ﻿using System;
 using System.Text;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging.Formatting
 {
+
     public class DefaultFormatter : ILogFormatter
     {
-        public const string DefaultTimestampFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
-        [CanBeNull]
-        public string TimestampFormat { get; set; }
+        public const string DefaultTimestampFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
         public DefaultFormatter()
         {
             TimestampFormat = DefaultTimestampFormat;
+        }
+
+        [CanBeNull]
+        public string TimestampFormat { get; set; }
+
+        /// <inheritdoc />
+        public string Format(
+            LogConfiguration configuration,
+            LogLevel logLevel,
+            DateTime dateTime,
+            Exception exception,
+            string message,
+            params object[] args
+        )
+        {
+            var prefix = FormatPrefix(configuration, logLevel, dateTime);
+            var builder = new StringBuilder();
+
+            if (message != null)
+            {
+                FormatLine(builder, prefix, message, args);
+            }
+
+            if (exception != null)
+            {
+                FormatLine(builder, prefix, exception);
+            }
+
+            return builder.ToString();
         }
 
         [NotNull]
@@ -43,7 +72,12 @@ namespace Intersect.Logging.Formatting
             return builder.ToString();
         }
 
-        private static void FormatLine([NotNull] StringBuilder builder, [NotNull] string prefix, [NotNull] string message, params object[] args)
+        private static void FormatLine(
+            [NotNull] StringBuilder builder,
+            [NotNull] string prefix,
+            [NotNull] string message,
+            params object[] args
+        )
         {
             builder.Append(prefix);
 
@@ -59,7 +93,12 @@ namespace Intersect.Logging.Formatting
             builder.AppendLine();
         }
 
-        private static void FormatLine([NotNull] StringBuilder builder, [CanBeNull] string prefix, [NotNull] Exception exception, bool recurse = true)
+        private static void FormatLine(
+            [NotNull] StringBuilder builder,
+            [CanBeNull] string prefix,
+            [NotNull] Exception exception,
+            bool recurse = true
+        )
         {
             if (!string.IsNullOrWhiteSpace(prefix))
             {
@@ -80,7 +119,8 @@ namespace Intersect.Logging.Formatting
                 return;
             }
 
-            Exception innerException = exception; ;
+            var innerException = exception;
+            ;
             while ((innerException = innerException.InnerException) != null)
             {
                 builder.AppendLine(@"Caused By");
@@ -88,24 +128,6 @@ namespace Intersect.Logging.Formatting
             }
         }
 
-        /// <inheritdoc />
-        public string Format(LogConfiguration configuration, LogLevel logLevel, DateTime dateTime, Exception exception, string message, params object[] args)
-        {
-            var prefix = FormatPrefix(configuration, logLevel, dateTime);
-            var builder = new StringBuilder();
-
-            if (message != null)
-            {
-                FormatLine(builder, prefix, message, args);
-            }
-
-            if (exception != null)
-            {
-                FormatLine(builder, prefix, exception);
-            }
-
-            return builder.ToString();
-        }
-
     }
+
 }

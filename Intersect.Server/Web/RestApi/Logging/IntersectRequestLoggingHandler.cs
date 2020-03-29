@@ -11,10 +11,11 @@ using Intersect.Server.Web.RestApi.Extensions;
 
 namespace Intersect.Server.Web.RestApi.Logging
 {
+
     // TODO: Probably a good idea to remove this since it was replaced with middleware
     public class IntersectRequestLoggingHandler : DelegatingHandler
     {
-        
+
         public LogLevel LogLevel { get; set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(
@@ -38,15 +39,20 @@ namespace Intersect.Server.Web.RestApi.Logging
             }
 
             var requestMethod = request.Method;
-            var requestHeaders = request.Headers?.ToDictionary(pair => pair.Key, pair => pair.Value?.ToList()) ?? new Dictionary<string, List<string>>();
+            var requestHeaders = request.Headers?.ToDictionary(pair => pair.Key, pair => pair.Value?.ToList()) ??
+                                 new Dictionary<string, List<string>>();
+
             var requestUri = new Uri(request.RequestUri?.OriginalString);
-            
+
             var response = await (base.SendAsync(request, cancellationToken) ?? throw new InvalidOperationException());
             var responseStatusCode = response.StatusCode;
-            var responseHeaders = response.Headers?.ToDictionary(pair => pair.Key, pair => pair.Value?.ToList()) ?? new Dictionary<string, List<string>>();
+            var responseHeaders = response.Headers?.ToDictionary(pair => pair.Key, pair => pair.Value?.ToList()) ??
+                                  new Dictionary<string, List<string>>();
+
             var responseReasonPhrase = response.ReasonPhrase;
 
             var logLevel = responseStatusCode.ToIntersectLogLevel(requestMethod);
+
             // ReSharper disable once InvertIf
             if (logLevel < LogLevel)
             {
@@ -72,6 +78,7 @@ namespace Intersect.Server.Web.RestApi.Logging
                     catch (Exception exception)
                     {
                         Log.Error(exception);
+
                         throw;
                     }
                 }
@@ -80,6 +87,6 @@ namespace Intersect.Server.Web.RestApi.Logging
             return response;
         }
 
-
     }
+
 }

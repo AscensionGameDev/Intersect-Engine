@@ -1,40 +1,55 @@
 ﻿using System;
+
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Static text label.
     /// </summary>
     public class Label : Base
     {
+
         public enum ControlState
         {
+
             Normal = 0,
+
             Hovered,
+
             Clicked,
+
             Disabled,
+
         }
 
         protected readonly Text mText;
-        private string fontInfo;
-        private Pos mAlign;
-        private bool mAutoSizeToContents;
-        protected Color mClickedTextColor;
-        protected Color mDisabledTextColor;
-        protected Color mHoverTextColor;
-        protected Color mNormalTextColor;
-        private Padding mTextPadding;
 
-        private GameTexture mBackgroundTemplateTex;
+        private string fontInfo;
+
+        private Pos mAlign;
+
+        private bool mAutoSizeToContents;
+
         private string mBackgroundTemplateFilename;
 
-        public GameTexture ToolTipBackground { get; set; }
+        private GameTexture mBackgroundTemplateTex;
+
+        protected Color mClickedTextColor;
+
+        protected Color mDisabledTextColor;
+
+        protected Color mHoverTextColor;
+
+        protected Color mNormalTextColor;
+
+        private Padding mTextPadding;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Label" /> class.
@@ -43,6 +58,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public Label(Base parent, string name = "") : base(parent, name)
         {
             mText = new Text(this);
+
             //m_Text.Font = Skin.DefaultFont;
 
             MouseInputEnabled = false;
@@ -51,6 +67,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             mAutoSizeToContents = true;
         }
+
+        public GameTexture ToolTipBackground { get; set; }
 
         /// <summary>
         ///     Text alignment.
@@ -94,6 +112,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     {
                         SizeToContents();
                     }
+
                     Invalidate();
                 }
             }
@@ -196,7 +215,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override JObject GetJson()
         {
             var obj = base.GetJson();
-            if (this.GetType() == typeof(Label)) obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+            if (this.GetType() == typeof(Label))
+            {
+                obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
+            }
+
             obj.Add("TextColor", Color.ToString(TextColor));
             obj.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
             obj.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
@@ -206,30 +229,66 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("AutoSizeToContents", mAutoSizeToContents);
             obj.Add("Font", fontInfo);
             obj.Add("TextScale", mText.GetScale());
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null) SetBackgroundTemplate(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["BackgroundTemplate"]), (string)obj["BackgroundTemplate"]);
-            if (obj["TextColor"] != null) TextColor = Color.FromString((string)obj["TextColor"]);
+            if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null)
+            {
+                SetBackgroundTemplate(
+                    GameContentManager.Current.GetTexture(
+                        GameContentManager.TextureType.Gui, (string) obj["BackgroundTemplate"]
+                    ), (string) obj["BackgroundTemplate"]
+                );
+            }
+
+            if (obj["TextColor"] != null)
+            {
+                TextColor = Color.FromString((string) obj["TextColor"]);
+            }
+
             mNormalTextColor = TextColor;
-            if (obj["HoveredTextColor"] != null) mHoverTextColor = Color.FromString((string)obj["HoveredTextColor"]);
-            if (obj["ClickedTextColor"] != null) mClickedTextColor = Color.FromString((string)obj["ClickedTextColor"]);
-            mDisabledTextColor = Color.FromString((string)obj["DisabledTextColor"], new Color(255, 90, 90, 90));
-            if (obj["TextAlign"] != null) mAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
-            if (obj["TextPadding"] != null) TextPadding = Padding.FromString((string)obj["TextPadding"]);
-            if (obj["AutoSizeToContents"] != null) mAutoSizeToContents = (bool) obj["AutoSizeToContents"];
+            if (obj["HoveredTextColor"] != null)
+            {
+                mHoverTextColor = Color.FromString((string) obj["HoveredTextColor"]);
+            }
+
+            if (obj["ClickedTextColor"] != null)
+            {
+                mClickedTextColor = Color.FromString((string) obj["ClickedTextColor"]);
+            }
+
+            mDisabledTextColor = Color.FromString((string) obj["DisabledTextColor"], new Color(255, 90, 90, 90));
+            if (obj["TextAlign"] != null)
+            {
+                mAlign = (Pos) Enum.Parse(typeof(Pos), (string) obj["TextAlign"]);
+            }
+
+            if (obj["TextPadding"] != null)
+            {
+                TextPadding = Padding.FromString((string) obj["TextPadding"]);
+            }
+
+            if (obj["AutoSizeToContents"] != null)
+            {
+                mAutoSizeToContents = (bool) obj["AutoSizeToContents"];
+            }
+
             if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
             {
-                var fontArr = ((string)obj["Font"]).Split(',');
+                var fontArr = ((string) obj["Font"]).Split(',');
                 fontInfo = (string) obj["Font"];
                 Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
-            if (obj["TextScale"] != null) mText.SetScale((float) obj["TextScale"]);
-        }
 
+            if (obj["TextScale"] != null)
+            {
+                mText.SetScale((float) obj["TextScale"]);
+            }
+        }
 
         public GameTexture GetTemplate()
         {
@@ -359,26 +418,47 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.Layout(skin);
 
-            Pos align = mAlign;
+            var align = mAlign;
 
             if (mAutoSizeToContents)
+            {
                 SizeToContents();
+            }
 
-            int x = mTextPadding.Left + Padding.Left;
-            int y = mTextPadding.Top + Padding.Top;
+            var x = mTextPadding.Left + Padding.Left;
+            var y = mTextPadding.Top + Padding.Top;
 
             if (0 != (align & Pos.Right))
+            {
                 x = Width - mText.Width - mTextPadding.Right - Padding.Right;
+            }
+
             if (0 != (align & Pos.CenterH))
-                x = (int) ((mTextPadding.Left + Padding.Left) +
-                           ((Width - mText.Width - mTextPadding.Left - Padding.Left - mTextPadding.Right -
-                             Padding.Right) * 0.5f));
+            {
+                x = (int) (mTextPadding.Left +
+                           Padding.Left +
+                           (Width -
+                            mText.Width -
+                            mTextPadding.Left -
+                            Padding.Left -
+                            mTextPadding.Right -
+                            Padding.Right) *
+                           0.5f);
+            }
 
             if (0 != (align & Pos.CenterV))
-                y = (int) ((mTextPadding.Top + Padding.Top) + ((Height - mText.Height) * 0.5f) -
-                           mTextPadding.Bottom - Padding.Bottom);
+            {
+                y = (int) (mTextPadding.Top +
+                           Padding.Top +
+                           (Height - mText.Height) * 0.5f -
+                           mTextPadding.Bottom -
+                           Padding.Bottom);
+            }
+
             if (0 != (align & Pos.Bottom))
+            {
                 y = Height - mText.Height - mTextPadding.Bottom - Padding.Bottom;
+            }
 
             mText.SetPosition(x, y);
         }
@@ -391,23 +471,33 @@ namespace Intersect.Client.Framework.Gwen.Control
         public virtual void SetText(string str, bool doEvents = true)
         {
             if (Text == str)
+            {
                 return;
+            }
 
             mText.String = str;
             if (mAutoSizeToContents)
+            {
                 SizeToContents();
+            }
+
             Invalidate();
             InvalidateParent();
 
             if (doEvents)
+            {
                 OnTextChanged();
+            }
         }
 
         public virtual void SetTextScale(float scale)
         {
             mText.SetScale(scale);
             if (mAutoSizeToContents)
+            {
                 SizeToContents();
+            }
+
             Invalidate();
             InvalidateParent();
         }
@@ -417,8 +507,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             mText.SetPosition(mTextPadding.Left + Padding.Left, mTextPadding.Top + Padding.Top);
             mText.SizeToContents();
 
-            SetSize(mText.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
-                mText.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom);
+            SetSize(
+                mText.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
+                mText.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom
+            );
 
             ProcessAlignments();
             InvalidateParent();
@@ -431,7 +523,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Character coordinates (local).</returns>
         public virtual Point GetCharacterPosition(int index)
         {
-            Point p = mText.GetCharacterPosition(index);
+            var p = mText.GetCharacterPosition(index);
+
             return new Point(p.X + mText.X, p.Y + mText.Y);
         }
 
@@ -449,7 +542,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public override void UpdateColors()
         {
-            Color textColor = GetTextColor(ControlState.Normal);
+            var textColor = GetTextColor(ControlState.Normal);
             if (IsDisabled && GetTextColor(ControlState.Disabled) != null)
             {
                 textColor = GetTextColor(ControlState.Disabled);
@@ -458,21 +551,25 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 textColor = GetTextColor(ControlState.Hovered);
             }
+
             if (textColor != null)
             {
                 TextColor = textColor;
+
                 return;
             }
 
             if (IsDisabled)
             {
                 TextColor = Skin.Colors.Button.Disabled;
+
                 return;
             }
 
             if (IsHovered && ClickEventAssigned)
             {
                 TextColor = Skin.Colors.Button.Hover;
+
                 return;
             }
 
@@ -485,19 +582,24 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 case ControlState.Normal:
                     mNormalTextColor = clr;
+
                     break;
                 case ControlState.Hovered:
                     mHoverTextColor = clr;
+
                     break;
                 case ControlState.Clicked:
                     mClickedTextColor = clr;
+
                     break;
                 case ControlState.Disabled:
                     mDisabledTextColor = clr;
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
+
             UpdateColors();
         }
 
@@ -517,5 +619,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return null;
             }
         }
+
     }
+
 }

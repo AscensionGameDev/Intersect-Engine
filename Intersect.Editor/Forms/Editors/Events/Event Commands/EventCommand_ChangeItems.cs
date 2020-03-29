@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -7,10 +8,14 @@ using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
+
     public partial class EventCommandChangeItems : UserControl
     {
+
         private readonly FrmEvent mEventEditor;
+
         private EventPage mCurrentPage;
+
         private ChangeItemsCommand mMyCommand;
 
         public EventCommandChangeItems(ChangeItemsCommand refCommand, EventPage refPage, FrmEvent editor)
@@ -32,6 +37,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 nudGiveTakeAmount.Value = mMyCommand.Quantity;
             }
+
             lblAmount.Text = Strings.EventChangeItems.amount;
         }
 
@@ -40,10 +46,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpChangeItems.Text = Strings.EventChangeItems.title;
             lblAction.Text = Strings.EventChangeItems.action;
             cmbAction.Items.Clear();
-            for (int i = 0; i < Strings.EventChangeItems.actions.Count; i++)
+            for (var i = 0; i < Strings.EventChangeItems.actions.Count; i++)
             {
                 cmbAction.Items.Add(Strings.EventChangeItems.actions[i]);
             }
+
             btnSave.Text = Strings.EventChangeItems.okay;
             btnCancel.Text = Strings.EventChangeItems.cancel;
         }
@@ -60,5 +67,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mEventEditor.CancelCommandEdit();
         }
+
     }
+
 }

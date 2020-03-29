@@ -3,6 +3,7 @@ using System.Net.Http;
 
 namespace Intersect.Server.Web.RestApi.Extensions
 {
+
     internal static class HttpRequestMessageExtensions
     {
 
@@ -14,5 +15,7 @@ namespace Intersect.Server.Web.RestApi.Extensions
         {
             return request.CreateResponse(statusCode, new {Message = message});
         }
+
     }
+
 }

@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 using JetBrains.Annotations;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Server.Web.RestApi.Payloads
 {
+
     public struct AdminChange
     {
 
@@ -15,4 +17,5 @@ namespace Intersect.Server.Web.RestApi.Payloads
         public string New { get; set; }
 
     }
+
 }

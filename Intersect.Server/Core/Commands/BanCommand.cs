@@ -4,14 +4,13 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class BanCommand : ModeratorActionCommand
     {
+
         public BanCommand() : base(
-            Strings.Commands.Ban,
-            Strings.Commands.Arguments.TargetBan,
-            Strings.Commands.Arguments.DurationBan,
-            Strings.Commands.Arguments.IpBan,
-            Strings.Commands.Arguments.ReasonBan
+            Strings.Commands.Ban, Strings.Commands.Arguments.TargetBan, Strings.Commands.Arguments.DurationBan,
+            Strings.Commands.Arguments.IpBan, Strings.Commands.Arguments.ReasonBan
         )
         {
         }
@@ -21,6 +20,7 @@ namespace Intersect.Server.Core.Commands
             if (target.Entity == null)
             {
                 Console.WriteLine($@"    {Strings.Player.offline}");
+
                 return;
             }
 
@@ -38,5 +38,7 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine($@"    {Strings.Account.alreadybanned.ToString(name)}");
             }
         }
+
     }
+
 }

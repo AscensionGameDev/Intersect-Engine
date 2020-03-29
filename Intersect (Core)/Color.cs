@@ -1,24 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
 using Intersect.Localization;
 
 namespace Intersect
 {
+
     public class Color
     {
+
         public enum ChatColor
         {
+
             Black = 0,
+
             White,
+
             Blue,
+
             Red,
+
             Green,
+
             Yellow,
+
             Orange,
+
             Purple,
+
             Gray,
+
             Cyan,
+
             Pink,
+
         }
 
         private const float RANGE__2_X = 2 * 255;
@@ -27,14 +41,11 @@ namespace Intersect
         {
         }
 
-        public Color(int argb)
-            : this((argb >> 24) & 0xFF, (argb >> 16) & 0xFF,
-                (argb >> 8) & 0xFF, (argb >> 0) & 0xFF)
+        public Color(int argb) : this((argb >> 24) & 0xFF, (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, (argb >> 0) & 0xFF)
         {
         }
 
-        public Color(int r, int g, int b)
-            : this(255, r, g, b)
+        public Color(int r, int g, int b) : this(255, r, g, b)
         {
         }
 
@@ -47,8 +58,11 @@ namespace Intersect
         }
 
         public byte A { get; set; }
+
         public byte R { get; set; }
+
         public byte G { get; set; }
+
         public byte B { get; set; }
 
         //public float Hue
@@ -58,7 +72,7 @@ namespace Intersect
         //        var max = Math.Max(Math.Max(R, G), B);
         //        var min = Math.Min(Math.Min(R, G), B);
         //        if (max == min) return 0;
-                
+
         //        float hue, delta = max - min;
         //        if (max == R) hue = (G - B) / delta + (G < B ? 6 : 0);
         //        else if (max == G) hue = (B - R) / delta + 2;
@@ -94,24 +108,34 @@ namespace Intersect
         public static Color Transparent => new Color(0, 0, 0, 0);
 
         public static Color White => new Color(255, 255, 255);
+
         public static Color Black => new Color(0, 0, 0);
 
         public static Color Red => new Color(255, 0, 0);
+
         public static Color Green => new Color(0, 255, 0);
+
         public static Color Blue => new Color(0, 0, 255);
 
         public static Color Yellow => new Color(255, 255, 0);
+
         public static Color LightCoral => new Color(240, 128, 128);
 
         public static Color ForestGreen => new Color(34, 139, 34);
+
         public static Color Magenta => new Color(255, 0, 255);
+
         public static Color OrangeRed => new Color(255, 69, 0);
+
         public static Color Orange => new Color(255, 165, 0);
+
         public static Color Gray => new Color(128, 128, 128);
+
         public static Color Cyan => new Color(0, 255, 255);
+
         public static Color Pink => new Color(255, 192, 203);
 
-        public static Color FromName(string name, IDictionary<int,LocalizedString> colors)
+        public static Color FromName(string name, IDictionary<int, LocalizedString> colors)
         {
             if (name == "Black" || name == colors[0])
             {
@@ -157,6 +181,7 @@ namespace Intersect
             {
                 return Cyan;
             }
+
             return White;
         }
 
@@ -177,7 +202,7 @@ namespace Intersect
 
         public int ToRgba()
         {
-            return (int)((uint)R << 24) + (G << 16) + (B << 8) + A;
+            return (int) ((uint) R << 24) + (G << 16) + (B << 8) + A;
         }
 
         public static Color FromArgb(int argb)
@@ -204,11 +229,18 @@ namespace Intersect
 
         public static Color FromString(string val, Color defaultColor = null)
         {
-            if (string.IsNullOrEmpty(val)) return defaultColor;
-            string[] strs = val.Split(",".ToCharArray());
-            int[] parts = new int[strs.Length];
-            for (int i = 0; i < strs.Length; i++)
+            if (string.IsNullOrEmpty(val))
+            {
+                return defaultColor;
+            }
+
+            var strs = val.Split(",".ToCharArray());
+            var parts = new int[strs.Length];
+            for (var i = 0; i < strs.Length; i++)
+            {
                 parts[i] = int.Parse(strs[i]);
+            }
+
             return new Color(parts[0], parts[1], parts[2], parts[3]);
         }
 
@@ -216,5 +248,7 @@ namespace Intersect
         {
             return FromString(colorString);
         }
+
     }
+
 }

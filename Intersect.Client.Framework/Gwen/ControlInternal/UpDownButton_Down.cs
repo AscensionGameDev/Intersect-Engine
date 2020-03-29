@@ -2,17 +2,18 @@
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
+
     /// <summary>
     ///     Numeric down arrow.
     /// </summary>
     internal class UpDownButtonDown : Button
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpDownButtonDown" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public UpDownButtonDown(Base parent)
-            : base(parent)
+        public UpDownButtonDown(Base parent) : base(parent)
         {
             SetSize(7, 7);
         }
@@ -25,5 +26,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             skin.DrawNumericUpDownButton(this, IsDepressed, false);
         }
+
     }
+
 }

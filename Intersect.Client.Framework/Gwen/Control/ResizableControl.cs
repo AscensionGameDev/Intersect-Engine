@@ -1,24 +1,27 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
+
 using Intersect.Client.Framework.Gwen.ControlInternal;
+
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Base resizable control.
     /// </summary>
     public class ResizableControl : Base
     {
+
         private readonly Resizer[] mResizer;
+
         private bool mClampMovement;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ResizableControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ResizableControl(Base parent, string name = "")
-            : base(parent, name)
+        public ResizableControl(Base parent, string name = "") : base(parent, name)
         {
             mResizer = new Resizer[10];
             MinimumSize = new Point(5, 5);
@@ -86,18 +89,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Invoked when the control has been resized.
         /// </summary>
         public event GwenEventHandler<EventArgs> Resized;
-        
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
             obj.Add("ClampMovement", ClampMovement);
+
             return base.FixJson(obj);
         }
 
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["ClampMovement"] != null) ClampMovement = (bool)obj["ClampMovement"];
+            if (obj["ClampMovement"] != null)
+            {
+                ClampMovement = (bool) obj["ClampMovement"];
+            }
         }
 
         /// <summary>
@@ -107,7 +114,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnResized(Base control, EventArgs args)
         {
             if (Resized != null)
+            {
                 Resized.Invoke(this, EventArgs.Empty);
+            }
         }
 
         protected Resizer GetResizer(int i)
@@ -120,10 +129,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void DisableResizing()
         {
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 if (mResizer[i] == null)
+                {
                     continue;
+                }
+
                 mResizer[i].MouseInputEnabled = false;
                 mResizer[i].IsHidden = true;
                 Padding = new Padding(mResizer[i].Width, mResizer[i].Width, mResizer[i].Width, mResizer[i].Width);
@@ -135,10 +147,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public void EnableResizing()
         {
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 if (mResizer[i] == null)
+                {
                     continue;
+                }
+
                 mResizer[i].MouseInputEnabled = true;
                 mResizer[i].IsHidden = false;
                 Padding = new Padding(0, 0, 0, 0); // todo: check if ok
@@ -157,19 +172,42 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </returns>
         public override bool SetBounds(int x, int y, int width, int height)
         {
-            Point minSize = MinimumSize;
+            var minSize = MinimumSize;
+
             // Clamp Minimum Size
-            if (width < minSize.X) width = minSize.X;
-            if (height < minSize.Y) height = minSize.Y;
+            if (width < minSize.X)
+            {
+                width = minSize.X;
+            }
+
+            if (height < minSize.Y)
+            {
+                height = minSize.Y;
+            }
 
             // Clamp to parent's window
-            Base parent = Parent;
+            var parent = Parent;
             if (parent != null && mClampMovement)
             {
-                if (x + width > parent.Width) x = parent.Width - width;
-                if (x < 0) x = 0;
-                if (y + height > parent.Height) y = parent.Height - height;
-                if (y < 0) y = 0;
+                if (x + width > parent.Width)
+                {
+                    x = parent.Width - width;
+                }
+
+                if (x < 0)
+                {
+                    x = 0;
+                }
+
+                if (y + height > parent.Height)
+                {
+                    y = parent.Height - height;
+                }
+
+                if (y < 0)
+                {
+                    y = 0;
+                }
             }
 
             return base.SetBounds(x, y, width, height);
@@ -183,12 +221,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>True if bounds changed.</returns>
         public override bool SetSize(int width, int height)
         {
-            bool changed = base.SetSize(width, height);
+            var changed = base.SetSize(width, height);
             if (changed)
             {
                 OnResized(this, EventArgs.Empty);
             }
+
             return changed;
         }
+
     }
+
 }

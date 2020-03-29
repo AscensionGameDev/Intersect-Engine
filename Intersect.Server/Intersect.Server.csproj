@@ -55,7 +55,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect.Server.MainClass</StartupObject>
+    <StartupObject>Intersect.Server.Core.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -418,78 +418,84 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Admin\Actions\ActionProcessing.cs" />
-    <Compile Include="Classes\Core\ServerTiming.cs" />
-    <Compile Include="Classes\Database\DbLogger.cs" />
-    <Compile Include="Classes\Database\DbLoggerProvider.cs" />
-    <Compile Include="Classes\Database\GameData\GameContext.cs" />
-    <Compile Include="Classes\Database\GameData\Migrations\Beta6Migration.cs" />
-    <Compile Include="Classes\Database\IntersectDbContext.cs" />
-    <Compile Include="Classes\Database\Logging\LoggingContext.cs" />
-    <Compile Include="Classes\Database\Logging\RequestLog.cs" />
-    <Compile Include="Classes\Database\MigrationBuilderExtensions.cs" />
-    <Compile Include="Classes\Database\PlayerData\Api\RefreshToken.cs" />
-    <Compile Include="Classes\Database\PlayerData\Ban.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\Bag.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\BagSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\BankSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\Friend.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\HotbarSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\InventorySlot.cs" />
-    <Compile Include="Classes\Database\Item.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\IPlayerOwned.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\ISlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\Quest.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\SlotHelper.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\SpellSlot.cs" />
-    <Compile Include="Classes\Entities\Player.Database.cs" />
-    <Compile Include="Classes\Database\Spell.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\Switch.cs" />
-    <Compile Include="Classes\Database\PlayerData\Players\Variable.cs" />
-    <Compile Include="Classes\Database\PlayerData\Mute.cs" />
-    <Compile Include="Classes\Database\PlayerData\User.cs" />
-    <Compile Include="Classes\Database\PlayerData\PlayerContext.cs" />
-    <Compile Include="Classes\Entities\EventInstance.cs" />
-    <Compile Include="Classes\Entities\Projectile.cs" />
-    <Compile Include="Classes\Entities\Resource.cs" />
-    <Compile Include="Classes\Entities\EventPageInstance.cs" />
-    <Compile Include="Classes\Core\Main.cs" />
-    <Compile Include="Classes\EventProcessing\CommandProcessing.cs" />
-    <Compile Include="Classes\EventProcessing\Conditions.cs" />
-    <Compile Include="Classes\General\Formulas.cs" />
-    <Compile Include="Classes\General\ServerTime.cs" />
-    <Compile Include="Classes\Localization\CommandsNamespace.cs" />
-    <Compile Include="Classes\Localization\Strings.cs" />
-    <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Maps\MapItemInstance.cs" />
-    <Compile Include="Classes\Maps\MapItemSpawn.cs" />
-    <Compile Include="Classes\Maps\MapNpcSpawn.cs" />
-    <Compile Include="Classes\Maps\MapResourceSpawn.cs" />
-    <Compile Include="Classes\Maps\MapTrapInstance.cs" />
-    <Compile Include="Classes\Maps\TileHelper.cs" />
-    <Compile Include="Classes\Misc\Pathfinding\Pathfinder.cs" />
-    <Compile Include="Classes\Misc\Pathfinding\SpatialAStar.cs" />
-    <Compile Include="Classes\Misc\Pathfinding\PathfinderTarget.cs" />
-    <Compile Include="Classes\Misc\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Classes\Networking\Client.cs" />
-    <Compile Include="Classes\Entities\Npc.cs" />
-    <Compile Include="Classes\Networking\Helpers\NetDebug.cs" />
-    <Compile Include="Classes\Networking\PacketHandler.cs" />
-    <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\Networking\PacketSender.cs" />
-    <Compile Include="Classes\Entities\Player.cs" />
-    <Compile Include="Classes\Entities\Entity.cs" />
-    <Compile Include="Classes\Database\DbInterface.cs" />
-    <Compile Include="Classes\Maps\MapGrid.cs" />
-    <Compile Include="Classes\Core\ServerLoop.cs" />
-    <Compile Include="Classes\Networking\Helpers\PortChecker.cs" />
-    <Compile Include="Classes\Networking\Helpers\UPnP.cs" />
-    <Compile Include="Classes\Networking\Websockets\WebSocketConnection.cs" />
-    <Compile Include="Classes\Networking\Websockets\WebSocketNetwork.cs" />
-    <Compile Include="Classes\Notifications\Notification.cs" />
-    <Compile Include="Classes\Notifications\ResetPassword.cs" />
-    <Compile Include="Classes\Spells\SpellInstance.cs" />
-    <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
+    <Compile Include="Admin\Actions\ActionProcessing.cs" />
+    <Compile Include="Core\ServerTiming.cs" />
+    <Compile Include="Database\DbLogger.cs" />
+    <Compile Include="Database\DbLoggerProvider.cs" />
+    <Compile Include="Database\GameData\GameContext.cs" />
+    <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\IntersectDbContext.cs" />
+    <Compile Include="Database\Logging\LoggingContext.cs" />
+    <Compile Include="Database\Logging\RequestLog.cs" />
+    <Compile Include="Database\MigrationBuilderExtensions.cs" />
+    <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
+    <Compile Include="Database\PlayerData\Ban.cs" />
+    <Compile Include="Database\PlayerData\Players\Bag.cs" />
+    <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\Friend.cs" />
+    <Compile Include="Database\PlayerData\Players\HotbarSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\InventorySlot.cs" />
+    <Compile Include="Database\Item.cs" />
+    <Compile Include="Database\PlayerData\Players\IPlayerOwned.cs" />
+    <Compile Include="Database\PlayerData\Players\ISlot.cs" />
+    <Compile Include="Database\PlayerData\Players\Quest.cs" />
+    <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
+    <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Entities\Combat\Buff.cs" />
+    <Compile Include="Entities\Combat\Dash.cs" />
+    <Compile Include="Entities\Combat\DoT.cs" />
+    <Compile Include="Entities\Label.cs" />
+    <Compile Include="Entities\Player.Database.cs" />
+    <Compile Include="Database\Spell.cs" />
+    <Compile Include="Database\PlayerData\Players\Switch.cs" />
+    <Compile Include="Database\PlayerData\Players\Variable.cs" />
+    <Compile Include="Database\PlayerData\Mute.cs" />
+    <Compile Include="Database\PlayerData\User.cs" />
+    <Compile Include="Database\PlayerData\PlayerContext.cs" />
+    <Compile Include="Entities\Events\Event.cs" />
+    <Compile Include="Entities\Projectile.cs" />
+    <Compile Include="Entities\ProjectileSpawn.cs" />
+    <Compile Include="Entities\Resource.cs" />
+    <Compile Include="Entities\Events\EventPageInstance.cs" />
+    <Compile Include="Core\Program.cs" />
+    <Compile Include="Entities\Combat\Stat.cs" />
+    <Compile Include="Entities\Combat\Status.cs" />
+    <Compile Include="Entities\Trading.cs" />
+    <Compile Include="Entities\Events\CommandInstance.cs" />
+    <Compile Include="Entities\Events\CommandProcessing.cs" />
+    <Compile Include="Entities\Events\Conditions.cs" />
+    <Compile Include="General\Formulas.cs" />
+    <Compile Include="General\Time.cs" />
+    <Compile Include="Localization\CommandsNamespace.cs" />
+    <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Maps\MapInstance.cs" />
+    <Compile Include="Maps\MapItemInstance.cs" />
+    <Compile Include="Maps\MapItemSpawn.cs" />
+    <Compile Include="Maps\MapNpcSpawn.cs" />
+    <Compile Include="Maps\MapResourceSpawn.cs" />
+    <Compile Include="Maps\MapTrapInstance.cs" />
+    <Compile Include="Maps\TileHelper.cs" />
+    <Compile Include="Entities\Pathfinding\Pathfinder.cs" />
+    <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
+    <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
+    <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Entities\Npc.cs" />
+    <Compile Include="Networking\Helpers\NetDebug.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="General\Globals.cs" />
+    <Compile Include="Networking\PacketSender.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Database\DbInterface.cs" />
+    <Compile Include="Maps\MapGrid.cs" />
+    <Compile Include="Core\ServerLoop.cs" />
+    <Compile Include="Networking\Helpers\PortChecker.cs" />
+    <Compile Include="Networking\Helpers\UPnP.cs" />
+    <Compile Include="Notifications\Notification.cs" />
+    <Compile Include="Notifications\ResetPassword.cs" />
+    <Compile Include="Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
     <Compile Include="Core\CommandParsing\CommandParserErrorsNamespace.cs" />
@@ -707,10 +713,10 @@
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
     <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
-    <Compile Include="Classes\Database\PlayerData\Security\UserRights.cs" />
-    <Compile Include="Classes\Database\PlayerData\SeedData\SeedUsers.cs" />
-    <Compile Include="Classes\Database\SeedData.cs" />
-    <Compile Include="Classes\Database\ISeedableContext.cs" />
+    <Compile Include="Database\PlayerData\Security\UserRights.cs" />
+    <Compile Include="Database\PlayerData\SeedData\SeedUsers.cs" />
+    <Compile Include="Database\SeedData.cs" />
+    <Compile Include="Database\ISeedableContext.cs" />
     <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
     <Compile Include="Web\RestApi\Types\DataPage.cs" />
@@ -719,7 +725,7 @@
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
     <None Include="app.config" />
-    <Compile Include="Classes\Entities\Entity.Comparison.cs" />
+    <Compile Include="Entities\Entity.Comparison.cs" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
@@ -762,7 +768,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Classes\Database\PlayerData\Migrations\" />
+    <Folder Include="Database\PlayerData\Migrations\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

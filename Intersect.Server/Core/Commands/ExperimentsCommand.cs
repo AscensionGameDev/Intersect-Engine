@@ -10,18 +10,19 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal class ExperimentsCommand : TargettedCommand<IExperimentalFlag>
     {
-        [NotNull]
-        private VariableArgument<bool> Enablement => FindArgumentOrThrow<VariableArgument<bool>>();
 
         public ExperimentsCommand() : base(
-            Strings.Commands.Experiments,
-            Strings.Commands.Arguments.TargetExperimentalFeature,
+            Strings.Commands.Experiments, Strings.Commands.Arguments.TargetExperimentalFeature,
             new VariableArgument<bool>(Strings.Commands.Arguments.EnablementBoolean, positional: true)
         )
         {
         }
+
+        [NotNull]
+        private VariableArgument<bool> Enablement => FindArgumentOrThrow<VariableArgument<bool>>();
 
         protected override IExperimentalFlag FindTarget(ServerContext context, ParserResult result, string targetName)
         {
@@ -36,6 +37,7 @@ namespace Intersect.Server.Core.Commands
             }
 
             Console.WriteLine($@"    {Strings.Commands.ExperimentalFlagNotFound.ToString(targetName)}");
+
             return default(IExperimentalFlag);
         }
 
@@ -59,10 +61,11 @@ namespace Intersect.Server.Core.Commands
             }
 
             var statusString = enablement ? Strings.General.EnabledLowerCase : Strings.General.DisabledLowerCase;
-            var enabledString =
-                Strings.Commandoutput.ExperimentalFeatureEnablement.ToString(target.Name, statusString);
+            var enabledString = Strings.Commandoutput.ExperimentalFeatureEnablement.ToString(target.Name, statusString);
 
             Console.WriteLine($@"    {enabledString}");
         }
+
     }
+
 }

@@ -3,17 +3,20 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using Intersect.Logging;
 using Intersect.Memory;
-using Intersect.Network.Packets;
 
 using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
+
     public abstract class AbstractNetwork : INetwork
     {
+
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
+
         private bool mDisposed;
 
         protected AbstractNetwork([NotNull] NetworkConfiguration configuration)
@@ -25,7 +28,9 @@ namespace Intersect.Network
             ConnectionLookup = new ConcurrentDictionary<Guid, IConnection>();
 
             if (configuration.Host?.ToLower() == "localhost")
+            {
                 configuration.Host = "127.0.0.1";
+            }
 
             Configuration = configuration;
         }
@@ -38,7 +43,7 @@ namespace Intersect.Network
 
         [NotNull]
         public HandlePacket Handler { get; set; }
-        
+
         public ShouldProcessPacket PreProcessHandler { get; set; }
 
         public int ConnectionCount => Connections.Count;
@@ -55,6 +60,7 @@ namespace Intersect.Network
             }
 
             ConnectionLookup.Add(connection.Guid, connection);
+
             return true;
         }
 
@@ -67,7 +73,11 @@ namespace Intersect.Network
         {
             lock (this)
             {
-                if (mDisposed) return;
+                if (mDisposed)
+                {
+                    return;
+                }
+
                 mDisposed = true;
             }
 
@@ -81,21 +91,32 @@ namespace Intersect.Network
             ConnectionLookup.Clear();
         }
 
-        public bool Disconnect(string message = "") => Disconnect(Connections, message);
+        public bool Disconnect(string message = "")
+        {
+            return Disconnect(Connections, message);
+        }
 
         public bool Disconnect(Guid guid, string message = "")
-            => Disconnect(FindConnection(guid), message);
+        {
+            return Disconnect(FindConnection(guid), message);
+        }
 
         public bool Disconnect(IConnection connection, string message = "")
-            => Disconnect(new[] {connection}, message);
+        {
+            return Disconnect(new[] {connection}, message);
+        }
 
         public bool Disconnect(ICollection<Guid> guids, string message = "")
-            => Disconnect(FindConnections(guids), message);
+        {
+            return Disconnect(FindConnections(guids), message);
+        }
 
         public bool Disconnect(ICollection<IConnection> connections, string message = "")
         {
             mNetworkLayerInterfaces?.ForEach(
-                networkLayerInterface => networkLayerInterface?.Disconnect(connections, message));
+                networkLayerInterface => networkLayerInterface?.Disconnect(connections, message)
+            );
+
             return true;
         }
 
@@ -104,13 +125,16 @@ namespace Intersect.Network
         public bool Send(Guid guid, IPacket packet)
         {
             var connection = FindConnection(guid);
+
             return connection != null && Send(connection, packet);
         }
 
         public abstract bool Send(IConnection connection, IPacket packet);
 
         public bool Send(ICollection<Guid> guids, IPacket packet)
-            => Send(FindConnections(guids), packet);
+        {
+            return Send(FindConnections(guids), packet);
+        }
 
         public abstract bool Send(ICollection<IConnection> connections, IPacket packet);
 
@@ -122,6 +146,7 @@ namespace Intersect.Network
             }
 
             Log.Diagnostic($"Could not find connection {guid}.");
+
             return null;
         }
 
@@ -173,6 +198,7 @@ namespace Intersect.Network
             if (!sender.TryGetInboundBuffer(out var buffer, out var connection))
             {
                 Log.Error("Failed to obtain packet when told a packet was available.");
+
                 return;
             }
 
@@ -197,24 +223,39 @@ namespace Intersect.Network
 
         private void HandleInboundData(IBuffer buffer, IConnection connection)
         {
-            if (buffer == default(IBuffer)) return;
-            if (buffer.Length < 1) return;
+            if (buffer == default(IBuffer))
+            {
+                return;
+            }
+
+            if (buffer.Length < 1)
+            {
+                return;
+            }
 
             if (PreProcessHandler != null)
             {
-                if (!PreProcessHandler.Invoke(connection, buffer.Length)) return;
+                if (!PreProcessHandler.Invoke(connection, buffer.Length))
+                {
+                    return;
+                }
             }
 
             //Incorperate Ceras
             var data = buffer.ToBytes();
+
             //Get Packet From Data using Ceras
             var sw = new Stopwatch();
             sw.Start();
-            var packet = (IPacket)connection.Ceras.Deserialize(data);
-            if (sw.ElapsedMilliseconds > 10) Debug.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to deserialize packet: " + packet.GetType().Name);
-            
-            //Handle any packet identification errors
+            var packet = (IPacket) connection.Ceras.Deserialize(data);
+            if (sw.ElapsedMilliseconds > 10)
+            {
+                Debug.WriteLine(
+                    "Took " + sw.ElapsedMilliseconds + "ms to deserialize packet: " + packet.GetType().Name
+                );
+            }
 
+            //Handle any packet identification errors
 
             //Pass packet to handler.
             Handler.Invoke(connection, packet);
@@ -227,23 +268,33 @@ namespace Intersect.Network
             mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.Start());
         }
 
-        protected void SendPacket(IPacket packet, IConnection connection,
-            TransmissionMode transmissionMode = TransmissionMode.All)
+        protected void SendPacket(
+            IPacket packet,
+            IConnection connection,
+            TransmissionMode transmissionMode = TransmissionMode.All
+        )
         {
             mNetworkLayerInterfaces?.ForEach(
-                networkLayerInterface => networkLayerInterface?.SendPacket(packet, connection, transmissionMode));
+                networkLayerInterface => networkLayerInterface?.SendPacket(packet, connection, transmissionMode)
+            );
         }
 
-        protected void SendPacket(IPacket packet, ICollection<IConnection> connections,
-            TransmissionMode transmissionMode = TransmissionMode.All)
+        protected void SendPacket(
+            IPacket packet,
+            ICollection<IConnection> connections,
+            TransmissionMode transmissionMode = TransmissionMode.All
+        )
         {
             mNetworkLayerInterfaces?.ForEach(
-                networkLayerInterface => networkLayerInterface?.SendPacket(packet, connections, transmissionMode));
+                networkLayerInterface => networkLayerInterface?.SendPacket(packet, connections, transmissionMode)
+            );
         }
 
         protected void StopInterfaces(string reason = "stopping")
         {
             mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.Stop(reason));
         }
+
     }
+
 }

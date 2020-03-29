@@ -1,19 +1,19 @@
 ﻿using System;
-using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Horizontal slider.
     /// </summary>
     public class HorizontalSlider : Slider
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="HorizontalSlider" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public HorizontalSlider(Base parent, string name = "")
-            : base(parent, name)
+        public HorizontalSlider(Base parent, string name = "") : base(parent, name)
         {
             mSliderBar.IsHorizontal = true;
         }
@@ -25,7 +25,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected override void UpdateBarFromValue()
         {
-            mSliderBar.MoveTo((int) ((Width - mSliderBar.Width) * (mValue)), mSliderBar.Y);
+            mSliderBar.MoveTo((int) ((Width - mSliderBar.Width) * mValue), mSliderBar.Y);
         }
 
         /// <summary>
@@ -60,5 +60,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             skin.DrawSlider(this, true, mSnapToNotches ? mNotchCount : 0, mSliderBar.Width);
         }
+
     }
+
 }

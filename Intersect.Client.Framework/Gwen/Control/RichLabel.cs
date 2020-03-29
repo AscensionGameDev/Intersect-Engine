@@ -9,15 +9,19 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+
     /// <summary>
     ///     Multiline label with text chunks having different color/font.
     /// </summary>
     public class RichLabel : Base
     {
-        private readonly List<TextBlock> mTextBlocks;
+
         private readonly string[] mNewline;
 
+        private readonly List<TextBlock> mTextBlocks;
+
         private GameFont mFont;
+
         private string mFontInfo;
 
         private bool mNeedsRebuild;
@@ -26,8 +30,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="RichLabel" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public RichLabel(Base parent, string name = "")
-            : base(parent, name)
+        public RichLabel(Base parent, string name = "") : base(parent, name)
         {
             mNewline = new string[] {Environment.NewLine, "\n"};
             mTextBlocks = new List<TextBlock>();
@@ -38,7 +41,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public void AddLineBreak()
         {
-            TextBlock block = new TextBlock {Type = BlockType.NewLine};
+            var block = new TextBlock {Type = BlockType.NewLine};
             mTextBlocks.Add(block);
         }
 
@@ -49,8 +52,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
             {
-                var fontArr = ((string)obj["Font"]).Split(',');
-                mFontInfo = (string)obj["Font"];
+                var fontArr = ((string) obj["Font"]).Split(',');
+                mFontInfo = (string) obj["Font"];
                 mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
         }
@@ -60,6 +63,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             var obj = base.GetJson();
             obj.Add("Font", mFontInfo);
+
             return base.FixJson(obj);
         }
 
@@ -72,18 +76,24 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void AddText(string text, Color color, Alignments alignment = Alignments.Left, GameFont font = null)
         {
             if (String.IsNullOrEmpty(text))
+            {
                 return;
+            }
 
             if (font == null && mFont != null)
+            {
                 font = mFont;
+            }
 
             var lines = text.Split(mNewline, StringSplitOptions.None);
-            for (int i = 0; i < lines.Length; i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 if (i > 0)
+                {
                     AddLineBreak();
+                }
 
-                TextBlock block = new TextBlock
+                var block = new TextBlock
                 {
                     Type = BlockType.Text,
                     Text = lines[i],
@@ -109,6 +119,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override bool SizeToChildren(bool width = true, bool height = true)
         {
             Rebuild();
+
             return base.SizeToChildren(width, height);
         }
 
@@ -116,34 +127,40 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             var spaced = Util.SplitAndKeep(text, " ");
             if (spaced.Length == 0)
+            {
                 return;
+            }
 
-            int spaceLeft = Width - x;
+            var spaceLeft = Width - x;
             string leftOver;
 
             // Does the whole word fit in?
-            Point stringSize = Skin.Renderer.MeasureText(font, text);
+            var stringSize = Skin.Renderer.MeasureText(font, text);
             if (spaceLeft > stringSize.X)
             {
                 CreateLabel(text, block, ref x, ref y, ref lineHeight, true);
+
                 return;
             }
 
             // If the first word is bigger than the line, just give up.
-            Point wordSize = Skin.Renderer.MeasureText(font, spaced[0]);
+            var wordSize = Skin.Renderer.MeasureText(font, spaced[0]);
             if (wordSize.X >= spaceLeft)
             {
                 CreateLabel(spaced[0], block, ref x, ref y, ref lineHeight, true);
                 if (spaced[0].Length >= text.Length)
+                {
                     return;
+                }
 
                 leftOver = text.Substring(spaced[0].Length + 1);
                 SplitLabel(leftOver, font, block, ref x, ref y, ref lineHeight);
+
                 return;
             }
 
-            string newString = String.Empty;
-            for (int i = 0; i < spaced.Length; i++)
+            var newString = String.Empty;
+            for (var i = 0; i < spaced.Length; i++)
             {
                 wordSize = Skin.Renderer.MeasureText(font, newString + spaced[i]);
                 if (wordSize.X > spaceLeft)
@@ -151,13 +168,14 @@ namespace Intersect.Client.Framework.Gwen.Control
                     CreateLabel(newString, block, ref x, ref y, ref lineHeight, true);
                     x = 0;
                     y += lineHeight;
+
                     break;
                 }
 
                 newString += spaced[i];
             }
 
-            int newstrLen = newString.Length;
+            var newstrLen = newString.Length;
             if (newstrLen < text.Length)
             {
                 leftOver = text.Substring(newstrLen + 1);
@@ -168,12 +186,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected void CreateLabel(string text, TextBlock block, ref int x, ref int y, ref int lineHeight, bool noSplit)
         {
             // Use default font or is one set?
-            GameFont font = Skin.DefaultFont;
+            var font = Skin.DefaultFont;
             if (block.Font != null)
+            {
                 font = block.Font;
+            }
 
             // This string is too long for us, split it up.
-            Point p = Skin.Renderer.MeasureText(font, text);
+            var p = Skin.Renderer.MeasureText(font, text);
 
             if (lineHeight == -1)
             {
@@ -185,6 +205,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (x + p.X > Width)
                 {
                     SplitLabel(text, font, block, ref x, ref y, ref lineHeight);
+
                     return;
                 }
             }
@@ -195,7 +216,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 CreateNewline(ref x, ref y, lineHeight);
             }
 
-            Label label = new Label(this);
+            var label = new Label(this);
             label.SetText(x == 0 ? text.TrimStart(' ') : text);
             label.TextColorOverride = block.Color;
             label.Font = font;
@@ -233,21 +254,23 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             DeleteAllChildren();
 
-            int x = 0;
-            int y = 0;
-            int lineHeight = -1;
+            var x = 0;
+            var y = 0;
+            var lineHeight = -1;
 
             foreach (var block in mTextBlocks)
             {
                 if (block.Type == BlockType.NewLine)
                 {
                     CreateNewline(ref x, ref y, lineHeight);
+
                     continue;
                 }
 
                 if (block.Type == BlockType.Text)
                 {
                     CreateLabel(block.Text, block, ref x, ref y, ref lineHeight, false);
+
                     continue;
                 }
             }
@@ -273,33 +296,47 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.Layout(skin);
             if (mNeedsRebuild)
+            {
                 Rebuild();
+            }
 
             // align bottoms. this is still not ideal, need to take font metrics into account.
             Base prev = null;
-            foreach (Base child in Children)
+            foreach (var child in Children)
             {
                 if (prev != null && child.Y == prev.Y)
                 {
                     Align.PlaceRightBottom(child, prev);
                 }
+
                 prev = child;
             }
         }
 
         protected struct TextBlock
         {
+
             public BlockType Type;
+
             public string Text;
+
             public Color Color;
+
             public GameFont Font;
+
             public Alignments Alignment;
+
         }
 
         protected enum BlockType
         {
+
             Text,
+
             NewLine
+
         }
+
     }
+
 }

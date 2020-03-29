@@ -8,18 +8,26 @@ using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
+
     public struct ExperimentalFlag : IExperimentalFlag
     {
+
         private readonly IExperimentalFlag mParentFlag;
-        
+
         [JsonProperty(nameof(Guid))] private Guid mGuid;
-        [JsonIgnore] public Guid Guid => mGuid;
-        
+
+        [JsonIgnore]
+        public Guid Guid => mGuid;
+
         [JsonProperty(nameof(Name)), NotNull] private string mName;
-        [JsonIgnore, NotNull] public string Name => mName;
+
+        [JsonIgnore, NotNull]
+        public string Name => mName;
 
         [JsonProperty(nameof(Enabled))] private bool mEnabled;
-        [JsonIgnore] public bool Enabled => (mParentFlag?.Enabled ?? true) && mEnabled;
+
+        [JsonIgnore]
+        public bool Enabled => (mParentFlag?.Enabled ?? true) && mEnabled;
 
         private ExperimentalFlag(ExperimentalFlag flag, bool enabled = false)
         {
@@ -29,7 +37,12 @@ namespace Intersect.Core.ExperimentalFeatures
             mEnabled = enabled;
         }
 
-        public ExperimentalFlag([NotNull] string name, Guid namespaceId, bool enabled = false, IExperimentalFlag parentFlag = null)
+        public ExperimentalFlag(
+            [NotNull] string name,
+            Guid namespaceId,
+            bool enabled = false,
+            IExperimentalFlag parentFlag = null
+        )
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -42,16 +55,25 @@ namespace Intersect.Core.ExperimentalFeatures
             mEnabled = enabled;
         }
 
-        public IExperimentalFlag With(bool enabled) => new ExperimentalFlag(this, enabled);
+        public IExperimentalFlag With(bool enabled)
+        {
+            return new ExperimentalFlag(this, enabled);
+        }
 
         /// <inheritdoc cref="IEquatable{T}" />
-        public bool Equals(IExperimentalFlag other) => this == other;
+        public bool Equals(IExperimentalFlag other)
+        {
+            return this == other;
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="flag"></param>
-        public static implicit operator bool(ExperimentalFlag flag) => flag.Enabled;
+        public static implicit operator bool(ExperimentalFlag flag)
+        {
+            return flag.Enabled;
+        }
 
         public static bool operator ==(ExperimentalFlag a, [NotNull] IExperimentalFlag b)
         {
@@ -62,5 +84,7 @@ namespace Intersect.Core.ExperimentalFeatures
         {
             return a.Guid != b.Guid || a.Enabled != b.Enabled;
         }
+
     }
+
 }

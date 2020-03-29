@@ -2,11 +2,13 @@
 
 namespace Intersect.Client.Framework.Gwen.Control.Property
 {
+
     /// <summary>
     ///     Base control for property entry.
     /// </summary>
     public class Base : Control.Base
     {
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
@@ -38,7 +40,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
         protected virtual void DoChanged()
         {
             if (ValueChanged != null)
+            {
                 ValueChanged.Invoke(this, EventArgs.Empty);
+            }
         }
 
         protected virtual void OnValueChanged(Control.Base control, EventArgs args)
@@ -54,5 +58,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
         public virtual void SetValue(string value, bool fireEvents = false)
         {
         }
+
     }
+
 }

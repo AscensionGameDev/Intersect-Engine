@@ -1,10 +1,13 @@
 ﻿using System;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Immutability
 {
+
     public struct Immutable<TValue>
     {
+
         private bool mInitialized;
 
         private TValue mValue;
@@ -34,5 +37,7 @@ namespace Intersect.Immutability
         {
             return immutable.mValue;
         }
+
     }
+
 }

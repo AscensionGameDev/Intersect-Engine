@@ -15,20 +15,23 @@ using Newtonsoft.Json.Serialization;
 
 namespace Intersect.Server.Web.RestApi.Serialization
 {
+
     /// <inheritdoc />
     /// <summary>
     /// </summary>
     public class ApiVisibilityContractResolver : DefaultContractResolver
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        [NotNull] public HttpRequestContext RequestContext { get; }
 
         public ApiVisibilityContractResolver([NotNull] HttpRequestContext requestContext)
         {
             RequestContext = requestContext;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [NotNull]
+        public HttpRequestContext RequestContext { get; }
 
         /// <inheritdoc />
         protected override List<MemberInfo> GetSerializableMembers(Type objectType)
@@ -51,30 +54,37 @@ namespace Intersect.Server.Web.RestApi.Serialization
             }
 
             var serializableMembers = base.GetSerializableMembers(objectType);
+
             return serializableMembers?.Where(
-                memberInfo =>
-                {
-                    var apiVisibility = memberInfo?.GetCustomAttribute<ApiVisibilityAttribute>();
-                    if (apiVisibility == null || apiVisibility.Visibility == ApiVisibility.Public)
+                    memberInfo =>
                     {
-                        return true;
-                    }
+                        var apiVisibility = memberInfo?.GetCustomAttribute<ApiVisibilityAttribute>();
+                        if (apiVisibility == null || apiVisibility.Visibility == ApiVisibility.Public)
+                        {
+                            return true;
+                        }
 
-                    if (apiVisibility.Visibility.HasFlag(ApiVisibility.Private))
-                    {
-                        // TODO: Not sure how to implement ownership visibility yet
-                    }
+                        if (apiVisibility.Visibility.HasFlag(ApiVisibility.Private))
+                        {
+                            // TODO: Not sure how to implement ownership visibility yet
+                        }
 
-                    // ReSharper disable once InvertIf
-                    if (apiVisibility.Visibility.HasFlag(ApiVisibility.Restricted))
-                    {
-                        return readClaims.Any(
-                            claim => string.Equals(memberInfo?.GetFullName(), claim?.Value, StringComparison.Ordinal)
-                        );
-                    }
+                        // ReSharper disable once InvertIf
+                        if (apiVisibility.Visibility.HasFlag(ApiVisibility.Restricted))
+                        {
+                            return readClaims.Any(
+                                claim => string.Equals(
+                                    memberInfo?.GetFullName(), claim?.Value, StringComparison.Ordinal
+                                )
+                            );
+                        }
 
-                    return false;
-                }).ToList();
+                        return false;
+                    }
+                )
+                .ToList();
         }
+
     }
+
 }

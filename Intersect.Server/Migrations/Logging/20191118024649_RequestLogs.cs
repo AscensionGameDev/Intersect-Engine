@@ -6,13 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations.Logging
 {
+
     public partial class RequestLogs : Migration
     {
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "RequestLogs",
-                columns: table => new
+                name: "RequestLogs", columns: table => new
                 {
                     Id = table.IsNotNull().Column<Guid>(nullable: false),
                     Time = table.IsNotNull().Column<DateTime>(nullable: false),
@@ -23,17 +24,15 @@ namespace Intersect.Server.Migrations.Logging
                     Uri = table.IsNotNull().Column<string>(nullable: true),
                     RequestHeaders = table.IsNotNull().Column<string>(nullable: true),
                     ResponseHeaders = table.IsNotNull().Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.IsNotNull().PrimaryKey("PK_RequestLogs", x => x.Id);
-                });
+                }, constraints: table => { table.IsNotNull().PrimaryKey("PK_RequestLogs", x => x.Id); }
+            );
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "RequestLogs");
+            migrationBuilder.DropTable(name: "RequestLogs");
         }
+
     }
+
 }

@@ -1,18 +1,38 @@
 ﻿using System;
+
 using Intersect.Logging;
-using Intersect.Utilities;
+
 using JetBrains.Annotations;
+
 using NCalc;
 
 namespace Intersect.Server.Utilities
 {
+
     public class ExperienceCurve
     {
+
         public const string DEFAULT_EXPERIENCE_FORMULA = "Floor(BaseExp * Pow(Gain, Level - 1))";
 
         public const string PARAM_BASE_EXP = "BaseExp";
+
         public const string PARAM_GAIN = "Gain";
+
         public const string PARAM_LEVEL = "Level";
+
+        public ExperienceCurve(string source = DEFAULT_EXPERIENCE_FORMULA)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+
+            //Formula = new Formula(source);
+            //Formula.RegisterFunction("Exp", Exp);
+
+            BaseExperience = 100;
+            Gain = 1.5;
+        }
 
         //[CanBeNull]
         //private Formula mFormula;
@@ -25,17 +45,8 @@ namespace Intersect.Server.Utilities
         //}
 
         public long BaseExperience { get; set; }
+
         public double Gain { get; set; }
-
-        public ExperienceCurve(string source = DEFAULT_EXPERIENCE_FORMULA)
-        {
-            if (string.IsNullOrEmpty(source)) return;
-            //Formula = new Formula(source);
-            //Formula.RegisterFunction("Exp", Exp);
-
-            BaseExperience = 100;
-            Gain = 1.5;
-        }
 
         protected virtual void Exp([NotNull] FunctionArgs args)
         {
@@ -45,17 +56,21 @@ namespace Intersect.Server.Utilities
                 args.Result = 0L;
             }
 
-            var level = (int)(args.Parameters?[0]?.Evaluate() ?? -1);
-            var baseExperience = (long)(args.Parameters?[1]?.Evaluate() ?? -1);
-            var gain = (double)(args.Parameters?[2]?.Evaluate() ?? -1);
+            var level = (int) (args.Parameters?[0]?.Evaluate() ?? -1);
+            var baseExperience = (long) (args.Parameters?[1]?.Evaluate() ?? -1);
+            var gain = (double) (args.Parameters?[2]?.Evaluate() ?? -1);
             args.Result = Calculate(level, baseExperience, gain);
         }
 
         public long Calculate(int level)
-            => Calculate(level, BaseExperience, Gain);
+        {
+            return Calculate(level, BaseExperience, Gain);
+        }
 
         public long Calculate(int level, long baseExperience)
-            => Calculate(level, baseExperience, Gain);
+        {
+            return Calculate(level, baseExperience, Gain);
+        }
 
         public long Calculate(int level, long baseExperience, double gain)
         {
@@ -63,7 +78,9 @@ namespace Intersect.Server.Utilities
             //Formula.RegisterParameter(PARAM_GAIN, gain, true);
             //Formula.RegisterParameter(PARAM_LEVEL, level, true);
             //return Formula.Evaluate<long>();
-            return (long)Math.Floor(baseExperience * Math.Pow(gain, level - 1));
+            return (long) Math.Floor(baseExperience * Math.Pow(gain, level - 1));
         }
+
     }
+
 }

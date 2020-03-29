@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Utilities
 {
+
     [TestFixture]
     public class ValueUtilsTests
     {
+
         [Test]
         public void SwapTest()
         {
@@ -23,5 +23,7 @@ namespace Intersect.Utilities
             Assert.AreEqual("Test", b);
             Assert.AreNotEqual("Test", a);
         }
+
     }
+
 }

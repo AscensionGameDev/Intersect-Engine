@@ -1,13 +1,15 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Net.Http;
 using System.Web.Http.Routing;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Server.Web.RestApi.Payloads
 {
+
     [TypeConverter(typeof(Converter))]
     public struct LookupKey
     {
@@ -24,7 +26,8 @@ namespace Intersect.Server.Web.RestApi.Payloads
 
         public Guid Id { get; private set; }
 
-        [CanBeNull] public string Name { get; private set; }
+        [CanBeNull]
+        public string Name { get; private set; }
 
         public override string ToString()
         {
@@ -34,8 +37,10 @@ namespace Intersect.Server.Web.RestApi.Payloads
         public class Converter : TypeConverter
         {
 
-            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) =>
-                typeof(string) == sourceType || typeof(Guid) == sourceType;
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                return typeof(string) == sourceType || typeof(Guid) == sourceType;
+            }
 
             public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
             {
@@ -78,4 +83,5 @@ namespace Intersect.Server.Web.RestApi.Payloads
         }
 
     }
+
 }

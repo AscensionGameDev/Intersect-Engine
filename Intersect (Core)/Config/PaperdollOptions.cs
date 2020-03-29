@@ -2,51 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Config
 {
+
     public class PaperdollOptions
     {
+
+        [JsonIgnore] public List<string>[] Directions;
+
+        public List<string> Down = new List<string>()
+        {
+            "Player",
+            "Armor",
+            "Helmet",
+            "Weapon",
+            "Shield",
+            "Boots"
+        };
+
+        public List<string> Left = new List<string>()
+        {
+            "Player",
+            "Armor",
+            "Helmet",
+            "Weapon",
+            "Shield",
+            "Boots"
+        };
+
+        public List<string> Right = new List<string>()
+        {
+            "Player",
+            "Armor",
+            "Helmet",
+            "Weapon",
+            "Shield",
+            "Boots"
+        };
+
         public List<string> Up = new List<string>()
         {
             "Player",
             "Armor",
-			"Helmet",
-			"Weapon",
+            "Helmet",
+            "Weapon",
             "Shield",
             "Boots"
         };
-        public List<string> Down = new List<string>()
-        {
-			"Player",
-			"Armor",
-			"Helmet",
-			"Weapon",
-			"Shield",
-            "Boots"
-        };
-        public List<string> Left = new List<string>()
-        {
-			"Player",
-			"Armor",
-			"Helmet",
-			"Weapon",
-			"Shield",
-            "Boots"
-        };
-        public List<string> Right = new List<string>()
-        {
-			"Player",
-			"Armor",
-			"Helmet",
-			"Weapon",
-			"Shield",
-            "Boots"
-        };
-
-        [JsonIgnore] public List<string>[] Directions;
 
         public PaperdollOptions()
         {
@@ -91,15 +96,24 @@ namespace Intersect.Config
                 var hasPlayer = false;
                 foreach (var item in direction)
                 {
-                    if (item == "Player") hasPlayer = true;
+                    if (item == "Player")
+                    {
+                        hasPlayer = true;
+                    }
+
                     if (!equipment.Slots.Contains(item) && item != "Player")
                     {
                         throw new Exception($"Config Error: Paperdoll item {item} does not exist in equipment slots!");
                     }
                 }
+
                 if (!hasPlayer)
+                {
                     throw new Exception($"Config Error: Paperdoll direction {direction} does not have Player listed!");
+                }
             }
         }
+
     }
+
 }

@@ -4,12 +4,11 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
+
     internal sealed class KillCommand : TargetClientCommand
     {
-        public KillCommand() : base(
-            Strings.Commands.Kill,
-            Strings.Commands.Arguments.TargetKill
-        )
+
+        public KillCommand() : base(Strings.Commands.Kill, Strings.Commands.Arguments.TargetKill)
         {
         }
 
@@ -18,6 +17,7 @@ namespace Intersect.Server.Core.Commands
             if (target?.Entity == null)
             {
                 Console.WriteLine($@"    {Strings.Player.offline}");
+
                 return;
             }
 
@@ -25,5 +25,7 @@ namespace Intersect.Server.Core.Commands
             PacketSender.SendGlobalMsg($@"    {Strings.Player.serverkilled.ToString(target.Entity.Name)}");
             Console.WriteLine($@"    {Strings.Commandoutput.killsuccess.ToString(target.Entity.Name)}");
         }
+
     }
+
 }
