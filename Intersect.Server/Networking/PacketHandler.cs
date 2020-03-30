@@ -39,7 +39,7 @@ namespace Intersect.Server.Networking
             var client = Client.FindBeta4Client(connection);
             if (client == null)
             {
-                throw new Exception("Client is null!");
+                return false;
             }
 
             if (client.Banned || client.FloodKicked)
