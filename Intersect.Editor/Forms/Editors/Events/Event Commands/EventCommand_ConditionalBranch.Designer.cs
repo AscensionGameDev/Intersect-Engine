@@ -592,14 +592,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudVariableValue.Location = new System.Drawing.Point(115, 48);
             this.nudVariableValue.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
+            -1,
+            -1,
+            -1,
             0});
             this.nudVariableValue.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
+            -1,
+            -1,
+            -1,
             -2147483648});
             this.nudVariableValue.Name = "nudVariableValue";
             this.nudVariableValue.Size = new System.Drawing.Size(125, 20);
