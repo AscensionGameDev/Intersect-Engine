@@ -373,6 +373,7 @@ namespace Intersect.Server.Database
 
         public static Player GetUserCharacter(User user, Guid characterId)
         {
+            if (user == null) return null;
             foreach (var character in user.Players)
             {
                 if (character.Id == characterId)
@@ -1892,7 +1893,7 @@ namespace Intersect.Server.Database
                 }
                 else if (i.Key == ConsoleKey.Backspace)
                 {
-                    if (pwd.Length > 0)
+                    if (pwd.Length > 1)
                     {
                         pwd = pwd.Remove(pwd.Length - 2, 1);
                         Console.Write("\b \b");

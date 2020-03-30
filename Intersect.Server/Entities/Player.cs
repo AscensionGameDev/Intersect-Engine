@@ -3316,6 +3316,11 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            if (slot < 0 || slot >= Trading.Offer.Length || Trading.Offer[slot] == null)
+            {
+                return;
+            }
+
             var itemBase = ItemBase.Get(Trading.Offer[slot].ItemId);
             if (itemBase == null)
             {

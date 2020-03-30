@@ -2,6 +2,7 @@
 
 using Intersect.GameObjects;
 using Intersect.Server.Entities.Combat;
+using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 
@@ -58,6 +59,7 @@ namespace Intersect.Server.Entities
         public bool HitEntity(Entity en)
         {
             var targetEntity = en;
+            if (targetEntity is EventPageInstance) return false;
             if (targetEntity != null && targetEntity != Parent.Owner)
             {
                 if (targetEntity.GetType() == typeof(Player)) //Player
