@@ -58,6 +58,8 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public long[] MoveDirectionTimers = new long[4];
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -829,6 +831,40 @@ namespace Intersect.Client.Entities
                 if (movex > 0)
                 {
                     Globals.Me.MoveDir = 3;
+                }
+            }
+
+            //Loop through our direction timers and keep track of how long we've been requesting to move in each direction
+            //If we have only just tapped a button we will set Globals.Me.MoveDir to -1 in order to cancel the movement
+            for (var i = 0; i < 4; i++)
+            {
+                if (i == Globals.Me.MoveDir)
+                {
+                    //If we just started to change to a new direction then turn the player only (set the timer to now + 60ms)
+                    if (MoveDirectionTimers[i] == -1 && !Globals.Me.IsMoving && Dir != Globals.Me.MoveDir)
+                    {
+                        //Turn Only
+                        Dir = (byte)Globals.Me.MoveDir;
+                        PacketSender.SendDirection((byte)Globals.Me.MoveDir);
+                        MoveDirectionTimers[i] = Globals.System.GetTimeMs() + 60;
+                        Globals.Me.MoveDir = -1;
+                    }
+                    //If we're already facing the direction then just start moving (set the timer to now)
+                    else if (MoveDirectionTimers[i] == -1 && !Globals.Me.IsMoving && Dir == Globals.Me.MoveDir)
+                    {
+                        MoveDirectionTimers[i] = Globals.System.GetTimeMs();
+                    }
+                    //The timer is greater than the currect time, let's cancel the move.
+                    else if (MoveDirectionTimers[i] > Globals.System.GetTimeMs() && !Globals.Me.IsMoving)
+                    {
+                        //Don't trigger the actual move immediately, wait until button is held
+                        Globals.Me.MoveDir = -1;
+                    }
+                }
+                else
+                {
+                    //Reset the timer if the direction isn't being requested
+                    MoveDirectionTimers[i] = -1;
                 }
             }
         }
