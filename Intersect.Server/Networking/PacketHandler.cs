@@ -1646,7 +1646,7 @@ namespace Intersect.Server.Networking
         //AcceptTradePacket
         public void HandlePacket(Client client, Player player, AcceptTradePacket packet)
         {
-            if (player == null)
+            if (player == null || player.Trading.Counterparty == null)
             {
                 return;
             }
