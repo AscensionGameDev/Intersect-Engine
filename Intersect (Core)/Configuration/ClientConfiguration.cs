@@ -66,6 +66,7 @@ namespace Intersect.Configuration
             UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            DiscordInviteUrl = DiscordInviteUrl ?? "";
         }
 
         #endregion
@@ -124,6 +125,11 @@ namespace Intersect.Configuration
 
         // TODO: What is this for?
         public List<string> IntroImages { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Link to discord invite that should open when discord button is clicked
+        /// </summary>
+        public string DiscordInviteUrl { get; set; } = "";
 
         #endregion
 
