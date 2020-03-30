@@ -373,6 +373,7 @@ namespace Intersect.Server.Database
 
         public static Player GetUserCharacter(User user, Guid characterId)
         {
+            if (user == null) return null;
             foreach (var character in user.Players)
             {
                 if (character.Id == characterId)
