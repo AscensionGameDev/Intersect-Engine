@@ -39,7 +39,7 @@ namespace Intersect.Server.Networking
             var client = Client.FindBeta4Client(connection);
             if (client == null)
             {
-                throw new Exception("Client is null!");
+                return false;
             }
 
             if (client.Banned || client.FloodKicked)
@@ -1646,7 +1646,7 @@ namespace Intersect.Server.Networking
         //AcceptTradePacket
         public void HandlePacket(Client client, Player player, AcceptTradePacket packet)
         {
-            if (player == null)
+            if (player == null || player.Trading.Counterparty == null)
             {
                 return;
             }
@@ -1866,6 +1866,7 @@ namespace Intersect.Server.Networking
         //SelectCharacterPacket
         public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
         {
+            if (client.User == null) return;
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
@@ -1887,6 +1888,7 @@ namespace Intersect.Server.Networking
         //DeleteCharacterPacket
         public void HandlePacket(Client client, Player player, DeleteCharacterPacket packet)
         {
+            if (client.User == null) return;
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
