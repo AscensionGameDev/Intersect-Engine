@@ -1264,24 +1264,27 @@ namespace Intersect.Server.Database
 
                 foreach (MapInstance map in MapInstance.Lookup.Values)
                 {
-                    map.SurroundingMaps.Clear();
-                    var myGrid = map.MapGrid;
-                    for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
+                    lock (map.GetMapLock())
                     {
-                        for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
+                        map.SurroundingMaps.Clear();
+                        var myGrid = map.MapGrid;
+                        for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                         {
-                            if (x == map.MapGridX && y == map.MapGridY)
+                            for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
                             {
-                                continue;
-                            }
+                                if (x == map.MapGridX && y == map.MapGridY)
+                                {
+                                    continue;
+                                }
 
-                            if (x >= MapGrids[myGrid].XMin &&
-                                x < MapGrids[myGrid].XMax &&
-                                y >= MapGrids[myGrid].YMin &&
-                                y < MapGrids[myGrid].YMax &&
-                                MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
-                            {
-                                map.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                                if (x >= MapGrids[myGrid].XMin &&
+                                    x < MapGrids[myGrid].XMax &&
+                                    y >= MapGrids[myGrid].YMin &&
+                                    y < MapGrids[myGrid].YMax &&
+                                    MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                {
+                                    map.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                                }
                             }
                         }
                     }
