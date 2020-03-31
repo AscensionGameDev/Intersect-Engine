@@ -16,6 +16,7 @@ using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Client;
 using Intersect.Server.Admin.Actions;
+using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
@@ -2896,55 +2897,58 @@ namespace Intersect.Server.Networking
 
             if (obj != null)
             {
-                //if Item or Resource, kill all global entities of that kind
-                if (type == GameObjectType.Item)
+                lock (ServerLoop.Lock)
                 {
-                    Globals.KillItemsOf((ItemBase) obj);
-                }
-                else if (type == GameObjectType.Npc)
-                {
-                    Globals.KillNpcsOf((NpcBase) obj);
-                }
-                else if (type == GameObjectType.Projectile)
-                {
-                    Globals.KillProjectilesOf((ProjectileBase) obj);
-                }
-
-                obj.Load(packet.Data);
-
-                if (type == GameObjectType.Quest)
-                {
-                    var qst = (QuestBase) obj;
-                    foreach (var evt in qst.RemoveEvents)
+                    //if Item or Resource, kill all global entities of that kind
+                    if (type == GameObjectType.Item)
                     {
-                        var evtb = EventBase.Get(evt);
-                        if (evtb != null)
-                        {
-                            DbInterface.DeleteGameObject(evtb);
-                        }
+                        Globals.KillItemsOf((ItemBase)obj);
+                    }
+                    else if (type == GameObjectType.Npc)
+                    {
+                        Globals.KillNpcsOf((NpcBase)obj);
+                    }
+                    else if (type == GameObjectType.Projectile)
+                    {
+                        Globals.KillProjectilesOf((ProjectileBase)obj);
                     }
 
-                    foreach (var evt in qst.AddEvents)
+                    obj.Load(packet.Data);
+
+                    if (type == GameObjectType.Quest)
                     {
-                        var evtb = (EventBase) DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
-                        evtb.CommonEvent = false;
-                        foreach (var tsk in qst.Tasks)
+                        var qst = (QuestBase)obj;
+                        foreach (var evt in qst.RemoveEvents)
                         {
-                            if (tsk.Id == evt.Key)
+                            var evtb = EventBase.Get(evt);
+                            if (evtb != null)
                             {
-                                tsk.CompletionEvent = evtb;
+                                DbInterface.DeleteGameObject(evtb);
                             }
                         }
 
-                        evtb.Load(evt.Value.JsonData);
+                        foreach (var evt in qst.AddEvents)
+                        {
+                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                            evtb.CommonEvent = false;
+                            foreach (var tsk in qst.Tasks)
+                            {
+                                if (tsk.Id == evt.Key)
+                                {
+                                    tsk.CompletionEvent = evtb;
+                                }
+                            }
+
+                            evtb.Load(evt.Value.JsonData);
+                        }
+
+                        qst.AddEvents.Clear();
+                        qst.RemoveEvents.Clear();
                     }
 
-                    qst.AddEvents.Clear();
-                    qst.RemoveEvents.Clear();
+                    PacketSender.CacheGameDataPacket();
+                    PacketSender.SendGameObjectToAll(obj, false);
                 }
-
-                PacketSender.CacheGameDataPacket();
-                PacketSender.SendGameObjectToAll(obj, false);
                 DbInterface.SaveGameDatabase();
             }
         }
