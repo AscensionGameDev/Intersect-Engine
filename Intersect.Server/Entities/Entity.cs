@@ -792,7 +792,7 @@ namespace Intersect.Server.Entities
 
                 if (doNotUpdate == false)
                 {
-                    if (this is EventPage)
+                    if (this is EventPageInstance)
                     {
                         if (forPlayer != null)
                         {
