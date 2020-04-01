@@ -188,7 +188,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     //Block of Players, Npcs, and Resources
                                                     foreach (var en in tmpMap.GetEntities())
                                                     {
-                                                        if (!en.IsPassable())
+                                                        if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
                                                         {
                                                             mapGrid[(x + 1 - gridX) * Options.MapWidth + en.X,
                                                                     (y + 1 - gridY) * Options.MapHeight + en.Y]
@@ -199,7 +199,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     //Block Global Events if they are not passable.
                                                     foreach (var en in tmpMap.GlobalEventInstances)
                                                     {
-                                                        if (en.Value != null)
+                                                        if (en.Value != null && en.Value.X > -1 && en.Value.X < Options.MapWidth && en.Value.Y > -1 && en.Value.Y < Options.MapHeight)
                                                         {
                                                             foreach (var page in en.Value.GlobalPageInstance)
                                                             {

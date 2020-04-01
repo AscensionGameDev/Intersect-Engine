@@ -243,11 +243,14 @@ namespace Intersect.Server.Networking
             else
             {
                 client.SendPacket(GenerateMapPacket(client, mapId));
-
-                //TODO: INCLUDE EVENTS IN MAP PACKET
-                if (mapId == client.Entity.MapId)
+                var entity = client.Entity;
+                if (entity != null)
                 {
-                    client.Entity.SendEvents();
+                    //TODO: INCLUDE EVENTS IN MAP PACKET
+                    if (mapId == entity.MapId)
+                    {
+                        entity.SendEvents();
+                    }
                 }
 
                 //TODO - Include Aggression and Equipment in ENTITY DATA PACKETS!
