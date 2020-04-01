@@ -1742,9 +1742,8 @@ namespace Intersect.Editor.Forms
 			{
 				return;
 			}
-			Globals.CurrentEditor = (int)GameObjectType.Mimus_RandomPlacer;
 			FormRandomPlacer formRandomPlacer = new FormRandomPlacer();
-			formRandomPlacer.Show();
+			formRandomPlacer.ShowDialog();
 		}
 	}
 

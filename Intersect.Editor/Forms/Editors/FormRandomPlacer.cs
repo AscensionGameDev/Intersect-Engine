@@ -28,6 +28,9 @@ namespace Intersect.Editor.Forms.Editors
 		private void btnGenerate_Click(object sender, EventArgs e)
 		{
 			Globals.MapEditorWindow.Mimus_TileRandomPlacer((int)nudMin.Value, (int)nudMax.Value, rbBlocked.Checked);
+			Hide();
+			Globals.CurrentEditor = -1;
+			Dispose();
 		}
 
 		private void nudMin_ValueChanged(object sender, EventArgs e)
