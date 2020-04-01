@@ -86,6 +86,12 @@
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Forms\Editors\FormRandomPlacer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\FormRandomPlacer.Designer.cs">
+      <DependentUpon>FormRandomPlacer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Maps\MapGridItem.cs" />
     <Compile Include="Maps\MapSaveState.cs" />
     <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
@@ -758,6 +764,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.resx">
       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\FormRandomPlacer.resx">
+      <DependentUpon>FormRandomPlacer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
       <DependentUpon>frmAnimation.cs</DependentUpon>

@@ -2384,7 +2384,57 @@ namespace Intersect.Editor.Forms.DockingElements
         private void picMap_Paint(object sender, PaintEventArgs e)
         {
         }
+		public void Mimus_TileRandomPlacer(int min, int max, bool blocked)
+		{
+			Random rand = new Random();
+			int countPlace = rand.Next() % (max - min + 1) + min;
+			var tmpMap = Globals.CurrentMap;
 
-    }
+			int tryTest = 0;
+
+			int i = 0;
+			int cx = 0;
+			int cy = 0;
+			while (i < countPlace)
+			{
+				cx = rand.Next() % Options.MapWidth;
+				cy = rand.Next() % Options.MapHeight;
+
+				if (tmpMap.Attributes[cx, cy] == MapAttribute.CreateAttribute(MapAttributes.Walkable))
+				{
+					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].TilesetId = Globals.CurrentTileset.Id;
+					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].X = Globals.CurSelX;
+					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Y = Globals.CurSelY;
+
+					if (Globals.Autotilemode == 0)
+					{
+						tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Autotile = 0;
+					}
+					else
+					{
+						tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Autotile = (byte)Globals.Autotilemode;
+					}
+					tmpMap.InitAutotiles();
+					if (blocked)
+					{
+						tmpMap.Attributes[cx, cy] = MapAttribute.CreateAttribute(MapAttributes.Blocked);
+					}
+					mMapChanged = true;
+					i++;
+					tryTest = 0;
+				}
+				else
+				{
+					tryTest++;
+					if (tryTest >= 5)
+					{
+						tryTest = 0;
+						i++;
+					}
+				}
+			}
+
+		}
+	}
 
 }
