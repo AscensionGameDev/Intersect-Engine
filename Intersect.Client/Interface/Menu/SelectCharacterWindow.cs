@@ -156,9 +156,9 @@ namespace Intersect.Client.Interface.Menu
                 mPrevCharButton.BringToFront();
             }
 
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (var i = 0; i < mPaperdollPortraits.Length; i++)
             {
-                mPaperdollPortraits[i].Hide();
+                mPaperdollPortraits[i]?.Hide();
             }
 
             if (Characters[mSelectedChar] != null)

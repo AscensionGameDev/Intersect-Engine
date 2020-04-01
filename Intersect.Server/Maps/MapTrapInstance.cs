@@ -2,6 +2,7 @@
 
 using Intersect.GameObjects;
 using Intersect.Server.Entities;
+using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 
@@ -54,6 +55,11 @@ namespace Intersect.Server.Classes.Maps
                                 return;
                             }
                         }
+                    }
+
+                    if (entity is EventPageInstance)
+                    {
+                        return;
                     }
 
                     Owner.TryAttack(entity, ParentSpell, false, true);

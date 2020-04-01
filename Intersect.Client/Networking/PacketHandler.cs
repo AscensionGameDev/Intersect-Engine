@@ -1581,7 +1581,7 @@ namespace Intersect.Client.Networking
                 Globals.Me.Friends.Add(f);
             }
 
-            Interface.Interface.GameUi.UpdateFriendsList();
+            Interface.Interface.GameUi.NotifyUpdateFriendsList();
         }
 
         //FriendRequestPacket

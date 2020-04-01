@@ -44,6 +44,8 @@ namespace Intersect.Server.General
                 }
 
                 File.WriteAllText(FORMULAS_FILE, JsonConvert.SerializeObject(mFormulas, Formatting.Indented));
+
+                Expression.CacheEnabled = false;
             }
             catch (Exception ex)
             {

@@ -308,17 +308,21 @@ namespace Intersect.Server.Entities.Events
 
             prams.Add("evtName", BaseEvent.Name);
 
+            var map = MapInstance.Get(BaseEvent.MapId);
+            if (map != null)
+            {
+                prams.Add("evtMap", map.Name);
+            }
+
             if (MapId != Guid.Empty)
             {
                 if (GlobalPageInstance != null)
                 {
-                    prams.Add("evtMap", GlobalPageInstance[PageIndex].Map.Name);
                     prams.Add("evtX", GlobalPageInstance[PageIndex].X.ToString());
                     prams.Add("evtY", GlobalPageInstance[PageIndex].Y.ToString());
                 }
                 else if (PageInstance != null)
                 {
-                    prams.Add("evtMap", PageInstance.Map.Name);
                     prams.Add("evtX", PageInstance.X.ToString());
                     prams.Add("evtY", PageInstance.Y.ToString());
                 }

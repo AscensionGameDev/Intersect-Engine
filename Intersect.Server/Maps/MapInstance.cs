@@ -759,14 +759,21 @@ namespace Intersect.Server.Maps
 
         public void ClearEntityTargetsOf(Entity en)
         {
-            lock (GetMapLock())
+            if (Monitor.TryEnter(GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
             {
-                foreach (var entity in mEntities)
+                try
                 {
-                    if (entity.GetType() == typeof(Npc) && ((Npc) entity).Target == en)
+                    foreach (var entity in mEntities)
                     {
-                        ((Npc) entity).RemoveTarget();
+                        if (entity.GetType() == typeof(Npc) && ((Npc)entity).Target == en)
+                        {
+                            ((Npc)entity).RemoveTarget();
+                        }
                     }
+                }
+                finally
+                {
+                    Monitor.Exit(GetMapLock());
                 }
             }
         }
@@ -921,17 +928,20 @@ namespace Intersect.Server.Maps
         public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
         {
             Debug.Assert(Lookup != null, "Lookup != null");
-            var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum))
-                           .Where(map => map != null)
-                           .ToList() ??
-                       new List<MapInstance>();
-
-            if (includingSelf)
+            lock (GetMapLock())
             {
-                maps.Add(this);
-            }
+                var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum))
+                               .Where(map => map != null)
+                               .ToList() ??
+                           new List<MapInstance>();
 
-            return maps;
+                if (includingSelf)
+                {
+                    maps.Add(this);
+                }
+
+                return maps;
+            }
         }
 
         public List<Guid> GetSurroundingMapIds(bool includingSelf = false)

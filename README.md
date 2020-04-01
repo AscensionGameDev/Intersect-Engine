@@ -74,11 +74,14 @@ This project has split licensing. See license.md within each of the projects' fo
 
 | Project  | License |
 |:---|--------|
-| Intersect.Client | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
 | Intersect.Core | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Client | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Client.Framework | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
 | Intersect.Network | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
+| Intersect.Shared | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
 | Intersect.Editor | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
 | Intersect.Server | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
+| Intersect.Utilities | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
 
 Third-party libraries used by Intersect are under their own licenses.  Please refer to those libraries for details on the license they use.
 

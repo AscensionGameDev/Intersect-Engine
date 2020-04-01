@@ -180,6 +180,7 @@ namespace Intersect.Client.Interface.Game
             else
             {
                 HideWindows();
+                PacketSender.SendRequestFriends();
                 mFriendsWindow.UpdateList();
                 mFriendsWindow.Show();
             }
@@ -252,10 +253,7 @@ namespace Intersect.Client.Interface.Game
 
         private void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (ToggleFriendsWindow())
-            {
-                PacketSender.SendRequestFriends();
-            }
+            ToggleFriendsWindow();
         }
 
         private void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
