@@ -359,6 +359,7 @@ namespace Intersect.Client.Core
 
             //Draw the players targets
             Globals.Me.DrawTargets();
+            Globals.Me.DrawTargetsNames();
 
             DrawOverlay();
 
@@ -371,7 +372,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        //entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -389,7 +390,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        //entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
