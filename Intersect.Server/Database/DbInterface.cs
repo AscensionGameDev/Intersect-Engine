@@ -674,9 +674,11 @@ namespace Intersect.Server.Database
                     TilesetBase.Lookup.Clear();
 
                     break;
-                case GameObjectType.Time:
-                    break;
-                default:
+				case GameObjectType.Time:
+					break;
+				case GameObjectType.Mimus_RandomPlacer:
+					break;
+				default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
@@ -803,7 +805,9 @@ namespace Intersect.Server.Database
                         break;
                     case GameObjectType.Time:
                         break;
-                    default:
+					case GameObjectType.Mimus_RandomPlacer:
+						break;
+					default:
                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
             }

@@ -4349,6 +4349,16 @@ Negative values for time to flow backwards.";
 
         }
 
-    }
+		public struct MimusRandomPlacer
+		{
+			public static LocalizedString attributeNone = @"None";
+			public static LocalizedString attributeBlocked = @"Blocked";
+			public static LocalizedString min = @"Min";
+			public static LocalizedString max = @"Max";
+			public static LocalizedString generate = @"Generate";
+			public static LocalizedString cancel = @"Cancel";
+		}
+
+	}
 
 }

@@ -1425,7 +1425,9 @@ namespace Intersect.Server.Networking
                     break;
                 case GameObjectType.Time:
                     break;
-                default:
+				case GameObjectType.Mimus_RandomPlacer:
+					break;
+				default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }

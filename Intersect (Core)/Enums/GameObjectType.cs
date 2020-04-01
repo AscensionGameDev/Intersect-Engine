@@ -58,8 +58,10 @@ namespace Intersect.Enums
         [GameObjectInfo(typeof(TilesetBase), "tilesets")]
         Tileset,
 
-        [GameObjectInfo(typeof(TimeBase), "")] Time
+        [GameObjectInfo(typeof(TimeBase), "")] Time,
 
-    }
+		Mimus_RandomPlacer
+
+	}
 
 }
