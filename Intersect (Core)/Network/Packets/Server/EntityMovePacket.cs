@@ -8,7 +8,7 @@ namespace Intersect.Network.Packets.Server
     public class EntityMovePacket : CerasPacket
     {
 
-        public EntityMovePacket(Guid id, EntityTypes type, Guid mapId, byte x, byte y, byte dir, bool correction)
+        public EntityMovePacket(Guid id, EntityTypes type, Guid mapId, byte x, byte y, byte dir, bool correction, byte run)
         {
             Id = id;
             Type = type;
@@ -17,7 +17,9 @@ namespace Intersect.Network.Packets.Server
             Y = y;
             Direction = dir;
             Correction = correction;
-        }
+			Run = run;
+
+		}
 
         public Guid Id { get; set; }
 
@@ -31,8 +33,10 @@ namespace Intersect.Network.Packets.Server
 
         public byte Direction { get; set; }
 
-        public bool Correction { get; set; }
+		public bool Correction { get; set; }
 
-    }
+		public byte Run { get; set; }
+
+	}
 
 }

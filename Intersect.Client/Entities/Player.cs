@@ -57,7 +57,7 @@ namespace Intersect.Client.Entities
         public Guid TargetIndex;
 
         public int TargetType;
-
+		
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -808,7 +808,17 @@ namespace Intersect.Client.Entities
                 movex = 1;
             }
 
-            Globals.Me.MoveDir = -1;
+			if (Controls.KeyDown(Control.Running))
+			{
+				Running = 1;
+			}
+			else
+			{
+				Running = 0;
+			}
+
+
+			Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
                 if (movey < 0)
@@ -1867,7 +1877,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-    }
+	}
 
     public class FriendInstance
     {
@@ -1895,5 +1905,7 @@ namespace Intersect.Client.Entities
         }
 
     }
+
+	
 
 }
