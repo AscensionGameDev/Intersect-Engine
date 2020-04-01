@@ -1776,6 +1776,7 @@ namespace Intersect.Client.Entities
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawName(null);
                         }
                     }
                 }
@@ -1802,6 +1803,7 @@ namespace Intersect.Client.Entities
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawName(null);
                         }
                     }
                 }
@@ -1834,6 +1836,7 @@ namespace Intersect.Client.Entities
                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int) TargetTypes.Hover);
+                                        en.Value.DrawName(null);
                                     }
                                 }
                             }
@@ -1856,86 +1859,6 @@ namespace Intersect.Client.Entities
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int) TargetTypes.Hover);
-                                    }
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        public void DrawTargetsNames() {
-            foreach (var en in Globals.Entities) {
-                if (en.Value == null) {
-                    continue;
-                }
-
-                if (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)) {
-                    if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource)) {
-                        if (TargetType == 0 && TargetIndex == en.Value.Id) {
-                            en.Value.DrawName(null);
-                        }
-                    }
-                } else {
-                    //TODO: Completely wipe the stealthed player from memory and have server re-send once stealth ends.
-                    ClearTarget();
-                }
-            }
-
-            foreach (MapInstance eventMap in MapInstance.Lookup.Values) {
-                foreach (var en in eventMap.LocalEntities) {
-                    if (en.Value == null) {
-                        continue;
-                    }
-
-                    if (en.Value.CurrentMap == eventMap.Id &&
-                        !((Event)en.Value).DisablePreview &&
-                        (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value))) {
-                        if (TargetType == 1 && TargetIndex == en.Value.Id) {
-                            en.Value.DrawName(null);
-                        }
-                    }
-                }
-            }
-
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
-
-            foreach (MapInstance map in MapInstance.Lookup.Values) {
-                if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth) {
-                    if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight) {
-                        var mapId = map.Id;
-
-                        foreach (var en in Globals.Entities) {
-                            if (en.Value == null) {
-                                continue;
-                            }
-
-                            if (en.Value.CurrentMap == mapId &&
-                                !en.Value.IsStealthed() &&
-                                en.Value.WorldPos.Contains(x, y)) {
-                                if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource)) {
-                                    if (TargetType != 0 || TargetIndex != en.Value.Id) {
-                                        en.Value.DrawName(null);
-                                    }
-                                }
-                            }
-                        }
-
-                        foreach (MapInstance eventMap in MapInstance.Lookup.Values) {
-                            foreach (var en in eventMap.LocalEntities) {
-                                if (en.Value == null) {
-                                    continue;
-                                }
-
-                                if (en.Value.CurrentMap == mapId &&
-                                    !((Event)en.Value).DisablePreview &&
-                                    !en.Value.IsStealthed() &&
-                                    en.Value.WorldPos.Contains(x, y)) {
-                                    if (TargetType != 1 || TargetIndex != en.Value.Id) {
                                         en.Value.DrawName(null);
                                     }
                                 }
