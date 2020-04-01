@@ -45,7 +45,7 @@ namespace Intersect.Client.Core
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
                 var type = ((GameObjectType) val);
-                if (type != GameObjectType.Event && type != GameObjectType.Time && type != GameObjectType.Mimus_RandomPlacer)
+                if (type != GameObjectType.Event && type != GameObjectType.Time)
                 {
                     var lookup = type.GetLookup();
                     var item = lookup.AddNew(type.GetObjectType(), id);
