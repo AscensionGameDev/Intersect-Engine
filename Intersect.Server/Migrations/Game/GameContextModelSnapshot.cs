@@ -197,14 +197,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("AnimationId")
-                        .HasColumnName("Animation");
-
                     b.Property<Guid>("AttackAnimationDownId")
                         .HasColumnName("AttackAnimationDown");
-
-                    b.Property<Guid>("AttackAnimationId")
-                        .HasColumnName("AttackAnimation");
 
                     b.Property<Guid>("AttackAnimationLeftId")
                         .HasColumnName("AttackAnimationLeft");
@@ -214,6 +208,12 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<Guid>("AttackAnimationUpId")
                         .HasColumnName("AttackAnimationUp");
+
+                    b.Property<Guid>("AnimationId")
+                        .HasColumnName("Animation");
+
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnName("AttackAnimation");
 
                     b.Property<int>("AttackSpeedModifier");
 
