@@ -16,7 +16,8 @@ namespace Intersect.Network.Packets.Server
             byte y,
             byte direction,
             bool passable,
-            bool hideName
+            bool hideName,
+			byte run
         )
         {
             Id = id;
@@ -27,6 +28,7 @@ namespace Intersect.Network.Packets.Server
             Direction = direction;
             Passable = passable;
             HideName = hideName;
+			Run = run;
         }
 
         public Guid Id { get; set; }
@@ -43,8 +45,10 @@ namespace Intersect.Network.Packets.Server
 
         public bool Passable { get; set; }
 
-        public bool HideName { get; set; }
+		public bool HideName { get; set; }
 
-    }
+		public byte Run { get; set; }
+
+	}
 
 }

@@ -408,6 +408,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+			player.Running = packet.Run;
             var canMove = player.CanMove(packet.Dir);
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
