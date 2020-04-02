@@ -480,6 +480,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20200402190906_DirectionalAnimationWeaponsToItems.cs" />
+    <Compile Include="Migrations\Game\20200402190906_DirectionalAnimationWeaponsToItems.designer.cs">
+      <DependentUpon>20200402190906_DirectionalAnimationWeaponsToItems.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />
