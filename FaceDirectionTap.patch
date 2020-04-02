@@ -1,0 +1,67 @@
+From 5a6b2661362a55607a55e61b4eb672619df996e5 Mon Sep 17 00:00:00 2001
+From: JC Snider <jcsnider3@gmail.com>
+Date: Mon, 30 Mar 2020 02:05:14 -0400
+Subject: [PATCH] Enable quick button taps of the arrow keys to turn the player
+ without actually moving them.
+
+---
+ Intersect.Client/Entities/Player.cs | 36 +++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 4620cea9..f4484044 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -58,6 +58,8 @@ public class Player : Entity
+ 
+         public int TargetType;
+ 
++        public long[] MoveDirectionTimers = new long[4];
++
+         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+         {
+             for (var i = 0; i < Options.MaxHotbar; i++)
+@@ -831,6 +833,40 @@ private void HandleInput()
+                     Globals.Me.MoveDir = 3;
+                 }
+             }
++
++            //Loop through our direction timers and keep track of how long we've been requesting to move in each direction
++            //If we have only just tapped a button we will set Globals.Me.MoveDir to -1 in order to cancel the movement
++            for (var i = 0; i < 4; i++)
++            {
++                if (i == Globals.Me.MoveDir)
++                {
++                    //If we just started to change to a new direction then turn the player only (set the timer to now + 60ms)
++                    if (MoveDirectionTimers[i] == -1 && !Globals.Me.IsMoving && Dir != Globals.Me.MoveDir)
++                    {
++                        //Turn Only
++                        Dir = (byte)Globals.Me.MoveDir;
++                        PacketSender.SendDirection((byte)Globals.Me.MoveDir);
++                        MoveDirectionTimers[i] = Globals.System.GetTimeMs() + 60;
++                        Globals.Me.MoveDir = -1;
++                    }
++                    //If we're already facing the direction then just start moving (set the timer to now)
++                    else if (MoveDirectionTimers[i] == -1 && !Globals.Me.IsMoving && Dir == Globals.Me.MoveDir)
++                    {
++                        MoveDirectionTimers[i] = Globals.System.GetTimeMs();
++                    }
++                    //The timer is greater than the currect time, let's cancel the move.
++                    else if (MoveDirectionTimers[i] > Globals.System.GetTimeMs() && !Globals.Me.IsMoving)
++                    {
++                        //Don't trigger the actual move immediately, wait until button is held
++                        Globals.Me.MoveDir = -1;
++                    }
++                }
++                else
++                {
++                    //Reset the timer if the direction isn't being requested
++                    MoveDirectionTimers[i] = -1;
++                }
++            }
+         }
+ 
+         protected int GetDistanceTo(Entity target)
+-- 
+2.25.1.windows.1
+
