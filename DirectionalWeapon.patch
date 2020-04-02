@@ -1,0 +1,975 @@
+From 31071bc1773912ac89db3eb8cddb505c68f90ac3 Mon Sep 17 00:00:00 2001
+From: rhathaway86 <56697566+rhathaway86@users.noreply.github.com>
+Date: Thu, 2 Apr 2020 10:33:36 -0500
+Subject: [PATCH] Directional Weapon Animations
+
+A package that adds in ability to choose different animations based on facing direction of player for weapons.
+---
+ Intersect (Core)/GameObjects/ItemBase.cs      |  54 +++++
+ Intersect.Client/Entities/Entity.cs           |  24 ++-
+ .../Forms/Editors/frmItem.Designer.cs         | 194 +++++++++++++++++-
+ Intersect.Editor/Forms/Editors/frmItem.cs     |  62 ++++++
+ Intersect.Editor/Forms/Editors/frmItem.resx   | 114 ++++++----
+ Intersect.Editor/Forms/Editors/frmSpell.resx  | 102 ++++-----
+ .../Migrations/Game/20180905042857_Initial.cs |   5 +
+ Intersect.Server/Networking/PacketHandler.cs  |  38 +++-
+ 8 files changed, 488 insertions(+), 105 deletions(-)
+
+diff --git a/Intersect (Core)/GameObjects/ItemBase.cs b/Intersect (Core)/GameObjects/ItemBase.cs
+index 741a8f1e..8361bd2c 100644
+--- a/Intersect (Core)/GameObjects/ItemBase.cs	
++++ b/Intersect (Core)/GameObjects/ItemBase.cs	
+@@ -53,6 +53,57 @@ public AnimationBase AttackAnimation
+             set => AttackAnimationId = value?.Id ?? Guid.Empty;
+         }
+ 
++        //Rhathaway86 Edit Attack Animations
++        [Column("AttackAnimationUp")]
++        [JsonProperty]
++        public Guid AttackAnimationUpId { get; set; }
++
++        [NotMapped]
++        [JsonIgnore]
++        public AnimationBase AttackAnimationUp
++        {
++            get => AnimationBase.Get(AttackAnimationUpId);
++            set => AttackAnimationUpId = value?.Id ?? Guid.Empty;
++        }
++
++        [Column("AttackAnimationDown")]
++        [JsonProperty]
++        public Guid AttackAnimationDownId { get; set; }
++
++        [NotMapped]
++        [JsonIgnore]
++        public AnimationBase AttackAnimationDown
++        {
++            get => AnimationBase.Get(AttackAnimationDownId);
++            set => AttackAnimationDownId = value?.Id ?? Guid.Empty;
++        }
++
++        [Column("AttackAnimationLeft")]
++        [JsonProperty]
++        public Guid AttackAnimationLeftId { get; set; }
++
++        [NotMapped]
++        [JsonIgnore]
++        public AnimationBase AttackAnimationLeft
++        {
++            get => AnimationBase.Get(AttackAnimationLeftId);
++            set => AttackAnimationLeftId = value?.Id ?? Guid.Empty;
++        }
++
++        [Column("AttackAnimationRight")]
++        [JsonProperty]
++        public Guid AttackAnimationRightId { get; set; }
++
++        [NotMapped]
++        [JsonIgnore]
++        public AnimationBase AttackAnimationRight
++        {
++            get => AnimationBase.Get(AttackAnimationRightId);
++            set => AttackAnimationRightId = value?.Id ?? Guid.Empty;
++        }
++
++        //
++
+         [Column("EquipmentAnimation")]
+         public Guid EquipmentAnimationId { get; set; }
+ 
+@@ -86,6 +137,9 @@ public AnimationBase EquipmentAnimation
+ 
+         public bool TwoHanded { get; set; }
+ 
++        //rhathaway86 adding checkbox for directional weapon animation
++        public bool DirectionalAnimation { get; set; }
++
+         public EffectData Effect { get; set; }
+ 
+         public int SlotCount { get; set; }
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index de0f4902..4a238467 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -875,8 +875,11 @@ public virtual void Draw()
+                     if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                     {
+                         srcRectangle = new FloatRect(
++                            //rhathaway86 change attack frames
+                             3 * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
+                             (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
++                            //4 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
++                            //(int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                         );
+                     }
+                     else
+@@ -934,13 +937,28 @@ public virtual void Draw()
+                                 var item = ItemBase.Get(itemId);
+                                 if (item != null)
+                                 {
+-                                    if (Gender == 0)
++                                    //rhathaway86 checkforweapon
++                                    if (paperdoll == "Weapon" && AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() && item.DirectionalAnimation == true)
+                                     {
+-                                        DrawEquipment(item.MalePaperdoll, alpha);
++                                        if (Gender == 0)
++                                        {
++                                            DrawEquipment(item.MalePaperdoll, 0);
++                                        }
++                                        else
++                                        {
++                                            DrawEquipment(item.FemalePaperdoll, 0);
++                                        }
+                                     }
+                                     else
+                                     {
+-                                        DrawEquipment(item.FemalePaperdoll, alpha);
++                                        if (Gender == 0)
++                                        {
++                                            DrawEquipment(item.MalePaperdoll, alpha);
++                                        }
++                                        else
++                                        {
++                                            DrawEquipment(item.FemalePaperdoll, alpha);
++                                        }
+                                     }
+                                 }
+                             }
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+index d46aa33d..9a98b5cb 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+@@ -66,6 +66,10 @@ private void InitializeComponent()
+             this.lblName = new System.Windows.Forms.Label();
+             this.txtName = new DarkUI.Controls.DarkTextBox();
+             this.grpEquipment = new DarkUI.Controls.DarkGroupBox();
++            this.cmbAttackAnimationRight = new DarkUI.Controls.DarkComboBox();
++            this.cmbAttackAnimationLeft = new DarkUI.Controls.DarkComboBox();
++            this.cmbAttackAnimationDown = new DarkUI.Controls.DarkComboBox();
++            this.cmbAttackAnimationUp = new DarkUI.Controls.DarkComboBox();
+             this.grpRegen = new DarkUI.Controls.DarkGroupBox();
+             this.nudMpRegen = new DarkUI.Controls.DarkNumericUpDown();
+             this.nudHPRegen = new DarkUI.Controls.DarkNumericUpDown();
+@@ -180,6 +184,12 @@ private void InitializeComponent()
+             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
++            this.chkDirectionalAnimation = new DarkUI.Controls.DarkCheckBox();
++            this.grpDirectionalAnimation = new DarkUI.Controls.DarkGroupBox();
++            this.lblDirectionalAnimationDown = new System.Windows.Forms.Label();
++            this.lblDirectionalAnimationUp = new System.Windows.Forms.Label();
++            this.lblDirectionalAnimationLeft = new System.Windows.Forms.Label();
++            this.lblDirectionalAnimationRight = new System.Windows.Forms.Label();
+             this.grpItems.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
+@@ -225,6 +235,7 @@ private void InitializeComponent()
+             this.grpBags.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
+             this.toolStrip.SuspendLayout();
++            this.grpDirectionalAnimation.SuspendLayout();
+             this.SuspendLayout();
+             // 
+             // grpItems
+@@ -343,7 +354,7 @@ private void InitializeComponent()
+             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+             this.grpGeneral.Location = new System.Drawing.Point(2, 1);
+             this.grpGeneral.Name = "grpGeneral";
+-            this.grpGeneral.Size = new System.Drawing.Size(439, 264);
++            this.grpGeneral.Size = new System.Drawing.Size(537, 264);
+             this.grpGeneral.TabIndex = 2;
+             this.grpGeneral.TabStop = false;
+             this.grpGeneral.Text = "General";
+@@ -692,12 +703,100 @@ private void InitializeComponent()
+             this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
+             this.grpEquipment.Location = new System.Drawing.Point(2, 270);
+             this.grpEquipment.Name = "grpEquipment";
+-            this.grpEquipment.Size = new System.Drawing.Size(439, 731);
++            this.grpEquipment.Size = new System.Drawing.Size(627, 731);
+             this.grpEquipment.TabIndex = 12;
+             this.grpEquipment.TabStop = false;
+             this.grpEquipment.Text = "Equipment";
+             this.grpEquipment.Visible = false;
+             // 
++            // cmbAttackAnimationRight
++            // 
++            this.cmbAttackAnimationRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbAttackAnimationRight.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbAttackAnimationRight.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbAttackAnimationRight.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbAttackAnimationRight.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationRight.ButtonIcon")));
++            this.cmbAttackAnimationRight.DrawDropdownHoverOutline = false;
++            this.cmbAttackAnimationRight.DrawFocusRectangle = false;
++            this.cmbAttackAnimationRight.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbAttackAnimationRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbAttackAnimationRight.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbAttackAnimationRight.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbAttackAnimationRight.FormattingEnabled = true;
++            this.cmbAttackAnimationRight.Location = new System.Drawing.Point(9, 157);
++            this.cmbAttackAnimationRight.Name = "cmbAttackAnimationRight";
++            this.cmbAttackAnimationRight.Size = new System.Drawing.Size(180, 21);
++            this.cmbAttackAnimationRight.TabIndex = 62;
++            this.cmbAttackAnimationRight.Text = null;
++            this.cmbAttackAnimationRight.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbAttackAnimationRight.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationRight_SelectedIndexChanged);
++            // 
++            // cmbAttackAnimationLeft
++            // 
++            this.cmbAttackAnimationLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbAttackAnimationLeft.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbAttackAnimationLeft.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbAttackAnimationLeft.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbAttackAnimationLeft.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationLeft.ButtonIcon")));
++            this.cmbAttackAnimationLeft.DrawDropdownHoverOutline = false;
++            this.cmbAttackAnimationLeft.DrawFocusRectangle = false;
++            this.cmbAttackAnimationLeft.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbAttackAnimationLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbAttackAnimationLeft.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbAttackAnimationLeft.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbAttackAnimationLeft.FormattingEnabled = true;
++            this.cmbAttackAnimationLeft.Location = new System.Drawing.Point(9, 117);
++            this.cmbAttackAnimationLeft.Name = "cmbAttackAnimationLeft";
++            this.cmbAttackAnimationLeft.Size = new System.Drawing.Size(180, 21);
++            this.cmbAttackAnimationLeft.TabIndex = 61;
++            this.cmbAttackAnimationLeft.Text = null;
++            this.cmbAttackAnimationLeft.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbAttackAnimationLeft.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationLeft_SelectedIndexChanged);
++            // 
++            // cmbAttackAnimationDown
++            // 
++            this.cmbAttackAnimationDown.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbAttackAnimationDown.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbAttackAnimationDown.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbAttackAnimationDown.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbAttackAnimationDown.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationDown.ButtonIcon")));
++            this.cmbAttackAnimationDown.DrawDropdownHoverOutline = false;
++            this.cmbAttackAnimationDown.DrawFocusRectangle = false;
++            this.cmbAttackAnimationDown.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbAttackAnimationDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbAttackAnimationDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbAttackAnimationDown.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbAttackAnimationDown.FormattingEnabled = true;
++            this.cmbAttackAnimationDown.Location = new System.Drawing.Point(9, 76);
++            this.cmbAttackAnimationDown.Name = "cmbAttackAnimationDown";
++            this.cmbAttackAnimationDown.Size = new System.Drawing.Size(180, 21);
++            this.cmbAttackAnimationDown.TabIndex = 60;
++            this.cmbAttackAnimationDown.Text = null;
++            this.cmbAttackAnimationDown.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbAttackAnimationDown.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationDown_SelectedIndexChanged);
++            // 
++            // cmbAttackAnimationUp
++            // 
++            this.cmbAttackAnimationUp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbAttackAnimationUp.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbAttackAnimationUp.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbAttackAnimationUp.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbAttackAnimationUp.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationUp.ButtonIcon")));
++            this.cmbAttackAnimationUp.DrawDropdownHoverOutline = false;
++            this.cmbAttackAnimationUp.DrawFocusRectangle = false;
++            this.cmbAttackAnimationUp.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbAttackAnimationUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbAttackAnimationUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbAttackAnimationUp.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbAttackAnimationUp.FormattingEnabled = true;
++            this.cmbAttackAnimationUp.Location = new System.Drawing.Point(9, 37);
++            this.cmbAttackAnimationUp.Name = "cmbAttackAnimationUp";
++            this.cmbAttackAnimationUp.Size = new System.Drawing.Size(180, 21);
++            this.cmbAttackAnimationUp.TabIndex = 59;
++            this.cmbAttackAnimationUp.Text = null;
++            this.cmbAttackAnimationUp.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbAttackAnimationUp.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationUp_SelectedIndexChanged);
++            // 
+             // grpRegen
+             // 
+             this.grpRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+@@ -1567,6 +1666,8 @@ private void InitializeComponent()
+             // 
+             this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.grpWeaponProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpWeaponProperties.Controls.Add(this.chkDirectionalAnimation);
++            this.grpWeaponProperties.Controls.Add(this.grpDirectionalAnimation);
+             this.grpWeaponProperties.Controls.Add(this.nudCritMultiplier);
+             this.grpWeaponProperties.Controls.Add(this.lblCritMultiplier);
+             this.grpWeaponProperties.Controls.Add(this.grpAttackSpeed);
+@@ -1590,7 +1691,7 @@ private void InitializeComponent()
+             this.grpWeaponProperties.ForeColor = System.Drawing.Color.Gainsboro;
+             this.grpWeaponProperties.Location = new System.Drawing.Point(221, 14);
+             this.grpWeaponProperties.Name = "grpWeaponProperties";
+-            this.grpWeaponProperties.Size = new System.Drawing.Size(207, 463);
++            this.grpWeaponProperties.Size = new System.Drawing.Size(400, 463);
+             this.grpWeaponProperties.TabIndex = 39;
+             this.grpWeaponProperties.TabStop = false;
+             this.grpWeaponProperties.Text = "Weapon Properties";
+@@ -2198,7 +2299,7 @@ private void InitializeComponent()
+             this.pnlContainer.Controls.Add(this.grpConsumable);
+             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
+             this.pnlContainer.Name = "pnlContainer";
+-            this.pnlContainer.Size = new System.Drawing.Size(463, 442);
++            this.pnlContainer.Size = new System.Drawing.Size(649, 442);
+             this.pnlContainer.TabIndex = 43;
+             this.pnlContainer.Visible = false;
+             // 
+@@ -2270,7 +2371,7 @@ private void InitializeComponent()
+             this.toolStrip.Location = new System.Drawing.Point(0, 0);
+             this.toolStrip.Name = "toolStrip";
+             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+-            this.toolStrip.Size = new System.Drawing.Size(686, 25);
++            this.toolStrip.Size = new System.Drawing.Size(882, 25);
+             this.toolStrip.TabIndex = 44;
+             this.toolStrip.Text = "toolStrip1";
+             // 
+@@ -2372,13 +2473,80 @@ private void InitializeComponent()
+             this.toolStripItemUndo.Text = "Undo";
+             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+             // 
++            // chkDirectionalAnimation
++            // 
++            this.chkDirectionalAnimation.AutoSize = true;
++            this.chkDirectionalAnimation.Location = new System.Drawing.Point(202, 14);
++            this.chkDirectionalAnimation.Name = "chkDirectionalAnimation";
++            this.chkDirectionalAnimation.Size = new System.Drawing.Size(125, 17);
++            this.chkDirectionalAnimation.TabIndex = 59;
++            this.chkDirectionalAnimation.Text = "Directional Animation";
++            this.chkDirectionalAnimation.CheckedChanged += new System.EventHandler(this.chkDirectionalAnimation_CheckedChanged);
++            // 
++            // grpDirectionalAnimation
++            // 
++            this.grpDirectionalAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++            this.grpDirectionalAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationRight);
++            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationLeft);
++            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationDown);
++            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationRight);
++            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationUp);
++            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationLeft);
++            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationUp);
++            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationDown);
++            this.grpDirectionalAnimation.ForeColor = System.Drawing.Color.Gainsboro;
++            this.grpDirectionalAnimation.Location = new System.Drawing.Point(202, 36);
++            this.grpDirectionalAnimation.Name = "grpDirectionalAnimation";
++            this.grpDirectionalAnimation.Size = new System.Drawing.Size(192, 198);
++            this.grpDirectionalAnimation.TabIndex = 60;
++            this.grpDirectionalAnimation.TabStop = false;
++            this.grpDirectionalAnimation.Text = "Directional Animation";
++            this.grpDirectionalAnimation.Visible = false;
++            // 
++            // lblDirectionalAnimationDown
++            // 
++            this.lblDirectionalAnimationDown.AutoSize = true;
++            this.lblDirectionalAnimationDown.Location = new System.Drawing.Point(6, 61);
++            this.lblDirectionalAnimationDown.Name = "lblDirectionalAnimationDown";
++            this.lblDirectionalAnimationDown.Size = new System.Drawing.Size(35, 13);
++            this.lblDirectionalAnimationDown.TabIndex = 29;
++            this.lblDirectionalAnimationDown.Text = "Down";
++            // 
++            // lblDirectionalAnimationUp
++            // 
++            this.lblDirectionalAnimationUp.AutoSize = true;
++            this.lblDirectionalAnimationUp.Location = new System.Drawing.Point(6, 22);
++            this.lblDirectionalAnimationUp.Name = "lblDirectionalAnimationUp";
++            this.lblDirectionalAnimationUp.Size = new System.Drawing.Size(21, 13);
++            this.lblDirectionalAnimationUp.TabIndex = 0;
++            this.lblDirectionalAnimationUp.Text = "Up";
++            // 
++            // lblDirectionalAnimationLeft
++            // 
++            this.lblDirectionalAnimationLeft.AutoSize = true;
++            this.lblDirectionalAnimationLeft.Location = new System.Drawing.Point(6, 101);
++            this.lblDirectionalAnimationLeft.Name = "lblDirectionalAnimationLeft";
++            this.lblDirectionalAnimationLeft.Size = new System.Drawing.Size(25, 13);
++            this.lblDirectionalAnimationLeft.TabIndex = 63;
++            this.lblDirectionalAnimationLeft.Text = "Left";
++            // 
++            // lblDirectionalAnimationRight
++            // 
++            this.lblDirectionalAnimationRight.AutoSize = true;
++            this.lblDirectionalAnimationRight.Location = new System.Drawing.Point(6, 141);
++            this.lblDirectionalAnimationRight.Name = "lblDirectionalAnimationRight";
++            this.lblDirectionalAnimationRight.Size = new System.Drawing.Size(32, 13);
++            this.lblDirectionalAnimationRight.TabIndex = 64;
++            this.lblDirectionalAnimationRight.Text = "Right";
++            // 
+             // FrmItem
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+             this.AutoSize = true;
+             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.ClientSize = new System.Drawing.Size(686, 517);
++            this.ClientSize = new System.Drawing.Size(882, 525);
+             this.ControlBox = false;
+             this.Controls.Add(this.toolStrip);
+             this.Controls.Add(this.btnCancel);
+@@ -2451,6 +2619,8 @@ private void InitializeComponent()
+             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
+             this.toolStrip.ResumeLayout(false);
+             this.toolStrip.PerformLayout();
++            this.grpDirectionalAnimation.ResumeLayout(false);
++            this.grpDirectionalAnimation.PerformLayout();
+             this.ResumeLayout(false);
+ 
+         }
+@@ -2602,5 +2772,15 @@ private void InitializeComponent()
+     private Label lblHpRegen;
+     private Label lblManaRegen;
+     private Label lblRegenHint;
+-  }
++        private DarkComboBox cmbAttackAnimationUp;
++        private DarkComboBox cmbAttackAnimationRight;
++        private DarkComboBox cmbAttackAnimationLeft;
++        private DarkComboBox cmbAttackAnimationDown;
++        private DarkCheckBox chkDirectionalAnimation;
++        private DarkGroupBox grpDirectionalAnimation;
++        private Label lblDirectionalAnimationRight;
++        private Label lblDirectionalAnimationLeft;
++        private Label lblDirectionalAnimationDown;
++        private Label lblDirectionalAnimationUp;
++    }
+ }
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.cs b/Intersect.Editor/Forms/Editors/frmItem.cs
+index 11cb4269..51a4a6a5 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.cs
+@@ -95,6 +95,24 @@ private void frmItem_Load(object sender, EventArgs e)
+             cmbAttackAnimation.Items.Clear();
+             cmbAttackAnimation.Items.Add(Strings.General.none);
+             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
++            //Add cmb process that was forgotten rhathaway86
++            cmbAttackAnimationUp.Items.Clear();
++            cmbAttackAnimationUp.Items.Add(Strings.General.none);
++            cmbAttackAnimationUp.Items.AddRange(AnimationBase.Names);
++
++            cmbAttackAnimationDown.Items.Clear();
++            cmbAttackAnimationDown.Items.Add(Strings.General.none);
++            cmbAttackAnimationDown.Items.AddRange(AnimationBase.Names);
++
++            cmbAttackAnimationLeft.Items.Clear();
++            cmbAttackAnimationLeft.Items.Add(Strings.General.none);
++            cmbAttackAnimationLeft.Items.AddRange(AnimationBase.Names);
++
++            cmbAttackAnimationRight.Items.Clear();
++            cmbAttackAnimationRight.Items.Add(Strings.General.none);
++            cmbAttackAnimationRight.Items.AddRange(AnimationBase.Names);
++
++            //
+             cmbScalingStat.Items.Clear();
+             for (var x = 0; x < Options.MaxStats; x++)
+             {
+@@ -309,6 +327,12 @@ private void UpdateEditor()
+                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
+                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
+                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
++                //Edits rhathaway86 adding directional animation combobox items for selection of different animations
++                cmbAttackAnimationUp.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationUpId) + 1;
++                cmbAttackAnimationDown.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationDownId) + 1;
++                cmbAttackAnimationLeft.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationLeftId) + 1;
++                cmbAttackAnimationRight.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationRightId) + 1;
++                //
+                 RefreshExtendedData();
+                 if (mEditorItem.ItemType == ItemTypes.Equipment)
+                 {
+@@ -317,6 +341,8 @@ private void UpdateEditor()
+ 
+                 nudEffectPercent.Value = mEditorItem.Effect.Percentage;
+                 chk2Hand.Checked = mEditorItem.TwoHanded;
++                //rhathaway adding in selection update when opened
++                chkDirectionalAnimation.Checked = mEditorItem.DirectionalAnimation;
+                 cmbMalePaperdoll.SelectedIndex =
+                     cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
+ 
+@@ -526,6 +552,20 @@ private void chk2Hand_CheckedChanged(object sender, EventArgs e)
+         {
+             mEditorItem.TwoHanded = chk2Hand.Checked;
+         }
++        //rhathaway86 adding in checkbox changing for directional animation
++
++        private void chkDirectionalAnimation_CheckedChanged(object sender, EventArgs e)
++        {
++            mEditorItem.DirectionalAnimation = chkDirectionalAnimation.Checked;
++            if (chkDirectionalAnimation.Checked == true)
++            {
++                grpDirectionalAnimation.Show();
++            }
++            else
++            {
++                grpDirectionalAnimation.Hide();
++            }
++        }
+ 
+         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
+         {
+@@ -653,6 +693,28 @@ private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
+             mEditorItem.AttackAnimation =
+                 AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+         }
++        //rhathaway86 more edits this is a strange additional area?
++        private void cmbAttackAnimationUp_SelectedIndexChanged(object sender, EventArgs e)
++        {
++            mEditorItem.AttackAnimationUp =
++                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationUp.SelectedIndex - 1));
++        }
++        private void cmbAttackAnimationDown_SelectedIndexChanged(object sender, EventArgs e)
++        {
++            mEditorItem.AttackAnimationDown =
++                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationDown.SelectedIndex - 1));
++        }
++        private void cmbAttackAnimationLeft_SelectedIndexChanged(object sender, EventArgs e)
++        {
++            mEditorItem.AttackAnimationLeft =
++                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationLeft.SelectedIndex - 1));
++        }
++        private void cmbAttackAnimationRight_SelectedIndexChanged(object sender, EventArgs e)
++        {
++            mEditorItem.AttackAnimationRight =
++                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationRight.SelectedIndex - 1));
++        }
++        //
+ 
+         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
+         {
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.resx b/Intersect.Editor/Forms/Editors/frmItem.resx
+index 4c97d54d..438eed64 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.resx
++++ b/Intersect.Editor/Forms/Editors/frmItem.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAbABAQGwAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAcgBAQHIAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wP2
++        AyoBQAMqAUAIAAP2Af8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wP2Af+IAANAAXAByAHeAewB/wFEAbYB3AH/
+-        AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2
+-        AdwB/wFEAbYB3AH/AbYB0wHmAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMyAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZAf8DMgH/AZoCmQH/AWkCaAH/AdsB2QHaAf8B8QHv
+-        AfAB/wMyAf8D9gH/hAADKgFAAd8B6gHxAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8DMgH/AdsB2QHaAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzIB/wHxAe8B8AH/AzIB/wP2Af+EAANRAZ8BqQHOAeYB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzIB/wHxAe8B8AH/AfEB7wHwAf8DMgH/AfEB7wHwAf8DMgH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AzIB/wHFAcQBxQH/AV4BXQFeAf8BmgKZAf8BXgFdAV4B/wHFAcQBxQH/AzIB/wHx
+-        Ae8B8AH/AzIB/wP2Af+EAAP2Af8D9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wP2Af+IAANAAXAByAHeAewB/wFBAbYB3AH/
++        AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2
++        AdwB/wFBAbYB3AH/AbYB0wHmAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMvAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
++        Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZAf8DLwH/AZoCmQH/AWYCZQH/AdsB2QHaAf8B8QHv
++        AfAB/wMvAf8D9gH/hAADKgFAAd8B6gHxAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
++        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8DLwH/AdsB2QHaAf8B8QHvAfAB/wMvAf8B8QHv
++        AfAB/wHbAdkB2gH/Ay8B/wHxAe8B8AH/Ay8B/wP2Af+EAANRAZ8BqQHOAeYB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wMvAf8B8QHv
++        AfAB/wHxAe8B8AH/Ay8B/wHxAe8B8AH/AfEB7wHwAf8DLwH/AfEB7wHwAf8DLwH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
++        Ay8B/wHxAe8B8AH/Ay8B/wHFAcQBxQH/AVsBWgFbAf8BmgKZAf8BWwFaAVsB/wHFAcQBxQH/Ay8B/wHx
++        Ae8B8AH/Ay8B/wP2Af+EAAP2Af8D9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AzIB/wFpAmgB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFpAmgB/wMyAf8B8QHvAfAB/wMyAf8D9gH/iAAD9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/Ay8B/wFmAmUB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFmAmUB/wMvAf8B8QHvAfAB/wMvAf8D9gH/iAAD9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFpAmgB/wHbAdkB2gH/AfEB7wHwAf8DMgH/A/YB/4gAA/YB/wFEAbYB3AH/
++        AfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFmAmUB/wHbAdkB2gH/AfEB7wHwAf8DLwH/A/YB/4gAA/YB/wFBAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wP2Af+IAAP2Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DMgH/A4YB/wNwAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DhgH/A3AB7wMhATCUAANcAd8ByAHeAewB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wOGAf8DcAHv
++        Ay8B/wP2Af+IAAP2Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
++        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay8B/wMvAf8DLwH/A4YB/wNoAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
++        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay8B/wMvAf8DhgH/A2gB7wMhATCUAANcAd8ByAHeAewB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
++        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wOGAf8DaAHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wOGAf8DcAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DcAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wOGAf8DaAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DaAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+@@ -246,42 +246,70 @@
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbAttackSpeedModifier.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbProjectile.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbProjectile.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbScalingStat.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbScalingStat.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbDamageType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbDamageType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbAttackAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbAttackAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbToolType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbToolType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbAttackAnimationRight.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbAttackAnimationLeft.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbAttackAnimationDown.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbAttackAnimationUp.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbAttackSpeedModifier.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+diff --git a/Intersect.Editor/Forms/Editors/frmSpell.resx b/Intersect.Editor/Forms/Editors/frmSpell.resx
+index b0cad45a..ff02c5a7 100644
+--- a/Intersect.Editor/Forms/Editors/frmSpell.resx
++++ b/Intersect.Editor/Forms/Editors/frmSpell.resx
+@@ -118,98 +118,98 @@
+     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+   </resheader>
+   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+-  <data name="cmbFolder.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbTargetType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbHitAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbProjectile.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbCastAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbEvent.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbSprite.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbExtraEffect.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbTransform.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbTargetType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbScalingStat.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbProjectile.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbDamageType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbEvent.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbWarpMap.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbExtraEffect.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbDirection.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbTransform.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbFolder.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbScalingStat.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbHitAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbDamageType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbCastAnimation.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbWarpMap.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbSprite.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+-  <data name="cmbDirection.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++  <data name="cmbType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+@@ -284,51 +284,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAcgBAQHIAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAdgBAQHYAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wP2
++        AyoBQAMqAUAIAAP2Af8DLQH/Ay0B/wMtAf8DLQH/Ay0B/wMtAf8DLQH/Ay0B/wMtAf8DLQH/Ay0B/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wP2Af+IAANAAXAByAHeAewB/wFBAbYB3AH/
+-        AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2
+-        AdwB/wFBAbYB3AH/AbYB0wHmAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMvAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
+-        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
+-        Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZAf8DLwH/AZoCmQH/AWYCZQH/AdsB2QHaAf8B8QHv
+-        AfAB/wMvAf8D9gH/hAADKgFAAd8B6gHxAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
+-        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8DLwH/AdsB2QHaAf8B8QHvAfAB/wMvAf8B8QHv
+-        AfAB/wHbAdkB2gH/Ay8B/wHxAe8B8AH/Ay8B/wP2Af+EAANRAZ8BqQHOAeYB/wFBAbYB3AH/AUEBtgHc
+-        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wMvAf8B8QHv
+-        AfAB/wHxAe8B8AH/Ay8B/wHxAe8B8AH/AfEB7wHwAf8DLwH/AfEB7wHwAf8DLwH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
+-        Af8BQQG2AdwB/wFBAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
+-        Ay8B/wHxAe8B8AH/Ay8B/wHFAcQBxQH/AVsBWgFbAf8BmgKZAf8BWwFaAVsB/wHFAcQBxQH/Ay8B/wHx
+-        Ae8B8AH/Ay8B/wP2Af+EAAP2Af8D9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DLQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay0B/wP2Af+IAANAAXAByAHeAewB/wE/AbYB3AH/
++        AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2
++        AdwB/wE/AbYB3AH/AbYB0wHmAf8BPwG2AdwB/wP2Af8IAAP2Af8DLQH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMtAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHc
++        Af8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AT8BtgHcAf8D9gH/CAAD9gH/
++        Ay0B/wHxAe8B8AH/AdsB2QHaAf8BZAJjAf8BmgKZAf8DLQH/AZoCmQH/AWQCYwH/AdsB2QHaAf8B8QHv
++        AfAB/wMtAf8D9gH/hAADKgFAAd8B6gHxAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/
++        AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BPwG2AdwB/wP2Af8IAAP2Af8DLQH/AfEB7wHwAf8DLQH/AdsB2QHaAf8B8QHvAfAB/wMtAf8B8QHv
++        AfAB/wHbAdkB2gH/Ay0B/wHxAe8B8AH/Ay0B/wP2Af+EAANRAZ8BqQHOAeYB/wE/AbYB3AH/AT8BtgHc
++        Af8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wE/AbYB3AH/A/YB/wgAA/YB/wMtAf8B8QHvAfAB/wMtAf8B8QHv
++        AfAB/wHxAe8B8AH/Ay0B/wHxAe8B8AH/AfEB7wHwAf8DLQH/AfEB7wHwAf8DLQH/A/YB/4QAA/YB/wGC
++        AboB3gH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHc
++        Af8BPwG2AdwB/wE/AbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AT8BtgHcAf8D9gH/CAAD9gH/
++        Ay0B/wHxAe8B8AH/Ay0B/wHFAcQBxQH/AVkBWAFZAf8BmgKZAf8BWQFYAVkB/wHFAcQBxQH/Ay0B/wHx
++        Ae8B8AH/Ay0B/wP2Af+EAAP2Af8D9gH/AT8BtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/Ay8B/wFmAmUB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFmAmUB/wMvAf8B8QHvAfAB/wMvAf8D9gH/iAAD9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AT8BtgHcAf8D9gH/CAAD9gH/Ay0B/wHxAe8B8AH/Ay0B/wFkAmMB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFkAmMB/wMtAf8B8QHvAfAB/wMtAf8D9gH/iAAD9gH/AT8BtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFmAmUB/wHbAdkB2gH/AfEB7wHwAf8DLwH/A/YB/4gAA/YB/wFBAbYB3AH/
++        AfAB/wHxAe8B8AH/AT8BtgHcAf8D9gH/CAAD9gH/Ay0B/wHxAe8B8AH/AdsB2QHaAf8BZAJjAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFkAmMB/wHbAdkB2gH/AfEB7wHwAf8DLQH/A/YB/4gAA/YB/wE/AbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wE/AbYB3AH/A/YB/wgAA/YB/wMtAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        Ay8B/wP2Af+IAAP2Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
+-        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        Ay8B/wMvAf8DLwH/A4YB/wNoAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
+-        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        Ay8B/wMvAf8DhgH/A2gB7wMhATCUAANcAd8ByAHeAewB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
+-        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wOGAf8DaAHv
++        Ay0B/wP2Af+IAAP2Af8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BPwG2AdwB/wP2
++        Af8IAAP2Af8DLQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay0B/wMtAf8DLQH/A4YB/wNlAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BPwG2AdwB/wP2
++        Af8IAAP2Af8DLQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay0B/wMtAf8DhgH/A2UB7wMhATCUAANcAd8ByAHeAewB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/
++        AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wE/AbYB3AH/AT8BtgHcAf8BPwG2AdwB/wP2Af8IAAP2Af8DLQH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay0B/wOGAf8DZQHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wOGAf8DaAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DaAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        Ay0B/wMtAf8DLQH/Ay0B/wMtAf8DLQH/Ay0B/wOGAf8DZQHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DZQHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Server/Migrations/Game/20180905042857_Initial.cs b/Intersect.Server/Migrations/Game/20180905042857_Initial.cs
+index cc3bdc78..7c8df40e 100644
+--- a/Intersect.Server/Migrations/Game/20180905042857_Initial.cs
++++ b/Intersect.Server/Migrations/Game/20180905042857_Initial.cs
+@@ -117,6 +117,11 @@ protected override void Up(MigrationBuilder migrationBuilder)
+                     Name = table.Column<string>(nullable: true),
+                     Animation = table.Column<Guid>(nullable: false),
+                     AttackAnimation = table.Column<Guid>(nullable: false),
++                    AttackAnimationUp = table.Column<Guid>(nullable: false),
++                    AttackAnimationDown = table.Column<Guid>(nullable: false),
++                    AttackAnimationLeft = table.Column<Guid>(nullable: false),
++                    AttackAnimationRight = table.Column<Guid>(nullable: false),
++                    DirectionalAnimation = table.Column<bool>(nullable: false),
+                     EquipmentAnimation = table.Column<Guid>(nullable: false),
+                     Bound = table.Column<bool>(nullable: false),
+                     CritChance = table.Column<int>(nullable: false),
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 5814f5e7..0d8a225e 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -802,9 +802,45 @@ public void HandlePacket(Client client, Player player, AttackPacket packet)
+                     );
+ 
+                     //Check for animation
++
++                    //This is where rhathaway86 adding check for direction of player and changing which animation is pulled for weapons
+                     var attackAnim = ItemBase
++                     .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
++                     .AttackAnimation;
++
++                    bool verifyDirectionalAnimation = ItemBase
+                         .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+-                        .AttackAnimation;
++                        .DirectionalAnimation;
++
++                    if (verifyDirectionalAnimation == true)
++                    {
++                        if (client.Entity.Dir == (int)Directions.Up)
++                        {
++                            attackAnim = ItemBase
++                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
++                            .AttackAnimationUp;
++                        }
++                        if (client.Entity.Dir == (int)Directions.Down)
++                        {
++                            attackAnim = ItemBase
++                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
++                            .AttackAnimationDown;
++                        }
++                        if (client.Entity.Dir == (int)Directions.Left)
++                        {
++                            attackAnim = ItemBase
++                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
++                            .AttackAnimationLeft;
++                        }
++                        if (client.Entity.Dir == (int)Directions.Right)
++                        {
++                            attackAnim = ItemBase
++                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
++                            .AttackAnimationRight;
++                        }
++                    }
++
++                    //
+ 
+                     if (attackAnim != null && attackingTile.TryFix())
+                     {
+-- 
+2.26.0.windows.1
+
