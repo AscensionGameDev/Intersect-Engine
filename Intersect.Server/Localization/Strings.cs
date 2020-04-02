@@ -948,7 +948,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString product = @"Intersect Game Engine";
+            public readonly LocalizedString product = @"The Celtos";
 
         }
 
@@ -1005,7 +1005,7 @@ namespace Intersect.Server.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
+            public readonly LocalizedString subject = @"The Celtos - Password Reset Code";
 
         }
 

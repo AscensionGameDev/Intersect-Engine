@@ -11,8 +11,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("2D ORPG Lidgren Wrapper - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ascension Game Dev")]
-[assembly: AssemblyProduct("Intersect Game Engine")]
-[assembly: AssemblyCopyright("Copyright ©  2020 Ascension Game Dev")]
+[assembly: AssemblyProduct("The Celtos")]
+[assembly: AssemblyCopyright("Copyright ©  2020 The Celtos")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("0.6.1.0")]
-[assembly: AssemblyFileVersion("0.6.1.0")]
+[assembly: AssemblyVersion("0.6.2.401")]
+[assembly: AssemblyFileVersion("0.6.2.401")]

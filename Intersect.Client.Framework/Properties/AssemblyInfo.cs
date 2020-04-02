@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Intersect Client Framework")]
 [assembly: AssemblyDescription("2D ORPG Client Framework - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ascension Game Development")]
+[assembly: AssemblyCompany("The Celtos")]
 [assembly: AssemblyProduct("Intersect Client Framework")]
-[assembly: AssemblyCopyright("Copyright ©  2020 Ascension Game Dev")]
+[assembly: AssemblyCopyright("Copyright ©  2020 The Celtos")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6.1.0")]
-[assembly: AssemblyFileVersion("0.6.1.0")]
+[assembly: AssemblyVersion("0.6.2.401")]
+[assembly: AssemblyFileVersion("0.6.2.401")]
