@@ -247,7 +247,7 @@ namespace Intersect.Server.Database.PlayerData
                     var context = DbInterface.GetPlayerContext();
                     try
                     {
-                        return QueryUsers(context, page * count, count) ?? throw new InvalidOperationException();
+                        return QueryUsers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
                     }
                     catch (Exception exception)
                     {
@@ -259,7 +259,7 @@ namespace Intersect.Server.Database.PlayerData
             }
             else
             {
-                return QueryUsers(playerContext, page, count) ?? throw new InvalidOperationException();
+                return QueryUsers(playerContext, page, count)?.ToList() ?? throw new InvalidOperationException();
             }
         }
 
