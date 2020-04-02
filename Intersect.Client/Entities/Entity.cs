@@ -875,8 +875,11 @@ namespace Intersect.Client.Entities
                     if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                     {
                         srcRectangle = new FloatRect(
+                            //rhathaway86 change attack frames
                             3 * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
                             (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
+                            //4 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                            //(int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
                         );
                     }
                     else
@@ -934,13 +937,28 @@ namespace Intersect.Client.Entities
                                 var item = ItemBase.Get(itemId);
                                 if (item != null)
                                 {
-                                    if (Gender == 0)
+                                    //rhathaway86 checkforweapon
+                                    if (paperdoll == "Weapon" && AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() && item.DirectionalAnimation == true)
                                     {
-                                        DrawEquipment(item.MalePaperdoll, alpha);
+                                        if (Gender == 0)
+                                        {
+                                            DrawEquipment(item.MalePaperdoll, 0);
+                                        }
+                                        else
+                                        {
+                                            DrawEquipment(item.FemalePaperdoll, 0);
+                                        }
                                     }
                                     else
                                     {
-                                        DrawEquipment(item.FemalePaperdoll, alpha);
+                                        if (Gender == 0)
+                                        {
+                                            DrawEquipment(item.MalePaperdoll, alpha);
+                                        }
+                                        else
+                                        {
+                                            DrawEquipment(item.FemalePaperdoll, alpha);
+                                        }
                                     }
                                 }
                             }

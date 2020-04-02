@@ -53,6 +53,57 @@ namespace Intersect.GameObjects
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
 
+        //Rhathaway86 Edit Attack Animations
+        [Column("AttackAnimationUp")]
+        [JsonProperty]
+        public Guid AttackAnimationUpId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimationUp
+        {
+            get => AnimationBase.Get(AttackAnimationUpId);
+            set => AttackAnimationUpId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("AttackAnimationDown")]
+        [JsonProperty]
+        public Guid AttackAnimationDownId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimationDown
+        {
+            get => AnimationBase.Get(AttackAnimationDownId);
+            set => AttackAnimationDownId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("AttackAnimationLeft")]
+        [JsonProperty]
+        public Guid AttackAnimationLeftId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimationLeft
+        {
+            get => AnimationBase.Get(AttackAnimationLeftId);
+            set => AttackAnimationLeftId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("AttackAnimationRight")]
+        [JsonProperty]
+        public Guid AttackAnimationRightId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimationRight
+        {
+            get => AnimationBase.Get(AttackAnimationRightId);
+            set => AttackAnimationRightId = value?.Id ?? Guid.Empty;
+        }
+
+        //
+
         [Column("EquipmentAnimation")]
         public Guid EquipmentAnimationId { get; set; }
 
@@ -85,6 +136,9 @@ namespace Intersect.GameObjects
         public int EquipmentSlot { get; set; }
 
         public bool TwoHanded { get; set; }
+
+        //rhathaway86 adding checkbox for directional weapon animation
+        public bool DirectionalAnimation { get; set; }
 
         public EffectData Effect { get; set; }
 

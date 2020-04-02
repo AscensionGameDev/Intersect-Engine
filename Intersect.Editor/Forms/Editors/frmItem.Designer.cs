@@ -66,6 +66,10 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpEquipment = new DarkUI.Controls.DarkGroupBox();
+            this.cmbAttackAnimationRight = new DarkUI.Controls.DarkComboBox();
+            this.cmbAttackAnimationLeft = new DarkUI.Controls.DarkComboBox();
+            this.cmbAttackAnimationDown = new DarkUI.Controls.DarkComboBox();
+            this.cmbAttackAnimationUp = new DarkUI.Controls.DarkComboBox();
             this.grpRegen = new DarkUI.Controls.DarkGroupBox();
             this.nudMpRegen = new DarkUI.Controls.DarkNumericUpDown();
             this.nudHPRegen = new DarkUI.Controls.DarkNumericUpDown();
@@ -180,6 +184,12 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.chkDirectionalAnimation = new DarkUI.Controls.DarkCheckBox();
+            this.grpDirectionalAnimation = new DarkUI.Controls.DarkGroupBox();
+            this.lblDirectionalAnimationDown = new System.Windows.Forms.Label();
+            this.lblDirectionalAnimationUp = new System.Windows.Forms.Label();
+            this.lblDirectionalAnimationLeft = new System.Windows.Forms.Label();
+            this.lblDirectionalAnimationRight = new System.Windows.Forms.Label();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
@@ -225,6 +235,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
             this.toolStrip.SuspendLayout();
+            this.grpDirectionalAnimation.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpItems
@@ -343,7 +354,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGeneral.Location = new System.Drawing.Point(2, 1);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(439, 264);
+            this.grpGeneral.Size = new System.Drawing.Size(537, 264);
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
@@ -692,11 +703,99 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEquipment.Location = new System.Drawing.Point(2, 270);
             this.grpEquipment.Name = "grpEquipment";
-            this.grpEquipment.Size = new System.Drawing.Size(439, 731);
+            this.grpEquipment.Size = new System.Drawing.Size(627, 731);
             this.grpEquipment.TabIndex = 12;
             this.grpEquipment.TabStop = false;
             this.grpEquipment.Text = "Equipment";
             this.grpEquipment.Visible = false;
+            // 
+            // cmbAttackAnimationRight
+            // 
+            this.cmbAttackAnimationRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAttackAnimationRight.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAttackAnimationRight.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAttackAnimationRight.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAttackAnimationRight.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationRight.ButtonIcon")));
+            this.cmbAttackAnimationRight.DrawDropdownHoverOutline = false;
+            this.cmbAttackAnimationRight.DrawFocusRectangle = false;
+            this.cmbAttackAnimationRight.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAttackAnimationRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimationRight.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAttackAnimationRight.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAttackAnimationRight.FormattingEnabled = true;
+            this.cmbAttackAnimationRight.Location = new System.Drawing.Point(9, 157);
+            this.cmbAttackAnimationRight.Name = "cmbAttackAnimationRight";
+            this.cmbAttackAnimationRight.Size = new System.Drawing.Size(180, 21);
+            this.cmbAttackAnimationRight.TabIndex = 62;
+            this.cmbAttackAnimationRight.Text = null;
+            this.cmbAttackAnimationRight.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbAttackAnimationRight.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationRight_SelectedIndexChanged);
+            // 
+            // cmbAttackAnimationLeft
+            // 
+            this.cmbAttackAnimationLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAttackAnimationLeft.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAttackAnimationLeft.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAttackAnimationLeft.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAttackAnimationLeft.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationLeft.ButtonIcon")));
+            this.cmbAttackAnimationLeft.DrawDropdownHoverOutline = false;
+            this.cmbAttackAnimationLeft.DrawFocusRectangle = false;
+            this.cmbAttackAnimationLeft.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAttackAnimationLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimationLeft.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAttackAnimationLeft.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAttackAnimationLeft.FormattingEnabled = true;
+            this.cmbAttackAnimationLeft.Location = new System.Drawing.Point(9, 117);
+            this.cmbAttackAnimationLeft.Name = "cmbAttackAnimationLeft";
+            this.cmbAttackAnimationLeft.Size = new System.Drawing.Size(180, 21);
+            this.cmbAttackAnimationLeft.TabIndex = 61;
+            this.cmbAttackAnimationLeft.Text = null;
+            this.cmbAttackAnimationLeft.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbAttackAnimationLeft.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationLeft_SelectedIndexChanged);
+            // 
+            // cmbAttackAnimationDown
+            // 
+            this.cmbAttackAnimationDown.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAttackAnimationDown.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAttackAnimationDown.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAttackAnimationDown.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAttackAnimationDown.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationDown.ButtonIcon")));
+            this.cmbAttackAnimationDown.DrawDropdownHoverOutline = false;
+            this.cmbAttackAnimationDown.DrawFocusRectangle = false;
+            this.cmbAttackAnimationDown.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAttackAnimationDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimationDown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAttackAnimationDown.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAttackAnimationDown.FormattingEnabled = true;
+            this.cmbAttackAnimationDown.Location = new System.Drawing.Point(9, 76);
+            this.cmbAttackAnimationDown.Name = "cmbAttackAnimationDown";
+            this.cmbAttackAnimationDown.Size = new System.Drawing.Size(180, 21);
+            this.cmbAttackAnimationDown.TabIndex = 60;
+            this.cmbAttackAnimationDown.Text = null;
+            this.cmbAttackAnimationDown.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbAttackAnimationDown.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationDown_SelectedIndexChanged);
+            // 
+            // cmbAttackAnimationUp
+            // 
+            this.cmbAttackAnimationUp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAttackAnimationUp.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAttackAnimationUp.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAttackAnimationUp.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAttackAnimationUp.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackAnimationUp.ButtonIcon")));
+            this.cmbAttackAnimationUp.DrawDropdownHoverOutline = false;
+            this.cmbAttackAnimationUp.DrawFocusRectangle = false;
+            this.cmbAttackAnimationUp.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAttackAnimationUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimationUp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAttackAnimationUp.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAttackAnimationUp.FormattingEnabled = true;
+            this.cmbAttackAnimationUp.Location = new System.Drawing.Point(9, 37);
+            this.cmbAttackAnimationUp.Name = "cmbAttackAnimationUp";
+            this.cmbAttackAnimationUp.Size = new System.Drawing.Size(180, 21);
+            this.cmbAttackAnimationUp.TabIndex = 59;
+            this.cmbAttackAnimationUp.Text = null;
+            this.cmbAttackAnimationUp.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbAttackAnimationUp.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimationUp_SelectedIndexChanged);
             // 
             // grpRegen
             // 
@@ -1567,6 +1666,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpWeaponProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpWeaponProperties.Controls.Add(this.chkDirectionalAnimation);
+            this.grpWeaponProperties.Controls.Add(this.grpDirectionalAnimation);
             this.grpWeaponProperties.Controls.Add(this.nudCritMultiplier);
             this.grpWeaponProperties.Controls.Add(this.lblCritMultiplier);
             this.grpWeaponProperties.Controls.Add(this.grpAttackSpeed);
@@ -1590,7 +1691,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpWeaponProperties.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpWeaponProperties.Location = new System.Drawing.Point(221, 14);
             this.grpWeaponProperties.Name = "grpWeaponProperties";
-            this.grpWeaponProperties.Size = new System.Drawing.Size(207, 463);
+            this.grpWeaponProperties.Size = new System.Drawing.Size(400, 463);
             this.grpWeaponProperties.TabIndex = 39;
             this.grpWeaponProperties.TabStop = false;
             this.grpWeaponProperties.Text = "Weapon Properties";
@@ -2198,7 +2299,7 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Controls.Add(this.grpConsumable);
             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(463, 442);
+            this.pnlContainer.Size = new System.Drawing.Size(649, 442);
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
             // 
@@ -2270,7 +2371,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(686, 25);
+            this.toolStrip.Size = new System.Drawing.Size(882, 25);
             this.toolStrip.TabIndex = 44;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -2372,13 +2473,80 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // chkDirectionalAnimation
+            // 
+            this.chkDirectionalAnimation.AutoSize = true;
+            this.chkDirectionalAnimation.Location = new System.Drawing.Point(202, 14);
+            this.chkDirectionalAnimation.Name = "chkDirectionalAnimation";
+            this.chkDirectionalAnimation.Size = new System.Drawing.Size(125, 17);
+            this.chkDirectionalAnimation.TabIndex = 59;
+            this.chkDirectionalAnimation.Text = "Directional Animation";
+            this.chkDirectionalAnimation.CheckedChanged += new System.EventHandler(this.chkDirectionalAnimation_CheckedChanged);
+            // 
+            // grpDirectionalAnimation
+            // 
+            this.grpDirectionalAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpDirectionalAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationRight);
+            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationLeft);
+            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationDown);
+            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationRight);
+            this.grpDirectionalAnimation.Controls.Add(this.lblDirectionalAnimationUp);
+            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationLeft);
+            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationUp);
+            this.grpDirectionalAnimation.Controls.Add(this.cmbAttackAnimationDown);
+            this.grpDirectionalAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpDirectionalAnimation.Location = new System.Drawing.Point(202, 36);
+            this.grpDirectionalAnimation.Name = "grpDirectionalAnimation";
+            this.grpDirectionalAnimation.Size = new System.Drawing.Size(192, 198);
+            this.grpDirectionalAnimation.TabIndex = 60;
+            this.grpDirectionalAnimation.TabStop = false;
+            this.grpDirectionalAnimation.Text = "Directional Animation";
+            this.grpDirectionalAnimation.Visible = false;
+            // 
+            // lblDirectionalAnimationDown
+            // 
+            this.lblDirectionalAnimationDown.AutoSize = true;
+            this.lblDirectionalAnimationDown.Location = new System.Drawing.Point(6, 61);
+            this.lblDirectionalAnimationDown.Name = "lblDirectionalAnimationDown";
+            this.lblDirectionalAnimationDown.Size = new System.Drawing.Size(35, 13);
+            this.lblDirectionalAnimationDown.TabIndex = 29;
+            this.lblDirectionalAnimationDown.Text = "Down";
+            // 
+            // lblDirectionalAnimationUp
+            // 
+            this.lblDirectionalAnimationUp.AutoSize = true;
+            this.lblDirectionalAnimationUp.Location = new System.Drawing.Point(6, 22);
+            this.lblDirectionalAnimationUp.Name = "lblDirectionalAnimationUp";
+            this.lblDirectionalAnimationUp.Size = new System.Drawing.Size(21, 13);
+            this.lblDirectionalAnimationUp.TabIndex = 0;
+            this.lblDirectionalAnimationUp.Text = "Up";
+            // 
+            // lblDirectionalAnimationLeft
+            // 
+            this.lblDirectionalAnimationLeft.AutoSize = true;
+            this.lblDirectionalAnimationLeft.Location = new System.Drawing.Point(6, 101);
+            this.lblDirectionalAnimationLeft.Name = "lblDirectionalAnimationLeft";
+            this.lblDirectionalAnimationLeft.Size = new System.Drawing.Size(25, 13);
+            this.lblDirectionalAnimationLeft.TabIndex = 63;
+            this.lblDirectionalAnimationLeft.Text = "Left";
+            // 
+            // lblDirectionalAnimationRight
+            // 
+            this.lblDirectionalAnimationRight.AutoSize = true;
+            this.lblDirectionalAnimationRight.Location = new System.Drawing.Point(6, 141);
+            this.lblDirectionalAnimationRight.Name = "lblDirectionalAnimationRight";
+            this.lblDirectionalAnimationRight.Size = new System.Drawing.Size(32, 13);
+            this.lblDirectionalAnimationRight.TabIndex = 64;
+            this.lblDirectionalAnimationRight.Text = "Right";
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(686, 517);
+            this.ClientSize = new System.Drawing.Size(882, 525);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -2451,6 +2619,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.grpDirectionalAnimation.ResumeLayout(false);
+            this.grpDirectionalAnimation.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2602,5 +2772,15 @@ namespace Intersect.Editor.Forms.Editors
     private Label lblHpRegen;
     private Label lblManaRegen;
     private Label lblRegenHint;
-  }
+        private DarkComboBox cmbAttackAnimationUp;
+        private DarkComboBox cmbAttackAnimationRight;
+        private DarkComboBox cmbAttackAnimationLeft;
+        private DarkComboBox cmbAttackAnimationDown;
+        private DarkCheckBox chkDirectionalAnimation;
+        private DarkGroupBox grpDirectionalAnimation;
+        private Label lblDirectionalAnimationRight;
+        private Label lblDirectionalAnimationLeft;
+        private Label lblDirectionalAnimationDown;
+        private Label lblDirectionalAnimationUp;
+    }
 }

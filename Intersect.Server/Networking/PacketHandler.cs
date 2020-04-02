@@ -802,9 +802,45 @@ namespace Intersect.Server.Networking
                     );
 
                     //Check for animation
+
+                    //This is where rhathaway86 adding check for direction of player and changing which animation is pulled for weapons
                     var attackAnim = ItemBase
+                     .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+                     .AttackAnimation;
+
+                    bool verifyDirectionalAnimation = ItemBase
                         .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
-                        .AttackAnimation;
+                        .DirectionalAnimation;
+
+                    if (verifyDirectionalAnimation == true)
+                    {
+                        if (client.Entity.Dir == (int)Directions.Up)
+                        {
+                            attackAnim = ItemBase
+                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+                            .AttackAnimationUp;
+                        }
+                        if (client.Entity.Dir == (int)Directions.Down)
+                        {
+                            attackAnim = ItemBase
+                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+                            .AttackAnimationDown;
+                        }
+                        if (client.Entity.Dir == (int)Directions.Left)
+                        {
+                            attackAnim = ItemBase
+                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+                            .AttackAnimationLeft;
+                        }
+                        if (client.Entity.Dir == (int)Directions.Right)
+                        {
+                            attackAnim = ItemBase
+                            .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
+                            .AttackAnimationRight;
+                        }
+                    }
+
+                    //
 
                     if (attackAnim != null && attackingTile.TryFix())
                     {

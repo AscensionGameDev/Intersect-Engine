@@ -95,6 +95,24 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+            //Add cmb process that was forgotten rhathaway86
+            cmbAttackAnimationUp.Items.Clear();
+            cmbAttackAnimationUp.Items.Add(Strings.General.none);
+            cmbAttackAnimationUp.Items.AddRange(AnimationBase.Names);
+
+            cmbAttackAnimationDown.Items.Clear();
+            cmbAttackAnimationDown.Items.Add(Strings.General.none);
+            cmbAttackAnimationDown.Items.AddRange(AnimationBase.Names);
+
+            cmbAttackAnimationLeft.Items.Clear();
+            cmbAttackAnimationLeft.Items.Add(Strings.General.none);
+            cmbAttackAnimationLeft.Items.AddRange(AnimationBase.Names);
+
+            cmbAttackAnimationRight.Items.Clear();
+            cmbAttackAnimationRight.Items.Add(Strings.General.none);
+            cmbAttackAnimationRight.Items.AddRange(AnimationBase.Names);
+
+            //
             cmbScalingStat.Items.Clear();
             for (var x = 0; x < Options.MaxStats; x++)
             {
@@ -309,6 +327,12 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                //Edits rhathaway86 adding directional animation combobox items for selection of different animations
+                cmbAttackAnimationUp.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationUpId) + 1;
+                cmbAttackAnimationDown.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationDownId) + 1;
+                cmbAttackAnimationLeft.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationLeftId) + 1;
+                cmbAttackAnimationRight.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationRightId) + 1;
+                //
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == ItemTypes.Equipment)
                 {
@@ -317,6 +341,8 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudEffectPercent.Value = mEditorItem.Effect.Percentage;
                 chk2Hand.Checked = mEditorItem.TwoHanded;
+                //rhathaway adding in selection update when opened
+                chkDirectionalAnimation.Checked = mEditorItem.DirectionalAnimation;
                 cmbMalePaperdoll.SelectedIndex =
                     cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
 
@@ -526,6 +552,20 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.TwoHanded = chk2Hand.Checked;
         }
+        //rhathaway86 adding in checkbox changing for directional animation
+
+        private void chkDirectionalAnimation_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DirectionalAnimation = chkDirectionalAnimation.Checked;
+            if (chkDirectionalAnimation.Checked == true)
+            {
+                grpDirectionalAnimation.Show();
+            }
+            else
+            {
+                grpDirectionalAnimation.Hide();
+            }
+        }
 
         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -653,6 +693,28 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.AttackAnimation =
                 AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
         }
+        //rhathaway86 more edits this is a strange additional area?
+        private void cmbAttackAnimationUp_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAnimationUp =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationUp.SelectedIndex - 1));
+        }
+        private void cmbAttackAnimationDown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAnimationDown =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationDown.SelectedIndex - 1));
+        }
+        private void cmbAttackAnimationLeft_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAnimationLeft =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationLeft.SelectedIndex - 1));
+        }
+        private void cmbAttackAnimationRight_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAnimationRight =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimationRight.SelectedIndex - 1));
+        }
+        //
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
         {
