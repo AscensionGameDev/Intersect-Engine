@@ -48,8 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbGraphicType.SelectedIndex = (int)mEditingGraphic.Type;
 
             UpdateGraphicList();
-            int count = cmbGraphic.Items.Count;
-              if (cmbGraphic.Items.Contains(mEditingGraphic.Filename))
+            if (cmbGraphic.Items.Contains(mEditingGraphic.Filename))
             {
                 cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(mEditingGraphic.Filename);
             }
