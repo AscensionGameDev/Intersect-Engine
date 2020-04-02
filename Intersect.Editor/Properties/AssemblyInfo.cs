@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Intersect Editor")]
+[assembly: AssemblyTitle("The Celtos Editor")]
 [assembly: AssemblyProduct("The Celtos")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("2D ORPG Editor - Part of the Intersect Game Creation Suite")]
+[assembly: AssemblyDescription("2D ORPG Editor - Part of the Game Creation Suite")]
 [assembly: AssemblyCompany("The Celtos")]
 [assembly: AssemblyCopyright("Copyright ©  2020 The Celtos")]
 [assembly: AssemblyTrademark("")]

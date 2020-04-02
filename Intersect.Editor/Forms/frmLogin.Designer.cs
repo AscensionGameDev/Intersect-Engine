@@ -181,7 +181,7 @@ namespace Intersect.Editor.Forms
             this.MaximizeBox = false;
             this.Name = "FrmLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Intersect Editor Login";
+            this.Text = "The Celtos Editor";
             this.Load += new System.EventHandler(this.frmLogin_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmLogin_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
