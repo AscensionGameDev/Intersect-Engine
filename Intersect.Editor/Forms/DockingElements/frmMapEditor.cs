@@ -2389,6 +2389,11 @@ namespace Intersect.Editor.Forms.DockingElements
 			Random rand = new Random();
 			int countPlace = rand.Next() % (max - min + 1) + min;
 			var tmpMap = Globals.CurrentMap;
+			if (CurrentMapState == null)
+			{
+				CurrentMapState = tmpMap.SaveInternal();
+			}
+			this.AddUndoState();
 
 			int tryTest = 0;
 
