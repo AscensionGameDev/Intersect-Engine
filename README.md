@@ -16,7 +16,7 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
  * [Helpful Links](#helpful-links)
 
 
-## Build Status
+## Build Status - The Celtos
 
 Our [build server](https://teamcity.freemmorpgmaker.com/?guest=1) builds, tests, and packages the latest Intersect changes.  The table below shows the current build status for the master and development branches.
 
