@@ -1,0 +1,2724 @@
+From b0955c884694d74d8a8703e5176cced1d92e79a7 Mon Sep 17 00:00:00 2001
+From: Mimus <mimus.angel@gmail.com>
+Date: Wed, 1 Apr 2020 18:07:36 +0200
+Subject: [PATCH 1/3] Correctly All Bug, and clean for patch
+
+---
+ Intersect (Core)/Enums/GameObjectType.cs      |    6 +-
+ Intersect.Client/Core/Main.cs                 |    2 +-
+ .../Forms/DockingElements/frmMapEditor.cs     |   54 +-
+ .../Editors/FormRandomPlacer.Designer.cs      |  214 ++
+ .../Forms/Editors/FormRandomPlacer.cs         |   54 +
+ .../Forms/Editors/FormRandomPlacer.resx       |  120 ++
+ Intersect.Editor/Forms/frmMain.Designer.cs    | 1808 +++++++++--------
+ Intersect.Editor/Forms/frmMain.cs             |   12 +-
+ Intersect.Editor/Forms/frmMain.resx           |   38 +-
+ Intersect.Editor/Intersect.Editor.csproj      |    9 +
+ Intersect.Editor/Localization/Strings.cs      |   12 +-
+ Intersect.Server/Database/DbInterface.cs      |   12 +-
+ Intersect.Server/Networking/PacketSender.cs   |    4 +-
+ 13 files changed, 1427 insertions(+), 918 deletions(-)
+ create mode 100644 Intersect.Editor/Forms/Editors/FormRandomPlacer.Designer.cs
+ create mode 100644 Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
+ create mode 100644 Intersect.Editor/Forms/Editors/FormRandomPlacer.resx
+
+diff --git a/Intersect (Core)/Enums/GameObjectType.cs b/Intersect (Core)/Enums/GameObjectType.cs
+index c58511ec..952edc96 100644
+--- a/Intersect (Core)/Enums/GameObjectType.cs	
++++ b/Intersect (Core)/Enums/GameObjectType.cs	
+@@ -58,8 +58,10 @@ public enum GameObjectType
+         [GameObjectInfo(typeof(TilesetBase), "tilesets")]
+         Tileset,
+ 
+-        [GameObjectInfo(typeof(TimeBase), "")] Time
++        [GameObjectInfo(typeof(TimeBase), "")] Time,
+ 
+-    }
++		Mimus_RandomPlacer
++
++	}
+ 
+ }
+diff --git a/Intersect.Client/Core/Main.cs b/Intersect.Client/Core/Main.cs
+index 7a1014be..b9c53910 100644
+--- a/Intersect.Client/Core/Main.cs
++++ b/Intersect.Client/Core/Main.cs
+@@ -45,7 +45,7 @@ public static void Start()
+             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
+             {
+                 var type = ((GameObjectType) val);
+-                if (type != GameObjectType.Event && type != GameObjectType.Time)
++                if (type != GameObjectType.Event && type != GameObjectType.Time && type != GameObjectType.Mimus_RandomPlacer)
+                 {
+                     var lookup = type.GetLookup();
+                     var item = lookup.AddNew(type.GetObjectType(), id);
+diff --git a/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs b/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
+index 06f7798b..f3b2724c 100644
+--- a/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
++++ b/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
+@@ -2384,7 +2384,57 @@ private void frmMapEditor_KeyDown(object sender, KeyEventArgs e)
+         private void picMap_Paint(object sender, PaintEventArgs e)
+         {
+         }
+-
+-    }
++		public void Mimus_TileRandomPlacer(int min, int max, bool blocked)
++		{
++			Random rand = new Random();
++			int countPlace = rand.Next() % (max - min + 1) + min;
++			var tmpMap = Globals.CurrentMap;
++
++			int tryTest = 0;
++
++			int i = 0;
++			int cx = 0;
++			int cy = 0;
++			while (i < countPlace)
++			{
++				cx = rand.Next() % Options.MapWidth;
++				cy = rand.Next() % Options.MapHeight;
++
++				if (tmpMap.Attributes[cx, cy] == MapAttribute.CreateAttribute(MapAttributes.Walkable))
++				{
++					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].TilesetId = Globals.CurrentTileset.Id;
++					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].X = Globals.CurSelX;
++					tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Y = Globals.CurSelY;
++
++					if (Globals.Autotilemode == 0)
++					{
++						tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Autotile = 0;
++					}
++					else
++					{
++						tmpMap.Layers[Globals.CurrentLayer].Tiles[cx, cy].Autotile = (byte)Globals.Autotilemode;
++					}
++					tmpMap.InitAutotiles();
++					if (blocked)
++					{
++						tmpMap.Attributes[cx, cy] = MapAttribute.CreateAttribute(MapAttributes.Blocked);
++					}
++					mMapChanged = true;
++					i++;
++					tryTest = 0;
++				}
++				else
++				{
++					tryTest++;
++					if (tryTest >= 5)
++					{
++						tryTest = 0;
++						i++;
++					}
++				}
++			}
++
++		}
++	}
+ 
+ }
+diff --git a/Intersect.Editor/Forms/Editors/FormRandomPlacer.Designer.cs b/Intersect.Editor/Forms/Editors/FormRandomPlacer.Designer.cs
+new file mode 100644
+index 00000000..87ec1ebd
+--- /dev/null
++++ b/Intersect.Editor/Forms/Editors/FormRandomPlacer.Designer.cs
+@@ -0,0 +1,214 @@
++﻿namespace Intersect.Editor.Forms.Editors
++{
++	partial class FormRandomPlacer
++	{
++		/// <summary>
++		/// Required designer variable.
++		/// </summary>
++		private System.ComponentModel.IContainer components = null;
++
++		/// <summary>
++		/// Clean up any resources being used.
++		/// </summary>
++		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
++		protected override void Dispose(bool disposing)
++		{
++			if (disposing && (components != null))
++			{
++				components.Dispose();
++			}
++			base.Dispose(disposing);
++		}
++
++		#region Windows Form Designer generated code
++
++		/// <summary>
++		/// Required method for Designer support - do not modify
++		/// the contents of this method with the code editor.
++		/// </summary>
++		private void InitializeComponent()
++		{
++			this.btnGenerate = new DarkUI.Controls.DarkButton();
++			this.btnCancel = new DarkUI.Controls.DarkButton();
++			this.nudMin = new DarkUI.Controls.DarkNumericUpDown();
++			this.lblMin = new System.Windows.Forms.Label();
++			this.lblMax = new System.Windows.Forms.Label();
++			this.nudMax = new DarkUI.Controls.DarkNumericUpDown();
++			this.grpAttribut = new DarkUI.Controls.DarkGroupBox();
++			this.rbNone = new DarkUI.Controls.DarkRadioButton();
++			this.rbBlocked = new DarkUI.Controls.DarkRadioButton();
++			((System.ComponentModel.ISupportInitialize)(this.nudMin)).BeginInit();
++			((System.ComponentModel.ISupportInitialize)(this.nudMax)).BeginInit();
++			this.grpAttribut.SuspendLayout();
++			this.SuspendLayout();
++			// 
++			// btnGenerate
++			// 
++			this.btnGenerate.Location = new System.Drawing.Point(12, 140);
++			this.btnGenerate.Name = "btnGenerate";
++			this.btnGenerate.Padding = new System.Windows.Forms.Padding(5);
++			this.btnGenerate.Size = new System.Drawing.Size(132, 27);
++			this.btnGenerate.TabIndex = 52;
++			this.btnGenerate.Text = "Generate";
++			this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
++			// 
++			// btnCancel
++			// 
++			this.btnCancel.Location = new System.Drawing.Point(150, 140);
++			this.btnCancel.Name = "btnCancel";
++			this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
++			this.btnCancel.Size = new System.Drawing.Size(132, 27);
++			this.btnCancel.TabIndex = 53;
++			this.btnCancel.Text = "Cancel";
++			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
++			// 
++			// nudMin
++			// 
++			this.nudMin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++			this.nudMin.ForeColor = System.Drawing.Color.Gainsboro;
++			this.nudMin.Location = new System.Drawing.Point(43, 7);
++			this.nudMin.Maximum = new decimal(new int[] {
++			100000,
++			0,
++			0,
++			0});
++			this.nudMin.Minimum = new decimal(new int[] {
++			1,
++			0,
++			0,
++			0});
++			this.nudMin.Name = "nudMin";
++			this.nudMin.Size = new System.Drawing.Size(239, 20);
++			this.nudMin.TabIndex = 55;
++			this.nudMin.Value = new decimal(new int[] {
++			1,
++			0,
++			0,
++			0});
++			this.nudMin.ValueChanged += new System.EventHandler(this.nudMin_ValueChanged);
++			// 
++			// lblMin
++			// 
++			this.lblMin.AutoSize = true;
++			this.lblMin.ForeColor = System.Drawing.Color.White;
++			this.lblMin.Location = new System.Drawing.Point(11, 9);
++			this.lblMin.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
++			this.lblMin.Name = "lblMin";
++			this.lblMin.Size = new System.Drawing.Size(27, 13);
++			this.lblMin.TabIndex = 54;
++			this.lblMin.Text = "Min:";
++			// 
++			// lblMax
++			// 
++			this.lblMax.AutoSize = true;
++			this.lblMax.ForeColor = System.Drawing.Color.White;
++			this.lblMax.Location = new System.Drawing.Point(11, 35);
++			this.lblMax.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
++			this.lblMax.Name = "lblMax";
++			this.lblMax.Size = new System.Drawing.Size(30, 13);
++			this.lblMax.TabIndex = 56;
++			this.lblMax.Text = "Max:";
++			// 
++			// nudMax
++			// 
++			this.nudMax.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++			this.nudMax.ForeColor = System.Drawing.Color.Gainsboro;
++			this.nudMax.Location = new System.Drawing.Point(43, 33);
++			this.nudMax.Maximum = new decimal(new int[] {
++			100000,
++			0,
++			0,
++			0});
++			this.nudMax.Minimum = new decimal(new int[] {
++			1,
++			0,
++			0,
++			0});
++			this.nudMax.Name = "nudMax";
++			this.nudMax.Size = new System.Drawing.Size(239, 20);
++			this.nudMax.TabIndex = 57;
++			this.nudMax.Value = new decimal(new int[] {
++			6,
++			0,
++			0,
++			0});
++			this.nudMax.ValueChanged += new System.EventHandler(this.nudMax_ValueChanged);
++			// 
++			// grpAttribut
++			// 
++			this.grpAttribut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.grpAttribut.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++			this.grpAttribut.Controls.Add(this.rbNone);
++			this.grpAttribut.Controls.Add(this.rbBlocked);
++			this.grpAttribut.ForeColor = System.Drawing.Color.Gainsboro;
++			this.grpAttribut.Location = new System.Drawing.Point(14, 59);
++			this.grpAttribut.Name = "grpAttribut";
++			this.grpAttribut.Size = new System.Drawing.Size(268, 75);
++			this.grpAttribut.TabIndex = 58;
++			this.grpAttribut.TabStop = false;
++			this.grpAttribut.Text = "Attribute";
++			// 
++			// rbNone
++			// 
++			this.rbNone.AutoSize = true;
++			this.rbNone.Checked = true;
++			this.rbNone.Location = new System.Drawing.Point(5, 18);
++			this.rbNone.Margin = new System.Windows.Forms.Padding(2);
++			this.rbNone.Name = "rbNone";
++			this.rbNone.Size = new System.Drawing.Size(51, 17);
++			this.rbNone.TabIndex = 18;
++			this.rbNone.TabStop = true;
++			this.rbNone.Text = "None";
++			// 
++			// rbBlocked
++			// 
++			this.rbBlocked.AutoSize = true;
++			this.rbBlocked.Location = new System.Drawing.Point(5, 38);
++			this.rbBlocked.Margin = new System.Windows.Forms.Padding(2);
++			this.rbBlocked.Name = "rbBlocked";
++			this.rbBlocked.Size = new System.Drawing.Size(64, 17);
++			this.rbBlocked.TabIndex = 19;
++			this.rbBlocked.Text = "Blocked";
++			// 
++			// FormRandomPlacer
++			// 
++			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
++			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
++			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.ClientSize = new System.Drawing.Size(293, 174);
++			this.ControlBox = false;
++			this.Controls.Add(this.grpAttribut);
++			this.Controls.Add(this.nudMax);
++			this.Controls.Add(this.lblMax);
++			this.Controls.Add(this.nudMin);
++			this.Controls.Add(this.lblMin);
++			this.Controls.Add(this.btnCancel);
++			this.Controls.Add(this.btnGenerate);
++			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
++			this.MaximizeBox = false;
++			this.Name = "FormRandomPlacer";
++			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
++			this.Text = "Mimus Random Placer";
++			this.Load += new System.EventHandler(this.FormRandomPlacer_Load);
++			((System.ComponentModel.ISupportInitialize)(this.nudMin)).EndInit();
++			((System.ComponentModel.ISupportInitialize)(this.nudMax)).EndInit();
++			this.grpAttribut.ResumeLayout(false);
++			this.grpAttribut.PerformLayout();
++			this.ResumeLayout(false);
++			this.PerformLayout();
++
++		}
++
++		#endregion
++
++		private DarkUI.Controls.DarkButton btnGenerate;
++		private DarkUI.Controls.DarkButton btnCancel;
++		private DarkUI.Controls.DarkNumericUpDown nudMin;
++		private System.Windows.Forms.Label lblMin;
++		private System.Windows.Forms.Label lblMax;
++		private DarkUI.Controls.DarkNumericUpDown nudMax;
++		private DarkUI.Controls.DarkGroupBox grpAttribut;
++		private DarkUI.Controls.DarkRadioButton rbNone;
++		private DarkUI.Controls.DarkRadioButton rbBlocked;
++	}
++}
+\ No newline at end of file
+diff --git a/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs b/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
+new file mode 100644
+index 00000000..a6e16e0c
+--- /dev/null
++++ b/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
+@@ -0,0 +1,54 @@
++﻿using Intersect.Editor.General;
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Data;
++using System.Drawing;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++using System.Windows.Forms;
++
++namespace Intersect.Editor.Forms.Editors
++{
++	public partial class FormRandomPlacer : Form
++	{
++		public FormRandomPlacer()
++		{
++			InitializeComponent();
++		}
++
++		private void btnCancel_Click(object sender, EventArgs e)
++		{
++			Hide();
++			Globals.CurrentEditor = -1;
++			Dispose();
++		}
++
++		private void btnGenerate_Click(object sender, EventArgs e)
++		{
++			Globals.MapEditorWindow.Mimus_TileRandomPlacer((int)nudMin.Value, (int)nudMax.Value, rbBlocked.Checked);
++		}
++
++		private void nudMin_ValueChanged(object sender, EventArgs e)
++		{
++			nudMin.Value = Math.Max(nudMin.Value, 0);
++			nudMax.Value = Math.Max(nudMin.Value, nudMax.Value);
++		}
++
++		private void nudMax_ValueChanged(object sender, EventArgs e)
++		{
++			nudMax.Value = Math.Max(nudMin.Value, nudMax.Value);
++		}
++
++		private void FormRandomPlacer_Load(object sender, EventArgs e)
++		{
++			nudMin.Text = Localization.Strings.MimusRandomPlacer.min;
++			nudMax.Text = Localization.Strings.MimusRandomPlacer.max;
++			rbNone.Text = Localization.Strings.MimusRandomPlacer.attributeNone;
++			rbBlocked.Text = Localization.Strings.MimusRandomPlacer.attributeBlocked;
++			btnCancel.Text = Localization.Strings.MimusRandomPlacer.cancel;
++			btnGenerate.Text = Localization.Strings.MimusRandomPlacer.generate;
++		}
++	}
++}
+diff --git a/Intersect.Editor/Forms/Editors/FormRandomPlacer.resx b/Intersect.Editor/Forms/Editors/FormRandomPlacer.resx
+new file mode 100644
+index 00000000..1af7de15
+--- /dev/null
++++ b/Intersect.Editor/Forms/Editors/FormRandomPlacer.resx
+@@ -0,0 +1,120 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<root>
++  <!-- 
++    Microsoft ResX Schema 
++    
++    Version 2.0
++    
++    The primary goals of this format is to allow a simple XML format 
++    that is mostly human readable. The generation and parsing of the 
++    various data types are done through the TypeConverter classes 
++    associated with the data types.
++    
++    Example:
++    
++    ... ado.net/XML headers & schema ...
++    <resheader name="resmimetype">text/microsoft-resx</resheader>
++    <resheader name="version">2.0</resheader>
++    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
++    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
++    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
++    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
++    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
++        <value>[base64 mime encoded serialized .NET Framework object]</value>
++    </data>
++    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
++        <comment>This is a comment</comment>
++    </data>
++                
++    There are any number of "resheader" rows that contain simple 
++    name/value pairs.
++    
++    Each data row contains a name, and value. The row also contains a 
++    type or mimetype. Type corresponds to a .NET class that support 
++    text/value conversion through the TypeConverter architecture. 
++    Classes that don't support this are serialized and stored with the 
++    mimetype set.
++    
++    The mimetype is used for serialized objects, and tells the 
++    ResXResourceReader how to depersist the object. This is currently not 
++    extensible. For a given mimetype the value must be set accordingly:
++    
++    Note - application/x-microsoft.net.object.binary.base64 is the format 
++    that the ResXResourceWriter will generate, however the reader can 
++    read any of the formats listed below.
++    
++    mimetype: application/x-microsoft.net.object.binary.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
++            : and then encoded with base64 encoding.
++    
++    mimetype: application/x-microsoft.net.object.soap.base64
++    value   : The object must be serialized with 
++            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
++            : and then encoded with base64 encoding.
++
++    mimetype: application/x-microsoft.net.object.bytearray.base64
++    value   : The object must be serialized into a byte array 
++            : using a System.ComponentModel.TypeConverter
++            : and then encoded with base64 encoding.
++    -->
++  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
++    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
++    <xsd:element name="root" msdata:IsDataSet="true">
++      <xsd:complexType>
++        <xsd:choice maxOccurs="unbounded">
++          <xsd:element name="metadata">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" />
++              </xsd:sequence>
++              <xsd:attribute name="name" use="required" type="xsd:string" />
++              <xsd:attribute name="type" type="xsd:string" />
++              <xsd:attribute name="mimetype" type="xsd:string" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="assembly">
++            <xsd:complexType>
++              <xsd:attribute name="alias" type="xsd:string" />
++              <xsd:attribute name="name" type="xsd:string" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="data">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
++              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
++              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
++              <xsd:attribute ref="xml:space" />
++            </xsd:complexType>
++          </xsd:element>
++          <xsd:element name="resheader">
++            <xsd:complexType>
++              <xsd:sequence>
++                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
++              </xsd:sequence>
++              <xsd:attribute name="name" type="xsd:string" use="required" />
++            </xsd:complexType>
++          </xsd:element>
++        </xsd:choice>
++      </xsd:complexType>
++    </xsd:element>
++  </xsd:schema>
++  <resheader name="resmimetype">
++    <value>text/microsoft-resx</value>
++  </resheader>
++  <resheader name="version">
++    <value>2.0</value>
++  </resheader>
++  <resheader name="reader">
++    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++  <resheader name="writer">
++    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
++  </resheader>
++</root>
+\ No newline at end of file
+diff --git a/Intersect.Editor/Forms/frmMain.Designer.cs b/Intersect.Editor/Forms/frmMain.Designer.cs
+index 1549b812..5fcd5e59 100644
+--- a/Intersect.Editor/Forms/frmMain.Designer.cs
++++ b/Intersect.Editor/Forms/frmMain.Designer.cs
+@@ -34,105 +34,106 @@ protected override void Dispose(bool disposing)
+ 		/// </summary>
+ 		private void InitializeComponent()
+ 		{
+-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
+-            this.statusStrip1 = new DarkUI.Controls.DarkStatusStrip();
+-            this.toolStripLabelCoords = new System.Windows.Forms.ToolStripStatusLabel();
+-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripLabelRevision = new System.Windows.Forms.ToolStripStatusLabel();
+-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
+-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
+-            this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+-            this.toolStripBtnNewMap = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnSaveMap = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnCut = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnCopy = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnPaste = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnUndo = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnRedo = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnPen = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnSelect = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnRect = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnErase = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnEyeDrop = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripTimeButton = new System.Windows.Forms.ToolStripDropDownButton();
+-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnRun = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripButtonBug = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripBtnFlipVertical = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripBtnFlipHorizontal = new System.Windows.Forms.ToolStripButton();
+-            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+-            this.toolStripButtonQuestion = new System.Windows.Forms.ToolStripButton();
+-            this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
+-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.importMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.exportMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.fillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.eraseLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.allLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.currentLayerOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.hideResourcesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.mapGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.craftsEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.craftingTableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.variableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.postQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
+-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+-            this.statusStrip1.SuspendLayout();
+-            this.toolStrip1.SuspendLayout();
+-            this.menuStrip.SuspendLayout();
+-            this.SuspendLayout();
+-            // 
+-            // statusStrip1
+-            // 
+-            this.statusStrip1.AutoSize = false;
+-            this.statusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.statusStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
++			this.statusStrip1 = new DarkUI.Controls.DarkStatusStrip();
++			this.toolStripLabelCoords = new System.Windows.Forms.ToolStripStatusLabel();
++			this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripLabelRevision = new System.Windows.Forms.ToolStripStatusLabel();
++			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
++			this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
++			this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
++			this.toolStripBtnNewMap = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnSaveMap = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnCut = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnCopy = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnPaste = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnUndo = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnRedo = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnPen = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnSelect = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnRect = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnErase = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnEyeDrop = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripTimeButton = new System.Windows.Forms.ToolStripDropDownButton();
++			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnRun = new System.Windows.Forms.ToolStripButton();
++			this.toolStripButtonBug = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripBtnFlipVertical = new System.Windows.Forms.ToolStripButton();
++			this.toolStripBtnFlipHorizontal = new System.Windows.Forms.ToolStripButton();
++			this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
++			this.toolStripButtonQuestion = new System.Windows.Forms.ToolStripButton();
++			this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
++			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.importMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.exportMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.fillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.eraseLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.allLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.currentLayerOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.hideResourcesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.mapGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.craftsEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.craftingTableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.variableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.postQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
++			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
++			this.toolStripRndPlace = new System.Windows.Forms.ToolStripButton();
++			this.statusStrip1.SuspendLayout();
++			this.toolStrip1.SuspendLayout();
++			this.menuStrip.SuspendLayout();
++			this.SuspendLayout();
++			// 
++			// statusStrip1
++			// 
++			this.statusStrip1.AutoSize = false;
++			this.statusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.statusStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
++			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.toolStripLabelCoords,
+             this.toolStripSeparator7,
+             this.toolStripLabelRevision,
+@@ -140,371 +141,371 @@ private void InitializeComponent()
+             this.toolStripLabelFPS,
+             this.toolStripSeparator9,
+             this.toolStripLabelDebug});
+-            this.statusStrip1.Location = new System.Drawing.Point(0, 645);
+-            this.statusStrip1.Name = "statusStrip1";
+-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 3);
+-            this.statusStrip1.Size = new System.Drawing.Size(1186, 30);
+-            this.statusStrip1.SizingGrip = false;
+-            this.statusStrip1.TabIndex = 10;
+-            this.statusStrip1.Text = "statusStrip1";
+-            // 
+-            // toolStripLabelCoords
+-            // 
+-            this.toolStripLabelCoords.ForeColor = System.Drawing.SystemColors.Control;
+-            this.toolStripLabelCoords.Name = "toolStripLabelCoords";
+-            this.toolStripLabelCoords.Size = new System.Drawing.Size(118, 17);
+-            this.toolStripLabelCoords.Text = "toolStripStatusLabel1";
+-            // 
+-            // toolStripSeparator7
+-            // 
+-            this.toolStripSeparator7.Name = "toolStripSeparator7";
+-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 22);
+-            // 
+-            // toolStripLabelRevision
+-            // 
+-            this.toolStripLabelRevision.ForeColor = System.Drawing.SystemColors.Control;
+-            this.toolStripLabelRevision.Name = "toolStripLabelRevision";
+-            this.toolStripLabelRevision.Size = new System.Drawing.Size(63, 17);
+-            this.toolStripLabelRevision.Text = "Revision: 0";
+-            // 
+-            // toolStripSeparator8
+-            // 
+-            this.toolStripSeparator8.Name = "toolStripSeparator8";
+-            this.toolStripSeparator8.Size = new System.Drawing.Size(6, 22);
+-            // 
+-            // toolStripLabelFPS
+-            // 
+-            this.toolStripLabelFPS.ForeColor = System.Drawing.SystemColors.Control;
+-            this.toolStripLabelFPS.Name = "toolStripLabelFPS";
+-            this.toolStripLabelFPS.Size = new System.Drawing.Size(44, 17);
+-            this.toolStripLabelFPS.Text = "FPS: 64";
+-            // 
+-            // toolStripSeparator9
+-            // 
+-            this.toolStripSeparator9.Name = "toolStripSeparator9";
+-            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 22);
+-            // 
+-            // toolStripLabelDebug
+-            // 
+-            this.toolStripLabelDebug.Name = "toolStripLabelDebug";
+-            this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 17);
+-            // 
+-            // dockLeft
+-            // 
+-            this.dockLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+-            this.dockLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+-            this.dockLeft.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.dockLeft.DockLeftPortion = 316D;
+-            this.dockLeft.DockRightPortion = 0.15D;
+-            this.dockLeft.Location = new System.Drawing.Point(0, 49);
+-            this.dockLeft.Name = "dockLeft";
+-            this.dockLeft.ShowAutoHideContentOnHover = false;
+-            this.dockLeft.Size = new System.Drawing.Size(1186, 596);
+-            this.dockLeft.SupportDeeplyNestedContent = true;
+-            this.dockLeft.TabIndex = 7;
+-            // 
+-            // toolStripBtnNewMap
+-            // 
+-            this.toolStripBtnNewMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnNewMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnNewMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnNewMap.Image")));
+-            this.toolStripBtnNewMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnNewMap.Margin = new System.Windows.Forms.Padding(12, 1, 0, 2);
+-            this.toolStripBtnNewMap.Name = "toolStripBtnNewMap";
+-            this.toolStripBtnNewMap.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnNewMap.Text = "New Unconnected Map";
+-            this.toolStripBtnNewMap.Click += new System.EventHandler(this.toolStripBtnNewMap_Click);
+-            // 
+-            // toolStripBtnSaveMap
+-            // 
+-            this.toolStripBtnSaveMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnSaveMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnSaveMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSaveMap.Image")));
+-            this.toolStripBtnSaveMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnSaveMap.Name = "toolStripBtnSaveMap";
+-            this.toolStripBtnSaveMap.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnSaveMap.Text = "Save Map";
+-            this.toolStripBtnSaveMap.Click += new System.EventHandler(this.toolStripBtnSaveMap_Click);
+-            // 
+-            // toolStripSeparator1
+-            // 
+-            this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator1.Name = "toolStripSeparator1";
+-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnCut
+-            // 
+-            this.toolStripBtnCut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnCut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnCut.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCut.Image")));
+-            this.toolStripBtnCut.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnCut.Name = "toolStripBtnCut";
+-            this.toolStripBtnCut.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnCut.Text = "Cut Selection";
+-            this.toolStripBtnCut.Click += new System.EventHandler(this.toolStripBtnCut_Click);
+-            // 
+-            // toolStripBtnCopy
+-            // 
+-            this.toolStripBtnCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnCopy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCopy.Image")));
+-            this.toolStripBtnCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnCopy.Name = "toolStripBtnCopy";
+-            this.toolStripBtnCopy.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnCopy.Text = "Copy Selection";
+-            this.toolStripBtnCopy.Click += new System.EventHandler(this.toolStripBtnCopy_Click);
+-            // 
+-            // toolStripBtnPaste
+-            // 
+-            this.toolStripBtnPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnPaste.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPaste.Image")));
+-            this.toolStripBtnPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnPaste.Name = "toolStripBtnPaste";
+-            this.toolStripBtnPaste.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnPaste.Text = "Paste";
+-            this.toolStripBtnPaste.Click += new System.EventHandler(this.toolStripBtnPaste_Click);
+-            // 
+-            // toolStripSeparator2
+-            // 
+-            this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator2.Name = "toolStripSeparator2";
+-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnUndo
+-            // 
+-            this.toolStripBtnUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnUndo.Enabled = false;
+-            this.toolStripBtnUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnUndo.Image")));
+-            this.toolStripBtnUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnUndo.Name = "toolStripBtnUndo";
+-            this.toolStripBtnUndo.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnUndo.Text = "Undo";
+-            this.toolStripBtnUndo.Click += new System.EventHandler(this.toolStripBtnUndo_Click);
+-            // 
+-            // toolStripBtnRedo
+-            // 
+-            this.toolStripBtnRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnRedo.Enabled = false;
+-            this.toolStripBtnRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRedo.Image")));
+-            this.toolStripBtnRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnRedo.Name = "toolStripBtnRedo";
+-            this.toolStripBtnRedo.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnRedo.Text = "Redo";
+-            this.toolStripBtnRedo.Click += new System.EventHandler(this.toolStripBtnRedo_Click);
+-            // 
+-            // toolStripSeparator3
+-            // 
+-            this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator3.Name = "toolStripSeparator3";
+-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnPen
+-            // 
+-            this.toolStripBtnPen.Checked = true;
+-            this.toolStripBtnPen.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.toolStripBtnPen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnPen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnPen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPen.Image")));
+-            this.toolStripBtnPen.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnPen.Name = "toolStripBtnPen";
+-            this.toolStripBtnPen.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnPen.Text = "Single Tile";
+-            this.toolStripBtnPen.Click += new System.EventHandler(this.toolStripBtnPen_Click);
+-            // 
+-            // toolStripBtnSelect
+-            // 
+-            this.toolStripBtnSelect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnSelect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSelect.Image")));
+-            this.toolStripBtnSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnSelect.Name = "toolStripBtnSelect";
+-            this.toolStripBtnSelect.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnSelect.Text = "Selection";
+-            this.toolStripBtnSelect.Click += new System.EventHandler(this.toolStripBtnSelect_Click);
+-            // 
+-            // toolStripBtnRect
+-            // 
+-            this.toolStripBtnRect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnRect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnRect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRect.Image")));
+-            this.toolStripBtnRect.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnRect.Name = "toolStripBtnRect";
+-            this.toolStripBtnRect.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnRect.Text = "Rectangle Fill";
+-            this.toolStripBtnRect.Click += new System.EventHandler(this.toolStripBtnRect_Click);
+-            // 
+-            // toolStripSeparator4
+-            // 
+-            this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator4.Name = "toolStripSeparator4";
+-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnFill
+-            // 
+-            this.toolStripBtnFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnFill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFill.Image")));
+-            this.toolStripBtnFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnFill.Name = "toolStripBtnFill";
+-            this.toolStripBtnFill.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnFill.Text = "Fill Layer";
+-            this.toolStripBtnFill.Click += new System.EventHandler(this.toolStripBtnFill_Click);
+-            // 
+-            // toolStripBtnErase
+-            // 
+-            this.toolStripBtnErase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnErase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnErase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnErase.Image")));
+-            this.toolStripBtnErase.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnErase.Name = "toolStripBtnErase";
+-            this.toolStripBtnErase.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnErase.Text = "Clear Layer";
+-            this.toolStripBtnErase.Click += new System.EventHandler(this.toolStripBtnErase_Click);
+-            // 
+-            // toolStripBtnEyeDrop
+-            // 
+-            this.toolStripBtnEyeDrop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnEyeDrop.Enabled = false;
+-            this.toolStripBtnEyeDrop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnEyeDrop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnEyeDrop.Image")));
+-            this.toolStripBtnEyeDrop.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnEyeDrop.Name = "toolStripBtnEyeDrop";
+-            this.toolStripBtnEyeDrop.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnEyeDrop.Text = "Eye Drop Tool";
+-            this.toolStripBtnEyeDrop.Click += new System.EventHandler(this.toolStripBtnEyeDrop_Click);
+-            // 
+-            // toolStripSeparator5
+-            // 
+-            this.toolStripSeparator5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator5.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator5.Name = "toolStripSeparator5";
+-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripTimeButton
+-            // 
+-            this.toolStripTimeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripTimeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripTimeButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripTimeButton.Image")));
+-            this.toolStripTimeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripTimeButton.Name = "toolStripTimeButton";
+-            this.toolStripTimeButton.Size = new System.Drawing.Size(29, 22);
+-            this.toolStripTimeButton.Text = "Toggle On/Off TOD Simulation";
+-            this.toolStripTimeButton.Click += new System.EventHandler(this.toolStripTimeButton_Click);
+-            // 
+-            // toolStripSeparator6
+-            // 
+-            this.toolStripSeparator6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator6.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator6.Name = "toolStripSeparator6";
+-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnScreenshot
+-            // 
+-            this.toolStripBtnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnScreenshot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnScreenshot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnScreenshot.Image")));
+-            this.toolStripBtnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnScreenshot.Name = "toolStripBtnScreenshot";
+-            this.toolStripBtnScreenshot.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnScreenshot.Text = "Screenshot Map";
+-            this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
+-            // 
+-            // toolStripSeparator10
+-            // 
+-            this.toolStripSeparator10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator10.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator10.Name = "toolStripSeparator10";
+-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnRun
+-            // 
+-            this.toolStripBtnRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnRun.Enabled = false;
+-            this.toolStripBtnRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnRun.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRun.Image")));
+-            this.toolStripBtnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnRun.Name = "toolStripBtnRun";
+-            this.toolStripBtnRun.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnRun.Text = "Run Client";
+-            this.toolStripBtnRun.Click += new System.EventHandler(this.toolStripBtnRun_Click);
+-            // 
+-            // toolStripButtonBug
+-            // 
+-            this.toolStripButtonBug.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+-            this.toolStripButtonBug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripButtonBug.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripButtonBug.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonBug.Image")));
+-            this.toolStripButtonBug.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripButtonBug.Name = "toolStripButtonBug";
+-            this.toolStripButtonBug.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripButtonBug.Text = "Report a Bug";
+-            this.toolStripButtonBug.Click += new System.EventHandler(this.toolStripButtonBug_Click);
+-            // 
+-            // toolStripSeparator11
+-            // 
+-            this.toolStripSeparator11.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+-            this.toolStripSeparator11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator11.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator11.Name = "toolStripSeparator11";
+-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripBtnFlipVertical
+-            // 
+-            this.toolStripBtnFlipVertical.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnFlipVertical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnFlipVertical.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFlipVertical.Image")));
+-            this.toolStripBtnFlipVertical.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnFlipVertical.Name = "toolStripBtnFlipVertical";
+-            this.toolStripBtnFlipVertical.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnFlipVertical.Text = "toolStripBtnFlipVertical";
+-            this.toolStripBtnFlipVertical.ToolTipText = "Flip Vertical";
+-            this.toolStripBtnFlipVertical.Click += new System.EventHandler(this.toolStripBtnFlipVertical_Click);
+-            // 
+-            // toolStripBtnFlipHorizontal
+-            // 
+-            this.toolStripBtnFlipHorizontal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripBtnFlipHorizontal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripBtnFlipHorizontal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFlipHorizontal.Image")));
+-            this.toolStripBtnFlipHorizontal.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripBtnFlipHorizontal.Name = "toolStripBtnFlipHorizontal";
+-            this.toolStripBtnFlipHorizontal.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripBtnFlipHorizontal.Text = "toolStripBtnFlipHorizontal";
+-            this.toolStripBtnFlipHorizontal.ToolTipText = "Flip Horizontal";
+-            this.toolStripBtnFlipHorizontal.Click += new System.EventHandler(this.toolStripBtnFlipHorizontal_Click);
+-            // 
+-            // toolStripSeparator13
+-            // 
+-            this.toolStripSeparator13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripSeparator13.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+-            this.toolStripSeparator13.Name = "toolStripSeparator13";
+-            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
+-            // 
+-            // toolStripButtonQuestion
+-            // 
+-            this.toolStripButtonQuestion.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+-            this.toolStripButtonQuestion.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+-            this.toolStripButtonQuestion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStripButtonQuestion.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonQuestion.Image")));
+-            this.toolStripButtonQuestion.ImageTransparentColor = System.Drawing.Color.Magenta;
+-            this.toolStripButtonQuestion.Name = "toolStripButtonQuestion";
+-            this.toolStripButtonQuestion.Size = new System.Drawing.Size(23, 22);
+-            this.toolStripButtonQuestion.Text = "Ask a Question";
+-            this.toolStripButtonQuestion.Click += new System.EventHandler(this.toolStripButtonQuestion_Click);
+-            // 
+-            // toolStrip1
+-            // 
+-            this.toolStrip1.AutoSize = false;
+-            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.statusStrip1.Location = new System.Drawing.Point(0, 645);
++			this.statusStrip1.Name = "statusStrip1";
++			this.statusStrip1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 3);
++			this.statusStrip1.Size = new System.Drawing.Size(1186, 30);
++			this.statusStrip1.SizingGrip = false;
++			this.statusStrip1.TabIndex = 10;
++			this.statusStrip1.Text = "statusStrip1";
++			// 
++			// toolStripLabelCoords
++			// 
++			this.toolStripLabelCoords.ForeColor = System.Drawing.SystemColors.Control;
++			this.toolStripLabelCoords.Name = "toolStripLabelCoords";
++			this.toolStripLabelCoords.Size = new System.Drawing.Size(118, 17);
++			this.toolStripLabelCoords.Text = "toolStripStatusLabel1";
++			// 
++			// toolStripSeparator7
++			// 
++			this.toolStripSeparator7.Name = "toolStripSeparator7";
++			this.toolStripSeparator7.Size = new System.Drawing.Size(6, 22);
++			// 
++			// toolStripLabelRevision
++			// 
++			this.toolStripLabelRevision.ForeColor = System.Drawing.SystemColors.Control;
++			this.toolStripLabelRevision.Name = "toolStripLabelRevision";
++			this.toolStripLabelRevision.Size = new System.Drawing.Size(63, 17);
++			this.toolStripLabelRevision.Text = "Revision: 0";
++			// 
++			// toolStripSeparator8
++			// 
++			this.toolStripSeparator8.Name = "toolStripSeparator8";
++			this.toolStripSeparator8.Size = new System.Drawing.Size(6, 22);
++			// 
++			// toolStripLabelFPS
++			// 
++			this.toolStripLabelFPS.ForeColor = System.Drawing.SystemColors.Control;
++			this.toolStripLabelFPS.Name = "toolStripLabelFPS";
++			this.toolStripLabelFPS.Size = new System.Drawing.Size(44, 17);
++			this.toolStripLabelFPS.Text = "FPS: 64";
++			// 
++			// toolStripSeparator9
++			// 
++			this.toolStripSeparator9.Name = "toolStripSeparator9";
++			this.toolStripSeparator9.Size = new System.Drawing.Size(6, 22);
++			// 
++			// toolStripLabelDebug
++			// 
++			this.toolStripLabelDebug.Name = "toolStripLabelDebug";
++			this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 17);
++			// 
++			// dockLeft
++			// 
++			this.dockLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
++			this.dockLeft.Dock = System.Windows.Forms.DockStyle.Fill;
++			this.dockLeft.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.dockLeft.DockLeftPortion = 316D;
++			this.dockLeft.DockRightPortion = 0.15D;
++			this.dockLeft.Location = new System.Drawing.Point(0, 49);
++			this.dockLeft.Name = "dockLeft";
++			this.dockLeft.ShowAutoHideContentOnHover = false;
++			this.dockLeft.Size = new System.Drawing.Size(1186, 596);
++			this.dockLeft.SupportDeeplyNestedContent = true;
++			this.dockLeft.TabIndex = 7;
++			// 
++			// toolStripBtnNewMap
++			// 
++			this.toolStripBtnNewMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnNewMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnNewMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnNewMap.Image")));
++			this.toolStripBtnNewMap.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnNewMap.Margin = new System.Windows.Forms.Padding(12, 1, 0, 2);
++			this.toolStripBtnNewMap.Name = "toolStripBtnNewMap";
++			this.toolStripBtnNewMap.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnNewMap.Text = "New Unconnected Map";
++			this.toolStripBtnNewMap.Click += new System.EventHandler(this.toolStripBtnNewMap_Click);
++			// 
++			// toolStripBtnSaveMap
++			// 
++			this.toolStripBtnSaveMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnSaveMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnSaveMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSaveMap.Image")));
++			this.toolStripBtnSaveMap.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnSaveMap.Name = "toolStripBtnSaveMap";
++			this.toolStripBtnSaveMap.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnSaveMap.Text = "Save Map";
++			this.toolStripBtnSaveMap.Click += new System.EventHandler(this.toolStripBtnSaveMap_Click);
++			// 
++			// toolStripSeparator1
++			// 
++			this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator1.Name = "toolStripSeparator1";
++			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnCut
++			// 
++			this.toolStripBtnCut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnCut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnCut.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCut.Image")));
++			this.toolStripBtnCut.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnCut.Name = "toolStripBtnCut";
++			this.toolStripBtnCut.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnCut.Text = "Cut Selection";
++			this.toolStripBtnCut.Click += new System.EventHandler(this.toolStripBtnCut_Click);
++			// 
++			// toolStripBtnCopy
++			// 
++			this.toolStripBtnCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnCopy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCopy.Image")));
++			this.toolStripBtnCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnCopy.Name = "toolStripBtnCopy";
++			this.toolStripBtnCopy.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnCopy.Text = "Copy Selection";
++			this.toolStripBtnCopy.Click += new System.EventHandler(this.toolStripBtnCopy_Click);
++			// 
++			// toolStripBtnPaste
++			// 
++			this.toolStripBtnPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnPaste.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPaste.Image")));
++			this.toolStripBtnPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnPaste.Name = "toolStripBtnPaste";
++			this.toolStripBtnPaste.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnPaste.Text = "Paste";
++			this.toolStripBtnPaste.Click += new System.EventHandler(this.toolStripBtnPaste_Click);
++			// 
++			// toolStripSeparator2
++			// 
++			this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator2.Name = "toolStripSeparator2";
++			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnUndo
++			// 
++			this.toolStripBtnUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnUndo.Enabled = false;
++			this.toolStripBtnUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnUndo.Image")));
++			this.toolStripBtnUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnUndo.Name = "toolStripBtnUndo";
++			this.toolStripBtnUndo.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnUndo.Text = "Undo";
++			this.toolStripBtnUndo.Click += new System.EventHandler(this.toolStripBtnUndo_Click);
++			// 
++			// toolStripBtnRedo
++			// 
++			this.toolStripBtnRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnRedo.Enabled = false;
++			this.toolStripBtnRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRedo.Image")));
++			this.toolStripBtnRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnRedo.Name = "toolStripBtnRedo";
++			this.toolStripBtnRedo.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnRedo.Text = "Redo";
++			this.toolStripBtnRedo.Click += new System.EventHandler(this.toolStripBtnRedo_Click);
++			// 
++			// toolStripSeparator3
++			// 
++			this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator3.Name = "toolStripSeparator3";
++			this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnPen
++			// 
++			this.toolStripBtnPen.Checked = true;
++			this.toolStripBtnPen.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.toolStripBtnPen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnPen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnPen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPen.Image")));
++			this.toolStripBtnPen.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnPen.Name = "toolStripBtnPen";
++			this.toolStripBtnPen.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnPen.Text = "Single Tile";
++			this.toolStripBtnPen.Click += new System.EventHandler(this.toolStripBtnPen_Click);
++			// 
++			// toolStripBtnSelect
++			// 
++			this.toolStripBtnSelect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnSelect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSelect.Image")));
++			this.toolStripBtnSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnSelect.Name = "toolStripBtnSelect";
++			this.toolStripBtnSelect.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnSelect.Text = "Selection";
++			this.toolStripBtnSelect.Click += new System.EventHandler(this.toolStripBtnSelect_Click);
++			// 
++			// toolStripBtnRect
++			// 
++			this.toolStripBtnRect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnRect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnRect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRect.Image")));
++			this.toolStripBtnRect.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnRect.Name = "toolStripBtnRect";
++			this.toolStripBtnRect.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnRect.Text = "Rectangle Fill";
++			this.toolStripBtnRect.Click += new System.EventHandler(this.toolStripBtnRect_Click);
++			// 
++			// toolStripSeparator4
++			// 
++			this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator4.Name = "toolStripSeparator4";
++			this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnFill
++			// 
++			this.toolStripBtnFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnFill.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFill.Image")));
++			this.toolStripBtnFill.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnFill.Name = "toolStripBtnFill";
++			this.toolStripBtnFill.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnFill.Text = "Fill Layer";
++			this.toolStripBtnFill.Click += new System.EventHandler(this.toolStripBtnFill_Click);
++			// 
++			// toolStripBtnErase
++			// 
++			this.toolStripBtnErase.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnErase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnErase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnErase.Image")));
++			this.toolStripBtnErase.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnErase.Name = "toolStripBtnErase";
++			this.toolStripBtnErase.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnErase.Text = "Clear Layer";
++			this.toolStripBtnErase.Click += new System.EventHandler(this.toolStripBtnErase_Click);
++			// 
++			// toolStripBtnEyeDrop
++			// 
++			this.toolStripBtnEyeDrop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnEyeDrop.Enabled = false;
++			this.toolStripBtnEyeDrop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnEyeDrop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnEyeDrop.Image")));
++			this.toolStripBtnEyeDrop.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnEyeDrop.Name = "toolStripBtnEyeDrop";
++			this.toolStripBtnEyeDrop.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnEyeDrop.Text = "Eye Drop Tool";
++			this.toolStripBtnEyeDrop.Click += new System.EventHandler(this.toolStripBtnEyeDrop_Click);
++			// 
++			// toolStripSeparator5
++			// 
++			this.toolStripSeparator5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator5.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator5.Name = "toolStripSeparator5";
++			this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripTimeButton
++			// 
++			this.toolStripTimeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripTimeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripTimeButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripTimeButton.Image")));
++			this.toolStripTimeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripTimeButton.Name = "toolStripTimeButton";
++			this.toolStripTimeButton.Size = new System.Drawing.Size(29, 22);
++			this.toolStripTimeButton.Text = "Toggle On/Off TOD Simulation";
++			this.toolStripTimeButton.Click += new System.EventHandler(this.toolStripTimeButton_Click);
++			// 
++			// toolStripSeparator6
++			// 
++			this.toolStripSeparator6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator6.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator6.Name = "toolStripSeparator6";
++			this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnScreenshot
++			// 
++			this.toolStripBtnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnScreenshot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnScreenshot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnScreenshot.Image")));
++			this.toolStripBtnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnScreenshot.Name = "toolStripBtnScreenshot";
++			this.toolStripBtnScreenshot.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnScreenshot.Text = "Screenshot Map";
++			this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
++			// 
++			// toolStripSeparator10
++			// 
++			this.toolStripSeparator10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator10.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator10.Name = "toolStripSeparator10";
++			this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnRun
++			// 
++			this.toolStripBtnRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnRun.Enabled = false;
++			this.toolStripBtnRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnRun.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRun.Image")));
++			this.toolStripBtnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnRun.Name = "toolStripBtnRun";
++			this.toolStripBtnRun.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnRun.Text = "Run Client";
++			this.toolStripBtnRun.Click += new System.EventHandler(this.toolStripBtnRun_Click);
++			// 
++			// toolStripButtonBug
++			// 
++			this.toolStripButtonBug.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
++			this.toolStripButtonBug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripButtonBug.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripButtonBug.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonBug.Image")));
++			this.toolStripButtonBug.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripButtonBug.Name = "toolStripButtonBug";
++			this.toolStripButtonBug.Size = new System.Drawing.Size(23, 22);
++			this.toolStripButtonBug.Text = "Report a Bug";
++			this.toolStripButtonBug.Click += new System.EventHandler(this.toolStripButtonBug_Click);
++			// 
++			// toolStripSeparator11
++			// 
++			this.toolStripSeparator11.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
++			this.toolStripSeparator11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator11.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator11.Name = "toolStripSeparator11";
++			this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripBtnFlipVertical
++			// 
++			this.toolStripBtnFlipVertical.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnFlipVertical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnFlipVertical.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFlipVertical.Image")));
++			this.toolStripBtnFlipVertical.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnFlipVertical.Name = "toolStripBtnFlipVertical";
++			this.toolStripBtnFlipVertical.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnFlipVertical.Text = "toolStripBtnFlipVertical";
++			this.toolStripBtnFlipVertical.ToolTipText = "Flip Vertical";
++			this.toolStripBtnFlipVertical.Click += new System.EventHandler(this.toolStripBtnFlipVertical_Click);
++			// 
++			// toolStripBtnFlipHorizontal
++			// 
++			this.toolStripBtnFlipHorizontal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripBtnFlipHorizontal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripBtnFlipHorizontal.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFlipHorizontal.Image")));
++			this.toolStripBtnFlipHorizontal.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripBtnFlipHorizontal.Name = "toolStripBtnFlipHorizontal";
++			this.toolStripBtnFlipHorizontal.Size = new System.Drawing.Size(23, 22);
++			this.toolStripBtnFlipHorizontal.Text = "toolStripBtnFlipHorizontal";
++			this.toolStripBtnFlipHorizontal.ToolTipText = "Flip Horizontal";
++			this.toolStripBtnFlipHorizontal.Click += new System.EventHandler(this.toolStripBtnFlipHorizontal_Click);
++			// 
++			// toolStripSeparator13
++			// 
++			this.toolStripSeparator13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripSeparator13.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
++			this.toolStripSeparator13.Name = "toolStripSeparator13";
++			this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
++			// 
++			// toolStripButtonQuestion
++			// 
++			this.toolStripButtonQuestion.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
++			this.toolStripButtonQuestion.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripButtonQuestion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripButtonQuestion.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonQuestion.Image")));
++			this.toolStripButtonQuestion.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripButtonQuestion.Name = "toolStripButtonQuestion";
++			this.toolStripButtonQuestion.Size = new System.Drawing.Size(23, 22);
++			this.toolStripButtonQuestion.Text = "Ask a Question";
++			this.toolStripButtonQuestion.Click += new System.EventHandler(this.toolStripButtonQuestion_Click);
++			// 
++			// toolStrip1
++			// 
++			this.toolStrip1.AutoSize = false;
++			this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
++			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.toolStripBtnNewMap,
+             this.toolStripBtnSaveMap,
+             this.toolStripSeparator1,
+@@ -525,6 +526,7 @@ private void InitializeComponent()
+             this.toolStripBtnFill,
+             this.toolStripBtnErase,
+             this.toolStripBtnEyeDrop,
++            this.toolStripRndPlace,
+             this.toolStripSeparator6,
+             this.toolStripTimeButton,
+             this.toolStripSeparator13,
+@@ -534,81 +536,81 @@ private void InitializeComponent()
+             this.toolStripButtonBug,
+             this.toolStripSeparator11,
+             this.toolStripButtonQuestion});
+-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+-            this.toolStrip1.Name = "toolStrip1";
+-            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
+-            this.toolStrip1.Size = new System.Drawing.Size(1186, 25);
+-            this.toolStrip1.TabIndex = 3;
+-            this.toolStrip1.Text = "toolStrip1";
+-            // 
+-            // fileToolStripMenuItem
+-            // 
+-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
++			this.toolStrip1.Name = "toolStrip1";
++			this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
++			this.toolStrip1.Size = new System.Drawing.Size(1186, 25);
++			this.toolStrip1.TabIndex = 3;
++			this.toolStrip1.Text = "toolStrip1";
++			// 
++			// fileToolStripMenuItem
++			// 
++			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.saveMapToolStripMenuItem,
+             this.newMapToolStripMenuItem,
+             this.importMapToolStripMenuItem,
+             this.exportMapToolStripMenuItem,
+             this.optionsToolStripMenuItem,
+             this.exitToolStripMenuItem});
+-            this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+-            this.fileToolStripMenuItem.Text = "File";
+-            // 
+-            // saveMapToolStripMenuItem
+-            // 
+-            this.saveMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.saveMapToolStripMenuItem.Name = "saveMapToolStripMenuItem";
+-            this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.saveMapToolStripMenuItem.Text = "Save Map";
+-            this.saveMapToolStripMenuItem.Click += new System.EventHandler(this.saveMapToolStripMenuItem_Click);
+-            // 
+-            // newMapToolStripMenuItem
+-            // 
+-            this.newMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
+-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.newMapToolStripMenuItem.Text = "New Map";
+-            this.newMapToolStripMenuItem.ToolTipText = "Create a new, unconnected map.";
+-            this.newMapToolStripMenuItem.Click += new System.EventHandler(this.NewMapToolStripMenuItem_Click);
+-            // 
+-            // importMapToolStripMenuItem
+-            // 
+-            this.importMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.importMapToolStripMenuItem.Name = "importMapToolStripMenuItem";
+-            this.importMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.importMapToolStripMenuItem.Text = "Import Map";
+-            this.importMapToolStripMenuItem.Visible = false;
+-            this.importMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
+-            // 
+-            // exportMapToolStripMenuItem
+-            // 
+-            this.exportMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.exportMapToolStripMenuItem.Name = "exportMapToolStripMenuItem";
+-            this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.exportMapToolStripMenuItem.Text = "Export Map";
+-            this.exportMapToolStripMenuItem.Visible = false;
+-            this.exportMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
+-            // 
+-            // optionsToolStripMenuItem
+-            // 
+-            this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.optionsToolStripMenuItem.Text = "Options";
+-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+-            // 
+-            // exitToolStripMenuItem
+-            // 
+-            this.exitToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.exitToolStripMenuItem.Text = "Exit";
+-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+-            // 
+-            // editToolStripMenuItem
+-            // 
+-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
++			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
++			this.fileToolStripMenuItem.Text = "File";
++			// 
++			// saveMapToolStripMenuItem
++			// 
++			this.saveMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.saveMapToolStripMenuItem.Name = "saveMapToolStripMenuItem";
++			this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.saveMapToolStripMenuItem.Text = "Save Map";
++			this.saveMapToolStripMenuItem.Click += new System.EventHandler(this.saveMapToolStripMenuItem_Click);
++			// 
++			// newMapToolStripMenuItem
++			// 
++			this.newMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
++			this.newMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.newMapToolStripMenuItem.Text = "New Map";
++			this.newMapToolStripMenuItem.ToolTipText = "Create a new, unconnected map.";
++			this.newMapToolStripMenuItem.Click += new System.EventHandler(this.NewMapToolStripMenuItem_Click);
++			// 
++			// importMapToolStripMenuItem
++			// 
++			this.importMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.importMapToolStripMenuItem.Name = "importMapToolStripMenuItem";
++			this.importMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.importMapToolStripMenuItem.Text = "Import Map";
++			this.importMapToolStripMenuItem.Visible = false;
++			this.importMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
++			// 
++			// exportMapToolStripMenuItem
++			// 
++			this.exportMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.exportMapToolStripMenuItem.Name = "exportMapToolStripMenuItem";
++			this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.exportMapToolStripMenuItem.Text = "Export Map";
++			this.exportMapToolStripMenuItem.Visible = false;
++			this.exportMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
++			// 
++			// optionsToolStripMenuItem
++			// 
++			this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
++			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.optionsToolStripMenuItem.Text = "Options";
++			this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
++			// 
++			// exitToolStripMenuItem
++			// 
++			this.exitToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
++			this.exitToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
++			this.exitToolStripMenuItem.Text = "Exit";
++			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
++			// 
++			// editToolStripMenuItem
++			// 
++			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.undoToolStripMenuItem,
+             this.redoToolStripMenuItem,
+             this.cutToolStripMenuItem,
+@@ -617,173 +619,173 @@ private void InitializeComponent()
+             this.fillToolStripMenuItem,
+             this.eraseLayerToolStripMenuItem,
+             this.selectToolStripMenuItem});
+-            this.editToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+-            this.editToolStripMenuItem.Text = "Edit";
+-            // 
+-            // undoToolStripMenuItem
+-            // 
+-            this.undoToolStripMenuItem.Enabled = false;
+-            this.undoToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.undoToolStripMenuItem.Text = "Undo";
+-            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
+-            // 
+-            // redoToolStripMenuItem
+-            // 
+-            this.redoToolStripMenuItem.Enabled = false;
+-            this.redoToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.redoToolStripMenuItem.Text = "Redo";
+-            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
+-            // 
+-            // cutToolStripMenuItem
+-            // 
+-            this.cutToolStripMenuItem.Enabled = false;
+-            this.cutToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.cutToolStripMenuItem.Text = "Cut";
+-            this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
+-            // 
+-            // copyToolStripMenuItem
+-            // 
+-            this.copyToolStripMenuItem.Enabled = false;
+-            this.copyToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.copyToolStripMenuItem.Text = "Copy";
+-            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+-            // 
+-            // pasteToolStripMenuItem
+-            // 
+-            this.pasteToolStripMenuItem.Enabled = false;
+-            this.pasteToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.pasteToolStripMenuItem.Text = "Paste";
+-            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+-            // 
+-            // fillToolStripMenuItem
+-            // 
+-            this.fillToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.fillToolStripMenuItem.Name = "fillToolStripMenuItem";
+-            this.fillToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.fillToolStripMenuItem.Text = "Fill";
+-            this.fillToolStripMenuItem.Click += new System.EventHandler(this.fillToolStripMenuItem_Click);
+-            // 
+-            // eraseLayerToolStripMenuItem
+-            // 
+-            this.eraseLayerToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.eraseLayerToolStripMenuItem.Name = "eraseLayerToolStripMenuItem";
+-            this.eraseLayerToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.eraseLayerToolStripMenuItem.Text = "Erase Layer";
+-            this.eraseLayerToolStripMenuItem.Click += new System.EventHandler(this.eraseLayerToolStripMenuItem_Click);
+-            // 
+-            // selectToolStripMenuItem
+-            // 
+-            this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.editToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
++			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
++			this.editToolStripMenuItem.Text = "Edit";
++			// 
++			// undoToolStripMenuItem
++			// 
++			this.undoToolStripMenuItem.Enabled = false;
++			this.undoToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
++			this.undoToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.undoToolStripMenuItem.Text = "Undo";
++			this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
++			// 
++			// redoToolStripMenuItem
++			// 
++			this.redoToolStripMenuItem.Enabled = false;
++			this.redoToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
++			this.redoToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.redoToolStripMenuItem.Text = "Redo";
++			this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
++			// 
++			// cutToolStripMenuItem
++			// 
++			this.cutToolStripMenuItem.Enabled = false;
++			this.cutToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
++			this.cutToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.cutToolStripMenuItem.Text = "Cut";
++			this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
++			// 
++			// copyToolStripMenuItem
++			// 
++			this.copyToolStripMenuItem.Enabled = false;
++			this.copyToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
++			this.copyToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.copyToolStripMenuItem.Text = "Copy";
++			this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
++			// 
++			// pasteToolStripMenuItem
++			// 
++			this.pasteToolStripMenuItem.Enabled = false;
++			this.pasteToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
++			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.pasteToolStripMenuItem.Text = "Paste";
++			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
++			// 
++			// fillToolStripMenuItem
++			// 
++			this.fillToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.fillToolStripMenuItem.Name = "fillToolStripMenuItem";
++			this.fillToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.fillToolStripMenuItem.Text = "Fill";
++			this.fillToolStripMenuItem.Click += new System.EventHandler(this.fillToolStripMenuItem_Click);
++			// 
++			// eraseLayerToolStripMenuItem
++			// 
++			this.eraseLayerToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.eraseLayerToolStripMenuItem.Name = "eraseLayerToolStripMenuItem";
++			this.eraseLayerToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.eraseLayerToolStripMenuItem.Text = "Erase Layer";
++			this.eraseLayerToolStripMenuItem.Click += new System.EventHandler(this.eraseLayerToolStripMenuItem_Click);
++			// 
++			// selectToolStripMenuItem
++			// 
++			this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.allLayersToolStripMenuItem,
+             this.currentLayerOnlyToolStripMenuItem});
+-            this.selectToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
+-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+-            this.selectToolStripMenuItem.Text = "Select....";
+-            // 
+-            // allLayersToolStripMenuItem
+-            // 
+-            this.allLayersToolStripMenuItem.Checked = true;
+-            this.allLayersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.allLayersToolStripMenuItem.Name = "allLayersToolStripMenuItem";
+-            this.allLayersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+-            this.allLayersToolStripMenuItem.Text = "All Layers";
+-            this.allLayersToolStripMenuItem.Click += new System.EventHandler(this.allLayersToolStripMenuItem_Click);
+-            // 
+-            // currentLayerOnlyToolStripMenuItem
+-            // 
+-            this.currentLayerOnlyToolStripMenuItem.Name = "currentLayerOnlyToolStripMenuItem";
+-            this.currentLayerOnlyToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+-            this.currentLayerOnlyToolStripMenuItem.Text = "Current Layer Only";
+-            this.currentLayerOnlyToolStripMenuItem.Click += new System.EventHandler(this.currentLayerOnlyToolStripMenuItem_Click);
+-            // 
+-            // viewToolStripMenuItem
+-            // 
+-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.selectToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
++			this.selectToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
++			this.selectToolStripMenuItem.Text = "Select....";
++			// 
++			// allLayersToolStripMenuItem
++			// 
++			this.allLayersToolStripMenuItem.Checked = true;
++			this.allLayersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.allLayersToolStripMenuItem.Name = "allLayersToolStripMenuItem";
++			this.allLayersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
++			this.allLayersToolStripMenuItem.Text = "All Layers";
++			this.allLayersToolStripMenuItem.Click += new System.EventHandler(this.allLayersToolStripMenuItem_Click);
++			// 
++			// currentLayerOnlyToolStripMenuItem
++			// 
++			this.currentLayerOnlyToolStripMenuItem.Name = "currentLayerOnlyToolStripMenuItem";
++			this.currentLayerOnlyToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
++			this.currentLayerOnlyToolStripMenuItem.Text = "Current Layer Only";
++			this.currentLayerOnlyToolStripMenuItem.Click += new System.EventHandler(this.currentLayerOnlyToolStripMenuItem_Click);
++			// 
++			// viewToolStripMenuItem
++			// 
++			this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.hideDarknessToolStripMenuItem,
+             this.hideFogToolStripMenuItem,
+             this.hideOverlayToolStripMenuItem,
+             this.hideTilePreviewToolStripMenuItem,
+             this.hideResourcesToolStripMenuItem,
+             this.mapGridToolStripMenuItem});
+-            this.viewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+-            this.viewToolStripMenuItem.Text = "View";
+-            // 
+-            // hideDarknessToolStripMenuItem
+-            // 
+-            this.hideDarknessToolStripMenuItem.Checked = true;
+-            this.hideDarknessToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.hideDarknessToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.hideDarknessToolStripMenuItem.Name = "hideDarknessToolStripMenuItem";
+-            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.hideDarknessToolStripMenuItem.Text = "Darkness";
+-            this.hideDarknessToolStripMenuItem.Click += new System.EventHandler(this.hideDarknessToolStripMenuItem_Click);
+-            // 
+-            // hideFogToolStripMenuItem
+-            // 
+-            this.hideFogToolStripMenuItem.Checked = true;
+-            this.hideFogToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.hideFogToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
+-            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.hideFogToolStripMenuItem.Text = "Fog";
+-            this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
+-            // 
+-            // hideOverlayToolStripMenuItem
+-            // 
+-            this.hideOverlayToolStripMenuItem.Checked = true;
+-            this.hideOverlayToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.hideOverlayToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
+-            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.hideOverlayToolStripMenuItem.Text = "Overlay";
+-            this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
+-            // 
+-            // hideTilePreviewToolStripMenuItem
+-            // 
+-            this.hideTilePreviewToolStripMenuItem.Checked = true;
+-            this.hideTilePreviewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.hideTilePreviewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
+-            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.hideTilePreviewToolStripMenuItem.Text = "Tile Preview";
+-            this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
+-            // 
+-            // hideResourcesToolStripMenuItem
+-            // 
+-            this.hideResourcesToolStripMenuItem.Checked = true;
+-            this.hideResourcesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+-            this.hideResourcesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.hideResourcesToolStripMenuItem.Name = "hideResourcesToolStripMenuItem";
+-            this.hideResourcesToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.hideResourcesToolStripMenuItem.Text = "Resources";
+-            this.hideResourcesToolStripMenuItem.Click += new System.EventHandler(this.hideResourcesToolStripMenuItem_Click);
+-            // 
+-            // mapGridToolStripMenuItem
+-            // 
+-            this.mapGridToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.mapGridToolStripMenuItem.Name = "mapGridToolStripMenuItem";
+-            this.mapGridToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+-            this.mapGridToolStripMenuItem.Text = "Map Grid";
+-            this.mapGridToolStripMenuItem.Click += new System.EventHandler(this.mapGridToolStripMenuItem_Click);
+-            // 
+-            // contentEditorsToolStripMenuItem
+-            // 
+-            this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.viewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
++			this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
++			this.viewToolStripMenuItem.Text = "View";
++			// 
++			// hideDarknessToolStripMenuItem
++			// 
++			this.hideDarknessToolStripMenuItem.Checked = true;
++			this.hideDarknessToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.hideDarknessToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.hideDarknessToolStripMenuItem.Name = "hideDarknessToolStripMenuItem";
++			this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.hideDarknessToolStripMenuItem.Text = "Darkness";
++			this.hideDarknessToolStripMenuItem.Click += new System.EventHandler(this.hideDarknessToolStripMenuItem_Click);
++			// 
++			// hideFogToolStripMenuItem
++			// 
++			this.hideFogToolStripMenuItem.Checked = true;
++			this.hideFogToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.hideFogToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
++			this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.hideFogToolStripMenuItem.Text = "Fog";
++			this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
++			// 
++			// hideOverlayToolStripMenuItem
++			// 
++			this.hideOverlayToolStripMenuItem.Checked = true;
++			this.hideOverlayToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.hideOverlayToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
++			this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.hideOverlayToolStripMenuItem.Text = "Overlay";
++			this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
++			// 
++			// hideTilePreviewToolStripMenuItem
++			// 
++			this.hideTilePreviewToolStripMenuItem.Checked = true;
++			this.hideTilePreviewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.hideTilePreviewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
++			this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.hideTilePreviewToolStripMenuItem.Text = "Tile Preview";
++			this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
++			// 
++			// hideResourcesToolStripMenuItem
++			// 
++			this.hideResourcesToolStripMenuItem.Checked = true;
++			this.hideResourcesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
++			this.hideResourcesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.hideResourcesToolStripMenuItem.Name = "hideResourcesToolStripMenuItem";
++			this.hideResourcesToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.hideResourcesToolStripMenuItem.Text = "Resources";
++			this.hideResourcesToolStripMenuItem.Click += new System.EventHandler(this.hideResourcesToolStripMenuItem_Click);
++			// 
++			// mapGridToolStripMenuItem
++			// 
++			this.mapGridToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.mapGridToolStripMenuItem.Name = "mapGridToolStripMenuItem";
++			this.mapGridToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
++			this.mapGridToolStripMenuItem.Text = "Map Grid";
++			this.mapGridToolStripMenuItem.Click += new System.EventHandler(this.mapGridToolStripMenuItem_Click);
++			// 
++			// contentEditorsToolStripMenuItem
++			// 
++			this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.animationEditorToolStripMenuItem,
+             this.classEditorToolStripMenuItem,
+             this.commonEventEditorToolStripMenuItem,
+@@ -798,220 +800,231 @@ private void InitializeComponent()
+             this.spellEditorToolStripMenuItem,
+             this.variableEditorToolStripMenuItem,
+             this.timeEditorToolStripMenuItem});
+-            this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
+-            this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
+-            this.contentEditorsToolStripMenuItem.Text = "Content Editors";
+-            // 
+-            // animationEditorToolStripMenuItem
+-            // 
+-            this.animationEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
+-            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.animationEditorToolStripMenuItem.Text = "Animation Editor";
+-            this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
+-            // 
+-            // classEditorToolStripMenuItem
+-            // 
+-            this.classEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
+-            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.classEditorToolStripMenuItem.Text = "Class Editor";
+-            this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
+-            // 
+-            // commonEventEditorToolStripMenuItem
+-            // 
+-            this.commonEventEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.commonEventEditorToolStripMenuItem.Name = "commonEventEditorToolStripMenuItem";
+-            this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
+-            this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
+-            // 
+-            // craftsEditorToolStripMenuItem
+-            // 
+-            this.craftsEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.craftsEditorToolStripMenuItem.Name = "craftsEditorToolStripMenuItem";
+-            this.craftsEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.craftsEditorToolStripMenuItem.Text = "Crafts Editor";
+-            this.craftsEditorToolStripMenuItem.Click += new System.EventHandler(this.craftsEditorToolStripMenuItem_Click);
+-            // 
+-            // craftingTableEditorToolStripMenuItem
+-            // 
+-            this.craftingTableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.craftingTableEditorToolStripMenuItem.Name = "craftingTableEditorToolStripMenuItem";
+-            this.craftingTableEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.craftingTableEditorToolStripMenuItem.Text = "Crafting Table Editor";
+-            this.craftingTableEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingTablesEditorToolStripMenuItem_Click);
+-            // 
+-            // itemEditorToolStripMenuItem
+-            // 
+-            this.itemEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
+-            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.itemEditorToolStripMenuItem.Text = "Item Editor";
+-            this.itemEditorToolStripMenuItem.Click += new System.EventHandler(this.itemEditorToolStripMenuItem_Click);
+-            // 
+-            // npcEditorToolStripMenuItem
+-            // 
+-            this.npcEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.npcEditorToolStripMenuItem.Name = "npcEditorToolStripMenuItem";
+-            this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.npcEditorToolStripMenuItem.Text = "Npc Editor";
+-            this.npcEditorToolStripMenuItem.Click += new System.EventHandler(this.npcEditorToolStripMenuItem_Click);
+-            // 
+-            // projectileEditorToolStripMenuItem
+-            // 
+-            this.projectileEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
+-            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
+-            this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
+-            // 
+-            // questEditorToolStripMenuItem
+-            // 
+-            this.questEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
+-            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.questEditorToolStripMenuItem.Text = "Quest Editor";
+-            this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
+-            // 
+-            // resourceEditorToolStripMenuItem
+-            // 
+-            this.resourceEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.resourceEditorToolStripMenuItem.Name = "resourceEditorToolStripMenuItem";
+-            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
+-            this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
+-            // 
+-            // shopEditorToolStripMenuItem
+-            // 
+-            this.shopEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
+-            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.shopEditorToolStripMenuItem.Text = "Shop Editor";
+-            this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
+-            // 
+-            // spellEditorToolStripMenuItem
+-            // 
+-            this.spellEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.spellEditorToolStripMenuItem.Name = "spellEditorToolStripMenuItem";
+-            this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.spellEditorToolStripMenuItem.Text = "Spell Editor";
+-            this.spellEditorToolStripMenuItem.Click += new System.EventHandler(this.spellEditorToolStripMenuItem_Click);
+-            // 
+-            // variableEditorToolStripMenuItem
+-            // 
+-            this.variableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.variableEditorToolStripMenuItem.Name = "variableEditorToolStripMenuItem";
+-            this.variableEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.variableEditorToolStripMenuItem.Text = "Variable Editor";
+-            this.variableEditorToolStripMenuItem.Click += new System.EventHandler(this.variableEditorToolStripMenuItem_Click);
+-            // 
+-            // timeEditorToolStripMenuItem
+-            // 
+-            this.timeEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.timeEditorToolStripMenuItem.Name = "timeEditorToolStripMenuItem";
+-            this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+-            this.timeEditorToolStripMenuItem.Text = "Time Editor";
+-            this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
+-            // 
+-            // helpToolStripMenuItem
+-            // 
+-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
++			this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
++			this.contentEditorsToolStripMenuItem.Text = "Content Editors";
++			// 
++			// animationEditorToolStripMenuItem
++			// 
++			this.animationEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
++			this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.animationEditorToolStripMenuItem.Text = "Animation Editor";
++			this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
++			// 
++			// classEditorToolStripMenuItem
++			// 
++			this.classEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
++			this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.classEditorToolStripMenuItem.Text = "Class Editor";
++			this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
++			// 
++			// commonEventEditorToolStripMenuItem
++			// 
++			this.commonEventEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.commonEventEditorToolStripMenuItem.Name = "commonEventEditorToolStripMenuItem";
++			this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
++			this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
++			// 
++			// craftsEditorToolStripMenuItem
++			// 
++			this.craftsEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.craftsEditorToolStripMenuItem.Name = "craftsEditorToolStripMenuItem";
++			this.craftsEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.craftsEditorToolStripMenuItem.Text = "Crafts Editor";
++			this.craftsEditorToolStripMenuItem.Click += new System.EventHandler(this.craftsEditorToolStripMenuItem_Click);
++			// 
++			// craftingTableEditorToolStripMenuItem
++			// 
++			this.craftingTableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.craftingTableEditorToolStripMenuItem.Name = "craftingTableEditorToolStripMenuItem";
++			this.craftingTableEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.craftingTableEditorToolStripMenuItem.Text = "Crafting Table Editor";
++			this.craftingTableEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingTablesEditorToolStripMenuItem_Click);
++			// 
++			// itemEditorToolStripMenuItem
++			// 
++			this.itemEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
++			this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.itemEditorToolStripMenuItem.Text = "Item Editor";
++			this.itemEditorToolStripMenuItem.Click += new System.EventHandler(this.itemEditorToolStripMenuItem_Click);
++			// 
++			// npcEditorToolStripMenuItem
++			// 
++			this.npcEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.npcEditorToolStripMenuItem.Name = "npcEditorToolStripMenuItem";
++			this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.npcEditorToolStripMenuItem.Text = "Npc Editor";
++			this.npcEditorToolStripMenuItem.Click += new System.EventHandler(this.npcEditorToolStripMenuItem_Click);
++			// 
++			// projectileEditorToolStripMenuItem
++			// 
++			this.projectileEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
++			this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
++			this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
++			// 
++			// questEditorToolStripMenuItem
++			// 
++			this.questEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
++			this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.questEditorToolStripMenuItem.Text = "Quest Editor";
++			this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
++			// 
++			// resourceEditorToolStripMenuItem
++			// 
++			this.resourceEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.resourceEditorToolStripMenuItem.Name = "resourceEditorToolStripMenuItem";
++			this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
++			this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
++			// 
++			// shopEditorToolStripMenuItem
++			// 
++			this.shopEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
++			this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.shopEditorToolStripMenuItem.Text = "Shop Editor";
++			this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
++			// 
++			// spellEditorToolStripMenuItem
++			// 
++			this.spellEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.spellEditorToolStripMenuItem.Name = "spellEditorToolStripMenuItem";
++			this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.spellEditorToolStripMenuItem.Text = "Spell Editor";
++			this.spellEditorToolStripMenuItem.Click += new System.EventHandler(this.spellEditorToolStripMenuItem_Click);
++			// 
++			// variableEditorToolStripMenuItem
++			// 
++			this.variableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.variableEditorToolStripMenuItem.Name = "variableEditorToolStripMenuItem";
++			this.variableEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.variableEditorToolStripMenuItem.Text = "Variable Editor";
++			this.variableEditorToolStripMenuItem.Click += new System.EventHandler(this.variableEditorToolStripMenuItem_Click);
++			// 
++			// timeEditorToolStripMenuItem
++			// 
++			this.timeEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.timeEditorToolStripMenuItem.Name = "timeEditorToolStripMenuItem";
++			this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
++			this.timeEditorToolStripMenuItem.Text = "Time Editor";
++			this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
++			// 
++			// helpToolStripMenuItem
++			// 
++			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.postQuestionToolStripMenuItem,
+             this.reportBugToolStripMenuItem,
+             this.aboutToolStripMenuItem});
+-            this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+-            this.helpToolStripMenuItem.Text = "Help";
+-            // 
+-            // postQuestionToolStripMenuItem
+-            // 
+-            this.postQuestionToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.postQuestionToolStripMenuItem.Name = "postQuestionToolStripMenuItem";
+-            this.postQuestionToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+-            this.postQuestionToolStripMenuItem.Text = "Post Question";
+-            this.postQuestionToolStripMenuItem.Click += new System.EventHandler(this.postQuestionToolStripMenuItem_Click);
+-            // 
+-            // reportBugToolStripMenuItem
+-            // 
+-            this.reportBugToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
+-            this.reportBugToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+-            this.reportBugToolStripMenuItem.Text = "Report Bug";
+-            this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
+-            // 
+-            // aboutToolStripMenuItem
+-            // 
+-            this.aboutToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+-            this.aboutToolStripMenuItem.Text = "About";
+-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+-            // 
+-            // menuStrip
+-            // 
+-            this.menuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.menuStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
++			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
++			this.helpToolStripMenuItem.Text = "Help";
++			// 
++			// postQuestionToolStripMenuItem
++			// 
++			this.postQuestionToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.postQuestionToolStripMenuItem.Name = "postQuestionToolStripMenuItem";
++			this.postQuestionToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
++			this.postQuestionToolStripMenuItem.Text = "Post Question";
++			this.postQuestionToolStripMenuItem.Click += new System.EventHandler(this.postQuestionToolStripMenuItem_Click);
++			// 
++			// reportBugToolStripMenuItem
++			// 
++			this.reportBugToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
++			this.reportBugToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
++			this.reportBugToolStripMenuItem.Text = "Report Bug";
++			this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
++			// 
++			// aboutToolStripMenuItem
++			// 
++			this.aboutToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
++			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
++			this.aboutToolStripMenuItem.Text = "About";
++			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
++			// 
++			// menuStrip
++			// 
++			this.menuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++			this.menuStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.fileToolStripMenuItem,
+             this.editToolStripMenuItem,
+             this.viewToolStripMenuItem,
+             this.contentEditorsToolStripMenuItem,
+             this.toolsToolStripMenuItem,
+             this.helpToolStripMenuItem});
+-            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+-            this.menuStrip.Name = "menuStrip";
+-            this.menuStrip.Padding = new System.Windows.Forms.Padding(3, 2, 0, 2);
+-            this.menuStrip.Size = new System.Drawing.Size(1186, 24);
+-            this.menuStrip.TabIndex = 1;
+-            this.menuStrip.Text = "menuStrip1";
+-            // 
+-            // toolsToolStripMenuItem
+-            // 
+-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++			this.menuStrip.Location = new System.Drawing.Point(0, 0);
++			this.menuStrip.Name = "menuStrip";
++			this.menuStrip.Padding = new System.Windows.Forms.Padding(3, 2, 0, 2);
++			this.menuStrip.Size = new System.Drawing.Size(1186, 24);
++			this.menuStrip.TabIndex = 1;
++			this.menuStrip.Text = "menuStrip1";
++			// 
++			// toolsToolStripMenuItem
++			// 
++			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.packClientTexturesToolStripMenuItem});
+-            this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+-            this.toolsToolStripMenuItem.Text = "Tools";
+-            // 
+-            // packClientTexturesToolStripMenuItem
+-            // 
+-            this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
+-            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+-            this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
+-            this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
+-            // 
+-            // FrmMain
+-            // 
+-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+-            this.ClientSize = new System.Drawing.Size(1186, 675);
+-            this.Controls.Add(this.dockLeft);
+-            this.Controls.Add(this.statusStrip1);
+-            this.Controls.Add(this.toolStrip1);
+-            this.Controls.Add(this.menuStrip);
+-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+-            this.IsMdiContainer = true;
+-            this.KeyPreview = true;
+-            this.MainMenuStrip = this.menuStrip;
+-            this.Name = "FrmMain";
+-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+-            this.Text = "Intersect Editor";
+-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+-            this.Load += new System.EventHandler(this.frmMain_Load);
+-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
+-            this.statusStrip1.ResumeLayout(false);
+-            this.statusStrip1.PerformLayout();
+-            this.toolStrip1.ResumeLayout(false);
+-            this.toolStrip1.PerformLayout();
+-            this.menuStrip.ResumeLayout(false);
+-            this.menuStrip.PerformLayout();
+-            this.ResumeLayout(false);
+-            this.PerformLayout();
++			this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
++			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
++			this.toolsToolStripMenuItem.Text = "Tools";
++			// 
++			// packClientTexturesToolStripMenuItem
++			// 
++			this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
++			this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
++			this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
++			this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
++			// 
++			// toolStripRndPlace
++			// 
++			this.toolStripRndPlace.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
++			this.toolStripRndPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++			this.toolStripRndPlace.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRndPlace.Image")));
++			this.toolStripRndPlace.ImageTransparentColor = System.Drawing.Color.Magenta;
++			this.toolStripRndPlace.Name = "toolStripRndPlace";
++			this.toolStripRndPlace.Size = new System.Drawing.Size(24, 24);
++			this.toolStripRndPlace.Text = "Random Placer";
++			this.toolStripRndPlace.Click += new System.EventHandler(this.toolStripRndPlace_Click);
++			// 
++			// FrmMain
++			// 
++			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
++			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
++			this.ClientSize = new System.Drawing.Size(1186, 675);
++			this.Controls.Add(this.dockLeft);
++			this.Controls.Add(this.statusStrip1);
++			this.Controls.Add(this.toolStrip1);
++			this.Controls.Add(this.menuStrip);
++			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
++			this.IsMdiContainer = true;
++			this.KeyPreview = true;
++			this.MainMenuStrip = this.menuStrip;
++			this.Name = "FrmMain";
++			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
++			this.Text = "Intersect Editor";
++			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
++			this.Load += new System.EventHandler(this.frmMain_Load);
++			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
++			this.statusStrip1.ResumeLayout(false);
++			this.statusStrip1.PerformLayout();
++			this.toolStrip1.ResumeLayout(false);
++			this.toolStrip1.PerformLayout();
++			this.menuStrip.ResumeLayout(false);
++			this.menuStrip.PerformLayout();
++			this.ResumeLayout(false);
++			this.PerformLayout();
+ 
+ 		}
+ 
+@@ -1103,5 +1116,6 @@ private void InitializeComponent()
+ 		private ToolStripSeparator toolStripSeparator13;
+ 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
+         private ToolStripMenuItem packClientTexturesToolStripMenuItem;
+-    }
++		private ToolStripButton toolStripRndPlace;
++	}
+ }
+\ No newline at end of file
+diff --git a/Intersect.Editor/Forms/frmMain.cs b/Intersect.Editor/Forms/frmMain.cs
+index 2298814f..acb1b349 100644
+--- a/Intersect.Editor/Forms/frmMain.cs
++++ b/Intersect.Editor/Forms/frmMain.cs
+@@ -1736,6 +1736,16 @@ private void packTextures()
+             Globals.PackingProgressForm.NotifyClose();
+         }
+ 
+-    }
++		private void toolStripRndPlace_Click(object sender, EventArgs e)
++		{
++			if (Globals.CurrentTool != (int)EditingTool.Pen)
++			{
++				return;
++			}
++			Globals.CurrentEditor = (int)GameObjectType.Mimus_RandomPlacer;
++			FormRandomPlacer formRandomPlacer = new FormRandomPlacer();
++			formRandomPlacer.Show();
++		}
++	}
+ 
+ }
+diff --git a/Intersect.Editor/Forms/frmMain.resx b/Intersect.Editor/Forms/frmMain.resx
+index d15b1a07..3ca681f5 100644
+--- a/Intersect.Editor/Forms/frmMain.resx
++++ b/Intersect.Editor/Forms/frmMain.resx
+@@ -179,15 +179,15 @@
+   <data name="toolStripBtnRedo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHBSURBVDhPjVJNSwJhEN4ygiIKgi7VqfoBUfYfomsfEAVB
+-        dYiuWmQfdOjQKbwUeMjMpI9ThoeISCkPYnaxsETSykgUtUXU1YPFNPP2aivJ1gPDvrvzzDMzz7uCHADQ
+-        kMvldBi+RCJRwPjA8x3GgiRJbfiEbDYbxHM7L/lBPp/vwmRg5+IBeuesUDNiBNWwEdTzVjA7/JBOp1+i
+-        yRRoTK7fItSZiqe3rkAY3K4YY3o7hGMiOxdFeLkg4GiL1JmS1UNGWD28gVDkHYKRJCzve9gklOvWHJcE
+-        aR1ezgR8PdrvJBXjeHbqQCQK23UIGsfNpeJfAvF4okA7U+I5KgL60UE7ksiMwVlWWIw/Beh7UaSSN2UC
+-        SLzvQ7cpwVc4R2PreY6J0A3Io0wAX5ZMMhMNZz4iuPHqWjhFGdQtk8mE5KOuHHjoqh5xnU5OUwb9SNgx
+-        rN11lUQmNy8hk5XiuIaa05SBxFYc3au3edkqJNK/dgrJVFrCaQY4TRmiKDaRiUfOANSNmpgI/c7+p7dP
+-        nHKK05SBntSiyJ7j9hWaJyxMZOPEy4zFnIrTlIHEKhRZ94ZioLO4maH/vhU5UGQWO8cq34YgfAFRX9iR
+-        iEttZQAAAABJRU5ErkJggg==
++        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHASURBVDhPjVJNLwNhEF4qEiIkEhec8AOE+g/i6iMREgkO
++        4toSn3FwcJJeSBxU0fg4qfQgItrQQ1N1WVKk0Q0lot3URtrd9lAyZl5vaxvN8iSTfXfnmWdmnncFPQCg
++        Kp1OT2OEZFnOYnzg+RpjStO0BnyCqqoRPDfykh9kMpkWTIY3Tm+hfcIFZX12MPXawTzpgi3vHSSTycfX
++        xDtYHP7fItSZikdXz0HoXi8aAzYPRGMKO+dEeLkg4Ggz1JmSpT12WNi7BOnlDSIvCZjbCbJJKNdqOcgL
++        0jq8nAmE2qzfSSrG8TzUgUgU7gsJqge38sW/BOJxOUs7U+LhVQH0o4l2JJGxNV9BYS7+FKDvOZFi3hQI
++        IPGmA92mBF/hBI2t5DkmQjegjwIBfJl16ExcOw4RIYBXV8cpxqBuqVRK0o86vxukq7rHdZo5zRj0I2HH
++        qHXTnxcZXjmDlKrJuIaZ04yBxHocXbS5RbYKiXQuHkHiPanhNF2cZgxFUWrIxH1fGCr6HUyEfudb6fkT
++        pxzhNGOgJ+Uosu29eoLaIScTWT4UmbGYM3GaMZBYgiJLohSDaWeAGfrvW9EDRcaxc6z4bQjCFyc+2ILy
++        tHXhAAAAAElFTkSuQmCC
+ </value>
+   </data>
+   <data name="toolStripBtnPen.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+@@ -313,6 +313,26 @@
+   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+     <value>125, 3</value>
+   </metadata>
++  <data name="toolStripRndPlace.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
++        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMtSURBVEhL5ZRLLFxhFMeHaWowuqhILCQSKjokRNVjIjOT
++        btoyEolIa8QjaYc7ZtzKKB0zlBGLDklrZeORiChJbUQIwkKwE2w8YiMRsfDcCOIR/zrHHUy10Wp3/Sdf
++        7rn3ft/vnO//PWS3SfdMh4jICJyH1P5eGfoMNH1pws7ODvb29tDe3o6EuIS7J8h5nYP+/n78ShMTE0h/
++        mQ5vL+/bEwhGYaRULMXAwACOjo5QVlaGtrY2nJycoKqqCpWVlRx3dHRAFEWOp6amUGIuQVhoGIIeBYVL
++        qCtR5pCQEIyNjUk1AUqlEvn5+Tg7O0N8fDxiYmI4NhqN8PPzk3oBIyMjUKlUCPAPgC5Z5zmDnNwcDA0N
++        ISUlBcnJyWhtbcXu7q40FDg8POTmFnne0tICtVqN1NRUDA8Pw2Q2IVoV7QkuMhVJQ4DJyUlkZmZygvr6
++        emxsbEh/wDF9I2B2djZGR0exsLDAtojvRKgiVZ5gsVTE5uYmA2dnZxkyNzcHs9mM2NhYOBwObhSTFTMz
++        M9jf38fp6SmB+Fv1x2pERkR6gq3vrVhZWYGPjw9PkQaQjo+Psba2Bo1GA51OxzGpq6uLgdPT07yYVIy1
++        zHqzYqFY4AHb29uXUKrq/Bd739zcjMbGRhgMBmi1WiwuLsJqtfIs3RJMwk2P3WC3aPXJT0EQsLy8jNra
++        WtTU1MDpdMJisUi9LnRwcMDPYnMxoh5HeYItogVbW1vs8fj4OIOvy2azwW63S29XIp+Dg4M5od1hvwm2
++        V9l5WnK5nD0mMFmyurrKAFq462A6lXFxcZifn4der0dPTw8qPlQg8GGgJ1ir0fJCuEVQej//hb6+PjQ0
++        NLAVLpeLq6PTGR4ejvX1de5Pi5r4NBFymdwT7PzsRFZmFgrfFGJwcJA7046g7ba0tIS6ujpudBjoFLpF
++        yXMNuVDcV3ARsns/uZwKzAXB5c5y5OXmwfDKgO6v3dJwsA1UMYlOIFmhf6G/gFHz+s3bzvHJAeNbI9Ke
++        p6Gzs5MvJNpevd96kfQk6RKoeMCV/rlsLhvUGjV8/Xyh8JWme96UPsq7AX+Ut4zvXYT6h/4b4P8mmew7
++        SugCJAIyNrkAAAAASUVORK5CYII=
++</value>
++  </data>
+   <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+     <value>17, 3</value>
+   </metadata>
+diff --git a/Intersect.Editor/Intersect.Editor.csproj b/Intersect.Editor/Intersect.Editor.csproj
+index 0a8e9137..f0cbe926 100644
+--- a/Intersect.Editor/Intersect.Editor.csproj
++++ b/Intersect.Editor/Intersect.Editor.csproj
+@@ -86,6 +86,12 @@
+     <Compile Include="Core\Preferences.cs" />
+     <Compile Include="Core\Program.cs" />
+     <Compile Include="Entities\Animation.cs" />
++    <Compile Include="Forms\Editors\FormRandomPlacer.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="Forms\Editors\FormRandomPlacer.Designer.cs">
++      <DependentUpon>FormRandomPlacer.cs</DependentUpon>
++    </Compile>
+     <Compile Include="Maps\MapGridItem.cs" />
+     <Compile Include="Maps\MapSaveState.cs" />
+     <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
+@@ -759,6 +765,9 @@
+     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.resx">
+       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
+     </EmbeddedResource>
++    <EmbeddedResource Include="Forms\Editors\FormRandomPlacer.resx">
++      <DependentUpon>FormRandomPlacer.cs</DependentUpon>
++    </EmbeddedResource>
+     <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
+       <DependentUpon>frmAnimation.cs</DependentUpon>
+     </EmbeddedResource>
+diff --git a/Intersect.Editor/Localization/Strings.cs b/Intersect.Editor/Localization/Strings.cs
+index 7432fe66..7bd51d35 100644
+--- a/Intersect.Editor/Localization/Strings.cs
++++ b/Intersect.Editor/Localization/Strings.cs
+@@ -4349,6 +4349,16 @@ public struct WarpSelection
+ 
+         }
+ 
+-    }
++		public struct MimusRandomPlacer
++		{
++			public static LocalizedString attributeNone = @"None";
++			public static LocalizedString attributeBlocked = @"Blocked";
++			public static LocalizedString min = @"Min";
++			public static LocalizedString max = @"Max";
++			public static LocalizedString generate = @"Generate";
++			public static LocalizedString cancel = @"Cancel";
++		}
++
++	}
+ 
+ }
+diff --git a/Intersect.Server/Database/DbInterface.cs b/Intersect.Server/Database/DbInterface.cs
+index e7ee21b5..da2b1cc3 100644
+--- a/Intersect.Server/Database/DbInterface.cs
++++ b/Intersect.Server/Database/DbInterface.cs
+@@ -674,9 +674,11 @@ private static void ClearGameObjects(GameObjectType type)
+                     TilesetBase.Lookup.Clear();
+ 
+                     break;
+-                case GameObjectType.Time:
+-                    break;
+-                default:
++				case GameObjectType.Time:
++					break;
++				case GameObjectType.Mimus_RandomPlacer:
++					break;
++				default:
+                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
+             }
+         }
+@@ -803,7 +805,9 @@ private static void LoadGameObjects(GameObjectType gameObjectType)
+                         break;
+                     case GameObjectType.Time:
+                         break;
+-                    default:
++					case GameObjectType.Mimus_RandomPlacer:
++						break;
++					default:
+                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+                 }
+             }
+diff --git a/Intersect.Server/Networking/PacketSender.cs b/Intersect.Server/Networking/PacketSender.cs
+index 9c1f7b58..10a6cd45 100644
+--- a/Intersect.Server/Networking/PacketSender.cs
++++ b/Intersect.Server/Networking/PacketSender.cs
+@@ -1425,7 +1425,9 @@ public static void SendGameObjects(Client client, GameObjectType type, List<Game
+                     break;
+                 case GameObjectType.Time:
+                     break;
+-                default:
++				case GameObjectType.Mimus_RandomPlacer:
++					break;
++				default:
+                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
+             }
+         }
+-- 
+2.24.0.windows.2
+
+
+From df426ca9a86f44bd7fd8eaf2b551f93362f9a170 Mon Sep 17 00:00:00 2001
+From: Mimus <mimus.angel@gmail.com>
+Date: Wed, 1 Apr 2020 20:19:22 +0200
+Subject: [PATCH 2/3] Optimize code
+
+---
+ Intersect (Core)/Enums/GameObjectType.cs           | 4 +---
+ Intersect.Client/Core/Main.cs                      | 2 +-
+ Intersect.Editor/Forms/Editors/FormRandomPlacer.cs | 3 +++
+ Intersect.Editor/Forms/frmMain.cs                  | 3 +--
+ Intersect.Server/Database/DbInterface.cs           | 4 ----
+ Intersect.Server/Networking/PacketSender.cs        | 2 --
+ 6 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/Intersect (Core)/Enums/GameObjectType.cs b/Intersect (Core)/Enums/GameObjectType.cs
+index 952edc96..e5278eff 100644
+--- a/Intersect (Core)/Enums/GameObjectType.cs	
++++ b/Intersect (Core)/Enums/GameObjectType.cs	
+@@ -58,9 +58,7 @@ public enum GameObjectType
+         [GameObjectInfo(typeof(TilesetBase), "tilesets")]
+         Tileset,
+ 
+-        [GameObjectInfo(typeof(TimeBase), "")] Time,
+-
+-		Mimus_RandomPlacer
++        [GameObjectInfo(typeof(TimeBase), "")] Time
+ 
+ 	}
+ 
+diff --git a/Intersect.Client/Core/Main.cs b/Intersect.Client/Core/Main.cs
+index b9c53910..7a1014be 100644
+--- a/Intersect.Client/Core/Main.cs
++++ b/Intersect.Client/Core/Main.cs
+@@ -45,7 +45,7 @@ public static void Start()
+             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
+             {
+                 var type = ((GameObjectType) val);
+-                if (type != GameObjectType.Event && type != GameObjectType.Time && type != GameObjectType.Mimus_RandomPlacer)
++                if (type != GameObjectType.Event && type != GameObjectType.Time)
+                 {
+                     var lookup = type.GetLookup();
+                     var item = lookup.AddNew(type.GetObjectType(), id);
+diff --git a/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs b/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
+index a6e16e0c..44ad9180 100644
+--- a/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
++++ b/Intersect.Editor/Forms/Editors/FormRandomPlacer.cs
+@@ -28,6 +28,9 @@ private void btnCancel_Click(object sender, EventArgs e)
+ 		private void btnGenerate_Click(object sender, EventArgs e)
+ 		{
+ 			Globals.MapEditorWindow.Mimus_TileRandomPlacer((int)nudMin.Value, (int)nudMax.Value, rbBlocked.Checked);
++			Hide();
++			Globals.CurrentEditor = -1;
++			Dispose();
+ 		}
+ 
+ 		private void nudMin_ValueChanged(object sender, EventArgs e)
+diff --git a/Intersect.Editor/Forms/frmMain.cs b/Intersect.Editor/Forms/frmMain.cs
+index acb1b349..198b77fa 100644
+--- a/Intersect.Editor/Forms/frmMain.cs
++++ b/Intersect.Editor/Forms/frmMain.cs
+@@ -1742,9 +1742,8 @@ private void toolStripRndPlace_Click(object sender, EventArgs e)
+ 			{
+ 				return;
+ 			}
+-			Globals.CurrentEditor = (int)GameObjectType.Mimus_RandomPlacer;
+ 			FormRandomPlacer formRandomPlacer = new FormRandomPlacer();
+-			formRandomPlacer.Show();
++			formRandomPlacer.ShowDialog();
+ 		}
+ 	}
+ 
+diff --git a/Intersect.Server/Database/DbInterface.cs b/Intersect.Server/Database/DbInterface.cs
+index da2b1cc3..15609469 100644
+--- a/Intersect.Server/Database/DbInterface.cs
++++ b/Intersect.Server/Database/DbInterface.cs
+@@ -676,8 +676,6 @@ private static void ClearGameObjects(GameObjectType type)
+                     break;
+ 				case GameObjectType.Time:
+ 					break;
+-				case GameObjectType.Mimus_RandomPlacer:
+-					break;
+ 				default:
+                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
+             }
+@@ -805,8 +803,6 @@ private static void LoadGameObjects(GameObjectType gameObjectType)
+                         break;
+                     case GameObjectType.Time:
+                         break;
+-					case GameObjectType.Mimus_RandomPlacer:
+-						break;
+ 					default:
+                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+                 }
+diff --git a/Intersect.Server/Networking/PacketSender.cs b/Intersect.Server/Networking/PacketSender.cs
+index 10a6cd45..5755ce17 100644
+--- a/Intersect.Server/Networking/PacketSender.cs
++++ b/Intersect.Server/Networking/PacketSender.cs
+@@ -1425,8 +1425,6 @@ public static void SendGameObjects(Client client, GameObjectType type, List<Game
+                     break;
+                 case GameObjectType.Time:
+                     break;
+-				case GameObjectType.Mimus_RandomPlacer:
+-					break;
+ 				default:
+                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
+             }
+-- 
+2.24.0.windows.2
+
+
+From e7a953a39696b4bc9e78daee17592f7210564b79 Mon Sep 17 00:00:00 2001
+From: Mimus <mimus.angel@gmail.com>
+Date: Thu, 2 Apr 2020 10:13:38 +0200
+Subject: [PATCH 3/3] Add Redo
+
+---
+ Intersect.Editor/Forms/DockingElements/frmMapEditor.cs | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs b/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
+index f3b2724c..9a971145 100644
+--- a/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
++++ b/Intersect.Editor/Forms/DockingElements/frmMapEditor.cs
+@@ -2389,6 +2389,11 @@ public void Mimus_TileRandomPlacer(int min, int max, bool blocked)
+ 			Random rand = new Random();
+ 			int countPlace = rand.Next() % (max - min + 1) + min;
+ 			var tmpMap = Globals.CurrentMap;
++			if (CurrentMapState == null)
++			{
++				CurrentMapState = tmpMap.SaveInternal();
++			}
++			this.AddUndoState();
+ 
+ 			int tryTest = 0;
+ 
+-- 
+2.24.0.windows.2
+
