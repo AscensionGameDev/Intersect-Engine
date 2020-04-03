@@ -768,6 +768,22 @@ namespace Intersect.Server.Entities
                                                     dir = 2;
 
                                                     break;
+                                                case 4:
+                                                    dir = 5;
+
+                                                    break;
+                                                case 5:
+                                                    dir = 4;
+
+                                                    break;
+                                                case 6:
+                                                    dir = 7;
+
+                                                    break;
+                                                case 7:
+                                                    dir = 6;
+
+                                                    break;
                                             }
                                         }
 
@@ -839,6 +855,22 @@ namespace Intersect.Server.Entities
                                         break;
                                     case 3:
                                         dir = 2;
+
+                                        break;
+                                    case 4:
+                                        dir = 5;
+
+                                        break;
+                                    case 5:
+                                        dir = 4;
+
+                                        break;
+                                    case 6:
+                                        dir = 7;
+
+                                        break;
+                                    case 7:
+                                        dir = 6;
 
                                         break;
                                 }
@@ -915,7 +947,7 @@ namespace Intersect.Server.Entities
                 var i = Randomization.Next(0, 1);
                 if (i == 0)
                 {
-                    i = Randomization.Next(0, 4);
+                    i = Randomization.Next(0, 8);
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned
@@ -931,6 +963,7 @@ namespace Intersect.Server.Entities
                         }
 
                         Move((byte) i, null);
+                        
                     }
                 }
 
@@ -955,6 +988,7 @@ namespace Intersect.Server.Entities
                     MapInstance.Get(MapId).AddEntity(this);
                 }
             }
+            // End of the Npc Movement
         }
 
         public override void NotifySwarm(Entity attacker)
