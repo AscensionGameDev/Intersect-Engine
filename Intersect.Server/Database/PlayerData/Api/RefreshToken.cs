@@ -86,16 +86,12 @@ namespace Intersect.Server.Database.PlayerData.Api
             return true;
         }
 
+        [CanBeNull]
         public static RefreshToken Find(Guid id)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return null;
-                }
-
-                return DbInterface.GetPlayerContext()?.RefreshTokens.Find(id);
+                return DbInterface.GetPlayerContext()?.RefreshTokens?.Find(id);
             }
         }
 
@@ -108,23 +104,16 @@ namespace Intersect.Server.Database.PlayerData.Api
 
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return null;
-                }
-
                 var playerContext = DbInterface.GetPlayerContext();
-                var refreshToken = playerContext?.RefreshTokens?.Where(queryToken => queryToken.TicketId == ticketId)
-                    .FirstOrDefault();
+                var refreshToken =
+                    playerContext?.RefreshTokens.FirstOrDefault(queryToken => queryToken.TicketId == ticketId);
 
                 if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
                 {
                     return refreshToken;
                 }
-                else
-                {
-                    Remove(refreshToken, true);
-                }
+
+                Remove(refreshToken, true);
             }
 
             return null;
@@ -139,13 +128,8 @@ namespace Intersect.Server.Database.PlayerData.Api
 
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return null;
-                }
-
                 var tokenQuery = DbInterface.GetPlayerContext()
-                    ?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
+                    ?.RefreshTokens.Where(queryToken => queryToken.ClientId == clientId);
 
                 return tokenQuery.AsEnumerable()?.ToList();
             }
@@ -160,13 +144,8 @@ namespace Intersect.Server.Database.PlayerData.Api
 
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return null;
-                }
-
                 var tokenQuery = DbInterface.GetPlayerContext()
-                    ?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
+                    ?.RefreshTokens.Where(queryToken => queryToken.UserId == userId);
 
                 return tokenQuery.AsEnumerable()?.ToList();
             }
@@ -181,13 +160,8 @@ namespace Intersect.Server.Database.PlayerData.Api
         {
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return null;
-                }
-
                 var token = DbInterface.GetPlayerContext()
-                    ?.RefreshTokens?.First(queryToken => queryToken.UserId == userId);
+                    ?.RefreshTokens.First(queryToken => queryToken.UserId == userId);
 
                 return token;
             }
@@ -202,23 +176,13 @@ namespace Intersect.Server.Database.PlayerData.Api
         {
             var token = Find(id);
 
-            if (token == null)
-            {
-                return false;
-            }
-
-            return Remove(token, commit);
+            return token != null && Remove(token, commit);
         }
 
         public static bool Remove([NotNull] RefreshToken token, bool commit = false)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return false;
-                }
-
                 DbInterface.GetPlayerContext()?.RefreshTokens.Remove(token);
 
                 return true;
@@ -229,11 +193,6 @@ namespace Intersect.Server.Database.PlayerData.Api
         {
             lock (DbInterface.GetPlayerContextLock())
             {
-                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
-                {
-                    return false;
-                }
-
                 DbInterface.GetPlayerContext()?.RefreshTokens.RemoveRange(tokens);
 
                 return true;

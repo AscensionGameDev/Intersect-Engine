@@ -143,7 +143,13 @@ namespace Intersect.Client.Entities
 
         public override bool Update()
         {
-            HandleInput();
+
+            if (Globals.Me == this)
+            {
+                HandleInput();
+            }
+
+
             if (!IsBusy())
             {
                 if (this == Globals.Me && IsMoving == false)
