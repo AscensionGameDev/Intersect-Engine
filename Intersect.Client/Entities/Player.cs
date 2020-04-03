@@ -161,6 +161,7 @@ namespace Intersect.Client.Entities
 
                 if (Controls.KeyDown(Control.AttackInteract))
                 {
+                    //oddly just TryAttack worked here.
                     if (!Globals.Me.TryAttack())
                     {
                         if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())

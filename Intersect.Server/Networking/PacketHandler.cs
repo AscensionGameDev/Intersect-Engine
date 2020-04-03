@@ -812,6 +812,7 @@ namespace Intersect.Server.Networking
                         .Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId)
                         .DirectionalAnimation;
 
+
                     if (verifyDirectionalAnimation == true)
                     {
                         if (client.Entity.Dir == (int)Directions.Up)
@@ -848,6 +849,8 @@ namespace Intersect.Server.Networking
                             attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
                             attackingTile.GetY(), (sbyte) client.Entity.Dir
                         );
+                        //rhathaway86 adding send attack?
+                        PacketSender.SendEntityAttack(client.Entity, client.Entity.CalculateAttackTime());
                     }
 
                     var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];

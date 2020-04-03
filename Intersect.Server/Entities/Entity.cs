@@ -333,7 +333,13 @@ namespace Intersect.Server.Entities
                         return -2;
                     }
 
+                    //rhathaway86 edit NpcAvoid to include events
+                    //if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
                     if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
+                    {
+                        return -2;
+                    }
+                    if (tileAttribute.Type == MapAttributes.NpcAvoid && this is EventPageInstance)
                     {
                         return -2;
                     }
