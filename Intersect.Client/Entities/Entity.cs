@@ -1162,6 +1162,22 @@ namespace Intersect.Client.Entities
                         d = 2;
 
                         break;
+                    case 4:
+                        d = 1;
+
+                        break;
+                    case 5:
+                        d = 2;
+
+                        break;
+                    case 6:
+                        d = 1;
+
+                        break;
+                    case 7:
+                        d = 2;
+
+                        break;
                 }
 
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);
