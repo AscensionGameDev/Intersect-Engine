@@ -504,8 +504,40 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
+                    case MoveRouteEnum.MoveUpLeft:
+                        if (CanMove((int)Directions.UpLeft) == -1)
+                        {
+                            Move((int)Directions.UpLeft, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveUpRight:
+                        if (CanMove((int)Directions.UpRight) == -1)
+                        {
+                            Move((int)Directions.UpRight, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveDownLeft:
+                        if (CanMove((int)Directions.DownLeft) == -1)
+                        {
+                            Move((int)Directions.DownLeft, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveDownRight:
+                        if (CanMove((int)Directions.DownRight) == -1)
+                        {
+                            Move((int)Directions.DownRight, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
                     case MoveRouteEnum.MoveRandomly:
-                        var dir = (byte)Randomization.Next(0, 4);
+                        var dir = (byte)Randomization.Next(0, 8);
                         if (CanMove(dir) == -1)
                         {
                             Move(dir, forPlayer);
@@ -538,6 +570,22 @@ namespace Intersect.Server.Entities
                                 break;
                             case (int) Directions.Right:
                                 moveDir = (int) Directions.Left;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                moveDir = (int)Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                moveDir = (int)Directions.DownLeft;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                moveDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                moveDir = (int)Directions.UpLeft;
 
                                 break;
                         }
@@ -573,19 +621,35 @@ namespace Intersect.Server.Entities
                         switch (Dir)
                         {
                             case (int) Directions.Up:
-                                lookDir = (int) Directions.Right;
+                                lookDir = (int) Directions.UpRight;
 
                                 break;
                             case (int) Directions.Down:
-                                lookDir = (int) Directions.Left;
+                                lookDir = (int) Directions.DownLeft;
 
                                 break;
                             case (int) Directions.Left:
-                                lookDir = (int) Directions.Down;
+                                lookDir = (int) Directions.UpLeft;
 
                                 break;
                             case (int) Directions.Right:
-                                lookDir = (int) Directions.Up;
+                                lookDir = (int) Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.Up;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.Right;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.Left;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.Down;
 
                                 break;
                         }
@@ -597,20 +661,36 @@ namespace Intersect.Server.Entities
                     case MoveRouteEnum.Turn90CounterClockwise:
                         switch (Dir)
                         {
-                            case (int) Directions.Up:
-                                lookDir = (int) Directions.Left;
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.UpLeft;
 
                                 break;
-                            case (int) Directions.Down:
-                                lookDir = (int) Directions.Right;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.DownRight;
 
                                 break;
-                            case (int) Directions.Left:
-                                lookDir = (int) Directions.Up;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.DownLeft;
 
                                 break;
-                            case (int) Directions.Right:
-                                lookDir = (int) Directions.Down;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.Left;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.Up;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.Down;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.Right;
 
                                 break;
                         }
@@ -638,6 +718,22 @@ namespace Intersect.Server.Entities
                                 lookDir = (int) Directions.Left;
 
                                 break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.DownLeft;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.UpLeft;
+
+                                break;
                         }
 
                         ChangeDir(lookDir);
@@ -645,7 +741,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.TurnRandomly:
-                        ChangeDir((byte)Randomization.Next(0, 4));
+                        ChangeDir((byte)Randomization.Next(0, 8));
                         moved = true;
 
                         break;
@@ -2310,6 +2406,8 @@ namespace Intersect.Server.Entities
             var x2 = target.X + MapInstance.Get(target.MapId).MapGridX * Options.MapWidth;
             var y2 = target.Y + MapInstance.Get(target.MapId).MapGridY * Options.MapHeight;
 
+
+            // When to attack in fact. Basically it's when the NPC is next tile from me. So right now it's always N, S, E, W
             //Left or Right
             if (x1 - x2 < 0 && y1 - y2 < 0)
             {
