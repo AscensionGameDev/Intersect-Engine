@@ -12,6 +12,14 @@
 
         MoveRight,
 
+        MoveUpLeft,
+
+        MoveUpRight,
+
+        MoveDownLeft,
+
+        MoveDownRight,
+
         MoveRandomly,
 
         MoveTowardsPlayer,
