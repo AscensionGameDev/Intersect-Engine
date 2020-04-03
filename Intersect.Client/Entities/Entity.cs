@@ -109,7 +109,7 @@ namespace Intersect.Client.Entities
 
         private byte mDir;
 
-        private byte mDeplDir;
+        // private byte mDeplDir;
 
         protected bool mDisposed;
 
@@ -224,17 +224,17 @@ namespace Intersect.Client.Entities
         public byte Dir
         {
             get => mDir;
-            set => mDir = (byte) ((value + 4) % 4);
+            set => mDir = (byte) ((value + 8) % 8);
         }
 
         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
-        public byte DeplacementDir
-        {
-            get => mDeplDir;
-            set => mDeplDir = (byte)((value + 8) % 8);
-            // I don't know why there was a +4 % 4 for the Dir field, but I just repeated the same thing here.
-            // I guess it's to be sure the value is in the acceptable range.
-        }
+        //public byte DeplacementDir
+        //{
+        //    get => mDeplDir;
+        //    set => mDeplDir = (byte)((value + 8) % 8);
+        //    // I don't know why there was a +4 % 4 for the Dir field, but I just repeated the same thing here.
+        //    // I guess it's to be sure the value is in the acceptable range.
+        //}
 
         public virtual string TransformedSprite
         {
@@ -549,7 +549,7 @@ namespace Intersect.Client.Entities
                 // delta offset Must be more than 0 for movements. 0 = slowest
                 // Direction is related to the sprite animation, I don't know how to set a sprite animation for eache direction
                 // so I use DeplacementDir...
-                switch (DeplacementDir)
+                switch (Dir)
                 {
                     case 0: // Up
                         OffsetY -= deplacementTime;
@@ -942,22 +942,39 @@ namespace Intersect.Client.Entities
                 destRectangle.X -= texture.GetWidth() / 8;
                 switch (Dir)
                 {
-                    case 0:
+                    case 0: // Up
                         d = 3;
 
                         break;
-                    case 1:
+                    case 1: // Down
                         d = 0;
 
                         break;
-                    case 2:
+                    case 2: // Left
                         d = 1;
 
                         break;
-                    case 3:
+                    case 3: // Right
                         d = 2;
 
                         break;
+                    case 4: // UpLeft
+                        d = 1;
+
+                        break;
+                    case 5: // UpRight
+                        d = 2;
+
+                        break;
+                    case 6: // DownLeft
+                        d = 1;
+
+                        break;
+                    case 7: // DownRight
+                        d = 2;
+
+                        break;
+
                     default:
                         Dir = 0;
                         d = 3;
@@ -1012,10 +1029,20 @@ namespace Intersect.Client.Entities
 
                 WorldPos = destRectangle;
 
-                //Order the layers of paperdolls and sprites
-                for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
+                int pDollIndex = Dir; // Actually it's because the index would've been outside of the bounds
+                if (Dir == 4 || Dir == 6)
                 {
-                    var paperdoll = Options.PaperdollOrder[Dir][z];
+                    pDollIndex = 2;
+                }
+                else if (Dir == 5 || Dir == 7)
+                {
+                    pDollIndex = 3;
+                }
+
+                //Order the layers of paperdolls and sprites
+                for (var z = 0; z < Options.PaperdollOrder[pDollIndex].Count; z++)
+                {
+                    var paperdoll = Options.PaperdollOrder[pDollIndex][z];
                     var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
 
                     //Check for player

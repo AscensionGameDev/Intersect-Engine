@@ -772,6 +772,7 @@ namespace Intersect.Server.Entities
 
             Dir = moveDir;
 
+
             var tile = new TileHelper(MapId, X, Y);
 
             // ReSharper disable once InvertIf
@@ -2309,24 +2310,43 @@ namespace Intersect.Server.Entities
             var x2 = target.X + MapInstance.Get(target.MapId).MapGridX * Options.MapWidth;
             var y2 = target.Y + MapInstance.Get(target.MapId).MapGridY * Options.MapHeight;
 
-            if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
-            {
-                //Left or Right
-                if (x1 - x2 < 0)
-                {
-                    return (byte) Directions.Right;
-                }
-
-                return (byte) Directions.Left;
-            }
-
             //Left or Right
-            if (y1 - y2 < 0)
+            if (x1 - x2 < 0 && y1 - y2 < 0)
             {
-                return (byte) Directions.Down;
+                return (byte)Directions.DownRight;
             }
-
-            return (byte) Directions.Up;
+            else if (x1 - x2 < 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.UpRight;
+            }
+            else if (x1 - x2 < 0 && y1 - y2 == 0)
+            {
+                return (byte)Directions.Right;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 < 0)
+            {
+                return (byte)Directions.DownLeft;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.UpLeft;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 == 0)
+            {
+                return (byte)Directions.Left;
+            }
+            else if (x1 - x2 == 0 && y1 - y2 < 0)
+            {
+                return (byte)Directions.Down;
+            }
+            else if (x1 - x2 == 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.Up;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.

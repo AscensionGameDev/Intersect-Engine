@@ -495,6 +495,26 @@ namespace Intersect.Client.Networking
                         en.OffsetX = -Options.TileWidth;
 
                         break;
+                    case 4:
+                        en.OffsetY = Options.TileHeight;
+                        en.OffsetX = Options.TileWidth;
+
+                        break;
+                    case 5:
+                        en.OffsetY = Options.TileHeight;
+                        en.OffsetX = -Options.TileWidth;
+
+                        break;
+                    case 6:
+                        en.OffsetY = -Options.TileHeight;
+                        en.OffsetX = Options.TileWidth;
+
+                        break;
+                    case 7:
+                        en.OffsetY = -Options.TileHeight;
+                        en.OffsetX = -Options.TileWidth;
+
+                        break;
                 }
             }
 
