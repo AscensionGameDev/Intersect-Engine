@@ -844,9 +844,15 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check for traps
-                foreach (var trap in MapInstance.Get(MapId).MapTraps)
+                if (currentMap != null)
                 {
-                    trap.CheckEntityHasDetonatedTrap(this);
+                    lock (currentMap.GetMapLock())
+                    {
+                        foreach (var trap in currentMap.MapTraps)
+                        {
+                            trap.CheckEntityHasDetonatedTrap(this);
+                        }
+                    }
                 }
 
                 // TODO: Why was this scoped to only Event entities?
