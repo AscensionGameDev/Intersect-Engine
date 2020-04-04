@@ -231,7 +231,7 @@ namespace Intersect.Client.Interface.Game.Character
                         Align.Center(PaperdollPanels[z]);
                     }
 
-                    if (paperdoll == "" && PaperdollTextures[z] != "" && Options.PaperdollOrder[1][z] != "Player")
+                    if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.PaperdollOrder[1][z] != "Player")
                     {
                         PaperdollPanels[z].Texture = null;
                         PaperdollPanels[z].Hide();
