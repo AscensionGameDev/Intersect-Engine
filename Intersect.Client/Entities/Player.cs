@@ -1633,7 +1633,6 @@ namespace Intersect.Client.Entities
                     {
                         continue;
                     }
-
                     if (en.Value == Globals.Me)
                     {
                         continue;
@@ -1645,6 +1644,11 @@ namespace Intersect.Client.Entities
                             en.Value.Y == tmpY &&
                             en.Value.Z == Z)
                         {
+                            //rhathaway86 had to add deathtimer to here to allow player to walk on dead npc, this was insanely hard to figure out
+                            if (en.Value.DeathTimer > 0)
+                            {
+                                return -1;
+                            }
                             if (en.Value.GetType() != typeof(Projectile))
                             {
                                 if (en.Value.GetType() == typeof(Resource))
@@ -1673,6 +1677,7 @@ namespace Intersect.Client.Entities
                                         }
                                     }
                                 }
+
                                 else if (en.Value.GetType() == typeof(Player))
                                 {
                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.

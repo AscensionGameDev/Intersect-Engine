@@ -17,7 +17,7 @@ namespace Intersect.Config
         //Can players move through each other on the following map types/moralities
         public bool Normal = false;
 
-        public bool Safe = true;
+        public bool Safe = false;
 
         [JsonIgnore]
         [NotNull]

@@ -697,6 +697,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
+            var deathTimer = packet.deathTimer;
 
             Entity en = null;
             if (type < EntityTypes.Event)
@@ -729,6 +730,7 @@ namespace Intersect.Client.Networking
                 return;
             }
 
+            en.DeathTimer = deathTimer;
             en.ClearAnimations(null);
         }
 

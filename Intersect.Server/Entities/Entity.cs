@@ -162,6 +162,9 @@ namespace Intersect.Server.Entities
         public long AttackTimer { get; set; }
 
         [NotMapped, JsonIgnore]
+        public long DeathTimer { get; set; }
+
+        [NotMapped, JsonIgnore]
         public bool Blocking { get; set; }
 
         [NotMapped, JsonIgnore]
@@ -335,11 +338,7 @@ namespace Intersect.Server.Entities
 
                     //rhathaway86 edit NpcAvoid to include events
                     //if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
-                    {
-                        return -2;
-                    }
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && this is EventPageInstance)
+                    if (tileAttribute.Type == MapAttributes.NpcAvoid && (this is Npc || this is EventPageInstance))
                     {
                         return -2;
                     }
@@ -420,7 +419,12 @@ namespace Intersect.Server.Entities
                             }
                             else
                             {
-                                return (int) EntityTypes.Player;
+                                if (this is Npc && DeathTimer == 0)
+                                {
+                                    return (int) EntityTypes.Player;
+                                }
+
+                                
                             }
                         }
                         else if (en is Npc)

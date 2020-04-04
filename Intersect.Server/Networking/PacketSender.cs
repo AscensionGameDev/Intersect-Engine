@@ -760,7 +760,7 @@ namespace Intersect.Server.Networking
         //EntityDiePacket
         public static void SendEntityDie(Entity en)
         {
-            SendDataToProximity(en.MapId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId));
+            SendDataToProximity(en.MapId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId, en.DeathTimer));
         }
 
         //EntityDirectionPacket

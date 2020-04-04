@@ -8,6 +8,7 @@ using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Items;
 using Intersect.Client.Maps;
@@ -48,6 +49,8 @@ namespace Intersect.Client.Entities
 
         //Combat
         public long AttackTimer = 0;
+
+        public long DeathTimer = 0;
 
         public bool Blocking = false;
 
@@ -833,8 +836,8 @@ namespace Intersect.Client.Entities
                     destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
-
-                destRectangle.X -= Texture.GetWidth() / 8;
+                //rhathaway86 changed dividing from 8 to 16 to match with double (8 frame) anims
+                destRectangle.X -= Texture.GetWidth() / 16;
                 switch (Dir)
                 {
                     case 0:
@@ -865,30 +868,64 @@ namespace Intersect.Client.Entities
                 if (Options.AnimatedSprites.Contains(sprite.ToLower()))
                 {
                     srcRectangle = new FloatRect(
-                        AnimationFrame * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
-                        (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
+                        AnimationFrame * (int) Texture.GetWidth() / 8, d * (int) Texture.GetHeight() / 4,
+                        (int) Texture.GetWidth() / 8, (int) Texture.GetHeight() / 4
                     );
                 }
                 else
                 {
+
                     var attackTime = CalculateAttackTime();
-                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                    //Changing how NPC animates with frames of 5 instead of 4 for death inclusion
+                    if (GetType() != typeof(Resource) && GetType() != typeof(Player) && GetType() != typeof(Event))
                     {
-                        srcRectangle = new FloatRect(
-                            //rhathaway86 change attack frames
-                            3 * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
-                            (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
-                            //4 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
-                            //(int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
-                        );
+                        attackTime = CalculateAttackTime();
+                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                        {
+                            srcRectangle = new FloatRect(
+                                3 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                            );
+                        }
+                        else
+                        {
+                            srcRectangle = new FloatRect(
+                                WalkFrame * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                            );
+                        }
+
                     }
                     else
                     {
+
+                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                        {
+                            srcRectangle = new FloatRect(
+                                3 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                            );
+                        }
+                        else
+                        {
+                            srcRectangle = new FloatRect(
+                                WalkFrame * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                            );
+                        }
+                    }
+
+                    if (DeathTimer > 0)
+                    {
                         srcRectangle = new FloatRect(
-                            WalkFrame * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
-                            (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
+                        //rhathaway86 change frames for death
+                            4 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                            (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                        //4 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                        //(int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
                         );
                     }
+
                 }
 
                 destRectangle.Width = srcRectangle.Width;

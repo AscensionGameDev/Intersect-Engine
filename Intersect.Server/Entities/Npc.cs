@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Transactions;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -108,10 +108,18 @@ namespace Intersect.Server.Entities
 
         public override void Die(int dropitems = 100, Entity killer = null)
         {
-            base.Die(dropitems, killer);
-            MapInstance.Get(MapId).RemoveEntity(this);
-            PacketSender.SendEntityDie(this);
-            PacketSender.SendEntityLeave(this);
+            //base.Die(dropitems, killer);
+            //rhathaway86 make death a short 1 second anim before death
+            if (DeathTimer == 0)
+            {
+                Passable = true;
+                base.Die(dropitems, killer);
+                DeathTimer = Globals.Timing.TimeMs + 2000;
+                PacketSender.SendEntityDie(this);
+            }
+            //MapInstance.Get(MapId).RemoveEntity(this);
+            //PacketSender.SendEntityDie(this);
+            //PacketSender.SendEntityLeave(this);
         }
 
         //Targeting
@@ -587,6 +595,21 @@ namespace Intersect.Server.Entities
                 {
                     return;
                 }
+            }
+
+            //adding deathtimer processing
+            if (DeathTimer > 0)
+            {
+                //Passable = true;
+                if (DeathTimer < Globals.Timing.TimeMs)
+                {
+                    DeathTimer = 0;
+                    MapInstance.Get(MapId).RemoveEntity(this);
+                    //PacketSender.SendEntityDie(this);
+                    PacketSender.SendEntityLeave(this);
+                }
+
+                return;
             }
 
             //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
