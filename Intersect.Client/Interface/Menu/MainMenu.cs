@@ -9,6 +9,8 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Network;
+using Intersect.Network.Events;
 
 using JetBrains.Annotations;
 
@@ -326,7 +328,7 @@ namespace Intersect.Client.Interface.Menu
         {
             mLoginButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
             mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online ||
-                                         Options.Loaded && Options.BlockClientRegistrations == true;
+                                         Options.Loaded && Options.BlockClientRegistrations;
         }
 
         public static void OnNetworkConnecting()
@@ -334,21 +336,9 @@ namespace Intersect.Client.Interface.Menu
             ActiveNetworkStatus = NetworkStatus.Connecting;
         }
 
-        public static void OnNetworkConnected()
+        public static void SetNetworkStatus(NetworkStatus networkStatus)
         {
-            ActiveNetworkStatus = NetworkStatus.Online;
-            NetworkStatusChanged?.Invoke();
-        }
-
-        public static void OnNetworkDisconnected()
-        {
-            ActiveNetworkStatus = NetworkStatus.Offline;
-            NetworkStatusChanged?.Invoke();
-        }
-
-        public static void OnNetworkFailed(bool denied)
-        {
-            ActiveNetworkStatus = denied ? NetworkStatus.Failed : NetworkStatus.Connecting;
+            ActiveNetworkStatus = networkStatus;
             NetworkStatusChanged?.Invoke();
         }
 

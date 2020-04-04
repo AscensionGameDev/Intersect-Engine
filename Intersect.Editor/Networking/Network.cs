@@ -9,6 +9,9 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
+using Intersect.Network.Events;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Editor.Networking
 {
@@ -80,7 +83,7 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        public static void HandleDc(INetworkLayerInterface netInterface, IConnection netConnection)
+        public static void HandleDc([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
             DestroyNetwork();
             if (Globals.MainForm != null && Globals.MainForm.Visible)
