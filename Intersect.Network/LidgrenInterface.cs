@@ -585,7 +585,16 @@ namespace Intersect.Network
                             NetworkStatus networkStatus;
                             try
                             {
-                                networkStatus = (NetworkStatus) Enum.Parse(typeof(NetworkStatus), reason, true);
+                                switch (reason)
+                                {
+                                    //Lidgren won't accept a connection with a bad version and sends this message back so we need to manually handle it
+                                    case "Wrong application identifier!":
+                                        networkStatus = NetworkStatus.VersionMismatch;
+                                        break;
+                                    default:
+                                        networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason, true);
+                                        break;
+                                }
                             }
                             catch (Exception exception)
                             {
