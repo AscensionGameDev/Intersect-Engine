@@ -1968,9 +1968,9 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
-                if (customlayertex.GetWidth() / 4 > Options.TileWidth)
+                if (customlayertex.GetWidth() / 8 > Options.TileWidth)
                 {
-                    destRectangle.X -= (customlayertex.GetWidth() / 4 - Options.TileWidth) / 2;
+                    destRectangle.X -= (customlayertex.GetWidth() / 8 - Options.TileWidth) / 2;
                 }
 
                 switch (Dir)
@@ -1998,15 +1998,15 @@ namespace Intersect.Client.Entities
                 if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                 {
                     srcRectangle = new FloatRect(
-                        3 * (int)customlayertex.GetWidth() / 4, d * (int)customlayertex.GetHeight() / 4,
-                        (int)customlayertex.GetWidth() / 4, (int)customlayertex.GetHeight() / 4
+                        3 * (int)customlayertex.GetWidth() / 8, d * (int)customlayertex.GetHeight() / 4,
+                        (int)customlayertex.GetWidth() / 8, (int)customlayertex.GetHeight() / 4
                     );
                 }
                 else
                 {
                     srcRectangle = new FloatRect(
-                        WalkFrame * (int)customlayertex.GetWidth() / 4, d * (int)customlayertex.GetHeight() / 4,
-                        (int)customlayertex.GetWidth() / 4, (int)customlayertex.GetHeight() / 4
+                        WalkFrame * (int)customlayertex.GetWidth() / 8, d * (int)customlayertex.GetHeight() / 4,
+                        (int)customlayertex.GetWidth() / 8, (int)customlayertex.GetHeight() / 4
                     );
                 }
 

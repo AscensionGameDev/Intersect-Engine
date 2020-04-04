@@ -195,7 +195,7 @@ namespace Intersect.Client.Interface.Game.Character
             if (Globals.Me.MySprite != "" && Globals.Me.MySprite != mCurrentSprite && entityTex != null)
             {
                 mCharacterPortrait.Texture = entityTex;
-                mCharacterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                mCharacterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 8, entityTex.GetHeight() / 4);
                 mCharacterPortrait.SizeToContents();
                 Align.Center(mCharacterPortrait);
                 mCharacterPortrait.IsHidden = false;
@@ -252,13 +252,13 @@ namespace Intersect.Client.Interface.Game.Character
                         {
                             PaperdollPanels[z]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / 4,
+                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / 8,
                                     PaperdollPanels[z].Texture.GetHeight() / 4
                                 );
 
                             PaperdollPanels[z]
                                 .SetSize(
-                                    PaperdollPanels[z].Texture.GetWidth() / 4,
+                                    PaperdollPanels[z].Texture.GetWidth() / 8,
                                     PaperdollPanels[z].Texture.GetHeight() / 4
                                 );
 

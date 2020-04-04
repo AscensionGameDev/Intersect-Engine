@@ -325,21 +325,21 @@ namespace Intersect.Client.Interface.Menu
                         else
                         {
                             mCharacterPortrait.SetTextureRect(
-                                0, 0, mCharacterPortrait.Texture.GetWidth() / 4,
+                                0, 0, mCharacterPortrait.Texture.GetWidth() / 8,
                                 mCharacterPortrait.Texture.GetHeight() / 4
                             );
 
                             if (mCharacterHair.Texture != null) mCharacterHair.SetTextureRect(
-                                0, 0, mCharacterHair.Texture.GetWidth() / 4,
+                                0, 0, mCharacterHair.Texture.GetWidth() / 8,
                                 mCharacterHair.Texture.GetHeight() / 4
                             );
 
                             mCharacterPortrait.SetSize(
-                                mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                                mCharacterPortrait.Texture.GetWidth() / 8, mCharacterPortrait.Texture.GetHeight() / 4
                             );
 
                             if (mCharacterHair.Texture != null) mCharacterHair.SetSize(
-                                mCharacterHair.Texture.GetWidth() / 4, mCharacterHair.Texture.GetHeight() / 4
+                                mCharacterHair.Texture.GetWidth() / 8, mCharacterHair.Texture.GetHeight() / 4
                             );
 
                             mCharacterPortrait.SetPosition(

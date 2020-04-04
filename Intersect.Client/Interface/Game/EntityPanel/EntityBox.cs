@@ -719,7 +719,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 if (entityTex != EntityFace.Texture)
                 {
                     EntityFace.Texture = entityTex;
-                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                    //rhathaway86 changing from 4 to 8
+                    //EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 8, entityTex.GetHeight() / 4);
+                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 8, entityTex.GetHeight() / 4);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
                     mCurrentSprite = MyEntity.MySprite;
@@ -798,13 +800,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         {
                             PaperdollPanels[n]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / 4,
+                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / 8,
                                     PaperdollPanels[n].Texture.GetHeight() / 4
                                 );
 
                             PaperdollPanels[n]
                                 .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / 4,
+                                    PaperdollPanels[n].Texture.GetWidth() / 8,
                                     PaperdollPanels[n].Texture.GetHeight() / 4
                                 );
 

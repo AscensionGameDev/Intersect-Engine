@@ -57,7 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     sourceBitmap,
                     new Rectangle(
                         pnlPreview.Width / 2 - sourceBitmap.Width / 2, pnlPreview.Height / 2 - sourceBitmap.Height / 2,
-                        sourceBitmap.Width, sourceBitmap.Height
+                        sourceBitmap.Width / 2, sourceBitmap.Height
                     ), new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), GraphicsUnit.Pixel
                 );
             }

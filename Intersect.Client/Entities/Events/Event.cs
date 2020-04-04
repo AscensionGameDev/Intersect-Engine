@@ -107,7 +107,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         srcTexture = entityTex;
                         height = srcTexture.GetHeight() / 4;
-                        width = srcTexture.GetWidth() / 4;
+                        width = srcTexture.GetWidth() / 8;
                         d = Graphic.Y;
                         if (!DirectionFix)
                         {
@@ -141,15 +141,15 @@ namespace Intersect.Client.Entities.Events
                         if (Options.AnimatedSprites.Contains(Graphic.Filename.ToLower()))
                         {
                             srcRectangle = new FloatRect(
-                                AnimationFrame * (int) entityTex.GetWidth() / 4, d * (int) entityTex.GetHeight() / 4,
-                                (int) entityTex.GetWidth() / 4, (int) entityTex.GetHeight() / 4
+                                AnimationFrame * (int) entityTex.GetWidth() / 8, d * (int) entityTex.GetHeight() / 4,
+                                (int) entityTex.GetWidth() / 8, (int) entityTex.GetHeight() / 4
                             );
                         }
                         else
                         {
                             srcRectangle = new FloatRect(
-                                frame * (int) srcTexture.GetWidth() / 4, d * (int) srcTexture.GetHeight() / 4,
-                                (int) srcTexture.GetWidth() / 4, (int) srcTexture.GetHeight() / 4
+                                frame * (int) srcTexture.GetWidth() / 8, d * (int) srcTexture.GetHeight() / 4,
+                                (int) srcTexture.GetWidth() / 8, (int) srcTexture.GetHeight() / 4
                             );
                         }
                     }

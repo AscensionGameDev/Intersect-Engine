@@ -273,7 +273,7 @@ namespace Intersect.Client.Interface.Game
             if (SpritePanel.Texture != null)
             {
                 SpritePanel.SetUv(0, 0, .25f, .25f);
-                SpritePanel.SetSize(SpritePanel.Texture.GetWidth() / 4, SpritePanel.Texture.GetHeight() / 4);
+                SpritePanel.SetSize(SpritePanel.Texture.GetWidth() / 8, SpritePanel.Texture.GetHeight() / 4);
                 Align.AlignTop(SpritePanel);
                 Align.CenterHorizontally(SpritePanel);
             }

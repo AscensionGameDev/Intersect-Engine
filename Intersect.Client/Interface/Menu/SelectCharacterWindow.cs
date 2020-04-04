@@ -228,11 +228,11 @@ namespace Intersect.Client.Interface.Menu
                     else
                     {
                         mCharacterPortrait.SetTextureRect(
-                            0, 0, mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                            0, 0, mCharacterPortrait.Texture.GetWidth() / 8, mCharacterPortrait.Texture.GetHeight() / 4
                         );
 
                         mCharacterPortrait.SetSize(
-                            mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+                            mCharacterPortrait.Texture.GetWidth() / 8, mCharacterPortrait.Texture.GetHeight() / 4
                         );
 
                         mCharacterPortrait.SetPosition(
@@ -273,13 +273,13 @@ namespace Intersect.Client.Interface.Menu
                                     mPaperdollPortraits[i].Show();
                                     mPaperdollPortraits[i]
                                         .SetTextureRect(
-                                            0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                            0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 8,
                                             mPaperdollPortraits[i].Texture.GetHeight() / 4
                                         );
 
                                     mPaperdollPortraits[i]
                                         .SetSize(
-                                            mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                            mPaperdollPortraits[i].Texture.GetWidth() / 8,
                                             mPaperdollPortraits[i].Texture.GetHeight() / 4
                                         );
 

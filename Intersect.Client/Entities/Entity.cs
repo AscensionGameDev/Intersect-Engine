@@ -874,47 +874,22 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-
                     var attackTime = CalculateAttackTime();
                     //Changing how NPC animates with frames of 5 instead of 4 for death inclusion
-                    if (GetType() != typeof(Resource) && GetType() != typeof(Player) && GetType() != typeof(Event))
+                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                     {
-                        attackTime = CalculateAttackTime();
-                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
-                        {
-                            srcRectangle = new FloatRect(
-                                3 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
-                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
-                            );
-                        }
-                        else
-                        {
-                            srcRectangle = new FloatRect(
-                                WalkFrame * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
-                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
-                            );
-                        }
-
+                        srcRectangle = new FloatRect(
+                            3 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                            (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                        );
                     }
                     else
                     {
-
-                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
-                        {
-                            srcRectangle = new FloatRect(
-                                3 * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
-                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
-                            );
-                        }
-                        else
-                        {
-                            srcRectangle = new FloatRect(
-                                WalkFrame * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
-                                (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
-                            );
-                        }
+                        srcRectangle = new FloatRect(
+                            WalkFrame * (int)Texture.GetWidth() / 8, d * (int)Texture.GetHeight() / 4,
+                            (int)Texture.GetWidth() / 8, (int)Texture.GetHeight() / 4
+                        );
                     }
-
                     if (DeathTimer > 0)
                     {
                         srcRectangle = new FloatRect(
@@ -1049,9 +1024,9 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
-                if (paperdollTex.GetWidth() / 4 > Options.TileWidth)
+                if (paperdollTex.GetWidth() / 8 > Options.TileWidth)
                 {
-                    destRectangle.X -= (paperdollTex.GetWidth() / 4 - Options.TileWidth) / 2;
+                    destRectangle.X -= (paperdollTex.GetWidth() / 8 - Options.TileWidth) / 2;
                 }
 
                 switch (Dir)
@@ -1079,15 +1054,15 @@ namespace Intersect.Client.Entities
                 if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                 {
                     srcRectangle = new FloatRect(
-                        3 * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
-                        (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
+                        3 * (int) paperdollTex.GetWidth() / 8, d * (int) paperdollTex.GetHeight() / 4,
+                        (int) paperdollTex.GetWidth() / 8, (int) paperdollTex.GetHeight() / 4
                     );
                 }
                 else
                 {
                     srcRectangle = new FloatRect(
-                        WalkFrame * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
-                        (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
+                        WalkFrame * (int) paperdollTex.GetWidth() / 8, d * (int) paperdollTex.GetHeight() / 4,
+                        (int) paperdollTex.GetWidth() / 8, (int) paperdollTex.GetHeight() / 4
                     );
                 }
 
