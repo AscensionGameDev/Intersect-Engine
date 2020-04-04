@@ -1335,11 +1335,11 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString Unknown = @"Unknown";
 
-            public static LocalizedString VersionMismatch = @"Version mismatch";
+            public static LocalizedString VersionMismatch = @"Bad Version";
 
-            public static LocalizedString ServerFull = @"Server Full";
+            public static LocalizedString ServerFull = @"Full";
 
-            public static LocalizedString HandshakeFailure = @"Handshake Failure";
+            public static LocalizedString HandshakeFailure = @"Handshake Error";
 
         }
 
