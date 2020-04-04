@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
@@ -9,6 +10,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Network;
 using Intersect.Network.Events;
 
@@ -68,13 +70,25 @@ namespace Intersect.Client.Interface.Menu
 
         private bool mShouldOpenCharacterSelection;
 
+        private readonly Button mDiscordButton;
+
         //Init
         public MainMenu(Canvas menuCanvas)
         {
             mMenuCanvas = menuCanvas;
 
             var logo = new ImagePanel(menuCanvas, "Logo");
-            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString()); 
+            
+            //Discord Button
+            mDiscordButton = new Button(menuCanvas, "DiscordButton");
+            mDiscordButton.Clicked += DiscordButton_Clicked;
+            mDiscordButton.SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, "discord.png"), "discord.png", Button.ControlState.Normal);
+            mDiscordButton.SetSize(220, 70);
+            mDiscordButton.CurAlignments.Add(Alignments.Bottom);
+            mDiscordButton.CurAlignments.Add(Alignments.Right);
+            mDiscordButton.ProcessAlignments();
+            mDiscordButton.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
@@ -340,6 +354,15 @@ namespace Intersect.Client.Interface.Menu
         {
             ActiveNetworkStatus = networkStatus;
             NetworkStatusChanged?.Invoke();
+        }
+
+        private void DiscordButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.DiscordInviteUrl))
+            {
+                //Start Process
+                    Process.Start(ClientConfiguration.Instance.DiscordInviteUrl);
+            }
         }
 
     }
