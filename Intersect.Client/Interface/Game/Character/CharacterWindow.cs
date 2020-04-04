@@ -194,11 +194,6 @@ namespace Intersect.Client.Interface.Game.Character
              else */
             if (Globals.Me.MySprite != "" && Globals.Me.MySprite != mCurrentSprite && entityTex != null)
             {
-                mCharacterPortrait.Texture = entityTex;
-                mCharacterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
-                mCharacterPortrait.SizeToContents();
-                Align.Center(mCharacterPortrait);
-                mCharacterPortrait.IsHidden = false;
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     var paperdoll = "";
@@ -227,8 +222,16 @@ namespace Intersect.Client.Interface.Game.Character
                             }
                         }
                     }
+                    else if (Options.PaperdollOrder[1][z] == "Player")
+                    {
+                        PaperdollPanels[z].Show();
+                        PaperdollPanels[z].Texture = entityTex;
+                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                        PaperdollPanels[z].SizeToContents();
+                        Align.Center(PaperdollPanels[z]);
+                    }
 
-                    if (paperdoll == "" && PaperdollTextures[z] != "")
+                    if (paperdoll == "" && PaperdollTextures[z] != "" && Options.PaperdollOrder[1][z] != "Player")
                     {
                         PaperdollPanels[z].Texture = null;
                         PaperdollPanels[z].Hide();
