@@ -779,7 +779,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     if (MyEntity is Player && paperdoll == "" && Options.PaperdollOrder[1][z] == Options.Equipment.HairSlot)
                     {
-                        paperdoll = Globals.Me.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair];
+                        var player = (Player)MyEntity;
+                        paperdoll = player.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair];
                         type = GameContentManager.TextureType.Hair;
                     }
 

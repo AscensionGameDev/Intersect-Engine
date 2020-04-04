@@ -369,8 +369,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
                 gfx.DrawImage(
-                    img, new Rectangle(0, 0, img.Width / 4, img.Height / 4),
-                    new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel
+                    img, new Rectangle(0, 0, img.Width / 8, img.Height / 4),
+                    new Rectangle(0, 0, img.Width / 8, img.Height / 4), GraphicsUnit.Pixel
                 );
 
                 img.Dispose();

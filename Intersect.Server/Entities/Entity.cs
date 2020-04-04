@@ -419,12 +419,7 @@ namespace Intersect.Server.Entities
                             }
                             else
                             {
-                                if (this is Npc && DeathTimer == 0)
-                                {
-                                    return (int) EntityTypes.Player;
-                                }
-
-                                
+                                return (int) EntityTypes.Player;
                             }
                         }
                         else if (en is Npc)
@@ -1426,8 +1421,9 @@ namespace Intersect.Server.Entities
                 // Friendly Spell! Do not attack other players/npcs around us.
                 switch (target)
                 {
-                    case Player targetPlayer
-                        when this is Player player && !player.InParty(targetPlayer) && this != target:
+                    //case Player targetPlayer
+                        //editing out in party && !player.InParty(targetPlayer)
+                        //when this is Player player && this != target:
                     case Npc _ when this is Npc npc && !npc.CanNpcCombat(target, spellBase.Combat.Friendly):
                         return;
                 }

@@ -3865,10 +3865,11 @@ namespace Intersect.Server.Entities
 
             if (target != null && singleTargetCombatSpell)
             {
-                if (spell.Combat.Friendly && !IsAllyOf(target))
-                {
-                    return false;
-                }
+                //rhathaway86 editing out the line here to prevent assisting other players (must be in party) if (spell.Combat.Friendly && !IsAllyOf(target))
+                //if (spell.Combat.Friendly && !IsAllyOf(target))
+                //{
+                //    return false;
+                //}
 
                 if (!spell.Combat.Friendly && IsAllyOf(target))
                 {

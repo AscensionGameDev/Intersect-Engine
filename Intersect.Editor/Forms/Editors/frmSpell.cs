@@ -517,9 +517,9 @@ namespace Intersect.Editor.Forms.Editors
                     g.DrawImage(
                         src,
                         new Rectangle(
-                            picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
+                            picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 8,
                             src.Height / 4
-                        ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                        ), new Rectangle(0, 0, src.Width / 8, src.Height / 4), GraphicsUnit.Pixel
                     );
 
                     g.Dispose();
@@ -575,9 +575,9 @@ namespace Intersect.Editor.Forms.Editors
                 g.DrawImage(
                     src,
                     new Rectangle(
-                        picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
+                        picSprite.Width / 2 - src.Width / 4, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
                         src.Height / 4
-                    ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                    ), new Rectangle(0, 0, src.Width / 8, src.Height / 4), GraphicsUnit.Pixel
                 );
 
                 g.Dispose();
