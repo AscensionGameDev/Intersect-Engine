@@ -2282,25 +2282,49 @@ namespace Intersect.Server.Entities
             var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
             if (Z == target.Z)
             {
-                myTile.Translate(0, -1);
+                myTile.Translate(0, -1); // Target Up
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(0, 2);
+                myTile.Translate(0, 2); // Target Down
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(-1, -1);
+                myTile.Translate(-1, -1); // Target Left
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(2, 0);
+                myTile.Translate(2, 0); // Target Right 
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, -1); // Target UpLeft
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0); // Target UpRight
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, 2); // Target DownLeft
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0); // Target DownRight
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
@@ -2337,6 +2361,30 @@ namespace Intersect.Server.Entities
 
                 myTile.Translate(2, 0);
                 if (myTile.Matches(enemyTile) && Dir == (int) Directions.Right)
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, -1);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpLeft)
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpRight)
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, 2);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownLeft)
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownRight)
                 {
                     return true;
                 }
@@ -2447,7 +2495,8 @@ namespace Intersect.Server.Entities
             }
         }
 
-        //Check if the target is either up, down, left or right of the target on the correct Z dimension.
+        // Outdated : Check if the target is either up, down, left or right of the target on the correct Z dimension.
+        // Check for 8 directions
         protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
         {
             //Calculate World Tile of Me
@@ -2459,7 +2508,7 @@ namespace Intersect.Server.Entities
             var y2 = y + MapInstance.Get(mapId).MapGridY * Options.MapHeight;
             if (z == Z)
             {
-                if (y1 == y2)
+                if (y1 == y2 || y1 - 1 == y2 || y1 + 1 == y2)
                 {
                     if (x1 == x2 - 1)
                     {
@@ -2471,7 +2520,7 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (x1 == x2)
+                if (x1 == x2 || x1 - 1 == x2 || x1 + 1 == x2)
                 {
                     if (y1 == y2 - 1)
                     {

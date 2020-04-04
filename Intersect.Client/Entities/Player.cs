@@ -980,21 +980,43 @@ namespace Intersect.Client.Entities
             int x = Globals.Me.X;
             int y = Globals.Me.Y;
             var map = Globals.Me.CurrentMap;
+
+            // The latest moving direction of the player
             switch (Globals.Me.Dir)
             {
-                case 0:
+                case 0: // Up
                     y--;
-
+                    
                     break;
-                case 1:
+                case 1: // Down
                     y++;
 
                     break;
-                case 2:
+                case 2: // Left
                     x--;
 
                     break;
-                case 3:
+                case 3: // Right
+                    x++;
+
+                    break;
+                case 4: // UpLeft
+                    y--;
+                    x--;
+
+                    break;
+                case 5: //UpRight
+                    y--;
+                    x++;
+
+                    break;
+                case 6: // DownLeft
+                    y--;
+                    x--;
+
+                    break;
+                case 7: // DownRight
+                    y--;
                     x++;
 
                     break;
@@ -1012,7 +1034,7 @@ namespace Intersect.Client.Entities
                     if (en.Value != Globals.Me)
                     {
                         if (en.Value.CurrentMap == map &&
-                            en.Value.X == x &&
+                            en.Value.X == x ||
                             en.Value.Y == y &&
                             en.Value.CanBeAttacked())
                         {
