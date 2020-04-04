@@ -492,6 +492,19 @@ namespace Intersect.Server.Entities.Events
             PacketSender.SendEntityDataToProximity(player);
         }
 
+        //Change Hair Command
+        private static void ProcessCommand(
+            ChangeHairCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair] = command.Hair;
+            PacketSender.SendCustomSpriteLayersToProximity(player);
+        }
+
         //Change Gender Command
         private static void ProcessCommand(
             ChangeGenderCommand command,

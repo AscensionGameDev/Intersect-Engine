@@ -221,6 +221,7 @@
     <Compile Include="Config\SmtpSettings.cs" />
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Enums\CustomSpriteLayers.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
+    <Compile Include="Network\Packets\Server\CustomSpriteLayersPacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />

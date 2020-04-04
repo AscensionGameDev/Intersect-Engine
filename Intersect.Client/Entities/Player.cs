@@ -5,6 +5,9 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.EntityPanel;
@@ -57,6 +60,10 @@ namespace Intersect.Client.Entities
         public Guid TargetIndex;
 
         public int TargetType;
+        
+        protected string[] mMyCustomSpriteLayers { get; set; } = new string[(int)Enums.CustomSpriteLayers.CustomCount];
+
+        public Framework.Graphics.GameTexture[] CustomSpriteLayersTexture { get; set; } = new Framework.Graphics.GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
 
         public long[] MoveDirectionTimers = new long[4];
 
@@ -83,6 +90,27 @@ namespace Intersect.Client.Entities
 
                 return mParty;
             }
+        }
+
+        public virtual string[] CustomSpriteLayers
+        {
+            get => mMyCustomSpriteLayers;
+            set
+            {
+                mMyCustomSpriteLayers = value;
+                CustomSpriteLayersTexture = GetCustomSpriteTextures(value);
+            }
+        }
+
+        private GameTexture[] GetCustomSpriteTextures(string[] customSpriteLayers)
+        {
+            var textures = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
+            for (int i=0; i < (int)Enums.CustomSpriteLayers.CustomCount; i++)
+            {
+                textures[i] = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Hair, customSpriteLayers[i]);
+            }
+
+            return textures;
         }
 
         public override Guid CurrentMap
@@ -1912,6 +1940,81 @@ namespace Intersect.Client.Entities
                         break;
                     }
                 }
+            }
+        }
+
+        public virtual void DrawCustomSpriteLayer(string filename, int alpha)
+        {
+            var map = MapInstance.Get(CurrentMap);
+            if (map == null)
+            {
+                return;
+            }
+
+            var srcRectangle = new FloatRect();
+            var destRectangle = new FloatRect();
+            var d = 0;
+            var customlayertex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Hair, filename);
+            if (customlayertex != null)
+            {
+                if (customlayertex.GetHeight() / 4 > Options.TileHeight)
+                {
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
+                    destRectangle.Y = GetCenterPos().Y - customlayertex.GetHeight() / 8;
+                }
+                else
+                {
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
+                }
+
+                if (customlayertex.GetWidth() / 4 > Options.TileWidth)
+                {
+                    destRectangle.X -= (customlayertex.GetWidth() / 4 - Options.TileWidth) / 2;
+                }
+
+                switch (Dir)
+                {
+                    case 0:
+                        d = 3;
+
+                        break;
+                    case 1:
+                        d = 0;
+
+                        break;
+                    case 2:
+                        d = 1;
+
+                        break;
+                    case 3:
+                        d = 2;
+
+                        break;
+                }
+
+                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
+                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                {
+                    srcRectangle = new FloatRect(
+                        3 * (int)customlayertex.GetWidth() / 4, d * (int)customlayertex.GetHeight() / 4,
+                        (int)customlayertex.GetWidth() / 4, (int)customlayertex.GetHeight() / 4
+                    );
+                }
+                else
+                {
+                    srcRectangle = new FloatRect(
+                        WalkFrame * (int)customlayertex.GetWidth() / 4, d * (int)customlayertex.GetHeight() / 4,
+                        (int)customlayertex.GetWidth() / 4, (int)customlayertex.GetHeight() / 4
+                    );
+                }
+
+                destRectangle.Width = srcRectangle.Width;
+                destRectangle.Height = srcRectangle.Height;
+                Graphics.DrawGameTexture(
+                    customlayertex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
+                );
             }
         }
 

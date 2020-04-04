@@ -892,6 +892,19 @@ namespace Intersect.Client.Networking
             }
         }
 
+        private static void HandlePacket(CustomSpriteLayersPacket packet)
+        {
+            var entityId = packet.EntityId;
+            if (Globals.Entities.ContainsKey(entityId))
+            {
+                var entity = Globals.Entities[entityId];
+                if (entity != null)
+                {
+                    ((Player)entity).CustomSpriteLayers = packet.CustomSpriteLayers;
+                }
+            }
+        }
+
         //StatPointsPacket
         private static void HandlePacket(StatPointsPacket packet)
         {
@@ -1604,7 +1617,7 @@ namespace Intersect.Client.Networking
             foreach (var chr in packet.Characters)
             {
                 characters.Add(
-                    new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment)
+                    new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment, chr.CustomSpriteLayers)
                 );
             }
 

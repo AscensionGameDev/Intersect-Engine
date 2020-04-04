@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+    [Migration("20200402160828_PlayerHair_PlayerEdits")]
+    partial class PlayerHair_PlayerEdits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,9 +331,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("ClassId");
 
-                    b.Property<string>("CustomSpriteLayersJson")
-                        .HasColumnName("CustomSpriteLayers");
-
                     b.Property<int>("Dir");
 
                     b.Property<string>("EquipmentJson")
@@ -345,6 +344,8 @@ namespace Intersect.Server.Migrations
                         .HasColumnName("FooterLabel");
 
                     b.Property<int>("Gender");
+
+                    b.Property<string>("Hair");
 
                     b.Property<string>("HeaderLabelJson")
                         .HasColumnName("HeaderLabel");

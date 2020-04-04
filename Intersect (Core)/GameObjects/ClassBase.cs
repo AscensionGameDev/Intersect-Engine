@@ -38,6 +38,8 @@ namespace Intersect.GameObjects
 
         [NotMapped] public List<ClassSprite> Sprites = new List<ClassSprite>();
 
+        [NotMapped] public Dictionary<Enums.CustomSpriteLayers, List<CustomSpriteLayer>> CustomSpriteLayers = new Dictionary<Enums.CustomSpriteLayers, List<CustomSpriteLayer>>();
+
         [NotMapped] public int[] StatIncrease = new int[(int) Stats.StatCount];
 
         [NotMapped] public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
@@ -53,6 +55,12 @@ namespace Intersect.GameObjects
             ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
+
+            // Init the empty lists, stop getting null references.
+            for (int i = 0; i < (int)Enums.CustomSpriteLayers.CustomCount; i++)
+            {
+                CustomSpriteLayers[(Enums.CustomSpriteLayers)i] = new List<CustomSpriteLayer>();
+            }
         }
 
         //Parameterless constructor for EF
@@ -64,6 +72,12 @@ namespace Intersect.GameObjects
             ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
+
+            // Init the empty lists, stop gettng null references.
+            for (int i = 0; i < (int)Enums.CustomSpriteLayers.CustomCount; i++)
+            {
+                CustomSpriteLayers[(Enums.CustomSpriteLayers)i] = new List<CustomSpriteLayer>();
+            }
         }
 
         [Column("AttackAnimation")]
@@ -194,6 +208,15 @@ namespace Intersect.GameObjects
             protected set => Sprites = JsonConvert.DeserializeObject<List<ClassSprite>>(value);
         }
 
+        //Sprites
+        [JsonIgnore]
+        [Column("CustomSpriteLayers")]
+        public string JsonCustomSpriteLayers
+        {
+            get => JsonConvert.SerializeObject(CustomSpriteLayers);
+            protected set => CustomSpriteLayers = value != null ? JsonConvert.DeserializeObject<Dictionary<Enums.CustomSpriteLayers, List<CustomSpriteLayer>>>(value) : CustomSpriteLayers;     // Because a migrated database doesn't have this, set to default value if no data exists.
+        }
+
         //Stat Increases (per level)
         [JsonIgnore]
         [Column("StatIncreases")]
@@ -291,6 +314,13 @@ namespace Intersect.GameObjects
 
         public string Sprite = "";
 
+    }
+
+    public class CustomSpriteLayer 
+    {
+        public string Texture = "";
+
+        public Gender Gender;
     }
 
 }

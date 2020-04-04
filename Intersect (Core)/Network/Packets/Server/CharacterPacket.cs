@@ -13,7 +13,8 @@ namespace Intersect.Network.Packets.Server
             string face,
             int level,
             string className,
-            string[] equipment
+            string[] equipment,
+            string[] customspritelayers
         )
         {
             Id = id;
@@ -23,6 +24,7 @@ namespace Intersect.Network.Packets.Server
             Level = level;
             ClassName = className;
             Equipment = equipment;
+            CustomSpriteLayers = customspritelayers;
         }
 
         public Guid Id { get; set; }
@@ -38,6 +40,8 @@ namespace Intersect.Network.Packets.Server
         public string ClassName { get; set; }
 
         public string[] Equipment { get; set; }
+
+        public string[] CustomSpriteLayers { get; set; }
 
     }
 

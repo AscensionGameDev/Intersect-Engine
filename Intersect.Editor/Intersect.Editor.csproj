@@ -86,6 +86,12 @@
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.Designer.cs">
+      <DependentUpon>EventCommand_ChangeHair.cs</DependentUpon>
+    </Compile>
     <Compile Include="Maps\MapGridItem.cs" />
     <Compile Include="Maps\MapSaveState.cs" />
     <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
@@ -641,6 +647,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\EditorForm.resx">
       <DependentUpon>EditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.resx">
+      <DependentUpon>EventCommand_ChangeHair.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.resx">
       <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>

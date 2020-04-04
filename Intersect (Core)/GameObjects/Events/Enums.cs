@@ -215,6 +215,9 @@
         //Player Label
         PlayerLabel,
 
+        //Change Hair
+        ChangeHair,
+
     }
 
 }

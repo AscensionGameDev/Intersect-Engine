@@ -483,6 +483,14 @@
     <Compile Include="Migrations\Game\20200402190906_DirectionalAnimationWeaponsToItems.cs" />
     <Compile Include="Migrations\Game\20200402190906_DirectionalAnimationWeaponsToItems.designer.cs">
       <DependentUpon>20200402190906_DirectionalAnimationWeaponsToItems.cs</DependentUpon>
+	</Compile>
+    <Compile Include="Migrations\20200402173703_PlayerHair_PlayerEdits.cs" />
+    <Compile Include="Migrations\20200402173703_PlayerHair_PlayerEdits.designer.cs">
+      <DependentUpon>20200402173703_PlayerHair_PlayerEdits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200402142818_PlayerHair_ClassEdits.cs" />
+    <Compile Include="Migrations\Game\20200402142818_PlayerHair_ClassEdits.designer.cs">
+      <DependentUpon>20200402142818_PlayerHair_ClassEdits.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

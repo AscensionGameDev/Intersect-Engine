@@ -998,6 +998,15 @@ namespace Intersect.Client.Entities
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    // Render a hairstyle here if we're currently rendering the desired hair slot without any equipment in it.
+                                    if (this is Player && paperdoll == Options.EquipmentSlots[Options.EquipmentSlots.IndexOf(Options.Equipment.HairSlot)])
+                                    {
+                                            var player = (Player)this;
+                                            player.DrawCustomSpriteLayer(player.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair], alpha);
+                                    }
+                                }
                             }
                         }
                     }

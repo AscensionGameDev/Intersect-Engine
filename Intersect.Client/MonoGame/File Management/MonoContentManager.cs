@@ -139,6 +139,11 @@ namespace Intersect.Client.MonoGame.File_Management
             LoadTextureGroup("entities", mEntityDict);
         }
 
+        public override void LoadHairs()
+        {
+            LoadTextureGroup("hairs", mHairDict);
+        }
+
         public override void LoadSpells()
         {
             LoadTextureGroup("spells", mSpellDict);

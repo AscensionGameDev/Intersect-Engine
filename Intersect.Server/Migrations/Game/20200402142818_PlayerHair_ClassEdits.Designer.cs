@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200402142818_PlayerHair_ClassEdits")]
+    partial class PlayerHair_ClassEdits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,8 +77,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonBaseVitals")
                         .HasColumnName("BaseVitals");
 
-                    b.Property<string>("JsonCustomSpriteLayers")
-                        .HasColumnName("CustomSpriteLayers");
+                    b.Property<string>("JsonHairs")
+                        .HasColumnName("Hairs");
 
                     b.Property<string>("JsonItems")
                         .HasColumnName("Items");
@@ -200,18 +202,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("AttackAnimationDownId")
-                        .HasColumnName("AttackAnimationDown");
-
-                    b.Property<Guid>("AttackAnimationLeftId")
-                        .HasColumnName("AttackAnimationLeft");
-
-                    b.Property<Guid>("AttackAnimationRightId")
-                        .HasColumnName("AttackAnimationRight");
-
-                    b.Property<Guid>("AttackAnimationUpId")
-                        .HasColumnName("AttackAnimationUp");
-
                     b.Property<Guid>("AnimationId")
                         .HasColumnName("Animation");
 
@@ -237,8 +227,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Description");
 
                     b.Property<bool>("DestroySpell");
-
-                    b.Property<bool>("DirectionalAnimation");
 
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
