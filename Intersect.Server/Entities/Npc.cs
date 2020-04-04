@@ -713,6 +713,7 @@ namespace Intersect.Server.Entities
                     if (mPathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
+                        // Check if can attack
                         if (!IsOneBlockAway(
                             mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
                             mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ
@@ -783,7 +784,9 @@ namespace Intersect.Server.Entities
                                         {
                                             mPathFinder.PathFailed(timeMs);
                                         }
+                                        
                                     }
+                                    // Npc move when here
 
                                     break;
                                 case PathfinderResult.OutOfRange:
@@ -884,6 +887,7 @@ namespace Intersect.Server.Entities
                                     }
                                     else
                                     {
+                                        // Code come here when player is near.
                                         if (CanAttack(Target, null))
                                         {
                                             TryAttack(Target);
