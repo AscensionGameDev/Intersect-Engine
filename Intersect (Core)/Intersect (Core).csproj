@@ -296,6 +296,8 @@
     <Compile Include="Models\INamedObject.cs" />
     <Compile Include="Network\Ceras.cs" />
     <Compile Include="Network\ConnectionPacket.cs" />
+    <Compile Include="Network\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Network\NetworkStatus.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
     <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
     <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Events;
 using Intersect.Server.Entities;
 
 using JetBrains.Annotations;
@@ -45,24 +46,24 @@ namespace Intersect.Server.Networking.Lidgren
             return true;
         }
 
-        protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Connected [{connection?.Guid}].");
-            Client.CreateBeta4Client(connection);
-            OnConnected?.Invoke(sender, connection);
+            Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
+            Client.CreateBeta4Client(connectionEventArgs.Connection);
+            OnConnected?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnConnectonApproved([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Connection approved [{connection?.Guid}].");
-            OnConnectionApproved?.Invoke(sender, connection);
+            Log.Info($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
+            OnConnectionApproved?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Disconnected [{connection?.Guid}].");
-            Client.RemoveBeta4Client(connection);
-            OnDisconnected?.Invoke(sender, connection);
+            Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid}].");
+            Client.RemoveBeta4Client(connectionEventArgs.Connection);
+            OnDisconnected?.Invoke(sender, connectionEventArgs);
         }
 
         protected virtual void HandleOnUnconnectedMessage(NetPeer peer, NetIncomingMessage message)
@@ -81,20 +82,13 @@ namespace Intersect.Server.Networking.Lidgren
 
         protected virtual bool HandleConnectionRequested(INetworkLayerInterface sender, IConnection connection)
         {
-            if (connection != null)
+            if (string.IsNullOrEmpty(connection?.Ip))
             {
-                if (!string.IsNullOrEmpty(connection.Ip))
-                {
-                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) &&
-                           Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
 
-            return true;
+            return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) &&
+                   Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
         }
 
         public override bool Send(IPacket packet)
