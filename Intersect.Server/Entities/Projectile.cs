@@ -246,21 +246,21 @@ namespace Intersect.Server.Entities
                     switch (projectionDir)
                     {
                         case 0: //Up
-                            return 2;
-                        case 1: //Down
-                            return 3;
-                        case 2: //Left
-                            return 1;
-                        case 3: //Right
-                            return 0;
-                        case 4: //UpLeft
-                            return 6;
-                        case 5: //UpRight
                             return 4;
-                        case 6: //DownLeft
+                        case 1: //Down
                             return 7;
-                        case 7: //DownRight
+                        case 2: //Left
+                            return 6;
+                        case 3: //Right
                             return 5;
+                        case 4: //UpLeft
+                            return 2;
+                        case 5: //UpRight
+                            return 0;
+                        case 6: //DownLeft
+                            return 1;
+                        case 7: //DownRight
+                            return 3;
                         default:
                             return projectionDir;
                     }
@@ -268,21 +268,21 @@ namespace Intersect.Server.Entities
                     switch (projectionDir)
                     {
                         case 0: //Up
-                            return 3;
-                        case 1: //Down
-                            return 2;
-                        case 2: //Left
-                            return 0;
-                        case 3: //Right
-                            return 1;
-                        case 4: //UpLeft
                             return 5;
-                        case 5: //UpRight
-                            return 7;
-                        case 6: //DownLeft
-                            return 4;
-                        case 7: //DownRight
+                        case 1: //Down
                             return 6;
+                        case 2: //Left
+                            return 4;
+                        case 3: //Right
+                            return 7;
+                        case 4: //UpLeft
+                            return 0;
+                        case 5: //UpRight
+                            return 3;
+                        case 6: //DownLeft
+                            return 2;
+                        case 7: //DownRight
+                            return 1;
                         default:
                             return projectionDir;
                     }
@@ -290,21 +290,21 @@ namespace Intersect.Server.Entities
                     switch (projectionDir)
                     {
                         case 0: //Up
-                            return 2;
-                        case 1: //Down
-                            return 3;
-                        case 2: //Left
-                            return 1;
-                        case 3: //Right
-                            return 0;
-                        case 4: //UpLeft
                             return 6;
-                        case 5: //UpRight
-                            return 4;
-                        case 6: //DownLeft
-                            return 7;
-                        case 7: //DownRight
+                        case 1: //Down
                             return 5;
+                        case 2: //Left
+                            return 7;
+                        case 3: //Right
+                            return 4;
+                        case 4: //UpLeft
+                            return 1;
+                        case 5: //UpRight
+                            return 2;
+                        case 6: //DownLeft
+                            return 3;
+                        case 7: //DownRight
+                            return 0;
                         default:
                             return projectionDir;
                     }
@@ -312,21 +312,21 @@ namespace Intersect.Server.Entities
                     switch (projectionDir)
                     {
                         case 0: //Up
-                            return 3;
-                        case 1: //Down
-                            return 2;
-                        case 2: //Left
-                            return 0;
-                        case 3: //Right
-                            return 1;
-                        case 4: //UpLeft
-                            return 5;
-                        case 5: //UpRight
                             return 7;
-                        case 6: //DownLeft
+                        case 1: //Down
                             return 4;
-                        case 7: //DownRight
+                        case 2: //Left
+                            return 5;
+                        case 3: //Right
                             return 6;
+                        case 4: //UpLeft
+                            return 3;
+                        case 5: //UpRight
+                            return 1;
+                        case 6: //DownLeft
+                            return 0;
+                        case 7: //DownRight
+                            return 2;
                         default:
                             return projectionDir;
                     }
