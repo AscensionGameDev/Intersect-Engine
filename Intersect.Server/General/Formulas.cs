@@ -192,7 +192,7 @@ namespace Intersect.Server.General
                 (double) (parameters[1] ?? throw new NullReferenceException("First parameter is null."))
             );
 
-            return min >= max ? min : Globals.Rand.Next(min, max + 1);
+            return min >= max ? min : Randomization.Next(min, max + 1);
         }
 
     }

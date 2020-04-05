@@ -8,6 +8,7 @@ using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Events
 {
@@ -324,12 +325,12 @@ namespace Intersect.Server.Entities.Events
             {
                 if (MovementType == EventMovementType.Random) //Random
                 {
-                    if (Globals.Rand.Next(0, 2) != 0)
+                    if (Randomization.Next(0, 2) != 0)
                     {
                         return;
                     }
 
-                    var dir = (byte) Globals.Rand.Next(0, 4);
+                    var dir = (byte)Randomization.Next(0, 4);
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Player);
@@ -438,7 +439,7 @@ namespace Intersect.Server.Entities.Events
                                     else
                                     {
                                         //Move Randomly
-                                        moveDir = (byte) Globals.Rand.Next(0, 4);
+                                        moveDir = (byte)Randomization.Next(0, 4);
                                         if (CanMove(moveDir) == -1)
                                         {
                                             Move(moveDir, forPlayer);
@@ -449,7 +450,7 @@ namespace Intersect.Server.Entities.Events
                                 else
                                 {
                                     //Move Randomly
-                                    moveDir = (byte) Globals.Rand.Next(0, 4);
+                                    moveDir = (byte)Randomization.Next(0, 4);
                                     if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
