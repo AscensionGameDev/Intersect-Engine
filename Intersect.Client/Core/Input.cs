@@ -189,7 +189,6 @@ namespace Intersect.Client.Core
 
                                     case Control.OpenFriends:
                                         Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow();
-
                                         break;
 
                                     case Control.OpenSettings:
@@ -209,7 +208,7 @@ namespace Intersect.Client.Core
 
 									case Control.OpenConnected:
 										Interface.Interface.GameUi?.GameMenu?.ToggleConnectedWindow();
-
+										
 										break;
 								}
 

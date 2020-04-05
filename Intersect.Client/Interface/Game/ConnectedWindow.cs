@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -14,6 +15,8 @@ namespace Intersect.Client.Interface.Game
 	{
 		private WindowControl mConnectedWindow;
 		private ListBox mConnected;
+
+		private bool isKeyDown;
 
 		public ConnectedWindow(Canvas gameCanvas)
 		{
@@ -37,7 +40,7 @@ namespace Intersect.Client.Interface.Game
 
 		public void Show()
 		{
-			mConnectedWindow.IsHidden = false;
+			mConnectedWindow.Show();
 		}
 
 		public bool IsVisible()
@@ -47,7 +50,7 @@ namespace Intersect.Client.Interface.Game
 
 		public void Hide()
 		{
-			mConnectedWindow.IsHidden = true;
+			mConnectedWindow.Hide();
 		}
 
 		public void UpdateList()

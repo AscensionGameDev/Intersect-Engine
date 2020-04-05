@@ -28,6 +28,7 @@ namespace Intersect.Client.Interface.Game
 		[NotNull] private readonly Button mFriendsButton;
 
 		[NotNull] private readonly ImagePanel mConnectedBackground;
+
 		[NotNull] private readonly Button mConnectedButton;
 
 		[NotNull] private readonly FriendsWindow mFriendsWindow;
