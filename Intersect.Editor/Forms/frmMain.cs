@@ -21,6 +21,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network;
 
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -366,7 +367,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            Networking.Network.EditorLidgrenNetwork?.Disconnect("quitting");
+            Networking.Network.EditorLidgrenNetwork?.Disconnect(NetworkStatus.Quitting.ToString());
             base.OnClosed(e);
             Application.Exit();
         }

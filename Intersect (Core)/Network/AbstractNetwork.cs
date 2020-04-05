@@ -81,7 +81,7 @@ namespace Intersect.Network
                 mDisposed = true;
             }
 
-            if (!Disconnect("disposing"))
+            if (!Disconnect(NetworkStatus.Quitting.ToString()))
             {
                 Log.Error("Error disconnecting while disposing.");
             }
