@@ -4,6 +4,7 @@ using System.Linq;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Notifications
 {
@@ -26,7 +27,7 @@ namespace Intersect.Server.Notifications
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-            return new string(Enumerable.Repeat(chars, length).Select(s => s[Globals.Rand.Next(s.Length)]).ToArray());
+            return new string(Enumerable.Repeat(chars, length).Select(s => s[Randomization.Next(s.Length)]).ToArray());
         }
 
     }

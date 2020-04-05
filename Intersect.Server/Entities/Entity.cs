@@ -505,7 +505,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveRandomly:
-                        var dir = (byte) Globals.Rand.Next(0, 4);
+                        var dir = (byte)Randomization.Next(0, 4);
                         if (CanMove(dir) == -1)
                         {
                             Move(dir, forPlayer);
@@ -645,7 +645,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.TurnRandomly:
-                        ChangeDir((byte) Globals.Rand.Next(0, 4));
+                        ChangeDir((byte)Randomization.Next(0, 4));
                         moved = true;
 
                         break;
@@ -1687,7 +1687,7 @@ namespace Intersect.Server.Entities
             }
 
             //Is this a critical hit?
-            if (Globals.Rand.Next(1, 101) > critChance)
+            if (Randomization.Next(1, 101) > critChance)
             {
                 critMultiplier = 1;
             }
@@ -2446,13 +2446,13 @@ namespace Intersect.Server.Entities
                     var luck = 1.0 + (playerKiller != null ? playerKiller.GetLuck() : 0) / 100;
 
                     //Player drop rates
-                    if (Globals.Rand.Next(1, 101) >= dropitems * luck)
+                    if (Randomization.Next(1, 101) >= dropitems * luck)
                     {
                         continue;
                     }
 
                     //Npc drop rates
-                    if (Globals.Rand.Next(1, 101) >= item.DropChance * luck)
+                    if (Randomization.Next(1, 101) >= item.DropChance * luck)
                     {
                         continue;
                     }

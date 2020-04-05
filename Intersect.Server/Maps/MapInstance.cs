@@ -16,6 +16,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 using JetBrains.Annotations;
 
@@ -519,7 +520,7 @@ namespace Intersect.Server.Maps
                 }
                 else
                 {
-                    dir = (byte) Globals.Rand.Next(0, 4);
+                    dir = (byte)Randomization.Next(0, 4);
                 }
 
                 if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
@@ -530,8 +531,8 @@ namespace Intersect.Server.Maps
                 {
                     for (var n = 0; n < 100; n++)
                     {
-                        x = (byte) Globals.Rand.Next(0, Options.MapWidth);
-                        y = (byte) Globals.Rand.Next(0, Options.MapHeight);
+                        x = (byte)Randomization.Next(0, Options.MapWidth);
+                        y = (byte)Randomization.Next(0, Options.MapHeight);
                         if (Attributes[x, y] == null || Attributes[x, y].Type == (int) MapAttributes.Walkable)
                         {
                             break;
