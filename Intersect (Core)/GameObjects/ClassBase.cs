@@ -44,7 +44,9 @@ namespace Intersect.GameObjects
 
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
-        [JsonConstructor]
+		[NotMapped] public List<HairSprite> Hairs = new List<HairSprite>();
+
+		[JsonConstructor]
         public ClassBase(Guid id) : base(id)
         {
             Name = "New Class";
@@ -236,8 +238,17 @@ namespace Intersect.GameObjects
             }
         }
 
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
+		//Hair
+		[JsonIgnore]
+		[Column("Hairs")]
+		public string JsonHairs
+		{
+			get => JsonConvert.SerializeObject(Hairs);
+			protected set => Hairs = JsonConvert.DeserializeObject<List<HairSprite>>(value);
+		}
+
+		/// <inheritdoc />
+		public string Folder { get; set; } = "";
 
         [Pure]
         public long ExperienceToNextLevel(int level)
@@ -282,15 +293,24 @@ namespace Intersect.GameObjects
 
     }
 
-    public class ClassSprite
-    {
+	public class ClassSprite
+	{
 
-        public string Face = "";
+		public string Face = "";
 
-        public Gender Gender;
+		public Gender Gender;
 
-        public string Sprite = "";
+		public string Sprite = "";
 
-    }
+	}
+
+	public class HairSprite
+	{
+		
+		public Gender Gender;
+
+		public string Sprite = "";
+
+	}
 
 }

@@ -106,9 +106,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CreateAccountPacket(username.Trim(), password.Trim(), email.Trim()));
         }
 
-        public static void SendCreateCharacter(string name, Guid classId, int sprite)
+        public static void SendCreateCharacter(string name, Guid classId, int sprite, int hair)
         {
-            Network.SendPacket(new CreateCharacterPacket(name, classId, sprite));
+            Network.SendPacket(new CreateCharacterPacket(name, classId, sprite, hair));
         }
 
         public static void SendPickupItem(int index)
@@ -318,7 +318,12 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new RequestFriendsPacket());
         }
 
-        public static void SendAddFriend(string name)
+		public static void SendRequestConnected()
+		{
+			Network.SendPacket(new RequestConnectedPacket());
+		}
+
+		public static void SendAddFriend(string name)
         {
             Network.SendPacket(new UpdateFriendsPacket(name, true));
         }

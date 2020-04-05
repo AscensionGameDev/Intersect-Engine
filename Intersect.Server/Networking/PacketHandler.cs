@@ -348,7 +348,7 @@ namespace Intersect.Server.Networking
                 client.LoadCharacter(client.Characters.First());
                 client.Entity.SetOnline();
                 PacketSender.SendJoinGame(client);
-            }
+			}
             else
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
@@ -664,7 +664,29 @@ namespace Intersect.Server.Networking
                     PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
                 }
             }
-            else
+			else if (cmd == Strings.Chat.where)
+			{
+				if (msgSplit.Length < 1)
+				{
+					return;
+				}
+
+				for (var i = 0; i < Globals.Clients.Count; i++)
+				{
+					if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+					{
+						if (msgSplit[0].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
+						{
+
+							PacketSender.SendChatMsg(player, $"{Globals.Clients[i].Entity.Name} est à {Globals.Clients[i].Entity.Map.Name}", CustomColors.Chat.LocalChat);
+							return;
+						}
+					}
+				}
+
+				PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
+			}
+			else
             {
                 //Search for command activated events and run them
                 foreach (var evt in EventBase.Lookup)
@@ -1106,6 +1128,12 @@ namespace Intersect.Server.Networking
                     newChar.Face = classBase.Sprites[spriteIndex].Face;
                     newChar.Gender = classBase.Sprites[spriteIndex].Gender;
                 }
+
+				if (classBase.Hairs.Count > 0)
+				{
+					var hairIndex = Math.Max(0, Math.Min(classBase.Hairs.Count, packet.Hair));
+					newChar.Hair = classBase.Hairs[hairIndex].Sprite;
+				}
 
                 client.LoadCharacter(newChar);
 
@@ -1743,8 +1771,19 @@ namespace Intersect.Server.Networking
             PacketSender.SendFriends(player);
         }
 
-        //UpdateFriendsPacket
-        public void HandlePacket(Client client, Player player, UpdateFriendsPacket packet)
+
+		public void HandlePacket(Client client, Player player, RequestConnectedPacket packet)
+		{
+			if (player == null)
+			{
+				return;
+			}
+
+			PacketSender.SendConnected(player);
+		}
+
+		//UpdateFriendsPacket
+		public void HandlePacket(Client client, Player player, UpdateFriendsPacket packet)
         {
             if (player == null)
             {
@@ -1877,7 +1916,8 @@ namespace Intersect.Server.Networking
                 {
                     client.Entity?.SetOnline();
                     PacketSender.SendJoinGame(client);
-                }
+
+				}
                 catch (Exception exception)
                 {
                     Log.Warn(exception);

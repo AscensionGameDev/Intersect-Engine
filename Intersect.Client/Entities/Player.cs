@@ -34,7 +34,9 @@ namespace Intersect.Client.Entities
 
         public List<FriendInstance> Friends = new List<FriendInstance>();
 
-        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+		public List<string> OnlinePlayer = new List<string>();
+
+		public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
 
         public InventoryUpdated InventoryUpdatedDelegate;
 
@@ -57,14 +59,15 @@ namespace Intersect.Client.Entities
         public Guid TargetIndex;
 
         public int TargetType;
-		
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+
+		public string Hair { get; set; } = "";
+
+		public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
             {
                 Hotbar[i] = new HotbarInstance();
             }
-
             mRenderPriority = 2;
         }
 
@@ -182,7 +185,7 @@ namespace Intersect.Client.Entities
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
-
+			Hair = pkt.Hair;
             if (((PlayerEntityPacket) packet).Equipment != null)
             {
                 if (this == Globals.Me && ((PlayerEntityPacket) packet).Equipment.InventorySlots != null)

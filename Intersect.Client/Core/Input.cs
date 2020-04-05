@@ -113,7 +113,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.AttackInteract:
-                                        break;
+										break;
 
                                     case Control.Block:
                                         Globals.Me?.TryBlock();
@@ -206,7 +206,12 @@ namespace Intersect.Client.Core
                                         PacketSender.SendOpenAdminWindow();
 
                                         break;
-                                }
+
+									case Control.OpenConnected:
+										Interface.Interface.GameUi?.GameMenu?.ToggleConnectedWindow();
+
+										break;
+								}
 
                                 break;
 

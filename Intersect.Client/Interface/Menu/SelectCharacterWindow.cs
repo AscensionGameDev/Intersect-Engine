@@ -21,16 +21,18 @@ namespace Intersect.Client.Interface.Menu
 
         private ImagePanel mCharacterContainer;
 
-        private ImagePanel mCharacterPortrait;
+		private ImagePanel mCharacterPortrait;
 
-        //Image
-        private string mCharacterPortraitImg = "";
+		private ImagePanel mCharacterHair;
+
+		//Image
+		private string mCharacterPortraitImg = "";
 
         private Label mCharacterSelectionHeader;
 
-        private ImagePanel mCharacterSelectionPanel;
+		private ImagePanel mCharacterSelectionPanel;
 
-        private Label mCharnameLabel;
+		private Label mCharnameLabel;
 
         private Button mDeleteButton;
 
@@ -147,12 +149,14 @@ namespace Intersect.Client.Interface.Menu
             {
                 mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count + 1];
                 mCharacterPortrait = new ImagePanel(mCharacterContainer);
-                for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
+				
+				for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
                     mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
                 }
+				mCharacterHair = new ImagePanel(mCharacterContainer);
 
-                mNextCharButton.BringToFront();
+				mNextCharButton.BringToFront();
                 mPrevCharButton.BringToFront();
             }
 
@@ -187,60 +191,81 @@ namespace Intersect.Client.Interface.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Face, Characters[mSelectedChar].Face
-                );
+                //mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
+                //    GameContentManager.TextureType.Face, Characters[mSelectedChar].Face
+                //);
 
-                if (mCharacterPortrait.Texture == null)
-                {
+                //if (mCharacterPortrait.Texture == null)
+                //{
                     mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
                         GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite
                     );
 
-                    isFace = false;
-                }
+					mCharacterHair.Texture = Globals.ContentManager.GetTexture(
+						GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Hair
+					);
+
+
+				isFace = false;
+                //}
 
                 if (mCharacterPortrait.Texture != null)
                 {
-                    if (isFace)
-                    {
-                        mCharacterPortrait.SetTextureRect(
-                            0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
-                        );
+					//if (isFace)
+					//{
+					//    mCharacterPortrait.SetTextureRect(
+					//        0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
+					//    );
 
-                        var scale = Math.Min(
-                            mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
-                            mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
-                        );
+					//    var scale = Math.Min(
+					//        mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
+					//        mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
+					//    );
 
-                        mCharacterPortrait.SetSize(
-                            (int) (mCharacterPortrait.Texture.GetWidth() * scale),
-                            (int) (mCharacterPortrait.Texture.GetHeight() * scale)
-                        );
+					//    mCharacterPortrait.SetSize(
+					//        (int) (mCharacterPortrait.Texture.GetWidth() * scale),
+					//        (int) (mCharacterPortrait.Texture.GetHeight() * scale)
+					//    );
 
-                        mCharacterPortrait.SetPosition(
-                            mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
-                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
-                        );
+					//    mCharacterPortrait.SetPosition(
+					//        mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+					//        mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+					//    );
 
-                        mCharacterPortrait.Show();
-                    }
-                    else
-                    {
-                        mCharacterPortrait.SetTextureRect(
-                            0, 0, mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
-                        );
+					//    mCharacterPortrait.Show();
+					//}
+					//else
+					//{
+					mCharacterPortrait.SetTextureRect(
+						0, 0, mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+					);
 
-                        mCharacterPortrait.SetSize(
-                            mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
-                        );
+					mCharacterPortrait.SetSize(
+						mCharacterPortrait.Texture.GetWidth() / 4, mCharacterPortrait.Texture.GetHeight() / 4
+					);
 
-                        mCharacterPortrait.SetPosition(
-                            mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
-                            mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
-                        );
+					mCharacterPortrait.SetPosition(
+						mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
+						mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2
+					);
 
-                        for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
+					if (mCharacterHair.Texture != null)
+					{
+						mCharacterHair.SetTextureRect(
+							0, 0, mCharacterHair.Texture.GetWidth() / 4, mCharacterHair.Texture.GetHeight() / 4
+						);
+
+						mCharacterHair.SetSize(
+							mCharacterHair.Texture.GetWidth() / 4, mCharacterHair.Texture.GetHeight() / 4
+						);
+
+						mCharacterHair.SetPosition(
+							mCharacterContainer.Width / 2 - mCharacterHair.Width / 2,
+							mCharacterContainer.Height / 2 - mCharacterHair.Height / 2
+						);
+					}
+					
+					for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
@@ -250,7 +275,12 @@ namespace Intersect.Client.Interface.Menu
 
                                 if (mPaperdollPortraits[i].Texture != null)
                                 {
-                                    mPaperdollPortraits[i].Show();
+									if (i == Options.EquipmentSlots.IndexOf("Helmet"))
+									{
+									mCharacterHair.Texture = null;
+									}
+
+									mPaperdollPortraits[i].Show();
                                     mPaperdollPortraits[i]
                                         .SetTextureRect(
                                             0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 4,
@@ -278,7 +308,7 @@ namespace Intersect.Client.Interface.Menu
                                 }
                             }
                         }
-                    }
+                    //}
                 }
             }
             else
@@ -291,6 +321,7 @@ namespace Intersect.Client.Interface.Menu
                 mInfoLabel.SetText("");
 
                 mCharacterPortrait.Texture = null;
+				mCharacterHair.Texture = null;
             }
         }
 
@@ -382,6 +413,8 @@ namespace Intersect.Client.Interface.Menu
 
         public string Sprite = "";
 
+		public string Hair = "";
+
         public Character(Guid id)
         {
             Id = id;
@@ -394,7 +427,8 @@ namespace Intersect.Client.Interface.Menu
             string face,
             int level,
             string charClass,
-            string[] equipment
+            string[] equipment,
+			string hair
         )
         {
             Equipment = equipment;
@@ -405,6 +439,7 @@ namespace Intersect.Client.Interface.Menu
             Level = level;
             Class = charClass;
             Exists = true;
+			Hair = hair;
         }
 
         public Character()

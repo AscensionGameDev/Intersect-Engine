@@ -554,7 +554,8 @@ namespace Intersect.Client.Localization
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
 				{"togglegui", @"Toggle Interface:"},
-				{"running", @"Running:"}
+				{"running", @"Running:"},
+				{"openconnected", @"Open Connected:"}
 			};
 
             public static LocalizedString edit = @"Edit Controls";
@@ -767,7 +768,14 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct GameMenu
+		public struct Connected
+		{
+			public static LocalizedString title = @"Connected";
+		}
+
+
+
+		public struct GameMenu
         {
 
             public static LocalizedString character = @"Character Info";
@@ -782,9 +790,11 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString quest = @"Quest Log";
 
-            public static LocalizedString spells = @"Spell Book";
+			public static LocalizedString spells = @"Spell Book";
 
-        }
+			public static LocalizedString connected = @"Connected";
+
+		}
 
         public struct General
         {

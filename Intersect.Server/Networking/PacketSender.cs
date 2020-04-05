@@ -1045,8 +1045,9 @@ namespace Intersect.Server.Networking
                 characters.Add(
                     new CharacterPacket(
                         character.Id, character.Name, character.Sprite, character.Face, character.Level,
-                        ClassBase.GetName(character.ClassId), equipment
-                    )
+                        ClassBase.GetName(character.ClassId), equipment, character.Hair
+
+					)
                 );
             }
 
@@ -1767,8 +1768,25 @@ namespace Intersect.Server.Networking
             player.SendPacket(new FriendsPacket(online, offline.ToArray()));
         }
 
-        //FriendRequestPacket
-        public static void SendFriendRequest(Player player, Player partner)
+		public static void SendConnected(Player player)
+		{
+			if (player == null)
+			{
+				return;
+			}
+			var online = new List<string>();
+			foreach (var c in Globals.Clients)
+			{
+				if (c != null && c.Entity != null)
+				{
+					online.Add(c.Entity?.Name);
+				}
+			}
+			player.SendPacket(new ConnectedPacket(online.ToArray()));
+		}
+
+		//FriendRequestPacket
+		public static void SendFriendRequest(Player player, Player partner)
         {
             player.SendPacket(new FriendRequestPacket(partner.Id, partner.Name));
         }

@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -37,6 +38,8 @@ namespace Intersect.Client.Interface.Game
         private Button mEventResponse3;
 
         private Button mEventResponse4;
+
+		private bool mLastSkip;
 
         //Init
         public EventWindow(Canvas gameCanvas)
@@ -250,7 +253,17 @@ namespace Intersect.Client.Interface.Game
                     }
                 }
             }
-        }
+			if (Controls.KeyDown(Control.AttackInteract) && !mLastSkip)
+			{
+				Skip();
+				mLastSkip = true;
+			}
+			if (mLastSkip && !Controls.KeyDown(Control.AttackInteract))
+			{
+				mLastSkip = false;
+			}
+
+		}
 
         //Input Handlers
         void EventResponse4_Clicked(Base sender, ClickedEventArgs arguments)
@@ -308,6 +321,43 @@ namespace Intersect.Client.Interface.Game
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
         }
+
+		public void Skip()
+		{
+			if (Globals.EventDialogs.Count <= 0)
+			{
+				return ;
+			}
+			if (mEventDialogWindow.IsHidden)
+			{
+				return ;
+			}
+			var responseCount = 0;
+			if (Globals.EventDialogs[0].Opt1.Length > 0)
+			{
+				responseCount++;
+			}
+
+			if (Globals.EventDialogs[0].Opt2.Length > 0)
+			{
+				responseCount++;
+			}
+
+			if (Globals.EventDialogs[0].Opt3.Length > 0)
+			{
+				responseCount++;
+			}
+
+			if (Globals.EventDialogs[0].Opt4.Length > 0)
+			{
+				responseCount++;
+			}
+
+			if (responseCount == 0)
+			{
+				EventResponse1_Clicked(null, null);
+			}
+		}
 
     }
 

@@ -424,7 +424,7 @@ namespace Intersect.Client.Entities
             var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
 			if (Running == 1)
 			{
-				time *= 0.5f;
+				time *= 0.75f;
 			}
 			if (Blocking)
             {
@@ -914,7 +914,16 @@ namespace Intersect.Client.Entities
                         Graphics.DrawGameTexture(
                             Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
                         );
-                    }
+						if (this is Player && Equipment[Options.EquipmentSlots.IndexOf("Helmet")] == Guid.Empty)
+						{
+							var player = (Player)this;
+							if (player.Hair.Length > 0)
+							{
+								DrawEquipment(player.Hair, alpha);
+							}
+						}
+
+					}
                     else if (equipSlot > -1)
                     {
                         //Don't render the paperdolls if they have transformed.

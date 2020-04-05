@@ -230,7 +230,26 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
-                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
+				RefreshHairList(false);
+				if (lstHairs.Items.Count > 0)
+				{
+					lstHairs.SelectedIndex = 0;
+					cmbHair.SelectedIndex = cmbSprite.FindString(
+						TextUtils.NullToNone(mEditorItem.Hairs[lstHairs.SelectedIndex].Sprite)
+					);
+
+					if (mEditorItem.Hairs[lstHairs.SelectedIndex].Gender == 0)
+					{
+						rbMale2.Checked = true;
+					}
+					else
+					{
+						rbFemale2.Checked = true;
+					}
+				}
+
+
+				for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == mEditorItem.SpawnMapId)
                     {
@@ -276,7 +295,14 @@ namespace Intersect.Editor.Forms.Editors
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
             );
 
-            cmbFace.Items.Clear();
+			cmbHair.Items.Clear();
+			cmbHair.Items.Add(Strings.General.none);
+			cmbHair.Items.AddRange(
+				GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll)
+			);
+
+
+			cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbSpawnItem.Items.Clear();
@@ -333,7 +359,6 @@ namespace Intersect.Editor.Forms.Editors
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             grpSprite.Text = Strings.ClassEditor.spriteface;
-            lblSpriteOptions.Text = Strings.ClassEditor.spriteoptions;
             btnAdd.Text = Strings.ClassEditor.addicon;
             btnRemove.Text = Strings.ClassEditor.removeicon;
             grpGender.Text = Strings.ClassEditor.gender;
@@ -342,7 +367,13 @@ namespace Intersect.Editor.Forms.Editors
             lblSprite.Text = Strings.ClassEditor.sprite;
             lblFace.Text = Strings.ClassEditor.face;
 
-            grpSpawnItems.Text = Strings.ClassEditor.spawnitems;
+
+			grpGender2.Text = Strings.ClassEditor.gender;
+			rbMale2.Text = Strings.ClassEditor.male;
+			rbFemale2.Text = Strings.ClassEditor.female;
+			lblHair.Text = Strings.ClassEditor.hair;
+
+			grpSpawnItems.Text = Strings.ClassEditor.spawnitems;
             lblSpawnItem.Text = Strings.ClassEditor.spawnitem;
             lblSpawnItemAmount.Text = Strings.ClassEditor.spawnamount;
             btnSpawnItemAdd.Text = Strings.ClassEditor.spawnitemadd;
@@ -596,14 +627,14 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         private void rbMale_Click(object sender, EventArgs e)
-        {
-            if (lstSprites.Items.Count > 0)
-            {
-                mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Male;
+		{
+			if (lstSprites.Items.Count > 0)
+			{
+				mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Male;
 
-                RefreshSpriteList();
-            }
-        }
+				RefreshSpriteList();
+			}
+		}
 
         private void rbFemale_Click(object sender, EventArgs e)
         {
@@ -612,10 +643,30 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Female;
 
                 RefreshSpriteList();
-            }
-        }
+			}
+		}
 
-        private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+		private void rbMale2_Click(object sender, EventArgs e)
+		{
+			if (lstHairs.Items.Count > 0)
+			{
+				mEditorItem.Hairs[lstHairs.SelectedIndex].Gender = Gender.Male;
+
+				RefreshHairList();
+			}
+		}
+
+		private void rbFemale2_Click(object sender, EventArgs e)
+		{
+			if (lstHairs.Items.Count > 0)
+			{
+				mEditorItem.Hairs[lstHairs.SelectedIndex].Gender = Gender.Female;
+
+				RefreshHairList();
+			}
+		}
+
+		private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstSprites.SelectedIndex >= 0)
             {
@@ -658,7 +709,38 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
+		private void RefreshHairList(bool saveSpot = true)
+		{
+			// Refresh List
+			var n = lstHairs.SelectedIndex;
+			lstHairs.Items.Clear();
+			for (var i = 0; i < mEditorItem.Hairs.Count; i++)
+			{
+				if (mEditorItem.Hairs[i].Gender == 0)
+				{
+					lstHairs.Items.Add(
+						Strings.ClassEditor.spriteitemmale.ToString(
+							i + 1, TextUtils.NullToNone(mEditorItem.Hairs[i].Sprite)
+						)
+					);
+				}
+				else
+				{
+					lstHairs.Items.Add(
+						Strings.ClassEditor.spriteitemfemale.ToString(
+							i + 1, TextUtils.NullToNone(mEditorItem.Hairs[i].Sprite)
+						)
+					);
+				}
+			}
+
+			if (saveSpot)
+			{
+				lstHairs.SelectedIndex = n;
+			}
+		}
+
+		private void btnAdd_Click(object sender, EventArgs e)
         {
             var n = new ClassSprite
             {
@@ -692,23 +774,21 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (lstSprites.SelectedIndex == -1)
+            if (lstSprites.SelectedIndex > -1)
             {
-                return;
-            }
+				mEditorItem.Sprites.RemoveAt(lstSprites.SelectedIndex);
+				lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
 
-            mEditorItem.Sprites.RemoveAt(lstSprites.SelectedIndex);
-            lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
+				RefreshSpriteList(false);
 
-            RefreshSpriteList(false);
+				if (lstSprites.Items.Count > 0)
+				{
+					lstSprites.SelectedIndex = 0;
+				}
+			}
+		}
 
-            if (lstSprites.Items.Count > 0)
-            {
-                lstSprites.SelectedIndex = 0;
-            }
-        }
-
-        private void DrawSprite()
+		private void DrawSprite()
         {
             var picSpriteBmp = new Bitmap(picSprite.Width, picSprite.Height);
             var gfx = Graphics.FromImage(picSpriteBmp);
@@ -749,7 +829,27 @@ namespace Intersect.Editor.Forms.Editors
 
             gfx.Dispose();
             picFace.BackgroundImage = picFaceBmp;
-        }
+
+			picSpriteBmp = new Bitmap(picHair.Width, picHair.Height);
+			gfx = Graphics.FromImage(picSpriteBmp);
+			gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picHair.Width, picHair.Height));
+			if (cmbHair.SelectedIndex > 0)
+			{
+				if (File.Exists("resources/paperdolls/" + cmbHair.Text))
+				{
+					var img = Image.FromFile("resources/paperdolls/" + cmbHair.Text);
+					gfx.DrawImage(
+						img, new Rectangle(0, 0, img.Width / 4, img.Height / 4),
+						new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel
+					);
+
+					img.Dispose();
+				}
+			}
+
+			gfx.Dispose();
+			picHair.BackgroundImage = picSpriteBmp;
+		}
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
@@ -1682,8 +1782,104 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        #endregion
+		#endregion
 
-    }
+		private void cmbHair_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (lstHairs.SelectedIndex >= 0)
+			{
+				mEditorItem.Hairs[lstHairs.SelectedIndex].Sprite = TextUtils.SanitizeNone(cmbHair?.Text);
+
+				RefreshHairList();
+			}
+
+			DrawSprite();
+		}
+
+		private void lstHairs_Click(object sender, EventArgs e)
+		{
+			if (lstHairs.Items.Count > 0)
+			{
+				cmbHair.SelectedIndex = cmbHair.FindString(
+					TextUtils.NullToNone(mEditorItem.Hairs[lstHairs.SelectedIndex].Sprite)
+				);
+
+				if (mEditorItem.Hairs[lstHairs.SelectedIndex].Gender == 0)
+				{
+					rbMale.Checked = true;
+				}
+				else
+				{
+					rbFemale.Checked = true;
+				}
+			}
+		}
+
+		private void btnAddHair_Click(object sender, EventArgs e)
+		{
+			var n = new HairSprite
+			{
+				Sprite = null,
+				Gender = 0
+			};
+
+			mEditorItem.Hairs.Add(n);
+
+			if (n.Gender == 0)
+			{
+				lstHairs.Items.Add(
+					Strings.ClassEditor.spriteitemmale.ToString(
+						mEditorItem.Hairs.Count, TextUtils.NullToNone(n.Sprite)
+					)
+				);
+			}
+			else
+			{
+				lstHairs.Items.Add(
+					Strings.ClassEditor.spriteitemfemale.ToString(
+						mEditorItem.Hairs.Count, TextUtils.NullToNone(n.Sprite)
+					)
+				);
+			}
+
+			lstHairs.SelectedIndex = lstHairs.Items.Count - 1;
+			lstHairs_Click(null, null);
+		}
+
+		private void btnRemoveHair_Click(object sender, EventArgs e)
+		{
+			if (lstHairs.SelectedIndex > -1)
+			{
+				mEditorItem.Sprites.RemoveAt(lstHairs.SelectedIndex);
+				lstHairs.Items.RemoveAt(lstHairs.SelectedIndex);
+
+				RefreshHairList(false);
+
+				if (lstHairs.Items.Count > 0)
+				{
+					lstHairs.SelectedIndex = 0;
+				}
+			}
+		}
+
+		private void lstHairs_Click_1(object sender, EventArgs e)
+		{
+			if (lstHairs.Items.Count > 0)
+			{
+				cmbHair.SelectedIndex = cmbSprite.FindString(
+					TextUtils.NullToNone(mEditorItem.Hairs[lstHairs.SelectedIndex].Sprite)
+				);
+
+				if (mEditorItem.Hairs[lstHairs.SelectedIndex].Gender == 0)
+				{
+					rbMale2.Checked = true;
+				}
+				else
+				{
+					rbFemale2.Checked = true;
+				}
+			}
+		}
+	}
 
 }

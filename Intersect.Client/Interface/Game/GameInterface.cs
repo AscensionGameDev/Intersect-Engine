@@ -71,7 +71,9 @@ namespace Intersect.Client.Interface.Game
 
         private bool mShouldUpdateFriendsList;
 
-        private string mTradingTarget;
+		private bool mShouldUpdateConnectedList;
+
+		private string mTradingTarget;
 
         private TradingWindow mTradingWindow;
 
@@ -121,8 +123,14 @@ namespace Intersect.Client.Interface.Game
             mShouldUpdateFriendsList = true;
         }
 
-        //Admin Window
-        public void NotifyOpenAdminWindow()
+		// Online Window
+		public void NotifyUpdateConnectedList()
+		{
+			mShouldUpdateConnectedList = true;
+		}
+
+		//Admin Window
+		public void NotifyOpenAdminWindow()
         {
             mShouldOpenAdminWindow = true;
         }
@@ -463,7 +471,12 @@ namespace Intersect.Client.Interface.Game
             if (mShouldUpdateFriendsList)
             {
                 GameMenu.UpdateFriendsList();
-            }
+			}
+
+			if (mShouldUpdateConnectedList)
+			{
+				GameMenu.UpdateConnectedList();
+			}
 
             mShouldCloseTrading = false;
 

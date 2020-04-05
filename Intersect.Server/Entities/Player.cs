@@ -75,6 +75,8 @@ namespace Intersect.Server.Entities
 
         public int StatPoints { get; set; }
 
+		public string Hair { get; set; }
+
 		[Column("Equipment"), JsonIgnore]
         public string EquipmentJson
         {
@@ -552,7 +554,7 @@ namespace Intersect.Server.Entities
             var pkt = (PlayerEntityPacket) packet;
             pkt.Gender = Gender;
             pkt.ClassId = ClassId;
-
+			pkt.Hair = Hair;
             if (Power.IsAdmin)
             {
                 pkt.AccessLevel = (int) Access.Admin;

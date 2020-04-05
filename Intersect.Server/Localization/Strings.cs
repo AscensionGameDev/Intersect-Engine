@@ -203,10 +203,14 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString replycmd = @"/reply";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString toofast = @"You are chatting too fast!";
+			[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+			public readonly LocalizedString toofast = @"You are chatting too fast!";
+			
+			[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+			public readonly LocalizedString where = @"/where";
 
-        }
+
+		}
 
         public sealed class ClassesNamespace : LocaleNamespace
         {

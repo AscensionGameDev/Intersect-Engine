@@ -18,6 +18,8 @@ namespace Intersect.Network.Packets.Server
 
         public long CombatTimeRemaining { get; set; }
 
-    }
+		public string Hair { get; set; }
+
+	}
 
 }

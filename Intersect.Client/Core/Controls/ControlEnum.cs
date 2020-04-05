@@ -66,8 +66,10 @@
 
         ToggleGui,
 
-		Running
+		Running,
 
-    }
+		OpenConnected
+
+	}
 
 }

@@ -42,11 +42,10 @@
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Intersect.Client.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
     <OutputPath>..\build\tespia\client\</OutputPath>
@@ -94,6 +93,7 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\ConnectedWindow.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\MapItem.cs" />

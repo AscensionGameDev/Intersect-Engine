@@ -23,11 +23,14 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull] private readonly CharacterWindow mCharacterWindow;
 
-        [NotNull] private readonly ImagePanel mFriendsBackground;
+		[NotNull] private readonly ImagePanel mFriendsBackground;
 
-        [NotNull] private readonly Button mFriendsButton;
+		[NotNull] private readonly Button mFriendsButton;
 
-        [NotNull] private readonly FriendsWindow mFriendsWindow;
+		[NotNull] private readonly ImagePanel mConnectedBackground;
+		[NotNull] private readonly Button mConnectedButton;
+
+		[NotNull] private readonly FriendsWindow mFriendsWindow;
 
         [NotNull] private readonly ImagePanel mInventoryBackground;
 
@@ -39,8 +42,10 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull] private readonly Button mMenuButton;
 
-        //Menu Container
-        private readonly ImagePanel mMenuContainer;
+		[NotNull] private readonly ConnectedWindow mConnectedWindow;
+
+		//Menu Container
+		private readonly ImagePanel mMenuContainer;
 
         [NotNull] private readonly ImagePanel mPartyBackground;
 
@@ -101,10 +106,16 @@ namespace Intersect.Client.Interface.Game
             mQuestsButton.SetToolTipText(Strings.GameMenu.quest);
             mQuestsButton.Clicked += QuestBtn_Clicked;
 
-            mFriendsBackground = new ImagePanel(mMenuContainer, "FriendsContainer");
-            mFriendsButton = new Button(mFriendsBackground, "FriendsButton");
-            mFriendsButton.SetToolTipText(Strings.GameMenu.friends);
-            mFriendsButton.Clicked += FriendsBtn_Clicked;
+			mFriendsBackground = new ImagePanel(mMenuContainer, "FriendsContainer");
+			mFriendsButton = new Button(mFriendsBackground, "FriendsButton");
+			mFriendsButton.SetToolTipText(Strings.GameMenu.friends);
+			mFriendsButton.Clicked += FriendsBtn_Clicked;
+
+			mConnectedBackground = new ImagePanel(mMenuContainer, "ConnectedContainer");
+            mConnectedButton = new Button(mConnectedBackground, "ConnectedButton");
+            mConnectedButton.SetToolTipText(Strings.GameMenu.connected);
+            mConnectedButton.Clicked += ConnectedBtn_Clicked;
+
 
             mPartyBackground = new ImagePanel(mMenuContainer, "PartyContainer");
             mPartyButton = new Button(mPartyBackground, "PartyButton");
@@ -116,7 +127,7 @@ namespace Intersect.Client.Interface.Game
             mMenuButton.SetToolTipText(Strings.GameMenu.Menu);
             mMenuButton.Clicked += MenuButtonClicked;
 
-            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+			mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             //Assign Window References
             mPartyWindow = new PartyWindow(gameCanvas);
@@ -125,7 +136,9 @@ namespace Intersect.Client.Interface.Game
             mSpellsWindow = new SpellsWindow(gameCanvas);
             mCharacterWindow = new CharacterWindow(gameCanvas);
             mQuestsWindow = new QuestsWindow(gameCanvas);
-        }
+			mConnectedWindow = new ConnectedWindow(gameCanvas);
+
+		}
 
         //Methods
         public void Update(bool updateQuestLog)
@@ -135,13 +148,20 @@ namespace Intersect.Client.Interface.Game
             mCharacterWindow.Update();
             mPartyWindow.Update();
             mFriendsWindow.Update();
-            mQuestsWindow.Update(updateQuestLog);
+			mConnectedWindow.Update();
+
+			mQuestsWindow.Update(updateQuestLog);
         }
 
         public void UpdateFriendsList()
         {
             mFriendsWindow.UpdateList();
         }
+
+		public void UpdateConnectedList()
+		{
+			mConnectedWindow.UpdateList();
+		}
 
         public void HideWindows()
         {
@@ -156,7 +176,9 @@ namespace Intersect.Client.Interface.Game
             mPartyWindow.Hide();
             mQuestsWindow.Hide();
             mSpellsWindow.Hide();
-        }
+			mConnectedWindow.Hide();
+
+		}
 
         public void ToggleCharacterWindow()
         {
@@ -240,8 +262,25 @@ namespace Intersect.Client.Interface.Game
             }
         }
 
-        //Input Handlers
-        private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
+		public bool ToggleConnectedWindow()
+		{
+			if (mConnectedWindow.IsVisible())
+			{
+				mConnectedWindow.Hide();
+			}
+			else
+			{
+				HideWindows();
+				PacketSender.SendRequestConnected();
+				mConnectedWindow.UpdateList();
+				mConnectedWindow.Show();
+			}
+
+			return mConnectedWindow.IsVisible();
+		}
+
+		//Input Handlers
+		private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
         {
             Interface.GameUi?.EscapeMenu?.ToggleHidden();
         }
@@ -274,8 +313,13 @@ namespace Intersect.Client.Interface.Game
         private void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleCharacterWindow();
-        }
+		}
 
-    }
+		private void ConnectedBtn_Clicked(Base sender, ClickedEventArgs arguments)
+		{
+			ToggleConnectedWindow();
+		}
+
+	}
 
 }

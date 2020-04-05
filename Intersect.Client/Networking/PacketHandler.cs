@@ -1586,8 +1586,15 @@ namespace Intersect.Client.Networking
             Interface.Interface.GameUi.NotifyUpdateFriendsList();
         }
 
-        //FriendRequestPacket
-        private static void HandlePacket(FriendRequestPacket packet)
+		private static void HandlePacket(ConnectedPacket packet)
+		{
+			Globals.Me.OnlinePlayer.Clear();
+			Globals.Me.OnlinePlayer.AddRange(packet.Online);
+			Interface.Interface.GameUi.NotifyUpdateConnectedList();
+		}
+
+		//FriendRequestPacket
+		private static void HandlePacket(FriendRequestPacket packet)
         {
             var iBox = new InputBox(
                 Strings.Friends.request, Strings.Friends.requestprompt.ToString(packet.FriendName), true,
@@ -1604,7 +1611,7 @@ namespace Intersect.Client.Networking
             foreach (var chr in packet.Characters)
             {
                 characters.Add(
-                    new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment)
+                    new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment, chr.Hair)
                 );
             }
 
