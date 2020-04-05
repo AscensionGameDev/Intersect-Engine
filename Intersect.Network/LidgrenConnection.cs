@@ -126,7 +126,7 @@ namespace Intersect.Network
         public override void Dispose()
         {
             base.Dispose();
-            NetConnection?.Disconnect("status_disposing");
+            NetConnection?.Disconnect(NetworkStatus.Quitting.ToString());
         }
 
         public override bool Send(IPacket packet)
