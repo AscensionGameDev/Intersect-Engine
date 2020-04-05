@@ -58,8 +58,6 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
-        public bool TargetOnFocus;
-
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -1100,7 +1098,7 @@ namespace Intersect.Client.Entities
                         if (en.Value.CurrentMap == map &&
                             en.Value.CanBeAttacked())
                         {
-                            if (TargetIndex != null && TargetOnFocus)
+                            if (TargetIndex != null && en.Value.IsATarget)
                             {
                                 bool canAttack = false;
                                 foreach (int[] hitBx in hitbox)
@@ -1114,7 +1112,7 @@ namespace Intersect.Client.Entities
 
                                 if (canAttack)
                                 {
-                                    PacketSender.SendAttack(en.Key, TargetOnFocus);
+                                    PacketSender.SendAttack(en.Key, en.Value.IsATarget);
                                     AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
 
                                     return true;
@@ -1123,7 +1121,7 @@ namespace Intersect.Client.Entities
                             else if (en.Value.X == x && en.Value.Y == y)
                             {
                                 //ATTACKKKKK!!!
-                                PacketSender.SendAttack(en.Key, TargetOnFocus);
+                                PacketSender.SendAttack(en.Key, en.Value.IsATarget);
                                 AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
 
                                 return true;
@@ -1157,7 +1155,8 @@ namespace Intersect.Client.Entities
             }
 
             //Projectile/empty swing for animations
-            PacketSender.SendAttack(Guid.Empty, TargetOnFocus);
+            // Check if there is an issue with the value always at false
+            PacketSender.SendAttack(Guid.Empty, false);
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
 
             return true;
@@ -1944,11 +1943,11 @@ namespace Intersect.Client.Entities
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
-                        TargetOnFocus = false;
+                        en.Value.IsATarget = false;
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
                             en.Value.DrawTarget((int)TargetTypes.Selected);
-                            TargetOnFocus = true;
+                            en.Value.IsATarget = true;
                         }
                     }
                 }
