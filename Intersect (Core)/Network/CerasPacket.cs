@@ -10,12 +10,7 @@ namespace Intersect.Network
 
     public abstract class CerasPacket : IPacket
     {
-
         [NotNull] private static readonly Ceras sCerasInstance = new Ceras(true);
-
-        protected CerasPacket()
-        {
-        }
 
         /// <inheritdoc />
         public virtual void Dispose()
