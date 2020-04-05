@@ -591,6 +591,9 @@ namespace Intersect.Network
                                     case "Wrong application identifier!":
                                         networkStatus = NetworkStatus.VersionMismatch;
                                         break;
+                                    case "Connection timed out":
+                                        networkStatus = NetworkStatus.Quitting;
+                                        break;
                                     default:
                                         networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason, true);
                                         break;
@@ -618,6 +621,7 @@ namespace Intersect.Network
                                 case NetworkStatus.Connecting:
                                 case NetworkStatus.Online:
                                 case NetworkStatus.Offline:
+                                case NetworkStatus.Quitting:
                                     disconnectHandler = OnDisconnected;
                                     disconnectHandlerName = nameof(OnDisconnected);
                                     break;

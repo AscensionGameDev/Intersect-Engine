@@ -16,8 +16,10 @@
         VersionMismatch,
 
         ServerFull,
+        
+        HandshakeFailure,
 
-        HandshakeFailure
+        Quitting,
 
     }
 }
