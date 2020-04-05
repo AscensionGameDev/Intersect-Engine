@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 
 using Intersect.Logging;
 using Intersect.Network.Events;
+using Intersect.Network.Lidgren;
 
 using JetBrains.Annotations;
 

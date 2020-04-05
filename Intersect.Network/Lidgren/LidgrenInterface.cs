@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 
 using Lidgren.Network;
 
-namespace Intersect.Network
+namespace Intersect.Network.Lidgren
 {
 
     public sealed class LidgrenInterface : INetworkLayerInterface
