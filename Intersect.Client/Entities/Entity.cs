@@ -430,9 +430,13 @@ namespace Intersect.Client.Entities
             }
         }
 
+        // After being set to true, mDisposed was always true so the if isDisposed condition in Entibox was always true.
+        // So this little temp variable fix that.
         public virtual bool IsDisposed()
         {
-            return mDisposed;
+            bool temp = mDisposed;
+            mDisposed = false;
+            return temp;
         }
 
         public virtual void Dispose()
