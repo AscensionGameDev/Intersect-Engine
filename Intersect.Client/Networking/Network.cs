@@ -6,6 +6,9 @@ using Intersect.Client.Interface.Menu;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Events;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Client.Networking
 {
@@ -50,7 +53,7 @@ namespace Intersect.Client.Networking
             Socket?.Connect(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
         }
 
-        private static void MySocket_OnConnectionFailed(bool denied)
+        private static void MySocket_OnConnectionFailed([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs, bool denied)
         {
             sConnected = false;
             if (!denied)
@@ -64,7 +67,7 @@ namespace Intersect.Client.Networking
             PacketHandler.HandlePacket(packet);
         }
 
-        private static void MySocket_OnDisconnected()
+        private static void MySocket_OnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
             //Not sure how to handle this yet!
             sConnected = false;
@@ -81,7 +84,7 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static void MySocket_OnConnected()
+        private static void MySocket_OnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
             //Not sure how to handle this yet!
             sConnected = true;

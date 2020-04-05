@@ -41,11 +41,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         )
         {
             InitializeComponent();
+            InitLocalization();
             mEditingGraphic = editingGraphic;
             mEventEditor = eventEditor;
             mLoading = true;
+            cmbGraphicType.SelectedIndex = (int)mEditingGraphic.Type;
             UpdateGraphicList();
-            if (cmbGraphic.Items.IndexOf(mEditingGraphic.Filename) > -1)
+            if (cmbGraphic.Items.Contains(mEditingGraphic.Filename))
             {
                 cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(mEditingGraphic.Filename);
             }
@@ -53,8 +55,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mRouteDesigner = moveRouteDesigner;
             mNewRouteAction = newMoveRouteAction;
             mLoading = false;
-            InitLocalization();
-            cmbGraphicType.SelectedIndex = (int) mEditingGraphic.Type;
             mTmpGraphic.CopyFrom(mEditingGraphic);
             UpdatePreview();
         }

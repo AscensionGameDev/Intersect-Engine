@@ -7,6 +7,7 @@ using System.Threading;
 
 using Intersect.Logging;
 using Intersect.Memory;
+using Intersect.Network.Events;
 using Intersect.Network.Packets;
 using Intersect.Utilities;
 
@@ -21,12 +22,6 @@ namespace Intersect.Network
     {
 
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
-
-        private const string RejectBadHail = "bad_hail";
-
-        private const string RejectBadVersion = "bad_version";
-
-        private const string RejectServerError = "server_error";
 
         private static readonly IConnection[] EmptyConnections = { };
 
@@ -494,6 +489,7 @@ namespace Intersect.Network
                             Log.Diagnostic($"{message.MessageType}: {message} [{connection?.Status}]");
 
                             break;
+
                         case NetConnectionStatus.Disconnecting:
                             Log.Debug($"{message.MessageType}: {message} [{connection?.Status}]");
 
@@ -515,7 +511,14 @@ namespace Intersect.Network
                                 }
 
                                 FireHandler(
-                                    OnConnectionApproved, nameof(OnConnectionApproved), this, intersectConnection
+                                    OnConnectionApproved,
+                                    nameof(OnConnectionApproved),
+                                    this,
+                                    new ConnectionEventArgs
+                                    {
+                                        NetworkStatus = NetworkStatus.Connecting,
+                                        Connection = intersectConnection
+                                    }
                                 );
 
                                 Debug.Assert(connection != null, "connection != null");
@@ -523,14 +526,13 @@ namespace Intersect.Network
 
                                 if (!intersectConnection.HandleApproval(approval))
                                 {
-                                    mNetwork?.Disconnect("bad_handshake_secret");
-                                    connection.Disconnect("bad_handshake_secret");
+                                    mNetwork.Disconnect(NetworkStatus.HandshakeFailure.ToString());
+                                    connection.Disconnect(NetworkStatus.HandshakeFailure.ToString());
 
                                     break;
                                 }
 
-                                var clientNetwork = mNetwork as ClientNetwork;
-                                if (clientNetwork == null)
+                                if (!(mNetwork is ClientNetwork clientNetwork))
                                 {
                                     throw new InvalidOperationException();
                                 }
@@ -559,7 +561,16 @@ namespace Intersect.Network
                                 intersectConnection?.HandleConnected();
                             }
 
-                            FireHandler(OnConnected, nameof(OnConnected), this, intersectConnection);
+                            FireHandler(
+                                OnConnected,
+                                nameof(OnConnected),
+                                this,
+                                new ConnectionEventArgs
+                                {
+                                    NetworkStatus = NetworkStatus.Online,
+                                    Connection = intersectConnection
+                                }
+                            );
                         }
 
                             break;
@@ -571,29 +582,54 @@ namespace Intersect.Network
                             var result = (NetConnectionStatus) message.ReadByte();
                             var reason = message.ReadString();
 
+                            NetworkStatus networkStatus;
+                            try
+                            {
+                                switch (reason)
+                                {
+                                    //Lidgren won't accept a connection with a bad version and sends this message back so we need to manually handle it
+                                    case "Wrong application identifier!":
+                                        networkStatus = NetworkStatus.VersionMismatch;
+                                        break;
+                                    default:
+                                        networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason, true);
+                                        break;
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+                                Log.Diagnostic(exception);
+                                networkStatus = NetworkStatus.Unknown;
+                            }
+
                             HandleConnectionEvent disconnectHandler;
                             string disconnectHandlerName;
-                            switch (reason)
+                            switch (networkStatus)
                             {
-                                case RejectBadHail:
-                                case RejectBadVersion:
-                                case RejectServerError:
+                                case NetworkStatus.Unknown:
+                                case NetworkStatus.HandshakeFailure:
+                                case NetworkStatus.ServerFull:
+                                case NetworkStatus.VersionMismatch:
+                                case NetworkStatus.Failed:
                                     disconnectHandler = OnConnectionDenied;
                                     disconnectHandlerName = nameof(OnConnectionDenied);
+                                    break;
 
+                                case NetworkStatus.Connecting:
+                                case NetworkStatus.Online:
+                                case NetworkStatus.Offline:
+                                    disconnectHandler = OnDisconnected;
+                                    disconnectHandlerName = nameof(OnDisconnected);
                                     break;
 
                                 default:
-                                    disconnectHandler = OnDisconnected;
-                                    disconnectHandlerName = nameof(OnDisconnected);
-
-                                    break;
+                                    throw new ArgumentOutOfRangeException();
                             }
 
                             if (!mGuidLookup.TryGetValue(lidgrenId, out var guid))
                             {
                                 Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
-                                FireHandler(disconnectHandler, disconnectHandlerName, this, null);
+                                FireHandler(disconnectHandler, disconnectHandlerName, this, new ConnectionEventArgs { NetworkStatus = networkStatus });
 
                                 break;
                             }
@@ -602,7 +638,8 @@ namespace Intersect.Network
                             if (client != null)
                             {
                                 client.HandleDisconnected();
-                                FireHandler(disconnectHandler, disconnectHandlerName, this, client);
+
+                                FireHandler(disconnectHandler, disconnectHandlerName, this, new ConnectionEventArgs { Connection = client, NetworkStatus = NetworkStatus.Offline });
                                 mNetwork.RemoveConnection(client);
                             }
 
@@ -625,59 +662,66 @@ namespace Intersect.Network
 
                 case NetIncomingMessageType.ConnectionApproval:
                 {
-                    var hail = (HailPacket) mCeras.Deserialize(message.Data);
-
-                    Debug.Assert(SharedConstants.VersionData != null, "SharedConstants.VERSION_DATA != null");
-                    Debug.Assert(hail.VersionData != null, "hail.VersionData != null");
-                    if (!SharedConstants.VersionData.SequenceEqual(hail.VersionData))
+                    try
                     {
-                        Log.Error($"Bad version detected, denying connection [{lidgrenIdHex}].");
-                        connection?.Deny(RejectBadVersion);
+                        var hail = (HailPacket) mCeras.Deserialize(message.Data);
 
-                        break;
+                        Debug.Assert(SharedConstants.VersionData != null, "SharedConstants.VERSION_DATA != null");
+                        Debug.Assert(hail.VersionData != null, "hail.VersionData != null");
+                        if (!SharedConstants.VersionData.SequenceEqual(hail.VersionData))
+                        {
+                            Log.Error($"Bad version detected, denying connection [{lidgrenIdHex}].");
+                            connection?.Deny(NetworkStatus.VersionMismatch.ToString());
+
+                            break;
+                        }
+
+                        if (OnConnectionApproved == null)
+                        {
+                            Log.Error($"No handlers for OnConnectionApproved, denying connection [{lidgrenIdHex}].");
+                            connection?.Deny(NetworkStatus.Failed.ToString());
+
+                            break;
+                        }
+
+                        /* Approving connection from here-on. */
+                        var aesKey = new byte[32];
+                        mRng?.GetNonZeroBytes(aesKey);
+                        var client = new LidgrenConnection(mNetwork, connection, aesKey, hail.RsaParameters);
+
+                        if (!OnConnectionRequested(this, client))
+                        {
+                            Log.Warn($"Connection blocked due to ban or ip filter!");
+                            connection?.Deny(NetworkStatus.Failed.ToString());
+
+                            break;
+                        }
+
+                        Debug.Assert(mNetwork != null, "mNetwork != null");
+                        if (!mNetwork.AddConnection(client))
+                        {
+                            Log.Error($"Failed to add the connection.");
+                            connection?.Deny(NetworkStatus.Failed.ToString());
+
+                            break;
+                        }
+
+                        Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
+                        Debug.Assert(connection != null, "connection != null");
+                        mGuidLookup.Add(connection.RemoteUniqueIdentifier, client.Guid);
+
+                        Debug.Assert(mPeer != null, "mPeer != null");
+                        var approval = new ApprovalPacket(client.Rsa, hail.HandshakeSecret, aesKey, client.Guid);
+                        var approvalMessage = mPeer.CreateMessage();
+                        approvalMessage.Data = approval.Data;
+                        approvalMessage.LengthBytes = approvalMessage.Data.Length;
+                        connection.Approve(approvalMessage);
+                        OnConnectionApproved(this, new ConnectionEventArgs { Connection = client, NetworkStatus = NetworkStatus.Online });
                     }
-
-                    if (OnConnectionApproved == null)
+                    catch
                     {
-                        Log.Error($"No handlers for OnConnectionApproved, denying connection [{lidgrenIdHex}].");
-                        connection?.Deny(RejectServerError);
-
-                        break;
+                        connection?.Deny(NetworkStatus.Failed.ToString());
                     }
-
-                    /* Approving connection from here-on. */
-                    var aesKey = new byte[32];
-                    mRng?.GetNonZeroBytes(aesKey);
-                    var client = new LidgrenConnection(mNetwork, connection, aesKey, hail.RsaParameters);
-
-                    if (!OnConnectionRequested(this, client))
-                    {
-                        Log.Warn($"Connection blocked due to ban or ip filter!");
-                        connection?.Deny(RejectServerError);
-
-                        break;
-                    }
-
-                    Debug.Assert(mNetwork != null, "mNetwork != null");
-                    if (!mNetwork.AddConnection(client))
-                    {
-                        Log.Error($"Failed to add the connection.");
-                        connection?.Deny(RejectServerError);
-
-                        break;
-                    }
-
-                    Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
-                    Debug.Assert(connection != null, "connection != null");
-                    mGuidLookup.Add(connection.RemoteUniqueIdentifier, client.Guid);
-
-                    Debug.Assert(mPeer != null, "mPeer != null");
-                    var approval = new ApprovalPacket(client.Rsa, hail.HandshakeSecret, aesKey, client.Guid);
-                    var approvalMessage = mPeer.CreateMessage();
-                    approvalMessage.Data = approval.Data;
-                    approvalMessage.LengthBytes = approvalMessage.Data.Length;
-                    connection.Approve(approvalMessage);
-                    OnConnectionApproved(this, client);
 
                     break;
                 }
@@ -726,11 +770,11 @@ namespace Intersect.Network
         private bool FireHandler(
             HandleConnectionEvent handler,
             string name,
-            INetworkLayerInterface sender,
-            IConnection connection
+            [NotNull] INetworkLayerInterface sender,
+            [NotNull] ConnectionEventArgs connectionEventArgs
         )
         {
-            handler?.Invoke(sender, connection);
+            handler?.Invoke(sender, connectionEventArgs);
 
             if (handler == null)
             {

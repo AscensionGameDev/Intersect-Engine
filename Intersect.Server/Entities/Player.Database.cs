@@ -154,7 +154,7 @@ namespace Intersect.Server.Entities
         }
 
         [NotNull]
-        public static IEnumerable<Player> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        public static IList<Player> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -162,12 +162,12 @@ namespace Intersect.Server.Entities
                 {
                     var context = DbInterface.GetPlayerContext();
 
-                    return QueryPlayers(context, page * count, count) ?? throw new InvalidOperationException();
+                    return QueryPlayers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
                 }
             }
             else
             {
-                return QueryPlayers(playerContext, page * count, count) ?? throw new InvalidOperationException();
+                return QueryPlayers(playerContext, page * count, count)?.ToList() ?? throw new InvalidOperationException();
             }
         }
 
@@ -192,7 +192,7 @@ namespace Intersect.Server.Entities
                     ? QueryPlayersWithRankAscending(context, page * count, count)
                     : QueryPlayersWithRank(context, page * count, count);
 
-                return results ?? throw new InvalidOperationException();
+                return results?.ToList() ?? throw new InvalidOperationException();
             }
         }
 

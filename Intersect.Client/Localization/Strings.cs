@@ -1335,6 +1335,12 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString Unknown = @"Unknown";
 
+            public static LocalizedString VersionMismatch = @"Bad Version";
+
+            public static LocalizedString ServerFull = @"Full";
+
+            public static LocalizedString HandshakeFailure = @"Handshake Error";
+
         }
 
         public struct Shop

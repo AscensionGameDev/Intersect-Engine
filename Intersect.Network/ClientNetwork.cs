@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Intersect.Logging;
+using Intersect.Network.Events;
 
 using JetBrains.Annotations;
 
@@ -94,30 +95,30 @@ namespace Intersect.Network
             return Send(packet);
         }
 
-        protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Connected [{connection?.Guid}].");
+            Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
             IsConnected = true;
-            OnConnected?.Invoke(sender, connection);
+            OnConnected?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnConnectonApproved(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnConnectonApproved([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Connection approved [{connection?.Guid}].");
-            OnConnectionApproved?.Invoke(sender, connection);
+            Log.Info($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
+            OnConnectionApproved?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnConnectonDenied(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnConnectonDenied([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Connection denied [{connection?.Guid}].");
-            OnConnectionDenied?.Invoke(sender, connection);
+            Log.Info($"Connection denied [{connectionEventArgs.Connection?.Guid}].");
+            OnConnectionDenied?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
+        protected virtual void HandleInterfaceOnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Log.Info($"Disconnected [{connection?.Guid ?? Guid.Empty}].");
+            Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid ?? Guid.Empty}].");
             IsConnected = false;
-            OnDisconnected?.Invoke(sender, connection);
+            OnDisconnected?.Invoke(sender, connectionEventArgs);
         }
 
         public void Close()

@@ -1,4 +1,7 @@
 ﻿using Intersect.Network;
+using Intersect.Network.Events;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Client.Framework.Network
 {
@@ -33,29 +36,29 @@ namespace Intersect.Client.Framework.Network
             DataReceived?.Invoke(packet);
         }
 
-        protected void OnConnected()
+        protected void OnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Connected?.Invoke();
+            Connected?.Invoke(sender, connectionEventArgs);
         }
 
-        protected void OnConnectionFailed(bool denied)
+        protected void OnConnectionFailed([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs, bool denied)
         {
-            ConnectionFailed?.Invoke(denied);
+            ConnectionFailed?.Invoke(sender, connectionEventArgs, denied);
         }
 
-        protected void OnDisconnected()
+        protected void OnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
         {
-            Disconnected?.Invoke();
+            Disconnected?.Invoke(sender, connectionEventArgs);
         }
 
     }
 
     public delegate void DataReceivedHandler(IPacket packet);
 
-    public delegate void ConnectedHandler();
+    public delegate void ConnectedHandler([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs);
 
-    public delegate void ConnectionFailedHandler(bool denied);
+    public delegate void ConnectionFailedHandler([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs, bool denied);
 
-    public delegate void DisconnectedHandler();
+    public delegate void DisconnectedHandler([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs);
 
 }

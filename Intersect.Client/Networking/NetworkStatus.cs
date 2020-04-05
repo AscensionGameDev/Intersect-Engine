@@ -1,24 +1,10 @@
 ﻿using System;
 
 using Intersect.Client.Localization;
+using Intersect.Network;
 
 namespace Intersect.Client.Networking
 {
-
-    public enum NetworkStatus
-    {
-
-        Unknown = 0,
-
-        Connecting,
-
-        Online,
-
-        Offline,
-
-        Failed
-
-    }
 
     public static class NetworkStatusExtensions
     {
@@ -41,6 +27,15 @@ namespace Intersect.Client.Networking
 
                 case NetworkStatus.Failed:
                     return Strings.Server.Failed;
+
+                case NetworkStatus.VersionMismatch:
+                    return Strings.Server.VersionMismatch;
+
+                case NetworkStatus.ServerFull:
+                    return Strings.Server.ServerFull;
+
+                case NetworkStatus.HandshakeFailure:
+                    return Strings.Server.HandshakeFailure;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(networkStatus), networkStatus, null);
