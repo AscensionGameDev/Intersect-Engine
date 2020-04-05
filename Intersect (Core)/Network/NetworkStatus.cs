@@ -17,7 +17,9 @@
 
         ServerFull,
 
-        HandshakeFailure
+        HandshakeFailure,
+
+        Quitting,
 
     }
 }

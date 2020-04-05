@@ -11,6 +11,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
+using Intersect.Network;
 
 namespace Intersect.Editor.Forms
 {
@@ -151,7 +152,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            Networking.Network.EditorLidgrenNetwork?.Disconnect("quitting");
+            Networking.Network.EditorLidgrenNetwork?.Disconnect(NetworkStatus.Quitting.ToString());
             base.OnClosed(e);
             Application.Exit();
         }
