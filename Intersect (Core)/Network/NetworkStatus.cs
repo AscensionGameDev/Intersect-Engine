@@ -16,7 +16,7 @@
         VersionMismatch,
 
         ServerFull,
-
+        
         HandshakeFailure,
 
         Quitting,
