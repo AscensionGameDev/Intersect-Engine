@@ -1034,7 +1034,7 @@ namespace Intersect.Client.Entities
                     if (en.Value != Globals.Me)
                     {
                         if (en.Value.CurrentMap == map &&
-                            en.Value.X == x ||
+                            en.Value.X == x &&
                             en.Value.Y == y &&
                             en.Value.CanBeAttacked())
                         {
