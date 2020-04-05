@@ -1011,12 +1011,12 @@ namespace Intersect.Client.Entities
 
                     break;
                 case 6: // DownLeft
-                    y--;
+                    y++;
                     x--;
 
                     break;
                 case 7: // DownRight
-                    y--;
+                    y++;
                     x++;
 
                     break;
