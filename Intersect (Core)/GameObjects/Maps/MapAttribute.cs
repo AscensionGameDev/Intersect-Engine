@@ -9,11 +9,6 @@ namespace Intersect.GameObjects.Maps
 
     public abstract class MapAttribute
     {
-
-        public MapAttribute()
-        {
-        }
-
         public abstract MapAttributes Type { get; }
 
         public static MapAttribute CreateAttribute(MapAttributes type)

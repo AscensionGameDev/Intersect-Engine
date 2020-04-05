@@ -59,8 +59,6 @@ namespace Intersect.Server.Entities
 
         #endregion
 
-        public Player() { }
-
         public static int OnlineCount => OnlinePlayers.Count;
 
         [JsonProperty("MaxVitals"), NotMapped]

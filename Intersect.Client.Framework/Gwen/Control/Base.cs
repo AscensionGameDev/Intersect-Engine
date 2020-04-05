@@ -11,6 +11,9 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
+#if DEBUG
+using Intersect.Logging;
+#endif
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -1097,8 +1100,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 #if DEBUG
         ~Base()
         {
-            //throw new InvalidOperationException(String.Format("IDisposable object finalized [{1:X}]: {0}", this, GetHashCode()));
-            ////debug.print(String.Format("IDisposable object finalized: {0}", GetType()));
+            Log.Debug($"IDisposable object finalized: {GetType()}");
         }
 #endif
 
