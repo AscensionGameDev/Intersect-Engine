@@ -109,7 +109,11 @@ namespace Intersect.Server.Entities
         [NotNull, JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
-        [JsonIgnore, NotMapped]
+		//Variables
+		[NotNull, JsonIgnore]
+		public virtual List<MailBox> MailBoxs { get; set; } = new List<MailBox>();
+
+		[JsonIgnore, NotMapped]
         public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
 
         [NotMapped]
@@ -131,9 +135,9 @@ namespace Intersect.Server.Entities
 
             changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
-            changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
-
-            if (Hotbar.Count < Options.MaxHotbar)
+			changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
+			
+			if (Hotbar.Count < Options.MaxHotbar)
             {
                 Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
                 for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
@@ -278,7 +282,8 @@ namespace Intersect.Server.Entities
             FriendRequests.Clear();
             InBag = null;
             InBank = false;
-            InShop = null;
+			InMailBox = false;
+			InShop = null;
 
             //Clear cooldowns that have expired
             var keys = SpellCooldowns.Keys.ToArray();
@@ -1750,7 +1755,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool TakeItemsBySlot(int slot, int amount)
+		public bool TakeItemsBySlot(int slot, int amount)
         {
             var returnVal = false;
             if (slot < 0)
@@ -2490,7 +2495,29 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool TryDepositItem(int slot, int amount, bool sendUpdate = true)
+		public void OpenMailBox()
+		{
+			InMailBox = true;
+			PacketSender.SendOpenMailBox(this);
+		}
+
+		public void CloseMailBox()
+		{
+			if (InMailBox)
+			{
+				InMailBox = false;
+				PacketSender.SendCloseMailBox(this);
+			}
+		}
+
+		public void SendMail()
+		{
+			InMailBox = true;
+			PacketSender.SendOpenSendMail(this);
+		}
+
+
+		public bool TryDepositItem(int slot, int amount, bool sendUpdate = true)
         {
             if (!InBank)
             {
@@ -5310,12 +5337,13 @@ namespace Intersect.Server.Entities
         [JsonIgnore, NotMapped] public ShopBase InShop;
 
         [NotMapped] public bool InBank;
+		[NotMapped] public bool InMailBox;
 
-        #endregion
+		#endregion
 
-        #region Item Cooldowns
+		#region Item Cooldowns
 
-        [JsonIgnore, Column("ItemCooldowns")]
+		[JsonIgnore, Column("ItemCooldowns")]
         public string ItemCooldownsJson
         {
             get => JsonConvert.SerializeObject(ItemCooldowns);
@@ -5324,8 +5352,8 @@ namespace Intersect.Server.Entities
 
         [JsonIgnore] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
-        #endregion
+		#endregion
 
-    }
+	}
 
 }

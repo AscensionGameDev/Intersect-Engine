@@ -33,8 +33,11 @@ namespace Intersect.Client.General
 
         public static bool ConnectionLost;
 
-        //Game Systems
-        public static GameContentManager ContentManager;
+		// Mail
+		public static List<Mail> Mails = new List<Mail>();
+
+		//Game Systems
+		public static GameContentManager ContentManager;
 
         public static int CurrentMap = -1;
 

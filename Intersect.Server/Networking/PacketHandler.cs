@@ -19,6 +19,7 @@ using Intersect.Server.Admin.Actions;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -1485,8 +1486,95 @@ namespace Intersect.Server.Networking
             PacketSender.SendChatMsg(player, Strings.Parties.outofrange, CustomColors.Combat.NoTarget);
         }
 
-        //PartyInviteResponsePacket
-        public void HandlePacket(Client client, Player player, PartyInviteResponsePacket packet)
+		// Mail Box
+		public void HandlePacket(Client client, Player player, MailBoxClosePacket packet)
+		{
+			if (player == null)
+			{
+				return;
+			}
+
+			player.CloseMailBox();
+		}
+
+		public void HandlePacket(Client client, Player player, MailBoxSendPacket packet)
+		{
+			if (player == null)
+			{
+				return;
+			}
+
+			var character = DbInterface.GetPlayer(packet.To);
+			if (character != null)
+			{
+				Guid itemID = packet.ItemID;
+				int quantity = 0;
+				if (itemID != Guid.Empty)
+				{
+					quantity = packet.Quantity;
+					if (player.TakeItemsById(itemID, quantity) == false)
+					{
+						itemID= packet.ItemID;
+						quantity = 0;
+					}
+				
+				}
+				character.MailBoxs.Add(new MailBox(player, character, packet.Title, packet.Message, itemID, quantity));
+				
+			}
+			else
+			{
+				PacketSender.SendChatMsg(player, $"Player Not Found! ({packet.To})", CustomColors.Alerts.Info);
+			}
+
+
+			player.CloseMailBox();
+			DbInterface.SavePlayerDatabaseAsync();
+		}
+
+		public void HandlePacket(Client client, Player player, TakeMailPacket packet)
+		{
+			if (player == null)
+			{
+				return;
+			}
+
+			MailBox mail = null;
+			foreach (MailBox mailbox in player.MailBoxs)
+			{
+				if (mailbox.Id == packet.MailID)
+				{
+					mail = mailbox;
+					break;
+				}
+			}
+			if (mail == null)
+			{
+				return;
+			}
+			if (mail.ItemId == Guid.Empty || mail.Quantity < 1)
+			{
+				player.MailBoxs.Remove(mail);
+				PacketSender.SendOpenMailBox(player);
+				DbInterface.SavePlayerDatabaseAsync();
+				return;
+			}
+			if (player.TryGiveItem(mail.ItemId, mail.Quantity, false, true))
+			{
+				player.MailBoxs.Remove(mail);
+				PacketSender.SendOpenMailBox(player);
+				DbInterface.SavePlayerDatabaseAsync();
+			}
+			else
+			{
+				PacketSender.SendChatMsg(player, $"Not enough space in your inventory!", CustomColors.Alerts.Info);
+			}
+
+		}
+			
+
+		//PartyInviteResponsePacket
+		public void HandlePacket(Client client, Player player, PartyInviteResponsePacket packet)
         {
             if (player == null)
             {

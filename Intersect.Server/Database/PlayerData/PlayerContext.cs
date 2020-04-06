@@ -75,10 +75,15 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull]
         public DbSet<Bag> Bags { get; set; }
 
-        [NotNull]
-        public DbSet<BagSlot> Bag_Items { get; set; }
+		[NotNull]
+		public DbSet<BagSlot> Bag_Items { get; set; }
 
-        internal async ValueTask Commit(
+		[NotNull]
+		public DbSet<MailBox> Player_MailBox { get; set; }
+
+		
+
+		internal async ValueTask Commit(
             bool commit = false,
             CancellationToken cancellationToken = default(CancellationToken)
         )
@@ -133,7 +138,10 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<InventorySlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
-        }
+
+			modelBuilder.Entity<Player>().HasMany(b => b.MailBoxs).WithOne(p => p.Player).OnDelete(DeleteBehavior.Cascade);
+			modelBuilder.Entity<MailBox>().HasOne(b => b.Sender).WithMany().OnDelete(DeleteBehavior.Cascade);
+		}
 
         public void Seed()
         {

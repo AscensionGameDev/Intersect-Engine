@@ -5,6 +5,7 @@ using System.Linq;
 
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
@@ -126,16 +127,19 @@ namespace Intersect.Server.Entities
                 return null;
             }
 
+			MailBox.GetMails(DbInterface.GetPlayerContext(), player);
+
             // ReSharper disable once InvertIf
             if (!player.ValidateLists())
             {
                 player.Bank = player.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
                 player.Items = player.Items.OrderBy(inventorySlot => inventorySlot?.Slot).ToList();
                 player.Hotbar = player.Hotbar.OrderBy(hotbarSlot => hotbarSlot?.Slot).ToList();
-                player.Spells = player.Spells.OrderBy(spellSlot => spellSlot?.Slot).ToList();
-            }
+				player.Spells = player.Spells.OrderBy(spellSlot => spellSlot?.Slot).ToList();
+			}
+			
 
-            return player;
+			return player;
         }
 
         #endregion
@@ -214,7 +218,9 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-            ) ??
+					.Include(p => p.MailBoxs)
+					.ThenInclude(p => p.Sender)
+			) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
@@ -232,7 +238,9 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-            ) ??
+					.Include(p => p.MailBoxs)
+					.ThenInclude(p => p.Sender)
+			) ??
             throw new InvalidOperationException();
 
         [NotNull]
@@ -251,7 +259,9 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-            ) ??
+					.Include(p => p.MailBoxs)
+					.ThenInclude(p => p.Sender)
+			) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
@@ -265,7 +275,9 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault()
+					.Include(p => p.MailBoxs)
+					.ThenInclude(p => p.Sender)
+					.FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
 
@@ -280,7 +292,9 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
-                    .FirstOrDefault()
+					.Include(p => p.MailBoxs)
+					.ThenInclude(p => p.Sender)
+					.FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
 

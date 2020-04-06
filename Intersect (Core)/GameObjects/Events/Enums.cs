@@ -215,6 +215,10 @@
         //Player Label
         PlayerLabel,
 
+
+		SendMail = 440,
+		OpenMailBox = 441,
+
     }
 
 }

@@ -326,8 +326,14 @@
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
+    <Compile Include="Network\Packets\Client\MailBoxClosePacket.cs" />
+    <Compile Include="Network\Packets\Client\MailBoxSendPacket.cs" />
     <Compile Include="Network\Packets\Client\RequestConnectedPacket.cs" />
+    <Compile Include="Network\Packets\Client\TakeMailPacket.cs" />
     <Compile Include="Network\Packets\Server\ConnectedPacket.cs" />
+    <Compile Include="Network\Packets\Server\MailBoxPacket.cs" />
+    <Compile Include="Network\Packets\Server\MailBoxsUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Server\MailBoxUpdatePacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />

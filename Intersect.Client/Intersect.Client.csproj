@@ -94,10 +94,13 @@
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Interface\Game\ConnectedWindow.cs" />
+    <Compile Include="Interface\Game\MailBoxWindow.cs" />
+    <Compile Include="Interface\Game\SendMailBoxWindow.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\MapItem.cs" />
     <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Mail.cs" />
     <Compile Include="Maps\ActionMessage.cs" />
     <Compile Include="Maps\MapAnimation.cs" />
     <Compile Include="Maps\MapInstance.cs" />

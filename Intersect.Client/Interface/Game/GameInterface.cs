@@ -45,7 +45,10 @@ namespace Intersect.Client.Interface.Game
 
         private ShopWindow mShopWindow;
 
-        private bool mShouldCloseBag;
+		private SendMailBoxWindow mSendMailBoxWindow;
+		private MailBoxWindow mMailBoxWindow;
+
+		private bool mShouldCloseBag;
 
         private bool mShouldCloseBank;
 
@@ -177,9 +180,42 @@ namespace Intersect.Client.Interface.Game
             mShopWindow = new ShopWindow(GameCanvas);
             mShouldOpenShop = false;
         }
+		// Mail Box
+		public void OpenSendMailBox()
+		{
+			if (mSendMailBoxWindow != null)
+			{
+				mSendMailBoxWindow.Close();
+			}
+			mSendMailBoxWindow = new SendMailBoxWindow(GameCanvas);
+			mSendMailBoxWindow.UpdateItemList();
+		}
 
-        //Bank
-        public void NotifyOpenBank()
+		public void OpenMailBox()
+		{
+			if (mMailBoxWindow != null)
+			{
+				mMailBoxWindow.UpdateMail();
+			}
+			else
+			{
+				mMailBoxWindow = new MailBoxWindow(GameCanvas);
+				mMailBoxWindow.UpdateMail();
+			}
+		}
+
+		public void CloseSendMailBox()
+		{
+			mSendMailBoxWindow?.Hide();
+		}
+
+		public void CloseMailBox()
+		{
+			mMailBoxWindow?.Hide();
+		}
+
+		//Bank
+		public void NotifyOpenBank()
         {
             mShouldOpenBank = true;
         }
@@ -377,6 +413,18 @@ namespace Intersect.Client.Interface.Game
             }
 
             mShouldCloseShop = false;
+
+			if (mSendMailBoxWindow != null && !mSendMailBoxWindow.IsVisible())
+			{
+				mSendMailBoxWindow?.Close();
+				mSendMailBoxWindow = null;
+			}
+
+			if (mMailBoxWindow != null && !mMailBoxWindow.IsVisible())
+			{
+				mMailBoxWindow?.Close();
+				mMailBoxWindow = null;
+			}
 
             //Bank Update
             if (mShouldOpenBank)

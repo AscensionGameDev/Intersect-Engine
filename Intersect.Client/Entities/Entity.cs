@@ -917,7 +917,7 @@ namespace Intersect.Client.Entities
 						if (this is Player && Equipment[Options.EquipmentSlots.IndexOf("Helmet")] == Guid.Empty)
 						{
 							var player = (Player)this;
-							if (player.Hair.Length > 0)
+							if (player.Hair?.Length > 0)
 							{
 								DrawEquipment(player.Hair, alpha);
 							}

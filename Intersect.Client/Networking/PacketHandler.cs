@@ -1200,8 +1200,38 @@ namespace Intersect.Client.Networking
             }
         }
 
-        //GameObjectPacket
-        private static void HandlePacket(GameObjectPacket packet)
+		// Mail
+		private static void HandlePacket(MailBoxsUpdatePacket packet)
+		{
+			Globals.Mails.Clear();
+			foreach (MailBoxUpdatePacket mail in packet.Mails)
+			{
+				Globals.Mails.Add(new Mail(mail.MailID, mail.Name, mail.Message, mail.SenderName, mail.Item == null ? Guid.Empty : mail.Item, mail.Quantity));
+			}
+		}
+
+		private static void HandlePacket(MailBoxPacket packet)
+		{
+			if (!packet.Close)
+			{
+				Interface.Interface.GameUi.CloseSendMailBox();
+				Interface.Interface.GameUi.CloseMailBox();
+			}
+			else
+			{
+				if (packet.Send)
+				{
+					Interface.Interface.GameUi.OpenSendMailBox();
+				}
+				else
+				{
+					Interface.Interface.GameUi.OpenMailBox();
+				}
+			}
+		}
+
+		//GameObjectPacket
+		private static void HandlePacket(GameObjectPacket packet)
         {
             var type = packet.Type;
             var id = packet.Id;

@@ -378,6 +378,25 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new BumpPacket(mapId, eventId));
         }
 
+
+		public static void SendMail(string to, string title, string message, Guid itemID, int quantity)
+		{
+			Network.SendPacket(new MailBoxSendPacket(to, title, message, itemID, quantity));
+		}
+
+		public static void SendCloseMail()
+		{
+			Network.SendPacket(new MailBoxClosePacket());
+		}
+
+		public static void SendTakeMail(Guid mailID)
+		{
+			if (mailID == Guid.Empty)
+			{
+				return;
+			}
+			Network.SendPacket(new TakeMailPacket(mailID));
+		}
     }
 
 }

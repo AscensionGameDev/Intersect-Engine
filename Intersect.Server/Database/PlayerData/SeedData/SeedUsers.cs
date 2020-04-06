@@ -112,7 +112,8 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                         StatPoints = 0,
 
                         Sprite = "1.png",
-                        Face = null
+                        Face = null,
+						Hair = ""
                     };
 
                     for (var i = 0; i < Options.EquipmentSlots.Count; i++)

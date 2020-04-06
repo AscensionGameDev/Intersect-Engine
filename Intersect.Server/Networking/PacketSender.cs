@@ -1307,10 +1307,34 @@ namespace Intersect.Server.Networking
             {
                 player.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
             }
-        }
+		}
 
-        //GameObjectPacket
-        public static void SendGameObjects(Client client, GameObjectType type, List<GameObjectPacket> packetList = null)
+		public static void SendOpenMailBox(Player player)
+		{
+			// TODO : Mail List
+			List<MailBoxUpdatePacket> mails = new List<MailBoxUpdatePacket>();
+
+			foreach (MailBox mail in player.MailBoxs)
+			{
+				MailBoxUpdatePacket m = new MailBoxUpdatePacket(mail.Id, mail.Title, mail.Message, mail.Sender.Name, mail.ItemId, mail.Quantity);
+				mails.Add(m);
+			}
+			player.SendPacket(new MailBoxsUpdatePacket(mails.ToArray<MailBoxUpdatePacket>()));
+			player.SendPacket(new MailBoxPacket(true, false));
+		}
+		public static void SendCloseMailBox(Player player)
+		{
+			player.SendPacket(new MailBoxPacket(false, false));
+		}
+
+		public static void SendOpenSendMail(Player player)
+		{
+			SendInventory(player);
+			player.SendPacket(new MailBoxPacket(true, true));
+		}
+
+		//GameObjectPacket
+		public static void SendGameObjects(Client client, GameObjectType type, List<GameObjectPacket> packetList = null)
         {
             switch (type)
             {

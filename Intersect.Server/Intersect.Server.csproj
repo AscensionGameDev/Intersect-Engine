@@ -439,6 +439,7 @@
     <Compile Include="Database\Item.cs" />
     <Compile Include="Database\PlayerData\Players\IPlayerOwned.cs" />
     <Compile Include="Database\PlayerData\Players\ISlot.cs" />
+    <Compile Include="Database\PlayerData\Players\MailBox.cs" />
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
@@ -480,6 +481,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\20200405171804_AddingMailBox.cs" />
+    <Compile Include="Migrations\20200405171804_AddingMailBox.designer.cs">
+      <DependentUpon>20200405171804_AddingMailBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

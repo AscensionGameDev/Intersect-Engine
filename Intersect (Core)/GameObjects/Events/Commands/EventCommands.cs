@@ -824,6 +824,20 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool SkipCompletionEvent { get; set; }
 
-    }
+	}
+
+	public class SendMailBoxCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.SendMail;
+
+	}
+
+	public class OpenMailBoxCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.OpenMailBox;
+
+	}
 
 }

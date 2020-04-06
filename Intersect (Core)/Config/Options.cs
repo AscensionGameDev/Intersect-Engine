@@ -83,7 +83,9 @@ namespace Intersect
 
         public static int PartyRange => Instance.PlayerOpts.PartyRange;
 
-        public static int WeaponIndex => Instance.EquipmentOpts.WeaponSlot;
+		public static int MaxMail => Instance.PlayerOpts.MaxMail;
+
+		public static int WeaponIndex => Instance.EquipmentOpts.WeaponSlot;
 
         public static int ShieldIndex => Instance.EquipmentOpts.ShieldSlot;
 

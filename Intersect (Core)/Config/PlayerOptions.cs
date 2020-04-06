@@ -24,6 +24,8 @@
 
         public int TradeRange = 6;
 
+		public int MaxMail = 255;
+
     }
 
 }

@@ -1860,8 +1860,9 @@ namespace Intersect.Server.Database
                         MigrateDbSet(sPlayerDb.Player_Bank, newPlayerContext.Player_Bank);
                         MigrateDbSet(sPlayerDb.Bag_Items, newPlayerContext.Bag_Items);
                         MigrateDbSet(sPlayerDb.Mutes, newPlayerContext.Mutes);
-                        MigrateDbSet(sPlayerDb.Bans, newPlayerContext.Bans);
-                        newPlayerContext.SaveChanges();
+						MigrateDbSet(sPlayerDb.Bans, newPlayerContext.Bans);
+						MigrateDbSet(sPlayerDb.Player_MailBox, newPlayerContext.Player_MailBox);
+						newPlayerContext.SaveChanges();
                         Options.PlayerDb = newOpts;
                         Options.SaveToDisk();
                     }
