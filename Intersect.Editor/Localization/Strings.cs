@@ -1423,6 +1423,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString despawnnpcs = @"Despawn NPCs";
 
+            public static LocalizedString dividevariable = @"Divide {00}";
+
             public static LocalizedString dupglobalvariable = @"Global Variable: {00}'s Value";
 
             public static LocalizedString dupplayervariable = @"Player Variable: {00}'s Value";
@@ -1434,6 +1436,22 @@ Tick timer saved in server config.json.";
             public static LocalizedString subtractglobalvariable = @"Subtract Global Variable: {00}'s Value";
 
             public static LocalizedString subtractplayervariable = @"Subtract Player Variable: {00}'s Value";
+
+            public static LocalizedString multiplyglobalvariable = @"Multiply Global Variable: {00}'s Value";
+
+            public static LocalizedString multiplyplayervariable = @"Multiply Player Variable: {00}'s Value";
+
+            public static LocalizedString divideglobalvariable = @"Divide Global Variable: {00}'s Value";
+
+            public static LocalizedString divideplayervariable = @"Divide Player Variable: {00}'s Value";
+
+            public static LocalizedString leftshiftglobalvariable = @"Left Bit Shift Global Variable: {00}'s Value";
+
+            public static LocalizedString leftshiftplayervariable = @"Left Bit Shift Player Variable: {00}'s Value";
+
+            public static LocalizedString rightshiftglobalvariable = @"Right Bit Shift Global Variable: {00}'s Value";
+
+            public static LocalizedString rightshiftplayervariable = @"Right Bit Shift Player Variable: {00}'s Value";
 
             public static LocalizedString enditemchange = @"End Item Change";
 
@@ -1481,6 +1499,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString label = @"Label: {00}";
 
+            public static LocalizedString leftshiftvariable = @"Left Bit Shift {00}";
+
             public static LocalizedString levelup = @"Level Up Player";
 
             public static LocalizedString linestart = @"@>";
@@ -1496,6 +1516,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString moverouteevent = @"Event #{00}";
 
             public static LocalizedString moverouteplayer = @"Player";
+
+            public static LocalizedString multiplyvariable = @"Multiply {00}";
 
             public static LocalizedString notcommon = @"Cannot use this command in common events.";
 
@@ -1533,6 +1555,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString restorehpby = @"Adjust Player HP ({00})";
 
             public static LocalizedString restorempby = @"Adjust Player MP ({00})";
+
+            public static LocalizedString rightshiftvariable = @"Right Bit Shift {00}";
 
             public static LocalizedString runcompletionevent = @"Running Completion Event";
 
@@ -2469,9 +2493,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString numericadd = @"Add";
 
+            public static LocalizedString numericdivide = @"Divide";
+
+            public static LocalizedString numericleftshift = @"LShift";
+
             public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
 
             public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
+
+            public static LocalizedString numericmultiply = @"Multiply";
 
             public static LocalizedString numericrandom = @"Random";
 
@@ -2480,6 +2510,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericrandomlow = @"Low:";
 
             public static LocalizedString numericrandomdesc = @"Random Number:";
+
+            public static LocalizedString numericrightshift = @"RShift";
 
             public static LocalizedString numericset = @"Set";
 

@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Net;
 
+using Intersect.Logging;
+
 using WebSocketSharp;
 
 namespace Intersect.Server.Networking.Helpers
@@ -41,8 +43,9 @@ namespace Intersect.Server.Networking.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
+                Log.Debug(exception);
             }
 
             return false;

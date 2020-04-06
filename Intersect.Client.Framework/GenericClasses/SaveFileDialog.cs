@@ -3,11 +3,6 @@
 
     public class SaveFileDialog
     {
-
-        public SaveFileDialog()
-        {
-        }
-
         public string Title { get; set; }
 
         public string InitialDirectory { get; set; }

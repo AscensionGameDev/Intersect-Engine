@@ -1,7 +1,11 @@
-﻿using System;
-
-using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+
+using System;
+
+#if DEBUG
+using Intersect.Logging;
+#endif
 
 namespace Intersect.Client.Framework.Gwen.Skin
 {
@@ -56,8 +60,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 #if DEBUG
         ~Base()
         {
-            //throw new InvalidOperationException(String.Format("IDisposable object finalized: {0}", GetType()));
-            ////debug.print(String.Format("IDisposable object finalized: {0}", GetType()));
+            Log.Debug($"IDisposable object finalized: {GetType()}");
         }
 #endif
 
