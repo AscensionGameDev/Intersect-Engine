@@ -1615,23 +1615,6 @@ namespace Intersect.Client.Entities
             Status = Status.OrderByDescending(x => x.RemainingMs()).ToList();
         }
 
-        ~Entity()
-        {
-            Dispose();
-        }
-
-        public void LoadAnimationTextures(string tex)
-        {
-            var file = Path.GetFileNameWithoutExtension(tex);
-            var ext = Path.GetExtension(tex);
-
-            AnimatedTextures.Clear();
-            foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
-            {
-                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, $@"{file}_{anim}.png"));
-            }
-        }
-
         public void UpdateSpriteAnimation()
         {
             var oldAnim = SpriteAnimation;
@@ -1740,6 +1723,27 @@ namespace Intersect.Client.Entities
             SpriteFrame = 0;
             SpriteFrameTimer = Globals.System.GetTimeMs();
         }
+
+        public void LoadAnimationTextures(string tex)
+        {
+            var file = Path.GetFileNameWithoutExtension(tex);
+            var ext = Path.GetExtension(tex);
+
+            AnimatedTextures.Clear();
+            foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
+            {
+                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, $@"{file}_{anim}.png"));
+            }
+        }
+
+        ~Entity()
+        {
+            Dispose();
+        }
+
+
+
+
     }
 
 }
