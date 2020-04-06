@@ -9,6 +9,7 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities
 {
@@ -31,7 +32,7 @@ namespace Intersect.Server.Entities
             Sprite = resource.Initial.Graphic;
             SetMaxVital(
                 Vitals.Health,
-                Globals.Rand.Next(
+                Randomization.Next(
                     Math.Min(1, resource.MinHp), Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1
                 )
             );
@@ -77,7 +78,7 @@ namespace Intersect.Server.Entities
                 Base.MaxHp = Base.MinHp;
             }
 
-            SetMaxVital(Vitals.Health, Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
+            SetMaxVital(Vitals.Health, Randomization.Next(Base.MinHp, Base.MaxHp + 1));
             RestoreVital(Vitals.Health);
             Passable = Base.WalkableBefore;
             Items.Clear();
@@ -86,7 +87,7 @@ namespace Intersect.Server.Entities
             var itemSlot = 0;
             foreach (var drop in Base.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
+                if (Randomization.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
                     slot.Set(new Item(drop.ItemId, drop.Quantity));
@@ -151,7 +152,7 @@ namespace Intersect.Server.Entities
 
                 if (selectedTile == null)
                 {
-                    selectedTile = tiles[Globals.Rand.Next(0, tiles.Count)];
+                    selectedTile = tiles[Randomization.Next(0, tiles.Count)];
                 }
 
                 // Drop items
