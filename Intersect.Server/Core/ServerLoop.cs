@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,23 @@ namespace Intersect.Server.Core
     public static class ServerLoop
     {
         public static object Lock = new object();
+
+		public static void GetActiveMap(List<MapInstance> activeMapList, Guid mapId, bool checkSide)
+		{
+			MapInstance map = MapInstance.Get(mapId);
+			if (map != null && activeMapList.Contains(map) == false)
+			{
+				activeMapList.Add(map);
+				if (checkSide)
+				{
+					GetActiveMap(activeMapList, map.Left, false);
+					GetActiveMap(activeMapList, map.Up, false);
+					GetActiveMap(activeMapList, map.Right, false);
+					GetActiveMap(activeMapList, map.Down, false);
+				}
+			}
+		}
+
         public static void RunServerLoop()
         {
             try
@@ -23,6 +41,7 @@ namespace Intersect.Server.Core
                 var lastGameSave = Globals.Timing.TimeMs + 60000;
                 var lastDbUpdate = DateTime.Now;
                 long dbBackupMinutes = 120;
+				List<MapInstance> activeMapList = new List<MapInstance>();
                 while (ServerContext.Instance.IsRunning)
                 {
                     lock (Lock)
@@ -31,8 +50,22 @@ namespace Intersect.Server.Core
                         var timeMs = Globals.Timing.TimeMs;
                         var maps = MapInstance.Lookup.Values.ToArray();
 
-                        //TODO: Could be optimized by keeping a list of active maps or something
-                        foreach (MapInstance map in maps)
+						//TODO: Could be optimized by keeping a list of active maps or something
+						activeMapList.Clear();
+						for (var i = 0; i < Globals.Clients.Count; i++)
+						{
+							if (Globals.Clients[i] == null)
+							{
+								continue;
+							}
+							if (Globals.Clients[i].Entity == null)
+							{
+								continue;
+							}
+							Guid mapid = Globals.Clients[i].Entity.MapId;
+							GetActiveMap(activeMapList, mapid, true);
+						}
+						foreach (MapInstance map in activeMapList/*maps*/)
                         {
                             map.Update(timeMs);
                         }

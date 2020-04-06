@@ -1687,8 +1687,9 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            //Is this a critical hit?
-            if (Globals.Rand.Next(1, 101) > critChance)
+			//Is this a critical hit?
+			float critRng = (float)(Globals.Rand.NextDouble() * 100.0);
+            if (critRng > critChance)
             {
                 critMultiplier = 1;
             }
@@ -2446,14 +2447,16 @@ namespace Intersect.Server.Entities
                     var playerKiller = killer as Player;
                     var luck = 1.0 + (playerKiller != null ? playerKiller.GetLuck() : 0) / 100;
 
-                    //Player drop rates
-                    if (Globals.Rand.Next(1, 101) >= dropitems * luck)
+					//Player drop rates
+					float dropRng = (float)(Globals.Rand.NextDouble() * 100);
+                    if (dropRng >= dropitems * luck)
                     {
                         continue;
                     }
 
-                    //Npc drop rates
-                    if (Globals.Rand.Next(1, 101) >= item.DropChance * luck)
+					//Npc drop rates
+					dropRng = (float)(Globals.Rand.NextDouble() * 100);
+					if (dropRng >= item.DropChance * luck)
                     {
                         continue;
                     }
