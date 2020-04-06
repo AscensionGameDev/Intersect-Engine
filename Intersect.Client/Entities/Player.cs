@@ -1096,7 +1096,7 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public bool TryTarget()
+        public bool TryTarget(bool removeTarget)
         {
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
@@ -1137,7 +1137,8 @@ namespace Intersect.Client.Entities
                                 if (en.Value.CurrentMap == mapId &&
                                     en.Value.X == x &&
                                     en.Value.Y == y &&
-                                    (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                                    (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)) ||
+                                    removeTarget)
                                 {
                                     if (en.Value.GetType() != typeof(Projectile) &&
                                         en.Value.GetType() != typeof(Resource))
@@ -1165,7 +1166,7 @@ namespace Intersect.Client.Entities
                                             }
                                         }
 
-                                        if (TargetType == 0 && TargetIndex == en.Value.Id)
+                                        if (TargetType == 0 && TargetIndex == en.Value.Id || removeTarget)
                                         {
                                             ClearTarget();
 
