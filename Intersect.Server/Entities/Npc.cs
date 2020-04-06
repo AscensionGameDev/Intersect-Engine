@@ -16,6 +16,7 @@ using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 using JetBrains.Annotations;
 
@@ -427,7 +428,7 @@ namespace Intersect.Server.Entities
             }
 
             // Pick a random spell
-            var spellIndex = Globals.Rand.Next(0, Spells.Count);
+            var spellIndex = Randomization.Next(0, Spells.Count);
             var spellId = Base.Spells[spellIndex];
             var spellBase = SpellBase.Get(spellId);
             if (spellBase == null)
@@ -460,7 +461,7 @@ namespace Intersect.Server.Entities
 
                     //Face the target -- next frame fire -- then go on with life
                     ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
 
                     return;
                 }
@@ -875,22 +876,22 @@ namespace Intersect.Server.Entities
 
                 if (Base.Movement == (int) NpcMovement.StandStill)
                 {
-                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
 
                     return;
                 }
                 else if (Base.Movement == (int) NpcMovement.TurnRandomly)
                 {
-                    ChangeDir((byte) Globals.Rand.Next(0, 4));
-                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
+                    ChangeDir((byte)Randomization.Next(0, 4));
+                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
 
                     return;
                 }
 
-                var i = Globals.Rand.Next(0, 1);
+                var i = Randomization.Next(0, 1);
                 if (i == 0)
                 {
-                    i = Globals.Rand.Next(0, 4);
+                    i = Randomization.Next(0, 4);
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned
@@ -909,7 +910,7 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
+                LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
 
                 if (fleeing)
                 {

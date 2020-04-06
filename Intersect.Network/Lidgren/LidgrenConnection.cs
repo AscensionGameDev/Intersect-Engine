@@ -7,7 +7,7 @@ using Intersect.Network.Packets;
 
 using Lidgren.Network;
 
-namespace Intersect.Network
+namespace Intersect.Network.Lidgren
 {
 
     public sealed class LidgrenConnection : AbstractConnection
@@ -126,7 +126,7 @@ namespace Intersect.Network
         public override void Dispose()
         {
             base.Dispose();
-            NetConnection?.Disconnect("status_disposing");
+            NetConnection?.Disconnect(NetworkStatus.Quitting.ToString());
         }
 
         public override bool Send(IPacket packet)

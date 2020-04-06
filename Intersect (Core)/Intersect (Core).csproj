@@ -220,7 +220,6 @@
     <Compile Include="Config\Passability.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
-    <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
@@ -560,6 +559,7 @@
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
     <Compile Include="Utilities\Nullability.cs" />
+    <Compile Include="Utilities\Randomization.cs" />
     <Compile Include="Utilities\Retry.cs" />
     <Compile Include="Utilities\StreamUtils.cs" />
     <Compile Include="Utilities\TextUtils.cs" />

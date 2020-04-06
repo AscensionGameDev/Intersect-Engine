@@ -27,25 +27,31 @@ namespace Intersect.Server.Database
         {
         }
 
-        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool incStatBuffs = true)
+        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool includeStatBuffs = true)
         {
             ItemId = itemId;
             Quantity = quantity;
             BagId = bagId;
             Bag = bag;
 
-            if (ItemBase.Get(ItemId) != null && incStatBuffs)
+            var descriptor = ItemBase.Get(ItemId);
+            if (descriptor == null || !includeStatBuffs)
             {
-                if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)
-                {
-                    for (var i = 0; i < (int) Stats.StatCount; i++)
-                    {
-                        // TODO: What the fuck?
-                        StatBuffs[i] = Globals.Rand.Next(
-                            -1 * ItemBase.Get(ItemId).StatGrowth, ItemBase.Get(ItemId).StatGrowth + 1
-                        );
-                    }
-                }
+                return;
+            }
+
+            if (descriptor.ItemType != ItemTypes.Equipment)
+            {
+                return;
+            }
+
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                // TODO: What the fuck?
+                StatBuffs[i] = Randomization.Next(
+                    -descriptor.StatGrowth,
+                    descriptor.StatGrowth + 1
+                );
             }
         }
 

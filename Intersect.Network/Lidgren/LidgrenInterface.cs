@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 
 using Lidgren.Network;
 
-namespace Intersect.Network
+namespace Intersect.Network.Lidgren
 {
 
     public sealed class LidgrenInterface : INetworkLayerInterface
@@ -591,8 +591,17 @@ namespace Intersect.Network
                                     case "Wrong application identifier!":
                                         networkStatus = NetworkStatus.VersionMismatch;
                                         break;
+
+                                    case "Connection timed out":
+                                        networkStatus = NetworkStatus.Quitting;
+                                        break;
+
+                                    case "Failed to establish connection - no response from remote host":
+                                        networkStatus = NetworkStatus.Offline;
+                                        break;
+
                                     default:
-                                        networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason, true);
+                                        networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason ?? "<null>", true);
                                         break;
                                 }
                             }
@@ -606,7 +615,6 @@ namespace Intersect.Network
                             string disconnectHandlerName;
                             switch (networkStatus)
                             {
-                                case NetworkStatus.Unknown:
                                 case NetworkStatus.HandshakeFailure:
                                 case NetworkStatus.ServerFull:
                                 case NetworkStatus.VersionMismatch:
@@ -618,6 +626,8 @@ namespace Intersect.Network
                                 case NetworkStatus.Connecting:
                                 case NetworkStatus.Online:
                                 case NetworkStatus.Offline:
+                                case NetworkStatus.Quitting:
+                                case NetworkStatus.Unknown:
                                     disconnectHandler = OnDisconnected;
                                     disconnectHandlerName = nameof(OnDisconnected);
                                     break;

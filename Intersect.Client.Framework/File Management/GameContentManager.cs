@@ -5,6 +5,7 @@ using System.Linq;
 
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Logging;
 
 namespace Intersect.Client.Framework.File_Management
 {
@@ -400,8 +401,9 @@ namespace Intersect.Client.Framework.File_Management
                     {
                         File.WriteAllText(path, json);
                     }
-                    catch (Exception)
+                    catch (Exception exception)
                     {
+                        Log.Debug(exception);
                     }
 
                     return;
@@ -413,8 +415,9 @@ namespace Intersect.Client.Framework.File_Management
             {
                 File.WriteAllText(path, json);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Log.Debug(exception);
             }
         }
 
