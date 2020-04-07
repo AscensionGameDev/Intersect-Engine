@@ -333,9 +333,9 @@ namespace Intersect.Server.Maps
         {
             foreach (var entity in mEntities.Values)
             {
-                if (entity.GetType() == typeof(Npc) && ((Npc)entity).Base == npcBase)
+                if (entity is Npc npc && npc.Base == npcBase)
                 {
-                    entity.Die(0);
+                    npc.Die(0);
                 }
             }
         }
@@ -344,9 +344,9 @@ namespace Intersect.Server.Maps
         {
             foreach (var entity in mEntities.Values)
             {
-                if (entity.GetType() == typeof(Resource) && ((Resource)entity).Base == resourceBase)
+                if (entity is Resource res && res.Base == resourceBase)
                 {
-                    entity.Die(0);
+                    res.Die(0);
                 }
             }
         }
@@ -355,9 +355,9 @@ namespace Intersect.Server.Maps
         {
             foreach (var entity in mEntities.Values)
             {
-                if (entity.GetType() == typeof(Projectile) && ((Projectile)entity).Base == projectileBase)
+                if (entity is Projectile proj && proj.Base == projectileBase)
                 {
-                    entity.Die(0);
+                    proj.Die(0);
                 }
             }
         }
@@ -537,9 +537,9 @@ namespace Intersect.Server.Maps
                 //Kill any other npcs on this map (only players should remain)
                 foreach (var entity in mEntities.Values)
                 {
-                    if (entity.GetType() == typeof(Npc))
+                    if (entity is Npc npc)
                     {
-                        entity.Die(0);
+                        npc.Die(0);
                     }
                 }
             }
@@ -693,9 +693,9 @@ namespace Intersect.Server.Maps
                 if (!mEntities.ContainsKey(en.Id))
                 {
                     mEntities.TryAdd(en.Id, en);
-                    if (en.GetType() == typeof(Player))
+                    if (en is Player plyr)
                     {
-                        mPlayers.TryAdd(en.Id, (Player)en);
+                        mPlayers.TryAdd(plyr.Id, plyr);
                     }
                 }
             }
@@ -730,9 +730,9 @@ namespace Intersect.Server.Maps
         {
             foreach (var entity in mEntities.Values)
             {
-                if (entity.GetType() == typeof(Npc) && ((Npc)entity).Target == en)
+                if (entity is Npc npc && npc.Target == en)
                 {
-                    ((Npc)entity).RemoveTarget();
+                    npc.RemoveTarget();
                 }
             }
         }
@@ -793,7 +793,7 @@ namespace Intersect.Server.Maps
                         if (timeMs > LastUpdateTime + 30000)
                         {
                             //Regen Everything & Forget Targets
-                            if (en.GetType() == typeof(Resource) || en.GetType() == typeof(Npc))
+                            if (en is Resource || en is Npc)
                             {
                                 en.RestoreVital(Vitals.Health);
                                 en.RestoreVital(Vitals.Mana);
@@ -1059,7 +1059,7 @@ namespace Intersect.Server.Maps
             var entities = GetEntities();
             for (var i = 0; i < entities.Count; i++)
             {
-                if (entities[i] != null && entities[i].GetType() != typeof(Projectile))
+                if (entities[i] != null && !(entities[i] is Projectile))
                 {
                     //If Npc or Player then blocked.. if resource then check
                     if (!entities[i].Passable && entities[i].X == x && entities[i].Y == y)
