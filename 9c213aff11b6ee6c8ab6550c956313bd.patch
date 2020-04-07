@@ -1,0 +1,408 @@
+From 2e0f6f84ee53956eccc7aac3e89d3523d7ea126f Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 15:29:36 -0400
+Subject: [PATCH 1/2] auto target hit feature
+
+---
+ .../Network/Packets/Client/AttackPacket.cs    |  5 +-
+ Intersect.Client/Entities/Entity.cs           |  6 +-
+ Intersect.Client/Entities/Player.cs           | 92 +++++++++++++++++--
+ .../Interface/Game/EntityPanel/EntityBox.cs   |  4 +
+ Intersect.Client/Networking/PacketSender.cs   |  4 +-
+ Intersect.Server/Entities/Player.cs           |  4 +-
+ Intersect.Server/Networking/PacketHandler.cs  |  3 +-
+ 7 files changed, 103 insertions(+), 15 deletions(-)
+
+diff --git a/Intersect (Core)/Network/Packets/Client/AttackPacket.cs b/Intersect (Core)/Network/Packets/Client/AttackPacket.cs
+index c312e968..55781e33 100644
+--- a/Intersect (Core)/Network/Packets/Client/AttackPacket.cs	
++++ b/Intersect (Core)/Network/Packets/Client/AttackPacket.cs	
+@@ -6,13 +6,16 @@ namespace Intersect.Network.Packets.Client
+     public class AttackPacket : CerasPacket
+     {
+ 
+-        public AttackPacket(Guid target)
++        public AttackPacket(Guid target, bool targetOnFocus)
+         {
+             Target = target;
++            TargetOnFocus = targetOnFocus;
+         }
+ 
+         public Guid Target { get; set; }
+ 
++        public bool TargetOnFocus { get; set; }
++
+     }
+ 
+ }
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index 0e68fc0e..03eb3b73 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -410,9 +410,13 @@ public void ClearAnimations(List<Animation> anims)
+             }
+         }
+ 
++        // After being set to true, mDisposed was always true so the if isDisposed condition in Entibox was always true.
++        // So this little temp variable fix that.
+         public virtual bool IsDisposed()
+         {
+-            return mDisposed;
++            bool temp = mDisposed;
++            mDisposed = false;
++            return temp;
+         }
+ 
+         public virtual void Dispose()
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 55ad50a3..b581c0f4 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -58,6 +58,8 @@ public class Player : Entity
+ 
+         public int TargetType;
+ 
++        public bool TargetOnFocus;
++
+         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+         {
+             for (var i = 0; i < Options.MaxHotbar; i++)
+@@ -986,41 +988,92 @@ public bool TryAttack()
+             int y = Globals.Me.Y;
+             var map = Globals.Me.CurrentMap;
+ 
++            List<int[]> hitbox = new List<int[]>();
++
+             // The latest moving direction of the player
+             switch (Globals.Me.Dir)
+             {
++
++                // Tabulation used to have a sight of the hitbox.
+                 case 0: // Up
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y - 1 }, new int[] { x, y - 1 }, new int[] { x + 1, y - 1 },
++                                new int[] { x - 1, y },                              new int[] { x + 1, y },
++                            });
+                     y--;
+-                    
++
+                     break;
+                 case 1: // Down
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y },                              new int[] { x + 1, y },
++                                new int[] { x - 1, y + 1 }, new int[] { x, y + 1 }, new int[] { x + 1, y + 1 },
++                            });
+                     y++;
+ 
+                     break;
+                 case 2: // Left
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y - 1 }, new int[] { x, y - 1 },
++                                new int[] { x - 1, y },
++                                new int[] { x - 1, y + 1 }, new int[] { x, y + 1 }
++                            });
+                     x--;
+ 
+                     break;
+                 case 3: // Right
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x, y - 1 }, new int[] { x + 1, y - 1 },
++                                new int[] { x + 1, y },
++                                new int[] { x, y + 1 }, new int[] { x + 1, y + 1 }
++                            });
+                     x++;
+ 
+                     break;
++
+                 case 4: // UpLeft
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y - 1 }, new int[] { x, y - 1 }, new int[] { x + 1, y - 1 },
++                                new int[] { x - 1, y },
++                                new int[] { x - 1, y + 1 }
++                            });
+                     y--;
+                     x--;
+ 
+                     break;
+                 case 5: //UpRight
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y - 1 }, new int[] { x, y - 1 }, new int[] { x + 1, y - 1 },
++                                                                                        new int[] { x + 1, y },
++                                                                                        new int[] { x + 1, y + 1 }
++                            });
+                     y--;
+                     x++;
+ 
+                     break;
+                 case 6: // DownLeft
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                new int[] { x - 1, y - 1 },
++                                new int[] { x - 1, y },
++                                new int[] { x - 1, y + 1 }, new int[] { x, y + 1 }, new int[] { x + 1, y + 1 }
++                            });
+                     y++;
+                     x--;
+ 
+                     break;
+                 case 7: // DownRight
++                    hitbox.AddRange(new List<int[]>
++                            {
++                                                                                    new int[] { x + 1, y - 1 },
++                                                                                    new int[] { x + 1, y },
++                                new int[] { x - 1, y + 1 }, new int[] { x, y + 1 }, new int[] { x + 1, y + 1 }
++                            });
+                     y++;
+                     x++;
+ 
+@@ -1039,15 +1092,36 @@ public bool TryAttack()
+                     if (en.Value != Globals.Me)
+                     {
+                         if (en.Value.CurrentMap == map &&
+-                            en.Value.X == x &&
+-                            en.Value.Y == y &&
+                             en.Value.CanBeAttacked())
+                         {
+-                            //ATTACKKKKK!!!
+-                            PacketSender.SendAttack(en.Key);
+-                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
++                            if (TargetIndex != null && TargetOnFocus)
++                            {
++                                bool canAttack = false;
++                                foreach (int[] hitBx in hitbox)
++                                {
++                                    if (hitBx[0] == en.Value.X && hitBx[1] == en.Value.Y)
++                                    {
++                                        canAttack = true;
++                                        break;
++                                    }
++                                }
+ 
+-                            return true;
++                                if (canAttack)
++                                {
++                                    PacketSender.SendAttack(en.Key, TargetOnFocus);
++                                    AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
++
++                                    return true;
++                                }
++                            }
++                            else if (en.Value.X == x && en.Value.Y == y)
++                            {
++                                //ATTACKKKKK!!!
++                                PacketSender.SendAttack(en.Key, TargetOnFocus);
++                                AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
++
++                                return true;
++                            }
+                         }
+                     }
+                 }
+@@ -1077,7 +1151,7 @@ public bool TryAttack()
+             }
+ 
+             //Projectile/empty swing for animations
+-            PacketSender.SendAttack(Guid.Empty);
++            PacketSender.SendAttack(Guid.Empty, TargetOnFocus);
+             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+ 
+             return true;
+@@ -1864,9 +1938,11 @@ public void DrawTargets()
+                 {
+                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
+                     {
++                        TargetOnFocus = false;
+                         if (TargetType == 0 && TargetIndex == en.Value.Id)
+                         {
+                             en.Value.DrawTarget((int)TargetTypes.Selected);
++                            TargetOnFocus = true;
+                         }
+                     }
+                 }
+diff --git a/Intersect.Client/Interface/Game/EntityPanel/EntityBox.cs b/Intersect.Client/Interface/Game/EntityPanel/EntityBox.cs
+index 1e2cd8db..613f6b7b 100644
+--- a/Intersect.Client/Interface/Game/EntityPanel/EntityBox.cs
++++ b/Intersect.Client/Interface/Game/EntityPanel/EntityBox.cs
+@@ -109,6 +109,8 @@ public class EntityBox
+ 
+         public bool UpdateStatuses;
+ 
++        public bool IsHidden;
++
+         //Init
+         public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
+         {
+@@ -326,12 +328,14 @@ public void Update()
+             //Update the event/entity face.
+             UpdateImage();
+ 
++            IsHidden = true;
+             if (EntityType != EntityTypes.Event)
+             {
+                 UpdateLevel();
+                 UpdateMap();
+                 UpdateHpBar(elapsedTime);
+                 UpdateMpBar(elapsedTime);
++                IsHidden = false;
+             }
+             else
+             {
+diff --git a/Intersect.Client/Networking/PacketSender.cs b/Intersect.Client/Networking/PacketSender.cs
+index 41082f45..b3c79aa1 100644
+--- a/Intersect.Client/Networking/PacketSender.cs
++++ b/Intersect.Client/Networking/PacketSender.cs
+@@ -51,9 +51,9 @@ public static void SendChatMsg(string msg, byte channel)
+             Network.SendPacket(new ChatMsgPacket(msg, channel));
+         }
+ 
+-        public static void SendAttack(Guid targetId)
++        public static void SendAttack(Guid targetId, bool targetOnFocus)
+         {
+-            Network.SendPacket(new AttackPacket(targetId));
++            Network.SendPacket(new AttackPacket(targetId, targetOnFocus));
+         }
+ 
+         public static void SendBlock(bool blocking)
+diff --git a/Intersect.Server/Entities/Player.cs b/Intersect.Server/Entities/Player.cs
+index f3289df3..bd20ddb8 100644
+--- a/Intersect.Server/Entities/Player.cs
++++ b/Intersect.Server/Entities/Player.cs
+@@ -992,7 +992,7 @@ byte projectileDir
+             base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
+         }
+ 
+-        public override void TryAttack(Entity target)
++        public void TryAttack(Entity target, bool targetOnFocus)
+         {
+             if (CastTime >= Globals.Timing.TimeMs)
+             {
+@@ -1006,7 +1006,7 @@ public override void TryAttack(Entity target)
+                 return;
+             }
+ 
+-            if (!IsFacingTarget(target))
++            if (!targetOnFocus && !IsFacingTarget(target))
+             {
+                 return;
+             }
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 95c777bd..43609287 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -736,6 +736,7 @@ public void HandlePacket(Client client, Player player, AttackPacket packet)
+ 
+             var unequippedAttack = false;
+             var target = packet.Target;
++            bool targetOnFocus = packet.TargetOnFocus;
+ 
+             if (player.CastTime >= Globals.Timing.TimeMs)
+             {
+@@ -936,7 +937,7 @@ public void HandlePacket(Client client, Player player, AttackPacket packet)
+                 {
+                     if (entity.Id == target)
+                     {
+-                        player.TryAttack(entity);
++                        player.TryAttack(entity, targetOnFocus);
+ 
+                         break;
+                     }
+-- 
+2.26.0.windows.1
+
+
+From 4f7f5f2d5b423b96d835670ba5be41430d24f249 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 19:39:57 -0400
+Subject: [PATCH 2/2] auto hit fix
+
+---
+ Intersect.Client/Entities/Entity.cs |  2 ++
+ Intersect.Client/Entities/Player.cs | 15 +++++++--------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index 03eb3b73..18c3bc23 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -92,6 +92,8 @@ public enum LabelType
+ 
+         public bool IsMoving;
+ 
++        public bool IsATarget = false;
++
+         //Caching
+         public MapInstance LatestMap;
+ 
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 34fb4d8c..1c880653 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -58,8 +58,6 @@ public class Player : Entity
+ 
+         public int TargetType;
+ 
+-        public bool TargetOnFocus;
+-
+         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+         {
+             for (var i = 0; i < Options.MaxHotbar; i++)
+@@ -1094,7 +1092,7 @@ public bool TryAttack()
+                         if (en.Value.CurrentMap == map &&
+                             en.Value.CanBeAttacked())
+                         {
+-                            if (TargetIndex != null && TargetOnFocus)
++                            if (TargetIndex != null && en.Value.IsATarget)
+                             {
+                                 bool canAttack = false;
+                                 foreach (int[] hitBx in hitbox)
+@@ -1108,7 +1106,7 @@ public bool TryAttack()
+ 
+                                 if (canAttack)
+                                 {
+-                                    PacketSender.SendAttack(en.Key, TargetOnFocus);
++                                    PacketSender.SendAttack(en.Key, en.Value.IsATarget);
+                                     AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+ 
+                                     return true;
+@@ -1117,7 +1115,7 @@ public bool TryAttack()
+                             else if (en.Value.X == x && en.Value.Y == y)
+                             {
+                                 //ATTACKKKKK!!!
+-                                PacketSender.SendAttack(en.Key, TargetOnFocus);
++                                PacketSender.SendAttack(en.Key, en.Value.IsATarget);
+                                 AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+ 
+                                 return true;
+@@ -1151,7 +1149,8 @@ public bool TryAttack()
+             }
+ 
+             //Projectile/empty swing for animations
+-            PacketSender.SendAttack(Guid.Empty, TargetOnFocus);
++            // Check if there is an issue with the value always at false
++            PacketSender.SendAttack(Guid.Empty, false);
+             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+ 
+             return true;
+@@ -1938,11 +1937,11 @@ public void DrawTargets()
+                 {
+                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
+                     {
+-                        TargetOnFocus = false;
++                        en.Value.IsATarget = false;
+                         if (TargetType == 0 && TargetIndex == en.Value.Id)
+                         {
+                             en.Value.DrawTarget((int)TargetTypes.Selected);
+-                            TargetOnFocus = true;
++                            en.Value.IsATarget = true;
+                         }
+                     }
+                 }
+-- 
+2.26.0.windows.1
+
