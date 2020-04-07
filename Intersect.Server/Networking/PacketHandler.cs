@@ -1509,22 +1509,35 @@ namespace Intersect.Server.Networking
 			{
 				Guid itemID = packet.ItemID;
 				int quantity = 0;
+				int[] statBuffs = new int[(int)Enums.Stats.StatCount];
 				if (itemID != Guid.Empty)
 				{
 					quantity = packet.Quantity;
+					for (var i = 0; i < Options.MaxInvItems; i++)
+					{
+						var item = player.Items[i];
+						if (item?.ItemId != itemID)
+						{
+							continue;
+						}
+						statBuffs = item.StatBuffs;
+						break;
+					}
 					if (player.TakeItemsById(itemID, quantity) == false)
 					{
 						itemID= packet.ItemID;
 						quantity = 0;
+						statBuffs = new int[(int)Enums.Stats.StatCount];
 					}
 				
 				}
-				character.MailBoxs.Add(new MailBox(player, character, packet.Title, packet.Message, itemID, quantity));
+
+				character.MailBoxs.Add(new MailBox(player, character, packet.Title, packet.Message, itemID, quantity, statBuffs));
 				
 			}
 			else
 			{
-				PacketSender.SendChatMsg(player, $"Player Not Found! ({packet.To})", CustomColors.Alerts.Info);
+				PacketSender.SendChatMsg(player, $"{Strings.Mails.playernotfound} ({packet.To})", CustomColors.Alerts.Info);
 			}
 
 
@@ -1559,15 +1572,19 @@ namespace Intersect.Server.Networking
 				DbInterface.SavePlayerDatabaseAsync();
 				return;
 			}
-			if (player.TryGiveItem(mail.ItemId, mail.Quantity, false, true))
+			Item item = new Item(mail.ItemId, mail.Quantity, false);
+			item.StatBuffs = mail.StatBuffs;
+			if (player.TryGiveItem(item))
 			{
+				var it = ItemBase.Get(mail.ItemId);
 				player.MailBoxs.Remove(mail);
+				PacketSender.SendChatMsg(player, $"{Strings.Mails.receiveitem} ({it?.Name})!", CustomColors.Chat.PartyChat);
 				PacketSender.SendOpenMailBox(player);
 				DbInterface.SavePlayerDatabaseAsync();
 			}
 			else
 			{
-				PacketSender.SendChatMsg(player, $"Not enough space in your inventory!", CustomColors.Alerts.Info);
+				PacketSender.SendChatMsg(player, Strings.Mails.inventoryfull, CustomColors.Alerts.Declined);
 			}
 
 		}

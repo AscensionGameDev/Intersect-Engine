@@ -914,10 +914,51 @@ namespace Intersect.Client.Entities
                         Graphics.DrawGameTexture(
                             Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
                         );
-						if (this is Player && Equipment[Options.EquipmentSlots.IndexOf("Helmet")] == Guid.Empty)
+						if (this is Player)
 						{
 							var player = (Player)this;
-							if (player.Hair?.Length > 0)
+
+							bool drawHair = false;
+							Guid itemId = Guid.Empty;
+							var eSlot = Options.EquipmentSlots.IndexOf("Helmet");
+							if (this == Globals.Me)
+							{
+								var slot = MyEquipment[eSlot];
+								if (slot > -1)
+								{
+									itemId = Inventory[slot].ItemId;
+								}
+							}
+							else
+							{
+								itemId = Equipment[eSlot];
+							}
+							if (itemId != Guid.Empty)
+							{
+								var item = ItemBase.Get(itemId);
+								if (item != null)
+								{
+									GameTexture paperdollTex;
+									if (Gender == 0)
+									{
+										paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, item.MalePaperdoll);
+									}
+									else
+									{
+										paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, item.FemalePaperdoll);
+									}
+									if (paperdollTex == null)
+									{
+										drawHair = true;
+									}
+								}
+							}
+							else
+							{
+								drawHair = true;
+							}
+
+							if (drawHair && player.Hair?.Length > 0)
 							{
 								DrawEquipment(player.Hair, alpha);
 							}

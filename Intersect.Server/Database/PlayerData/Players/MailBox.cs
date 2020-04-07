@@ -18,7 +18,7 @@ namespace Intersect.Server.Database.PlayerData.Players
 		{
 		}
 
-		public MailBox(Player sender, Player to, string title, string msg, Guid itemid, int quantity)
+		public MailBox(Player sender, Player to, string title, string msg, Guid itemid, int quantity, int[] statBuffs)
 		{
 			Sender = sender;
 			Player = to;
@@ -26,6 +26,7 @@ namespace Intersect.Server.Database.PlayerData.Players
 			Message = msg;
 			ItemId = itemid;
 			Quantity = quantity;
+			StatBuffs = statBuffs;
 		}
 
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
