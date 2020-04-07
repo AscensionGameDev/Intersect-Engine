@@ -25,10 +25,11 @@ namespace Intersect.Server.Core
                 long dbBackupMinutes = 120;
                 while (ServerContext.Instance.IsRunning)
                 {
+                    var timeMs = Globals.Timing.TimeMs;
+
                     lock (Lock)
                     {
                         //TODO: If there are no players online then loop slower and save the poor cpu
-                        var timeMs = Globals.Timing.TimeMs;
                         var maps = MapInstance.Lookup.Values.ToArray();
 
                         //TODO: Could be optimized by keeping a list of active maps or something
@@ -36,40 +37,40 @@ namespace Intersect.Server.Core
                         {
                             map.Update(timeMs);
                         }
-
-                        if (minuteTimer < timeMs)
+                    }
+                    
+                    if (minuteTimer < timeMs)
+                    {
+                        if (lastDbUpdate.AddMinutes(dbBackupMinutes) < DateTime.Now)
                         {
-                            if (lastDbUpdate.AddMinutes(dbBackupMinutes) < DateTime.Now)
-                            {
-                                Task.Run(() => DbInterface.BackupDatabase());
-                                lastDbUpdate = DateTime.Now;
-                            }
-
-                            DbInterface.SavePlayerDatabaseAsync();
-                            minuteTimer = timeMs + 60000;
+                            Task.Run(() => DbInterface.BackupDatabase());
+                            lastDbUpdate = DateTime.Now;
                         }
 
-                        cps++;
-                        if (timeMs >= cpsTimer)
-                        {
-                            Globals.Cps = cps;
-                            cps = 0;
-                            cpsTimer = timeMs + 1000;
-                        }
+                        DbInterface.SavePlayerDatabaseAsync();
+                        minuteTimer = timeMs + 60000;
+                    }
 
-                        Time.Update();
-                        var currentTime = Globals.Timing.TimeMs;
-                        if (Globals.CpsLock && currentTime < timeMs + 10)
-                        {
-                            var waitTime = (int)(timeMs + 10 - currentTime);
-                            Thread.Sleep(waitTime);
-                        }
+                    cps++;
+                    if (timeMs >= cpsTimer)
+                    {
+                        Globals.Cps = cps;
+                        cps = 0;
+                        cpsTimer = timeMs + 1000;
+                    }
 
-                        if (timeMs > lastGameSave)
-                        {
-                            Task.Run(() => DbInterface.SaveGameDatabase());
-                            lastGameSave = timeMs + 60000;
-                        }
+                    Time.Update();
+                    var currentTime = Globals.Timing.TimeMs;
+                    if (Globals.CpsLock && currentTime < timeMs + 10)
+                    {
+                        var waitTime = (int)(timeMs + 10 - currentTime);
+                        Thread.Sleep(waitTime);
+                    }
+
+                    if (timeMs > lastGameSave)
+                    {
+                        Task.Run(() => DbInterface.SaveGameDatabase());
+                        lastGameSave = timeMs + 60000;
                     }
                 }
             }
