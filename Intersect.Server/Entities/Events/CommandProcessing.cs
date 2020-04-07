@@ -15,6 +15,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Events
 {
@@ -1509,7 +1510,7 @@ namespace Intersect.Server.Entities.Events
                     break;
                 case Enums.VariableMods.Random:
                     //TODO: Fix - Random doesnt work with longs lolz
-                    value.Integer = Globals.Rand.Next((int) mod.Value, (int) mod.HighValue + 1);
+                    value.Integer = Randomization.Next((int) mod.Value, (int) mod.HighValue + 1);
 
                     break;
                 case Enums.VariableMods.SystemTime:

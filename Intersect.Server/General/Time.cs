@@ -2,6 +2,7 @@
 
 using Intersect.GameObjects;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.General
 {
@@ -25,8 +26,12 @@ namespace Intersect.Server.General
             else
             {
                 sGameTime = new DateTime(
-                    DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, Globals.Rand.Next(0, 24),
-                    Globals.Rand.Next(0, 60), Globals.Rand.Next(0, 60)
+                    DateTime.Now.Year,
+                    DateTime.Now.Month,
+                    DateTime.Now.Day,
+                    Randomization.Next(0, 24),
+                    Randomization.Next(0, 60),
+                    Randomization.Next(0, 60)
                 );
             }
 

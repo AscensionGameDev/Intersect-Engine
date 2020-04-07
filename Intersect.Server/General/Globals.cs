@@ -29,10 +29,6 @@ namespace Intersect.Server.General
         [NotNull]
         public static ServerTiming Timing { get; } = new ServerTiming();
 
-        //Game helping stuff
-        [NotNull]
-        public static Random Rand { get; } = new Random();
-
         public static List<Player> OnlineList => Clients.FindAll(client => client?.Entity != null)
             .Select(client => client.Entity)
             .ToList();

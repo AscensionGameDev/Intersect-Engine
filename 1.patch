@@ -1,0 +1,2354 @@
+From 0008e9b14599451e6f4cad2c465eb2a2374b1a12 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Thu, 2 Apr 2020 14:35:33 -0400
+Subject: [PATCH 1/9] diagonal movement
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ .../Network/Packets/Client/MovePacket.cs      |   5 +-
+ Intersect.Client/Entities/Entity.cs           |  77 +++++++++--
+ Intersect.Client/Entities/Player.cs           | 127 ++++++++++++++----
+ Intersect.Client/Networking/PacketSender.cs   |   2 +-
+ Intersect.Server/Networking/PacketHandler.cs  |   4 +-
+ 5 files changed, 177 insertions(+), 38 deletions(-)
+
+diff --git a/Intersect (Core)/Network/Packets/Client/MovePacket.cs b/Intersect (Core)/Network/Packets/Client/MovePacket.cs
+index f4c3a02e..5e0e71c1 100644
+--- a/Intersect (Core)/Network/Packets/Client/MovePacket.cs	
++++ b/Intersect (Core)/Network/Packets/Client/MovePacket.cs	
+@@ -6,12 +6,13 @@ namespace Intersect.Network.Packets.Client
+     public class MovePacket : CerasPacket
+     {
+ 
+-        public MovePacket(Guid mapId, byte x, byte y, byte dir)
++        public MovePacket(Guid mapId, byte x, byte y, byte dir, byte deplDir)
+         {
+             MapId = mapId;
+             X = x;
+             Y = y;
+             Dir = dir;
++            DeplacementDir = deplDir;
+         }
+ 
+         public Guid MapId { get; set; }
+@@ -22,6 +23,8 @@ public MovePacket(Guid mapId, byte x, byte y, byte dir)
+ 
+         public byte Dir { get; set; }
+ 
++        public byte DeplacementDir { get; set; }
++
+     }
+ 
+ }
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index de0f4902..05f059d6 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -107,6 +107,8 @@ public enum LabelType
+ 
+         private byte mDir;
+ 
++        private byte mDeplDir;
++
+         protected bool mDisposed;
+ 
+         private long mLastUpdate;
+@@ -207,6 +209,15 @@ public byte Dir
+             set => mDir = (byte) ((value + 4) % 4);
+         }
+ 
++        // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
++        public byte DeplacementDir
++        {
++            get => mDeplDir;
++            set => mDeplDir = (byte)((value + 8) % 8);
++            // I don't know why there was a +4 % 4 for the Dir field, but I just repeated the same thing here.
++            // I guess it's to be sure the value is in the acceptable range.
++        }
++
+         public virtual string TransformedSprite
+         {
+             get => mTransformedSprite;
+@@ -512,11 +523,18 @@ public virtual bool Update()
+             }
+             else if (IsMoving)
+             {
+-                switch (Dir)
++                float deplacementTime = ecTime * Options.TileHeight / GetMovementTime();
++
++                // Dir = facing direction (only 4)
++                // delta offset Must be more than 0 for movements. 0 = slowest
++                // Direction is related to the sprite animation, I don't know how to set a sprite animation for eache direction
++                // so I use DeplacementDir...
++                switch (DeplacementDir)
+                 {
+-                    case 0:
+-                        OffsetY -= (float) ecTime * (float) Options.TileHeight / GetMovementTime();
++                    case 0: // Up
++                        OffsetY -= deplacementTime;
+                         OffsetX = 0;
++
+                         if (OffsetY < 0)
+                         {
+                             OffsetY = 0;
+@@ -524,8 +542,8 @@ public virtual bool Update()
+ 
+                         break;
+ 
+-                    case 1:
+-                        OffsetY += (float) ecTime * (float) Options.TileHeight / GetMovementTime();
++                    case 1: // Down
++                        OffsetY += deplacementTime;
+                         OffsetX = 0;
+                         if (OffsetY > 0)
+                         {
+@@ -534,9 +552,10 @@ public virtual bool Update()
+ 
+                         break;
+ 
+-                    case 2:
+-                        OffsetX -= (float) ecTime * (float) Options.TileHeight / GetMovementTime();
++                    case 2: // Left
++                        OffsetX -= deplacementTime;
+                         OffsetY = 0;
++
+                         if (OffsetX < 0)
+                         {
+                             OffsetX = 0;
+@@ -544,14 +563,54 @@ public virtual bool Update()
+ 
+                         break;
+ 
+-                    case 3:
+-                        OffsetX += (float) ecTime * (float) Options.TileHeight / GetMovementTime();
++                    case 3: // Right
++                        OffsetX += deplacementTime;
+                         OffsetY = 0;
+                         if (OffsetX > 0)
+                         {
+                             OffsetX = 0;
+                         }
+ 
++                        break;
++                    case 4: // NW     
++                        OffsetY -= deplacementTime;
++                        OffsetX -= deplacementTime;
++
++                        if (OffsetY < 0)
++                            OffsetY = 0;
++                        if (OffsetX < 0)
++                            OffsetX = 0;
++
++                        break;
++                    case 5: // NE
++                        OffsetY -= deplacementTime;
++                        OffsetX += deplacementTime;
++
++                        if (OffsetY < 0)
++                            OffsetY = 0;
++                        if (OffsetX > 0)
++                            OffsetX = 0;
++
++                        break;
++                    case 6: //SW
++                        OffsetY += deplacementTime;
++                        OffsetX -= deplacementTime;
++
++                        if (OffsetY > 0)
++                            OffsetY = 0;
++                        if (OffsetX < 0)
++                            OffsetX = 0;
++
++                        break;
++                    case 7: // SE
++                        OffsetY += deplacementTime;
++                        OffsetX += deplacementTime;
++
++                        if (OffsetY > 0)
++                            OffsetY = 0;
++                        if (OffsetX > 0)
++                            OffsetX = 0;
++
+                         break;
+                 }
+ 
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 4620cea9..c62a4794 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -808,28 +808,49 @@ private void HandleInput()
+                 movex = 1;
+             }
+ 
++
++            // Used this so I can do multiple switch case
++            var move = movex / 10 + movey;
++
+             Globals.Me.MoveDir = -1;
+             if (movex != 0f || movey != 0f)
+             {
+-                if (movey < 0)
++                switch (move)
+                 {
+-                    Globals.Me.MoveDir = 1;
+-                }
++                    case 1.0f:
++                        Globals.Me.MoveDir = 0; // Up
+ 
+-                if (movey > 0)
+-                {
+-                    Globals.Me.MoveDir = 0;
+-                }
++                        break;
++                    case -1.0f:
++                        Globals.Me.MoveDir = 1; // Down
+ 
+-                if (movex < 0)
+-                {
+-                    Globals.Me.MoveDir = 2;
+-                }
++                        break;
++                    case -0.1f: // x = 0, y = -1
++                        Globals.Me.MoveDir = 2; // Left
+ 
+-                if (movex > 0)
+-                {
+-                    Globals.Me.MoveDir = 3;
++                        break;
++                    case 0.1f:
++                        Globals.Me.MoveDir = 3; // Right
++
++                        break;
++                    case 0.9f:
++                        Globals.Me.MoveDir = 4; // NW
++
++                        break;
++                    case 1.1f:
++                        Globals.Me.MoveDir = 5; // NE
++
++                        break;
++                    case -1.1f:
++                        Globals.Me.MoveDir = 6; // SW
++
++                        break;
++                    case -0.9f:
++                        Globals.Me.MoveDir = 7; // SE
++
++                        break;
+                 }
++
+             }
+         }
+ 
+@@ -1361,49 +1382,105 @@ private void ProcessDirectionalInput()
+                 {
+                     switch (MoveDir)
+                     {
+-                        case 0:
++                        // Dir is the direction the player faces
++                        // tmp the next position of the player
++                        // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
++
++                        case 0: // Up
++                            Dir = 0; // Set the sprite direction
+                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY--;
+-                                Dir = 0;
++                                DeplacementDir = 0;
+                                 IsMoving = true;
+                                 OffsetY = Options.TileHeight;
+                                 OffsetX = 0;
+                             }
+ 
+                             break;
+-                        case 1:
++                        case 1: // Down
++                            Dir = 1;
+                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY++;
+-                                Dir = 1;
++                                DeplacementDir = 1;
+                                 IsMoving = true;
+                                 OffsetY = -Options.TileHeight;
+                                 OffsetX = 0;
+                             }
+ 
+                             break;
+-                        case 2:
++                        case 2: // Left
++                            Dir = 2;
+                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpX--;
+-                                Dir = 2;
++                                DeplacementDir = 2;
+                                 IsMoving = true;
+                                 OffsetY = 0;
+                                 OffsetX = Options.TileWidth;
+                             }
+ 
+                             break;
+-                        case 3:
++                        case 3: // Right
++                            Dir = 3;
+                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpX++;
+-                                Dir = 3;
++                                DeplacementDir = 3;
+                                 IsMoving = true;
+                                 OffsetY = 0;
+                                 OffsetX = -Options.TileWidth;
+                             }
+ 
++                            break;
++                        case 4: // NW
++                            Dir = 2;
++                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
++                            {
++                                tmpY--;
++                                tmpX--;
++                                DeplacementDir = 4;
++                                IsMoving = true;
++                                OffsetY = Options.TileHeight;
++                                OffsetX = Options.TileWidth;
++                            }
++                            break;
++                        case 5: // NE
++                            Dir = 3;
++                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
++                            {
++                                tmpY--;
++                                tmpX++;
++                                DeplacementDir = 5;
++                                IsMoving = true;
++                                OffsetY = Options.TileHeight;
++                                OffsetX = -Options.TileWidth;
++                            }
++                            break;
++                        case 6: // SW
++                            Dir = 2;
++                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
++                            {
++                                tmpY++;
++                                tmpX--;
++                                DeplacementDir = 6;
++                                IsMoving = true;
++                                OffsetY = -Options.TileHeight;
++                                OffsetX = Options.TileWidth;
++                            }
++                            break;
++                        case 7: // SE
++                            Dir = 3;
++                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
++                            {
++                                tmpY++;
++                                tmpX++;
++                                DeplacementDir = 7;
++                                IsMoving = true;
++                                OffsetY = -Options.TileHeight;
++                                OffsetX = -Options.TileWidth;
++                            }
+                             break;
+                     }
+ 
+@@ -1466,10 +1543,10 @@ private void ProcessDirectionalInput()
+                     }
+                     else
+                     {
+-                        if (MoveDir != Dir)
++                        if (MoveDir != DeplacementDir)
+                         {
+-                            Dir = (byte) MoveDir;
+-                            PacketSender.SendDirection(Dir);
++                            DeplacementDir = (byte) MoveDir;
++                            PacketSender.SendDirection(DeplacementDir);
+                         }
+ 
+                         if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy.GetType() == typeof(Event))
+diff --git a/Intersect.Client/Networking/PacketSender.cs b/Intersect.Client/Networking/PacketSender.cs
+index 41082f45..38edb70f 100644
+--- a/Intersect.Client/Networking/PacketSender.cs
++++ b/Intersect.Client/Networking/PacketSender.cs
+@@ -43,7 +43,7 @@ public static void SendNeedMap(Guid mapId)
+ 
+         public static void SendMove()
+         {
+-            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
++            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir, Globals.Me.DeplacementDir));
+         }
+ 
+         public static void SendChatMsg(string msg, byte channel)
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 5814f5e7..2c4d984c 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -408,10 +408,10 @@ public void HandlePacket(Client client, Player player, MovePacket packet)
+                 return;
+             }
+ 
+-            var canMove = player.CanMove(packet.Dir);
++            var canMove = player.CanMove(packet.DeplacementDir);
+             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
+             {
+-                player.Move(packet.Dir, player, false);
++                player.Move(packet.DeplacementDir, player, false);
+                 if (player.MoveTimer > Globals.Timing.TimeMs)
+                 {
+                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
+-- 
+2.26.0.windows.1
+
+
+From 07c4d535553fcbff353f0439625f13e009cc020f Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Thu, 2 Apr 2020 21:55:29 -0400
+Subject: [PATCH 2/9] npcdiagonal
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect (Core)/Enums/Directions.cs          |  10 +-
+ Intersect (Core)/GameObjects/Events/Enums.cs  |   8 +
+ .../Network/Packets/Client/MovePacket.cs      |   5 +-
+ Intersect.Client/Entities/Entity.cs           |  59 +++++--
+ Intersect.Client/Entities/Player.cs           | 152 +++++++++---------
+ Intersect.Client/Networking/PacketHandler.cs  |  20 +++
+ Intersect.Client/Networking/PacketSender.cs   |   2 +-
+ Intersect.Server/Entities/Entity.cs           |  48 ++++--
+ Intersect.Server/Entities/Npc.cs              |  36 ++++-
+ Intersect.Server/Networking/PacketHandler.cs  |   4 +-
+ 10 files changed, 225 insertions(+), 119 deletions(-)
+
+diff --git a/Intersect (Core)/Enums/Directions.cs b/Intersect (Core)/Enums/Directions.cs
+index 027b9840..8beff271 100644
+--- a/Intersect (Core)/Enums/Directions.cs	
++++ b/Intersect (Core)/Enums/Directions.cs	
+@@ -10,7 +10,15 @@ public enum Directions
+ 
+         Left,
+ 
+-        Right
++        Right,
++
++        UpLeft,
++
++        UpRight,
++
++        DownLeft,
++
++        DownRight
+ 
+     }
+ 
+diff --git a/Intersect (Core)/GameObjects/Events/Enums.cs b/Intersect (Core)/GameObjects/Events/Enums.cs
+index a5d59d83..86d6b6fa 100644
+--- a/Intersect (Core)/GameObjects/Events/Enums.cs	
++++ b/Intersect (Core)/GameObjects/Events/Enums.cs	
+@@ -12,6 +12,14 @@ public enum MoveRouteEnum
+ 
+         MoveRight,
+ 
++        MoveUpLeft,
++
++        MoveUpRight,
++
++        MoveDownLeft,
++
++        MoveDownRight,
++
+         MoveRandomly,
+ 
+         MoveTowardsPlayer,
+diff --git a/Intersect (Core)/Network/Packets/Client/MovePacket.cs b/Intersect (Core)/Network/Packets/Client/MovePacket.cs
+index 5e0e71c1..f4c3a02e 100644
+--- a/Intersect (Core)/Network/Packets/Client/MovePacket.cs	
++++ b/Intersect (Core)/Network/Packets/Client/MovePacket.cs	
+@@ -6,13 +6,12 @@ namespace Intersect.Network.Packets.Client
+     public class MovePacket : CerasPacket
+     {
+ 
+-        public MovePacket(Guid mapId, byte x, byte y, byte dir, byte deplDir)
++        public MovePacket(Guid mapId, byte x, byte y, byte dir)
+         {
+             MapId = mapId;
+             X = x;
+             Y = y;
+             Dir = dir;
+-            DeplacementDir = deplDir;
+         }
+ 
+         public Guid MapId { get; set; }
+@@ -23,8 +22,6 @@ public MovePacket(Guid mapId, byte x, byte y, byte dir, byte deplDir)
+ 
+         public byte Dir { get; set; }
+ 
+-        public byte DeplacementDir { get; set; }
+-
+     }
+ 
+ }
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index 05f059d6..83a6619f 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -107,7 +107,7 @@ public enum LabelType
+ 
+         private byte mDir;
+ 
+-        private byte mDeplDir;
++        // private byte mDeplDir;
+ 
+         protected bool mDisposed;
+ 
+@@ -206,17 +206,17 @@ public Entity(Guid id, EntityPacket packet, bool isEvent = false)
+         public byte Dir
+         {
+             get => mDir;
+-            set => mDir = (byte) ((value + 4) % 4);
++            set => mDir = (byte) ((value + 8) % 8);
+         }
+ 
+         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
+-        public byte DeplacementDir
+-        {
+-            get => mDeplDir;
+-            set => mDeplDir = (byte)((value + 8) % 8);
+-            // I don't know why there was a +4 % 4 for the Dir field, but I just repeated the same thing here.
+-            // I guess it's to be sure the value is in the acceptable range.
+-        }
++        //public byte DeplacementDir
++        //{
++        //    get => mDeplDir;
++        //    set => mDeplDir = (byte)((value + 8) % 8);
++        //    // I don't know why there was a +4 % 4 for the Dir field, but I just repeated the same thing here.
++        //    // I guess it's to be sure the value is in the acceptable range.
++        //}
+ 
+         public virtual string TransformedSprite
+         {
+@@ -529,7 +529,7 @@ public virtual bool Update()
+                 // delta offset Must be more than 0 for movements. 0 = slowest
+                 // Direction is related to the sprite animation, I don't know how to set a sprite animation for eache direction
+                 // so I use DeplacementDir...
+-                switch (DeplacementDir)
++                switch (Dir)
+                 {
+                     case 0: // Up
+                         OffsetY -= deplacementTime;
+@@ -896,22 +896,39 @@ public virtual void Draw()
+                 destRectangle.X -= Texture.GetWidth() / 8;
+                 switch (Dir)
+                 {
+-                    case 0:
++                    case 0: // Up
+                         d = 3;
+ 
+                         break;
+-                    case 1:
++                    case 1: // Down
+                         d = 0;
+ 
+                         break;
+-                    case 2:
++                    case 2: // Left
+                         d = 1;
+ 
+                         break;
+-                    case 3:
++                    case 3: // Right
+                         d = 2;
+ 
+                         break;
++                    case 4: // UpLeft
++                        d = 1;
++
++                        break;
++                    case 5: // UpRight
++                        d = 2;
++
++                        break;
++                    case 6: // DownLeft
++                        d = 1;
++
++                        break;
++                    case 7: // DownRight
++                        d = 2;
++
++                        break;
++
+                     default:
+                         Dir = 0;
+                         d = 3;
+@@ -955,10 +972,20 @@ public virtual void Draw()
+ 
+                 WorldPos = destRectangle;
+ 
++                int pDollIndex = Dir; // Actually it's because the index would've been outside of the bounds
++                if (Dir == 4 || Dir == 6)
++                {
++                    pDollIndex = 2;
++                }
++                else if (Dir == 5 || Dir == 7)
++                {
++                    pDollIndex = 3;
++                }
++
+                 //Order the layers of paperdolls and sprites
+-                for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
++                for (var z = 0; z < Options.PaperdollOrder[pDollIndex].Count; z++)
+                 {
+-                    var paperdoll = Options.PaperdollOrder[Dir][z];
++                    var paperdoll = Options.PaperdollOrder[pDollIndex][z];
+                     var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
+ 
+                     //Check for player
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index c62a4794..a96963b0 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -177,21 +177,21 @@ public override bool Update()
+         public override void Load(EntityPacket packet)
+         {
+             base.Load(packet);
+-            var pkt = (PlayerEntityPacket) packet;
++            var pkt = (PlayerEntityPacket)packet;
+             Gender = pkt.Gender;
+             Class = pkt.ClassId;
+             Type = pkt.AccessLevel;
+             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
+ 
+-            if (((PlayerEntityPacket) packet).Equipment != null)
++            if (((PlayerEntityPacket)packet).Equipment != null)
+             {
+-                if (this == Globals.Me && ((PlayerEntityPacket) packet).Equipment.InventorySlots != null)
++                if (this == Globals.Me && ((PlayerEntityPacket)packet).Equipment.InventorySlots != null)
+                 {
+-                    this.MyEquipment = ((PlayerEntityPacket) packet).Equipment.InventorySlots;
++                    this.MyEquipment = ((PlayerEntityPacket)packet).Equipment.InventorySlots;
+                 }
+-                else if (((PlayerEntityPacket) packet).Equipment.ItemIds != null)
++                else if (((PlayerEntityPacket)packet).Equipment.ItemIds != null)
+                 {
+-                    this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
++                    this.Equipment = ((PlayerEntityPacket)packet).Equipment.ItemIds;
+                 }
+             }
+         }
+@@ -234,16 +234,16 @@ public void TryDropItem(int index)
+ 
+         private void DropItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendDropItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+         private void DropInputBoxOkay(object sender, EventArgs e)
+         {
+-            PacketSender.SendDropItem((int) ((InputBox) sender).UserData, 1);
++            PacketSender.SendDropItem((int)((InputBox)sender).UserData, 1);
+         }
+ 
+         public int FindItem(Guid itemId, int itemVal = 1)
+@@ -450,16 +450,16 @@ public void TrySellItem(int index)
+ 
+         private void SellItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendSellItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+         private void SellInputBoxOkay(object sender, EventArgs e)
+         {
+-            PacketSender.SendSellItem((int) ((InputBox) sender).UserData, 1);
++            PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
+         }
+ 
+         //bank
+@@ -484,10 +484,10 @@ public void TryDepositItem(int index)
+ 
+         private void DepositItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendDepositItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -512,10 +512,10 @@ public void TryWithdrawItem(int index)
+ 
+         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendWithdrawItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -541,10 +541,10 @@ public void TryStoreBagItem(int index)
+ 
+         private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendStoreBagItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendStoreBagItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -569,10 +569,10 @@ public void TryRetreiveBagItem(int index)
+ 
+         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendRetrieveBagItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendRetrieveBagItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -598,10 +598,10 @@ public void TryTradeItem(int index)
+ 
+         private void TradeItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendOfferTradeItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -626,10 +626,10 @@ public void TryRevokeItem(int index)
+ 
+         private void RevokeItemInputBoxOkay(object sender, EventArgs e)
+         {
+-            var value = (int) ((InputBox) sender).Value;
++            var value = (int)((InputBox)sender).Value;
+             if (value > 0)
+             {
+-                PacketSender.SendRevokeTradeItem((int) ((InputBox) sender).UserData, value);
++                PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
+             }
+         }
+ 
+@@ -655,7 +655,7 @@ public void TryForgetSpell(int index)
+ 
+         private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
+         {
+-            PacketSender.SendForgetSpell((int) ((InputBox) sender).UserData);
++            PacketSender.SendForgetSpell((int)((InputBox)sender).UserData);
+         }
+ 
+         public void TryUseSpell(int index)
+@@ -716,7 +716,7 @@ public int FindHotbarSpell(HotbarInstance hotbarInstance)
+         public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
+         {
+             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
+-            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int) Stats.StatCount];
++            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Stats.StatCount];
+             if (itemType == 0)
+             {
+                 var item = Inventory[itemSlot];
+@@ -766,9 +766,9 @@ private void TryToChangeDimension()
+                     {
+                         if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type == MapAttributes.ZDimension)
+                         {
+-                            if (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
++                            if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
+                             {
+-                                Z = (byte) (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y])
++                                Z = (byte)(((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y])
+                                             .GatewayTo -
+                                             1);
+                             }
+@@ -870,7 +870,7 @@ protected int GetDistanceTo(Entity target)
+                     var x2 = target.X + targetMap.MapGridX * Options.MapWidth;
+                     var y2 = target.Y + targetMap.MapGridY * Options.MapHeight;
+ 
+-                    return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
++                    return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+                 }
+             }
+ 
+@@ -1099,8 +1099,8 @@ public bool GetRealLocation(ref int x, ref int y, ref Guid mapId)
+                 {
+                     if (MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
+                     {
+-                        x = (byte) tmpX;
+-                        y = (byte) tmpY;
++                        x = (byte)tmpX;
++                        y = (byte)tmpY;
+                         mapId = Globals.MapGrid[gridX, gridY];
+ 
+                         return true;
+@@ -1122,8 +1122,8 @@ public bool TryTarget()
+                 }
+             }
+ 
+-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
+-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
++            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
++            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+ 
+             foreach (MapInstance map in MapInstance.Lookup.Values)
+             {
+@@ -1132,8 +1132,8 @@ public bool TryTarget()
+                     if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                     {
+                         //Remove the offsets to just be dealing with pixels within the map selected
+-                        x -= (int) map.GetX();
+-                        y -= (int) map.GetY();
++                        x -= (int)map.GetX();
++                        y -= (int)map.GetY();
+ 
+                         //transform pixel format to tile format
+                         x /= Options.TileWidth;
+@@ -1216,7 +1216,7 @@ public bool TryTarget()
+                                     if (en.Value.CurrentMap == mapId &&
+                                         en.Value.X == x &&
+                                         en.Value.Y == y &&
+-                                        !((Event) en.Value).DisablePreview &&
++                                        !((Event)en.Value).DisablePreview &&
+                                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                                     {
+                                         if (TargetBox != null)
+@@ -1335,7 +1335,7 @@ public override int CalculateAttackTime()
+                 }
+                 else if (weapon.AttackSpeedModifier == 2) //Percentage
+                 {
+-                    attackTime = (int) (attackTime * (100f / weapon.AttackSpeedValue));
++                    attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
+                 }
+             }
+ 
+@@ -1371,8 +1371,8 @@ private void ProcessDirectionalInput()
+                 return;
+             }
+ 
+-            var tmpX = (sbyte) X;
+-            var tmpY = (sbyte) Y;
++            var tmpX = (sbyte)X;
++            var tmpY = (sbyte)Y;
+             Entity blockedBy = null;
+ 
+             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
+@@ -1387,96 +1387,88 @@ private void ProcessDirectionalInput()
+                         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
+ 
+                         case 0: // Up
+-                            Dir = 0; // Set the sprite direction
+                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY--;
+-                                DeplacementDir = 0;
+                                 IsMoving = true;
++                                Dir = 0; // Set the sprite direction
+                                 OffsetY = Options.TileHeight;
+                                 OffsetX = 0;
+                             }
+ 
+                             break;
+                         case 1: // Down
+-                            Dir = 1;
+                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY++;
+-                                DeplacementDir = 1;
+                                 IsMoving = true;
++                                Dir = 1;
+                                 OffsetY = -Options.TileHeight;
+                                 OffsetX = 0;
+                             }
+ 
+                             break;
+                         case 2: // Left
+-                            Dir = 2;
+                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpX--;
+-                                DeplacementDir = 2;
+                                 IsMoving = true;
++                                Dir = 2;
+                                 OffsetY = 0;
+                                 OffsetX = Options.TileWidth;
+                             }
+ 
+                             break;
+                         case 3: // Right
+-                            Dir = 3;
+                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpX++;
+-                                DeplacementDir = 3;
+                                 IsMoving = true;
++                                Dir = 3;
+                                 OffsetY = 0;
+                                 OffsetX = -Options.TileWidth;
+                             }
+ 
+                             break;
+                         case 4: // NW
+-                            Dir = 2;
+                             if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY--;
+                                 tmpX--;
+-                                DeplacementDir = 4;
++                                Dir = 4;
+                                 IsMoving = true;
+                                 OffsetY = Options.TileHeight;
+                                 OffsetX = Options.TileWidth;
+                             }
+                             break;
+                         case 5: // NE
+-                            Dir = 3;
+                             if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY--;
+                                 tmpX++;
+-                                DeplacementDir = 5;
++                                Dir = 5;
+                                 IsMoving = true;
+                                 OffsetY = Options.TileHeight;
+                                 OffsetX = -Options.TileWidth;
+                             }
+                             break;
+                         case 6: // SW
+-                            Dir = 2;
+                             if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY++;
+                                 tmpX--;
+-                                DeplacementDir = 6;
++                                Dir = 6;
+                                 IsMoving = true;
+                                 OffsetY = -Options.TileHeight;
+                                 OffsetX = Options.TileWidth;
+                             }
+                             break;
+                         case 7: // SE
+-                            Dir = 3;
+                             if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                             {
+                                 tmpY++;
+                                 tmpX++;
+-                                DeplacementDir = 7;
++                                Dir = 7;
+                                 IsMoving = true;
+                                 OffsetY = -Options.TileHeight;
+                                 OffsetX = -Options.TileWidth;
+@@ -1500,7 +1492,7 @@ private void ProcessDirectionalInput()
+                             if (tmpX < 0)
+                             {
+                                 gridX--;
+-                                X = (byte) (Options.MapWidth - 1);
++                                X = (byte)(Options.MapWidth - 1);
+                             }
+                             else if (tmpX >= Options.MapWidth)
+                             {
+@@ -1509,13 +1501,13 @@ private void ProcessDirectionalInput()
+                             }
+                             else
+                             {
+-                                X = (byte) tmpX;
++                                X = (byte)tmpX;
+                             }
+ 
+                             if (tmpY < 0)
+                             {
+                                 gridY--;
+-                                Y = (byte) (Options.MapHeight - 1);
++                                Y = (byte)(Options.MapHeight - 1);
+                             }
+                             else if (tmpY >= Options.MapHeight)
+                             {
+@@ -1524,7 +1516,7 @@ private void ProcessDirectionalInput()
+                             }
+                             else
+                             {
+-                                Y = (byte) tmpY;
++                                Y = (byte)tmpY;
+                             }
+ 
+                             if (CurrentMap != Globals.MapGrid[gridX, gridY])
+@@ -1535,18 +1527,18 @@ private void ProcessDirectionalInput()
+                         }
+                         else
+                         {
+-                            X = (byte) tmpX;
+-                            Y = (byte) tmpY;
++                            X = (byte)tmpX;
++                            Y = (byte)tmpY;
+                         }
+ 
+                         TryToChangeDimension();
+                     }
+                     else
+                     {
+-                        if (MoveDir != DeplacementDir)
++                        if (MoveDir != Dir)
+                         {
+-                            DeplacementDir = (byte) MoveDir;
+-                            PacketSender.SendDirection(DeplacementDir);
++                            Dir = (byte)MoveDir;
++                            PacketSender.SendDirection(Dir);
+                         }
+ 
+                         if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy.GetType() == typeof(Event))
+@@ -1683,25 +1675,25 @@ public void FetchNewMaps()
+                             {
+                                 if (en.Value.GetType() == typeof(Resource))
+                                 {
+-                                    var resourceBase = ((Resource) en.Value).GetResourceBase();
++                                    var resourceBase = ((Resource)en.Value).GetResourceBase();
+                                     if (resourceBase != null)
+                                     {
+-                                        if (!ignoreAliveResources && !((Resource) en.Value).IsDead)
++                                        if (!ignoreAliveResources && !((Resource)en.Value).IsDead)
+                                         {
+                                             blockedBy = en.Value;
+ 
+                                             return -6;
+                                         }
+ 
+-                                        if (!ignoreDeadResources && ((Resource) en.Value).IsDead)
++                                        if (!ignoreDeadResources && ((Resource)en.Value).IsDead)
+                                         {
+                                             blockedBy = en.Value;
+ 
+                                             return -6;
+                                         }
+ 
+-                                        if (resourceBase.WalkableAfter && ((Resource) en.Value).IsDead ||
+-                                            resourceBase.WalkableBefore && !((Resource) en.Value).IsDead)
++                                        if (resourceBase.WalkableAfter && ((Resource)en.Value).IsDead ||
++                                            resourceBase.WalkableBefore && !((Resource)en.Value).IsDead)
+                                         {
+                                             continue;
+                                         }
+@@ -1711,7 +1703,7 @@ public void FetchNewMaps()
+                                 {
+                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
+                                     var entityMap = MapInstance.Get(en.Value.CurrentMap);
+-                                    if (Options.Instance.Passability.Passable[(int) entityMap.ZoneType])
++                                    if (Options.Instance.Passability.Passable[(int)entityMap.ZoneType])
+                                     {
+                                         continue;
+                                     }
+@@ -1758,7 +1750,7 @@ public void FetchNewMaps()
+                         }
+                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
+                         {
+-                            if (((MapZDimensionAttribute) gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
++                            if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
+                             {
+                                 return -3;
+                             }
+@@ -1852,7 +1844,7 @@ public void DrawTargets()
+                     {
+                         if (TargetType == 0 && TargetIndex == en.Value.Id)
+                         {
+-                            en.Value.DrawTarget((int) TargetTypes.Selected);
++                            en.Value.DrawTarget((int)TargetTypes.Selected);
+                         }
+                     }
+                 }
+@@ -1873,19 +1865,19 @@ public void DrawTargets()
+                     }
+ 
+                     if (en.Value.CurrentMap == eventMap.Id &&
+-                        !((Event) en.Value).DisablePreview &&
++                        !((Event)en.Value).DisablePreview &&
+                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                     {
+                         if (TargetType == 1 && TargetIndex == en.Value.Id)
+                         {
+-                            en.Value.DrawTarget((int) TargetTypes.Selected);
++                            en.Value.DrawTarget((int)TargetTypes.Selected);
+                         }
+                     }
+                 }
+             }
+ 
+-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
+-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
++            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
++            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+ 
+             foreach (MapInstance map in MapInstance.Lookup.Values)
+             {
+@@ -1910,7 +1902,7 @@ public void DrawTargets()
+                                 {
+                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
+                                     {
+-                                        en.Value.DrawTarget((int) TargetTypes.Hover);
++                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                     }
+                                 }
+                             }
+@@ -1926,13 +1918,13 @@ public void DrawTargets()
+                                 }
+ 
+                                 if (en.Value.CurrentMap == mapId &&
+-                                    !((Event) en.Value).DisablePreview &&
++                                    !((Event)en.Value).DisablePreview &&
+                                     !en.Value.IsStealthed() &&
+                                     en.Value.WorldPos.Contains(x, y))
+                                 {
+                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
+                                     {
+-                                        en.Value.DrawTarget((int) TargetTypes.Hover);
++                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                     }
+                                 }
+                             }
+@@ -1964,7 +1956,7 @@ public class HotbarInstance
+ 
+         public Guid ItemOrSpellId = Guid.Empty;
+ 
+-        public int[] PreferredStatBuffs = new int[(int) Stats.StatCount];
++        public int[] PreferredStatBuffs = new int[(int)Stats.StatCount];
+ 
+         public void Load(string data)
+         {
+diff --git a/Intersect.Client/Networking/PacketHandler.cs b/Intersect.Client/Networking/PacketHandler.cs
+index c69ec70d..f7ce3899 100644
+--- a/Intersect.Client/Networking/PacketHandler.cs
++++ b/Intersect.Client/Networking/PacketHandler.cs
+@@ -471,6 +471,26 @@ private static void HandlePacket(EntityMovePacket packet)
+                         en.OffsetY = 0;
+                         en.OffsetX = -Options.TileWidth;
+ 
++                        break;
++                    case 4:
++                        en.OffsetY = Options.TileHeight;
++                        en.OffsetX = Options.TileWidth;
++
++                        break;
++                    case 5:
++                        en.OffsetY = Options.TileHeight;
++                        en.OffsetX = -Options.TileWidth;
++
++                        break;
++                    case 6:
++                        en.OffsetY = -Options.TileHeight;
++                        en.OffsetX = Options.TileWidth;
++
++                        break;
++                    case 7:
++                        en.OffsetY = -Options.TileHeight;
++                        en.OffsetX = -Options.TileWidth;
++
+                         break;
+                 }
+             }
+diff --git a/Intersect.Client/Networking/PacketSender.cs b/Intersect.Client/Networking/PacketSender.cs
+index 38edb70f..41082f45 100644
+--- a/Intersect.Client/Networking/PacketSender.cs
++++ b/Intersect.Client/Networking/PacketSender.cs
+@@ -43,7 +43,7 @@ public static void SendNeedMap(Guid mapId)
+ 
+         public static void SendMove()
+         {
+-            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir, Globals.Me.DeplacementDir));
++            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
+         }
+ 
+         public static void SendChatMsg(string msg, byte channel)
+diff --git a/Intersect.Server/Entities/Entity.cs b/Intersect.Server/Entities/Entity.cs
+index 5bd4fa8e..0c16e8fd 100644
+--- a/Intersect.Server/Entities/Entity.cs
++++ b/Intersect.Server/Entities/Entity.cs
+@@ -772,6 +772,7 @@ public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false
+ 
+             Dir = moveDir;
+ 
++
+             var tile = new TileHelper(MapId, X, Y);
+ 
+             // ReSharper disable once InvertIf
+@@ -2341,24 +2342,43 @@ protected byte DirToEnemy(Entity target)
+             var x2 = target.X + MapInstance.Get(target.MapId).MapGridX * Options.MapWidth;
+             var y2 = target.Y + MapInstance.Get(target.MapId).MapGridY * Options.MapHeight;
+ 
+-            if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
++            //Left or Right
++            if (x1 - x2 < 0 && y1 - y2 < 0)
+             {
+-                //Left or Right
+-                if (x1 - x2 < 0)
+-                {
+-                    return (byte) Directions.Right;
+-                }
+-
+-                return (byte) Directions.Left;
++                return (byte)Directions.DownRight;
+             }
+-
+-            //Left or Right
+-            if (y1 - y2 < 0)
++            else if (x1 - x2 < 0 && y1 - y2 > 0)
+             {
+-                return (byte) Directions.Down;
++                return (byte)Directions.UpRight;
++            }
++            else if (x1 - x2 < 0 && y1 - y2 == 0)
++            {
++                return (byte)Directions.Right;
++            }
++            else if (x1 - x2 > 0 && y1 - y2 < 0)
++            {
++                return (byte)Directions.DownLeft;
++            }
++            else if (x1 - x2 > 0 && y1 - y2 > 0)
++            {
++                return (byte)Directions.UpLeft;
++            }
++            else if (x1 - x2 > 0 && y1 - y2 == 0)
++            {
++                return (byte)Directions.Left;
++            }
++            else if (x1 - x2 == 0 && y1 - y2 < 0)
++            {
++                return (byte)Directions.Down;
++            }
++            else if (x1 - x2 == 0 && y1 - y2 > 0)
++            {
++                return (byte)Directions.Up;
++            }
++            else
++            {
++                return 0;
+             }
+-
+-            return (byte) Directions.Up;
+         }
+ 
+         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
+diff --git a/Intersect.Server/Entities/Npc.cs b/Intersect.Server/Entities/Npc.cs
+index cc38c4bd..f59aca32 100644
+--- a/Intersect.Server/Entities/Npc.cs
++++ b/Intersect.Server/Entities/Npc.cs
+@@ -742,6 +742,22 @@ public override void Update(long timeMs)
+                                                 case 3:
+                                                     dir = 2;
+ 
++                                                    break;
++                                                case 4:
++                                                    dir = 5;
++
++                                                    break;
++                                                case 5:
++                                                    dir = 4;
++
++                                                    break;
++                                                case 6:
++                                                    dir = 7;
++
++                                                    break;
++                                                case 7:
++                                                    dir = 6;
++
+                                                     break;
+                                             }
+                                         }
+@@ -815,6 +831,22 @@ public override void Update(long timeMs)
+                                     case 3:
+                                         dir = 2;
+ 
++                                        break;
++                                    case 4:
++                                        dir = 5;
++
++                                        break;
++                                    case 5:
++                                        dir = 4;
++
++                                        break;
++                                    case 6:
++                                        dir = 7;
++
++                                        break;
++                                    case 7:
++                                        dir = 6;
++
+                                         break;
+                                 }
+ 
+@@ -890,7 +922,7 @@ public override void Update(long timeMs)
+                 var i = Randomization.Next(0, 1);
+                 if (i == 0)
+                 {
+-                    i = Randomization.Next(0, 4);
++                    i = Randomization.Next(0, 8);
+                     if (CanMove(i) == -1)
+                     {
+                         //check if NPC is snared or stunned
+@@ -906,6 +938,7 @@ public override void Update(long timeMs)
+                         }
+ 
+                         Move((byte) i, null);
++                        
+                     }
+                 }
+ 
+@@ -930,6 +963,7 @@ public override void Update(long timeMs)
+                     MapInstance.Get(MapId).AddEntity(this);
+                 }
+             }
++            // End of the Npc Movement
+         }
+ 
+         public override void NotifySwarm(Entity attacker)
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 2c4d984c..5814f5e7 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -408,10 +408,10 @@ public void HandlePacket(Client client, Player player, MovePacket packet)
+                 return;
+             }
+ 
+-            var canMove = player.CanMove(packet.DeplacementDir);
++            var canMove = player.CanMove(packet.Dir);
+             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
+             {
+-                player.Move(packet.DeplacementDir, player, false);
++                player.Move(packet.Dir, player, false);
+                 if (player.MoveTimer > Globals.Timing.TimeMs)
+                 {
+                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
+-- 
+2.26.0.windows.1
+
+
+From e0fcd2728072519ae6bbe85d6a2edfeedb0213c2 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 05:33:53 -0400
+Subject: [PATCH 3/9] move routes done
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Server/Entities/Entity.cs | 126 ++++++++++++++++++++++++----
+ 1 file changed, 112 insertions(+), 14 deletions(-)
+
+diff --git a/Intersect.Server/Entities/Entity.cs b/Intersect.Server/Entities/Entity.cs
+index 0c16e8fd..48e1914e 100644
+--- a/Intersect.Server/Entities/Entity.cs
++++ b/Intersect.Server/Entities/Entity.cs
+@@ -503,9 +503,41 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+                             moved = true;
+                         }
+ 
++                        break;
++                    case MoveRouteEnum.MoveUpLeft:
++                        if (CanMove((int)Directions.UpLeft) == -1)
++                        {
++                            Move((int)Directions.UpLeft, forPlayer, false, true);
++                            moved = true;
++                        }
++
++                        break;
++                    case MoveRouteEnum.MoveUpRight:
++                        if (CanMove((int)Directions.UpRight) == -1)
++                        {
++                            Move((int)Directions.UpRight, forPlayer, false, true);
++                            moved = true;
++                        }
++
++                        break;
++                    case MoveRouteEnum.MoveDownLeft:
++                        if (CanMove((int)Directions.DownLeft) == -1)
++                        {
++                            Move((int)Directions.DownLeft, forPlayer, false, true);
++                            moved = true;
++                        }
++
++                        break;
++                    case MoveRouteEnum.MoveDownRight:
++                        if (CanMove((int)Directions.DownRight) == -1)
++                        {
++                            Move((int)Directions.DownRight, forPlayer, false, true);
++                            moved = true;
++                        }
++
+                         break;
+                     case MoveRouteEnum.MoveRandomly:
+-                        var dir = (byte)Randomization.Next(0, 4);
++                        var dir = (byte)Randomization.Next(0, 8);
+                         if (CanMove(dir) == -1)
+                         {
+                             Move(dir, forPlayer);
+@@ -539,6 +571,22 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+                             case (int) Directions.Right:
+                                 moveDir = (int) Directions.Left;
+ 
++                                break;
++                            case (int)Directions.UpLeft:
++                                moveDir = (int)Directions.DownRight;
++
++                                break;
++                            case (int)Directions.UpRight:
++                                moveDir = (int)Directions.DownLeft;
++
++                                break;
++                            case (int)Directions.DownLeft:
++                                moveDir = (int)Directions.UpRight;
++
++                                break;
++                            case (int)Directions.DownRight:
++                                moveDir = (int)Directions.UpLeft;
++
+                                 break;
+                         }
+ 
+@@ -573,19 +621,35 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+                         switch (Dir)
+                         {
+                             case (int) Directions.Up:
+-                                lookDir = (int) Directions.Right;
++                                lookDir = (int) Directions.UpRight;
+ 
+                                 break;
+                             case (int) Directions.Down:
+-                                lookDir = (int) Directions.Left;
++                                lookDir = (int) Directions.DownLeft;
+ 
+                                 break;
+                             case (int) Directions.Left:
+-                                lookDir = (int) Directions.Down;
++                                lookDir = (int) Directions.UpLeft;
+ 
+                                 break;
+                             case (int) Directions.Right:
+-                                lookDir = (int) Directions.Up;
++                                lookDir = (int) Directions.DownRight;
++
++                                break;
++                            case (int)Directions.UpLeft:
++                                lookDir = (int)Directions.Up;
++
++                                break;
++                            case (int)Directions.UpRight:
++                                lookDir = (int)Directions.Right;
++
++                                break;
++                            case (int)Directions.DownLeft:
++                                lookDir = (int)Directions.Left;
++
++                                break;
++                            case (int)Directions.DownRight:
++                                lookDir = (int)Directions.Down;
+ 
+                                 break;
+                         }
+@@ -597,20 +661,36 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+                     case MoveRouteEnum.Turn90CounterClockwise:
+                         switch (Dir)
+                         {
+-                            case (int) Directions.Up:
+-                                lookDir = (int) Directions.Left;
++                            case (int)Directions.Up:
++                                lookDir = (int)Directions.UpLeft;
+ 
+                                 break;
+-                            case (int) Directions.Down:
+-                                lookDir = (int) Directions.Right;
++                            case (int)Directions.Down:
++                                lookDir = (int)Directions.DownRight;
+ 
+                                 break;
+-                            case (int) Directions.Left:
+-                                lookDir = (int) Directions.Up;
++                            case (int)Directions.Left:
++                                lookDir = (int)Directions.DownLeft;
+ 
+                                 break;
+-                            case (int) Directions.Right:
+-                                lookDir = (int) Directions.Down;
++                            case (int)Directions.Right:
++                                lookDir = (int)Directions.UpRight;
++
++                                break;
++                            case (int)Directions.UpLeft:
++                                lookDir = (int)Directions.Left;
++
++                                break;
++                            case (int)Directions.UpRight:
++                                lookDir = (int)Directions.Up;
++
++                                break;
++                            case (int)Directions.DownLeft:
++                                lookDir = (int)Directions.Down;
++
++                                break;
++                            case (int)Directions.DownRight:
++                                lookDir = (int)Directions.Right;
+ 
+                                 break;
+                         }
+@@ -637,6 +717,22 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+                             case (int) Directions.Right:
+                                 lookDir = (int) Directions.Left;
+ 
++                                break;
++                            case (int)Directions.UpLeft:
++                                lookDir = (int)Directions.DownRight;
++
++                                break;
++                            case (int)Directions.UpRight:
++                                lookDir = (int)Directions.DownLeft;
++
++                                break;
++                            case (int)Directions.DownLeft:
++                                lookDir = (int)Directions.UpRight;
++
++                                break;
++                            case (int)Directions.DownRight:
++                                lookDir = (int)Directions.UpLeft;
++
+                                 break;
+                         }
+ 
+@@ -645,7 +741,7 @@ protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
+ 
+                         break;
+                     case MoveRouteEnum.TurnRandomly:
+-                        ChangeDir((byte)Randomization.Next(0, 4));
++                        ChangeDir((byte)Randomization.Next(0, 8));
+                         moved = true;
+ 
+                         break;
+@@ -2342,6 +2438,8 @@ protected byte DirToEnemy(Entity target)
+             var x2 = target.X + MapInstance.Get(target.MapId).MapGridX * Options.MapWidth;
+             var y2 = target.Y + MapInstance.Get(target.MapId).MapGridY * Options.MapHeight;
+ 
++
++            // When to attack in fact. Basically it's when the NPC is next tile from me. So right now it's always N, S, E, W
+             //Left or Right
+             if (x1 - x2 < 0 && y1 - y2 < 0)
+             {
+-- 
+2.26.0.windows.1
+
+
+From 95d61c04ad4a3340e05fde4018d775fd9e9ea580 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 09:20:37 -0400
+Subject: [PATCH 4/9] projectile fix
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ .../Entities/Projectiles/Projectile.cs        | 104 ++++++++++++++++++
+ Intersect.Server/Entities/Projectile.cs       | 104 ++++++++++++++++++
+ 2 files changed, 208 insertions(+)
+
+diff --git a/Intersect.Client/Entities/Projectiles/Projectile.cs b/Intersect.Client/Entities/Projectiles/Projectile.cs
+index bc46aa75..e727eb8d 100644
+--- a/Intersect.Client/Entities/Projectiles/Projectile.cs
++++ b/Intersect.Client/Entities/Projectiles/Projectile.cs
+@@ -198,6 +198,14 @@ private int FindProjectileRotationX(int direction, int x, int y)
+                     return -y;
+                 default:
+                     return x;
++                case 4: //UpLeft
++                    return y;
++                case 5: //UpRight
++                    return -y;
++                case 6: //DownLeft
++                    return y;
++                case 7: //DownRight
++                    return -y;
+             }
+         }
+ 
+@@ -213,6 +221,14 @@ private int FindProjectileRotationY(int direction, int x, int y)
+                     return -x;
+                 case 3: //Right
+                     return x;
++                case 4: //UpLeft
++                    return -x;
++                case 5: //UpRight
++                    return x;
++                case 6: //DownLeft
++                    return -x;
++                case 7: //DownRight
++                    return x;
+                 default:
+                     return y;
+             }
+@@ -290,6 +306,94 @@ private int FindProjectileRotationDir(int entityDir, int projectionDir)
+                         default:
+                             return projectionDir;
+                     }
++                case 4: //UpLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 5: //UpRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
++                case 6: //DownLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 7: //DownRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
+                 default:
+                     return projectionDir;
+             }
+diff --git a/Intersect.Server/Entities/Projectile.cs b/Intersect.Server/Entities/Projectile.cs
+index c62ebe82..91dd224f 100644
+--- a/Intersect.Server/Entities/Projectile.cs
++++ b/Intersect.Server/Entities/Projectile.cs
+@@ -132,6 +132,14 @@ private int FindProjectileRotationX(int direction, int x, int y)
+                     return y;
+                 case 3: //Right
+                     return -y;
++                case 4: //UpLeft
++                    return y;
++                case 5: //UpRight
++                    return -y;
++                case 6: //DownLeft
++                    return y;
++                case 7: //DownRight
++                    return -y;
+                 default:
+                     return x;
+             }
+@@ -149,6 +157,14 @@ private int FindProjectileRotationY(int direction, int x, int y)
+                     return -x;
+                 case 3: //Right
+                     return x;
++                case 4: //UpLeft
++                    return -x;
++                case 5: //UpRight
++                    return x;
++                case 6: //DownLeft
++                    return -x;
++                case 7: //DownRight
++                    return x;
+                 default:
+                     return y;
+             }
+@@ -226,6 +242,94 @@ private byte FindProjectileRotationDir(int entityDir, byte projectionDir)
+                         default:
+                             return projectionDir;
+                     }
++                case 4: //UpLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 5: //UpRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
++                case 6: //DownLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 7: //DownRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
+                 default:
+                     return projectionDir;
+             }
+-- 
+2.26.0.windows.1
+
+
+From afee933d8126eaed6d5898ccd7fde6cc0fe2df73 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 13:24:47 -0400
+Subject: [PATCH 5/9] paperdoll fix
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Client/Entities/Entity.cs | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index 83a6619f..0e68fc0e 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -1093,6 +1093,22 @@ public virtual void DrawEquipment(string filename, int alpha)
+                     case 3:
+                         d = 2;
+ 
++                        break;
++                    case 4:
++                        d = 1;
++
++                        break;
++                    case 5:
++                        d = 2;
++
++                        break;
++                    case 6:
++                        d = 1;
++
++                        break;
++                    case 7:
++                        d = 2;
++
+                         break;
+                 }
+ 
+-- 
+2.26.0.windows.1
+
+
+From ad2568451e5e9ab24bb5b106dac62a2f40833ce6 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 17:28:51 -0400
+Subject: [PATCH 6/9] offensive npc move diagonal
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ .../Entities/Pathfinding/Pathfinder.cs        | 32 ++++++++++--
+ .../Entities/Pathfinding/SpatialAStar.cs      | 52 +++++++++++++++----
+ 2 files changed, 70 insertions(+), 14 deletions(-)
+
+diff --git a/Intersect.Server/Entities/Pathfinding/Pathfinder.cs b/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
+index bde7d0ac..7a4c9dfe 100644
+--- a/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
++++ b/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
+@@ -447,30 +447,54 @@ public sbyte GetMove()
+                     {
+                         var newX = enm.Current.X - Options.MapWidth;
+                         var newY = enm.Current.Y - Options.MapHeight;
+-                        if (mEntity.X < newX)
++                        if (mEntity.X < newX && mEntity.Y == newY)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Right;
+                         }
+-                        else if (mEntity.X > newX)
++                        else if (mEntity.X > newX && mEntity.Y == newY)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Left;
+                         }
+-                        else if (mEntity.Y < newY)
++                        else if (mEntity.Y < newY && mEntity.X == newX)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Down;
+                         }
+-                        else if (mEntity.Y > newY)
++                        else if (mEntity.Y > newY && mEntity.X == newX)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Up;
+                         }
++                        else if (mEntity.Y > newY && mEntity.X > newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.UpLeft;
++                        }
++                        else if (mEntity.Y > newY && mEntity.X < newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.UpRight;
++                        }
++                        else if (mEntity.Y < newY && mEntity.X > newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.DownLeft;
++                        }
++                        else if (mEntity.Y < newY && mEntity.X < newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.DownRight;
++                        }
+                     }
+                 }
+             }
+diff --git a/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs b/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
+index 606f37bf..05e058ad 100644
+--- a/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
++++ b/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
+@@ -282,49 +282,81 @@ private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
+             var x = inAround.X;
+             var y = inAround.Y;
+ 
+-            inNeighbors[0] = null;
++            if (y > 0 && x > 0)
++            {
++                inNeighbors[0] = mSearchSpace[x - 1, y - 1]; // UpLeft
++            }
++            else
++            {
++                inNeighbors[0] = null;
++            }
++
++            if (y > 0 && x < Width - 1)
++            {
++                inNeighbors[2] = mSearchSpace[x + 1, y - 1]; // UpRight
++            }
++            else
++            {
++                inNeighbors[2] = null;
++            }
++
++            if (y < Height - 1 && x > 0)
++            {
++                inNeighbors[5] = mSearchSpace[x - 1, y + 1]; // DownLeft
++            }
++            else
++            {
++                inNeighbors[5] = null;
++            }
++
++            if (y < Height - 1 && x < Width - 1)
++            {
++                inNeighbors[7] = mSearchSpace[x + 1, y + 1]; // DownRight
++            }
++            else
++            {
++                inNeighbors[7] = null;
++            }
+ 
+             if (y > 0)
+             {
+-                inNeighbors[1] = mSearchSpace[x, y - 1];
++                inNeighbors[1] = mSearchSpace[x, y - 1]; // Up
+             }
+             else
+             {
+                 inNeighbors[1] = null;
+             }
+ 
+-            inNeighbors[2] = null;
+ 
+-            if (x > 0)
++            if (x > 0) 
+             {
+-                inNeighbors[3] = mSearchSpace[x - 1, y];
++                inNeighbors[3] = mSearchSpace[x - 1, y]; // Left
+             }
+             else
+             {
+                 inNeighbors[3] = null;
+             }
+ 
+-            if (x < Width - 1)
++            if (x < Width - 1) 
+             {
+-                inNeighbors[4] = mSearchSpace[x + 1, y];
++                inNeighbors[4] = mSearchSpace[x + 1, y]; // Right
+             }
+             else
+             {
+                 inNeighbors[4] = null;
+             }
+ 
+-            inNeighbors[5] = null;
+ 
+             if (y < Height - 1)
+             {
+-                inNeighbors[6] = mSearchSpace[x, y + 1];
++                inNeighbors[6] = mSearchSpace[x, y + 1]; // Down
+             }
+             else
+             {
+                 inNeighbors[6] = null;
+             }
+ 
+-            inNeighbors[7] = null;
++
+         }
+ 
+         private class OpenCloseMap
+-- 
+2.26.0.windows.1
+
+
+From 930784def8e6ca29278ff3e18db3d2b8613c3cda Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 20:12:38 -0400
+Subject: [PATCH 7/9] Diagonal attack
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Client/Entities/Player.cs          | 34 +++++++++--
+ Intersect.Server/Entities/Entity.cs          | 63 +++++++++++++++++---
+ Intersect.Server/Entities/Npc.cs             |  4 ++
+ Intersect.Server/Networking/PacketHandler.cs | 16 +++++
+ 4 files changed, 104 insertions(+), 13 deletions(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index a96963b0..1d23bd81 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -985,21 +985,43 @@ public bool TryAttack()
+             int x = Globals.Me.X;
+             int y = Globals.Me.Y;
+             var map = Globals.Me.CurrentMap;
++
++            // The latest moving direction of the player
+             switch (Globals.Me.Dir)
+             {
+-                case 0:
++                case 0: // Up
+                     y--;
+-
++                    
+                     break;
+-                case 1:
++                case 1: // Down
+                     y++;
+ 
+                     break;
+-                case 2:
++                case 2: // Left
++                    x--;
++
++                    break;
++                case 3: // Right
++                    x++;
++
++                    break;
++                case 4: // UpLeft
++                    y--;
++                    x--;
++
++                    break;
++                case 5: //UpRight
++                    y--;
++                    x++;
++
++                    break;
++                case 6: // DownLeft
++                    y--;
+                     x--;
+ 
+                     break;
+-                case 3:
++                case 7: // DownRight
++                    y--;
+                     x++;
+ 
+                     break;
+@@ -1017,7 +1039,7 @@ public bool TryAttack()
+                     if (en.Value != Globals.Me)
+                     {
+                         if (en.Value.CurrentMap == map &&
+-                            en.Value.X == x &&
++                            en.Value.X == x ||
+                             en.Value.Y == y &&
+                             en.Value.CanBeAttacked())
+                         {
+diff --git a/Intersect.Server/Entities/Entity.cs b/Intersect.Server/Entities/Entity.cs
+index 48e1914e..1fa0d4a4 100644
+--- a/Intersect.Server/Entities/Entity.cs
++++ b/Intersect.Server/Entities/Entity.cs
+@@ -2320,25 +2320,49 @@ protected bool IsOneBlockAway(Entity target)
+             var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
+             if (Z == target.Z)
+             {
+-                myTile.Translate(0, -1);
++                myTile.Translate(0, -1); // Target Up
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(0, 2);
++                myTile.Translate(0, 2); // Target Down
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(-1, -1);
++                myTile.Translate(-1, -1); // Target Left
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(2, 0);
++                myTile.Translate(2, 0); // Target Right 
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, -1); // Target UpLeft
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0); // Target UpRight
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, 2); // Target DownLeft
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0); // Target DownRight
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+@@ -2378,6 +2402,30 @@ protected bool IsFacingTarget(Entity target)
+                 {
+                     return true;
+                 }
++
++                myTile.Translate(-2, -1);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpLeft)
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpRight)
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, 2);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownLeft)
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownRight)
++                {
++                    return true;
++                }
+             }
+ 
+             return false;
+@@ -2479,7 +2527,8 @@ protected byte DirToEnemy(Entity target)
+             }
+         }
+ 
+-        //Check if the target is either up, down, left or right of the target on the correct Z dimension.
++        // Outdated : Check if the target is either up, down, left or right of the target on the correct Z dimension.
++        // Check for 8 directions
+         protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+         {
+             //Calculate World Tile of Me
+@@ -2491,7 +2540,7 @@ protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+             var y2 = y + MapInstance.Get(mapId).MapGridY * Options.MapHeight;
+             if (z == Z)
+             {
+-                if (y1 == y2)
++                if (y1 == y2 || y1 - 1 == y2 || y1 + 1 == y2)
+                 {
+                     if (x1 == x2 - 1)
+                     {
+@@ -2503,7 +2552,7 @@ protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+                     }
+                 }
+ 
+-                if (x1 == x2)
++                if (x1 == x2 || x1 - 1 == x2 || x1 + 1 == x2)
+                 {
+                     if (y1 == y2 - 1)
+                     {
+diff --git a/Intersect.Server/Entities/Npc.cs b/Intersect.Server/Entities/Npc.cs
+index f59aca32..b55d63f3 100644
+--- a/Intersect.Server/Entities/Npc.cs
++++ b/Intersect.Server/Entities/Npc.cs
+@@ -712,6 +712,7 @@ public override void Update(long timeMs)
+                     if (mPathFinder.GetTarget() != null)
+                     {
+                         TryCastSpells();
++                        // Check if can attack
+                         if (!IsOneBlockAway(
+                             mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
+                             mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ
+@@ -782,7 +783,9 @@ public override void Update(long timeMs)
+                                         {
+                                             mPathFinder.PathFailed(timeMs);
+                                         }
++                                        
+                                     }
++                                    // Npc move when here
+ 
+                                     break;
+                                 case PathfinderResult.OutOfRange:
+@@ -883,6 +886,7 @@ public override void Update(long timeMs)
+                                     }
+                                     else
+                                     {
++                                        // Code come here when player is near.
+                                         if (CanAttack(Target, null))
+                                         {
+                                             TryAttack(Target);
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 5814f5e7..95c777bd 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -788,6 +788,22 @@ public void HandlePacket(Client client, Player player, AttackPacket packet)
+                 case 3:
+                     attackingTile.Translate(1, 0);
+ 
++                    break;
++                case 4:
++                    attackingTile.Translate(-1, -1); // UpLeft
++
++                    break;
++                case 5:
++                    attackingTile.Translate(1, -1); // UpRight
++
++                    break;
++                case 6:
++                    attackingTile.Translate(-1, 1); // DownLeft
++
++                    break;
++                case 7:
++                    attackingTile.Translate(1, 1); // DownRight
++
+                     break;
+             }
+ 
+-- 
+2.26.0.windows.1
+
+
+From 572ddd61790218ff7350e56115588cb16bfacb4e Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 14:46:23 -0400
+Subject: [PATCH 8/9] event diag fix
+
+---
+ Intersect.Client/Entities/Player.cs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 1d23bd81..55ad50a3 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -1016,12 +1016,12 @@ public bool TryAttack()
+ 
+                     break;
+                 case 6: // DownLeft
+-                    y--;
++                    y++;
+                     x--;
+ 
+                     break;
+                 case 7: // DownRight
+-                    y--;
++                    y++;
+                     x++;
+ 
+                     break;
+-- 
+2.26.0.windows.1
+
+
+From cc14775dbe6ddaca0f74af8eb522e3e7fb184a8a Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 17:58:28 -0400
+Subject: [PATCH 9/9] attack fix
+
+---
+ Intersect.Client/Entities/Player.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 55ad50a3..c9fd5891 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -1039,7 +1039,7 @@ public bool TryAttack()
+                     if (en.Value != Globals.Me)
+                     {
+                         if (en.Value.CurrentMap == map &&
+-                            en.Value.X == x ||
++                            en.Value.X == x &&
+                             en.Value.Y == y &&
+                             en.Value.CanBeAttacked())
+                         {
+-- 
+2.26.0.windows.1
+
