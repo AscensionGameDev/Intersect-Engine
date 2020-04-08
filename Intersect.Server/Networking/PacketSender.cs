@@ -351,14 +351,15 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static void SendMapEntitiesTo(Player player, List<Entity> entities)
+        public static void SendMapEntitiesTo(Player player, ICollection<Entity> entities)
         {
             var sendEntities = new List<Entity>();
-            for (var i = 0; i < entities.Count; i++)
+
+            foreach (var en in entities)
             {
-                if (entities[i] != null && entities[i] != player)
+                if (en != null && en != player)
                 {
-                    sendEntities.Add(entities[i]);
+                    sendEntities.Add(en);
                 }
             }
 
