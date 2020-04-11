@@ -740,27 +740,25 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
+                            HashSet<Entity> renderSet;
+
                             if (y == gridY - 1)
                             {
-                                Graphics.RenderingEntities[priority, Options.MapHeight + Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                             }
                             else if (y == gridY)
                             {
-                                Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                             }
                             else
                             {
-                                Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                             }
+
+                            renderSet.Add(this);
+                            renderList = renderSet;
+
+                            return renderList;
                         }
                     }
                 }

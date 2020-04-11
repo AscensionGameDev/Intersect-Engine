@@ -113,6 +113,17 @@ namespace Intersect.Client.Entities
 
                 return false;
             }
+            else
+            {
+                var map = MapInstance.Get(CurrentMap);
+                LatestMap = map;
+                if (map == null || !map.InView())
+                {
+                    Globals.EntitiesToDispose.Add(Id);
+
+                    return false;
+                }
+            }
 
             if (!mHasRenderBounds)
             {
@@ -190,27 +201,26 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
+                            HashSet<Entity> renderSet;
+
                             if (y == gridY - 1)
                             {
-                                Graphics.RenderingEntities[priority, Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Y];
                             }
                             else if (y == gridY)
                             {
-                                Graphics.RenderingEntities[priority, Options.MapHeight + Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                             }
                             else
                             {
-                                Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y].Add(this);
-                                renderList = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
-
-                                return renderList;
+                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                             }
+
+                            renderSet.Add(this);
+                            renderList = renderSet;
+
+                            return renderList;
+
                         }
                     }
                 }
