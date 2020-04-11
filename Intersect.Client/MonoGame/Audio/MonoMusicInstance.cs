@@ -4,7 +4,6 @@ using Intersect.Client.General;
 
 using JetBrains.Annotations;
 
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
 namespace Intersect.Client.MonoGame.Audio
@@ -13,11 +12,7 @@ namespace Intersect.Client.MonoGame.Audio
     public class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
     {
 
-        public static MonoMusicInstance Instance = null;
-
-        private readonly DynamicSoundEffectInstance mSong;
-
-        private readonly MonoMusicSource mSource;
+        private readonly Song mSong;
 
         private bool mDisposed;
 
@@ -26,18 +21,6 @@ namespace Intersect.Client.MonoGame.Audio
         // ReSharper disable once SuggestBaseTypeForParameter
         public MonoMusicInstance([NotNull] MonoMusicSource source) : base(source)
         {
-            //Only allow one music player at a time
-            if (Instance != null)
-            {
-                Instance.Stop();
-                Instance.Dispose();
-                Instance = null;
-            }
-
-            Instance = this;
-            mSource = source;
-
-
             mSong = source.LoadSong();
         }
 
@@ -45,19 +28,19 @@ namespace Intersect.Client.MonoGame.Audio
         {
             get
             {
-                if (mSong == null || mSong.IsDisposed)
+                if (mDisposed)
                 {
                     return AudioInstanceState.Disposed;
                 }
 
-                switch (mSong.State)
+                switch (MediaPlayer.State)
                 {
-                    case SoundState.Playing:
+                    case MediaState.Playing:
                         return AudioInstanceState.Playing;
-                    case SoundState.Paused:
-                        return AudioInstanceState.Paused;
-                    case SoundState.Stopped:
+                    case MediaState.Stopped:
                         return AudioInstanceState.Stopped;
+                    case MediaState.Paused:
+                        return AudioInstanceState.Paused;
                     default:
                         return AudioInstanceState.Disposed;
                 }
@@ -66,45 +49,36 @@ namespace Intersect.Client.MonoGame.Audio
 
         public override void Play()
         {
-            if (mSong != null && !mSong.IsDisposed)
+            if (mSong != null)
             {
-                mSong.Play();
+                MediaPlayer.Play(mSong);
             }
         }
 
         public override void Pause()
         {
-            if (mSong != null && !mSong.IsDisposed)
-            {
-                mSong.Pause();
-            }
+            MediaPlayer.Pause();
         }
 
         public override void Stop()
         {
-            if (mSong != null && !mSong.IsDisposed)
-            {
-                mSong.Stop();
-            }
+            MediaPlayer.Stop();
         }
 
         public override void SetVolume(int volume, bool isMusic = false)
         {
-            if (mSong != null && !mSong.IsDisposed)
+            mVolume = volume;
+            try
             {
-                mVolume = volume;
-                try
-                {
-                    mSong.Volume = mVolume * (Globals.Database.MusicVolume / 100f) / 100f;
-                }
-                catch (NullReferenceException)
-                {
-                    // song changed while changing volume
-                }
-                catch (Exception)
-                {
-                    // device not ready
-                }
+                MediaPlayer.Volume = mVolume * (Globals.Database.MusicVolume / 100f) / 100f;
+            }
+            catch (NullReferenceException)
+            {
+                // song changed while changing volume
+            }
+            catch (Exception)
+            {
+                // device not ready
             }
         }
 
@@ -115,10 +89,7 @@ namespace Intersect.Client.MonoGame.Audio
 
         protected override void InternalLoopSet()
         {
-            if (mSong != null)
-            {
-                //mSong.IsLooped = IsLooping;
-            }
+            MediaPlayer.IsRepeating = IsLooping;
         }
 
         public override void Dispose()
@@ -126,13 +97,8 @@ namespace Intersect.Client.MonoGame.Audio
             mDisposed = true;
             try
             {
-                if (mSong != null && !mSong.IsDisposed)
-                {
-                    mSong.Stop();
-                    mSong.Dispose();
-                }
-
-                mSource.Close();
+                MediaPlayer.Stop();
+                mSong.Dispose();
             }
             catch
             {
