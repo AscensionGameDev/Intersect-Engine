@@ -132,6 +132,7 @@ namespace Intersect.Client.Maps
 
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
+            OnMapLoaded -= HandleMapLoaded;
             OnMapLoaded += HandleMapLoaded;
             if (MapRequests.ContainsKey(Id))
             {
@@ -593,7 +594,10 @@ namespace Intersect.Client.Maps
                         }
                     }
                 }
+                mTileBufferDict[i]?.Clear();
             }
+
+            mTileBuffers = null;
         }
 
         //Rendering/Drawing Code
@@ -1195,6 +1199,7 @@ namespace Intersect.Client.Maps
         public void Dispose(bool prep = true, bool killentities = true)
         {
             MapLoaded = false;
+            OnMapLoaded -= HandleMapLoaded;
 
             foreach (var evt in mEvents)
             {

@@ -97,6 +97,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mGame = monoGame;
             mGraphics = graphics;
             mContentManager = contentManager;
+            mGraphics.PreferHalfPixelOffset = true;
 
             mNormalState = new BlendState()
             {

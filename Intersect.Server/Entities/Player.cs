@@ -3220,6 +3220,14 @@ namespace Intersect.Server.Entities
                         amount = 1;
                     }
 
+                    //Check if the item is bound.. if so don't allow trade
+                    if (itemBase.Bound)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Bags.tradebound, CustomColors.Items.Bound);
+
+                        return;
+                    }
+
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {

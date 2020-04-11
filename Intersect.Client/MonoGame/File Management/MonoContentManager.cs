@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -9,6 +8,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Client.MonoGame.Graphics;
+using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
 
@@ -23,11 +23,7 @@ namespace Intersect.Client.MonoGame.File_Management
             Init(this);
             if (!Directory.Exists("resources"))
             {
-                //ERROR MESSAGE
-                MessageBox.Show(
-                    Strings.Errors.resourcesnotfound, Strings.Errors.resourcesnotfoundtitle, MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                Log.Error(Strings.Errors.resourcesnotfound);
 
                 Environment.Exit(1);
             }
@@ -120,7 +116,7 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 foreach (var itm in packItems)
                 {
-                    var filename = Path.GetFileName(itm.Filename.ToLower());
+                    var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\","/"));
                     if (!dict.ContainsKey(filename))
                     {
                         dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename)));

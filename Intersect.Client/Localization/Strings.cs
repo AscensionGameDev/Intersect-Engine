@@ -149,9 +149,7 @@ namespace Intersect.Client.Localization
             }
 
             Program.OpenGLLink = Errors.opengllink.ToString();
-            Program.OpenGLError = Errors.openglerror.ToString();
             Program.OpenALLink = Errors.openallink.ToString();
-            Program.OpenALError = Errors.openalerror.ToString();
 
             Save();
         }
@@ -678,13 +676,7 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString notsupported = @"Not Supported!";
 
-            public static LocalizedString openalerror =
-                @"OpenAL Initialization Error! Try updating your audio drivers! Make sure you have speakers available and enabled. Maybe try plugging in headphones. Visit {00} (may open automatically) for more information.";
-
             public static LocalizedString openallink = @"https://goo.gl/Nbx6hx";
-
-            public static LocalizedString openglerror =
-                @"OpenGL Initialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit {00} (may open automatically) for more information.";
 
             public static LocalizedString opengllink = @"https://goo.gl/RSP3ts";
 
@@ -693,8 +685,6 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString resourcesnotfound =
                 @"The resources directory could not be found! Intersect will now close.";
-
-            public static LocalizedString resourcesnotfoundtitle = @"Resources not found!";
 
             public static LocalizedString title = @"Error!";
 
