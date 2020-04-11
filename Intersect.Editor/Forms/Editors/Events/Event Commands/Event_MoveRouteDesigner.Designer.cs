@@ -34,12 +34,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Move Down");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Move Left");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Move Right");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Move Randomly");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Move Toward Player");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Move Away From Player");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Step Forward");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Step Backward");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Move", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Move Up Left");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Move Up Right");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Move Down Left");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Move Down Right");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Move Randomly");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Move Toward Player");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Move Away From Player");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Step Forward");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Step Backward");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Move", new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
@@ -48,84 +52,88 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             treeNode6,
             treeNode7,
             treeNode8,
-            treeNode9});
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Face Up");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Face Down");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Face Left");
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Face Right");
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Turn 90* Clockwise");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Turn 90* Counter Clockwise");
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Turn 180*");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Turn Randomly");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Turn Toward Player");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Turn Away From Player");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Turn", new System.Windows.Forms.TreeNode[] {
+            treeNode9,
+            treeNode10,
             treeNode11,
             treeNode12,
-            treeNode13,
-            treeNode14,
+            treeNode13});
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Face Up");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Face Down");
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Face Left");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Face Right");
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Turn 90* Clockwise");
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Turn 90* Counter Clockwise");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Turn 180*");
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Turn Randomly");
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Turn Toward Player");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Turn Away From Player");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Turn", new System.Windows.Forms.TreeNode[] {
             treeNode15,
             treeNode16,
             treeNode17,
             treeNode18,
             treeNode19,
-            treeNode20});
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Slowest");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Slower");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Normal");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Faster");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Fastest");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Set Speed", new System.Windows.Forms.TreeNode[] {
+            treeNode20,
+            treeNode21,
             treeNode22,
             treeNode23,
-            treeNode24,
-            treeNode25,
-            treeNode26});
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Lowest");
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Lower");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Normal");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Higher");
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Highest");
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Set Movement Frequency", new System.Windows.Forms.TreeNode[] {
+            treeNode24});
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Slowest");
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Slower");
+            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Normal");
+            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Faster");
+            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Fastest");
+            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Set Speed", new System.Windows.Forms.TreeNode[] {
+            treeNode26,
+            treeNode27,
             treeNode28,
             treeNode29,
-            treeNode30,
-            treeNode31,
-            treeNode32});
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Walking Animation: On");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Walking Animation: Off");
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Direction Fix: On");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Direction Fix: Off");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Walkthrough: On");
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Walkthrough: Off");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Show Name");
-            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Hide Name");
-            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Set Layer: Below Player");
-            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("Set Layer: Same as Player");
-            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Set Layer: Above Player");
-            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Set Attribute", new System.Windows.Forms.TreeNode[] {
+            treeNode30});
+            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Lowest");
+            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Lower");
+            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Normal");
+            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Higher");
+            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Highest");
+            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Set Movement Frequency", new System.Windows.Forms.TreeNode[] {
+            treeNode32,
+            treeNode33,
             treeNode34,
             treeNode35,
-            treeNode36,
-            treeNode37,
+            treeNode36});
+            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Walking Animation: On");
+            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Walking Animation: Off");
+            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Direction Fix: On");
+            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Direction Fix: Off");
+            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Walkthrough: On");
+            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("Walkthrough: Off");
+            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Show Name");
+            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Hide Name");
+            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Set Layer: Below Player");
+            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Set Layer: Same as Player");
+            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Set Layer: Above Player");
+            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Set Attribute", new System.Windows.Forms.TreeNode[] {
             treeNode38,
             treeNode39,
             treeNode40,
             treeNode41,
             treeNode42,
             treeNode43,
-            treeNode44});
-            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Wait 100ms");
-            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Wait 500ms");
-            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Wait 1000ms");
-            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Set Graphic...");
-            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Set Animation...");
-            System.Windows.Forms.TreeNode treeNode51 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
+            treeNode44,
+            treeNode45,
             treeNode46,
             treeNode47,
-            treeNode48,
-            treeNode49,
-            treeNode50});
+            treeNode48});
+            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Wait 100ms");
+            System.Windows.Forms.TreeNode treeNode51 = new System.Windows.Forms.TreeNode("Wait 500ms");
+            System.Windows.Forms.TreeNode treeNode52 = new System.Windows.Forms.TreeNode("Wait 1000ms");
+            System.Windows.Forms.TreeNode treeNode53 = new System.Windows.Forms.TreeNode("Set Graphic...");
+            System.Windows.Forms.TreeNode treeNode54 = new System.Windows.Forms.TreeNode("Set Animation...");
+            System.Windows.Forms.TreeNode treeNode55 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
+            treeNode50,
+            treeNode51,
+            treeNode52,
+            treeNode53,
+            treeNode54});
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventMoveRouteDesigner));
             this.grpMoveRoute = new DarkUI.Controls.DarkGroupBox();
             this.btnOkay = new DarkUI.Controls.DarkButton();
@@ -223,148 +231,160 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             treeNode4.Name = "moveright";
             treeNode4.Tag = "4";
             treeNode4.Text = "Move Right";
-            treeNode5.Name = "moverandomly";
-            treeNode5.Tag = "5";
-            treeNode5.Text = "Move Randomly";
-            treeNode6.Name = "movetowardplayer";
-            treeNode6.Tag = "6";
-            treeNode6.Text = "Move Toward Player";
-            treeNode7.Name = "moveawayfromplayer";
-            treeNode7.Tag = "7";
-            treeNode7.Text = "Move Away From Player";
-            treeNode8.Name = "stepforward";
-            treeNode8.Tag = "8";
-            treeNode8.Text = "Step Forward";
-            treeNode9.Name = "stepbackward";
-            treeNode9.Tag = "9";
-            treeNode9.Text = "Step Backward";
-            treeNode10.Name = "move";
-            treeNode10.Text = "Move";
-            treeNode11.Name = "faceup";
-            treeNode11.Tag = "10";
-            treeNode11.Text = "Face Up";
-            treeNode12.Name = "facedown";
-            treeNode12.Tag = "11";
-            treeNode12.Text = "Face Down";
-            treeNode13.Name = "faceleft";
-            treeNode13.Tag = "12";
-            treeNode13.Text = "Face Left";
-            treeNode14.Name = "faceright";
-            treeNode14.Tag = "13";
-            treeNode14.Text = "Face Right";
-            treeNode15.Name = "turn90clockwise";
-            treeNode15.Tag = "14";
-            treeNode15.Text = "Turn 90* Clockwise";
-            treeNode16.Name = "turn90counterclockwise";
-            treeNode16.Tag = "15";
-            treeNode16.Text = "Turn 90* Counter Clockwise";
-            treeNode17.Name = "turn180";
-            treeNode17.Tag = "16";
-            treeNode17.Text = "Turn 180*";
-            treeNode18.Name = "turnrandomly";
-            treeNode18.Tag = "17";
-            treeNode18.Text = "Turn Randomly";
-            treeNode19.Name = "turntowardplayer";
-            treeNode19.Tag = "18";
-            treeNode19.Text = "Turn Toward Player";
-            treeNode20.Name = "turnawayfromplayer";
-            treeNode20.Tag = "19";
-            treeNode20.Text = "Turn Away From Player";
-            treeNode21.Name = "turn";
-            treeNode21.Text = "Turn";
-            treeNode22.Name = "slowest";
-            treeNode22.Tag = "20";
-            treeNode22.Text = "Slowest";
-            treeNode23.Name = "slower";
-            treeNode23.Tag = "21";
-            treeNode23.Text = "Slower";
-            treeNode24.Name = "speednormal";
-            treeNode24.Tag = "22";
-            treeNode24.Text = "Normal";
-            treeNode25.Name = "faster";
-            treeNode25.Tag = "23";
-            treeNode25.Text = "Faster";
-            treeNode26.Name = "fastest";
-            treeNode26.Tag = "24";
-            treeNode26.Text = "Fastest";
-            treeNode27.Name = "setspeed";
-            treeNode27.Text = "Set Speed";
-            treeNode28.Name = "lowest";
-            treeNode28.Tag = "25";
-            treeNode28.Text = "Lowest";
-            treeNode29.Name = "lower";
-            treeNode29.Tag = "26";
-            treeNode29.Text = "Lower";
-            treeNode30.Name = "frequencynormal";
-            treeNode30.Tag = "27";
-            treeNode30.Text = "Normal";
-            treeNode31.Name = "higher";
-            treeNode31.Tag = "28";
-            treeNode31.Text = "Higher";
-            treeNode32.Name = "highest";
-            treeNode32.Tag = "29";
-            treeNode32.Text = "Highest";
-            treeNode33.Name = "setmovementfrequency";
-            treeNode33.Text = "Set Movement Frequency";
-            treeNode34.Name = "walkinganimon";
-            treeNode34.Tag = "30";
-            treeNode34.Text = "Walking Animation: On";
-            treeNode35.Name = "walkinganimoff";
-            treeNode35.Tag = "31";
-            treeNode35.Text = "Walking Animation: Off";
-            treeNode36.Name = "directionfixon";
-            treeNode36.Tag = "32";
-            treeNode36.Text = "Direction Fix: On";
-            treeNode37.Name = "directionfixoff";
-            treeNode37.Tag = "33";
-            treeNode37.Text = "Direction Fix: Off";
-            treeNode38.Name = "walkthroughon";
-            treeNode38.Tag = "34";
-            treeNode38.Text = "Walkthrough: On";
-            treeNode39.Name = "walkthroughoff";
-            treeNode39.Tag = "35";
-            treeNode39.Text = "Walkthrough: Off";
-            treeNode40.Name = "showname";
-            treeNode40.Tag = "36";
-            treeNode40.Text = "Show Name";
-            treeNode41.Name = "hidename";
-            treeNode41.Tag = "37";
-            treeNode41.Text = "Hide Name";
-            treeNode42.Name = "setlayerbelow";
-            treeNode42.Tag = "38";
-            treeNode42.Text = "Set Layer: Below Player";
-            treeNode43.Name = "setlayersame";
-            treeNode43.Tag = "39";
-            treeNode43.Text = "Set Layer: Same as Player";
-            treeNode44.Name = "setlayerabove";
-            treeNode44.Tag = "40";
-            treeNode44.Text = "Set Layer: Above Player";
-            treeNode45.Name = "setattribute";
-            treeNode45.Text = "Set Attribute";
-            treeNode46.Name = "wait100";
-            treeNode46.Tag = "41";
-            treeNode46.Text = "Wait 100ms";
-            treeNode47.Name = "wait500";
-            treeNode47.Tag = "42";
-            treeNode47.Text = "Wait 500ms";
-            treeNode48.Name = "wait1000";
-            treeNode48.Tag = "43";
-            treeNode48.Text = "Wait 1000ms";
-            treeNode49.Name = "setgraphic";
-            treeNode49.Tag = "44";
-            treeNode49.Text = "Set Graphic...";
-            treeNode50.Name = "setanimation";
-            treeNode50.Tag = "45";
-            treeNode50.Text = "Set Animation...";
-            treeNode51.Name = "etc";
-            treeNode51.Text = "Etc";
+            treeNode5.Name = "moveupleft";
+            treeNode5.Tag = "46";
+            treeNode5.Text = "Move Up Left";
+            treeNode6.Name = "moveupright";
+            treeNode6.Tag = "47";
+            treeNode6.Text = "Move Up Right";
+            treeNode7.Name = "movedownleft";
+            treeNode7.Tag = "48";
+            treeNode7.Text = "Move Down Left";
+            treeNode8.Name = "movedownright";
+            treeNode8.Tag = "49";
+            treeNode8.Text = "Move Down Right";
+            treeNode9.Name = "moverandomly";
+            treeNode9.Tag = "5";
+            treeNode9.Text = "Move Randomly";
+            treeNode10.Name = "movetowardplayer";
+            treeNode10.Tag = "6";
+            treeNode10.Text = "Move Toward Player";
+            treeNode11.Name = "moveawayfromplayer";
+            treeNode11.Tag = "7";
+            treeNode11.Text = "Move Away From Player";
+            treeNode12.Name = "stepforward";
+            treeNode12.Tag = "8";
+            treeNode12.Text = "Step Forward";
+            treeNode13.Name = "stepbackward";
+            treeNode13.Tag = "9";
+            treeNode13.Text = "Step Backward";
+            treeNode14.Name = "move";
+            treeNode14.Text = "Move";
+            treeNode15.Name = "faceup";
+            treeNode15.Tag = "10";
+            treeNode15.Text = "Face Up";
+            treeNode16.Name = "facedown";
+            treeNode16.Tag = "11";
+            treeNode16.Text = "Face Down";
+            treeNode17.Name = "faceleft";
+            treeNode17.Tag = "12";
+            treeNode17.Text = "Face Left";
+            treeNode18.Name = "faceright";
+            treeNode18.Tag = "13";
+            treeNode18.Text = "Face Right";
+            treeNode19.Name = "turn90clockwise";
+            treeNode19.Tag = "14";
+            treeNode19.Text = "Turn 90* Clockwise";
+            treeNode20.Name = "turn90counterclockwise";
+            treeNode20.Tag = "15";
+            treeNode20.Text = "Turn 90* Counter Clockwise";
+            treeNode21.Name = "turn180";
+            treeNode21.Tag = "16";
+            treeNode21.Text = "Turn 180*";
+            treeNode22.Name = "turnrandomly";
+            treeNode22.Tag = "17";
+            treeNode22.Text = "Turn Randomly";
+            treeNode23.Name = "turntowardplayer";
+            treeNode23.Tag = "18";
+            treeNode23.Text = "Turn Toward Player";
+            treeNode24.Name = "turnawayfromplayer";
+            treeNode24.Tag = "19";
+            treeNode24.Text = "Turn Away From Player";
+            treeNode25.Name = "turn";
+            treeNode25.Text = "Turn";
+            treeNode26.Name = "slowest";
+            treeNode26.Tag = "20";
+            treeNode26.Text = "Slowest";
+            treeNode27.Name = "slower";
+            treeNode27.Tag = "21";
+            treeNode27.Text = "Slower";
+            treeNode28.Name = "speednormal";
+            treeNode28.Tag = "22";
+            treeNode28.Text = "Normal";
+            treeNode29.Name = "faster";
+            treeNode29.Tag = "23";
+            treeNode29.Text = "Faster";
+            treeNode30.Name = "fastest";
+            treeNode30.Tag = "24";
+            treeNode30.Text = "Fastest";
+            treeNode31.Name = "setspeed";
+            treeNode31.Text = "Set Speed";
+            treeNode32.Name = "lowest";
+            treeNode32.Tag = "25";
+            treeNode32.Text = "Lowest";
+            treeNode33.Name = "lower";
+            treeNode33.Tag = "26";
+            treeNode33.Text = "Lower";
+            treeNode34.Name = "frequencynormal";
+            treeNode34.Tag = "27";
+            treeNode34.Text = "Normal";
+            treeNode35.Name = "higher";
+            treeNode35.Tag = "28";
+            treeNode35.Text = "Higher";
+            treeNode36.Name = "highest";
+            treeNode36.Tag = "29";
+            treeNode36.Text = "Highest";
+            treeNode37.Name = "setmovementfrequency";
+            treeNode37.Text = "Set Movement Frequency";
+            treeNode38.Name = "walkinganimon";
+            treeNode38.Tag = "30";
+            treeNode38.Text = "Walking Animation: On";
+            treeNode39.Name = "walkinganimoff";
+            treeNode39.Tag = "31";
+            treeNode39.Text = "Walking Animation: Off";
+            treeNode40.Name = "directionfixon";
+            treeNode40.Tag = "32";
+            treeNode40.Text = "Direction Fix: On";
+            treeNode41.Name = "directionfixoff";
+            treeNode41.Tag = "33";
+            treeNode41.Text = "Direction Fix: Off";
+            treeNode42.Name = "walkthroughon";
+            treeNode42.Tag = "34";
+            treeNode42.Text = "Walkthrough: On";
+            treeNode43.Name = "walkthroughoff";
+            treeNode43.Tag = "35";
+            treeNode43.Text = "Walkthrough: Off";
+            treeNode44.Name = "showname";
+            treeNode44.Tag = "36";
+            treeNode44.Text = "Show Name";
+            treeNode45.Name = "hidename";
+            treeNode45.Tag = "37";
+            treeNode45.Text = "Hide Name";
+            treeNode46.Name = "setlayerbelow";
+            treeNode46.Tag = "38";
+            treeNode46.Text = "Set Layer: Below Player";
+            treeNode47.Name = "setlayersame";
+            treeNode47.Tag = "39";
+            treeNode47.Text = "Set Layer: Same as Player";
+            treeNode48.Name = "setlayerabove";
+            treeNode48.Tag = "40";
+            treeNode48.Text = "Set Layer: Above Player";
+            treeNode49.Name = "setattribute";
+            treeNode49.Text = "Set Attribute";
+            treeNode50.Name = "wait100";
+            treeNode50.Tag = "41";
+            treeNode50.Text = "Wait 100ms";
+            treeNode51.Name = "wait500";
+            treeNode51.Tag = "42";
+            treeNode51.Text = "Wait 500ms";
+            treeNode52.Name = "wait1000";
+            treeNode52.Tag = "43";
+            treeNode52.Text = "Wait 1000ms";
+            treeNode53.Name = "setgraphic";
+            treeNode53.Tag = "44";
+            treeNode53.Text = "Set Graphic...";
+            treeNode54.Name = "setanimation";
+            treeNode54.Tag = "45";
+            treeNode54.Text = "Set Animation...";
+            treeNode55.Name = "etc";
+            treeNode55.Text = "Etc";
             this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode10,
-            treeNode21,
-            treeNode27,
-            treeNode33,
-            treeNode45,
-            treeNode51});
+            treeNode14,
+            treeNode25,
+            treeNode31,
+            treeNode37,
+            treeNode49,
+            treeNode55});
             this.lstCommands.Size = new System.Drawing.Size(297, 383);
             this.lstCommands.TabIndex = 1;
             this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);
@@ -427,11 +447,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbTarget.Name = "cmbTarget";
             this.cmbTarget.Size = new System.Drawing.Size(191, 21);
             this.cmbTarget.TabIndex = 0;
-            this.cmbTarget.Text = null;
+            this.cmbTarget.Text = "Self";
             this.cmbTarget.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTarget.SelectedIndexChanged += new System.EventHandler(this.cmbTarget_SelectedIndexChanged);
             // 
-            // Event_MoveRouteDesigner
+            // EventMoveRouteDesigner
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

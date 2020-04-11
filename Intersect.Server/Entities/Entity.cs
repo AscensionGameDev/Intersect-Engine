@@ -621,35 +621,35 @@ namespace Intersect.Server.Entities
                         switch (Dir)
                         {
                             case (int) Directions.Up:
-                                lookDir = (int) Directions.UpRight;
+                                lookDir = (int) Directions.Right;
 
                                 break;
                             case (int) Directions.Down:
-                                lookDir = (int) Directions.DownLeft;
+                                lookDir = (int) Directions.Left;
 
                                 break;
                             case (int) Directions.Left:
-                                lookDir = (int) Directions.UpLeft;
+                                lookDir = (int) Directions.Up;
 
                                 break;
                             case (int) Directions.Right:
-                                lookDir = (int) Directions.DownRight;
+                                lookDir = (int) Directions.Down;
 
                                 break;
                             case (int)Directions.UpLeft:
-                                lookDir = (int)Directions.Up;
+                                lookDir = (int)Directions.UpRight;
 
                                 break;
                             case (int)Directions.UpRight:
-                                lookDir = (int)Directions.Right;
+                                lookDir = (int)Directions.DownRight;
 
                                 break;
                             case (int)Directions.DownLeft:
-                                lookDir = (int)Directions.Left;
+                                lookDir = (int)Directions.UpLeft;
 
                                 break;
                             case (int)Directions.DownRight:
-                                lookDir = (int)Directions.Down;
+                                lookDir = (int)Directions.DownLeft;
 
                                 break;
                         }
@@ -662,35 +662,35 @@ namespace Intersect.Server.Entities
                         switch (Dir)
                         {
                             case (int)Directions.Up:
-                                lookDir = (int)Directions.UpLeft;
-
-                                break;
-                            case (int)Directions.Down:
-                                lookDir = (int)Directions.DownRight;
-
-                                break;
-                            case (int)Directions.Left:
-                                lookDir = (int)Directions.DownLeft;
-
-                                break;
-                            case (int)Directions.Right:
-                                lookDir = (int)Directions.UpRight;
-
-                                break;
-                            case (int)Directions.UpLeft:
                                 lookDir = (int)Directions.Left;
 
                                 break;
-                            case (int)Directions.UpRight:
-                                lookDir = (int)Directions.Up;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Right;
 
                                 break;
-                            case (int)Directions.DownLeft:
+                            case (int)Directions.Left:
                                 lookDir = (int)Directions.Down;
 
                                 break;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Up;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.DownLeft;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.UpLeft;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.DownRight;
+
+                                break;
                             case (int)Directions.DownRight:
-                                lookDir = (int)Directions.Right;
+                                lookDir = (int)Directions.UpRight;
 
                                 break;
                         }
