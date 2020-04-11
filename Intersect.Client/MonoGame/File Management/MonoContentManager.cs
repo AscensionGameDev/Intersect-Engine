@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Client.MonoGame.Graphics;
+using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
 
@@ -23,11 +24,7 @@ namespace Intersect.Client.MonoGame.File_Management
             Init(this);
             if (!Directory.Exists("resources"))
             {
-                //ERROR MESSAGE
-                MessageBox.Show(
-                    Strings.Errors.resourcesnotfound, Strings.Errors.resourcesnotfoundtitle, MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                Log.Error(Strings.Errors.resourcesnotfound);
 
                 Environment.Exit(1);
             }

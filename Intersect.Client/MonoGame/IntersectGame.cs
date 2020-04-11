@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Reflection;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -79,7 +79,6 @@ namespace Intersect.Client.MonoGame
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
-            MessageBox.Show(Strings.Errors.errorencountered);
             Environment.Exit(-1);
         }
 
@@ -150,16 +149,37 @@ namespace Intersect.Client.MonoGame
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            base.OnExiting(sender, args);
-            Networking.Network.Close("quitting");
             if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
             {
-                MessageBox.Show(
-                    Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation
-                );
+                //Try to prevent SDL Window Close
+                var exception = false;
+                try
+                {
+                    var platform = GetType().GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this);
+                    var field = platform.GetType().GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
+                    field.SetValue(platform, 0);
+                    
+                }
+                catch
+                {
+                    //TODO: Should we log here? I really don't know if it's necessary.
+                    exception = true;
+                }
+
+                if (!exception)
+                {
+                    //Restart the MonoGame RunLoop
+                    Run();
+
+                    //Show Message Getting Exit Confirmation From Player to Leave in Combat
+                    //TODO
+                    return;
+                }
             }
 
+            //Just close if we don't need to show a combat warning
+            base.OnExiting(sender, args);
+            Networking.Network.Close("quitting");
             base.Dispose();
         }
 
