@@ -44,6 +44,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public static GameTexturePackFrame GetFrame(string filename)
         {
+            filename = filename.Replace("\\", "/");
             return mFrames.Where(p => p.Filename.ToLower() == filename).FirstOrDefault();
         }
 
@@ -60,7 +61,7 @@ namespace Intersect.Client.Framework.Graphics
             GameTexture packTexture
         )
         {
-            Filename = filename.Replace('/', '\\');
+            Filename = filename.Replace('\\', '/');
             Rect = rect;
             Rotated = rotated;
             SourceRect = sourceSpriteRect;

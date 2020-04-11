@@ -120,7 +120,7 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 foreach (var itm in packItems)
                 {
-                    var filename = Path.GetFileName(itm.Filename.ToLower());
+                    var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\","/"));
                     if (!dict.ContainsKey(filename))
                     {
                         dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename)));
