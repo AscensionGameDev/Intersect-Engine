@@ -6,6 +6,7 @@ using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Database;
 using Intersect.Client.MonoGame.File_Management;
@@ -147,6 +148,16 @@ namespace Intersect.Client.MonoGame
             base.Draw(gameTime);
         }
 
+        private void ExitToDesktop(object sender, EventArgs e)
+        {
+            if (Globals.Me != null)
+            {
+                Globals.Me.CombatTimer = 0;
+            }
+
+            Globals.IsRunning = false;
+        }
+
         protected override void OnExiting(object sender, EventArgs args)
         {
             if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
@@ -168,11 +179,14 @@ namespace Intersect.Client.MonoGame
 
                 if (!exception)
                 {
+                    //Show Message Getting Exit Confirmation From Player to Leave in Combat
+                    var box = new InputBox(
+                        Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true, InputBox.InputType.YesNo,
+                        ExitToDesktop, null, null
+                    );
+
                     //Restart the MonoGame RunLoop
                     Run();
-
-                    //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                    //TODO
                     return;
                 }
             }
