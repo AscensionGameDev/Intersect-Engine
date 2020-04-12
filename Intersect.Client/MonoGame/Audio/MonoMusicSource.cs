@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Threading;
 
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
+using Intersect.Client.Utilities;
 using Intersect.Logging;
 
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+
+using NVorbis;
 
 namespace Intersect.Client.MonoGame.Audio
 {
@@ -15,9 +21,30 @@ namespace Intersect.Client.MonoGame.Audio
 
         private readonly string mPath;
 
+        public VorbisReader Reader { get; set; }
+        public DynamicSoundEffectInstance Instance { get; set; }
+
+
+        private static Thread mUnderlyingThread;
+        private static object mInstanceLock = new object();
+        private static MonoMusicSource mActiveSource;
+
+        
+
         public MonoMusicSource(string path)
         {
             mPath = path;
+
+            if (mUnderlyingThread == null)
+            {
+                mUnderlyingThread = new Thread(EnsureBuffersFilled)
+                {
+                    Priority = ThreadPriority.Lowest,
+                    IsBackground = true
+                };
+
+                mUnderlyingThread.Start();
+            }
         }
 
         public override GameAudioInstance CreateInstance()
@@ -25,26 +52,104 @@ namespace Intersect.Client.MonoGame.Audio
             return new MonoMusicInstance(this);
         }
 
-        public Song LoadSong()
+        public DynamicSoundEffectInstance LoadSong()
         {
-            if (!string.IsNullOrWhiteSpace(mPath))
+            lock (mInstanceLock)
             {
-                try
+                if (!string.IsNullOrWhiteSpace(mPath))
                 {
-                    return Song.FromUri(mPath, new Uri(mPath, UriKind.Relative));
-                }
-                catch (Exception exception)
-                {
-                    Log.Error($"Error loading '{mPath}'.", exception);
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
-                        )
-                    );
+                    try
+                    {
+                        if (Reader == null)
+                        {
+                            Reader = new VorbisReader(mPath);
+                        }
+
+                        if (Instance != null)
+                        {
+                            Instance.Dispose();
+                            Instance = null;
+                        }
+
+                        Instance = new DynamicSoundEffectInstance(
+                            Reader.SampleRate, Reader.Channels == 1 ? AudioChannels.Mono : AudioChannels.Stereo
+                        );
+                        mActiveSource = this;
+                        return Instance;
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error($"Error loading '{mPath}'.", exception);
+                        ChatboxMsg.AddMessage(
+                            new ChatboxMsg(
+                                Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
+                            )
+                        );
+                    }
                 }
             }
-
+            mActiveSource = this;
             return null;
+        }
+
+        public void Close()
+        {
+            lock (mInstanceLock)
+            {
+                if (Reader != null)
+                {
+                    Reader.Dispose();
+                    Reader = null;
+                }
+
+                mActiveSource = null;
+            }
+        }
+
+        private static void EnsureBuffersFilled()
+        {
+            var buffers = 3;
+            var samples = 44100;
+
+            while (Globals.IsRunning)
+            {
+                Thread.Sleep((int)(1000 / ((10 <= 0) ? 1 : 10)));
+                lock (mInstanceLock)
+                {
+                    if (mActiveSource != null)
+                    {
+                        var reader = mActiveSource.Reader;
+                        var soundInstance = mActiveSource.Instance;
+
+                        if (reader != null && soundInstance != null && !soundInstance.IsDisposed) {
+                            float[] sampleBuffer = null;
+                            while (soundInstance.PendingBufferCount < buffers)
+                            {
+                                if (sampleBuffer == null)
+                                    sampleBuffer = new float[samples];
+
+                                var read = reader.ReadSamples(sampleBuffer, 0, sampleBuffer.Length);
+                                if (read == 0)
+                                {
+                                    reader.DecodedPosition = 0;
+                                    continue;
+                                }
+
+                                var dataBuffer = new byte[read << 1];
+                                for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
+                                {
+                                    var sample = (short)MathHelper.Clamp(sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue);
+                                    var sampleData = BitConverter.GetBytes(sample);
+                                    for (var sampleByteIndex = 0; sampleByteIndex < sampleData.Length; ++sampleByteIndex)
+                                        dataBuffer[(sampleIndex << 1) + sampleByteIndex] = sampleData[sampleByteIndex];
+                                }
+
+                                soundInstance.SubmitBuffer(dataBuffer, 0, read << 1);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     }
