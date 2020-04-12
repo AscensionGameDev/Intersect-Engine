@@ -53,8 +53,6 @@ namespace Intersect.Client.Core
                     lookup.Delete(item);
                 }
             }
-
-            Globals.IsRunning = true;
         }
 
         public static void DestroyGame()
