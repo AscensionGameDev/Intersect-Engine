@@ -85,7 +85,7 @@ namespace Intersect.Client.General
 
         public static long IntroStartTime = -1;
 
-        public static bool IsRunning = false;
+        public static bool IsRunning = true;
 
         public static bool JoiningGame = false;
 
