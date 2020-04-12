@@ -1,0 +1,112 @@
+From 13dcb20fc042ea5c8107523356eeb0a736958843 Mon Sep 17 00:00:00 2001
+From: JC Snider <jcsnider3@gmail.com>
+Date: Sun, 29 Mar 2020 20:12:05 -0400
+Subject: [PATCH 1/2] Added discord url to client configuration
+
+Signed-off-by: JC Snider <jcsnider3@gmail.com>
+---
+ Intersect (Core)/Configuration/ClientConfiguration.cs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Intersect (Core)/Configuration/ClientConfiguration.cs b/Intersect (Core)/Configuration/ClientConfiguration.cs
+index 4bba076c..4441a2b0 100644
+--- a/Intersect (Core)/Configuration/ClientConfiguration.cs	
++++ b/Intersect (Core)/Configuration/ClientConfiguration.cs	
+@@ -66,6 +66,7 @@ public void Validate()
+             UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
+             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
+             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
++            DiscordInviteUrl = DiscordInviteUrl ?? "";
+         }
+ 
+         #endregion
+@@ -125,6 +126,11 @@ public void Validate()
+         // TODO: What is this for?
+         public List<string> IntroImages { get; set; } = new List<string>();
+ 
++        /// <summary>
++        /// Link to discord invite that should open when discord button is clicked
++        /// </summary>
++        public string DiscordInviteUrl { get; set; } = "";
++
+         #endregion
+ 
+         #region Serialization Hooks
+-- 
+2.25.1.windows.1
+
+
+From fdc7e1944567efdba6bd07b616a32a863d12215b Mon Sep 17 00:00:00 2001
+From: JC Snider <jcsnider3@gmail.com>
+Date: Sat, 4 Apr 2020 19:40:49 -0400
+Subject: [PATCH 2/2] Added discord button to main menu screen that opens the 
+ discord invite url when clicked
+
+---
+ Intersect.Client/Interface/Menu/MainMenu.cs | 25 ++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/Intersect.Client/Interface/Menu/MainMenu.cs b/Intersect.Client/Interface/Menu/MainMenu.cs
+index e42d21f7..304a3405 100644
+--- a/Intersect.Client/Interface/Menu/MainMenu.cs
++++ b/Intersect.Client/Interface/Menu/MainMenu.cs
+@@ -1,4 +1,5 @@
+ using System.Collections.Generic;
++using System.Diagnostics;
+ 
+ using Intersect.Client.Core;
+ using Intersect.Client.Framework.File_Management;
+@@ -9,6 +10,7 @@
+ using Intersect.Client.Interface.Shared;
+ using Intersect.Client.Localization;
+ using Intersect.Client.Networking;
++using Intersect.Configuration;
+ using Intersect.Network;
+ using Intersect.Network.Events;
+ 
+@@ -68,13 +70,25 @@ public class MainMenu
+ 
+         private bool mShouldOpenCharacterSelection;
+ 
++        private readonly Button mDiscordButton;
++
+         //Init
+         public MainMenu(Canvas menuCanvas)
+         {
+             mMenuCanvas = menuCanvas;
+ 
+             var logo = new ImagePanel(menuCanvas, "Logo");
+-            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
++            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString()); 
++            
++            //Discord Button
++            mDiscordButton = new Button(menuCanvas, "DiscordButton");
++            mDiscordButton.Clicked += DiscordButton_Clicked;
++            mDiscordButton.SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, "discord.png"), "discord.png", Button.ControlState.Normal);
++            mDiscordButton.SetSize(220, 70);
++            mDiscordButton.CurAlignments.Add(Alignments.Bottom);
++            mDiscordButton.CurAlignments.Add(Alignments.Right);
++            mDiscordButton.ProcessAlignments();
++            mDiscordButton.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+ 
+             //Main Menu Window
+             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
+@@ -342,6 +356,15 @@ public static void SetNetworkStatus(NetworkStatus networkStatus)
+             NetworkStatusChanged?.Invoke();
+         }
+ 
++        private void DiscordButton_Clicked(Base sender, ClickedEventArgs arguments)
++        {
++            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.DiscordInviteUrl))
++            {
++                //Start Process
++                    Process.Start(ClientConfiguration.Instance.DiscordInviteUrl);
++            }
++        }
++
+     }
+ 
+ }
+-- 
+2.25.1.windows.1
+
