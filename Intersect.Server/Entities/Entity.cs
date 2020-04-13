@@ -933,28 +933,31 @@ namespace Intersect.Server.Entities
         public int GetDirectionTo(Entity target)
         {
             int xDiff = 0, yDiff = 0;
-            var myGrid = MapInstance.Get(MapId).MapGrid;
+
+            var map = MapInstance.Get(MapId);
+            var gridId = map.MapGrid;
+            var grid = DbInterface.GetGrid(gridId);
 
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = MapInstance.Get(MapId).MapGridX - 1; x <= MapInstance.Get(MapId).MapGridX + 1; x++)
+            for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
             {
-                if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
+                if (x == -1 || x >= grid.Width)
                 {
                     continue;
                 }
 
-                for (var y = MapInstance.Get(MapId).MapGridY - 1; y <= MapInstance.Get(MapId).MapGridY + 1; y++)
+                for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
                 {
-                    if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
+                    if (y == -1 || y >= grid.Height)
                     {
                         continue;
                     }
 
-                    if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty &&
-                        DbInterface.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
+                    if (grid.MyGrid[x, y] != Guid.Empty &&
+                        grid.MyGrid[x, y] == target.MapId)
                     {
-                        xDiff = (x - MapInstance.Get(MapId).MapGridX) * Options.MapWidth + target.X - X;
-                        yDiff = (y - MapInstance.Get(MapId).MapGridY) * Options.MapHeight + target.Y - Y;
+                        xDiff = (x - map.MapGridX) * Options.MapWidth + target.X - X;
+                        yDiff = (y - map.MapGridY) * Options.MapHeight + target.Y - Y;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
                             if (xDiff < 0)

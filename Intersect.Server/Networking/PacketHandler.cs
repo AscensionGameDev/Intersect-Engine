@@ -2256,12 +2256,12 @@ namespace Intersect.Server.Networking
 
                 if (newMap != Guid.Empty)
                 {
-                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < DbInterface.MapGrids[tmpMap.MapGrid].Width)
+                    var grid = DbInterface.GetGrid(tmpMap.MapGrid);
+                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < grid.Width)
                     {
-                        if (tmpMap.MapGridY + 1 < DbInterface.MapGrids[tmpMap.MapGrid].Height)
+                        if (tmpMap.MapGridY + 1 < grid.Height)
                         {
-                            tmpMap.Down = DbInterface.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+                            tmpMap.Down = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
 
                             if (tmpMap.Down != Guid.Empty)
                             {
@@ -2271,8 +2271,7 @@ namespace Intersect.Server.Networking
 
                         if (tmpMap.MapGridY - 1 >= 0)
                         {
-                            tmpMap.Up = DbInterface.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+                            tmpMap.Up = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
 
                             if (tmpMap.Up != Guid.Empty)
                             {
@@ -2281,12 +2280,11 @@ namespace Intersect.Server.Networking
                         }
                     }
 
-                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < DbInterface.MapGrids[tmpMap.MapGrid].Height)
+                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < grid.Height)
                     {
                         if (tmpMap.MapGridX - 1 >= 0)
                         {
-                            tmpMap.Left = DbInterface.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+                            tmpMap.Left = grid.MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
 
                             if (tmpMap.Left != Guid.Empty)
                             {
@@ -2294,10 +2292,9 @@ namespace Intersect.Server.Networking
                             }
                         }
 
-                        if (tmpMap.MapGridX + 1 < DbInterface.MapGrids[tmpMap.MapGrid].Width)
+                        if (tmpMap.MapGridX + 1 < grid.Width)
                         {
-                            tmpMap.Right = DbInterface.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                            tmpMap.Right = grid.MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
 
                             if (tmpMap.Right != Guid.Empty)
                             {
@@ -2444,75 +2441,37 @@ namespace Intersect.Server.Networking
             {
                 if (client.IsEditor)
                 {
-                    if (MapInstance.Get(mapId) != null)
+                    var map = MapInstance.Get(mapId);
+                    if (map != null)
                     {
-                        MapInstance.Get(mapId).ClearConnections();
+                        map.ClearConnections();
 
-                        var gridX = MapInstance.Get(mapId).MapGridX;
-                        var gridY = MapInstance.Get(mapId).MapGridY;
+                        var grid = DbInterface.GetGrid(map.MapGrid);
+                        var gridX = map.MapGridX;
+                        var gridY = map.MapGridY;
 
                         //Up
-                        if (gridY - 1 >= 0 &&
-                            DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1] != Guid.Empty)
+                        if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
                         {
-                            if (MapInstance.Get(
-                                    DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1]
-                                ) !=
-                                null)
-                            {
-                                MapInstance.Get(
-                                        DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1]
-                                    )
-                                    .ClearConnections((int) Directions.Down);
-                            }
+                            MapInstance.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
                         }
 
                         //Down
-                        if (gridY + 1 < DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].Height &&
-                            DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1] != Guid.Empty)
+                        if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
                         {
-                            if (MapInstance.Get(
-                                    DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1]
-                                ) !=
-                                null)
-                            {
-                                MapInstance.Get(
-                                        DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1]
-                                    )
-                                    .ClearConnections((int) Directions.Up);
-                            }
+                            MapInstance.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
                         }
 
                         //Left
-                        if (gridX - 1 >= 0 &&
-                            DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY] != Guid.Empty)
+                        if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
                         {
-                            if (MapInstance.Get(
-                                    DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY]
-                                ) !=
-                                null)
-                            {
-                                MapInstance.Get(
-                                        DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY]
-                                    )
-                                    .ClearConnections((int) Directions.Right);
-                            }
+                            MapInstance.Get(grid.MyGrid[gridX - 1, gridY])?.ClearConnections((int) Directions.Right);
                         }
 
                         //Right
-                        if (gridX + 1 < DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].Width &&
-                            DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY] != Guid.Empty)
+                        if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
                         {
-                            if (MapInstance.Get(
-                                    DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY]
-                                ) !=
-                                null)
-                            {
-                                MapInstance.Get(
-                                        DbInterface.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY]
-                                    )
-                                    .ClearConnections((int) Directions.Left);
-                            }
+                            MapInstance.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
                         }
 
                         DbInterface.GenerateMapGrids();
@@ -2535,41 +2494,41 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var adjacentMap = packet.AdjacentMapId;
-            var linkMap = packet.LinkMapId;
+            var adjacentMapId = packet.AdjacentMapId;
+            var linkMapId = packet.LinkMapId;
+            var adjacentMap = MapInstance.Get(packet.AdjacentMapId);
+            var linkMap = MapInstance.Get(packet.LinkMapId);
             long gridX = packet.GridX;
             long gridY = packet.GridY;
             var canLink = true;
-            if (MapInstance.Lookup.Keys.Contains(linkMap) && MapInstance.Lookup.Keys.Contains(adjacentMap))
+
+            if (adjacentMap != null && linkMap != null)
             {
                 //Clear to test if we can link.
-                var linkGrid = MapInstance.Get(linkMap).MapGrid;
-                var adjacentGrid = MapInstance.Get(adjacentMap).MapGrid;
-                if (linkGrid != adjacentGrid)
+                var linkGrid = DbInterface.GetGrid(linkMap.MapGrid);
+                var adjacentGrid = DbInterface.GetGrid(adjacentMap.MapGrid);
+                if (linkGrid != adjacentGrid && linkGrid != null && adjacentGrid != null)
                 {
-                    var xOffset = MapInstance.Get(linkMap).MapGridX - gridX;
-                    var yOffset = MapInstance.Get(linkMap).MapGridY - gridY;
-                    for (var x = 0; x < DbInterface.MapGrids[adjacentGrid].Width; x++)
+                    var xOffset = linkMap.MapGridX - gridX;
+                    var yOffset = linkMap.MapGridY - gridY;
+                    for (var x = 0; x < adjacentGrid.Width; x++)
                     {
-                        for (var y = 0; y < DbInterface.MapGrids[adjacentGrid].Height; y++)
+                        for (var y = 0; y < adjacentGrid.Height; y++)
                         {
                             if (x + xOffset >= 0 &&
-                                x + xOffset < DbInterface.MapGrids[linkGrid].Width &&
+                                x + xOffset < linkGrid.Width &&
                                 y + yOffset >= 0 &&
-                                y + yOffset < DbInterface.MapGrids[linkGrid].Height)
+                                y + yOffset < linkGrid.Height)
                             {
-                                if (DbInterface.MapGrids[adjacentGrid].MyGrid[x, y] != Guid.Empty &&
-                                    DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                if (adjacentGrid.MyGrid[x, y] != Guid.Empty &&
+                                    linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                 {
                                     //Incompatible Link!
-                                    PacketSender.SendError(
-                                        client,
+                                    PacketSender.SendError(client,
                                         Strings.Mapping.linkfailerror.ToString(
-                                            MapBase.GetName(linkMap), MapBase.GetName(adjacentMap),
-                                            MapBase.GetName(DbInterface.MapGrids[adjacentGrid].MyGrid[x, y]),
-                                            MapBase.GetName(
-                                                DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]
-                                            )
+                                            MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
+                                            MapBase.GetName(adjacentGrid.MyGrid[x, y]),
+                                            MapBase.GetName(linkGrid.MyGrid[x + xOffset, y + yOffset])
                                         ), Strings.Mapping.linkfail
                                     );
 
@@ -2581,85 +2540,50 @@ namespace Intersect.Server.Networking
 
                     if (canLink)
                     {
-                        for (var x = -1; x < DbInterface.MapGrids[adjacentGrid].Width + 1; x++)
+                        for (var x = -1; x < adjacentGrid.Width + 1; x++)
                         {
-                            for (var y = -1; y < DbInterface.MapGrids[adjacentGrid].Height + 1; y++)
+                            for (var y = -1; y < adjacentGrid.Height + 1; y++)
                             {
                                 if (x + xOffset >= 0 &&
-                                    x + xOffset < DbInterface.MapGrids[linkGrid].Width &&
+                                    x + xOffset < linkGrid.Width &&
                                     y + yOffset >= 0 &&
-                                    y + yOffset < DbInterface.MapGrids[linkGrid].Height)
+                                    y + yOffset < linkGrid.Height)
                                 {
-                                    if (DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                    if (linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                     {
-                                        var inXBounds = x > -1 && x < DbInterface.MapGrids[adjacentGrid].Width;
-                                        var inYBounds = y > -1 && y < DbInterface.MapGrids[adjacentGrid].Height;
+                                        var inXBounds = x > -1 && x < adjacentGrid.Width;
+                                        var inYBounds = y > -1 && y < adjacentGrid.Height;
                                         if (inXBounds && inYBounds)
                                         {
-                                            DbInterface.MapGrids[adjacentGrid].MyGrid[x, y] = DbInterface
-                                                .MapGrids[linkGrid]
-                                                .MyGrid[x + xOffset, y + yOffset];
+                                            adjacentGrid.MyGrid[x, y] = linkGrid.MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inXBounds &&
-                                            y - 1 >= 0 &&
-                                            DbInterface.MapGrids[adjacentGrid].MyGrid[x, y - 1] != Guid.Empty)
+                                        if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]
-                                                )
-                                                .Up = DbInterface.MapGrids[adjacentGrid].MyGrid[x, y - 1];
+                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
 
-                                            MapInstance.Lookup.Get<MapInstance>(
-                                                    DbInterface.MapGrids[adjacentGrid].MyGrid[x, y - 1]
-                                                )
-                                                .Down = DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inXBounds &&
-                                            y + 1 < DbInterface.MapGrids[adjacentGrid].Height &&
-                                            DbInterface.MapGrids[adjacentGrid].MyGrid[x, y + 1] != Guid.Empty)
+                                        if (inXBounds && y + 1 < adjacentGrid.Height && adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]
-                                                )
-                                                .Down = DbInterface.MapGrids[adjacentGrid].MyGrid[x, y + 1];
+                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
 
-                                            MapInstance.Lookup.Get<MapInstance>(
-                                                    DbInterface.MapGrids[adjacentGrid].MyGrid[x, y + 1]
-                                                )
-                                                .Up = DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inYBounds &&
-                                            x - 1 >= 0 &&
-                                            DbInterface.MapGrids[adjacentGrid].MyGrid[x - 1, y] != Guid.Empty)
+                                        if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]
-                                                )
-                                                .Left = DbInterface.MapGrids[adjacentGrid].MyGrid[x - 1, y];
+                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
 
-                                            MapInstance.Lookup.Get<MapInstance>(
-                                                    DbInterface.MapGrids[adjacentGrid].MyGrid[x - 1, y]
-                                                )
-                                                .Right =
-                                            DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inYBounds &&
-                                            x + 1 < DbInterface.MapGrids[adjacentGrid].Width &&
-                                            DbInterface.MapGrids[adjacentGrid].MyGrid[x + 1, y] != Guid.Empty)
+                                        if (inYBounds && x + 1 < adjacentGrid.Width && adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]
-                                                )
-                                                .Right = DbInterface.MapGrids[adjacentGrid].MyGrid[x + 1, y];
+                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
 
-                                            MapInstance.Lookup.Get<MapInstance>(
-                                                    DbInterface.MapGrids[adjacentGrid].MyGrid[x + 1, y]
-                                                )
-                                                .Left = DbInterface.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
                                         }
                                     }
                                 }
@@ -2668,7 +2592,7 @@ namespace Intersect.Server.Networking
 
                         DbInterface.SaveGameDatabase();
                         DbInterface.GenerateMapGrids();
-                        PacketSender.SendMapGridToAll(MapInstance.Get(adjacentMap).MapGrid);
+                        PacketSender.SendMapGridToAll(adjacentMap.MapGrid);
                     }
                 }
             }
