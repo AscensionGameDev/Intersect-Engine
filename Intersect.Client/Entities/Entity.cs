@@ -165,9 +165,11 @@ namespace Intersect.Client.Entities
 
         public long LastActionTime = -1;
 
-        public const long TimeBeforeIdling = 4000;
+        //Valor Antigo = 4000
+        public const long TimeBeforeIdling = 150;
 
-        public const long IdleFrameDuration = 200;
+        //Valor Antigo = 200
+        public const long IdleFrameDuration = 400;
         #endregion
 
         public int Type;
