@@ -28,13 +28,13 @@ namespace Intersect.Client.Interface.Menu
         {
             mMenuCanvas = myCanvas;
             InitMenuGui();
-            mServerStatusArea = new ImagePanel(mMenuCanvas, "ServerStatusArea");
-            mServerStatusLabel = new Label(mServerStatusArea, "ServerStatusLabel")
-            {
-                Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
-            };
-
-            mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            //mServerStatusArea = new ImagePanel(mMenuCanvas, "ServerStatusArea");
+            //mServerStatusLabel = new Label(mServerStatusArea, "ServerStatusLabel")
+            //{
+            //    Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
+            //};
+        
+            //mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
             MainMenu.NetworkStatusChanged += HandleNetworkStatusChanged;
         }
 

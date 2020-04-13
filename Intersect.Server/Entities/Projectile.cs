@@ -132,6 +132,14 @@ namespace Intersect.Server.Entities
                     return y;
                 case 3: //Right
                     return -y;
+                case 4: //UpLeft
+                    return y;
+                case 5: //UpRight
+                    return -y;
+                case 6: //DownLeft
+                    return y;
+                case 7: //DownRight
+                    return -y;
                 default:
                     return x;
             }
@@ -148,6 +156,14 @@ namespace Intersect.Server.Entities
                 case 2: //Left
                     return -x;
                 case 3: //Right
+                    return x;
+                case 4: //UpLeft
+                    return -x;
+                case 5: //UpRight
+                    return x;
+                case 6: //DownLeft
+                    return -x;
+                case 7: //DownRight
                     return x;
                 default:
                     return y;
@@ -223,6 +239,94 @@ namespace Intersect.Server.Entities
                             return 4;
                         case 7: //DownRight
                             return 6;
+                        default:
+                            return projectionDir;
+                    }
+                case 4: //UpLeft
+                    switch (projectionDir)
+                    {
+                        case 0: //Up
+                            return 4;
+                        case 1: //Down
+                            return 7;
+                        case 2: //Left
+                            return 6;
+                        case 3: //Right
+                            return 5;
+                        case 4: //UpLeft
+                            return 2;
+                        case 5: //UpRight
+                            return 0;
+                        case 6: //DownLeft
+                            return 1;
+                        case 7: //DownRight
+                            return 3;
+                        default:
+                            return projectionDir;
+                    }
+                case 5: //UpRight
+                    switch (projectionDir)
+                    {
+                        case 0: //Up
+                            return 5;
+                        case 1: //Down
+                            return 6;
+                        case 2: //Left
+                            return 4;
+                        case 3: //Right
+                            return 7;
+                        case 4: //UpLeft
+                            return 0;
+                        case 5: //UpRight
+                            return 3;
+                        case 6: //DownLeft
+                            return 2;
+                        case 7: //DownRight
+                            return 1;
+                        default:
+                            return projectionDir;
+                    }
+                case 6: //DownLeft
+                    switch (projectionDir)
+                    {
+                        case 0: //Up
+                            return 6;
+                        case 1: //Down
+                            return 5;
+                        case 2: //Left
+                            return 7;
+                        case 3: //Right
+                            return 4;
+                        case 4: //UpLeft
+                            return 1;
+                        case 5: //UpRight
+                            return 2;
+                        case 6: //DownLeft
+                            return 3;
+                        case 7: //DownRight
+                            return 0;
+                        default:
+                            return projectionDir;
+                    }
+                case 7: //DownRight
+                    switch (projectionDir)
+                    {
+                        case 0: //Up
+                            return 7;
+                        case 1: //Down
+                            return 4;
+                        case 2: //Left
+                            return 5;
+                        case 3: //Right
+                            return 6;
+                        case 4: //UpLeft
+                            return 3;
+                        case 5: //UpRight
+                            return 1;
+                        case 6: //DownLeft
+                            return 0;
+                        case 7: //DownRight
+                            return 2;
                         default:
                             return projectionDir;
                     }

@@ -1,0 +1,173 @@
+From e6701d68e59a8a6ab859befbf63d4213664e060f Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 17:28:51 -0400
+Subject: [PATCH 06/12] offensive npc move diagonal
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ .../Entities/Pathfinding/Pathfinder.cs        | 32 ++++++++++--
+ .../Entities/Pathfinding/SpatialAStar.cs      | 52 +++++++++++++++----
+ 2 files changed, 70 insertions(+), 14 deletions(-)
+
+diff --git a/Intersect.Server/Entities/Pathfinding/Pathfinder.cs b/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
+index bde7d0ac..7a4c9dfe 100644
+--- a/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
++++ b/Intersect.Server/Entities/Pathfinding/Pathfinder.cs
+@@ -447,30 +447,54 @@ public sbyte GetMove()
+                     {
+                         var newX = enm.Current.X - Options.MapWidth;
+                         var newY = enm.Current.Y - Options.MapHeight;
+-                        if (mEntity.X < newX)
++                        if (mEntity.X < newX && mEntity.Y == newY)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Right;
+                         }
+-                        else if (mEntity.X > newX)
++                        else if (mEntity.X > newX && mEntity.Y == newY)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Left;
+                         }
+-                        else if (mEntity.Y < newY)
++                        else if (mEntity.Y < newY && mEntity.X == newX)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Down;
+                         }
+-                        else if (mEntity.Y > newY)
++                        else if (mEntity.Y > newY && mEntity.X == newX)
+                         {
+                             enm.Dispose();
+ 
+                             return (int) Directions.Up;
+                         }
++                        else if (mEntity.Y > newY && mEntity.X > newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.UpLeft;
++                        }
++                        else if (mEntity.Y > newY && mEntity.X < newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.UpRight;
++                        }
++                        else if (mEntity.Y < newY && mEntity.X > newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.DownLeft;
++                        }
++                        else if (mEntity.Y < newY && mEntity.X < newX)
++                        {
++                            enm.Dispose();
++
++                            return (int)Directions.DownRight;
++                        }
+                     }
+                 }
+             }
+diff --git a/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs b/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
+index 606f37bf..05e058ad 100644
+--- a/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
++++ b/Intersect.Server/Entities/Pathfinding/SpatialAStar.cs
+@@ -282,49 +282,81 @@ private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
+             var x = inAround.X;
+             var y = inAround.Y;
+ 
+-            inNeighbors[0] = null;
++            if (y > 0 && x > 0)
++            {
++                inNeighbors[0] = mSearchSpace[x - 1, y - 1]; // UpLeft
++            }
++            else
++            {
++                inNeighbors[0] = null;
++            }
++
++            if (y > 0 && x < Width - 1)
++            {
++                inNeighbors[2] = mSearchSpace[x + 1, y - 1]; // UpRight
++            }
++            else
++            {
++                inNeighbors[2] = null;
++            }
++
++            if (y < Height - 1 && x > 0)
++            {
++                inNeighbors[5] = mSearchSpace[x - 1, y + 1]; // DownLeft
++            }
++            else
++            {
++                inNeighbors[5] = null;
++            }
++
++            if (y < Height - 1 && x < Width - 1)
++            {
++                inNeighbors[7] = mSearchSpace[x + 1, y + 1]; // DownRight
++            }
++            else
++            {
++                inNeighbors[7] = null;
++            }
+ 
+             if (y > 0)
+             {
+-                inNeighbors[1] = mSearchSpace[x, y - 1];
++                inNeighbors[1] = mSearchSpace[x, y - 1]; // Up
+             }
+             else
+             {
+                 inNeighbors[1] = null;
+             }
+ 
+-            inNeighbors[2] = null;
+ 
+-            if (x > 0)
++            if (x > 0) 
+             {
+-                inNeighbors[3] = mSearchSpace[x - 1, y];
++                inNeighbors[3] = mSearchSpace[x - 1, y]; // Left
+             }
+             else
+             {
+                 inNeighbors[3] = null;
+             }
+ 
+-            if (x < Width - 1)
++            if (x < Width - 1) 
+             {
+-                inNeighbors[4] = mSearchSpace[x + 1, y];
++                inNeighbors[4] = mSearchSpace[x + 1, y]; // Right
+             }
+             else
+             {
+                 inNeighbors[4] = null;
+             }
+ 
+-            inNeighbors[5] = null;
+ 
+             if (y < Height - 1)
+             {
+-                inNeighbors[6] = mSearchSpace[x, y + 1];
++                inNeighbors[6] = mSearchSpace[x, y + 1]; // Down
+             }
+             else
+             {
+                 inNeighbors[6] = null;
+             }
+ 
+-            inNeighbors[7] = null;
++
+         }
+ 
+         private class OpenCloseMap
+-- 
+2.25.0.windows.1
+

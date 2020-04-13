@@ -108,9 +108,9 @@ namespace Intersect.Client.Interface.Menu
             mRegisterButton.Clicked += RegisterButton_Clicked;
 
             //Credits Button
-            mCreditsButton = new Button(mMenuWindow, "CreditsButton");
-            mCreditsButton.SetText(Strings.MainMenu.credits);
-            mCreditsButton.Clicked += CreditsButton_Clicked;
+            //mCreditsButton = new Button(mMenuWindow, "CreditsButton");
+            //mCreditsButton.SetText(Strings.MainMenu.credits);
+            //mCreditsButton.Clicked += CreditsButton_Clicked;
 
             //Exit Button
             mExitButton = new Button(mMenuWindow, "ExitButton");
@@ -118,13 +118,13 @@ namespace Intersect.Client.Interface.Menu
             mExitButton.Clicked += ExitButton_Clicked;
 
             //Options Button
-            mOptionsButton = new Button(mMenuWindow, "OptionsButton");
-            mOptionsButton.Clicked += OptionsButton_Clicked;
-            mOptionsButton.SetText(Strings.MainMenu.options);
-            if (!string.IsNullOrEmpty(Strings.MainMenu.optionstooltip))
-            {
-                mOptionsButton.SetToolTipText(Strings.MainMenu.optionstooltip);
-            }
+            //mOptionsButton = new Button(mMenuWindow, "OptionsButton");
+            //mOptionsButton.Clicked += OptionsButton_Clicked;
+            //mOptionsButton.SetText(Strings.MainMenu.options);
+            //if (!string.IsNullOrEmpty(Strings.MainMenu.optionstooltip))
+            //{
+            //    mOptionsButton.SetToolTipText(Strings.MainMenu.optionstooltip);
+            //}
 
             mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
@@ -216,19 +216,19 @@ namespace Intersect.Client.Interface.Menu
             }
 
             mMenuWindow.Show();
-            mOptionsButton.Show();
+            //mOptionsButton.Show();
         }
 
         public void Show()
         {
             mMenuWindow.IsHidden = false;
-            mOptionsButton.IsHidden = false;
+            //mOptionsButton.IsHidden = false;
         }
 
         public void Hide()
         {
             mMenuWindow.IsHidden = true;
-            mOptionsButton.IsHidden = true;
+            //mOptionsButton.IsHidden = true;
         }
 
         public void NotifyOpenCharacterSelection(List<Character> characters)

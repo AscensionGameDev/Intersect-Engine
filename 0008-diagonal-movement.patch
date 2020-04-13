@@ -1,0 +1,32 @@
+From 607bf6d8ae0691eeb22eb639f4ea9187ba8aa8a7 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 14:46:23 -0400
+Subject: [PATCH 08/12] event diag fix
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Client/Entities/Player.cs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 19852bd6..944085ac 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -1022,12 +1022,12 @@ public bool TryAttack()
+ 
+                     break;
+                 case 6: // DownLeft
+-                    y--;
++                    y++;
+                     x--;
+ 
+                     break;
+                 case 7: // DownRight
+-                    y--;
++                    y++;
+                     x++;
+ 
+                     break;
+-- 
+2.25.0.windows.1
+

@@ -1,0 +1,252 @@
+From 3c7e1e8e858b59a0c0d3c0db8a6ceddda768ced7 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 20:12:38 -0400
+Subject: [PATCH 07/12] Diagonal attack
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Client/Entities/Player.cs          | 34 +++++++++--
+ Intersect.Server/Entities/Entity.cs          | 63 +++++++++++++++++---
+ Intersect.Server/Entities/Npc.cs             |  4 ++
+ Intersect.Server/Networking/PacketHandler.cs | 16 +++++
+ 4 files changed, 104 insertions(+), 13 deletions(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index afb7861b..19852bd6 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -991,21 +991,43 @@ public bool TryAttack()
+             int x = Globals.Me.X;
+             int y = Globals.Me.Y;
+             var map = Globals.Me.CurrentMap;
++
++            // The latest moving direction of the player
+             switch (Globals.Me.Dir)
+             {
+-                case 0:
++                case 0: // Up
+                     y--;
+-
++                    
+                     break;
+-                case 1:
++                case 1: // Down
+                     y++;
+ 
+                     break;
+-                case 2:
++                case 2: // Left
++                    x--;
++
++                    break;
++                case 3: // Right
++                    x++;
++
++                    break;
++                case 4: // UpLeft
++                    y--;
++                    x--;
++
++                    break;
++                case 5: //UpRight
++                    y--;
++                    x++;
++
++                    break;
++                case 6: // DownLeft
++                    y--;
+                     x--;
+ 
+                     break;
+-                case 3:
++                case 7: // DownRight
++                    y--;
+                     x++;
+ 
+                     break;
+@@ -1023,7 +1045,7 @@ public bool TryAttack()
+                     if (en.Value != Globals.Me)
+                     {
+                         if (en.Value.CurrentMap == map &&
+-                            en.Value.X == x &&
++                            en.Value.X == x ||
+                             en.Value.Y == y &&
+                             en.Value.CanBeAttacked())
+                         {
+diff --git a/Intersect.Server/Entities/Entity.cs b/Intersect.Server/Entities/Entity.cs
+index 114ac1e0..ce0c035e 100644
+--- a/Intersect.Server/Entities/Entity.cs
++++ b/Intersect.Server/Entities/Entity.cs
+@@ -2326,25 +2326,49 @@ protected bool IsOneBlockAway(Entity target)
+             var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
+             if (Z == target.Z)
+             {
+-                myTile.Translate(0, -1);
++                myTile.Translate(0, -1); // Target Up
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(0, 2);
++                myTile.Translate(0, 2); // Target Down
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(-1, -1);
++                myTile.Translate(-1, -1); // Target Left
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+                 }
+ 
+-                myTile.Translate(2, 0);
++                myTile.Translate(2, 0); // Target Right 
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, -1); // Target UpLeft
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0); // Target UpRight
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, 2); // Target DownLeft
++                if (myTile.Matches(enemyTile))
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0); // Target DownRight
+                 if (myTile.Matches(enemyTile))
+                 {
+                     return true;
+@@ -2384,6 +2408,30 @@ protected bool IsFacingTarget(Entity target)
+                 {
+                     return true;
+                 }
++
++                myTile.Translate(-2, -1);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpLeft)
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpRight)
++                {
++                    return true;
++                }
++
++                myTile.Translate(-2, 2);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownLeft)
++                {
++                    return true;
++                }
++
++                myTile.Translate(2, 0);
++                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownRight)
++                {
++                    return true;
++                }
+             }
+ 
+             return false;
+@@ -2485,7 +2533,8 @@ protected byte DirToEnemy(Entity target)
+             }
+         }
+ 
+-        //Check if the target is either up, down, left or right of the target on the correct Z dimension.
++        // Outdated : Check if the target is either up, down, left or right of the target on the correct Z dimension.
++        // Check for 8 directions
+         protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+         {
+             //Calculate World Tile of Me
+@@ -2497,7 +2546,7 @@ protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+             var y2 = y + MapInstance.Get(mapId).MapGridY * Options.MapHeight;
+             if (z == Z)
+             {
+-                if (y1 == y2)
++                if (y1 == y2 || y1 - 1 == y2 || y1 + 1 == y2)
+                 {
+                     if (x1 == x2 - 1)
+                     {
+@@ -2509,7 +2558,7 @@ protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
+                     }
+                 }
+ 
+-                if (x1 == x2)
++                if (x1 == x2 || x1 - 1 == x2 || x1 + 1 == x2)
+                 {
+                     if (y1 == y2 - 1)
+                     {
+diff --git a/Intersect.Server/Entities/Npc.cs b/Intersect.Server/Entities/Npc.cs
+index d473ca2b..05f5a9a6 100644
+--- a/Intersect.Server/Entities/Npc.cs
++++ b/Intersect.Server/Entities/Npc.cs
+@@ -713,6 +713,7 @@ public override void Update(long timeMs)
+                     if (mPathFinder.GetTarget() != null)
+                     {
+                         TryCastSpells();
++                        // Check if can attack
+                         if (!IsOneBlockAway(
+                             mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
+                             mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ
+@@ -783,7 +784,9 @@ public override void Update(long timeMs)
+                                         {
+                                             mPathFinder.PathFailed(timeMs);
+                                         }
++                                        
+                                     }
++                                    // Npc move when here
+ 
+                                     break;
+                                 case PathfinderResult.OutOfRange:
+@@ -884,6 +887,7 @@ public override void Update(long timeMs)
+                                     }
+                                     else
+                                     {
++                                        // Code come here when player is near.
+                                         if (CanAttack(Target, null))
+                                         {
+                                             TryAttack(Target);
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 831504ca..b9f985b0 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -788,6 +788,22 @@ public void HandlePacket(Client client, Player player, AttackPacket packet)
+                 case 3:
+                     attackingTile.Translate(1, 0);
+ 
++                    break;
++                case 4:
++                    attackingTile.Translate(-1, -1); // UpLeft
++
++                    break;
++                case 5:
++                    attackingTile.Translate(1, -1); // UpRight
++
++                    break;
++                case 6:
++                    attackingTile.Translate(-1, 1); // DownLeft
++
++                    break;
++                case 7:
++                    attackingTile.Translate(1, 1); // DownRight
++
+                     break;
+             }
+ 
+-- 
+2.25.0.windows.1
+

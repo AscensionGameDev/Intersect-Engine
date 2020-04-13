@@ -1,0 +1,272 @@
+From bed4442b1d273c2027f724726a56b89b4511bfe2 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 3 Apr 2020 09:20:37 -0400
+Subject: [PATCH 04/12] projectile fix
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ .../Entities/Projectiles/Projectile.cs        | 104 ++++++++++++++++++
+ Intersect.Server/Entities/Projectile.cs       | 104 ++++++++++++++++++
+ 2 files changed, 208 insertions(+)
+
+diff --git a/Intersect.Client/Entities/Projectiles/Projectile.cs b/Intersect.Client/Entities/Projectiles/Projectile.cs
+index bc46aa75..e727eb8d 100644
+--- a/Intersect.Client/Entities/Projectiles/Projectile.cs
++++ b/Intersect.Client/Entities/Projectiles/Projectile.cs
+@@ -198,6 +198,14 @@ private int FindProjectileRotationX(int direction, int x, int y)
+                     return -y;
+                 default:
+                     return x;
++                case 4: //UpLeft
++                    return y;
++                case 5: //UpRight
++                    return -y;
++                case 6: //DownLeft
++                    return y;
++                case 7: //DownRight
++                    return -y;
+             }
+         }
+ 
+@@ -213,6 +221,14 @@ private int FindProjectileRotationY(int direction, int x, int y)
+                     return -x;
+                 case 3: //Right
+                     return x;
++                case 4: //UpLeft
++                    return -x;
++                case 5: //UpRight
++                    return x;
++                case 6: //DownLeft
++                    return -x;
++                case 7: //DownRight
++                    return x;
+                 default:
+                     return y;
+             }
+@@ -290,6 +306,94 @@ private int FindProjectileRotationDir(int entityDir, int projectionDir)
+                         default:
+                             return projectionDir;
+                     }
++                case 4: //UpLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 5: //UpRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
++                case 6: //DownLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 7: //DownRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
+                 default:
+                     return projectionDir;
+             }
+diff --git a/Intersect.Server/Entities/Projectile.cs b/Intersect.Server/Entities/Projectile.cs
+index c62ebe82..91dd224f 100644
+--- a/Intersect.Server/Entities/Projectile.cs
++++ b/Intersect.Server/Entities/Projectile.cs
+@@ -132,6 +132,14 @@ private int FindProjectileRotationX(int direction, int x, int y)
+                     return y;
+                 case 3: //Right
+                     return -y;
++                case 4: //UpLeft
++                    return y;
++                case 5: //UpRight
++                    return -y;
++                case 6: //DownLeft
++                    return y;
++                case 7: //DownRight
++                    return -y;
+                 default:
+                     return x;
+             }
+@@ -149,6 +157,14 @@ private int FindProjectileRotationY(int direction, int x, int y)
+                     return -x;
+                 case 3: //Right
+                     return x;
++                case 4: //UpLeft
++                    return -x;
++                case 5: //UpRight
++                    return x;
++                case 6: //DownLeft
++                    return -x;
++                case 7: //DownRight
++                    return x;
+                 default:
+                     return y;
+             }
+@@ -226,6 +242,94 @@ private byte FindProjectileRotationDir(int entityDir, byte projectionDir)
+                         default:
+                             return projectionDir;
+                     }
++                case 4: //UpLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 5: //UpRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
++                case 6: //DownLeft
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 2;
++                        case 1: //Down
++                            return 3;
++                        case 2: //Left
++                            return 1;
++                        case 3: //Right
++                            return 0;
++                        case 4: //UpLeft
++                            return 6;
++                        case 5: //UpRight
++                            return 4;
++                        case 6: //DownLeft
++                            return 7;
++                        case 7: //DownRight
++                            return 5;
++                        default:
++                            return projectionDir;
++                    }
++                case 7: //DownRight
++                    switch (projectionDir)
++                    {
++                        case 0: //Up
++                            return 3;
++                        case 1: //Down
++                            return 2;
++                        case 2: //Left
++                            return 0;
++                        case 3: //Right
++                            return 1;
++                        case 4: //UpLeft
++                            return 5;
++                        case 5: //UpRight
++                            return 7;
++                        case 6: //DownLeft
++                            return 4;
++                        case 7: //DownRight
++                            return 6;
++                        default:
++                            return projectionDir;
++                    }
+                 default:
+                     return projectionDir;
+             }
+-- 
+2.25.0.windows.1
+
