@@ -163,17 +163,17 @@ namespace Intersect.Server.Entities.Events
                                 else
                                 {
                                     //Check if the exist exists && if the move route is completed.
-                                    foreach (var evt in Player.EventLookup.Values)
+                                    foreach (var evt in Player.EventLookup)
                                     {
-                                        if (evt.MapId == curStack.WaitingForRouteMap &&
-                                            evt.BaseEvent.Id == curStack.WaitingForRoute)
+                                        if (evt.Value.MapId == curStack.WaitingForRouteMap &&
+                                            evt.Value.BaseEvent.Id == curStack.WaitingForRoute)
                                         {
-                                            if (evt.PageInstance == null)
+                                            if (evt.Value.PageInstance == null)
                                             {
                                                 break;
                                             }
 
-                                            if (!evt.PageInstance.MoveRoute.Complete)
+                                            if (!evt.Value.PageInstance.MoveRoute.Complete)
                                             {
                                                 break;
                                             }

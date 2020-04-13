@@ -11,7 +11,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
-#if DEBUG
+#if DEBUG || DIAGNOSTIC
 using Intersect.Logging;
 #endif
 
@@ -1097,7 +1097,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual event GwenEventHandler<ClickedEventArgs> DoubleRightClicked;
 
-#if DEBUG
+#if DIAGNOSTIC
         ~Base()
         {
             Log.Debug($"IDisposable object finalized: {GetType()}");

@@ -72,7 +72,7 @@ namespace Intersect.Server.Entities.Pathfinding
                     var currentMap = MapInstance.Get(mEntity.MapId);
                     if (currentMap != null && mTarget != null)
                     {
-                        var myGrid = currentMap.MapGrid;
+                        var grid = DbInterface.GetGrid(currentMap.MapGrid);
                         var gridX = currentMap.MapGridX;
                         var gridY = currentMap.MapGridY;
 
@@ -85,21 +85,21 @@ namespace Intersect.Server.Entities.Pathfinding
                         //Loop through surrouding maps to see if our target is even around.
                         for (var x = gridX - 1; x <= gridX + 1; x++)
                         {
-                            if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
+                            if (x == -1 || x >= grid.Width)
                             {
                                 continue;
                             }
 
                             for (var y = gridY - 1; y <= gridY + 1; y++)
                             {
-                                if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
+                                if (y == -1 || y >= grid.Height)
                                 {
                                     continue;
                                 }
 
-                                if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                if (grid.MyGrid[x, y] != Guid.Empty)
                                 {
-                                    if (DbInterface.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMapId)
+                                    if (grid.MyGrid[x, y] == mTarget.TargetMapId)
                                     {
                                         targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
                                         targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
@@ -142,7 +142,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                     //loop through all surrounding maps.. gather blocking elements, resources, players, npcs, global events, and local events (if this is a local event)
                                     for (var x = gridX - 1; x <= gridX + 1; x++)
                                     {
-                                        if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
+                                        if (x == -1 || x >= grid.Width)
                                         {
                                             for (var y = 0; y < 3; y++)
                                             {
@@ -157,7 +157,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
                                         for (var y = gridY - 1; y <= gridY + 1; y++)
                                         {
-                                            if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
+                                            if (y == -1 || y >= grid.Height)
                                             {
                                                 FillArea(
                                                     mapGrid, (x + 1 - gridX) * Options.MapWidth,
@@ -168,9 +168,9 @@ namespace Intersect.Server.Entities.Pathfinding
                                                 continue;
                                             }
 
-                                            if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                            if (grid.MyGrid[x, y] != Guid.Empty)
                                             {
-                                                var tmpMap = MapInstance.Get(DbInterface.MapGrids[myGrid].MyGrid[x, y]);
+                                                var tmpMap = MapInstance.Get(grid.MyGrid[x, y]);
                                                 if (tmpMap != null)
                                                 {
                                                     //Copy the cached array of tile blocks

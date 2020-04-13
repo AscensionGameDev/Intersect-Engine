@@ -64,9 +64,7 @@ namespace Intersect.Server.Database
 
         private static long gameSavesWaiting = 0;
 
-        public static object MapGridLock = new object();
-
-        public static List<MapGrid> MapGrids = new List<MapGrid>();
+        private static List<MapGrid> mapGrids = new List<MapGrid>();
 
         private static object mGameDbLock = new object();
 
@@ -493,6 +491,7 @@ namespace Intersect.Server.Database
         {
             lock (mPlayerDbLock)
             {
+                // ReSharper disable once SpecifyStringComparison
                 var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower())
                     .Select(p => new {p.Password, p.Salt})
                     .FirstOrDefault();
@@ -505,10 +504,8 @@ namespace Intersect.Server.Database
         {
             lock (mPlayerDbLock)
             {
-                var user = sPlayerDb.Users.Where(
-                        p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)
-                    )
-                    .FirstOrDefault();
+                // ReSharper disable once SpecifyStringComparison
+                var user = User.Find(username);
 
                 if (user != null)
                 {
@@ -1230,27 +1227,27 @@ namespace Intersect.Server.Database
 
         public static void GenerateMapGrids()
         {
-            lock (MapGridLock)
+            lock (mapGrids)
             {
-                MapGrids.Clear();
+                mapGrids.Clear();
                 foreach (var map in MapInstance.Lookup.Values)
                 {
-                    if (MapGrids.Count == 0)
+                    if (mapGrids.Count == 0)
                     {
-                        MapGrids.Add(new MapGrid(map.Id, 0));
+                        mapGrids.Add(new MapGrid(map.Id, 0));
                     }
                     else
                     {
-                        for (var y = 0; y < MapGrids.Count; y++)
+                        for (var y = 0; y < mapGrids.Count; y++)
                         {
-                            if (!MapGrids[y].HasMap(map.Id))
+                            if (!mapGrids[y].HasMap(map.Id))
                             {
-                                if (y != MapGrids.Count - 1)
+                                if (y != mapGrids.Count - 1)
                                 {
                                     continue;
                                 }
 
-                                MapGrids.Add(new MapGrid(map.Id, MapGrids.Count));
+                                mapGrids.Add(new MapGrid(map.Id, mapGrids.Count));
 
                                 break;
                             }
@@ -1277,23 +1274,39 @@ namespace Intersect.Server.Database
                                     continue;
                                 }
 
-                                if (x >= MapGrids[myGrid].XMin &&
-                                    x < MapGrids[myGrid].XMax &&
-                                    y >= MapGrids[myGrid].YMin &&
-                                    y < MapGrids[myGrid].YMax &&
-                                    MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                if (x >= mapGrids[myGrid].XMin &&
+                                    x < mapGrids[myGrid].XMax &&
+                                    y >= mapGrids[myGrid].YMin &&
+                                    y < mapGrids[myGrid].YMax &&
+                                    mapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                                 {
-                                    map.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                                    map.SurroundingMaps.Add(mapGrids[myGrid].MyGrid[x, y]);
                                 }
                             }
                         }
                     }
                 }
 
-                for (var i = 0; i < MapGrids.Count; i++)
+                for (var i = 0; i < mapGrids.Count; i++)
                 {
                     PacketSender.SendMapGridToAll(i);
                 }
+            }
+        }
+
+        public static MapGrid GetGrid(int index)
+        {
+            lock (mapGrids)
+            {
+                return mapGrids[index];
+            }
+        }
+
+        public static bool GridsContain(Guid id)
+        {
+            lock (mapGrids)
+            {
+                return mapGrids.Any(g => g.HasMap(id));
             }
         }
 
