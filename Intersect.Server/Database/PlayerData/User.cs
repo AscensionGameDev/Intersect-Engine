@@ -279,7 +279,8 @@ namespace Intersect.Server.Database.PlayerData
 
         [NotNull] private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery(
-                (PlayerContext context, string username) => context.Users.Where(u => u.Name == username)
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string username) => context.Users.Where(u => u.Name.ToLower() == username.ToLower())
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
