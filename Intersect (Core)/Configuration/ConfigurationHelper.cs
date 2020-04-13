@@ -90,7 +90,14 @@ namespace Intersect.Configuration
             }
             finally
             {
-                configuration.Save(filePath);
+                try
+                {
+                    configuration.Save(filePath);
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(exception);
+                }
             }
 
             return configuration;
