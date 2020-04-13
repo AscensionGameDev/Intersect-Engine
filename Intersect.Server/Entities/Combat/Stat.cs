@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Enums;
@@ -11,7 +12,7 @@ namespace Intersect.Server.Entities.Combat
     public class Stat
     {
 
-        private Dictionary<SpellBase, Buff> mBuff = new Dictionary<SpellBase, Buff>();
+        private ConcurrentDictionary<SpellBase, Buff> mBuff = new ConcurrentDictionary<SpellBase, Buff>();
 
         private bool mChanged;
 
@@ -56,13 +57,11 @@ namespace Intersect.Server.Entities.Combat
         public bool Update()
         {
             var changed = false;
-            var buffs = mBuff.ToArray();
-            foreach (var buff in buffs)
+            foreach (var buff in mBuff)
             {
                 if (buff.Value.Duration <= Globals.Timing.TimeMs)
                 {
-                    mBuff.Remove(buff.Key);
-                    changed = true;
+                    changed |= mBuff.TryRemove(buff.Key, out Buff result);
                 }
             }
 
@@ -74,15 +73,7 @@ namespace Intersect.Server.Entities.Combat
 
         public void AddBuff(Buff buff)
         {
-            if (mBuff.ContainsKey(buff.Spell))
-            {
-                mBuff[buff.Spell].Duration = buff.Duration;
-            }
-            else
-            {
-                mBuff.Add(buff.Spell, buff);
-            }
-
+            mBuff.AddOrUpdate(buff.Spell, buff, (key, val) => buff);
             mChanged = true;
         }
 
