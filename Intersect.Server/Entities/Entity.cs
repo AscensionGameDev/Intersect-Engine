@@ -245,10 +245,10 @@ namespace Intersect.Server.Entities
             }
 
             //Regen Timers
-            if (Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
+            if (timeMs > CombatTimer && timeMs > RegenTimer)
             {
                 ProcessRegen();
-                RegenTimer = Globals.Timing.TimeMs + Options.RegenTime;
+                RegenTimer = timeMs + Options.RegenTime;
             }
 
             //Status timers
@@ -2139,80 +2139,36 @@ namespace Intersect.Server.Entities
         )
         {
             var spellBase = SpellBase.Get(spellId);
-            var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
-                for (var x = startX - range; x <= startX + range; x++)
+                var startMap = MapInstance.Get(startMapId);
+                if (startMap != null)
                 {
-                    for (var y = startY - range; y <= startY + range; y++)
+                    var surroundingMaps = startMap.GetSurroundingMaps(true);
+                    foreach (var map in surroundingMaps)
                     {
-                        var tempMap = MapInstance.Get(startMapId);
-
-                        if (tempMap == null)
+                        foreach (var pair in map.GetEntitiesDictionary())
                         {
-                            continue;
-                        }
-
-                        var x2 = x;
-                        var y2 = y;
-
-                        if (y < 0 && tempMap.Up != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Up);
-                            y2 = Options.MapHeight + y;
-                        }
-                        else if (y > Options.MapHeight - 1 && tempMap.Down != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Down);
-                            y2 = y - Options.MapHeight;
-                        }
-
-                        if (x < 0 && tempMap.Left != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Left);
-                            x2 = Options.MapWidth + x;
-                        }
-                        else if (x > Options.MapWidth - 1 && tempMap.Right != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Right);
-                            x2 = x - Options.MapWidth;
-                        }
-
-                        if (tempMap == null)
-                        {
-                            continue;
-                        }
-
-                        var mapEntities = tempMap.GetEntities();
-                        for (var i = 0; i < mapEntities.Count; i++)
-                        {
-                            var t = mapEntities[i];
-                            if (t == null || targetsHit.Contains(t))
+                            var entity = pair.Value;
+                            if (entity != null && (entity is Player || entity is Npc))
                             {
-                                continue;
-                            }
-
-                            if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
-                            {
-                                if (t.MapId == tempMap.Id && t.X == x2 && t.Y == y2)
+                                if (spellTarget == null || spellTarget == entity)
                                 {
-                                    if (spellTarget == null || spellTarget == t)
+                                    if (entity.GetDistanceTo(startMap,startX,startY) <= range)
                                     {
-                                        targetsHit.Add(t);
-
                                         //Check to handle a warp to spell
                                         if (spellBase.SpellType == SpellTypes.WarpTo)
                                         {
                                             if (spellTarget != null)
                                             {
                                                 Warp(
-                                                    spellTarget.MapId, (byte) spellTarget.X, (byte) spellTarget.Y,
-                                                    (byte) Dir
+                                                    spellTarget.MapId, (byte)spellTarget.X, (byte)spellTarget.Y,
+                                                    (byte)Dir
                                                 ); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
 
-                                        TryAttack(t, spellBase); //Handle damage
+                                        TryAttack(entity, spellBase); //Handle damage
                                     }
                                 }
                             }
@@ -2296,21 +2252,27 @@ namespace Intersect.Server.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Get(MapId);
-                var targetMap = MapInstance.Get(target.MapId);
-                if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
-                ) //Make sure both maps exist and that they are in the same dimension
-                {
-                    //Calculate World Tile of Me
-                    var x1 = X + myMap.MapGridX * Options.MapWidth;
-                    var y1 = Y + myMap.MapGridY * Options.MapHeight;
+                return GetDistanceTo(target.Map, target.X, target.Y);
+            }
+            //Something is null.. return a value that is out of range :) 
+            return 9999;
+        }
 
-                    //Calculate world tile of target
-                    var x2 = target.X + targetMap.MapGridX * Options.MapWidth;
-                    var y2 = target.Y + targetMap.MapGridY * Options.MapHeight;
+        protected int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
+        {
+            var myMap = MapInstance.Get(MapId);
+            if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
+            ) //Make sure both maps exist and that they are in the same dimension
+            {
+                //Calculate World Tile of Me
+                var x1 = X + myMap.MapGridX * Options.MapWidth;
+                var y1 = Y + myMap.MapGridY * Options.MapHeight;
 
-                    return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
-                }
+                //Calculate world tile of target
+                var x2 = targetX + targetMap.MapGridX * Options.MapWidth;
+                var y2 = targetY + targetMap.MapGridY * Options.MapHeight;
+
+                return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
             //Something is null.. return a value that is out of range :) 

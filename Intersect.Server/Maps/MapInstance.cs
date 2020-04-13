@@ -297,23 +297,26 @@ namespace Intersect.Server.Maps
 
         public void RemoveItem(int index, bool respawn = true)
         {
-            if (index < MapItems.Count && MapItems[index] != null)
+            lock (MapItems)
             {
-                MapItems[index].ItemId = Guid.Empty;
-                PacketSender.SendMapItemUpdate(Id, index);
-                if (respawn)
+                if (index < MapItems.Count && MapItems[index] != null)
                 {
-                    if (MapItems[index].AttributeSpawnX > -1)
+                    MapItems[index].ItemId = Guid.Empty;
+                    PacketSender.SendMapItemUpdate(Id, index);
+                    if (respawn)
                     {
-                        ItemRespawns.Add(new MapItemSpawn());
-                        ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
-                        ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
-                        ItemRespawns[ItemRespawns.Count - 1].RespawnTime =
-                            Globals.Timing.TimeMs + Options.ItemRepawnTime;
+                        if (MapItems[index].AttributeSpawnX > -1)
+                        {
+                            ItemRespawns.Add(new MapItemSpawn());
+                            ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
+                            ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
+                            ItemRespawns[ItemRespawns.Count - 1].RespawnTime =
+                                Globals.Timing.TimeMs + Options.ItemRepawnTime;
+                        }
                     }
-                }
 
-                MapItems[index] = null;
+                    MapItems[index] = null;
+                }
             }
         }
 
@@ -331,9 +334,9 @@ namespace Intersect.Server.Maps
 
         public void DespawnNpcsOf(NpcBase npcBase)
         {
-            foreach (var entity in mEntities.Values)
+            foreach (var entity in mEntities)
             {
-                if (entity is Npc npc && npc.Base == npcBase)
+                if (entity.Value is Npc npc && npc.Base == npcBase)
                 {
                     npc.Die(0);
                 }
@@ -342,9 +345,9 @@ namespace Intersect.Server.Maps
 
         public void DespawnResourcesOf(ResourceBase resourceBase)
         {
-            foreach (var entity in mEntities.Values)
+            foreach (var entity in mEntities)
             {
-                if (entity is Resource res && res.Base == resourceBase)
+                if (entity.Value is Resource res && res.Base == resourceBase)
                 {
                     res.Die(0);
                 }
@@ -353,9 +356,9 @@ namespace Intersect.Server.Maps
 
         public void DespawnProjectilesOf(ProjectileBase projectileBase)
         {
-            foreach (var entity in mEntities.Values)
+            foreach (var entity in mEntities)
             {
-                if (entity is Projectile proj && proj.Base == projectileBase)
+                if (entity.Value is Projectile proj && proj.Base == projectileBase)
                 {
                     proj.Die(0);
                 }
@@ -535,9 +538,9 @@ namespace Intersect.Server.Maps
                 NpcSpawnInstances.Clear();
 
                 //Kill any other npcs on this map (only players should remain)
-                foreach (var entity in mEntities.Values)
+                foreach (var entity in mEntities)
                 {
-                    if (entity is Npc npc)
+                    if (entity.Value is Npc npc)
                     {
                         npc.Die(0);
                     }
@@ -728,9 +731,9 @@ namespace Intersect.Server.Maps
 
         public void ClearEntityTargetsOf(Entity en)
         {
-            foreach (var entity in mEntities.Values)
+            foreach (var entity in mEntities)
             {
-                if (entity is Npc npc && npc.Target == en)
+                if (entity.Value is Npc npc && npc.Target == en)
                 {
                     npc.RemoveTarget();
                 }
@@ -786,22 +789,22 @@ namespace Intersect.Server.Maps
                     }
 
                     //Process All Entites
-                    foreach (var en in mEntities.Values)
+                    foreach (var en in mEntities)
                     {
                         //Let's see if and how long this map has been inactive, if longer than 30 seconds, regenerate everything on the map
                         //TODO, take this 30 second value and throw it into the server config after I switch everything to json
                         if (timeMs > LastUpdateTime + 30000)
                         {
                             //Regen Everything & Forget Targets
-                            if (en is Resource || en is Npc)
+                            if (en.Value is Resource || en is Npc)
                             {
-                                en.RestoreVital(Vitals.Health);
-                                en.RestoreVital(Vitals.Mana);
-                                en.Target = null;
+                                en.Value.RestoreVital(Vitals.Health);
+                                en.Value.RestoreVital(Vitals.Mana);
+                                en.Value.Target = null;
                             }
                         }
 
-                        en.Update(timeMs);
+                        en.Value.Update(timeMs);
                     }
 
                     //Process NPC Respawns
@@ -963,7 +966,11 @@ namespace Intersect.Server.Maps
         [NotNull]
         public List<Entity> GetEntities(bool includeSurroundingMaps = false)
         {
-            var entities = new List<Entity>(mEntities.Values);
+
+            var entities = new List<Entity>();
+
+            foreach (var en in mEntities)
+                entities.Add(en.Value);
 
             // ReSharper disable once InvertIf
             if (includeSurroundingMaps)
@@ -975,6 +982,11 @@ namespace Intersect.Server.Maps
             }
 
             return entities;
+        }
+
+        public ConcurrentDictionary<Guid,Entity> GetEntitiesDictionary()
+        {
+            return mEntities;
         }
 
         public ICollection<Player> GetPlayersOnMap()
@@ -1014,7 +1026,7 @@ namespace Intersect.Server.Maps
         {
             if (player != null)
             {
-                PacketSender.SendMapEntitiesTo(player, mEntities.Values);
+                PacketSender.SendMapEntitiesTo(player, mEntities);
                 if (player.MapId == Id)
                 {
                     player.SendEvents();
