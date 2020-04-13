@@ -1007,6 +1007,11 @@ namespace Intersect.Server.Networking
         public static void SendPlayerCharacters(Client client)
         {
             var characters = new List<CharacterPacket>();
+            if (client.User == null || client.Characters.Count <= 0)
+            {
+                return;
+            }
+
             foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
             {
                 var equipmentArray = character.Equipment;
