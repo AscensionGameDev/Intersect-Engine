@@ -102,6 +102,12 @@ namespace Intersect.Client.MonoGame.Audio
                     Reader = null;
                 }
 
+                if (Instance != null)
+                {
+                    Instance.Dispose();
+                    Instance = null;
+                }
+
                 mActiveSource = null;
             }
         }
@@ -110,10 +116,11 @@ namespace Intersect.Client.MonoGame.Audio
         {
             var buffers = 3;
             var samples = 44100;
+            var updateRate = 10;
 
             while (Globals.IsRunning)
             {
-                Thread.Sleep((int)(1000 / ((10 <= 0) ? 1 : 10)));
+                Thread.Sleep((int)(1000 / ((updateRate <= 0) ? 1 : updateRate)));
                 lock (mInstanceLock)
                 {
                     if (mActiveSource != null)
@@ -152,6 +159,10 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
+        ~MonoMusicSource()
+        {
+            Close();
+        }
     }
 
 }
