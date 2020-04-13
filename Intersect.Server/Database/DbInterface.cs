@@ -507,7 +507,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 // ReSharper disable once SpecifyStringComparison
-                var user = sPlayerDb.Users.FirstOrDefault(p => p.Name.ToLower() == username.Trim().ToLower());
+                var user = User.Find(username);
 
                 if (user != null)
                 {
