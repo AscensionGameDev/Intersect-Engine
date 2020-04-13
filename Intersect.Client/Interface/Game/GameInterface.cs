@@ -1,4 +1,7 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+﻿using System;
+
+using Intersect.Client.Core;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
@@ -107,6 +110,32 @@ namespace Intersect.Client.Interface.Game
             mEventWindow = new EventWindow(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
+
+            CalculatePositioning();
+        }
+
+        /// <summary>
+        /// Calculates the positioning of the game interface.
+        /// <note>
+        /// This is a sort of hacky workaround for the UI scaling
+        /// issues associated with the GUI config JSON files. It seems
+        /// that they don't scale based on their alignments and resolution,
+        /// so this is just here to do that...
+        /// </note>
+        /// </summary>
+        private void CalculatePositioning()
+        {
+            // Scale the player box by the resolution ratio
+            // The target resolution of the player box is 1920 by 1080.
+            float scaleRatio = Math.Max(Graphics.Renderer.GetScreenWidth() / 1920.0f, Graphics.Renderer.GetScreenHeight() / 1080.0f);
+            // TODO: Scale
+
+            // The player box is aligned to the bottom of the screen and horizontally centered.
+            PlayerBox.EntityWindow.X = (Graphics.Renderer.GetScreenWidth() - PlayerBox.EntityWindow.Width) / 2;
+            PlayerBox.EntityWindow.Y = Graphics.Renderer.GetScreenHeight() - PlayerBox.EntityWindow.Height;
+
+            Hotbar.HotbarWindow.X = PlayerBox.EntityWindow.X - (int)(5 * scaleRatio);
+            Hotbar.HotbarWindow.Y = PlayerBox.EntityWindow.Y + PlayerBox.HpBar.Y - Hotbar.HotbarWindow.Height - (int)(10 * scaleRatio);
         }
 
         //Chatbox
