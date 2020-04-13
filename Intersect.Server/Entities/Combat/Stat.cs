@@ -61,8 +61,7 @@ namespace Intersect.Server.Entities.Combat
             {
                 if (buff.Value.Duration <= Globals.Timing.TimeMs)
                 {
-                    mBuff.TryRemove(buff.Key, out Buff result);
-                    changed = true;
+                    changed |= mBuff.TryRemove(buff.Key, out Buff result);
                 }
             }
 
