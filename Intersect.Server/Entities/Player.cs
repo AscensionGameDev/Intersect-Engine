@@ -359,8 +359,9 @@ namespace Intersect.Server.Entities
             base.Update(timeMs);
 
             //Check for autorun common events and run them
-            foreach (EventBase evt in EventBase.Lookup.Values)
+            foreach (var obj in EventBase.Lookup)
             {
+                var evt = obj.Value as EventBase;
                 if (evt != null && evt.CommonEvent)
                 {
                     StartCommonEvent(evt, CommonEventTrigger.Autorun);
@@ -372,9 +373,9 @@ namespace Intersect.Server.Entities
             {
                 //Check to see if the event instance is still active for us... if not then let's remove this route
                 var foundEvent = false;
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.PageInstance == MoveRouteSetter)
+                    if (evt.Value.PageInstance == MoveRouteSetter)
                     {
                         foundEvent = true;
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
@@ -489,28 +490,28 @@ namespace Intersect.Server.Entities
             //Check to see if we can spawn events, if already spawned.. update them.
             lock (mEventLock)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt == null)
+                    if (evt.Value == null)
                     {
                         continue;
                     }
 
                     var eventFound = false;
-                    if (evt.MapId == Guid.Empty)
+                    if (evt.Value.MapId == Guid.Empty)
                     {
-                        evt.Update(timeMs);
-                        if (evt.CallStack.Count > 0)
+                        evt.Value.Update(timeMs);
+                        if (evt.Value.CallStack.Count > 0)
                         {
                             eventFound = true;
                         }
                     }
 
-                    if (evt.MapId != MapId)
+                    if (evt.Value.MapId != MapId)
                     {
                         foreach (var t in MapInstance.Get(MapId).SurroundingMaps)
                         {
-                            if (t == evt.MapId)
+                            if (t == evt.Value.MapId)
                             {
                                 eventFound = true;
                             }
@@ -526,8 +527,8 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    PacketSender.SendEntityLeaveTo(this, evt);
-                    EventLookup.TryRemove(evt.Id, out var z);
+                    PacketSender.SendEntityLeaveTo(this, evt.Value);
+                    EventLookup.TryRemove(evt.Value.Id, out var z);
                 }
             }
         }
@@ -621,9 +622,9 @@ namespace Intersect.Server.Entities
             PacketSender.SendPlayerDeath(this);
 
             //Event trigger
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                evt.PlayerHasDied = true;
+                evt.Value.PlayerHasDied = true;
             }
 
             base.Die(dropitems, killer);
@@ -1285,11 +1286,11 @@ namespace Intersect.Server.Entities
             Z = zOverride;
             Dir = newDir;
             var newSurroundingMaps = map.GetSurroundingMapIds(true);
-            foreach (var evt in EventLookup.Values.ToArray())
+            foreach (var evt in EventLookup)
             {
-                if (evt.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.MapId) || mapSave))
+                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
                 {
-                    EventLookup.TryRemove(evt.Id, out var z);
+                    EventLookup.TryRemove(evt.Value.Id, out var z);
                 }
             }
 
@@ -3516,7 +3517,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Party.Count < 4)
+            if (Party.Count < 10)
             {
                 target.LeaveParty();
                 Party.Add(target);
@@ -4346,14 +4347,14 @@ namespace Intersect.Server.Entities
                     if (quest != null)
                     {
                         StartQuest(quest);
-                        foreach (var evt in EventLookup.Values)
+                        foreach (var evt in EventLookup)
                         {
-                            if (evt.CallStack.Count <= 0)
+                            if (evt.Value.CallStack.Count <= 0)
                             {
                                 continue;
                             }
 
-                            var stackInfo = evt.CallStack.Peek();
+                            var stackInfo = evt.Value.CallStack.Peek();
                             if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest)
                             {
                                 continue;
@@ -4362,8 +4363,8 @@ namespace Intersect.Server.Entities
                             if (((StartQuestCommand) stackInfo.WaitingOnCommand).QuestId == questId)
                             {
                                 var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0]);
-                                evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                                evt.CallStack.Push(tmpStack);
+                                evt.Value.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                                evt.Value.CallStack.Push(tmpStack);
                             }
                         }
                     }
@@ -4382,14 +4383,14 @@ namespace Intersect.Server.Entities
                         this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), CustomColors.Quests.Declined
                     );
 
-                    foreach (var evt in EventLookup.Values)
+                    foreach (var evt in EventLookup)
                     {
-                        if (evt.CallStack.Count <= 0)
+                        if (evt.Value.CallStack.Count <= 0)
                         {
                             continue;
                         }
 
-                        var stackInfo = evt.CallStack.Peek();
+                        var stackInfo = evt.Value.CallStack.Peek();
                         if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest)
                         {
                             continue;
@@ -4400,7 +4401,7 @@ namespace Intersect.Server.Entities
                             //Run failure branch
                             var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[1]);
                             stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
-                            evt.CallStack.Push(tmpStack);
+                            evt.Value.CallStack.Push(tmpStack);
                         }
                     }
                 }
@@ -4676,11 +4677,11 @@ namespace Intersect.Server.Entities
         //Event Processing Methods
         public Event EventExists(Guid mapId, int x, int y)
         {
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.MapId == mapId && evt.BaseEvent.SpawnX == x && evt.BaseEvent.SpawnY == y)
+                if (evt.Value.MapId == mapId && evt.Value.BaseEvent.SpawnX == x && evt.Value.BaseEvent.SpawnY == y)
                 {
-                    return evt;
+                    return evt.Value;
                 }
             }
 
@@ -4689,16 +4690,16 @@ namespace Intersect.Server.Entities
 
         public EventPageInstance EventAt(Guid mapId, int x, int y, int z)
         {
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt != null && evt.PageInstance != null)
+                if (evt.Value != null && evt.Value.PageInstance != null)
                 {
-                    if (evt.PageInstance.MapId == mapId &&
-                        evt.PageInstance.X == x &&
-                        evt.PageInstance.Y == y &&
-                        evt.PageInstance.Z == z)
+                    if (evt.Value.PageInstance.MapId == mapId &&
+                        evt.Value.PageInstance.X == x &&
+                        evt.Value.PageInstance.Y == y &&
+                        evt.Value.PageInstance.Z == z)
                     {
-                        return evt.PageInstance;
+                        return evt.Value.PageInstance;
                     }
                 }
             }
@@ -4708,30 +4709,30 @@ namespace Intersect.Server.Entities
 
         public void TryActivateEvent(Guid eventId)
         {
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
+                if (evt.Value.PageInstance != null && evt.Value.PageInstance.Id == eventId)
                 {
-                    if (evt.PageInstance.Trigger != EventTrigger.ActionButton)
+                    if (evt.Value.PageInstance.Trigger != EventTrigger.ActionButton)
                     {
                         return;
                     }
 
-                    if (!IsEventOneBlockAway(evt))
+                    if (!IsEventOneBlockAway(evt.Value))
                     {
                         return;
                     }
 
-                    if (evt.CallStack.Count != 0)
+                    if (evt.Value.CallStack.Count != 0)
                     {
                         return;
                     }
 
-                    var newStack = new CommandInstance(evt.PageInstance.MyPage);
-                    evt.CallStack.Push(newStack);
-                    if (!evt.Global)
+                    var newStack = new CommandInstance(evt.Value.PageInstance.MyPage);
+                    evt.Value.CallStack.Push(newStack);
+                    if (!evt.Value.Global)
                     {
-                        evt.PageInstance.TurnTowardsPlayer();
+                        evt.Value.PageInstance.TurnTowardsPlayer();
                     }
                     else
                     {
@@ -4739,19 +4740,19 @@ namespace Intersect.Server.Entities
                         switch (Dir)
                         {
                             case 0:
-                                evt.PageInstance.GlobalClone.ChangeDir(1);
+                                evt.Value.PageInstance.GlobalClone.ChangeDir(1);
 
                                 break;
                             case 1:
-                                evt.PageInstance.GlobalClone.ChangeDir(0);
+                                evt.Value.PageInstance.GlobalClone.ChangeDir(0);
 
                                 break;
                             case 2:
-                                evt.PageInstance.GlobalClone.ChangeDir(3);
+                                evt.Value.PageInstance.GlobalClone.ChangeDir(3);
 
                                 break;
                             case 3:
-                                evt.PageInstance.GlobalClone.ChangeDir(2);
+                                evt.Value.PageInstance.GlobalClone.ChangeDir(2);
 
                                 break;
                         }
@@ -4764,16 +4765,16 @@ namespace Intersect.Server.Entities
         {
             lock (mEventLock)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.Id == eventId)
                     {
-                        if (evt.CallStack.Count <= 0)
+                        if (evt.Value.CallStack.Count <= 0)
                         {
                             return;
                         }
 
-                        var stackInfo = evt.CallStack.Peek();
+                        var stackInfo = evt.Value.CallStack.Peek();
                         if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue)
                         {
                             return;
@@ -4784,7 +4785,7 @@ namespace Intersect.Server.Entities
                             stackInfo.WaitingOnCommand.Type == EventCommandType.ShowOptions)
                         {
                             var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[responseId - 1]);
-                            evt.CallStack.Push(tmpStack);
+                            evt.Value.CallStack.Push(tmpStack);
                         }
 
                         return;
@@ -4797,16 +4798,16 @@ namespace Intersect.Server.Entities
         {
             lock (mEventLock)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.Id == eventId)
                     {
-                        if (evt.CallStack.Count <= 0)
+                        if (evt.Value.CallStack.Count <= 0)
                         {
                             return;
                         }
 
-                        var stackInfo = evt.CallStack.Peek();
+                        var stackInfo = evt.Value.CallStack.Peek();
                         if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue)
                         {
                             return;
@@ -4903,7 +4904,7 @@ namespace Intersect.Server.Entities
                                 ? new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0])
                                 : new CommandInstance(stackInfo.Page, stackInfo.BranchIds[1]);
 
-                            evt.CallStack.Push(tmpStack);
+                            evt.Value.CallStack.Push(tmpStack);
                         }
 
                         return;
@@ -4922,16 +4923,16 @@ namespace Intersect.Server.Entities
         {
             lock (mEventLock)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.PageInstance == null)
+                    if (evt.Value.PageInstance == null)
                     {
                         continue;
                     }
 
-                    if (evt.PageInstance == en || evt.PageInstance.GlobalClone == en)
+                    if (evt.Value.PageInstance == en || evt.Value.PageInstance.GlobalClone == en)
                     {
-                        return evt;
+                        return evt.Value;
                     }
                 }
             }
@@ -4941,11 +4942,11 @@ namespace Intersect.Server.Entities
 
         public void SendEvents()
         {
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.PageInstance != null)
+                if (evt.Value.PageInstance != null)
                 {
-                    evt.PageInstance.SendToPlayer();
+                    evt.Value.PageInstance.SendToPlayer();
                 }
             }
         }
@@ -4969,9 +4970,9 @@ namespace Intersect.Server.Entities
 
             lock (mEventLock)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.BaseEvent == baseEvent)
+                    if (evt.Value.BaseEvent == baseEvent)
                     {
                         return false;
                     }
@@ -5080,9 +5081,9 @@ namespace Intersect.Server.Entities
                 return -5;
             }
 
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.HoldingPlayer)
+                if (evt.Value.HoldingPlayer)
                 {
                     return -5;
                 }
@@ -5095,11 +5096,11 @@ namespace Intersect.Server.Entities
         {
             if (base.IsTileWalkable(map, x, y, z) == -1)
             {
-                foreach (var evt in EventLookup.Values)
+                foreach (var evt in EventLookup)
                 {
-                    if (evt.PageInstance != null)
+                    if (evt.Value.PageInstance != null)
                     {
-                        var instance = evt.PageInstance;
+                        var instance = evt.Value.PageInstance;
                         if (instance.GlobalClone != null)
                         {
                             instance = instance.GlobalClone;
@@ -5140,18 +5141,18 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.MapId == MapId)
+                if (evt.Value.MapId == MapId)
                 {
-                    if (evt.PageInstance != null && evt.PageInstance.MapId == MapId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == MapId)
                     {
-                        var x = evt.PageInstance.GlobalClone?.X ?? evt.PageInstance.X;
-                        var y = evt.PageInstance.GlobalClone?.Y ?? evt.PageInstance.Y;
-                        var z = evt.PageInstance.GlobalClone?.Z ?? evt.PageInstance.Z;
+                        var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
+                        var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;
+                        var z = evt.Value.PageInstance.GlobalClone?.Z ?? evt.Value.PageInstance.Z;
                         if (x == X && y == Y && z == Z)
                         {
-                            HandleEventCollision(evt, -1);
+                            HandleEventCollision(evt.Value, -1);
                         }
                     }
                 }
@@ -5160,29 +5161,29 @@ namespace Intersect.Server.Entities
 
         public void TryBumpEvent(Guid mapId, Guid eventId)
         {
-            foreach (var evt in EventLookup.Values)
+            foreach (var evt in EventLookup)
             {
-                if (evt.MapId == MapId)
+                if (evt.Value.MapId == MapId)
                 {
-                    if (evt.PageInstance != null && evt.PageInstance.MapId == MapId && evt.BaseEvent.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == MapId && evt.Value.BaseEvent.Id == eventId)
                     {
-                        var x = evt.PageInstance.GlobalClone?.X ?? evt.PageInstance.X;
-                        var y = evt.PageInstance.GlobalClone?.Y ?? evt.PageInstance.Y;
-                        var z = evt.PageInstance.GlobalClone?.Z ?? evt.PageInstance.Z;
+                        var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
+                        var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;
+                        var z = evt.Value.PageInstance.GlobalClone?.Z ?? evt.Value.PageInstance.Z;
                         if (IsOneBlockAway(mapId, x, y, z))
                         {
-                            if (evt.PageInstance.Trigger != EventTrigger.PlayerBump)
+                            if (evt.Value.PageInstance.Trigger != EventTrigger.PlayerBump)
                             {
                                 return;
                             }
 
-                            if (evt.CallStack.Count != 0)
+                            if (evt.Value.CallStack.Count != 0)
                             {
                                 return;
                             }
 
-                            var newStack = new CommandInstance(evt.PageInstance.MyPage);
-                            evt.CallStack.Push(newStack);
+                            var newStack = new CommandInstance(evt.Value.PageInstance.MyPage);
+                            evt.Value.CallStack.Push(newStack);
                         }
                     }
                 }
@@ -5195,13 +5196,13 @@ namespace Intersect.Server.Entities
             if (evt.Player == null) //Global
             {
                 eventInstance = null;
-                foreach (var e in EventLookup.Values)
+                foreach (var e in EventLookup)
                 {
-                    if (e.BaseEvent.Id == evt.BaseEvent.Id)
+                    if (e.Value.BaseEvent.Id == evt.BaseEvent.Id)
                     {
-                        if (e.PageInstance.MyPage == e.BaseEvent.Pages[pageNum])
+                        if (e.Value.PageInstance.MyPage == e.Value.BaseEvent.Pages[pageNum])
                         {
-                            eventInstance = e;
+                            eventInstance = e.Value;
 
                             break;
                         }

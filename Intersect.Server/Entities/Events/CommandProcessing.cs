@@ -629,17 +629,17 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.Route.Target)
+                    if (evt.Value.BaseEvent.Id == command.Route.Target)
                     {
-                        if (evt.PageInstance != null)
+                        if (evt.Value.PageInstance != null)
                         {
-                            evt.PageInstance.MoveRoute.CopyFrom(command.Route);
-                            evt.PageInstance.MovementType = EventMovementType.MoveRoute;
-                            if (evt.PageInstance.GlobalClone != null)
+                            evt.Value.PageInstance.MoveRoute.CopyFrom(command.Route);
+                            evt.Value.PageInstance.MovementType = EventMovementType.MoveRoute;
+                            if (evt.Value.PageInstance.GlobalClone != null)
                             {
-                                evt.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
+                                evt.Value.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
                             }
                         }
                     }
@@ -663,12 +663,12 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.TargetId)
+                    if (evt.Value.BaseEvent.Id == command.TargetId)
                     {
-                        stackInfo.WaitingForRoute = evt.BaseEvent.Id;
-                        stackInfo.WaitingForRouteMap = evt.MapId;
+                        stackInfo.WaitingForRoute = evt.Value.BaseEvent.Id;
+                        stackInfo.WaitingForRouteMap = evt.Value.MapId;
 
                         break;
                     }
@@ -701,16 +701,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
@@ -817,16 +817,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
