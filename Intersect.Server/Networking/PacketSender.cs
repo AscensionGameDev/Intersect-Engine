@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -351,15 +352,15 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static void SendMapEntitiesTo(Player player, ICollection<Entity> entities)
+        public static void SendMapEntitiesTo(Player player, ConcurrentDictionary<Guid, Entity> entities)
         {
             var sendEntities = new List<Entity>();
 
             foreach (var en in entities)
             {
-                if (en != null && en != player)
+                if (en.Value != null && en.Value != player)
                 {
-                    sendEntities.Add(en);
+                    sendEntities.Add(en.Value);
                 }
             }
 
