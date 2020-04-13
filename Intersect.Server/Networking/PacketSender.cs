@@ -1003,61 +1003,63 @@ namespace Intersect.Server.Networking
         public static void SendPlayerCharacters(Client client)
         {
             var characters = new List<CharacterPacket>();
-            if (client.User != null && client.Characters.Count > 0)
+            if (client.User == null || client.Characters.Count <= 0)
             {
-                foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
+                return;
+            }
+
+            foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
+            {
+                var equipmentArray = character.Equipment;
+                var equipment = new string[Options.EquipmentSlots.Count + 1];
+
+                //Draw the equipment/paperdolls
+                for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    var equipmentArray = character.Equipment;
-                    var equipment = new string[Options.EquipmentSlots.Count + 1];
-
-                    //Draw the equipment/paperdolls
-                    for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                     {
-                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                        if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
+                            equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                            Options.MaxInvItems)
                         {
-                            if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                                equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                                Options.MaxInvItems)
-                            {
-                                var itemId = character
-                                    .Items[equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
-                                    .ItemId;
+                            var itemId = character
+                                .Items[equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
+                                .ItemId;
 
-                                if (ItemBase.Get(itemId) != null)
+                            if (ItemBase.Get(itemId) != null)
+                            {
+                                var itemdata = ItemBase.Get(itemId);
+                                if (character.Gender == 0)
                                 {
-                                    var itemdata = ItemBase.Get(itemId);
-                                    if (character.Gender == 0)
-                                    {
-                                        equipment[z] = itemdata.MalePaperdoll;
-                                    }
-                                    else
-                                    {
-                                        equipment[z] = itemdata.FemalePaperdoll;
-                                    }
+                                    equipment[z] = itemdata.MalePaperdoll;
+                                }
+                                else
+                                {
+                                    equipment[z] = itemdata.FemalePaperdoll;
                                 }
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        if (Options.PaperdollOrder[1][z] == "Player")
                         {
-                            if (Options.PaperdollOrder[1][z] == "Player")
-                            {
-                                equipment[z] = "Player";
-                            }
+                            equipment[z] = "Player";
                         }
                     }
-
-                    characters.Add(
-                        new CharacterPacket(
-                            character.Id, character.Name, character.Sprite, character.Face, character.Level,
-                            ClassBase.GetName(character.ClassId), equipment
-                        )
-                    );
                 }
 
-                client.SendPacket(
-                    new CharactersPacket(characters.ToArray(), client.Characters.Count < Options.MaxCharacters)
+                characters.Add(
+                    new CharacterPacket(
+                        character.Id, character.Name, character.Sprite, character.Face, character.Level,
+                        ClassBase.GetName(character.ClassId), equipment
+                    )
                 );
             }
+
+            client.SendPacket(
+                new CharactersPacket(characters.ToArray(), client.Characters.Count < Options.MaxCharacters)
+            );
         }
 
         //AdminPanelPacket
