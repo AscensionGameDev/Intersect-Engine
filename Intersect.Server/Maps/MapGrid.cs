@@ -99,7 +99,7 @@ namespace Intersect.Server.Maps
                 x = curMap.Item2;
                 y = curMap.Item3;
 
-                if (HasMap(map.Id, true))
+                if (HasMap(map.Id) || DbInterface.GridsContain(map.Id))
                 {
                     continue;
                 }
@@ -149,19 +149,9 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public bool HasMap(Guid mapId, bool parent = false)
+        public bool HasMap(Guid mapId)
         {
-            if (MyMaps.Contains(mapId))
-            {
-                return true;
-            }
-
-            if (!parent)
-            {
-                return false;
-            }
-
-            return DbInterface.MapGrids.Any(t => t.HasMap(mapId));
+            return MyMaps.Contains(mapId);
         }
 
         public string[,] GetEditorData()

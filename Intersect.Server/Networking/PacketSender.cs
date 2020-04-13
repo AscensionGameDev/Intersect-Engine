@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -168,11 +169,15 @@ namespace Intersect.Server.Networking
                             break;
 
                         case 0:
-                            mapPacket.CameraHolds = new bool[4]
+                            var grid = DbInterface.GetGrid(map.MapGrid);
+                            if (grid != null)
                             {
-                                0 == map.MapGridY, DbInterface.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY,
-                                0 == map.MapGridX, DbInterface.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX
-                            };
+                                mapPacket.CameraHolds = new bool[4]
+                                {
+                                    0 == map.MapGridY, grid.YMax - 1 == map.MapGridY,
+                                    0 == map.MapGridX, grid.XMax - 1 == map.MapGridX
+                                };
+                            }
 
                             break;
                     }
@@ -351,15 +356,15 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static void SendMapEntitiesTo(Player player, ICollection<Entity> entities)
+        public static void SendMapEntitiesTo(Player player, ConcurrentDictionary<Guid, Entity> entities)
         {
             var sendEntities = new List<Entity>();
 
             foreach (var en in entities)
             {
-                if (en != null && en != player)
+                if (en.Value != null && en.Value != player)
                 {
-                    sendEntities.Add(en);
+                    sendEntities.Add(en.Value);
                 }
             }
 
@@ -1002,6 +1007,11 @@ namespace Intersect.Server.Networking
         public static void SendPlayerCharacters(Client client)
         {
             var characters = new List<CharacterPacket>();
+            if (client.User == null || client.Characters.Count <= 0)
+            {
+                return;
+            }
+
             foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
             {
                 var equipmentArray = character.Equipment;
@@ -1063,26 +1073,31 @@ namespace Intersect.Server.Networking
         }
 
         //MapGridPacket
-        public static void SendMapGridToAll(int gridIndex)
+        public static void SendMapGridToAll(int gridId)
         {
+            SendMapGridToAll(DbInterface.GetGrid(gridId));
+        }
+        public static void SendMapGridToAll(MapGrid grid)
+        {
+            if (grid == null) return;
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
                 if (Globals.Clients[i] != null)
                 {
                     if (Globals.Clients[i].IsEditor)
                     {
-                        if (DbInterface.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
+                        if (grid.HasMap(Globals.Clients[i].EditorMap))
                         {
-                            SendMapGrid(Globals.Clients[i], gridIndex);
+                            SendMapGrid(Globals.Clients[i], grid);
                         }
                     }
                     else
                     {
                         if (Globals.Clients[i].Entity != null)
                         {
-                            if (DbInterface.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.MapId))
+                            if (grid.HasMap(Globals.Clients[i].Entity.MapId))
                             {
-                                SendMapGrid(Globals.Clients[i], gridIndex, true);
+                                SendMapGrid(Globals.Clients[i], grid, true);
                             }
                         }
                     }
@@ -1091,14 +1106,18 @@ namespace Intersect.Server.Networking
         }
 
         //MapGridPacket
-        public static void SendMapGrid([NotNull] Client client, int gridIndex, bool clearKnownMaps = false)
+        public static void SendMapGrid([NotNull] Client client, int gridId, bool clearKnownMaps = false)
         {
-            if (client == null)
+            var grid = DbInterface.GetGrid(gridId);
+            SendMapGrid(client,grid,clearKnownMaps);
+        }
+        public static void SendMapGrid([NotNull] Client client, MapGrid grid, bool clearKnownMaps = false)
+        {
+            if (client == null || grid == null)
             {
                 return;
             }
 
-            var grid = DbInterface.MapGrids[gridIndex];
             if (clearKnownMaps)
             {
                 client.SentMaps.Clear();

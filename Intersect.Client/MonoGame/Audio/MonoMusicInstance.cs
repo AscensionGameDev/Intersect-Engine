@@ -126,12 +126,8 @@ namespace Intersect.Client.MonoGame.Audio
             mDisposed = true;
             try
             {
-                if (mSong != null && !mSong.IsDisposed)
-                {
-                    mSong.Stop();
-                    mSong.Dispose();
-                }
-
+                mSong?.Stop();
+                //Closing the source will lock the processing thread and then properly dispose of the song.
                 mSource.Close();
             }
             catch
