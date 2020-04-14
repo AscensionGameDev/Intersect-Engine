@@ -59,7 +59,7 @@ namespace Intersect.Client.Interface.Game
         [NotNull] private readonly Button mSpellsButton;
 
         [NotNull] private readonly SpellsWindow mSpellsWindow;
-
+		
         private int mBackgroundHeight = 42;
 
         private int mBackgroundWidth = 42;
