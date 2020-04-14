@@ -1445,7 +1445,8 @@ namespace Intersect.Server.Entities
             }
 
             //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-            if (projectile.Knockback > 0 && projectileDir < 4)
+            //Diagonal movement coded with diagonal patch
+            if (projectile.Knockback > 0 && projectileDir < 8)
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
