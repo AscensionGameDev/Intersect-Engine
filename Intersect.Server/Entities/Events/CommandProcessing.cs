@@ -629,17 +629,17 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.Route.Target)
+                    if (evt.Value.BaseEvent.Id == command.Route.Target)
                     {
-                        if (evt.PageInstance != null)
+                        if (evt.Value.PageInstance != null)
                         {
-                            evt.PageInstance.MoveRoute.CopyFrom(command.Route);
-                            evt.PageInstance.MovementType = EventMovementType.MoveRoute;
-                            if (evt.PageInstance.GlobalClone != null)
+                            evt.Value.PageInstance.MoveRoute.CopyFrom(command.Route);
+                            evt.Value.PageInstance.MovementType = EventMovementType.MoveRoute;
+                            if (evt.Value.PageInstance.GlobalClone != null)
                             {
-                                evt.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
+                                evt.Value.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
                             }
                         }
                     }
@@ -663,12 +663,12 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.TargetId)
+                    if (evt.Value.BaseEvent.Id == command.TargetId)
                     {
-                        stackInfo.WaitingForRoute = evt.BaseEvent.Id;
-                        stackInfo.WaitingForRouteMap = evt.MapId;
+                        stackInfo.WaitingForRoute = evt.Value.BaseEvent.Id;
+                        stackInfo.WaitingForRouteMap = evt.Value.MapId;
 
                         break;
                     }
@@ -701,16 +701,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
@@ -817,16 +817,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
@@ -1508,6 +1508,25 @@ namespace Intersect.Server.Entities.Events
                     value.Integer -= mod.Value;
 
                     break;
+                case Enums.VariableMods.Multiply:
+                    value.Integer *= mod.Value;
+
+                    break;
+                case Enums.VariableMods.Divide:
+                    if (mod.Value != 0)  //Idiot proofing divide by 0 LOL
+                    {
+                        value.Integer /= mod.Value;
+                    }
+
+                    break;
+                case Enums.VariableMods.LeftShift:
+                    value.Integer = value.Integer << (int)mod.Value;
+
+                    break;
+                case Enums.VariableMods.RightShift:
+                    value.Integer = value.Integer >> (int)mod.Value;
+
+                    break;
                 case Enums.VariableMods.Random:
                     //TODO: Fix - Random doesnt work with longs lolz
                     value.Integer = Randomization.Next((int) mod.Value, (int) mod.HighValue + 1);
@@ -1553,6 +1572,60 @@ namespace Intersect.Server.Entities.Events
                     if (ssv != null)
                     {
                         value.Integer -= ssv.Value.Integer;
+                    }
+
+                    break;
+                case Enums.VariableMods.MultiplyPlayerVar:
+                    value.Integer *= player.GetVariableValue(mod.DuplicateVariableId).Integer;
+
+                    break;
+                case Enums.VariableMods.MultiplyGlobalVar:
+                    var msv = ServerVariableBase.Get(mod.DuplicateVariableId);
+                    if (msv != null)
+                    {
+                        value.Integer *= msv.Value.Integer;
+                    }
+
+                    break;
+                case Enums.VariableMods.DividePlayerVar:
+                    if (player.GetVariableValue(mod.DuplicateVariableId).Integer != 0) //Idiot proofing divide by 0 LOL
+                    {
+                        value.Integer /= player.GetVariableValue(mod.DuplicateVariableId).Integer;
+                    }
+
+                    break;
+                case Enums.VariableMods.DivideGlobalVar:
+                    var dsv = ServerVariableBase.Get(mod.DuplicateVariableId);
+                    if (dsv != null)
+                    {
+                        if (dsv.Value != 0) //Idiot proofing divide by 0 LOL
+                        {
+                            value.Integer /= dsv.Value.Integer;
+                        }
+                    }
+
+                    break;
+                case Enums.VariableMods.LeftShiftPlayerVar:
+                    value.Integer = value.Integer << (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
+
+                    break;
+                case Enums.VariableMods.LeftShiftGlobalVar:
+                    var lhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
+                    if (lhsv != null)
+                    {
+                        value.Integer = value.Integer << (int)lhsv.Value.Integer;
+                    }
+
+                    break;
+                case Enums.VariableMods.RightShiftPlayerVar:
+                    value.Integer = value.Integer >> (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
+
+                    break;
+                case Enums.VariableMods.RightShiftGlobalVar:
+                    var rhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
+                    if (rhsv != null)
+                    {
+                        value.Integer = value.Integer >> (int)rhsv.Value.Integer;
                     }
 
                     break;

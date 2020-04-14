@@ -814,49 +814,28 @@ namespace Intersect.Client.Entities
                 movex = 1;
             }
 
-
-            // Used this so I can do multiple switch case
-            var move = movex / 10 + movey;
-
             Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
-                switch (move)
+                if (movey < 0)
                 {
-                    case 1.0f:
-                        Globals.Me.MoveDir = 0; // Up
-
-                        break;
-                    case -1.0f:
-                        Globals.Me.MoveDir = 1; // Down
-
-                        break;
-                    case -0.1f: // x = 0, y = -1
-                        Globals.Me.MoveDir = 2; // Left
-
-                        break;
-                    case 0.1f:
-                        Globals.Me.MoveDir = 3; // Right
-
-                        break;
-                    case 0.9f:
-                        Globals.Me.MoveDir = 4; // NW
-
-                        break;
-                    case 1.1f:
-                        Globals.Me.MoveDir = 5; // NE
-
-                        break;
-                    case -1.1f:
-                        Globals.Me.MoveDir = 6; // SW
-
-                        break;
-                    case -0.9f:
-                        Globals.Me.MoveDir = 7; // SE
-
-                        break;
+                    Globals.Me.MoveDir = 1;
                 }
 
+                if (movey > 0)
+                {
+                    Globals.Me.MoveDir = 0;
+                }
+
+                if (movex < 0)
+                {
+                    Globals.Me.MoveDir = 2;
+                }
+
+                if (movex > 0)
+                {
+                    Globals.Me.MoveDir = 3;
+                }
             }
         }
 
@@ -1388,105 +1367,49 @@ namespace Intersect.Client.Entities
                 {
                     switch (MoveDir)
                     {
-                        // Dir is the direction the player faces
-                        // tmp the next position of the player
-                        // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
-
-                        case 0: // Up
-                            Dir = 0; // Set the sprite direction
+                        case 0:
                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY--;
-                                DeplacementDir = 0;
+                                Dir = 0;
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 1: // Down
-                            Dir = 1;
+                        case 1:
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY++;
-                                DeplacementDir = 1;
+                                Dir = 1;
                                 IsMoving = true;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 2: // Left
-                            Dir = 2;
+                        case 2:
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX--;
-                                DeplacementDir = 2;
+                                Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = Options.TileWidth;
                             }
 
                             break;
-                        case 3: // Right
-                            Dir = 3;
+                        case 3:
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX++;
-                                DeplacementDir = 3;
+                                Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = -Options.TileWidth;
                             }
 
-                            break;
-                        case 4: // NW
-                            Dir = 2;
-                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
-                            {
-                                tmpY--;
-                                tmpX--;
-                                DeplacementDir = 4;
-                                IsMoving = true;
-                                OffsetY = Options.TileHeight;
-                                OffsetX = Options.TileWidth;
-                            }
-                            break;
-                        case 5: // NE
-                            Dir = 3;
-                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
-                            {
-                                tmpY--;
-                                tmpX++;
-                                DeplacementDir = 5;
-                                IsMoving = true;
-                                OffsetY = Options.TileHeight;
-                                OffsetX = -Options.TileWidth;
-                            }
-                            break;
-                        case 6: // SW
-                            Dir = 2;
-                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
-                            {
-                                tmpY++;
-                                tmpX--;
-                                DeplacementDir = 6;
-                                IsMoving = true;
-                                OffsetY = -Options.TileHeight;
-                                OffsetX = Options.TileWidth;
-                            }
-                            break;
-                        case 7: // SE
-                            Dir = 3;
-                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
-                            {
-                                tmpY++;
-                                tmpX++;
-                                DeplacementDir = 7;
-                                IsMoving = true;
-                                OffsetY = -Options.TileHeight;
-                                OffsetX = -Options.TileWidth;
-                            }
                             break;
                     }
 
@@ -1549,10 +1472,10 @@ namespace Intersect.Client.Entities
                     }
                     else
                     {
-                        if (MoveDir != DeplacementDir)
+                        if (MoveDir != Dir)
                         {
-                            DeplacementDir = (byte) MoveDir;
-                            PacketSender.SendDirection(DeplacementDir);
+                            Dir = (byte) MoveDir;
+                            PacketSender.SendDirection(Dir);
                         }
 
                         if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy.GetType() == typeof(Event))

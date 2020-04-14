@@ -15,12 +15,7 @@ namespace Intersect.Client
     /// </summary>
     public static class Program
     {
-
-        public static string OpenALError = "";
-
         public static string OpenALLink = "";
-
-        public static string OpenGLError = "";
 
         public static string OpenGLLink = "";
 
@@ -52,7 +47,7 @@ namespace Intersect.Client
                     txt += ex.InnerException.ToString();
                     txt += ex.InnerException.InnerException.ToString();
                     File.WriteAllText("gfxerror.txt", txt);
-                    System.Windows.Forms.MessageBox.Show(String.Format(OpenGLError, OpenGLLink));
+
                     if (!string.IsNullOrEmpty(OpenGLLink))
                     {
                         Process.Start(OpenGLLink);
@@ -63,7 +58,6 @@ namespace Intersect.Client
 
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoAudioHardwareException")
                 {
-                    System.Windows.Forms.MessageBox.Show(String.Format(OpenALError, OpenALLink));
                     if (!string.IsNullOrEmpty(OpenALLink))
                     {
                         Process.Start(OpenALLink);

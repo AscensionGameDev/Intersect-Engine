@@ -37,6 +37,9 @@ namespace Intersect.Client.Networking
                 case NetworkStatus.HandshakeFailure:
                     return Strings.Server.HandshakeFailure;
 
+                case NetworkStatus.Quitting:
+                    return "";
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(networkStatus), networkStatus, null);
             }

@@ -23,6 +23,8 @@ namespace Intersect.Enums
 
     }
 
+    //Should properly seperate static value, player & global vars into a seperate enum.
+    //But technical debt :/
     public enum VariableMods
     {
 
@@ -50,6 +52,29 @@ namespace Intersect.Enums
 
         Replace,
 
+        Multiply,
+
+        MultiplyPlayerVar,
+
+        MultiplyGlobalVar,
+
+        Divide,
+
+        DividePlayerVar,
+
+        DivideGlobalVar,
+
+        LeftShift,
+
+        LeftShiftPlayerVar,
+
+        LeftShiftGlobalVar,
+
+        RightShift,
+
+        RightShiftPlayerVar,
+
+        RightShiftGlobalVar
     }
 
     public enum VariableComparators

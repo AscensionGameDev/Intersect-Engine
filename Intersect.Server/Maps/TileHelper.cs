@@ -70,20 +70,26 @@ namespace Intersect.Server.Maps
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapInstance.Lookup.Keys.Contains(mMapId))
+            var map = MapInstance.Get(mMapId);
+            if (map == null)
             {
                 return false;
             }
 
-            var grid = MapInstance.Get(mMapId).MapGrid;
-            var gridX = MapInstance.Get(mMapId).MapGridX;
-            var gridY = MapInstance.Get(mMapId).MapGridY;
+            var grid = DbInterface.GetGrid(map.MapGrid);
+            if (grid == null)
+            {
+                return false;
+            }
+
+            var gridX = map.MapGridX;
+            var gridY = map.MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
-                    if (gridY > 0 && DbInterface.MapGrids[grid].MyGrid[gridX, gridY - 1] != Guid.Empty)
+                    if (gridY > 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
                     {
-                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY - 1];
+                        mMapId = grid.MyGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
 
                         return true;
@@ -91,10 +97,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Directions.Down:
-                    if (gridY + 1 < DbInterface.MapGrids[grid].Height &&
-                        DbInterface.MapGrids[grid].MyGrid[gridX, gridY + 1] != Guid.Empty)
+                    if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
                     {
-                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY + 1];
+                        mMapId = grid.MyGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
 
                         return true;
@@ -102,9 +107,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Directions.Left:
-                    if (gridX > 0 && DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY] != Guid.Empty)
+                    if (gridX > 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
                     {
-                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY];
+                        mMapId = grid.MyGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
 
                         return true;
@@ -112,10 +117,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Directions.Right:
-                    if (gridX + 1 < DbInterface.MapGrids[grid].Width &&
-                        DbInterface.MapGrids[grid].MyGrid[gridX + 1, gridY] != Guid.Empty)
+                    if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
                     {
-                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX + 1, gridY];
+                        mMapId = grid.MyGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
 
                         return true;

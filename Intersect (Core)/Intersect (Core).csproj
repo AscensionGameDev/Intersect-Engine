@@ -192,6 +192,7 @@
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
+    <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
@@ -219,7 +220,6 @@
     <Compile Include="Config\Passability.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
-    <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
