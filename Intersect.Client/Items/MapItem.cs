@@ -10,6 +10,8 @@ namespace Intersect.Client.Items
 
         public int Y;
 
+        public float hasFallen;
+
         public MapItemInstance() : base()
         {
         }
