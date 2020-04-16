@@ -600,6 +600,10 @@ namespace Intersect.Network.Lidgren
                                         networkStatus = NetworkStatus.Offline;
                                         break;
 
+                                    case "closing":
+                                        networkStatus = NetworkStatus.Offline;
+                                        break;
+
                                     default:
                                         networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason ?? "<null>", true);
                                         break;

@@ -124,6 +124,8 @@ namespace Intersect.Editor.General
 
         public static FrmProgress PreviewProgressForm;
 
+        public static FrmProgress UpdateCreationProgressForm;
+
         //Network Variables
         public static int ReconnectTime = 3000;
 

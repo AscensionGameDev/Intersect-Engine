@@ -4347,6 +4347,19 @@ Negative values for time to flow backwards.";
 
         }
 
+        public struct UpdatePacking
+        {
+
+            public static LocalizedString title = "Packaging Updater Files, Please Wait!";
+
+            public static LocalizedString deleting = "Deleting existing files..";
+
+            public static LocalizedString calculating = "Calculating checksums, and creating update list...";
+
+            public static LocalizedString done = "Done!";
+
+        }
+
         public struct Warping
         {
 

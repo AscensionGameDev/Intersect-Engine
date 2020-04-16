@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -22,6 +23,10 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network;
+using Intersect.Updater;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -1737,6 +1742,170 @@ namespace Intersect.Editor.Forms
             Globals.PackingProgressForm.NotifyClose();
         }
 
+        private void packageUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using(var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    if (MessageBox.Show("Existing files in this folder will be deleted! Continue?","Warning!", MessageBoxButtons.YesNoCancel,MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                    {
+
+                        Globals.UpdateCreationProgressForm = new FrmProgress();
+                        Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.title);
+                        Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.deleting,10,false);
+                        var packingthread = new Thread(() => createUpdate(fbd.SelectedPath));
+                        packingthread.Start();
+                        Globals.UpdateCreationProgressForm.ShowDialog();
+                       
+                    }
+                }
+            }
+        }
+
+        private void createUpdate(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory((path));
+            }
+
+            if (Directory.Exists(path))
+            {
+                DirectoryInfo di = new DirectoryInfo(path);
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
+
+                //Intersect excluded files
+                var excludeFiles = new string[] {"resources/mapcache.db", "resources/client_files.json", "resources/editor_files.json", "update.json"};
+                var clientExcludeFiles = new List<string>(){"Intersect Editor.exe", "Intersect Editor.pdb"};
+                var excludeExtensions = new string[] {".dll", ".xml", ".config"};
+                var excludeDirectories = new string[] {"logs"};
+
+
+                //TODO: Mark ClientIgnore for graphics that are in existing packs
+                if (Directory.Exists(Path.Combine("resources", "packs")))
+                {
+                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.json");
+                    foreach (var pack in packs)
+                    {
+                        var obj = JObject.Parse(File.ReadAllText(pack))["frames"];
+                        foreach (var frame in obj.Children())
+                        {
+                            var filename = frame["filename"].ToString();
+                            clientExcludeFiles.Add(filename);
+                        }
+                    }
+                }
+
+
+
+                var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
+
+                var update = new Update();
+                queryFilesForUpdate(update, excludeFiles, clientExcludeFiles.ToArray(), excludeExtensions, excludeDirectories, Directory.GetCurrentDirectory(), Directory.GetCurrentDirectory(), path, 0, fileCount);
+
+            }
+            else
+            {
+                //Error, no directory1
+            }
+        }
+
+        private int queryFilesForUpdate(Update update, string[] excludeFiles, string[] clientExcludeFiles, string[] excludeExtensions, string[] excludeDirectories, string workingDirectory, string path, string updatePath, int filesProcessed, int fileCount)
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+            Uri workingDir = new Uri(workingDirectory + "/");
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                string relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(path, file.Name))).ToString().Replace('\\', '/'));
+                if (!excludeFiles.Contains(relativePath) && !excludeExtensions.Contains(file.Extension))
+                {
+                    var md5Hash = "";
+                    using (var md5 = MD5.Create())
+                    {
+                        using (var stream = new BufferedStream(File.OpenRead(file.FullName), 1200000))
+                        {
+                            md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+                        }
+                    }
+
+                    var updateFile = new UpdateFile(relativePath, md5Hash, file.Length);
+
+                    if (clientExcludeFiles.Contains(relativePath))
+                    {
+                        updateFile.ClientIgnore = true;
+                    }
+
+                    update.Files.Add(updateFile);
+
+                    //Copy File
+                    var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(path + "/")).ToString().Replace('\\','/'));
+                    if (!string.IsNullOrEmpty(relativeFolder))
+                    {
+                        Directory.CreateDirectory(Path.Combine(updatePath, relativeFolder));
+                        File.Copy(file.FullName, Path.Combine(updatePath, relativeFolder, file.Name));
+                    }
+                    else
+                    {
+                        File.Copy(file.FullName, Path.Combine(updatePath, file.Name));
+                    }
+                }
+                else
+                {
+                    //MessageBox.Show("File not added to update! " + relativePath);
+                }
+
+                filesProcessed++;
+
+                var percentage = (float) (filesProcessed / (float) (fileCount + 1));
+                var outofeighty = (int)(percentage * 80f);
+
+                Globals.UpdateCreationProgressForm.SetProgress(
+                    Strings.UpdatePacking.calculating, outofeighty + 10, false
+                );
+
+                Application.DoEvents();
+            }
+
+            foreach (var dir in di.GetDirectories())
+            {
+                string relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(path, dir.Name))).ToString().Replace('\\', '/'));
+                if (!excludeDirectories.Contains(relativePath))
+                {
+                    filesProcessed = queryFilesForUpdate(update,excludeFiles, clientExcludeFiles, excludeExtensions,excludeFiles,workingDirectory,Path.Combine(path,dir.Name), updatePath, filesProcessed, fileCount);
+                }
+                else
+                {
+                    //MessageBox.Show("Directory not added to update! " + relativePath);
+                }
+            }
+
+            if (path == Directory.GetCurrentDirectory())
+            {
+                Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.done, 100, false);
+                Application.DoEvents();
+                System.Threading.Thread.Sleep(1000);
+
+                //TODO: Open folder with update files
+                File.WriteAllText(Path.Combine(updatePath, "update.json"), JsonConvert.SerializeObject(update, Formatting.Indented, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
+
+                Globals.UpdateCreationProgressForm.NotifyClose();
+            }
+
+            return filesProcessed;
+        }
     }
 
 }
