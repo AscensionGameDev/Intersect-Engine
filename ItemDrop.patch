@@ -1,0 +1,82 @@
+From e39c0e754990036f0ff659f6099b5e5186465a1c Mon Sep 17 00:00:00 2001
+From: JadinRiverJames <40528979+JadinRiverJames@users.noreply.github.com>
+Date: Wed, 15 Apr 2020 04:09:03 -0600
+Subject: [PATCH] Done and done, bitch
+
+---
+ Intersect.Client/Items/MapItem.cs            |  2 ++
+ Intersect.Client/Maps/MapInstance.cs         | 29 ++++++++++++++------
+ Intersect.Client/Networking/PacketHandler.cs |  1 +
+ 3 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/Intersect.Client/Items/MapItem.cs b/Intersect.Client/Items/MapItem.cs
+index 0a25fbd1..4c9d5643 100644
+--- a/Intersect.Client/Items/MapItem.cs
++++ b/Intersect.Client/Items/MapItem.cs
+@@ -10,6 +10,8 @@ public class MapItemInstance : Item
+ 
+         public int Y;
+ 
++        public float hasFallen;
++
+         public MapItemInstance() : base()
+         {
+         }
+diff --git a/Intersect.Client/Maps/MapInstance.cs b/Intersect.Client/Maps/MapInstance.cs
+index 0ac64ed9..9201264e 100644
+--- a/Intersect.Client/Maps/MapInstance.cs
++++ b/Intersect.Client/Maps/MapInstance.cs
+@@ -657,17 +657,30 @@ public void DrawItemsAndLights()
+                     var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Icon);
+                     if (itemTex != null)
+                     {
+-                        Graphics.DrawGameTexture(
+-                            itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
+-                            new FloatRect(
+-                                GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,
+-                                Options.TileWidth, Options.TileHeight
+-                            ), Color.White
+-                        );
++                        if (item.Value.hasFallen > 0)
++                        {
++                            Graphics.DrawGameTexture(
++                                itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
++                                new FloatRect(
++                                    GetX() + item.Value.X * Options.TileWidth, (GetY() + item.Value.Y * Options.TileHeight) - (item.Value.hasFallen * Options.TileHeight),
++                                    Options.TileWidth, Options.TileHeight
++                                ), Color.White
++                            );
++                            item.Value.hasFallen -= 0.2f;
++                        }
++                        else
++                        {
++                            Graphics.DrawGameTexture(
++                                itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
++                                new FloatRect(
++                                    GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * (Options.TileHeight),
++                                    Options.TileWidth, Options.TileHeight
++                                ), Color.White
++                            );
++                        }
+                     }
+                 }
+             }
+-
+             //Add lights to our darkness texture
+             foreach (var light in Lights)
+             {
+diff --git a/Intersect.Client/Networking/PacketHandler.cs b/Intersect.Client/Networking/PacketHandler.cs
+index c69ec70d..51aaadaa 100644
+--- a/Intersect.Client/Networking/PacketHandler.cs
++++ b/Intersect.Client/Networking/PacketHandler.cs
+@@ -820,6 +820,7 @@ private static void HandlePacket(MapItemUpdatePacket packet)
+                     if (!map.MapItems.ContainsKey(packet.ItemIndex))
+                     {
+                         map.MapItems.Add(packet.ItemIndex, new MapItemInstance(packet.ItemData));
++                        map.MapItems[packet.ItemIndex].hasFallen = 1f;
+                     }
+                     else
+                     {
+-- 
+2.26.0.windows.1
+
