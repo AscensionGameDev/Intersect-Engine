@@ -1446,6 +1446,7 @@ namespace Intersect.Client.Entities
                 //if we dont check if we are on thr ground, we cant land on the ground
                 if (OnGround() == false)
                 {
+                    
                     if (FallDir == 1)
                     {
                         Globals.Me.MoveDir = 1;
@@ -1608,6 +1609,11 @@ namespace Intersect.Client.Entities
                                 JumpHeight++;
                                 JumpDir = 4;
                             }
+                            else
+                            {
+                                JumpHeight = Globals.JumpHeight;
+                                JumpDir = -1;
+                            }
                             break;
                         case 5: // NE
                             if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7)
@@ -1621,6 +1627,11 @@ namespace Intersect.Client.Entities
                                 JumpHeight++;
                                 JumpDir = 5;
                             }
+                            else
+                            {
+                                JumpHeight = Globals.JumpHeight;
+                                JumpDir = -1;
+                            }
                             break;
                         case 6: // SW
                             if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
@@ -1633,6 +1644,10 @@ namespace Intersect.Client.Entities
                                 OffsetX = Options.TileWidth;
                                 FallDir = 6;
                             }
+                            else
+                            {
+                                FallDir = 1;
+                            }
                             break;
                         case 7: // SE
                             if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
@@ -1644,6 +1659,10 @@ namespace Intersect.Client.Entities
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
                                 FallDir = 7;
+                            }
+                            else
+                            {
+                                FallDir = 1;
                             }
                             break;
                     }
