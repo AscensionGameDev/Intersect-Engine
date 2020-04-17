@@ -37,6 +37,8 @@ namespace Intersect.Updater
         private bool mStopping;
         private bool mUpdaterContentLoaded;
         private bool mIsClient;
+        private string mConfigUrl;
+        private string mBaseUrl;
 
         public float Progress => ((float) BytesDownloaded / (float) SizeTotal) * 100f;
 
@@ -49,6 +51,7 @@ namespace Intersect.Updater
         public int FilesTotal => mDownloadQueue.Count +
                                  mActiveDownloads.Count +
                                  mCompletedDownloads.Count;
+
         public long BytesDownloaded => mDownloadedBytes + 
                                        mActiveDownloads.Values.Sum();
 
@@ -89,7 +92,20 @@ namespace Intersect.Updater
             {
                 try
                 {
-                    var json = wc.DownloadString(ClientConfiguration.Instance.UpdateUrl + "/update.json?token=" + Environment.TickCount);
+                    mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] {'/'});
+                    mBaseUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[]{'/'});
+                    var uri = new Uri(ClientConfiguration.Instance.UpdateUrl);
+
+                    //Specifying update.json themselves or some other file that generates the config... base url needs to be the folder containing it
+                    if (Path.HasExtension(uri.AbsolutePath))
+                    {
+                        mBaseUrl = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length).TrimEnd(new char[]{'/'});
+                    }
+                    else
+                    {
+                        mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[]{'/'}) + "/update.json";
+                    }
+                    var json = wc.DownloadString(mConfigUrl + "?token=" + Environment.TickCount);
                     mUpdate = JsonConvert.DeserializeObject<Update>(json);
 
                     var downloadFirst = new List<UpdateFile>();
@@ -299,7 +315,7 @@ namespace Intersect.Updater
         {
             lock (mUpdate)
             {
-                return mDownloadQueue.Count > 0 || mActiveDownloads.Count > 0 && !mFailed && !mStopping;
+                return (mDownloadQueue.Count > 0 || mActiveDownloads.Count > 0) && !mFailed && !mStopping;
             }
         }
 
@@ -330,8 +346,13 @@ namespace Intersect.Updater
                         //Use WebClient to Download File To Memory
                         var wc = new WebClient();
                         wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] =  args.BytesReceived);
-                        var fileData = await wc.DownloadDataTaskAsync(new Uri(ClientConfiguration.Instance.UpdateUrl + "/" + file.Path + "?token=" + Environment.TickCount));
+                        var fileData = await wc.DownloadDataTaskAsync(new Uri(mBaseUrl + "/" + file.Path + "?token=" + Environment.TickCount));
                         wc.Dispose();
+
+                        if (fileData.Length != file.Size)
+                        {
+                            throw new Exception("[File Length Mismatch - Got " + fileData.Length + " bytes, Expected " + file.Size + "]");
+                        }
 
                         //Check MD5
                         var md5Hash = "";
@@ -345,8 +366,7 @@ namespace Intersect.Updater
 
                         if (md5Hash != file.Hash)
                         {
-                            throw new Exception("File downloaded hash does not match!");
-                            //TODO: Try again?
+                            throw new Exception("File Hash Mismatch");
                         }
 
 
@@ -388,17 +408,11 @@ namespace Intersect.Updater
                         //Save New File
                         File.WriteAllBytes(file.Path, fileData);
 
-                        if (IsUpdaterFile(file.Path))
-                        {
-                            //TODO: Inform client that the updater files have been changed
-                            //reloadUpdaterFiles = true;
-                        }
-
                         lock (mUpdate)
                         {
                             mCompletedDownloads.Add(file);
-                            mDownloadedBytes += file.Size;
                             mActiveDownloads.TryRemove(file, out long val);
+                            mDownloadedBytes += file.Size;
 
                             if (IsUpdaterFile(file.Path))
                             {
