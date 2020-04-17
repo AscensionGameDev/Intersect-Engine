@@ -132,6 +132,8 @@ namespace Intersect.Client.General
         //Scene management
         public static bool WaitingOnServer = false;
 
+        public static int JumpHeight = 1;
+
         public static Entity GetEntity(Guid id, EntityTypes type)
         {
             if (Entities.ContainsKey(id))

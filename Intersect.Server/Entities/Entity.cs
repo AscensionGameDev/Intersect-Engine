@@ -797,6 +797,10 @@ namespace Intersect.Server.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
+            if (Dir == 0 || Dir == 1 || Dir == 4 || Dir == 5 || Dir == 6 || Dir == 7)
+            {
+                time *= 0.7f;
+            }
             if (Blocking)
             {
                 time += time * Options.BlockingSlow;
@@ -819,53 +823,77 @@ namespace Intersect.Server.Entities
 
             var xOffset = 0;
             var yOffset = 0;
-            switch (moveDir)
+
+            if(forPlayer == null)
             {
-                case 0: //Up
-                    --yOffset;
+                switch (moveDir)
+                {
+                    case 2: //Left
+                        --xOffset;
 
-                    break;
-                case 1: //Down
-                    ++yOffset;
+                        break;
+                    case 3: //Right
+                        ++xOffset;
 
-                    break;
-                case 2: //Left
-                    --xOffset;
+                        break;
+                    default:
+                        Log.Warn(
+                            new ArgumentOutOfRangeException(nameof(moveDir), $@"Bogus move attempt in direction {moveDir}.")
+                        );
 
-                    break;
-                case 3: //Right
-                    ++xOffset;
-
-                    break;
-                case 4: //NW
-                    --yOffset;
-                    --xOffset;
-
-                    break;
-                case 5: //NE
-                    --yOffset;
-                    ++xOffset;
-
-                    break;
-                case 6: //SW
-                    ++yOffset;
-                    --xOffset;
-
-                    break;
-                case 7: //SE
-                    ++yOffset;
-                    ++xOffset;
-
-                    break;
-
-                default:
-                    Log.Warn(
-                        new ArgumentOutOfRangeException(nameof(moveDir), $@"Bogus move attempt in direction {moveDir}.")
-                    );
-
-                    return;
+                        return;
+                }
             }
+            else
+            {
+                switch (moveDir)
+                {
+                    case 0: //Up
+                        --yOffset;
 
+                        break;
+                    case 1: //Down
+                        ++yOffset;
+
+                        break;
+                    case 2: //Left
+                        --xOffset;
+
+                        break;
+                    case 3: //Right
+                        ++xOffset;
+
+                        break;
+                    case 4: //NW
+                        --yOffset;
+                        --xOffset;
+
+                        break;
+                    case 5: //NE
+                        --yOffset;
+                        ++xOffset;
+
+                        break;
+                    case 6: //SW
+                        ++yOffset;
+                        --xOffset;
+
+                        break;
+                    case 7: //SE
+                        ++yOffset;
+                        ++xOffset;
+
+                        break;
+
+                    default:
+                        Log.Warn(
+                            new ArgumentOutOfRangeException(nameof(moveDir), $@"Bogus move attempt in direction {moveDir}.")
+                        );
+
+                        return;
+                }
+            }
+            
             Dir = moveDir;
 
 

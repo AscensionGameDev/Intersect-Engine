@@ -183,6 +183,9 @@ namespace Intersect.Client.Entities
 
         public byte Z;
 
+        //animation locking
+        public int lastDir = 1;
+
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
@@ -450,6 +453,10 @@ namespace Intersect.Client.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+            if (Dir == 0 || Dir == 1 || Dir == 4 || Dir == 5 || Dir == 6 || Dir == 7)
+            {
+                time *= 0.7f;
+            }
             if (Blocking)
             {
                 time += time * (float) Options.BlockingSlow;
@@ -920,35 +927,41 @@ namespace Intersect.Client.Entities
                 switch (Dir)
                 {
                     case 0: // Up
-                        d = 3;
+                        d = lastDir;
 
                         break;
                     case 1: // Down
-                        d = 0;
+                        d = lastDir;
 
                         break;
                     case 2: // Left
                         d = 1;
+                        lastDir = 1;
 
                         break;
                     case 3: // Right
                         d = 2;
+                        lastDir = 2;
 
                         break;
                     case 4: // UpLeft
                         d = 1;
+                        lastDir = 1;
 
                         break;
                     case 5: // UpRight
                         d = 2;
+                        lastDir = 2;
 
                         break;
                     case 6: // DownLeft
                         d = 1;
+                        lastDir = 1;
 
                         break;
                     case 7: // DownRight
                         d = 2;
+                        lastDir = 2;
 
                         break;
 

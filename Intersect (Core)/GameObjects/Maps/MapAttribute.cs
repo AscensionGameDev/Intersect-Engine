@@ -37,6 +37,8 @@ namespace Intersect.GameObjects.Maps
                     return new MapGrappleStoneAttribute();
                 case MapAttributes.Slide:
                     return new MapSlideAttribute();
+                case MapAttributes.Platform:
+                    return new MapPlatformAttribute();
             }
 
             return null;
@@ -212,6 +214,13 @@ namespace Intersect.GameObjects.Maps
 
             return att;
         }
+
+    }
+
+    public class MapPlatformAttribute : MapAttribute
+    {
+
+        public override MapAttributes Type { get; } = MapAttributes.Platform;
 
     }
 

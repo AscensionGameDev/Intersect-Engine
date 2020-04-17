@@ -459,7 +459,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
                             return (int) Directions.Left;
                         }
-                        else if (mEntity.Y < newY && mEntity.X == newX)
+                       /* else if (mEntity.Y < newY && mEntity.X == newX)
                         {
                             enm.Dispose();
 
@@ -494,7 +494,7 @@ namespace Intersect.Server.Entities.Pathfinding
                             enm.Dispose();
 
                             return (int)Directions.DownRight;
-                        }
+                        }*/
                     }
                 }
             }

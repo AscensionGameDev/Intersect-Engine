@@ -377,6 +377,11 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
         }
 
+        private void rbPlatform_CheckedChanged(object sender, EventArgs e)
+        {
+            HideAttributeMenus();
+        }
+
         private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
         {
             HideAttributeMenus();
@@ -508,6 +513,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return (int) MapAttributes.Slide;
             }
+            else if (rbPlatform.Checked == true)
+            {
+                return (int)MapAttributes.Platform;
+            }
 
             return (int) MapAttributes.Walkable;
         }
@@ -581,6 +590,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Slide);
                 ((MapSlideAttribute) tmpMap.Attributes[x, y]).Direction = (byte) cmbSlideDir.SelectedIndex;
+            }
+            else if (rbPlatform.Checked)
+            {
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Platform);
             }
         }
 
@@ -829,6 +842,7 @@ namespace Intersect.Editor.Forms.DockingElements
             rbAnimation.Text = Strings.Attributes.mapanimation;
             rbGrappleStone.Text = Strings.Attributes.grapple;
             rbSlide.Text = Strings.Attributes.slide;
+            rbPlatform.Text = Strings.Attributes.platform;
 
             //Map Animation Groupbox
             grpAnimation.Text = Strings.Attributes.mapanimation;

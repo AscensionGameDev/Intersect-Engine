@@ -637,6 +637,8 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString slide = @"Slide";
 
+            public static LocalizedString platform = @"Platform";
+
             public static LocalizedString sound = @"Sound:";
 
             public static LocalizedString warp = @"Warp";

@@ -624,6 +624,7 @@ namespace Intersect.Server.Entities
                         targetMap = Target.MapId;
                         targetX = Target.X;
                         targetY = Target.Y;
+                        //targetY = 0;
                         targetZ = Target.Z;
                         var targetStatuses = Target.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
@@ -921,7 +922,7 @@ namespace Intersect.Server.Entities
                 }
                 else if (Base.Movement == (int) NpcMovement.TurnRandomly)
                 {
-                    ChangeDir((byte)Randomization.Next(0, 4));
+                    ChangeDir((byte)Randomization.Next(2, 4));
                     LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
 
                     return;
@@ -930,7 +931,7 @@ namespace Intersect.Server.Entities
                 var i = Randomization.Next(0, 1);
                 if (i == 0)
                 {
-                    i = Randomization.Next(0, 8);
+                    i = Randomization.Next(2, 4);
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned

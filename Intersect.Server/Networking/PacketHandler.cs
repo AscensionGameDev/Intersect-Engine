@@ -411,11 +411,18 @@ namespace Intersect.Server.Networking
             var canMove = player.CanMove(packet.Dir);
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
-                player.Move(packet.Dir, player, false);
-                if (player.MoveTimer > Globals.Timing.TimeMs)
+                if ((packet.Dir == 0  || packet.Dir == 4 || packet.Dir == 5) && packet.Jh > Globals.JumpHeight) 
                 {
-                    //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
-                    player.MoveTimer = Globals.Timing.TimeMs + (long) (player.GetMovementTime() * .75f);
+                   //prevent jumping if the jump height is more than what is defined
+                }
+                else
+                {
+                    player.Move(packet.Dir, player, false);
+                    if (player.MoveTimer > Globals.Timing.TimeMs)
+                    {
+                        //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
+                        player.MoveTimer = Globals.Timing.TimeMs + (long)(player.GetMovementTime() * .75f);
+                    }
                 }
             }
             else

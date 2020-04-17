@@ -26,6 +26,8 @@ namespace Intersect.Server.General
 
         public static bool CpsLock = true;
 
+        public static int JumpHeight = 1;
+
         [NotNull]
         public static ServerTiming Timing { get; } = new ServerTiming();
 

@@ -58,6 +58,16 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public bool Jumping = false;
+
+        public bool Falling = false;
+
+        public int JumpHeight = 0;
+
+        public int JumpDir = -1;
+
+        public int FallDir = -1;
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -997,7 +1007,7 @@ namespace Intersect.Client.Entities
             {
                 case 0: // Up
                     y--;
-                    
+
                     break;
                 case 1: // Down
                     y++;
@@ -1370,6 +1380,20 @@ namespace Intersect.Client.Entities
             return attackTime;
         }
 
+        public bool OnGround()
+        {
+            bool result = false;
+
+            Entity blockedBy = null;
+
+            //the tile below is either a block tile or a ground tile, this means you are on the ground
+            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -2 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
+            {
+                result = true;
+            }
+
+            return result;
+        }
         //Movement Processing
         private void ProcessDirectionalInput()
         {
@@ -1403,6 +1427,113 @@ namespace Intersect.Client.Entities
             var tmpY = (sbyte)Y;
             Entity blockedBy = null;
 
+            //should we be falling?
+            if (OnGround() == false && Globals.Me.Jumping == false)
+            {
+                Globals.Me.Falling = true;
+            }
+            else
+            {
+                Globals.Me.Falling = false;
+                FallDir = -1;
+            }
+
+            //We are falling
+            if (Globals.Me.Falling == true)
+            {
+                Jumping = false;
+
+                //if we dont check if we are on thr ground, we cant land on the ground
+                if (OnGround() == false)
+                {
+                    if (FallDir == 1)
+                    {
+                        Globals.Me.MoveDir = 1;
+                    }
+                    else if (FallDir == 6)
+                    {
+                        Globals.Me.MoveDir = 6;
+                    }
+                    else if (FallDir == 7)
+                    {
+                        Globals.Me.MoveDir = 7;
+                    }
+                    else
+                    {
+                        if (Controls.KeyDown(Control.MoveLeft))
+                        {
+                            Globals.Me.MoveDir = 6;
+                            FallDir = 6;
+                        }
+                        else if (Controls.KeyDown(Control.MoveRight))
+                        {
+                            Globals.Me.MoveDir = 7;
+                            FallDir = 7;
+                        }
+                        else
+                        {
+                            Globals.Me.MoveDir = 1;
+                            FallDir = 1;
+                        }
+                    }
+                }
+            }
+
+            //we are trying to jump
+            if ((MoveDir == 0 || MoveDir == 4 || MoveDir == 5) && Jumping == false && Falling == false && OnGround() == true)
+            {
+                Globals.Me.Jumping = true;
+                FallDir = -1;
+            }
+            
+            //we only want to jump to a certain height
+            if (Globals.Me.Jumping == true)
+            {
+                if (JumpHeight >= Globals.JumpHeight)
+                {
+                    Jumping = false;
+                    
+                    JumpHeight = 0;
+
+                    if (OnGround() == false)
+                    {
+                        if (JumpDir == 0)
+                        {
+                            Globals.Me.MoveDir = 1;
+                            FallDir = 1;
+                        }
+                        else if (JumpDir == 4)
+                        {
+                            Globals.Me.MoveDir = 6;
+                            FallDir = 6;
+                        }
+                        else if (JumpDir == 5)
+                        {
+                            Globals.Me.MoveDir = 7;
+                            FallDir = 7;
+                        }
+                        
+                    }
+                    JumpDir = -1;
+                }
+                //We are jumping still
+                else
+                {
+                    if (JumpDir == 0)
+                    {
+                        Globals.Me.MoveDir = 0;
+                    }
+                    else if (JumpDir == 4)
+                    {
+                        Globals.Me.MoveDir = 4;
+                    }
+                    else if (JumpDir == 5)
+                    {
+                        Globals.Me.MoveDir = 5;
+                    }
+                }
+            }
+
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
@@ -1415,29 +1546,36 @@ namespace Intersect.Client.Entities
                         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
 
                         case 0: // Up
-                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -7))
                             {
                                 tmpY--;
                                 IsMoving = true;
                                 Dir = 0; // Set the sprite direction
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
+                                JumpHeight++;
+                                JumpDir = 0;
+                            }
+                            else
+                            {
+                                JumpHeight = Globals.JumpHeight;
                             }
 
                             break;
                         case 1: // Down
-                            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7))
                             {
                                 tmpY++;
                                 IsMoving = true;
                                 Dir = 1;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
+                                FallDir = 1;
                             }
 
                             break;
                         case 2: // Left
-                            if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -7))
                             {
                                 tmpX--;
                                 IsMoving = true;
@@ -1448,7 +1586,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 3: // Right
-                            if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -7))
                             {
                                 tmpX++;
                                 IsMoving = true;
@@ -1459,7 +1597,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 4: // NW
-                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7)
                             {
                                 tmpY--;
                                 tmpX--;
@@ -1467,10 +1605,12 @@ namespace Intersect.Client.Entities
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = Options.TileWidth;
+                                JumpHeight++;
+                                JumpDir = 4;
                             }
                             break;
                         case 5: // NE
-                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7)
                             {
                                 tmpY--;
                                 tmpX++;
@@ -1478,10 +1618,12 @@ namespace Intersect.Client.Entities
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
+                                JumpHeight++;
+                                JumpDir = 5;
                             }
                             break;
                         case 6: // SW
-                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
                             {
                                 tmpY++;
                                 tmpX--;
@@ -1489,10 +1631,11 @@ namespace Intersect.Client.Entities
                                 IsMoving = true;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = Options.TileWidth;
+                                FallDir = 6;
                             }
                             break;
                         case 7: // SE
-                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
                             {
                                 tmpY++;
                                 tmpX++;
@@ -1500,6 +1643,7 @@ namespace Intersect.Client.Entities
                                 IsMoving = true;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
+                                FallDir = 7;
                             }
                             break;
                     }
@@ -1618,6 +1762,7 @@ namespace Intersect.Client.Entities
         }
 
         /// <summary>
+        ///     Returns -7 if the tile is blocked by a platform attribute.
         ///     Returns -6 if the tile is blocked by a global (non-event) entity
         ///     Returns -5 if the tile is completely out of bounds.
         ///     Returns -4 if a tile is blocked because of a local event.
@@ -1775,6 +1920,10 @@ namespace Intersect.Client.Entities
                         if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked)
                         {
                             return -2;
+                        }
+                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Platform)
+                        {
+                            return -7;
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
                         {
