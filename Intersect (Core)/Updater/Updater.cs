@@ -126,17 +126,22 @@ namespace Intersect.Updater
                     if (updateRequired)
                     {
                         //Remove Deleted Files
-                        foreach (var file in mCachedVersion.Files)
+                        if (mCachedVersion != null)
                         {
-                            if (!mUpdate.Files.Any(f => f.Path == file.Path))
+                            foreach (var file in mCachedVersion.Files)
                             {
-                                if (File.Exists(file.Path))
+                                if (!mUpdate.Files.Any(f => f.Path == file.Path))
                                 {
-                                    try
+                                    if (File.Exists(file.Path))
                                     {
-                                        File.Delete(file.Path);
+                                        try
+                                        {
+                                            File.Delete(file.Path);
+                                        }
+                                        catch
+                                        {
+                                        }
                                     }
-                                    catch { }
                                 }
                             }
                         }
@@ -145,7 +150,7 @@ namespace Intersect.Updater
                         mCurrentVersion = new Update();
                         foreach (var file in mUpdate.Files)
                         {
-                            if (mIsClient && file.ClientIgnore || !mIsClient && file.EditorIgnore)
+                            if ((mIsClient && file.ClientIgnore || !mIsClient && file.EditorIgnore) && mCachedVersion != null)
                             {
                                 var ignoredFile = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
                                 if (ignoredFile != null)

@@ -4346,6 +4346,29 @@ Negative values for time to flow backwards.";
             public static LocalizedString to = @"to";
 
         }
+        
+        public struct Update
+        {
+
+            public static LocalizedString title = @"Intersect Editor - Updating";
+
+            public static LocalizedString checking = @"Checking for updates, please wait!";
+
+            public static LocalizedString updating = @"Downloading updates, please wait!";
+
+            public static LocalizedString restart = @"Update complete! Relaunching!";
+
+            public static LocalizedString done = @"Update complete! Launching game!";
+
+            public static LocalizedString error = @"Update Error! Check logs for more info!";
+
+            public static LocalizedString files = @"{00} Files Remaining";
+
+            public static LocalizedString size = @"{00} Left";
+
+            public static LocalizedString percent = @"{00}%";
+
+        }
 
         public struct UpdatePacking
         {

@@ -191,8 +191,6 @@ namespace Intersect.Editor.Forms
         }
 
         #endregion
-
-        private Label lblStatus;
         private Timer tmrSocket;
         private DarkTextBox txtUsername;
         private DarkTextBox txtPassword;
@@ -203,5 +201,6 @@ namespace Intersect.Editor.Forms
         private Label lblPassword;
         private Label lblGettingStarted;
         private DarkCheckBox chkRemember;
+        public Label lblStatus;
     }
 }

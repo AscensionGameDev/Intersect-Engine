@@ -91,6 +91,8 @@ namespace Intersect.Editor.General
 
         public static Guid LoadingMap = Guid.Empty;
 
+        public static FrmUpdate UpdateForm;
+
         public static FrmLogin LoginForm;
 
         public static FrmMain MainForm;

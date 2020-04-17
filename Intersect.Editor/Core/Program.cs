@@ -50,12 +50,13 @@ namespace Intersect.Editor
             Log.Diagnostic("Libraries unpacked.");
 
             Log.Diagnostic("Creating forms...");
+            Globals.UpdateForm = new FrmUpdate();
             Globals.LoginForm = new FrmLogin();
             Globals.MainForm = new FrmMain();
             Log.Diagnostic("Forms created.");
 
             Log.Diagnostic("Starting application.");
-            Application.Run(Globals.LoginForm);
+            Application.Run(Globals.UpdateForm);
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
