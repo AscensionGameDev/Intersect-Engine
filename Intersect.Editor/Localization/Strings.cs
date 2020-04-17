@@ -4354,13 +4354,13 @@ Negative values for time to flow backwards.";
 
             public static LocalizedString checking = @"Checking for updates, please wait!";
 
-            public static LocalizedString updating = @"Downloading updates, please wait!";
+            public static LocalizedString updating = @"Downloading updates, {00}% done!";
 
             public static LocalizedString restart = @"Update complete! Relaunching!";
 
             public static LocalizedString done = @"Update complete! Launching game!";
 
-            public static LocalizedString error = @"Update Error! Check logs for more info!";
+            public static LocalizedString error = @"Errpr: {00}";
 
             public static LocalizedString files = @"{00} Files Remaining";
 

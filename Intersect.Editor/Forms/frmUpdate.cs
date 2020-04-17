@@ -73,7 +73,7 @@ namespace Intersect.Editor.Forms
                         lblSize.Show();
                         lblFiles.Text = Strings.Update.files.ToString(mUpdater.FilesRemaining);
                         lblSize.Text = Strings.Update.size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
-                        lblStatus.Text = Strings.Update.updating;
+                        lblStatus.Text = Strings.Update.updating.ToString((int)mUpdater.Progress);
                         progressBar.Value = (int) mUpdater.Progress;
                         break;
                     case UpdateStatus.Restart:
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms
                         lblFiles.Hide();
                         lblSize.Hide();
                         progressBar.Value = 100;
-                        lblStatus.Text = Strings.Update.error;
+                        lblStatus.Text = Strings.Update.error.ToString(mUpdater.Exception?.Message ?? "");
                         break;
                     case UpdateStatus.None:
                         lblFiles.Hide();
