@@ -382,6 +382,11 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
         }
 
+        private void rbLadder_CheckedChanged(object sender, EventArgs e)
+        {
+            HideAttributeMenus();
+        }
+
         private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
         {
             HideAttributeMenus();
@@ -517,6 +522,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return (int)MapAttributes.Platform;
             }
+            else if (rbLadder.Checked == true)
+            {
+                return (int)MapAttributes.Ladder;
+            }
 
             return (int) MapAttributes.Walkable;
         }
@@ -595,6 +604,11 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Platform);
             }
+            else if (rbLadder.Checked)
+            {
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Ladder);
+            }
+
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
@@ -843,6 +857,7 @@ namespace Intersect.Editor.Forms.DockingElements
             rbGrappleStone.Text = Strings.Attributes.grapple;
             rbSlide.Text = Strings.Attributes.slide;
             rbPlatform.Text = Strings.Attributes.platform;
+            rbLadder.Text = Strings.Attributes.ladder;
 
             //Map Animation Groupbox
             grpAnimation.Text = Strings.Attributes.mapanimation;

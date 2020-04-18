@@ -68,6 +68,8 @@ namespace Intersect.Client.Entities
 
         public int FallDir = -1;
 
+        public bool Climbing = false;
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -1387,7 +1389,7 @@ namespace Intersect.Client.Entities
             Entity blockedBy = null;
 
             //the tile below is either a block tile or a ground tile, this means you are on the ground
-            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -2 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
+            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -2 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -8)
             {
                 result = true;
             }
@@ -1428,7 +1430,7 @@ namespace Intersect.Client.Entities
             Entity blockedBy = null;
 
             //should we be falling?
-            if (OnGround() == false && Globals.Me.Jumping == false)
+            if (OnGround() == false && Globals.Me.Jumping == false && Globals.Me.Climbing == false)
             {
                 Globals.Me.Falling = true;
             }
@@ -1478,6 +1480,21 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
+            }
+
+            //We are climbing
+            if(Climbing == true)
+            {
+                if(MoveDir == 1 || MoveDir == 0)
+                {
+                    Globals.Me.Jumping = false;
+                    Globals.Me.Falling = false;
+                }
+                else
+                {
+                    MoveDir = -1;
+                }
+                
             }
 
             //we are trying to jump
@@ -1547,15 +1564,26 @@ namespace Intersect.Client.Entities
                         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal mouvement.
 
                         case 0: // Up
-                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -7))
+                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -7 || IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -8)
                             {
                                 tmpY--;
                                 IsMoving = true;
                                 Dir = 0; // Set the sprite direction
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
-                                JumpHeight++;
-                                JumpDir = 0;
+
+                                //did we hit a ladder?
+                                if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -8)
+                                {
+                                    Climbing = true;
+                                    Jumping = false;
+                                }
+                                else
+                                {
+                                    Climbing = false;
+                                    JumpHeight++;
+                                    JumpDir = 0;
+                                }
                             }
                             else
                             {
@@ -1564,14 +1592,24 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 1: // Down
-                            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7))
+                            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -7 || IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -8)
                             {
                                 tmpY++;
                                 IsMoving = true;
                                 Dir = 1;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
-                                FallDir = 1;
+                                //did we hit a ladder?
+                                if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -8)
+                                {
+                                    Climbing = true;
+                                    Jumping = false;
+                                }
+                                else
+                                {
+                                    Climbing = false;
+                                    FallDir = 1;
+                                }
                             }
 
                             break;
@@ -1598,7 +1636,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 4: // NW
-                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7)
+                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7 || IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -8)
                             {
                                 tmpY--;
                                 tmpX--;
@@ -1616,7 +1654,7 @@ namespace Intersect.Client.Entities
                             }
                             break;
                         case 5: // NE
-                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7)
+                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -7 || IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -8)
                             {
                                 tmpY--;
                                 tmpX++;
@@ -1649,6 +1687,7 @@ namespace Intersect.Client.Entities
                                 FallDir = 1;
                             }
                             break;
+
                         case 7: // SE
                             if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1 || IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -7)
                             {
@@ -1781,6 +1820,7 @@ namespace Intersect.Client.Entities
         }
 
         /// <summary>
+        ///     Returns -8 if the tile is blocked by a ladder attribute.
         ///     Returns -7 if the tile is blocked by a platform attribute.
         ///     Returns -6 if the tile is blocked by a global (non-event) entity
         ///     Returns -5 if the tile is completely out of bounds.
@@ -1943,6 +1983,10 @@ namespace Intersect.Client.Entities
                         if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Platform)
                         {
                             return -7;
+                        }
+                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Ladder)
+                        {
+                            return -8;
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
                         {

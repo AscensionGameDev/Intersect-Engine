@@ -39,6 +39,8 @@ namespace Intersect.GameObjects.Maps
                     return new MapSlideAttribute();
                 case MapAttributes.Platform:
                     return new MapPlatformAttribute();
+                case MapAttributes.Ladder:
+                    return new MapLadderAttribute();
             }
 
             return null;
@@ -222,6 +224,11 @@ namespace Intersect.GameObjects.Maps
 
         public override MapAttributes Type { get; } = MapAttributes.Platform;
 
+    }
+
+    public class MapLadderAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Ladder;
     }
 
 }

@@ -26,7 +26,9 @@ namespace Intersect.Enums
 
         Slide,
 
-        Platform
+        Platform,
+
+        Ladder
 
     }
 
