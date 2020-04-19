@@ -10,6 +10,7 @@ namespace Intersect.Updater
     {
         public List<UpdateFile> Files { get; set; } = new List<UpdateFile>();
         public bool TrustCache { get; set; } = true;
+        public bool StreamingEnabled { get; set; }
 
     }
 }

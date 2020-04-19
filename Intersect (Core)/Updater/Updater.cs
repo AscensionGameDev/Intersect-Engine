@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,19 +41,19 @@ namespace Intersect.Updater
         private string mConfigUrl;
         private string mBaseUrl;
 
-        public float Progress => ((float) BytesDownloaded / (float) SizeTotal) * 100f;
+        public float Progress => ((float)BytesDownloaded / (float)SizeTotal) * 100f;
 
-        public int FilesRemaining => mDownloadQueue.Count + 
+        public int FilesRemaining => mDownloadQueue.Count +
                                      mActiveDownloads.Count;
 
-        public long SizeRemaining => SizeTotal - 
+        public long SizeRemaining => SizeTotal -
                                      BytesDownloaded;
 
         public int FilesTotal => mDownloadQueue.Count +
                                  mActiveDownloads.Count +
                                  mCompletedDownloads.Count;
 
-        public long BytesDownloaded => mDownloadedBytes + 
+        public long BytesDownloaded => mDownloadedBytes +
                                        mActiveDownloads.Values.Sum();
 
         public long SizeTotal { get; private set; }
@@ -82,28 +83,27 @@ namespace Intersect.Updater
         }
 
 
-        private void RunUpdates()
+        private async void RunUpdates()
         {
             DeleteOldFiles();
-
 
             //Download Update Config
             using (WebClient wc = new WebClient())
             {
                 try
                 {
-                    mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] {'/'});
-                    mBaseUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[]{'/'});
+                    mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
+                    mBaseUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
                     var uri = new Uri(ClientConfiguration.Instance.UpdateUrl);
 
                     //Specifying update.json themselves or some other file that generates the config... base url needs to be the folder containing it
                     if (Path.HasExtension(uri.AbsolutePath))
                     {
-                        mBaseUrl = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length).TrimEnd(new char[]{'/'});
+                        mBaseUrl = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length).TrimEnd(new char[] { '/' });
                     }
                     else
                     {
-                        mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[]{'/'}) + "/update.json";
+                        mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' }) + "/update.json";
                     }
                     var json = wc.DownloadString(mConfigUrl + "?token=" + Environment.TickCount);
                     mUpdate = JsonConvert.DeserializeObject<Update>(json);
@@ -181,7 +181,7 @@ namespace Intersect.Updater
                                 //If json we will still trust the cache, this might be wrong but given that the client is constantly updating json files we really can't expect the hash to always match
                                 if (mCachedVersion != null && Path.GetExtension(file.Path) == ".json")
                                 {
-                                    var cacheCompare =  mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
+                                    var cacheCompare = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
                                     if (cacheCompare != null)
                                     {
                                         if (cacheCompare.Size == file.Size &&
@@ -259,14 +259,24 @@ namespace Intersect.Updater
 
             Status = UpdateStatus.Updating;
 
-            //Spawn Download Threads
-            var threadCount = Math.Min(mDownloadThreadCount, FilesTotal);
-            mDownloadThreads = new Thread[threadCount];
+            var streamingSuccess = false;
 
-            for (int i = 0; i < threadCount; i++)
+            if (mUpdate.StreamingEnabled)
             {
-                mDownloadThreads[i] = new Thread(DownloadUpdates);
-                mDownloadThreads[i].Start();
+                streamingSuccess = await StreamDownloads();
+            }
+
+            if (!streamingSuccess)
+            {
+                //Spawn Download Threads
+                var threadCount = Math.Min(mDownloadThreadCount, FilesTotal);
+                mDownloadThreads = new Thread[threadCount];
+
+                for (int i = 0; i < threadCount; i++)
+                {
+                    mDownloadThreads[i] = new Thread(DownloadUpdates);
+                    mDownloadThreads[i].Start();
+                }
             }
 
             while (Updating())
@@ -283,7 +293,7 @@ namespace Intersect.Updater
                 mCurrentVersionPath,
                 JsonConvert.SerializeObject(
                     mCurrentVersion, Formatting.Indented,
-                    new JsonSerializerSettings {DefaultValueHandling = DefaultValueHandling.Ignore}
+                    new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }
                 )
             );
 
@@ -311,6 +321,136 @@ namespace Intersect.Updater
 
         }
 
+        private async Task<bool> StreamDownloads()
+        {
+            var client = new HttpClient();
+
+            var files = new List<string>();
+
+            while (!mDownloadQueue.IsEmpty)
+            {
+                if (mDownloadQueue.TryPop(out UpdateFile file))
+                {
+                    files.Add(file.Path);
+                    mActiveDownloads.TryAdd(file,0);
+                }
+            }
+            var msg = new HttpRequestMessage(HttpMethod.Post, mBaseUrl + "/stream.php?token=" + Environment.TickCount)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(files), Encoding.UTF8, "application/json"),
+            };
+            var response = await client.SendAsync(msg, HttpCompletionOption.ResponseHeadersRead);
+
+            using (var str = await response.Content.ReadAsStreamAsync())
+            {
+                try
+                {
+                    using (var br = new BinaryReader(str))
+                    {
+                        while (true)
+                        {
+                            var name = br.ReadString();
+
+                            var file = mActiveDownloads.Keys.FirstOrDefault(f => f.Path == name);
+                            var size = (int)br.ReadInt64();
+
+                            var dataStream = new MemoryStream(size);
+                            var downloaded = 0;
+                            while (downloaded < size)
+                            {
+                                var chunk = 1024 * 1024;
+                                if (downloaded + chunk > size)
+                                {
+                                    chunk = size - downloaded;
+                                }
+                                dataStream.Write(br.ReadBytes(chunk),0,chunk);
+                                downloaded += chunk;
+                                if (file != null)
+                                {
+                                    mActiveDownloads[file] = downloaded;
+                                }
+                            }
+
+                            var data = dataStream.ToArray();
+                            dataStream.Close();
+                            dataStream.Dispose();
+
+                            if (file != null)
+                            {
+                                try
+                                {
+                                    BeforeFileDownload(file);
+                                    CheckFileData(file, data);
+                                    BeforeReplaceFile(file);
+
+
+                                    //Save New File
+                                    File.WriteAllBytes(file.Path, data);
+
+                                    lock (mUpdate)
+                                    {
+                                        mCompletedDownloads.Add(file);
+                                        mActiveDownloads.TryRemove(file, out long val);
+                                        mDownloadedBytes += file.Size;
+
+                                        if (IsUpdaterFile(file.Path))
+                                        {
+                                            mUpdaterContentLoaded = true;
+                                        }
+                                    }
+
+
+                                }
+                                catch (EndOfStreamException eof)
+                                {
+                                    return mDownloadQueue.IsEmpty && mActiveDownloads.IsEmpty;
+                                }
+                                catch (Exception ex)
+                                {
+                                    lock (mUpdate)
+                                    {
+
+                                        mActiveDownloads.TryRemove(file, out long val);
+
+                                        if (mFailedDownloads.ContainsKey(file))
+                                        {
+                                            mFailedDownloads[file]++;
+                                        }
+                                        else
+                                        {
+                                            mFailedDownloads.TryAdd(file, 1);
+                                        }
+
+                                        if (mFailedDownloads[file] > 2)
+                                        {
+                                            Exception = new Exception("[" + file.Path + "] - " + ex.Message, ex);
+                                            mFailed = true;
+                                        }
+                                        else
+                                        {
+                                            mDownloadQueue.Push(file);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (EndOfStreamException eof)
+                {
+                    //Good to go?
+                    //TODO Check if any files are missing, if so return false and let the basic downloader code try to fetch them.
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    //Errored
+                    Log.Error("Failed to download streamed files, failure occured on " );
+                    return false;
+                }
+            }
+        }
+
         private bool Updating()
         {
             lock (mUpdate)
@@ -324,6 +464,7 @@ namespace Intersect.Updater
             while (mDownloadQueue.Count > 0 && !mFailed)
             {
                 UpdateFile file = null;
+                var streamDl = false;
                 lock (mUpdate)
                 {
                     if (mDownloadQueue.TryPop(out file))
@@ -335,75 +476,19 @@ namespace Intersect.Updater
                 if (file != null)
                 {
                     //Download File
-                    var dir = Path.GetDirectoryName(file.Path);
-                    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                    {
-                        Directory.CreateDirectory(dir);
-                    }
+                    BeforeFileDownload(file);
 
                     try
                     {
                         //Use WebClient to Download File To Memory
                         var wc = new WebClient();
-                        wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] =  args.BytesReceived);
+                        wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] = args.BytesReceived);
                         var fileData = await wc.DownloadDataTaskAsync(new Uri(mBaseUrl + "/" + file.Path + "?token=" + Environment.TickCount));
                         wc.Dispose();
 
-                        if (fileData.Length != file.Size)
-                        {
-                            throw new Exception("[File Length Mismatch - Got " + fileData.Length + " bytes, Expected " + file.Size + "]");
-                        }
+                        CheckFileData(file, fileData);
 
-                        //Check MD5
-                        var md5Hash = "";
-                        using (var md5 = MD5.Create())
-                        {
-                            using (var stream = new MemoryStream(fileData))
-                            {
-                                md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
-                            }
-                        }
-
-                        if (md5Hash != file.Hash)
-                        {
-                            throw new Exception("File Hash Mismatch");
-                        }
-
-
-                        //Delete .old first if exists
-                        if (File.Exists(file.Path + ".old"))
-                        {
-                            try
-                            {
-                                File.Delete(file.Path + ".old");
-                            }
-                            catch { }
-                        }
-
-                        //Delete Existing File
-                        if (File.Exists(file.Path))
-                        {
-                            try
-                            {
-                                File.Delete(file.Path);
-                            }
-                            catch
-                            {
-                                try
-                                {
-                                    File.Move(file.Path, file.Path + ".old");
-                                }
-                                catch
-                                {
-                                    throw new Exception("Failed to delete or move existing file!");
-                                }
-                            }
-                        }
-
-                        if (file.Path == Path.GetFileName(Assembly.GetEntryAssembly().Location))
-                        {
-                            ReplacedSelf = true;
-                        }
+                        BeforeReplaceFile(file);
 
                         //Save New File
                         File.WriteAllBytes(file.Path, fileData);
@@ -419,7 +504,7 @@ namespace Intersect.Updater
                                 mUpdaterContentLoaded = true;
                             }
                         }
-                        
+
 
                     }
                     catch (Exception ex)
@@ -427,7 +512,7 @@ namespace Intersect.Updater
                         lock (mUpdate)
                         {
                             mActiveDownloads.TryRemove(file, out long val);
-                            
+
 
                             if (mFailedDownloads.ContainsKey(file))
                             {
@@ -452,6 +537,77 @@ namespace Intersect.Updater
 
                 }
                 Thread.Sleep(10);
+            }
+        }
+
+        private void BeforeFileDownload(UpdateFile file)
+        {
+            //Create any parent directories for this file
+            var dir = Path.GetDirectoryName(file.Path);
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+        }
+
+        private void CheckFileData(UpdateFile file, byte[] fileData)
+        {
+            if (fileData.Length != file.Size)
+            {
+                throw new Exception("[File Length Mismatch - Got " + fileData.Length + " bytes, Expected " + file.Size + "]");
+            }
+
+            //Check MD5
+            var md5Hash = "";
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = new MemoryStream(fileData))
+                {
+                    md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+                }
+            }
+
+            if (md5Hash != file.Hash)
+            {
+                throw new Exception("File Hash Mismatch");
+            }
+        }
+
+        private void BeforeReplaceFile(UpdateFile file)
+        {
+            //Delete .old first if exists
+            if (File.Exists(file.Path + ".old"))
+            {
+                try
+                {
+                    File.Delete(file.Path + ".old");
+                }
+                catch { }
+            }
+
+            //Delete Existing File
+            if (File.Exists(file.Path))
+            {
+                try
+                {
+                    File.Delete(file.Path);
+                }
+                catch
+                {
+                    try
+                    {
+                        File.Move(file.Path, file.Path + ".old");
+                    }
+                    catch
+                    {
+                        throw new Exception("Failed to delete or move existing file!");
+                    }
+                }
+            }
+
+            if (file.Path == Path.GetFileName(Assembly.GetEntryAssembly().Location))
+            {
+                ReplacedSelf = true;
             }
         }
 
@@ -499,9 +655,10 @@ namespace Intersect.Updater
             string[] sizes = { "B", "KB", "MB", "GB", "TB" };
             double len = size;
             int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1) {
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
                 order++;
-                len = len/1024;
+                len = len / 1024;
             }
             return String.Format("{0:0.##} {1} Left", len, sizes[order]);
         }
@@ -520,14 +677,20 @@ namespace Intersect.Updater
 
         public void Stop()
         {
-            foreach (var dlThread in mDownloadThreads)
+            if (mDownloadThreads != null)
             {
-                try
+                foreach (var dlThread in mDownloadThreads)
                 {
-                    dlThread?.Abort();
+                    try
+                    {
+                        dlThread?.Abort();
+                    }
+                    catch
+                    {
+                    }
                 }
-                catch { }
             }
+
             mStopping = true;
         }
     }
