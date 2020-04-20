@@ -42,9 +42,9 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Update.title;
+            Text = Strings.Update.Title;
             lblVersion.Text = Strings.Login.version.ToString(Application.ProductVersion);
-            lblStatus.Text = Strings.Update.checking;
+            lblStatus.Text = Strings.Update.Checking;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -66,21 +66,21 @@ namespace Intersect.Editor.Forms
                 switch (mUpdater.Status)
                 {
                     case UpdateStatus.Checking:
-                        lblStatus.Text = Strings.Update.checking;
+                        lblStatus.Text = Strings.Update.Checking;
                         break;
                     case UpdateStatus.Updating:
                         lblFiles.Show();
                         lblSize.Show();
-                        lblFiles.Text = Strings.Update.files.ToString(mUpdater.FilesRemaining);
-                        lblSize.Text = Strings.Update.size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
-                        lblStatus.Text = Strings.Update.updating.ToString((int)mUpdater.Progress);
+                        lblFiles.Text = Strings.Update.Files.ToString(mUpdater.FilesRemaining);
+                        lblSize.Text = Strings.Update.Size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
+                        lblStatus.Text = Strings.Update.Updating.ToString((int)mUpdater.Progress);
                         progressBar.Value = (int) mUpdater.Progress;
                         break;
                     case UpdateStatus.Restart:
                         lblFiles.Hide();
                         lblSize.Hide();
                         progressBar.Value = 100;
-                        lblStatus.Text = Strings.Update.restart.ToString();
+                        lblStatus.Text = Strings.Update.Restart.ToString();
                         tmrUpdate.Enabled = false;
                         Process.Start(
                             Environment.GetCommandLineArgs()[0],
@@ -96,7 +96,7 @@ namespace Intersect.Editor.Forms
                         lblFiles.Hide();
                         lblSize.Hide();
                         progressBar.Value = 100;
-                        lblStatus.Text = Strings.Update.done;
+                        lblStatus.Text = Strings.Update.Done;
                         tmrUpdate.Enabled = false;
                         Hide();
                         Globals.LoginForm.Show();
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms
                         lblFiles.Hide();
                         lblSize.Hide();
                         progressBar.Value = 100;
-                        lblStatus.Text = Strings.Update.error.ToString(mUpdater.Exception?.Message ?? "");
+                        lblStatus.Text = Strings.Update.Error.ToString(mUpdater.Exception?.Message ?? "");
                         break;
                     case UpdateStatus.None:
                         lblFiles.Hide();

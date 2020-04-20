@@ -4350,46 +4350,46 @@ Negative values for time to flow backwards.";
         public struct Update
         {
 
-            public static LocalizedString title = @"Intersect Editor - Updating";
+            public static LocalizedString Title = @"Intersect Editor - Updating";
 
-            public static LocalizedString checking = @"Checking for updates, please wait!";
+            public static LocalizedString Checking = @"Checking for updates, please wait!";
 
-            public static LocalizedString updating = @"Downloading updates, {00}% done!";
+            public static LocalizedString Updating = @"Downloading updates, {00}% done!";
 
-            public static LocalizedString restart = @"Update complete! Relaunching!";
+            public static LocalizedString Restart = @"Update complete! Relaunching!";
 
-            public static LocalizedString done = @"Update complete! Launching game!";
+            public static LocalizedString Done = @"Update complete! Launching game!";
 
-            public static LocalizedString error = @"Errpr: {00}";
+            public static LocalizedString Error = @"Errpr: {00}";
 
-            public static LocalizedString files = @"{00} Files Remaining";
+            public static LocalizedString Files = @"{00} Files Remaining";
 
-            public static LocalizedString size = @"{00} Left";
+            public static LocalizedString Size = @"{00} Left";
 
-            public static LocalizedString percent = @"{00}%";
+            public static LocalizedString Percent = @"{00}%";
 
         }
 
         public struct UpdatePacking
         {
 
-            public static LocalizedString title = @"Packaging Updater Files, Please Wait!";
+            public static LocalizedString Title = @"Packaging Updater Files, Please Wait!";
 
-            public static LocalizedString deleting = @"Deleting existing or unchanged files..";
+            public static LocalizedString Deleting = @"Deleting existing or unchanged files..";
 
-            public static LocalizedString differential = @"An update already exists in this folder, would you like to generate a differential update (only files that have changed)?";
+            public static LocalizedString Differential = @"An update already exists in this folder, would you like to generate a differential update (only files that have changed)?";
 
-            public static LocalizedString differentialtitle = @"Create differential update?";
+            public static LocalizedString DifferentialTitle = @"Create differential update?";
 
-            public static LocalizedString empty = @"You must select an empty folder, or a folder already containing an Intersect update!";
+            public static LocalizedString Empty = @"You must select an empty folder, or a folder already containing an Intersect update!";
 
-            public static LocalizedString invalidbase = @"You cannot create the update within the editor folder, the update would include itself!";
+            public static LocalizedString InvalidBase = @"You cannot create the update within the editor folder, the update would include itself!";
 
-            public static LocalizedString error = @"Error!";
+            public static LocalizedString Error = @"Error!";
 
-            public static LocalizedString calculating = @"Calculating checksums, and creating update list...";
+            public static LocalizedString Calculating = @"Calculating checksums, and creating update list...";
 
-            public static LocalizedString done = @"Done!";
+            public static LocalizedString Done = @"Done!";
 
         }
 

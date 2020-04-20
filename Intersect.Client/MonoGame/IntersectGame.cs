@@ -337,27 +337,27 @@ namespace Intersect.Client.MonoGame
             switch (mUpdater.Status)
             {
                 case UpdateStatus.Checking:
-                    status = Strings.Update.checking;
+                    status = Strings.Update.Checking;
                     break;
                 case UpdateStatus.Updating:
-                    status = Strings.Update.updating;
+                    status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.percent.ToString((int)mUpdater.Progress);
+                    progress = Strings.Update.Percent.ToString((int)mUpdater.Progress);
                     filesRemaining = mUpdater.FilesRemaining + " Files Remaining";
                     sizeRemaining = mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining) + " Left";
                     break;
                 case UpdateStatus.Restart:
-                    status = Strings.Update.restart.ToString(Strings.Main.gamename);
+                    status = Strings.Update.Restart.ToString(Strings.Main.gamename);
                     progressPercent = 100;
-                    progress = Strings.Update.percent.ToString(100);
+                    progress = Strings.Update.Percent.ToString(100);
                     break;
                 case UpdateStatus.Done:
-                    status = Strings.Update.done;
+                    status = Strings.Update.Done;
                     progressPercent = 100;
-                    progress = Strings.Update.percent.ToString(100);
+                    progress = Strings.Update.Percent.ToString(100);
                     break;
                 case UpdateStatus.Error:
-                    status = Strings.Update.error;
+                    status = Strings.Update.Error;
                     progress = mUpdater.Exception?.Message ?? "";
                     progressPercent = 100;
                     break;

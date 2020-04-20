@@ -1756,7 +1756,7 @@ namespace Intersect.Editor.Forms
                     {
                         //Error, cannot be put within editor folder else it would try to include itself?
                         MessageBox.Show(
-                            Strings.UpdatePacking.invalidbase, Strings.UpdatePacking.error, MessageBoxButtons.OK
+                            Strings.UpdatePacking.InvalidBase, Strings.UpdatePacking.Error, MessageBoxButtons.OK
                         );
                         return;
                     }
@@ -1766,7 +1766,7 @@ namespace Intersect.Editor.Forms
                     {
                         //Existing update! Offer to create a differential folder where the only files within will be those that have changed
                         if (MessageBox.Show(
-                                Strings.UpdatePacking.differential, Strings.UpdatePacking.differentialtitle,
+                                Strings.UpdatePacking.Differential, Strings.UpdatePacking.DifferentialTitle,
                                 MessageBoxButtons.YesNo
                             ) ==
                             DialogResult.Yes)
@@ -1780,15 +1780,15 @@ namespace Intersect.Editor.Forms
                         {
                             //Folder must be empty!
                             MessageBox.Show(
-                                Strings.UpdatePacking.empty, Strings.UpdatePacking.error, MessageBoxButtons.OK
+                                Strings.UpdatePacking.Empty, Strings.UpdatePacking.Error, MessageBoxButtons.OK
                             );
                             return;
                         }
                     }
                     
                     Globals.UpdateCreationProgressForm = new FrmProgress();
-                    Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.title);
-                    Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.deleting,10,false);
+                    Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.Title);
+                    Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Deleting,10,false);
                     var packingthread = new Thread(() => createUpdate(fbd.SelectedPath, existingUpdate));
                     packingthread.Start();
                     Globals.UpdateCreationProgressForm.ShowDialog();
@@ -1907,7 +1907,7 @@ namespace Intersect.Editor.Forms
                 var outofeighty = (int)(percentage * 80f);
 
                 Globals.UpdateCreationProgressForm.SetProgress(
-                    Strings.UpdatePacking.calculating, outofeighty + 10, false
+                    Strings.UpdatePacking.Calculating, outofeighty + 10, false
                 );
 
                 Application.DoEvents();
@@ -1928,7 +1928,7 @@ namespace Intersect.Editor.Forms
 
             if (path == Directory.GetCurrentDirectory())
             {
-                Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.done, 100, false);
+                Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Done, 100, false);
                 Application.DoEvents();
                 System.Threading.Thread.Sleep(1000);
 
