@@ -8,6 +8,7 @@
         Shoot,
         Cast,
         Weapon,
+        Jump
     }
 
 

@@ -1429,6 +1429,10 @@ namespace Intersect.Client.Entities
             var tmpY = (sbyte)Y;
             Entity blockedBy = null;
 
+            if (OnGround())
+            {
+                Globals.Me.Jumping = false;
+            }
             //should we be falling?
             if (OnGround() == false && Globals.Me.Jumping == false && Globals.Me.Climbing == false)
             {
@@ -1443,7 +1447,7 @@ namespace Intersect.Client.Entities
             //We are falling
             if (Globals.Me.Falling == true)
             {
-                Jumping = false;
+                Globals.Me.Jumping = false;
 
                 //if we dont check if we are on thr ground, we cant land on the ground
                 if (OnGround() == false)
@@ -1509,7 +1513,7 @@ namespace Intersect.Client.Entities
             {
                 if (JumpHeight >= Globals.JumpHeight)
                 {
-                    Jumping = false;
+                    Globals.Me.Jumping = false;
                     
                     JumpHeight = 0;
 
@@ -1576,11 +1580,12 @@ namespace Intersect.Client.Entities
                                 if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -8)
                                 {
                                     Climbing = true;
-                                    Jumping = false;
+                                    Globals.Me.Jumping = false;
                                 }
                                 else
                                 {
                                     Climbing = false;
+                                    Globals.Me.Jumping = true;
                                     JumpHeight++;
                                     JumpDir = 0;
                                 }
@@ -1588,6 +1593,7 @@ namespace Intersect.Client.Entities
                             else
                             {
                                 JumpHeight = Globals.JumpHeight;
+                                Globals.Me.Jumping = false;
                             }
 
                             break;
@@ -1603,7 +1609,7 @@ namespace Intersect.Client.Entities
                                 if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -8)
                                 {
                                     Climbing = true;
-                                    Jumping = false;
+                                    Globals.Me.Jumping = false;
                                 }
                                 else
                                 {
@@ -1642,6 +1648,7 @@ namespace Intersect.Client.Entities
                                 tmpX--;
                                 Dir = 4;
                                 IsMoving = true;
+                                Globals.Me.Jumping = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = Options.TileWidth;
                                 JumpHeight++;
@@ -1651,6 +1658,7 @@ namespace Intersect.Client.Entities
                             {
                                 JumpHeight = Globals.JumpHeight;
                                 JumpDir = -1;
+                                Globals.Me.Jumping = false;
                             }
                             break;
                         case 5: // NE
@@ -1660,6 +1668,7 @@ namespace Intersect.Client.Entities
                                 tmpX++;
                                 Dir = 5;
                                 IsMoving = true;
+                                Globals.Me.Jumping = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
                                 JumpHeight++;
@@ -1669,6 +1678,7 @@ namespace Intersect.Client.Entities
                             {
                                 JumpHeight = Globals.JumpHeight;
                                 JumpDir = -1;
+                                Globals.Me.Jumping = false;
                             }
                             break;
                         case 6: // SW

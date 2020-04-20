@@ -927,11 +927,25 @@ namespace Intersect.Client.Entities
                 switch (Dir)
                 {
                     case 0: // Up
-                        d = lastDir;
+                        if(Globals.Me.Climbing == true)
+                        {
+                            d = 0;
+                        }
+                        else
+                        {
+                            d = lastDir;
+                        }
 
                         break;
                     case 1: // Down
-                        d = lastDir;
+                        if (Globals.Me.Climbing == true)
+                        {
+                            d = 3;
+                        }
+                        else
+                        {
+                            d = lastDir;
+                        }
 
                         break;
                     case 2: // Left
@@ -999,6 +1013,25 @@ namespace Intersect.Client.Entities
                             srcRectangle = new FloatRect(
                                 WalkFrame * (int) texture.GetWidth() / 4, d * (int) texture.GetHeight() / 4,
                                 (int) texture.GetWidth() / 4, (int) texture.GetHeight() / 4
+                            );
+                        }
+                    }
+                    else if (SpriteAnimation == SpriteAnimations.Jump)
+                    {
+                        var attackTime = CalculateAttackTime();
+                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                        {
+                            srcRectangle = new FloatRect(
+                                3 * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                                (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                            );
+                        }
+                        else
+                        {
+                            //Restore Original Attacking/Blocking Code
+                            srcRectangle = new FloatRect(
+                                WalkFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                                (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
                             );
                         }
                     }
@@ -1186,6 +1219,23 @@ namespace Intersect.Client.Entities
                         srcRectangle = new FloatRect(
                             WalkFrame * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
                             (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
+                        );
+                    }
+                }
+                else if (SpriteAnimation == SpriteAnimations.Jump)
+                {
+                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                    {
+                        srcRectangle = new FloatRect(
+                            3 * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4,
+                            (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4
+                        );
+                    }
+                    else
+                    {
+                        srcRectangle = new FloatRect(
+                            WalkFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4,
+                            (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4
                         );
                     }
                 }
@@ -1739,10 +1789,21 @@ namespace Intersect.Client.Entities
             }
 
             SpriteAnimation = AnimatedTextures[SpriteAnimations.Idle] != null && LastActionTime + TimeBeforeIdling < Globals.System.GetTimeMs() ? SpriteAnimations.Idle : SpriteAnimations.Normal;
-            if (IsMoving)
+
+            
+            if (IsMoving) //Moving
             {
-                SpriteAnimation = SpriteAnimations.Normal;
-                LastActionTime = Globals.System.GetTimeMs();
+                Console.WriteLine(Globals.Me.Jumping);
+                if (Globals.Me.Jumping == true || Globals.Me.Falling == true) //Jumping
+                {
+                    SpriteAnimation = SpriteAnimations.Jump;
+                    LastActionTime = Globals.System.GetTimeMs();
+                }
+                else
+                {
+                    SpriteAnimation = SpriteAnimations.Normal;
+                    LastActionTime = Globals.System.GetTimeMs();
+                }
             }
             else if (AttackTimer > Globals.System.GetTimeMs()) //Attacking
             {
