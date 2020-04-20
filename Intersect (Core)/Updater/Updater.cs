@@ -643,6 +643,8 @@ namespace Intersect.Updater
                     return true;
                 case "resources/updater/font.xnb":
                     return true;
+                case "resources/updater/fontsmall.xnb":
+                    return true;
                 case "resources/updater/progressbar.png":
                     return true;
                 default:
