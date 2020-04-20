@@ -1750,22 +1750,53 @@ namespace Intersect.Editor.Forms
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    if (MessageBox.Show("Existing files in this folder will be deleted! Continue?","Warning!", MessageBoxButtons.YesNoCancel,MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                    Uri baseDir = new Uri(Directory.GetCurrentDirectory());
+                    Uri selectedDir = new Uri(fbd.SelectedPath);
+                    if (baseDir.IsBaseOf(selectedDir))
                     {
-
-                        Globals.UpdateCreationProgressForm = new FrmProgress();
-                        Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.title);
-                        Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.deleting,10,false);
-                        var packingthread = new Thread(() => createUpdate(fbd.SelectedPath));
-                        packingthread.Start();
-                        Globals.UpdateCreationProgressForm.ShowDialog();
-                       
+                        //Error, cannot be put within editor folder else it would try to include itself?
+                        MessageBox.Show(
+                            Strings.UpdatePacking.invalidbase, Strings.UpdatePacking.error, MessageBoxButtons.OK
+                        );
+                        return;
                     }
+
+                    Update existingUpdate = null;
+                    if (Directory.Exists(fbd.SelectedPath) && File.Exists(Path.Combine(fbd.SelectedPath, "update.json")))
+                    {
+                        //Existing update! Offer to create a differential folder where the only files within will be those that have changed
+                        if (MessageBox.Show(
+                                Strings.UpdatePacking.differential, Strings.UpdatePacking.differentialtitle,
+                                MessageBoxButtons.YesNo
+                            ) ==
+                            DialogResult.Yes)
+                        {
+                            existingUpdate = JsonConvert.DeserializeObject<Update>(File.ReadAllText(Path.Combine(fbd.SelectedPath, "update.json")));
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.EnumerateFileSystemEntries(fbd.SelectedPath).Any())
+                        {
+                            //Folder must be empty!
+                            MessageBox.Show(
+                                Strings.UpdatePacking.empty, Strings.UpdatePacking.error, MessageBoxButtons.OK
+                            );
+                            return;
+                        }
+                    }
+                    
+                    Globals.UpdateCreationProgressForm = new FrmProgress();
+                    Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.title);
+                    Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.deleting,10,false);
+                    var packingthread = new Thread(() => createUpdate(fbd.SelectedPath, existingUpdate));
+                    packingthread.Start();
+                    Globals.UpdateCreationProgressForm.ShowDialog();
                 }
             }
         }
 
-        private void createUpdate(string path)
+        private void createUpdate(string path, Update existingUpdate)
         {
             if (!Directory.Exists(path))
             {
@@ -1812,16 +1843,12 @@ namespace Intersect.Editor.Forms
                 var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
 
                 var update = new Update();
-                queryFilesForUpdate(update, excludeFiles, clientExcludeFiles.ToArray(), excludeExtensions, excludeDirectories, Directory.GetCurrentDirectory(), Directory.GetCurrentDirectory(), path, 0, fileCount);
+                queryFilesForUpdate(update, excludeFiles, clientExcludeFiles.ToArray(), excludeExtensions, excludeDirectories, Directory.GetCurrentDirectory(), Directory.GetCurrentDirectory(), path, 0, fileCount, existingUpdate);
 
-            }
-            else
-            {
-                //Error, no directory1
             }
         }
 
-        private int queryFilesForUpdate(Update update, string[] excludeFiles, string[] clientExcludeFiles, string[] excludeExtensions, string[] excludeDirectories, string workingDirectory, string path, string updatePath, int filesProcessed, int fileCount)
+        private int queryFilesForUpdate(Update update, string[] excludeFiles, string[] clientExcludeFiles, string[] excludeExtensions, string[] excludeDirectories, string workingDirectory, string path, string updatePath, int filesProcessed, int fileCount, Update existingUpdate)
         {
             DirectoryInfo di = new DirectoryInfo(path);
             Uri workingDir = new Uri(workingDirectory + "/");
@@ -1849,16 +1876,24 @@ namespace Intersect.Editor.Forms
 
                     update.Files.Add(updateFile);
 
-                    //Copy File
-                    var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(path + "/")).ToString().Replace('\\','/'));
-                    if (!string.IsNullOrEmpty(relativeFolder))
+                    //Copy File (If not in existing update)
+                    UpdateFile existingFile = null;
+                    if (existingUpdate != null)
                     {
-                        Directory.CreateDirectory(Path.Combine(updatePath, relativeFolder));
-                        File.Copy(file.FullName, Path.Combine(updatePath, relativeFolder, file.Name));
+                        existingFile = existingUpdate.Files.FirstOrDefault(f => f.Path == updateFile.Path);
                     }
-                    else
-                    {
-                        File.Copy(file.FullName, Path.Combine(updatePath, file.Name));
+
+                    if (existingFile == null || existingFile.Size != updateFile.Size || existingFile.Hash != updateFile.Hash) { 
+                        var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(path + "/")).ToString().Replace('\\','/'));
+                        if (!string.IsNullOrEmpty(relativeFolder))
+                        {
+                            Directory.CreateDirectory(Path.Combine(updatePath, relativeFolder));
+                            File.Copy(file.FullName, Path.Combine(updatePath, relativeFolder, file.Name));
+                        }
+                        else
+                        {
+                            File.Copy(file.FullName, Path.Combine(updatePath, file.Name));
+                        }
                     }
                 }
                 else
@@ -1883,7 +1918,7 @@ namespace Intersect.Editor.Forms
                 string relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(path, dir.Name))).ToString().Replace('\\', '/'));
                 if (!excludeDirectories.Contains(relativePath))
                 {
-                    filesProcessed = queryFilesForUpdate(update,excludeFiles, clientExcludeFiles, excludeExtensions,excludeFiles,workingDirectory,Path.Combine(path,dir.Name), updatePath, filesProcessed, fileCount);
+                    filesProcessed = queryFilesForUpdate(update,excludeFiles, clientExcludeFiles, excludeExtensions,excludeFiles,workingDirectory,Path.Combine(path,dir.Name), updatePath, filesProcessed, fileCount, existingUpdate);
                 }
                 else
                 {

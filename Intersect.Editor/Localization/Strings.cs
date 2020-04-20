@@ -4373,13 +4373,23 @@ Negative values for time to flow backwards.";
         public struct UpdatePacking
         {
 
-            public static LocalizedString title = "Packaging Updater Files, Please Wait!";
+            public static LocalizedString title = @"Packaging Updater Files, Please Wait!";
 
-            public static LocalizedString deleting = "Deleting existing files..";
+            public static LocalizedString deleting = @"Deleting existing or unchanged files..";
 
-            public static LocalizedString calculating = "Calculating checksums, and creating update list...";
+            public static LocalizedString differential = @"An update already exists in this folder, would you like to generate a differential update (only files that have changed)?";
 
-            public static LocalizedString done = "Done!";
+            public static LocalizedString differentialtitle = @"Create differential update?";
+
+            public static LocalizedString empty = @"You must select an empty folder, or a folder already containing an Intersect update!";
+
+            public static LocalizedString invalidbase = @"You cannot create the update within the editor folder, the update would include itself!";
+
+            public static LocalizedString error = @"Error!";
+
+            public static LocalizedString calculating = @"Calculating checksums, and creating update list...";
+
+            public static LocalizedString done = @"Done!";
 
         }
 
