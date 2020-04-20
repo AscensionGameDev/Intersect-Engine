@@ -261,7 +261,7 @@ namespace Intersect.Updater
 
             var streamingSuccess = false;
 
-            if (mUpdate.StreamingEnabled)
+            if (!string.IsNullOrWhiteSpace(mUpdate.StreamingUrl))
             {
                 streamingSuccess = await StreamDownloads();
             }
@@ -335,7 +335,7 @@ namespace Intersect.Updater
                     mActiveDownloads.TryAdd(file,0);
                 }
             }
-            var msg = new HttpRequestMessage(HttpMethod.Post, mBaseUrl + "/stream.php?token=" + Environment.TickCount)
+            var msg = new HttpRequestMessage(HttpMethod.Post, mUpdate.StreamingUrl + "?token=" + Environment.TickCount)
             {
                 Content = new StringContent(JsonConvert.SerializeObject(files), Encoding.UTF8, "application/json"),
             };
