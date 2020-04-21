@@ -1750,8 +1750,8 @@ namespace Intersect.Editor.Forms
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    Uri baseDir = new Uri(Directory.GetCurrentDirectory());
-                    Uri selectedDir = new Uri(fbd.SelectedPath);
+                    Uri baseDir = new Uri(Directory.GetCurrentDirectory() + "\\");
+                    Uri selectedDir = new Uri(fbd.SelectedPath + "\\");
                     if (baseDir.IsBaseOf(selectedDir))
                     {
                         //Error, cannot be put within editor folder else it would try to include itself?
