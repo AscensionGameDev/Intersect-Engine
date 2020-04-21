@@ -4346,6 +4346,52 @@ Negative values for time to flow backwards.";
             public static LocalizedString to = @"to";
 
         }
+        
+        public struct Update
+        {
+
+            public static LocalizedString Title = @"Intersect Editor - Updating";
+
+            public static LocalizedString Checking = @"Checking for updates, please wait!";
+
+            public static LocalizedString Updating = @"Downloading updates, {00}% done!";
+
+            public static LocalizedString Restart = @"Update complete! Relaunching!";
+
+            public static LocalizedString Done = @"Update complete! Launching game!";
+
+            public static LocalizedString Error = @"Errpr: {00}";
+
+            public static LocalizedString Files = @"{00} Files Remaining";
+
+            public static LocalizedString Size = @"{00} Left";
+
+            public static LocalizedString Percent = @"{00}%";
+
+        }
+
+        public struct UpdatePacking
+        {
+
+            public static LocalizedString Title = @"Packaging Updater Files, Please Wait!";
+
+            public static LocalizedString Deleting = @"Deleting existing or unchanged files..";
+
+            public static LocalizedString Differential = @"An update already exists in this folder, would you like to generate a differential update (only files that have changed)?";
+
+            public static LocalizedString DifferentialTitle = @"Create differential update?";
+
+            public static LocalizedString Empty = @"You must select an empty folder, or a folder already containing an Intersect update!";
+
+            public static LocalizedString InvalidBase = @"You cannot create the update within the editor folder, the update would include itself!";
+
+            public static LocalizedString Error = @"Error!";
+
+            public static LocalizedString Calculating = @"Calculating checksums, and creating update list...";
+
+            public static LocalizedString Done = @"Done!";
+
+        }
 
         public struct Warping
         {

@@ -477,6 +477,10 @@
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
     <Compile Include="Threading\Threaded.cs" />
+    <Compile Include="Updater\Update.cs" />
+    <Compile Include="Updater\UpdateFile.cs" />
+    <Compile Include="Updater\Updater.cs" />
+    <Compile Include="Updater\UpdateStatus.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\DatabaseUtils.cs" />
     <Compile Include="Utilities\ExperienceCurve.cs" />
