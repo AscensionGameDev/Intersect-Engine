@@ -648,9 +648,24 @@ namespace Intersect.Client.Entities
 
             CalculateCenterPos();
 
+            List<Animation> animsToRemove = null;
             foreach (var animInstance in Animations)
             {
                 animInstance.Update();
+
+                //If disposed mark to be removed and continue onward
+                if (animInstance.Disposed())
+                {
+                    if (animsToRemove == null)
+                    {
+                        animsToRemove = new List<Animation>();
+                    }
+
+                    animsToRemove.Add(animInstance);
+
+                    continue;
+                }
+
                 if (IsStealthed())
                 {
                     animInstance.Hide();
@@ -673,6 +688,14 @@ namespace Intersect.Client.Entities
                         (int) Math.Ceiling(GetCenterPos().X), (int) Math.Ceiling(GetCenterPos().Y), X, Y, CurrentMap,
                         -1, Z
                     );
+                }
+            }
+
+            if (animsToRemove != null)
+            {
+                foreach (var anim in animsToRemove)
+                {
+                    Animations.Remove(anim);
                 }
             }
 
