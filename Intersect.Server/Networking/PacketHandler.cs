@@ -2150,176 +2150,179 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var newMap = Guid.Empty;
-            var tmpMap = new MapInstance(true);
-            if (!packet.AttachedToMap)
+            lock (ServerLoop.Lock)
             {
-                var destType = (int) packet.MapListParentType;
-                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                tmpMap = MapInstance.Get(newMap);
-                DbInterface.GenerateMapGrids();
-                PacketSender.SendMap(client, newMap, true);
-                PacketSender.SendMapGridToAll(tmpMap.MapGrid);
-
-                //FolderDirectory parent = null;
-                destType = -1;
-                if (destType == -1)
+                var newMap = Guid.Empty;
+                var tmpMap = new MapInstance(true);
+                if (!packet.AttachedToMap)
                 {
-                    MapList.List.AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
-                }
-
-                DbInterface.SaveGameDatabase();
-                PacketSender.SendMapListToAll();
-                /*else if (destType == 0)
-                {
-                    parent = Database.MapStructure.FindDir(bf.ReadInteger());
-                    if (parent == null)
-                    {
-                        Database.MapStructure.AddMap(newMap);
-                    }
-                    else
-                    {
-                        parent.Children.AddMap(newMap);
-                    }
-                }
-                else if (destType == 1)
-                {
-                    var mapNum = bf.ReadInteger();
-                    parent = Database.MapStructure.FindMapParent(mapNum, null);
-                    if (parent == null)
-                    {
-                        Database.MapStructure.AddMap(newMap);
-                    }
-                    else
-                    {
-                        parent.Children.AddMap(newMap);
-                    }
-                }*/
-            }
-            else
-            {
-                var relativeMap = packet.MapId;
-                switch (packet.AttachDir)
-                {
-                    case 0:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap).Up) == null)
-                        {
-                            newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Get(newMap);
-                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
-                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY - 1;
-                            MapInstance.Get(relativeMap).Up = newMap;
-                        }
-
-                        break;
-
-                    case 1:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap).Down) == null)
-                        {
-                            newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Get(newMap);
-                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
-                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY + 1;
-                            MapInstance.Get(relativeMap).Down = newMap;
-                        }
-
-                        break;
-
-                    case 2:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap).Left) == null)
-                        {
-                            newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Get(newMap);
-                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX - 1;
-                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                            MapInstance.Get(relativeMap).Left = newMap;
-                        }
-
-                        break;
-
-                    case 3:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap).Right) == null)
-                        {
-                            newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Get(newMap);
-                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX + 1;
-                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                            MapInstance.Get(relativeMap).Right = newMap;
-                        }
-
-                        break;
-                }
-
-                if (newMap != Guid.Empty)
-                {
-                    var grid = DbInterface.GetGrid(tmpMap.MapGrid);
-                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < grid.Width)
-                    {
-                        if (tmpMap.MapGridY + 1 < grid.Height)
-                        {
-                            tmpMap.Down = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
-
-                            if (tmpMap.Down != Guid.Empty)
-                            {
-                                MapInstance.Get(tmpMap.Down).Up = newMap;
-                            }
-                        }
-
-                        if (tmpMap.MapGridY - 1 >= 0)
-                        {
-                            tmpMap.Up = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
-
-                            if (tmpMap.Up != Guid.Empty)
-                            {
-                                MapInstance.Get(tmpMap.Up).Down = newMap;
-                            }
-                        }
-                    }
-
-                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < grid.Height)
-                    {
-                        if (tmpMap.MapGridX - 1 >= 0)
-                        {
-                            tmpMap.Left = grid.MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
-
-                            if (tmpMap.Left != Guid.Empty)
-                            {
-                                MapInstance.Get(tmpMap.Left).Right = newMap;
-                            }
-                        }
-
-                        if (tmpMap.MapGridX + 1 < grid.Width)
-                        {
-                            tmpMap.Right = grid.MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
-
-                            if (tmpMap.Right != Guid.Empty)
-                            {
-                                MapInstance.Get(tmpMap.Right).Left = newMap;
-                            }
-                        }
-                    }
-
-                    DbInterface.SaveGameDatabase();
+                    var destType = (int) packet.MapListParentType;
+                    newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
+                    tmpMap = MapInstance.Get(newMap);
                     DbInterface.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap, true);
-                    PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
-                    PacketSender.SendEnterMap(client, newMap);
-                    var folderDir = MapList.List.FindMapParent(relativeMap, null);
-                    if (folderDir != null)
+                    PacketSender.SendMapGridToAll(tmpMap.MapGrid);
+
+                    //FolderDirectory parent = null;
+                    destType = -1;
+                    if (destType == -1)
                     {
-                        folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
-                    }
-                    else
-                    {
-                        MapList.List.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                        MapList.List.AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
                     }
 
                     DbInterface.SaveGameDatabase();
                     PacketSender.SendMapListToAll();
+                    /*else if (destType == 0)
+                    {
+                        parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                        if (parent == null)
+                        {
+                            Database.MapStructure.AddMap(newMap);
+                        }
+                        else
+                        {
+                            parent.Children.AddMap(newMap);
+                        }
+                    }
+                    else if (destType == 1)
+                    {
+                        var mapNum = bf.ReadInteger();
+                        parent = Database.MapStructure.FindMapParent(mapNum, null);
+                        if (parent == null)
+                        {
+                            Database.MapStructure.AddMap(newMap);
+                        }
+                        else
+                        {
+                            parent.Children.AddMap(newMap);
+                        }
+                    }*/
+                }
+                else
+                {
+                    var relativeMap = packet.MapId;
+                    switch (packet.AttachDir)
+                    {
+                        case 0:
+                            if (MapInstance.Get(MapInstance.Get(relativeMap).Up) == null)
+                            {
+                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
+                                tmpMap = MapInstance.Get(newMap);
+                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
+                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY - 1;
+                                MapInstance.Get(relativeMap).Up = newMap;
+                            }
+
+                            break;
+
+                        case 1:
+                            if (MapInstance.Get(MapInstance.Get(relativeMap).Down) == null)
+                            {
+                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
+                                tmpMap = MapInstance.Get(newMap);
+                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
+                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY + 1;
+                                MapInstance.Get(relativeMap).Down = newMap;
+                            }
+
+                            break;
+
+                        case 2:
+                            if (MapInstance.Get(MapInstance.Get(relativeMap).Left) == null)
+                            {
+                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
+                                tmpMap = MapInstance.Get(newMap);
+                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX - 1;
+                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
+                                MapInstance.Get(relativeMap).Left = newMap;
+                            }
+
+                            break;
+
+                        case 3:
+                            if (MapInstance.Get(MapInstance.Get(relativeMap).Right) == null)
+                            {
+                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
+                                tmpMap = MapInstance.Get(newMap);
+                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX + 1;
+                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
+                                MapInstance.Get(relativeMap).Right = newMap;
+                            }
+
+                            break;
+                    }
+
+                    if (newMap != Guid.Empty)
+                    {
+                        var grid = DbInterface.GetGrid(tmpMap.MapGrid);
+                        if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < grid.Width)
+                        {
+                            if (tmpMap.MapGridY + 1 < grid.Height)
+                            {
+                                tmpMap.Down = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+
+                                if (tmpMap.Down != Guid.Empty)
+                                {
+                                    MapInstance.Get(tmpMap.Down).Up = newMap;
+                                }
+                            }
+
+                            if (tmpMap.MapGridY - 1 >= 0)
+                            {
+                                tmpMap.Up = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+
+                                if (tmpMap.Up != Guid.Empty)
+                                {
+                                    MapInstance.Get(tmpMap.Up).Down = newMap;
+                                }
+                            }
+                        }
+
+                        if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < grid.Height)
+                        {
+                            if (tmpMap.MapGridX - 1 >= 0)
+                            {
+                                tmpMap.Left = grid.MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+
+                                if (tmpMap.Left != Guid.Empty)
+                                {
+                                    MapInstance.Get(tmpMap.Left).Right = newMap;
+                                }
+                            }
+
+                            if (tmpMap.MapGridX + 1 < grid.Width)
+                            {
+                                tmpMap.Right = grid.MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+
+                                if (tmpMap.Right != Guid.Empty)
+                                {
+                                    MapInstance.Get(tmpMap.Right).Left = newMap;
+                                }
+                            }
+                        }
+
+                        DbInterface.SaveGameDatabase();
+                        DbInterface.GenerateMapGrids();
+                        PacketSender.SendMap(client, newMap, true);
+                        PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
+                        PacketSender.SendEnterMap(client, newMap);
+                        var folderDir = MapList.List.FindMapParent(relativeMap, null);
+                        if (folderDir != null)
+                        {
+                            folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                        }
+                        else
+                        {
+                            MapList.List.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                        }
+
+                        DbInterface.SaveGameDatabase();
+                        PacketSender.SendMapListToAll();
+                    }
                 }
             }
         }
@@ -2404,16 +2407,19 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        mapId = packet.TargetId;
-                        var players = MapInstance.Get(mapId).GetPlayersOnMap();
-                        MapList.List.DeleteMap(mapId);
-                        DbInterface.DeleteGameObject(MapInstance.Get(mapId));
-                        DbInterface.SaveGameDatabase();
-                        DbInterface.GenerateMapGrids();
-                        PacketSender.SendMapListToAll();
-                        foreach (var plyr in players)
+                        lock (ServerLoop.Lock)
                         {
-                            plyr.WarpToSpawn();
+                            mapId = packet.TargetId;
+                            var players = MapInstance.Get(mapId).GetPlayersOnMap();
+                            MapList.List.DeleteMap(mapId);
+                            DbInterface.DeleteGameObject(MapInstance.Get(mapId));
+                            DbInterface.SaveGameDatabase();
+                            DbInterface.GenerateMapGrids();
+                            PacketSender.SendMapListToAll();
+                            foreach (var plyr in players)
+                            {
+                                plyr.WarpToSpawn();
+                            }
                         }
 
                         PacketSender.SendMapToEditors(mapId);
@@ -2441,47 +2447,51 @@ namespace Intersect.Server.Networking
             {
                 if (client.IsEditor)
                 {
-                    var map = MapInstance.Get(mapId);
-                    if (map != null)
+                    lock (ServerLoop.Lock)
                     {
-                        map.ClearConnections();
-
-                        var grid = DbInterface.GetGrid(map.MapGrid);
-                        var gridX = map.MapGridX;
-                        var gridY = map.MapGridY;
-
-                        //Up
-                        if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
+                        var map = MapInstance.Get(mapId);
+                        if (map != null)
                         {
-                            MapInstance.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
+                            map.ClearConnections();
+
+                            var grid = DbInterface.GetGrid(map.MapGrid);
+                            var gridX = map.MapGridX;
+                            var gridY = map.MapGridY;
+
+                            //Up
+                            if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
+                            {
+                                MapInstance.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
+                            }
+
+                            //Down
+                            if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
+                            {
+                                MapInstance.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
+                            }
+
+                            //Left
+                            if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
+                            {
+                                MapInstance.Get(grid.MyGrid[gridX - 1, gridY])
+                                    ?.ClearConnections((int) Directions.Right);
+                            }
+
+                            //Right
+                            if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
+                            {
+                                MapInstance.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
+                            }
+
+                            DbInterface.GenerateMapGrids();
+                            if (MapInstance.Lookup.Keys.Contains(curMapId))
+                            {
+                                mapGrid = MapInstance.Get(curMapId).MapGrid;
+                            }
                         }
 
-                        //Down
-                        if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
-                        {
-                            MapInstance.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
-                        }
-
-                        //Left
-                        if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
-                        {
-                            MapInstance.Get(grid.MyGrid[gridX - 1, gridY])?.ClearConnections((int) Directions.Right);
-                        }
-
-                        //Right
-                        if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
-                        {
-                            MapInstance.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
-                        }
-
-                        DbInterface.GenerateMapGrids();
-                        if (MapInstance.Lookup.Keys.Contains(curMapId))
-                        {
-                            mapGrid = MapInstance.Get(curMapId).MapGrid;
-                        }
+                        PacketSender.SendMapGridToAll(mapGrid);
                     }
-
-                    PacketSender.SendMapGridToAll(mapGrid);
                 }
             }
         }
@@ -2502,97 +2512,100 @@ namespace Intersect.Server.Networking
             long gridY = packet.GridY;
             var canLink = true;
 
-            if (adjacentMap != null && linkMap != null)
-            {
-                //Clear to test if we can link.
-                var linkGrid = DbInterface.GetGrid(linkMap.MapGrid);
-                var adjacentGrid = DbInterface.GetGrid(adjacentMap.MapGrid);
-                if (linkGrid != adjacentGrid && linkGrid != null && adjacentGrid != null)
+            lock (ServerLoop.Lock) 
+            { 
+                if (adjacentMap != null && linkMap != null)
                 {
-                    var xOffset = linkMap.MapGridX - gridX;
-                    var yOffset = linkMap.MapGridY - gridY;
-                    for (var x = 0; x < adjacentGrid.Width; x++)
+                    //Clear to test if we can link.
+                    var linkGrid = DbInterface.GetGrid(linkMap.MapGrid);
+                    var adjacentGrid = DbInterface.GetGrid(adjacentMap.MapGrid);
+                    if (linkGrid != adjacentGrid && linkGrid != null && adjacentGrid != null)
                     {
-                        for (var y = 0; y < adjacentGrid.Height; y++)
+                        var xOffset = linkMap.MapGridX - gridX;
+                        var yOffset = linkMap.MapGridY - gridY;
+                        for (var x = 0; x < adjacentGrid.Width; x++)
                         {
-                            if (x + xOffset >= 0 &&
-                                x + xOffset < linkGrid.Width &&
-                                y + yOffset >= 0 &&
-                                y + yOffset < linkGrid.Height)
-                            {
-                                if (adjacentGrid.MyGrid[x, y] != Guid.Empty &&
-                                    linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
-                                {
-                                    //Incompatible Link!
-                                    PacketSender.SendError(client,
-                                        Strings.Mapping.linkfailerror.ToString(
-                                            MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
-                                            MapBase.GetName(adjacentGrid.MyGrid[x, y]),
-                                            MapBase.GetName(linkGrid.MyGrid[x + xOffset, y + yOffset])
-                                        ), Strings.Mapping.linkfail
-                                    );
-
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
-                    if (canLink)
-                    {
-                        for (var x = -1; x < adjacentGrid.Width + 1; x++)
-                        {
-                            for (var y = -1; y < adjacentGrid.Height + 1; y++)
+                            for (var y = 0; y < adjacentGrid.Height; y++)
                             {
                                 if (x + xOffset >= 0 &&
                                     x + xOffset < linkGrid.Width &&
                                     y + yOffset >= 0 &&
                                     y + yOffset < linkGrid.Height)
                                 {
-                                    if (linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                    if (adjacentGrid.MyGrid[x, y] != Guid.Empty &&
+                                        linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                     {
-                                        var inXBounds = x > -1 && x < adjacentGrid.Width;
-                                        var inYBounds = y > -1 && y < adjacentGrid.Height;
-                                        if (inXBounds && inYBounds)
-                                        {
-                                            adjacentGrid.MyGrid[x, y] = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                        }
+                                        //Incompatible Link!
+                                        PacketSender.SendError(client,
+                                            Strings.Mapping.linkfailerror.ToString(
+                                                MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
+                                                MapBase.GetName(adjacentGrid.MyGrid[x, y]),
+                                                MapBase.GetName(linkGrid.MyGrid[x + xOffset, y + yOffset])
+                                            ), Strings.Mapping.linkfail
+                                        );
 
-                                        if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
-                                        {
-                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
-
-                                            MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                        }
-
-                                        if (inXBounds && y + 1 < adjacentGrid.Height && adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
-                                        {
-                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
-
-                                            MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                        }
-
-                                        if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
-                                        {
-                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
-
-                                            MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                        }
-
-                                        if (inYBounds && x + 1 < adjacentGrid.Width && adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
-                                        {
-                                            MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
-
-                                            MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                        }
+                                        return;
                                     }
                                 }
                             }
                         }
 
-                        DbInterface.SaveGameDatabase();
-                        DbInterface.GenerateMapGrids();
-                        PacketSender.SendMapGridToAll(adjacentMap.MapGrid);
+                        if (canLink)
+                        {
+                            for (var x = -1; x < adjacentGrid.Width + 1; x++)
+                            {
+                                for (var y = -1; y < adjacentGrid.Height + 1; y++)
+                                {
+                                    if (x + xOffset >= 0 &&
+                                        x + xOffset < linkGrid.Width &&
+                                        y + yOffset >= 0 &&
+                                        y + yOffset < linkGrid.Height)
+                                    {
+                                        if (linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                        {
+                                            var inXBounds = x > -1 && x < adjacentGrid.Width;
+                                            var inYBounds = y > -1 && y < adjacentGrid.Height;
+                                            if (inXBounds && inYBounds)
+                                            {
+                                                adjacentGrid.MyGrid[x, y] = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                            }
+
+                                            if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
+                                            {
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
+
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                            }
+
+                                            if (inXBounds && y + 1 < adjacentGrid.Height && adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
+                                            {
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
+
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                            }
+
+                                            if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
+                                            {
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
+
+                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                            }
+
+                                            if (inYBounds && x + 1 < adjacentGrid.Width && adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
+                                            {
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
+
+                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            DbInterface.SaveGameDatabase();
+                            DbInterface.GenerateMapGrids();
+                            PacketSender.SendMapGridToAll(adjacentMap.MapGrid);
+                        }
                     }
                 }
             }
