@@ -863,14 +863,20 @@ namespace Intersect.Server.Entities
                     {
                         foreach (var partyMember in Party)
                         {
-                            //TODO: Only share experience with party members on the 9 surrounding maps....
-                            partyMember.GiveExperience(descriptor.Experience / Party.Count);
-                            partyMember.UpdateQuestKillTasks(entity);
+                            if (partyMember.InRangeOf(this, Options.PartySharedXpRange))
+                            {
+                                partyMember.GiveExperience(descriptor.Experience / Party.Count);
+                                partyMember.UpdateQuestKillTasks(entity);
+                            }
+
                             if (partyEvent != null)
                             {
                                 if (!(playerEvent != null && partyMember == this))
                                 {
-                                    partyMember.StartCommonEvent(partyEvent);
+                                    if (partyMember.InRangeOf(this, Options.PartyStartCommonEventRange))
+                                    {
+                                        partyMember.StartCommonEvent(partyEvent);
+                                    }
                                 }
                             }
                         }
