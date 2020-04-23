@@ -786,6 +786,22 @@ namespace Intersect.Server.Entities
                     var oldMap = MapInstance.Get(MapId);
                     oldMap?.RemoveEntity(this);
                     currentMap?.AddEntity(this);
+
+                    //Send Left Map Packet To the Maps that we are no longer with
+                    var oldMaps = oldMap?.GetSurroundingMaps(true);
+                    var newMaps = currentMap?.GetSurroundingMaps(true);
+
+                    if (oldMaps != null)
+                    {
+                        foreach (var map in oldMaps)
+                        {
+                            if (newMaps == null || !newMaps.Contains(map))
+                            {
+                                PacketSender.SendEntityLeaveMap(this, map.Id);
+                            }
+                        }
+                    }
+
                 }
 
                 MapId = tile.GetMapId();

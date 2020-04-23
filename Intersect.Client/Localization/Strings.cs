@@ -1513,6 +1513,27 @@ namespace Intersect.Client.Localization
 
         }
 
+        public struct Update
+        {
+
+            public static LocalizedString Checking = @"Checking for updates, please wait!";
+
+            public static LocalizedString Updating = @"Downloading updates, please wait!";
+
+            public static LocalizedString Restart = @"Update complete! Relaunch {00} to play!";
+
+            public static LocalizedString Done = @"Update complete! Launching game!";
+
+            public static LocalizedString Error = @"Update Error! Check logs for more info!";
+
+            public static LocalizedString Files = @"{00} Files Remaining";
+
+            public static LocalizedString Size = @"{00} Left";
+
+            public static LocalizedString Percent = @"{00}%";
+
+        }
+
     }
 
 }
