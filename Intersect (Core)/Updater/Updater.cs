@@ -166,13 +166,17 @@ namespace Intersect.Updater
                         mCurrentVersion = new Update();
                         foreach (var file in mUpdate.Files)
                         {
-                            if ((mIsClient && file.ClientIgnore || !mIsClient && file.EditorIgnore) && mCachedVersion != null)
+                            if ((mIsClient && file.ClientIgnore || !mIsClient && file.EditorIgnore))
                             {
-                                var ignoredFile = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
-                                if (ignoredFile != null)
+                                if (mCachedVersion != null)
                                 {
-                                    mCurrentVersion.Files.Add(ignoredFile);
+                                    var ignoredFile = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
+                                    if (ignoredFile != null)
+                                    {
+                                        mCurrentVersion.Files.Add(ignoredFile);
+                                    }
                                 }
+
                                 continue;
                             }
 
