@@ -785,17 +785,17 @@ namespace Intersect.Server.Maps
                     {
                         if (MapItems[i] != null)
                         {
-                            // Do we need to delete this item?
-                            if (MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
-                            {
-                                RemoveItem(i);
-                            }
-                            
                             // Should this item be visible to everyone now?
                             if (!MapItems[i].VisibleToAll && MapItems[i].OwnershipTime < timeMs)
                             {
                                 MapItems[i].VisibleToAll = true;
                                 PacketSender.SendMapItemUpdate(Id, i);
+                            }
+
+                            // Do we need to delete this item?
+                            if (MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
+                            {
+                                RemoveItem(i);
                             }
                         }
 
