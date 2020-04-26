@@ -1776,7 +1776,14 @@ namespace Intersect.Server.Entities
                         dmgMap.TryGetValue(this, out var damage);
                         dmgMap[this] = damage + baseDamage;
 
-                        enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
+                        if (enemyNpc.Base.FocusHighestDamageDealer)
+                        {
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
+                        }
+                        else
+                        {
+                            enemyNpc.AssignTarget(this);
+                        }
                     }
 
                     enemy.NotifySwarm(this);
