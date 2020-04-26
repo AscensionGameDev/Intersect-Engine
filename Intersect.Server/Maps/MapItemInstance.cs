@@ -17,6 +17,10 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] public long DespawnTime;
 
+        [JsonIgnore] public Guid Owner;
+
+        [JsonIgnore] public long OwnershipTime;
+
         public int X = 0;
 
         public int Y = 0;

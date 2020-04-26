@@ -1510,7 +1510,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1);
+            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1, Id);
 
             slot.Quantity = Math.Max(0, slot.Quantity - amount);
 

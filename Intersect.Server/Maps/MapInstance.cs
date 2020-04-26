@@ -215,6 +215,11 @@ namespace Intersect.Server.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
+            this.SpawnItem(x, y, item, amount, Guid.Empty);
+        }
+
+        public void SpawnItem(int x, int y, Item item, int amount, Guid owner)
+        {
             if (item == null)
             {
                 Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
@@ -234,7 +239,9 @@ namespace Intersect.Server.Maps
             {
                 X = x,
                 Y = y,
-                DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
+                DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime,
+                Owner = owner,
+                OwnershipTime = Globals.Timing.TimeMs + Options.ItemOwnershipTime
             };
 
             if (itemBase.ItemType == ItemTypes.Equipment)

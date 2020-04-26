@@ -1156,14 +1156,36 @@ namespace Intersect.Server.Networking
             if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
-                if (MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].X == player.X &&
-                    MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].Y == player.Y)
+                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
+                if (mapItem.X == player.X &&
+                    mapItem.Y == player.Y)
                 {
-                    if (player.TryGiveItem(MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex]))
+                    var canTake = false;
+                    // Can we actually take this item?
+                    if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
                     {
-                        //Remove Item From Map
-                        MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        // The ownership time has run out, or there's no owner!
+                        canTake = true;
                     }
+                    else if (mapItem.Owner.Equals(player.Id) || player.Party.Any(p => p.Id.Equals(mapItem.Owner)))
+                    {
+                        // The current player is the owner, or one of their party members is.
+                        canTake = true;
+                    } 
+
+                    if (canTake)
+                    {
+                        if (player.TryGiveItem(mapItem))
+                        {
+                            //Remove Item From Map
+                            MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        }
+                    } 
+                    else
+                    {
+                        PacketSender.SendChatMsg(player, "This item does not belong to you!", Color.Red);
+                    }
+                    
                 }
             }
         }

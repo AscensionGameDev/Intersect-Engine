@@ -2439,7 +2439,48 @@ namespace Intersect.Server.Entities
                     }
 
                     var map = MapInstance.Get(MapId);
-                    map?.SpawnItem(X, Y, item, item.Quantity);
+                    // Decide if we want to have a loot ownership timer or not.
+                    if (this is Npc)
+                    {
+                        // Check if we have someone that tagged this NPC.
+                        var damageMap = ((Npc)this).DamageMap;
+                        long damage = 0;
+                        Entity taggedBy = null;
+                        foreach (var pair in damageMap)
+                        {
+                            if (pair.Value > damage)
+                            {
+                                taggedBy = pair.Key;
+                            }
+                        }
+
+                        if (taggedBy != null)
+                        {
+                            // We have something that tagged the npc, but is it a player?
+                            if (taggedBy is Player)
+                            {
+                                // Spawn with ownership!
+                                map?.SpawnItem(X, Y, item, item.Quantity, taggedBy.Id);
+                            }
+                            else
+                            {
+                                // Spawn without ownership, something other than a Player killed this Entity.
+                                map?.SpawnItem(X, Y, item, item.Quantity);
+                            }  
+                        }
+                        else
+                        {
+                            // Spawn without ownership, this Entity was never tagged.
+                            map?.SpawnItem(X, Y, item, item.Quantity);
+                        }
+                    } 
+                    else
+                    {
+                        // This is not an NPC that died, moving on!
+                        // There's no tracking of who damaged what player as of now, so going by last hit!
+                        var killerId = playerKiller != null ? playerKiller.Id : Guid.Empty;
+                        map?.SpawnItem(X, Y, item, item.Quantity, killerId);
+                    }
 
                     var player = this as Player;
                     player?.TakeItemsBySlot(n, item.Quantity);
