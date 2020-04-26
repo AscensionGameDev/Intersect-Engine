@@ -1776,21 +1776,7 @@ namespace Intersect.Server.Entities
                         dmgMap.TryGetValue(this, out var damage);
                         dmgMap[this] = damage + baseDamage;
 
-                        long dmg = baseDamage;
-                        var newTarget = this;
-                        if (enemyNpc.Base.FocusHighestDamageDealer)
-                        {
-                            foreach (var pair in dmgMap)
-                            {
-                                if (pair.Value > dmg)
-                                {
-                                    newTarget = pair.Key;
-                                    dmg = pair.Value;
-                                }
-                            }
-                        }
-
-                        enemyNpc.AssignTarget(newTarget);
+                        enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                     }
 
                     enemy.NotifySwarm(this);
@@ -1827,21 +1813,9 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = enemyNpc.DamageMap;
-                        var target = this;
-                        long dmg = 0;
-                        foreach (var pair in dmgMap)
-                        {
-                            if (pair.Value > dmg)
-                            {
-                                target = pair.Key;
-                                dmg = pair.Value;
-                            }
-                        }
-
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            enemyNpc.AssignTarget(target);
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
                         else
                         {
@@ -2438,51 +2412,30 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var map = MapInstance.Get(MapId);
                     // Decide if we want to have a loot ownership timer or not.
+                    Guid lootOwner = Guid.Empty;
                     if (this is Npc)
                     {
                         // Check if we have someone that tagged this NPC.
-                        var damageMap = ((Npc)this).DamageMap;
-                        long damage = 0;
-                        Entity taggedBy = null;
-                        foreach (var pair in damageMap)
+                        var taggedBy = ((Npc)this).DamageMapHighest;
+                        if (taggedBy != null && taggedBy is Player)
                         {
-                            if (pair.Value > damage)
-                            {
-                                taggedBy = pair.Key;
-                                damage = pair.Value;
-                            }
-                        }
-
-                        if (taggedBy != null)
-                        {
-                            // We have something that tagged the npc, but is it a player?
-                            if (taggedBy is Player)
-                            {
-                                // Spawn with ownership!
-                                map?.SpawnItem(X, Y, item, item.Quantity, taggedBy.Id);
-                            }
-                            else
-                            {
-                                // Spawn without ownership, something other than a Player killed this Entity.
-                                map?.SpawnItem(X, Y, item, item.Quantity);
-                            }  
-                        }
-                        else
-                        {
-                            // Spawn without ownership, this Entity was never tagged.
-                            map?.SpawnItem(X, Y, item, item.Quantity);
+                            // Spawn with ownership!
+                            lootOwner = taggedBy.Id;
                         }
                     } 
                     else
                     {
                         // This is not an NPC that died, moving on!
                         // There's no tracking of who damaged what player as of now, so going by last hit!
-                        var killerId = playerKiller != null ? playerKiller.Id : Guid.Empty;
-                        map?.SpawnItem(X, Y, item, item.Quantity, killerId);
+                        lootOwner = playerKiller != null ? playerKiller.Id : Guid.Empty; 
                     }
 
+                    // Spawn the actual item!
+                    var map = MapInstance.Get(MapId);
+                    map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+
+                    // Remove the item from inventory if a player.
                     var player = this as Player;
                     player?.TakeItemsBySlot(n, item.Quantity);
                 }
