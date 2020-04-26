@@ -2433,9 +2433,8 @@ namespace Intersect.Server.Entities
                     } 
                     else
                     {
-                        // This is not an NPC that died, moving on!
-                        // There's no tracking of who damaged what player as of now, so going by last hit!
-                        lootOwner = playerKiller != null ? playerKiller.Id : Guid.Empty; 
+                        // There's no tracking of who damaged what player as of now, so going by last hit.. Or set ownership to the player themselves.
+                        lootOwner = playerKiller != null ? playerKiller.Id : Id; 
                     }
 
                     // Spawn the actual item!
