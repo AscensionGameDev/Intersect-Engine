@@ -2451,6 +2451,7 @@ namespace Intersect.Server.Entities
                             if (pair.Value > damage)
                             {
                                 taggedBy = pair.Key;
+                                damage = pair.Value;
                             }
                         }
 
