@@ -130,6 +130,19 @@ namespace Intersect.Client.Entities
             return false;
         }
 
+        public bool IsInMyParty(Guid id)
+        {
+            foreach (var member in Party)
+            {
+                if (member.Id == Id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool IsBusy()
         {
             return !(Globals.EventHolds.Count == 0 &&
@@ -1267,6 +1280,13 @@ namespace Intersect.Client.Entities
             {
                 if (item.Value.X == X && item.Value.Y == Y)
                 {
+                    // Are we allowed to see and pick this item up?
+                    if (!item.Value.VisibleToAll && !item.Value.Owner.Equals(Globals.Me.Id) && !Globals.Me.IsInMyParty(item.Value.Owner))
+                    {
+                        // This item does not apply to us!
+                        return false;
+                    }
+
                     PacketSender.SendPickupItem(item.Key);
 
                     return true;

@@ -17,9 +17,12 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] public long DespawnTime;
 
-        [JsonIgnore] public Guid Owner;
+        public Guid Owner;
 
         [JsonIgnore] public long OwnershipTime;
+
+        // We need this mostly for the client-side.. They can't keep track of our timer after all!
+        public bool VisibleToAll = true;
 
         public int X = 0;
 

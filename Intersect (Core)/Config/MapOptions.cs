@@ -16,6 +16,8 @@ namespace Intersect.Config
 
         public int ItemOwnershipTime = 5000;
 
+        public bool ShowUnownedItems = false;
+
         public int ItemSpawnTime = 15000;
 
         public int TileHeight = 32;

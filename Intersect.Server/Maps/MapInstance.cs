@@ -235,13 +235,15 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
-            {
+            
+
+            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
                 X = x,
                 Y = y,
                 DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime,
                 Owner = owner,
-                OwnershipTime = Globals.Timing.TimeMs + Options.ItemOwnershipTime
+                OwnershipTime = Globals.Timing.TimeMs + Options.ItemOwnershipTime,
+                VisibleToAll = Options.ShowUnownedItems
             };
 
             if (itemBase.ItemType == ItemTypes.Equipment)
@@ -778,12 +780,25 @@ namespace Intersect.Server.Maps
                 //Process Items
                 lock (MapItems)
                 {
+
                     for (var i = 0; i < MapItems.Count; i++)
                     {
-                        if (MapItems[i] != null && MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
+                        if (MapItems[i] != null)
                         {
-                            RemoveItem(i);
+                            // Do we need to delete this item?
+                            if (MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
+                            {
+                                RemoveItem(i);
+                            }
+                            
+                            // Should this item be visible to everyone now?
+                            if (!MapItems[i].VisibleToAll && MapItems[i].OwnershipTime < timeMs)
+                            {
+                                MapItems[i].VisibleToAll = true;
+                                PacketSender.SendMapItemUpdate(Id, i);
+                            }
                         }
+
                     }
 
                     for (var i = 0; i < ItemRespawns.Count; i++)

@@ -119,6 +119,8 @@ namespace Intersect
 
         public static int ItemDespawnTime => Instance.MapOpts.ItemDespawnTime;
 
+        public static bool ShowUnownedItems => Instance.MapOpts.ShowUnownedItems;
+
         public static int ItemOwnershipTime => Instance.MapOpts.ItemOwnershipTime;
 
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
