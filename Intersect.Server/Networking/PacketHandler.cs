@@ -1183,7 +1183,7 @@ namespace Intersect.Server.Networking
                     } 
                     else
                     {
-                        PacketSender.SendChatMsg(player, "This item does not belong to you!", Color.Red);
+                        PacketSender.SendChatMsg(player, Strings.Items.notyours, Color.Red);
                     }
                     
                 }

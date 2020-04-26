@@ -776,6 +776,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunned = @"You cannot use this item whilst stunned.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString notyours = @"This item does not belong to you!";
+
         }
 
         public sealed class MappingNamespace : LocaleNamespace
