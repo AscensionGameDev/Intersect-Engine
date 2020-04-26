@@ -54,6 +54,8 @@ namespace Intersect
 
         [JsonProperty("Security")] public SecurityOptions SecurityOpts = new SecurityOptions();
 
+        [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         [NotNull]
@@ -119,10 +121,6 @@ namespace Intersect
 
         public static int ItemDespawnTime => Instance.MapOpts.ItemDespawnTime;
 
-        public static bool ShowUnownedItems => Instance.MapOpts.ShowUnownedItems;
-
-        public static int ItemOwnershipTime => Instance.MapOpts.ItemOwnershipTime;
-
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
 
         public static int MapWidth => Instance?.MapOpts?.Width ?? 32;
@@ -138,6 +136,10 @@ namespace Intersect
         public static int MaxChatLength => Instance.ChatOpts.MaxChatLength;
 
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
+
+        public static bool ShowUnownedItems => Instance.LootOpts.ShowUnownedItems;
+
+        public static int ItemOwnershipTime => Instance.LootOpts.ItemOwnershipTime;
 
         public static bool UPnP => Instance._upnp;
 
