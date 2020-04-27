@@ -242,8 +242,8 @@ namespace Intersect.Server.Maps
                 Y = y,
                 DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime,
                 Owner = owner,
-                OwnershipTime = Globals.Timing.TimeMs + Options.ItemOwnershipTime,
-                VisibleToAll = Options.ShowUnownedItems
+                OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                VisibleToAll = Options.Loot.ShowUnownedItems
             };
 
             if (itemBase.ItemType == ItemTypes.Equipment)
@@ -783,17 +783,18 @@ namespace Intersect.Server.Maps
 
                     for (var i = 0; i < MapItems.Count; i++)
                     {
-                        if (MapItems[i] != null)
+                        var mapItem = MapItems[i];
+                        if (mapItem != null)
                         {
                             // Should this item be visible to everyone now?
-                            if (!MapItems[i].VisibleToAll && MapItems[i].OwnershipTime < timeMs)
+                            if (!mapItem.VisibleToAll && mapItem.OwnershipTime < timeMs)
                             {
-                                MapItems[i].VisibleToAll = true;
+                                mapItem.VisibleToAll = true;
                                 PacketSender.SendMapItemUpdate(Id, i);
                             }
 
                             // Do we need to delete this item?
-                            if (MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
+                            if (mapItem.DespawnTime != -1 && mapItem.DespawnTime < timeMs)
                             {
                                 RemoveItem(i);
                             }
@@ -803,9 +804,10 @@ namespace Intersect.Server.Maps
 
                     for (var i = 0; i < ItemRespawns.Count; i++)
                     {
-                        if (ItemRespawns[i].RespawnTime < timeMs)
+                        var itemRespawn = ItemRespawns[i];
+                        if (itemRespawn.RespawnTime < timeMs)
                         {
-                            SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
+                            SpawnAttributeItem(itemRespawn.AttributeSpawnX, itemRespawn.AttributeSpawnY);
                             ItemRespawns.RemoveAt(i);
                         }
                     }

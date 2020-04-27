@@ -2421,10 +2421,10 @@ namespace Intersect.Server.Entities
 
                     // Decide if we want to have a loot ownership timer or not.
                     Guid lootOwner = Guid.Empty;
-                    if (this is Npc)
+                    if (this is Npc thisNpc)
                     {
                         // Check if we have someone that tagged this NPC.
-                        var taggedBy = ((Npc)this).DamageMapHighest;
+                        var taggedBy = thisNpc.DamageMapHighest;
                         if (taggedBy != null && taggedBy is Player)
                         {
                             // Spawn with ownership!
@@ -2434,7 +2434,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         // There's no tracking of who damaged what player as of now, so going by last hit.. Or set ownership to the player themselves.
-                        lootOwner = playerKiller != null ? playerKiller.Id : Id; 
+                        lootOwner = playerKiller?.Id ?? Id;
                     }
 
                     // Spawn the actual item!

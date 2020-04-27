@@ -12,8 +12,10 @@ namespace Intersect.Config
 
         public int Height = 26;
 
+        // TODO: (panda) Move this to the LootOptions class, this is unrelated to map attribute items. (https://github.com/AscensionGameDev/Intersect-Engine/pull/181#issuecomment-619745057)
         public int ItemDespawnTime = 15000;
 
+        // TODO: (panda) Rename to something like MapItemRespawnItem for clarity, would need an alias to the original however. (https://github.com/AscensionGameDev/Intersect-Engine/pull/181#issuecomment-619745057)
         public int ItemSpawnTime = 15000;
 
         public int TileHeight = 32;

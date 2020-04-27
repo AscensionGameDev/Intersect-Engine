@@ -137,9 +137,7 @@ namespace Intersect
 
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
-        public static bool ShowUnownedItems => Instance.LootOpts.ShowUnownedItems;
-
-        public static int ItemOwnershipTime => Instance.LootOpts.ItemOwnershipTime;
+        public static LootOptions Loot => Instance.LootOpts;
 
         public static bool UPnP => Instance._upnp;
 

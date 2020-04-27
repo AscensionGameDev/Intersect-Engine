@@ -1167,7 +1167,7 @@ namespace Intersect.Server.Networking
                         // The ownership time has run out, or there's no owner!
                         canTake = true;
                     }
-                    else if (mapItem.Owner.Equals(player.Id) || player.Party.Any(p => p.Id.Equals(mapItem.Owner)))
+                    else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
                     {
                         // The current player is the owner, or one of their party members is.
                         canTake = true;
@@ -1175,15 +1175,22 @@ namespace Intersect.Server.Networking
 
                     if (canTake)
                     {
+                        // Try to give the item to our player.
                         if (player.TryGiveItem(mapItem))
                         {
-                            //Remove Item From Map
+                            // Remove Item From Map
                             MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        } 
+                        else 
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, Color.Red);
                         }
                     } 
                     else
                     {
-                        PacketSender.SendChatMsg(player, Strings.Items.notyours, Color.Red);
+                        // Item does not belong to them.
+                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, Color.Red);
                     }
                     
                 }
