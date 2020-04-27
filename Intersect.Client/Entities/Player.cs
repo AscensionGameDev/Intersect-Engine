@@ -115,7 +115,7 @@ namespace Intersect.Client.Entities
             return Party.Count > 0;
         }
 
-        public bool IsInMyParty(Player player) => Party.Any(member => member.Id == player.Id);
+        public bool IsInMyParty(Player player) => IsInMyParty(player.Id);
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);
 
@@ -877,7 +877,7 @@ namespace Intersect.Client.Entities
                     if (en.Value.GetEntityType() == EntityTypes.GlobalEntity ||
                         en.Value.GetEntityType() == EntityTypes.Player)
                     {
-                        if (en.Value != Globals.Me || en.Value is Player player && Globals.Me.IsInMyParty(player))
+                        if (en.Value != Globals.Me && !(en.Value is Player player && Globals.Me.IsInMyParty(player)))
                         {
                             if (GetDistanceTo(en.Value) < GetDistanceTo(closestEntity))
                             {
@@ -1191,7 +1191,7 @@ namespace Intersect.Client.Entities
                                         en.Value.X == x &&
                                         en.Value.Y == y &&
                                         !((Event) en.Value).DisablePreview &&
-                                        !en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player))
+                                        (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                                     {
                                         if (TargetBox != null)
                                         {
