@@ -820,7 +820,7 @@ namespace Intersect.Server.Maps
                         if (timeMs > LastUpdateTime + 30000)
                         {
                             //Regen Everything & Forget Targets
-                            if (en.Value is Resource || en is Npc)
+                            if (en.Value is Resource || en.Value is Npc)
                             {
                                 en.Value.RestoreVital(Vitals.Health);
                                 en.Value.RestoreVital(Vitals.Mana);
