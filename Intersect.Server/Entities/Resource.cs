@@ -161,7 +161,7 @@ namespace Intersect.Server.Entities
                     if (ItemBase.Get(item.ItemId) != null)
                     {
                         MapInstance.Get(selectedTile.GetMapId())
-                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity);
+                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
                     }
                 }
             }
