@@ -1184,13 +1184,13 @@ namespace Intersect.Server.Networking
                         else 
                         {
                             // We couldn't give the player their item, notify them.
-                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, Color.Red);
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
                         }
                     } 
                     else
                     {
                         // Item does not belong to them.
-                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, Color.Red);
+                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
                     }
                     
                 }
