@@ -117,10 +117,6 @@ namespace Intersect
 
         public static int GameBorderStyle => Instance.MapOpts.GameBorderStyle;
 
-        public static int ItemRepawnTime => Instance.MapOpts.ItemSpawnTime;
-
-        public static int ItemDespawnTime => Instance.MapOpts.ItemDespawnTime;
-
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
 
         public static int MapWidth => Instance?.MapOpts?.Width ?? 32;

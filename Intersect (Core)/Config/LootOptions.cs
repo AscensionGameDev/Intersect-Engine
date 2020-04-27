@@ -7,6 +7,11 @@
     {
 
         /// <summary>
+        /// Defines how long (in ms) loot will be available for picking up on the map.
+        /// </summary>
+        public int ItemDespawnTime = 15000;
+
+        /// <summary>
         /// Defines how long (in ms) an item drop will be ''owned'' by a player and their party.
         /// </summary>
         public int ItemOwnershipTime = 5000;
