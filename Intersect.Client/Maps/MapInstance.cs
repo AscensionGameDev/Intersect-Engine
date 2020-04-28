@@ -651,6 +651,13 @@ namespace Intersect.Client.Maps
             //Draw Map Items
             foreach (var item in MapItems)
             {
+                // Are we allowed to see and pick this item up?
+                if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
+                {
+                    // This item does not apply to us!
+                    continue;
+                }
+
                 var itemBase = ItemBase.Get(item.Value.ItemId);
                 if (itemBase != null)
                 {

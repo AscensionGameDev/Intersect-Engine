@@ -1156,14 +1156,43 @@ namespace Intersect.Server.Networking
             if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
-                if (MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].X == player.X &&
-                    MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].Y == player.Y)
+                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
+                if (mapItem.X == player.X &&
+                    mapItem.Y == player.Y)
                 {
-                    if (player.TryGiveItem(MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex]))
+                    var canTake = false;
+                    // Can we actually take this item?
+                    if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
                     {
-                        //Remove Item From Map
-                        MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        // The ownership time has run out, or there's no owner!
+                        canTake = true;
                     }
+                    else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
+                    {
+                        // The current player is the owner, or one of their party members is.
+                        canTake = true;
+                    } 
+
+                    if (canTake)
+                    {
+                        // Try to give the item to our player.
+                        if (player.TryGiveItem(mapItem))
+                        {
+                            // Remove Item From Map
+                            MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        } 
+                        else 
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
+                        }
+                    } 
+                    else
+                    {
+                        // Item does not belong to them.
+                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
+                    }
+                    
                 }
             }
         }

@@ -12,9 +12,7 @@ namespace Intersect.Config
 
         public int Height = 26;
 
-        public int ItemDespawnTime = 15000;
-
-        public int ItemSpawnTime = 15000;
+        public int ItemAttributeRespawnTime = 15000;
 
         public int TileHeight = 32;
 

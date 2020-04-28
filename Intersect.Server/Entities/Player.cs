@@ -1510,7 +1510,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1);
+            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1, Id);
 
             slot.Quantity = Math.Max(0, slot.Quantity - amount);
 
@@ -3427,7 +3427,7 @@ namespace Intersect.Server.Entities
 
                 if (!TryGiveItem(new Item(offer)))
                 {
-                    MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity);
+                    MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity, Id);
                     PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, CustomColors.Alerts.Error);
                 }
 
