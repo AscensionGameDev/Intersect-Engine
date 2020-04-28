@@ -60,6 +60,10 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         public bool NewEvent;
 
+        private bool KeyPressTrigger;
+
+        private bool JustPressedKey;
+
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
@@ -383,6 +387,32 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
 
                 return;
+            }
+            else if (KeyPressTrigger && cmbTrigger.Focused)
+            {
+                JustPressedKey = true;
+                string key = e.KeyData.ToString();
+
+                if (key.Contains("Oem") || key.Contains("Page") || key.Contains("Win") || key.Contains("Menu") || key == "Next")
+                {
+                    return;
+                }
+
+                if (key.Contains(","))
+                {
+                    key = key.Remove(key.IndexOf(","));
+                }
+                if (key.Contains("Key"))
+                {
+                    key = key.Remove(key.IndexOf("Key"));
+                }
+                if (key == "Capital")
+                {
+                    key = "CapsLock";
+                }
+
+                txtKeyPress.Text = key;
+                CurrentPage.TriggerKey = txtKeyPress.Text;
             }
         }
 
@@ -1683,6 +1713,15 @@ namespace Intersect.Editor.Forms.Editors.Events
             lblTriggerVal.Hide();
             txtCommand.Hide();
             lblCommand.Hide();
+            txtKeyPress.Hide();
+            if (KeyPressTrigger && JustPressedKey)
+            {
+                cmbTrigger.SelectedIndex = cmbTrigger.Items.Count - 1;
+            }
+            else
+            {
+                KeyPressTrigger = false;
+            }
 
             if (MyEvent.CommonEvent)
             {
@@ -1692,6 +1731,21 @@ namespace Intersect.Editor.Forms.Editors.Events
                     txtCommand.Text = CurrentPage.TriggerCommand;
                     lblCommand.Show();
                     lblCommand.Text = Strings.EventEditor.command;
+                }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.KeyPress)
+                {
+                    KeyPressTrigger = true;
+                    txtKeyPress.Show();
+                    if (CurrentPage.TriggerKey == null)
+                    {
+                        txtKeyPress.Text = Strings.EventEditor.listening;
+                    }
+                    else
+                    {
+                        txtKeyPress.Text = CurrentPage.TriggerKey;
+                    }
+                    lblCommand.Show();
+                    lblCommand.Text = Strings.EventEditor.keypress;
                 }
             }
         }
@@ -1765,6 +1819,10 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         #endregion
 
+        private void cmbTrigger_Click(object sender, EventArgs e)
+        {
+            JustPressedKey = false;
+        }
     }
 
     public class CommandListProperties

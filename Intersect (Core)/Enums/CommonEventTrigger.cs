@@ -20,7 +20,9 @@
 
         PVPDeath,
 
-        PlayerInteract
+        PlayerInteract,
+
+        KeyPress
 
     }
 

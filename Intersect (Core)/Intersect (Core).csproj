@@ -326,6 +326,7 @@
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Client\KeyDownPacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />

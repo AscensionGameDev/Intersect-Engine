@@ -64,6 +64,8 @@ namespace Intersect.Client.Core
                 return;
             }
 
+            PacketSender.SendKeyDown(key.ToString());
+
             Controls.Controls.GetControlsFor(key)
                 ?.ForEach(
                     control =>

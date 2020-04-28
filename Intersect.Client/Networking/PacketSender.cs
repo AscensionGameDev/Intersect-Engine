@@ -41,6 +41,11 @@ namespace Intersect.Client.Networking
             }
         }
 
+        public static void SendKeyDown(string key)
+        {
+            Network.SendPacket(new KeyDownPacket(key));
+        }
+
         public static void SendMove()
         {
             Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));

@@ -685,6 +685,25 @@ namespace Intersect.Server.Networking
             }
         }
 
+        //KeyDownPacket
+        public void HandlePacket(Client client, Player player, KeyDownPacket packet)
+        {
+            //Search for key activated events and run them
+            foreach (var evt in EventBase.Lookup)
+            {
+                if ((EventBase)evt.Value != null)
+                {
+                    if (client.Entity.StartCommonEvent(
+                            (EventBase)evt.Value, CommonEventTrigger.KeyPress, "", packet.Key
+                        ) ==
+                        true)
+                    {
+                        return; //Found our key, exit now :)
+                    }
+                }
+            }
+        }
+
         //BlockPacket
         public void HandlePacket(Client client, Player player, BlockPacket packet)
         {

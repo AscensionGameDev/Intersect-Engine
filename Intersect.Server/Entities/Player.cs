@@ -5024,6 +5024,17 @@ namespace Intersect.Server.Entities
                                 return true;
                             }
                         }
+                        else if (trigger == CommonEventTrigger.KeyPress)
+                        {
+                            if (param.ToLower() == tmpEvent.PageInstance.MyPage.TriggerKey.ToLower())
+                            {
+                                var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
+                                tmpEvent.PageInstance.Param = param;
+                                tmpEvent.CallStack.Push(newStack);
+
+                                return true;
+                            }
+                        }
                         else
                         {
                             switch (trigger)
