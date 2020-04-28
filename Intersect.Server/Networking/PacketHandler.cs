@@ -359,6 +359,15 @@ namespace Intersect.Server.Networking
         //LogoutPacket
         public void HandlePacket(Client client, Player player, LogoutPacket packet)
         {
+            //Search for logout activated events and run them
+            foreach (EventBase evt in EventBase.Lookup.Values)
+            {
+                if (evt != null)
+                {
+                    player.StartCommonEvent(evt, CommonEventTrigger.Logout);
+                }
+            }
+
             client?.Logout();
             if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
             {

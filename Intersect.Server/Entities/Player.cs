@@ -5043,6 +5043,8 @@ namespace Intersect.Server.Entities
                                     break;
                                 case CommonEventTrigger.Login:
                                     break;
+                                case CommonEventTrigger.Logout:
+                                    break;
                                 case CommonEventTrigger.LevelUp:
                                     break;
                                 case CommonEventTrigger.OnRespawn:

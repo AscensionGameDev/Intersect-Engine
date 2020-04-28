@@ -22,7 +22,9 @@
 
         PlayerInteract,
 
-        KeyPress
+        KeyPress,
+
+        Logout
 
     }
 

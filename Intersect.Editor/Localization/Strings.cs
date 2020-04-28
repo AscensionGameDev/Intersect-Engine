@@ -2037,6 +2037,7 @@ Tick timer saved in server config.json.";
                 {7, @"PVP Death"},
                 {8, @"Player Interact"},
                 {9, @"Key press"},
+                {10, @"Logout"},
             };
 
             public static LocalizedString conditions = @"Conditions";

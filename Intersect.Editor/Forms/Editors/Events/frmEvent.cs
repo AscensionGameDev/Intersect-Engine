@@ -1716,7 +1716,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             txtKeyPress.Hide();
             if (KeyPressTrigger && JustPressedKey)
             {
-                cmbTrigger.SelectedIndex = cmbTrigger.Items.Count - 1;
+                cmbTrigger.SelectedIndex = cmbTrigger.Items.Count - 2; // The index of KeyPress
             }
             else
             {

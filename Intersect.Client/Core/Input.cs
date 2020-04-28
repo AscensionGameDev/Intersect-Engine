@@ -64,7 +64,10 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            PacketSender.SendKeyDown(key.ToString());
+            if (Globals.GameState == GameStates.InGame)
+            {
+                PacketSender.SendKeyDown(key.ToString());
+            }
 
             Controls.Controls.GetControlsFor(key)
                 ?.ForEach(
