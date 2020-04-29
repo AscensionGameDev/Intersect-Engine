@@ -419,13 +419,76 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
-            if (command.Add) //Try to give item
+
+            // This is where things get a little funky, do we change their items in one go or do we have to account for the possibility to overflow or even just change as many as we can?
+            if (!command.ChangeUpTo && !command.AllowOverflow)    // We are JUST going to have to change our item.
             {
-                success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
+                success = player.ChangeItemById(command.ItemId, command.Quantity, command.Add, true);
             }
-            else
+            else if (command.ChangeUpTo && !command.AllowOverflow)  // We can change up to the quantity, rather than enforcing the total amount. But can NOT overflow!
             {
-                success = player.TakeItemsById(command.ItemId, command.Quantity);
+                // Go through each oof our items and change them one by one..
+                var attempts = new List<bool>();
+                for (var i = 0; i < command.Quantity; i++)
+                {
+                    attempts.Add(player.ChangeItemById(command.ItemId, 1, command.Add, false));
+                }
+                // Update their inventory.
+                PacketSender.SendInventory(player);
+
+                // Did ANY of our attempts work out? If so, consider this a success.
+                success = attempts.Any(a => a == true) ? true : false;
+            }
+            else if (!command.ChangeUpTo && command.AllowOverflow)  // Simply give our players the item, and when they run out of space start dropping it on the floor.
+            {
+                if (!command.Add)   // We can't overflow a take command. So just act as if this is a normal command.
+                {
+                    success = player.TakeItemsById(command.ItemId, command.Quantity);
+                }
+                else    // We can however give items that overflow!
+                {
+                    // Try to give our player as many items as we can until it stops working..
+                    var amountChanged = 0;
+                    var item = new Item(command.ItemId, 1);
+                    for (var i = 0; i < command.Quantity; i++)
+                    {
+                        if (player.TryGiveItem(item, false))
+                        {
+                            amountChanged++;
+                        }
+                        else
+                        {
+                            // can no longer give them more items!
+                            break;
+                        }
+                    }
+                    // Update their inventory.
+                    PacketSender.SendInventory(player);
+
+                    // Do we still have more items to give?
+                    var itemsLeft = command.Quantity - amountChanged;
+                    if (itemsLeft > 0)
+                    {
+                        // We do, so drop them on the map!
+                        // But is it a stackable item..?
+                        if (item.Descriptor.IsStackable)
+                        {
+                            player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, itemsLeft), itemsLeft, player.Id);    // Using a new item here, because we need the actual stack size rather than 1!
+                        }
+                        else
+                        {
+                            // Oh boy, it's not.. Here we go again!
+                            for (var i = 0; i < itemsLeft; i++)
+                            {
+                                player.Map.SpawnItem(player.X, player.Y, item, 1, player.Id);
+                            }
+                        }
+                        
+                    }
+
+                    // Always consider this a success!
+                    success = true;
+                }
             }
 
             List<EventCommand> newCommandList = null;

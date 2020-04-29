@@ -1747,7 +1747,27 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool TakeItemsBySlot(int slot, int amount)
+        /// <summary>
+        /// Add or Remove items through a simple switch with this method.
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <param name="amount"></param>
+        /// <param name="add"></param>
+        /// <param name="sendUpdate"></param>
+        /// <returns></returns>
+        public bool ChangeItemById(Guid itemId, int amount, bool add, bool sendUpdate = true)
+        {
+            if (add)
+            {
+                return TryGiveItem(new Item(itemId, amount), sendUpdate);
+            }
+            else
+            {
+                return TakeItemsById(itemId, amount, sendUpdate);
+            }
+        } 
+
+        public bool TakeItemsBySlot(int slot, int amount, bool sendUpdate = true)
         {
             var returnVal = false;
             if (slot < 0)
@@ -1786,7 +1806,7 @@ namespace Intersect.Server.Entities
                     returnVal = true;
                 }
 
-                PacketSender.SendInventoryItemUpdate(this, slot);
+                if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, slot);
             }
 
             if (returnVal)
@@ -1797,7 +1817,7 @@ namespace Intersect.Server.Entities
             return returnVal;
         }
 
-        public bool TakeItemsById(Guid itemId, int amount)
+        public bool TakeItemsById(Guid itemId, int amount, bool sendUpdate = true)
         {
             if (CountItems(itemId) < amount)
             {
@@ -1823,7 +1843,7 @@ namespace Intersect.Server.Entities
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);
-                    PacketSender.SendInventoryItemUpdate(this, i);
+                    if (sendUpdate)PacketSender.SendInventoryItemUpdate(this, i);
                     EquipmentProcessItemLoss(i);
                     if (amount == 0)
                     {
@@ -1836,7 +1856,7 @@ namespace Intersect.Server.Entities
                     {
                         amount -= item.Quantity;
                         Items[i].Set(Item.None);
-                        PacketSender.SendInventoryItemUpdate(this, i);
+                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, i);
                         EquipmentProcessItemLoss(i);
                         if (amount == 0)
                         {
@@ -1846,7 +1866,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         item.Quantity -= amount;
-                        PacketSender.SendInventoryItemUpdate(this, i);
+                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, i);
 
                         return true;
                     }

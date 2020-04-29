@@ -425,6 +425,16 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool Add { get; set; } //If !Add then Remove
 
+        /// <summary>
+        /// Configures whether or not Add changes are allowed to overflow the inventory when full, and instead drop on the ground.
+        /// </summary>
+        public bool AllowOverflow { get; set; } = false;
+
+        /// <summary>
+        /// Configures whether this event should change as many items as it can up to the set quantity, rather than enforcing a set quantity.
+        /// </summary>
+        public bool ChangeUpTo { get; set; } = false;
+
         public int Quantity { get; set; }
 
         public Guid[] BranchIds { get; set; } =

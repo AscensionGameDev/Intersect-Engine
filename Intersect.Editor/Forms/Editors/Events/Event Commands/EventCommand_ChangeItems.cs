@@ -29,6 +29,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbItem.Items.AddRange(ItemBase.Names);
             cmbAction.SelectedIndex = mMyCommand.Add ? 0 : 1;
             cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
+            chkOverflow.Checked = mMyCommand.AllowOverflow;
+            chkUpTo.Checked = mMyCommand.ChangeUpTo;
             if (mMyCommand.Quantity < 1)
             {
                 nudGiveTakeAmount.Value = 1;
@@ -51,6 +53,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbAction.Items.Add(Strings.EventChangeItems.actions[i]);
             }
 
+            chkOverflow.Text = Strings.EventChangeItems.AllowOverflow;
+            chkUpTo.Text = Strings.EventChangeItems.UpTo;
+
             btnSave.Text = Strings.EventChangeItems.okay;
             btnCancel.Text = Strings.EventChangeItems.cancel;
         }
@@ -60,6 +65,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.Add = !Convert.ToBoolean(cmbAction.SelectedIndex);
             mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
             mMyCommand.Quantity = (int) nudGiveTakeAmount.Value;
+            mMyCommand.ChangeUpTo = chkUpTo.Checked;
+            mMyCommand.AllowOverflow = chkOverflow.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -68,6 +75,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor.CancelCommandEdit();
         }
 
+        private void nudGiveTakeAmount_ValueChanged(object sender, EventArgs e)
+        {
+            // This should never be below 1. We shouldn't accept giving or taking away 0 items!
+            if (nudGiveTakeAmount.Value < 1) nudGiveTakeAmount.Value = 1;
+        }
+
+        private void chkUpTo_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkUpTo.Checked) chkOverflow.Checked = false;
+        }
+
+        private void chkOverflow_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkOverflow.Checked) chkUpTo.Checked = false;
+        }
     }
 
 }
