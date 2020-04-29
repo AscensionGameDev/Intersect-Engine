@@ -1485,20 +1485,7 @@ namespace Intersect.Server.Entities
         /// Finds the first open inventory slot this player has.
         /// </summary>
         /// <returns></returns>
-        public InventorySlot FindOpenInventorySlot()
-        {
-            var slots = new List<InventorySlot>();
-            for (var i = 0; i < Options.MaxInvItems; i++)
-            {
-                var inventorySlot = Items[i];
-
-                if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
-                {
-                    return inventorySlot;
-                }
-            }
-            return null;
-        }
+        public InventorySlot FindOpenInventorySlot() => FindOpenInventorySlots().FirstOrDefault();
 
         public void SwapItems(int item1, int item2)
         {

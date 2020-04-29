@@ -1156,7 +1156,7 @@ namespace Intersect.Server.Networking
             if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
-                 var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
+                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
                 if (mapItem.X == player.X &&
                     mapItem.Y == player.Y)
                 {
