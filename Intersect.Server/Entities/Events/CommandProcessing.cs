@@ -445,7 +445,7 @@ namespace Intersect.Server.Entities.Events
                     var itemCount = player.FindInventoryItemQuantity(command.ItemId);
                     if (itemCount >= 1)
                     {
-                        success = player.TakeItemsById(command.ItemId, itemCount);
+                        success = player.TryTakeItemsById(command.ItemId, itemCount);
                     }
                 }
             }
@@ -453,7 +453,7 @@ namespace Intersect.Server.Entities.Events
             {
                 if (!command.Add)   // We can't overflow a take command. So just act as if this is a normal command.
                 {
-                    success = player.TakeItemsById(command.ItemId, command.Quantity);
+                    success = player.TryTakeItemsById(command.ItemId, command.Quantity);
                 }
                 else    // We can however give items that overflow!
                 {

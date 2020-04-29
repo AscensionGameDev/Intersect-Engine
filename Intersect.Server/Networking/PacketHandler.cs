@@ -829,7 +829,7 @@ namespace Intersect.Server.Networking
                                 projectileBase.AmmoItemId, projectileBase.AmmoRequired
                             );
 
-                            if (itemSlot == -1)
+                            if (itemSlot == null)
                             {
                                 PacketSender.SendChatMsg(
                                     player,
@@ -844,7 +844,7 @@ namespace Intersect.Server.Networking
                                     Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
                                     CustomColors.NoAmmo);
 #endif
-                            if (!player.TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
+                            if (!player.TryTakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
                             {
 #if INTERSECT_DIAGNOSTIC
                                     PacketSender.SendPlayerMsg(client,

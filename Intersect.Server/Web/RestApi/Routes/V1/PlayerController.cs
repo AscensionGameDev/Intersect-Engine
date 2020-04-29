@@ -506,7 +506,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (player.TakeItemsById(itemInfo.ItemId, itemInfo.Quantity))
+            if (player.TryTakeItemsById(itemInfo.ItemId, itemInfo.Quantity))
             {
                 return new
                 {

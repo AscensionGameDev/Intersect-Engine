@@ -1690,7 +1690,7 @@ namespace Intersect.Server.Entities
                             Die();
                         }
 
-                        TakeItemsBySlot(slot, 1);
+                        TryTakeItemsBySlot(slot, 1);
 
                         break;
                     case ItemTypes.Equipment:
@@ -1738,7 +1738,7 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.DestroySpell)
                         {
-                            TakeItemsBySlot(slot, 1);
+                            TryTakeItemsBySlot(slot, 1);
                         }
 
                         break;
@@ -1749,7 +1749,7 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        TakeItemsBySlot(slot, 1);
+                        TryTakeItemsBySlot(slot, 1);
 
                         break;
                     case ItemTypes.Bag:
@@ -1805,11 +1805,11 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                return TakeItemsById(itemId, amount, sendUpdate);
+                return TryTakeItemsById(itemId, amount, sendUpdate);
             }
         } 
 
-        public bool TakeItemsBySlot(int slot, int amount, bool sendUpdate = true)
+        public bool TryTakeItemsBySlot(int slot, int amount, bool sendUpdate = true)
         {
             var returnVal = false;
             if (slot < 0)
@@ -1859,7 +1859,7 @@ namespace Intersect.Server.Entities
             return returnVal;
         }
 
-        public bool TakeItemsById(Guid itemId, int amount, bool sendUpdate = true)
+        public bool TryTakeItemsById(Guid itemId, int amount, bool sendUpdate = true)
         {
             if (CountItems(itemId) < amount)
             {
@@ -2329,7 +2329,7 @@ namespace Intersect.Server.Entities
                             {
                                 if (shop.SellingItems[slot].CostItemQuantity > 0)
                                 {
-                                    TakeItemsBySlot(
+                                    TryTakeItemsBySlot(
                                         FindInventoryItemSlot(
                                             shop.SellingItems[slot].CostItemId,
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt
@@ -2349,7 +2349,7 @@ namespace Intersect.Server.Entities
                                             ).Slot]
                                         .Quantity)
                                 {
-                                    TakeItemsBySlot(
+                                    TryTakeItemsBySlot(
                                         FindInventoryItemSlot(
                                             shop.SellingItems[slot].CostItemId,
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt
@@ -2456,7 +2456,7 @@ namespace Intersect.Server.Entities
                 //Take the items
                 foreach (var c in CraftBase.Get(id).Ingredients)
                 {
-                    if (!TakeItemsById(c.ItemId, c.Quantity))
+                    if (!TryTakeItemsById(c.ItemId, c.Quantity))
                     {
                         for (var i = 0; i < invbackup.Count; i++)
                         {
@@ -4045,7 +4045,7 @@ namespace Intersect.Server.Entities
                         var projectileBase = spell.Combat.Projectile;
                         if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
                         {
-                            TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
+                            TryTakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
                         }
                     }
 
