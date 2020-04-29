@@ -1370,28 +1370,17 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (var i = 0; i < Options.MaxInvItems; i++)
-                {
-                    if (Items[i].ItemId == Guid.Empty)
-                    {
-                        return true;
-                    }
-                }
+                // Either a non stacking item, or we couldn't find the item already existing in the players inventory
+                // Check if we have enough slots in our inventory to contain this item.
+                if (FindOpenInventorySlots().Count >= item.Quantity) return true;
             }
 
             return false;
         }
 
-        public bool TryGiveItem(Guid itemId, int quantity, bool bankOverflow = false, bool sendUpdate = true)
-        {
-            return TryGiveItem(new Item(itemId, quantity), sendUpdate);
-        }
+        public bool TryGiveItem(Guid itemId, int quantity, bool bankOverflow = false, bool sendUpdate = true) => TryGiveItem(new Item(itemId, quantity), sendUpdate);
 
-        public bool TryGiveItem(Item item, bool sendUpdate = true)
-        {
-            return TryGiveItem(item, false, sendUpdate);
-        }
+        public bool TryGiveItem(Item item, bool sendUpdate = true) => TryGiveItem(item, false, sendUpdate);
 
         public bool TryGiveItem(Item item, bool bankOverflow, bool sendUpdate)
         {
@@ -1417,32 +1406,46 @@ namespace Intersect.Server.Entities
                         }
 
                         UpdateGatherItemQuests(item.ItemId);
-
                         return true;
                     }
                 }
             }
 
             // Either a non stacking item, or we couldn't find the item already existing in the players inventory
+            // Get a list of open inventory slots, and if there are more or equal to the items we want to deposit.. go for it!
+            var openSlots = FindOpenInventorySlots();
+            if (openSlots.Count >= item.Quantity)
+            {
+                var singleItem = new Item(item.ItemId, 1);
+                for (var i = 0; i < item.Quantity; i++)
+                {
+                    openSlots[i].Set(singleItem);
+                    if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
+                }
+                UpdateGatherItemQuests(item.ItemId);
+                return true;
+            }
+
+            return bankOverflow && TryDepositItem(item, sendUpdate);
+        }
+
+        /// <summary>
+        /// Retrieves a list of open inventory slots for this player.
+        /// </summary>
+        /// <returns></returns>
+        public List<InventorySlot> FindOpenInventorySlots()
+        {
+            var slots = new List<InventorySlot>();
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 var inventorySlot = Items[i];
 
                 if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
                 {
-                    inventorySlot.Set(item);
-                    if (sendUpdate)
-                    {
-                        PacketSender.SendInventoryItemUpdate(this, i);
-                    }
-
-                    UpdateGatherItemQuests(item.ItemId);
-
-                    return true;
+                    slots.Add(inventorySlot);
                 }
             }
-
-            return bankOverflow && TryDepositItem(item, sendUpdate);
+            return slots;
         }
 
         public void SwapItems(int item1, int item2)
@@ -1884,7 +1887,33 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public int FindItem(Guid itemId, int quantity = 1)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        public int FindInventoryItemQuantity(Guid itemId)
+        {
+            if (Items == null)
+            {
+                return 0;
+            }
+
+            var itemCount = 0;
+            for (var i = 0; i < Options.MaxInvItems; i++) 
+            {
+                var item = Items[i];
+                if (item.ItemId == itemId)
+                {
+                    itemCount = item.Descriptor.Stackable ? itemCount += item.Quantity : itemCount += 1;
+                }
+            }
+
+            return itemCount;
+        }
+
+        public int FindInventoryItemSlot(Guid itemId, int quantity = 1)
         {
             if (Items == null)
             {
@@ -2251,7 +2280,7 @@ namespace Intersect.Server.Entities
                         }
 
                         if (shop.SellingItems[slot].CostItemQuantity == 0 ||
-                            FindItem(
+                            FindInventoryItemSlot(
                                 shop.SellingItems[slot].CostItemId,
                                 shop.SellingItems[slot].CostItemQuantity * buyItemAmt
                             ) >
@@ -2262,7 +2291,7 @@ namespace Intersect.Server.Entities
                                 if (shop.SellingItems[slot].CostItemQuantity > 0)
                                 {
                                     TakeItemsBySlot(
-                                        FindItem(
+                                        FindInventoryItemSlot(
                                             shop.SellingItems[slot].CostItemId,
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt
                                         ), shop.SellingItems[slot].CostItemQuantity * buyItemAmt
@@ -2275,14 +2304,14 @@ namespace Intersect.Server.Entities
                             {
                                 if (shop.SellingItems[slot].CostItemQuantity * buyItemAmt ==
                                     Items[
-                                            FindItem(
+                                            FindInventoryItemSlot(
                                                 shop.SellingItems[slot].CostItemId,
                                                 shop.SellingItems[slot].CostItemQuantity * buyItemAmt
                                             )]
                                         .Quantity)
                                 {
                                     TakeItemsBySlot(
-                                        FindItem(
+                                        FindInventoryItemSlot(
                                             shop.SellingItems[slot].CostItemId,
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt
                                         ), shop.SellingItems[slot].CostItemQuantity * buyItemAmt
@@ -3858,7 +3887,7 @@ namespace Intersect.Server.Entities
 
                 if (projectileBase.AmmoItemId != Guid.Empty)
                 {
-                    if (FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
+                    if (FindInventoryItemSlot(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
                     {
                         PacketSender.SendChatMsg(
                             this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),

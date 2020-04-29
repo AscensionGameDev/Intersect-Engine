@@ -825,7 +825,7 @@ namespace Intersect.Server.Networking
                     {
                         if (projectileBase.AmmoItemId != Guid.Empty)
                         {
-                            var itemSlot = player.FindItem(
+                            var itemSlot = player.FindInventoryItemSlot(
                                 projectileBase.AmmoItemId, projectileBase.AmmoRequired
                             );
 
@@ -1156,7 +1156,7 @@ namespace Intersect.Server.Networking
             if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
-                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
+                 var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
                 if (mapItem.X == player.X &&
                     mapItem.Y == player.Y)
                 {

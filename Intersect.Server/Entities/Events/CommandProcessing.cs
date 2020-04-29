@@ -427,17 +427,27 @@ namespace Intersect.Server.Entities.Events
             }
             else if (command.ChangeUpTo && !command.AllowOverflow)  // We can change up to the quantity, rather than enforcing the total amount. But can NOT overflow!
             {
-                // Go through each oof our items and change them one by one..
-                var attempts = new List<bool>();
-                for (var i = 0; i < command.Quantity; i++)
+                // Oh boy, what do we get to do today?
+                if (command.Add)
                 {
-                    attempts.Add(player.ChangeItemById(command.ItemId, 1, command.Add, false));
+                    // Find out how many we can add, and do so!
+                    // If we can't give them even one, consider this a failure.
+                    var inventorySlots = player.FindOpenInventorySlots();
+                    if (inventorySlots.Count >= 1)
+                    {
+                        success = player.TryGiveItem(new Item(command.ItemId, inventorySlots.Count));
+                    }
                 }
-                // Update their inventory.
-                PacketSender.SendInventory(player);
-
-                // Did ANY of our attempts work out? If so, consider this a success.
-                success = attempts.Any(a => a == true) ? true : false;
+                else
+                {
+                    // Find out how many we can take, and do so!
+                    // If we can't take any, consider this a failure.
+                    var itemCount = player.FindInventoryItemQuantity(command.ItemId);
+                    if (itemCount >= 1)
+                    {
+                        success = player.TakeItemsById(command.ItemId, itemCount);
+                    }
+                }
             }
             else if (!command.ChangeUpTo && command.AllowOverflow)  // Simply give our players the item, and when they run out of space start dropping it on the floor.
             {
@@ -447,47 +457,36 @@ namespace Intersect.Server.Entities.Events
                 }
                 else    // We can however give items that overflow!
                 {
-                    // Try to give our player as many items as we can until it stops working..
-                    var amountChanged = 0;
-                    var item = new Item(command.ItemId, 1);
-                    for (var i = 0; i < command.Quantity; i++)
+                    var item = new Item(command.ItemId, command.Quantity);
+                    if (item.Descriptor.Stackable)
                     {
-                        if (player.TryGiveItem(item, false))
+                        // It's stackable, don't care for overflowing and just give it.
+                        success = player.TryGiveItem(item);
+                    } 
+                    else
+                    {
+                        // See how many we could potentially give them.
+                        var inventorySlots = player.FindOpenInventorySlots().Count;
+                        if (inventorySlots >= 1 && inventorySlots > command.Quantity)
                         {
-                            amountChanged++;
+                            // We have more slots than we want to add items. So go for it.
+                            
+                            success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
                         }
                         else
                         {
-                            // can no longer give them more items!
-                            break;
-                        }
-                    }
-                    // Update their inventory.
-                    PacketSender.SendInventory(player);
+                            // Okay, plan B.. Give as many as we have slots and drop the rest on the map.
+                            success = player.TryGiveItem(new Item(command.ItemId, inventorySlots));
 
-                    // Do we still have more items to give?
-                    var itemsLeft = command.Quantity - amountChanged;
-                    if (itemsLeft > 0)
-                    {
-                        // We do, so drop them on the map!
-                        // But is it a stackable item..?
-                        if (item.Descriptor.IsStackable)
-                        {
-                            player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, itemsLeft), itemsLeft, player.Id);    // Using a new item here, because we need the actual stack size rather than 1!
-                        }
-                        else
-                        {
-                            // Oh boy, it's not.. Here we go again!
-                            for (var i = 0; i < itemsLeft; i++)
+                            // Only drop items if we actually succeeded in filling our inventory.
+                            // In theory this should never not be true, but you never know..?
+                            if (success)
                             {
-                                player.Map.SpawnItem(player.X, player.Y, item, 1, player.Id);
+                                var toDrop = command.Quantity - inventorySlots;
+                                player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, toDrop), toDrop, player.Id);
                             }
                         }
-                        
                     }
-
-                    // Always consider this a success!
-                    success = true;
                 }
             }
 

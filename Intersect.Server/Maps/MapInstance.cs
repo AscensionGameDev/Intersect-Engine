@@ -235,20 +235,18 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            
-
-            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
-                X = x,
-                Y = y,
-                DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
-                Owner = owner,
-                OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
-                VisibleToAll = Options.Loot.ShowUnownedItems
-            };
-
             if (itemBase.ItemType == ItemTypes.Equipment)
             {
-                mapItem.Quantity = 1;
+                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                    Owner = owner,
+                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                    VisibleToAll = Options.Loot.ShowUnownedItems,
+                    Quantity = 1
+                    
+                };
                 if (mapItem.StatBuffs != null && item.StatBuffs != null)
                 {
                     for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
@@ -264,14 +262,48 @@ namespace Intersect.Server.Maps
                 {
                     Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
                 }
+                MapItems.Add(mapItem);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+                return;
+            }
+
+            // if we can stack this item, simply spawn a single stack of it.
+            if (itemBase.Stackable)
+            {
+                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                    Owner = owner,
+                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                    VisibleToAll = Options.Loot.ShowUnownedItems,
+                    Quantity = amount
+
+                };
+
+                MapItems.Add(mapItem);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
             else
             {
-                mapItem.Quantity = amount;
-            }
+                // Oh boy here we go! Set quantity to 1 and drop multiple!
+                for (var i = 0; i < amount; i++)
+                {
+                    var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
+                        X = x,
+                        Y = y,
+                        DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                        Owner = owner,
+                        OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                        VisibleToAll = Options.Loot.ShowUnownedItems,
+                        Quantity = 1
 
-            MapItems.Add(mapItem);
-            PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+                    };
+                    MapItems.Add(mapItem);
+                }
+                PacketSender.SendMapItemsToProximity(Id);
+            }
+            
         }
 
         private void SpawnAttributeItem(int x, int y)
