@@ -1422,10 +1422,9 @@ namespace Intersect.Server.Entities
                 var openSlots = FindOpenInventorySlots();
                 if (openSlots.Count >= item.Quantity)
                 {
-                    var singleItem = new Item(item.ItemId, 1);
                     for (var i = 0; i < item.Quantity; i++)
                     {
-                        openSlots[i].Set(singleItem);
+                        openSlots[i].Set(new Item(item.ItemId, 1));
                         if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
                     }
                     UpdateGatherItemQuests(item.ItemId);
