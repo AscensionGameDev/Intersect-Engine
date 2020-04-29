@@ -1234,6 +1234,8 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
 
+            if (nudSpawnItemAmount.Value < 1) nudSpawnItemAmount.Value = 1;
+
             mEditorItem.Items[(int) lstSpawnItems.SelectedIndex].Quantity = (int) nudSpawnItemAmount.Value;
             UpdateSpawnItemValues(true);
         }

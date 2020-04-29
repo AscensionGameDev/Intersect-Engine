@@ -714,6 +714,8 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
 
+            if (nudDropAmount.Value < 1) nudDropAmount.Value = 1;
+
             mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
             UpdateDropValues(true);
         }

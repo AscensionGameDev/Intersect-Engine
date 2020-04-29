@@ -630,6 +630,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
+
+            if (nudDropAmount.Value < 1) nudDropAmount.Value = 1;
+
             if (lstDrops.SelectedIndex < lstDrops.Items.Count)
             {
                 return;

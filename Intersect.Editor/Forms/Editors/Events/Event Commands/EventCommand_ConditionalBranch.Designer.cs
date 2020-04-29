@@ -1449,11 +1449,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.nudItemAmount.Name = "nudItemAmount";
             this.nudItemAmount.Size = new System.Drawing.Size(150, 20);
             this.nudItemAmount.TabIndex = 4;
-            this.nudItemAmount.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.nudItemAmount.Value = 1;
+            this.nudItemAmount.ValueChanged += new System.EventHandler(this.NudItemAmount_ValueChanged);
             // 
             // cmbItem
             // 
@@ -1544,6 +1541,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).EndInit();
             this.ResumeLayout(false);
 
+        }
+
+        private void NudItemAmount_ValueChanged(object sender, System.EventArgs e)
+        {
+            if (nudItemAmount.Value < 1) nudItemAmount.Value = 1;
         }
 
         #endregion
