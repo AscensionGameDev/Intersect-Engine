@@ -1390,40 +1390,47 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
+            // is this item stackable?
             if (itemBase.IsStackable)
             {
-                for (var i = 0; i < Options.MaxInvItems; i++)
+                // Do we already have this item? If so update our stack.
+                var existingSlot = FindInventoryItemSlot(itemBase.Id);
+                if (existingSlot > -1)
                 {
-                    var inventorySlot = Items[i];
-
-                    if (inventorySlot != null && inventorySlot.ItemId == item.ItemId)
+                    Items[existingSlot].Quantity += item.Quantity;
+                    if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, existingSlot);
+                    UpdateGatherItemQuests(item.ItemId);
+                    return true;
+                }
+                else
+                {
+                    // If not, then try and give it to the player!
+                    var newSlot = FindOpenInventorySlot();
+                    if (newSlot != null)
                     {
-                        inventorySlot.Quantity += item.Quantity;
-
-                        if (sendUpdate)
-                        {
-                            PacketSender.SendInventoryItemUpdate(this, i);
-                        }
-
+                        newSlot.Set(item);
+                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, newSlot.Slot);
                         UpdateGatherItemQuests(item.ItemId);
                         return true;
                     }
                 }
             }
-
-            // Either a non stacking item, or we couldn't find the item already existing in the players inventory
-            // Get a list of open inventory slots, and if there are more or equal to the items we want to deposit.. go for it!
-            var openSlots = FindOpenInventorySlots();
-            if (openSlots.Count >= item.Quantity)
+            else
             {
-                var singleItem = new Item(item.ItemId, 1);
-                for (var i = 0; i < item.Quantity; i++)
+                // Not stackable!
+                // Get a list of open inventory slots, and if there are more or equal to the items we want to give them.. go for it!
+                var openSlots = FindOpenInventorySlots();
+                if (openSlots.Count >= item.Quantity)
                 {
-                    openSlots[i].Set(singleItem);
-                    if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
+                    var singleItem = new Item(item.ItemId, 1);
+                    for (var i = 0; i < item.Quantity; i++)
+                    {
+                        openSlots[i].Set(singleItem);
+                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
+                    }
+                    UpdateGatherItemQuests(item.ItemId);
+                    return true;
                 }
-                UpdateGatherItemQuests(item.ItemId);
-                return true;
             }
 
             return bankOverflow && TryDepositItem(item, sendUpdate);
@@ -1446,6 +1453,21 @@ namespace Intersect.Server.Entities
                 }
             }
             return slots;
+        }
+
+        public InventorySlot FindOpenInventorySlot()
+        {
+            var slots = new List<InventorySlot>();
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                var inventorySlot = Items[i];
+
+                if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
+                {
+                    return inventorySlot;
+                }
+            }
+            return null;
         }
 
         public void SwapItems(int item1, int item2)
