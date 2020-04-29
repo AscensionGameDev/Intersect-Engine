@@ -1354,34 +1354,61 @@ namespace Intersect.Server.Entities
         }
 
         //Inventory
+        /// <summary>
+        /// Checks whether a player can or can not receive the specified item and its quantity.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool CanGiveItem(Item item)
         {
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
+                // Is the item stackable?
                 if (itemBase.IsStackable)
                 {
-                    for (var i = 0; i < Options.MaxInvItems; i++)
-                    {
-                        if (Items[i].ItemId == item.ItemId)
-                        {
-                            return true;
-                        }
-                    }
-                }
+                    // Does the user have this item already?
+                    if (FindInventoryItemSlot(item.ItemId) > -1) return true;
 
-                // Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                // Check if we have enough slots in our inventory to contain this item.
-                if (FindOpenInventorySlots().Count >= item.Quantity) return true;
+                    // Does the user have a free space?
+                    if (FindOpenInventorySlots().Count >= 1) return true;
+                }
+                else
+                {
+                    // Not a stacking item, so can we contain the amount we want to give them?
+                    if (FindOpenInventorySlots().Count >= item.Quantity) return true;
+                }
             }
 
+            // Nothing matches in here, give up!
             return false;
         }
 
+        /// <summary>
+        /// Attempts to give the player an item. Returns whether or not it succeeds.
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <param name="quantity"></param>
+        /// <param name="bankOverflow"></param>
+        /// <param name="sendUpdate"></param>
+        /// <returns></returns>
         public bool TryGiveItem(Guid itemId, int quantity, bool bankOverflow = false, bool sendUpdate = true) => TryGiveItem(new Item(itemId, quantity), sendUpdate);
 
+        /// <summary>
+        /// Attempts to give the player an item. Returns whether or not it succeeds.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="sendUpdate"></param>
+        /// <returns></returns>
         public bool TryGiveItem(Item item, bool sendUpdate = true) => TryGiveItem(item, false, sendUpdate);
 
+        /// <summary>
+        /// Attempts to give the player an item. Returns whether or not it succeeds.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="bankOverflow"></param>
+        /// <param name="sendUpdate"></param>
+        /// <returns></returns>
         public bool TryGiveItem(Item item, bool bankOverflow, bool sendUpdate)
         {
             var itemBase = ItemBase.Get(item.ItemId);
@@ -1454,6 +1481,10 @@ namespace Intersect.Server.Entities
             return slots;
         }
 
+        /// <summary>
+        /// Finds the first open inventory slot this player has.
+        /// </summary>
+        /// <returns></returns>
         public InventorySlot FindOpenInventorySlot()
         {
             var slots = new List<InventorySlot>();
