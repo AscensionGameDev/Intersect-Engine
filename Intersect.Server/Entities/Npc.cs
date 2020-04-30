@@ -29,8 +29,29 @@ namespace Intersect.Server.Entities
         //Spell casting
         public long CastFreq;
 
-        //Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
+        /// <summary>
+        /// Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
+        /// </summary>
         public ConcurrentDictionary<Entity, long> DamageMap = new ConcurrentDictionary<Entity, long>();
+
+        /// <summary>
+        /// Returns the entity that ranks the highest on this NPC's damage map.
+        /// </summary>
+        public Entity DamageMapHighest { 
+            get {
+                long damage = 0;
+                Entity top = null;
+                foreach (var pair in DamageMap)
+                {
+                    if (pair.Value > damage)
+                    {
+                        top = pair.Key;
+                        damage = pair.Value;
+                    }
+                }
+                return top;
+            } 
+        }
 
         public bool Despawnable;
 

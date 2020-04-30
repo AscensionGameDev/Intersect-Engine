@@ -215,6 +215,11 @@ namespace Intersect.Server.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
+            this.SpawnItem(x, y, item, amount, Guid.Empty);
+        }
+
+        public void SpawnItem(int x, int y, Item item, int amount, Guid owner)
+        {
             if (item == null)
             {
                 Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
@@ -230,11 +235,15 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
-            {
+            
+
+            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
                 X = x,
                 Y = y,
-                DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
+                DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                Owner = owner,
+                OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                VisibleToAll = Options.Loot.ShowUnownedItems
             };
 
             if (itemBase.ItemType == ItemTypes.Equipment)
@@ -311,7 +320,7 @@ namespace Intersect.Server.Maps
                             ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
                             ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
                             ItemRespawns[ItemRespawns.Count - 1].RespawnTime =
-                                Globals.Timing.TimeMs + Options.ItemRepawnTime;
+                                Globals.Timing.TimeMs + Options.Map.ItemAttributeRespawnTime;
                         }
                     }
 
@@ -771,19 +780,34 @@ namespace Intersect.Server.Maps
                 //Process Items
                 lock (MapItems)
                 {
+
                     for (var i = 0; i < MapItems.Count; i++)
                     {
-                        if (MapItems[i] != null && MapItems[i].DespawnTime != -1 && MapItems[i].DespawnTime < timeMs)
+                        var mapItem = MapItems[i];
+                        if (mapItem != null)
                         {
-                            RemoveItem(i);
+                            // Should this item be visible to everyone now?
+                            if (!mapItem.VisibleToAll && mapItem.OwnershipTime < timeMs)
+                            {
+                                mapItem.VisibleToAll = true;
+                                PacketSender.SendMapItemUpdate(Id, i);
+                            }
+
+                            // Do we need to delete this item?
+                            if (mapItem.DespawnTime != -1 && mapItem.DespawnTime < timeMs)
+                            {
+                                RemoveItem(i);
+                            }
                         }
+
                     }
 
                     for (var i = 0; i < ItemRespawns.Count; i++)
                     {
-                        if (ItemRespawns[i].RespawnTime < timeMs)
+                        var itemRespawn = ItemRespawns[i];
+                        if (itemRespawn.RespawnTime < timeMs)
                         {
-                            SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
+                            SpawnAttributeItem(itemRespawn.AttributeSpawnX, itemRespawn.AttributeSpawnY);
                             ItemRespawns.RemoveAt(i);
                         }
                     }
@@ -796,7 +820,7 @@ namespace Intersect.Server.Maps
                         if (timeMs > LastUpdateTime + 30000)
                         {
                             //Regen Everything & Forget Targets
-                            if (en.Value is Resource || en is Npc)
+                            if (en.Value is Resource || en.Value is Npc)
                             {
                                 en.Value.RestoreVital(Vitals.Health);
                                 en.Value.RestoreVital(Vitals.Mana);

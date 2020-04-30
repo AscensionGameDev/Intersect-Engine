@@ -1776,21 +1776,14 @@ namespace Intersect.Server.Entities
                         dmgMap.TryGetValue(this, out var damage);
                         dmgMap[this] = damage + baseDamage;
 
-                        long dmg = baseDamage;
-                        var newTarget = this;
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            foreach (var pair in dmgMap)
-                            {
-                                if (pair.Value > dmg)
-                                {
-                                    newTarget = pair.Key;
-                                    dmg = pair.Value;
-                                }
-                            }
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
-
-                        enemyNpc.AssignTarget(newTarget);
+                        else
+                        {
+                            enemyNpc.AssignTarget(this);
+                        }
                     }
 
                     enemy.NotifySwarm(this);
@@ -1827,21 +1820,9 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = enemyNpc.DamageMap;
-                        var target = this;
-                        long dmg = 0;
-                        foreach (var pair in dmgMap)
-                        {
-                            if (pair.Value > dmg)
-                            {
-                                target = pair.Key;
-                                dmg = pair.Value;
-                            }
-                        }
-
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            enemyNpc.AssignTarget(target);
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
                         else
                         {
@@ -2438,9 +2419,29 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var map = MapInstance.Get(MapId);
-                    map?.SpawnItem(X, Y, item, item.Quantity);
+                    // Decide if we want to have a loot ownership timer or not.
+                    Guid lootOwner = Guid.Empty;
+                    if (this is Npc thisNpc)
+                    {
+                        // Check if we have someone that tagged this NPC.
+                        var taggedBy = thisNpc.DamageMapHighest;
+                        if (taggedBy != null && taggedBy is Player)
+                        {
+                            // Spawn with ownership!
+                            lootOwner = taggedBy.Id;
+                        }
+                    } 
+                    else
+                    {
+                        // There's no tracking of who damaged what player as of now, so going by last hit.. Or set ownership to the player themselves.
+                        lootOwner = playerKiller?.Id ?? Id;
+                    }
 
+                    // Spawn the actual item!
+                    var map = MapInstance.Get(MapId);
+                    map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+
+                    // Remove the item from inventory if a player.
                     var player = this as Player;
                     player?.TakeItemsBySlot(n, item.Quantity);
                 }
