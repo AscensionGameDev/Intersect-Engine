@@ -1368,15 +1368,24 @@ namespace Intersect.Server.Entities
                 if (itemBase.IsStackable)
                 {
                     // Does the user have this item already?
-                    if (FindInventoryItemSlot(item.ItemId) != null) return true;
+                    if (FindInventoryItemSlot(item.ItemId) != null)
+                    {
+                        return true;
+                    }
 
                     // Does the user have a free space?
-                    if (FindOpenInventorySlots().Count >= 1) return true;
+                    if (FindOpenInventorySlots().Count >= 1)
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
                     // Not a stacking item, so can we contain the amount we want to give them?
-                    if (FindOpenInventorySlots().Count >= item.Quantity) return true;
+                    if (FindOpenInventorySlots().Count >= item.Quantity)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -1411,21 +1420,25 @@ namespace Intersect.Server.Entities
         /// <returns></returns>
         public bool TryGiveItem(Item item, bool bankOverflow, bool sendUpdate)
         {
-            var itemBase = ItemBase.Get(item.ItemId);
-            if (itemBase == null)
+            var itemDescriptor = ItemBase.Get(item.ItemId);
+            if (itemDescriptor == null)
             {
                 return false;
             }
 
             // is this item stackable?
-            if (itemBase.IsStackable)
+            if (itemDescriptor.IsStackable)
             {
                 // Do we already have this item? If so update our stack.
-                var existingSlot = FindInventoryItemSlot(itemBase.Id);
+                var existingSlot = FindInventoryItemSlot(itemDescriptor.Id);
                 if (existingSlot != null)
                 {
                     Items[existingSlot.Slot].Quantity += item.Quantity;
-                    if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, existingSlot.Slot);
+                    if (sendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(this, existingSlot.Slot);
+                    }
+
                     UpdateGatherItemQuests(item.ItemId);
                     return true;
                 }
@@ -1436,7 +1449,11 @@ namespace Intersect.Server.Entities
                     if (newSlot != null)
                     {
                         newSlot.Set(item);
-                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, newSlot.Slot);
+                        if (sendUpdate)
+                        { 
+                            PacketSender.SendInventoryItemUpdate(this, newSlot.Slot); 
+                        }
+
                         UpdateGatherItemQuests(item.ItemId);
                         return true;
                     }

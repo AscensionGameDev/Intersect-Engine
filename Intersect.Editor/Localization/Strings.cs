@@ -1225,8 +1225,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString item = @"Item:";
 
+            [NotNull, JsonProperty]
             public static LocalizedString UpTo = @"Up to Amount";
 
+            [NotNull, JsonProperty]
             public static LocalizedString AllowOverflow = @"Allow inventory overflow";
 
             public static LocalizedString okay = @"Ok";

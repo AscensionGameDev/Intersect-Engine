@@ -78,17 +78,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void nudGiveTakeAmount_ValueChanged(object sender, EventArgs e)
         {
             // This should never be below 1. We shouldn't accept giving or taking away 0 items!
-            if (nudGiveTakeAmount.Value < 1) nudGiveTakeAmount.Value = 1;
+            nudGiveTakeAmount.Value = Math.Max(1, nudGiveTakeAmount.Value);
         }
 
         private void chkUpTo_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkUpTo.Checked) chkOverflow.Checked = false;
+            chkOverflow.Checked &= !chkUpTo.Checked;
         }
 
         private void chkOverflow_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkOverflow.Checked) chkUpTo.Checked = false;
+            chkUpTo.Checked &= !chkOverflow.Checked;
         }
     }
 

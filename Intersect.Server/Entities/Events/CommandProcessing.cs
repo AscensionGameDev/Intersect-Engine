@@ -465,26 +465,32 @@ namespace Intersect.Server.Entities.Events
                     } 
                     else
                     {
-                        // See how many we could potentially give them.
+                        // See how many we could potentially give them, then see if we can give them all in one go.
                         var inventorySlots = player.FindOpenInventorySlots().Count;
-                        if (inventorySlots >= 1 && inventorySlots > command.Quantity)
+                        if (inventorySlots >= command.Quantity)
                         {
-                            // We have more slots than we want to add items. So go for it.
-                            
+                            // We have enough slots, throw them in there!
                             success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
                         }
                         else
                         {
                             // Okay, plan B.. Give as many as we have slots and drop the rest on the map.
-                            success = player.TryGiveItem(new Item(command.ItemId, inventorySlots));
-
-                            // Only drop items if we actually succeeded in filling our inventory.
-                            // In theory this should never not be true, but you never know..?
-                            if (success)
-                            {
-                                var toDrop = command.Quantity - inventorySlots;
-                                player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, toDrop), toDrop, player.Id);
+                            // Can we give our player anything?
+                            var giveSucceed = false;
+                            if (inventorySlots > 0) {
+                                giveSucceed = player.TryGiveItem(new Item(command.ItemId, inventorySlots));
                             }
+
+                            // Check if we tried to give the user something and succeeded, of if their inventory was simply full to start with.
+                            // If we tried to give them something and failed, don't drop anything on the map! We don't want players finding a way to get free stuff by failing this event!
+                            var toDrop = command.Quantity - inventorySlots;
+                            if ((giveSucceed || inventorySlots == 0) && toDrop > 0)
+                            {
+                                player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, toDrop), toDrop, player.Id);
+                                success = true;
+                            }
+
+
                         }
                     }
                 }

@@ -709,12 +709,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
+            // This should never be below 1. We shouldn't accept giving 0 items!
+            nudDropAmount.Value = Math.Max(1, nudDropAmount.Value);
+
             if (lstDrops.SelectedIndex < lstDrops.Items.Count)
             {
                 return;
             }
-
-            if (nudDropAmount.Value < 1) nudDropAmount.Value = 1;
 
             mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
             UpdateDropValues(true);
