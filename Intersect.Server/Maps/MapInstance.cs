@@ -267,8 +267,8 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            // if we can stack this item, simply spawn a single stack of it.
-            if (itemBase.Stackable)
+            // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
+            if (itemBase.Stackable || Options.Loot.ConsolidateMapDrops)
             {
                 var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
                     X = x,
