@@ -40,8 +40,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblAction = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.chkOverflow = new System.Windows.Forms.CheckBox();
-            this.chkUpTo = new System.Windows.Forms.CheckBox();
+            this.cmbMethod = new DarkUI.Controls.DarkComboBox();
+            this.lblMethod = new System.Windows.Forms.Label();
             this.grpChangeItems.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudGiveTakeAmount)).BeginInit();
             this.SuspendLayout();
@@ -50,8 +50,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpChangeItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChangeItems.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChangeItems.Controls.Add(this.chkUpTo);
-            this.grpChangeItems.Controls.Add(this.chkOverflow);
+            this.grpChangeItems.Controls.Add(this.cmbMethod);
+            this.grpChangeItems.Controls.Add(this.lblMethod);
             this.grpChangeItems.Controls.Add(this.nudGiveTakeAmount);
             this.grpChangeItems.Controls.Add(this.lblAmount);
             this.grpChangeItems.Controls.Add(this.cmbItem);
@@ -63,7 +63,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeItems.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpChangeItems.Location = new System.Drawing.Point(3, 3);
             this.grpChangeItems.Name = "grpChangeItems";
-            this.grpChangeItems.Size = new System.Drawing.Size(193, 173);
+            this.grpChangeItems.Size = new System.Drawing.Size(193, 171);
             this.grpChangeItems.TabIndex = 17;
             this.grpChangeItems.TabStop = false;
             this.grpChangeItems.Text = "Change Player Items:";
@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 144);
+            this.btnCancel.Location = new System.Drawing.Point(112, 140);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -177,7 +177,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(8, 144);
+            this.btnSave.Location = new System.Drawing.Point(6, 140);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -185,27 +185,39 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // chkOverflow
+            // cmbMethod
             // 
-            this.chkOverflow.AutoSize = true;
-            this.chkOverflow.Location = new System.Drawing.Point(8, 99);
-            this.chkOverflow.Name = "chkOverflow";
-            this.chkOverflow.Size = new System.Drawing.Size(143, 17);
-            this.chkOverflow.TabIndex = 27;
-            this.chkOverflow.Text = "Allow Inventory Overflow";
-            this.chkOverflow.UseVisualStyleBackColor = true;
-            this.chkOverflow.CheckedChanged += new System.EventHandler(this.chkOverflow_CheckedChanged);
+            this.cmbMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbMethod.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbMethod.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbMethod.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbMethod.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbMethod.ButtonIcon")));
+            this.cmbMethod.DrawDropdownHoverOutline = false;
+            this.cmbMethod.DrawFocusRectangle = false;
+            this.cmbMethod.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMethod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbMethod.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbMethod.FormattingEnabled = true;
+            this.cmbMethod.Items.AddRange(new object[] {
+            "Normal",
+            "Allow Overflow",
+            "Up to Amount"});
+            this.cmbMethod.Location = new System.Drawing.Point(64, 99);
+            this.cmbMethod.Name = "cmbMethod";
+            this.cmbMethod.Size = new System.Drawing.Size(115, 21);
+            this.cmbMethod.TabIndex = 28;
+            this.cmbMethod.Text = "Normal";
+            this.cmbMethod.TextPadding = new System.Windows.Forms.Padding(2);
             // 
-            // chkUpTo
+            // lblMethod
             // 
-            this.chkUpTo.AutoSize = true;
-            this.chkUpTo.Location = new System.Drawing.Point(8, 121);
-            this.chkUpTo.Name = "chkUpTo";
-            this.chkUpTo.Size = new System.Drawing.Size(129, 17);
-            this.chkUpTo.TabIndex = 28;
-            this.chkUpTo.Text = "Change up to Amount";
-            this.chkUpTo.UseVisualStyleBackColor = true;
-            this.chkUpTo.CheckedChanged += new System.EventHandler(this.chkUpTo_CheckedChanged);
+            this.lblMethod.AutoSize = true;
+            this.lblMethod.Location = new System.Drawing.Point(6, 102);
+            this.lblMethod.Name = "lblMethod";
+            this.lblMethod.Size = new System.Drawing.Size(46, 13);
+            this.lblMethod.TabIndex = 27;
+            this.lblMethod.Text = "Method:";
             // 
             // EventCommandChangeItems
             // 
@@ -234,7 +246,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.Label lblAmount;
         private DarkNumericUpDown nudGiveTakeAmount;
-        private System.Windows.Forms.CheckBox chkUpTo;
-        private System.Windows.Forms.CheckBox chkOverflow;
+        private DarkComboBox cmbMethod;
+        private System.Windows.Forms.Label lblMethod;
     }
 }

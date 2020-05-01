@@ -213,10 +213,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void SpawnItem(int x, int y, Item item, int amount)
-        {
-            this.SpawnItem(x, y, item, amount, Guid.Empty);
-        }
+        public void SpawnItem(int x, int y, Item item, int amount) => SpawnItem(x, y, item, amount, Guid.Empty);
 
         public void SpawnItem(int x, int y, Item item, int amount, Guid owner)
         {

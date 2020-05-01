@@ -419,81 +419,14 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
-            // This is where things get a little funky, do we change their items in one go or do we have to account for the possibility to overflow or even just change as many as we can?
-            if (!command.ChangeUpTo && !command.AllowOverflow)    // We are JUST going to have to change our item.
+
+            if (command.Add)
             {
-                success = player.TryChangeItemById(command.ItemId, command.Quantity, command.Add, true);
+                success = player.TryGiveItem(command.ItemId, command.Quantity, command.ItemHandling);
             }
-            else if (command.ChangeUpTo && !command.AllowOverflow)  // We can change up to the quantity, rather than enforcing the total amount. But can NOT overflow!
+            else
             {
-                // Oh boy, what do we get to do today?
-                if (command.Add)
-                {
-                    // Find out how many we can add, and do so!
-                    // If we can't give them even one, consider this a failure.
-                    var inventorySlots = player.FindOpenInventorySlots();
-                    if (inventorySlots.Count >= 1)
-                    {
-                        success = player.TryGiveItem(new Item(command.ItemId, inventorySlots.Count));
-                    }
-                }
-                else
-                {
-                    // Find out how many we can take, and do so!
-                    // If we can't take any, consider this a failure.
-                    var itemCount = player.FindInventoryItemQuantity(command.ItemId);
-                    if (itemCount >= 1)
-                    {
-                        success = player.TryTakeItemsById(command.ItemId, itemCount);
-                    }
-                }
-            }
-            else if (!command.ChangeUpTo && command.AllowOverflow)  // Simply give our players the item, and when they run out of space start dropping it on the floor.
-            {
-                if (!command.Add)   // We can't overflow a take command. So just act as if this is a normal command.
-                {
-                    success = player.TryTakeItemsById(command.ItemId, command.Quantity);
-                }
-                else    // We can however give items that overflow!
-                {
-                    var item = new Item(command.ItemId, command.Quantity);
-                    if (item.Descriptor.Stackable)
-                    {
-                        // It's stackable, don't care for overflowing and just give it.
-                        success = player.TryGiveItem(item);
-                    } 
-                    else
-                    {
-                        // See how many we could potentially give them, then see if we can give them all in one go.
-                        var inventorySlots = player.FindOpenInventorySlots().Count;
-                        if (inventorySlots >= command.Quantity)
-                        {
-                            // We have enough slots, throw them in there!
-                            success = player.TryGiveItem(item);
-                        }
-                        else
-                        {
-                            // Okay, plan B.. Give as many as we have slots and drop the rest on the map.
-                            // Can we give our player anything?
-                            var giveSucceed = false;
-                            if (inventorySlots > 0) {
-                                item.Quantity = inventorySlots;
-                                giveSucceed = player.TryGiveItem(item);
-                            }
-
-                            // Check if we tried to give the user something and succeeded, of if their inventory was simply full to start with.
-                            // If we tried to give them something and failed, don't drop anything on the map! We don't want players finding a way to get free stuff by failing this event!
-                            var toDrop = command.Quantity - inventorySlots;
-                            if ((giveSucceed || inventorySlots == 0) && toDrop > 0)
-                            {
-                                player.Map.SpawnItem(player.X, player.Y, new Item(command.ItemId, toDrop), toDrop, player.Id);
-                                success = true;
-                            }
-
-
-                        }
-                    }
-                }
+                success = player.TryTakeItem(command.ItemId, command.Quantity, command.ItemHandling);
             }
 
             List<EventCommand> newCommandList = null;

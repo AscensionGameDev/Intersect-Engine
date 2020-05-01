@@ -1231,10 +1231,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString item = @"Item:";
 
             [NotNull, JsonProperty]
-            public static LocalizedString UpTo = @"Up to Amount";
+            public static LocalizedString Method = @"Method:";
 
-            [NotNull, JsonProperty]
-            public static LocalizedString AllowOverflow = @"Allow inventory overflow";
+            public static Dictionary<int, LocalizedString> Methods = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Normal"},
+                {1, @"Allow Overflow"},
+                {2, @"Up to Amount" },
+            };
 
             public static LocalizedString okay = @"Ok";
 
