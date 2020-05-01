@@ -419,11 +419,10 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
-
             // This is where things get a little funky, do we change their items in one go or do we have to account for the possibility to overflow or even just change as many as we can?
             if (!command.ChangeUpTo && !command.AllowOverflow)    // We are JUST going to have to change our item.
             {
-                success = player.ChangeItemById(command.ItemId, command.Quantity, command.Add, true);
+                success = player.TryChangeItemById(command.ItemId, command.Quantity, command.Add, true);
             }
             else if (command.ChangeUpTo && !command.AllowOverflow)  // We can change up to the quantity, rather than enforcing the total amount. But can NOT overflow!
             {
@@ -470,7 +469,7 @@ namespace Intersect.Server.Entities.Events
                         if (inventorySlots >= command.Quantity)
                         {
                             // We have enough slots, throw them in there!
-                            success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
+                            success = player.TryGiveItem(item);
                         }
                         else
                         {
@@ -478,7 +477,8 @@ namespace Intersect.Server.Entities.Events
                             // Can we give our player anything?
                             var giveSucceed = false;
                             if (inventorySlots > 0) {
-                                giveSucceed = player.TryGiveItem(new Item(command.ItemId, inventorySlots));
+                                item.Quantity = inventorySlots;
+                                giveSucceed = player.TryGiveItem(item);
                             }
 
                             // Check if we tried to give the user something and succeeded, of if their inventory was simply full to start with.

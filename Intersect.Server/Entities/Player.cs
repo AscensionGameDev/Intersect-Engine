@@ -1469,7 +1469,10 @@ namespace Intersect.Server.Entities
                     for (var i = 0; i < item.Quantity; i++)
                     {
                         openSlots[i].Set(new Item(item.ItemId, 1));
-                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
+                        if (sendUpdate)
+                        { 
+                            PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot); 
+                        }
                     }
                     UpdateGatherItemQuests(item.ItemId);
                     return true;
@@ -1814,7 +1817,7 @@ namespace Intersect.Server.Entities
         /// <param name="add"></param>
         /// <param name="sendUpdate"></param>
         /// <returns></returns>
-        public bool ChangeItemById(Guid itemId, int amount, bool add, bool sendUpdate = true)
+        public bool TryChangeItemById(Guid itemId, int amount, bool add, bool sendUpdate = true)
         {
             if (add)
             {
@@ -1865,7 +1868,10 @@ namespace Intersect.Server.Entities
                     returnVal = true;
                 }
 
-                if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, slot);
+                if (sendUpdate)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, slot);
+                }
             }
 
             if (returnVal)
@@ -1902,7 +1908,10 @@ namespace Intersect.Server.Entities
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);
-                    if (sendUpdate)PacketSender.SendInventoryItemUpdate(this, i);
+                    if (sendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(this, i);
+                    }
                     EquipmentProcessItemLoss(i);
                     if (amount == 0)
                     {
@@ -1915,7 +1924,10 @@ namespace Intersect.Server.Entities
                     {
                         amount -= item.Quantity;
                         Items[i].Set(Item.None);
-                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, i);
+                        if (sendUpdate)
+                        {
+                            PacketSender.SendInventoryItemUpdate(this, i);
+                        }
                         EquipmentProcessItemLoss(i);
                         if (amount == 0)
                         {
@@ -1925,7 +1937,10 @@ namespace Intersect.Server.Entities
                     else
                     {
                         item.Quantity -= amount;
-                        if (sendUpdate) PacketSender.SendInventoryItemUpdate(this, i);
+                        if (sendUpdate)
+                        {
+                            PacketSender.SendInventoryItemUpdate(this, i);
+                        }
 
                         return true;
                     }
