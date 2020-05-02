@@ -1188,9 +1188,9 @@ namespace Intersect.Server.Networking
                     MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].Y == player.Y)
                 {
                     if (player.TryGiveItem(MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex]))
-                    {
-                        //Remove Item From Map
-                        MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+					{
+						//Remove Item From Map
+						MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
                     }
                 }
             }
@@ -1507,40 +1507,44 @@ namespace Intersect.Server.Networking
 			var character = DbInterface.GetPlayer(packet.To);
 			if (character != null)
 			{
-				Guid itemID = packet.ItemID;
+				int slotID = packet.SlotID;
+				if (slotID >= player.Items.Count)
+				{
+					player.CloseMailBox();
+					return;
+				}
 				int quantity = 0;
 				int[] statBuffs = new int[(int)Enums.Stats.StatCount];
-				if (itemID != Guid.Empty)
+				Dictionary<string, int> tags = new Dictionary<string, int>();
+				Guid itemID = Guid.Empty;
+				if (slotID >= 0)
 				{
-					quantity = packet.Quantity;
-					for (var i = 0; i < Options.MaxInvItems; i++)
+					InventorySlot slot = player.Items[slotID];
+					itemID = slot.ItemId;
+					if (itemID != Guid.Empty)
 					{
-						var item = player.Items[i];
-						if (item?.ItemId != itemID)
+						quantity = packet.Quantity;
+						statBuffs = slot.StatBuffs;
+						tags = slot.Tags;
+
+						if (player.TakeItemsBySlot(slotID, quantity) == false)
 						{
-							continue;
+							itemID = Guid.Empty;
+							quantity = 0;
+							statBuffs = new int[(int)Enums.Stats.StatCount];
+							tags = new Dictionary<string, int>();
 						}
-						statBuffs = item.StatBuffs;
-						break;
+
 					}
-					if (player.TakeItemsById(itemID, quantity) == false)
-					{
-						itemID= packet.ItemID;
-						quantity = 0;
-						statBuffs = new int[(int)Enums.Stats.StatCount];
-					}
-				
 				}
 
-				character.MailBoxs.Add(new MailBox(player, character, packet.Title, packet.Message, itemID, quantity, statBuffs));
+				character.MailBoxs.Add(new MailBox(player, character, packet.Title, packet.Message, itemID, quantity, statBuffs, tags));
 				
 			}
 			else
 			{
 				PacketSender.SendChatMsg(player, $"{Strings.Mails.playernotfound} ({packet.To})", CustomColors.Alerts.Info);
 			}
-
-
 			player.CloseMailBox();
 			DbInterface.SavePlayerDatabaseAsync();
 		}
@@ -1574,6 +1578,7 @@ namespace Intersect.Server.Networking
 			}
 			Item item = new Item(mail.ItemId, mail.Quantity, false);
 			item.StatBuffs = mail.StatBuffs;
+			item.Tags = mail.Tags;
 			if (player.TryGiveItem(item))
 			{
 				var it = ItemBase.Get(mail.ItemId);

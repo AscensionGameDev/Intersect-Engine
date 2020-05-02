@@ -1648,7 +1648,37 @@ namespace Intersect.Server.Entities
             target.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
         }
 
-        public void Attack(
+		public virtual float CalculCritChance(float baseChance)
+		{
+			return baseChance;
+		}
+
+		public virtual double CalculCritMul(double baseCritical)
+		{
+			return baseCritical;
+		}
+
+		public virtual int CalculWeaponDamage(int baseWeaponDamage)
+		{
+			return baseWeaponDamage;
+		}
+
+		public virtual int CalculDamage(int baseDamage)
+		{
+			return baseDamage;
+		}
+
+		public virtual int CalculPhysicalDamage(int baseDamage)
+		{
+			return baseDamage;
+		}
+
+		public virtual int CalculMagicalDamage(int baseDamage)
+		{
+			return baseDamage;
+		}
+
+		public void Attack(
             Entity enemy,
             int baseDamage,
             int secondaryDamage,
@@ -1689,21 +1719,58 @@ namespace Intersect.Server.Entities
 
 			//Is this a critical hit?
 			float critRng = (float)(Globals.Rand.NextDouble() * 100.0);
-            if (critRng > critChance)
+			/***
+			 *  ItemTag : Calcul Cirt Chance
+			 *  
+			 *  critChance
+			 * **/
+			float cc = CalculCritChance(critChance);
+			if (critRng > cc)
             {
                 critMultiplier = 1;
             }
             else
             {
                 PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Combat.Critical);
-            }
+				/* **
+				 *  ItemTag : Calcul Degat
+				 *  
+				 *  critMultiplier : Add buff Crit Multiplier
+				 * **/
+				critMultiplier = CalculCritMul(critMultiplier);
+			}
 
-            //Calculate Damages
-            if (baseDamage != 0)
+			//Calculate Damages
+			if (baseDamage != 0)
             {
-                baseDamage = Formulas.CalculateDamage(
-                    baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
-                );
+				/* **
+				 *  ItemTag : Calcul Degat
+				 *  
+				 *  baseDamage : Add Buff base Damage By Type
+				 * **/
+				baseDamage = CalculWeaponDamage(baseDamage);
+				double minDamage = baseDamage + (double)this.Stat[(int)scalingStat].Value() * ((double)scaling / 100.0f) * critMultiplier * 0.975;
+				double maxDamage = baseDamage + (double)this.Stat[(int)scalingStat].Value() * ((double)scaling / 100.0f) * critMultiplier * 1.025;
+				baseDamage = (int)Math.Round(minDamage + ((maxDamage - minDamage) * Globals.Rand.NextDouble()));
+				double defense = 1.0f;
+				switch (damageType)
+				{
+					case DamageType.Physical:
+						baseDamage = CalculPhysicalDamage(baseDamage);
+						defense = 100.0 / (100.0 + enemy.Stat[(int)Stats.Defense].Value());
+						break;
+					case DamageType.Magic:
+						baseDamage = CalculMagicalDamage(baseDamage);
+						defense = 100.0 / (100.0 + enemy.Stat[(int)Stats.MagicResist].Value());
+						break;
+					case DamageType.True:
+						break;
+				}
+				baseDamage = CalculDamage(baseDamage);
+				baseDamage = (int)Math.Round((double)baseDamage * defense);
+				//baseDamage = Formulas.CalculateDamage(
+    //                baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
+    //            );
 
                 if (baseDamage < 0 && damagingAttack)
                 {
@@ -1788,10 +1855,35 @@ namespace Intersect.Server.Entities
             }
 
             if (secondaryDamage != 0)
-            {
-                secondaryDamage = Formulas.CalculateDamage(
-                    secondaryDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
-                );
+			{
+				/***
+				 *  ItemTag : Calcul Degat
+				 * **/
+
+				secondaryDamage = CalculWeaponDamage(secondaryDamage);
+				double minDamage = secondaryDamage + (double)this.Stat[(int)scalingStat].Value() * ((double)scaling / 100.0f) * critMultiplier * 0.975;
+				double maxDamage = secondaryDamage + (double)this.Stat[(int)scalingStat].Value() * ((double)scaling / 100.0f) * critMultiplier * 1.025;
+				secondaryDamage = (int)Math.Round(minDamage + ((maxDamage - minDamage) * Globals.Rand.NextDouble()));
+				double defense = 1.0f;
+				switch (damageType)
+				{
+					case DamageType.Physical:
+						secondaryDamage = CalculPhysicalDamage(secondaryDamage);
+						defense = 100.0 / (100.0 + enemy.Stat[(int)Stats.Defense].Value());
+						break;
+					case DamageType.Magic:
+						secondaryDamage = CalculMagicalDamage(secondaryDamage);
+						defense = 100.0 / (100.0 + enemy.Stat[(int)Stats.MagicResist].Value());
+						break;
+					case DamageType.True:
+						break;
+				}
+				secondaryDamage = CalculDamage(secondaryDamage);
+				secondaryDamage = (int)Math.Round((double)secondaryDamage * defense);
+
+				//secondaryDamage = Formulas.CalculateDamage(
+    //                secondaryDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
+    //            );
 
                 if (secondaryDamage < 0 && damagingAttack)
                 {
@@ -2461,6 +2553,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
+					//Console.WriteLine($"Entity.cs : Spawn Item {item.Tags.Count}");
                     var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity);
 

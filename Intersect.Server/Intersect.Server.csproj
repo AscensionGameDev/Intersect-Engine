@@ -485,6 +485,14 @@
     <Compile Include="Migrations\20200405171804_AddingMailBox.designer.cs">
       <DependentUpon>20200405171804_AddingMailBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20200501120653_PlayerItemTag.cs" />
+    <Compile Include="Migrations\20200501120653_PlayerItemTag.designer.cs">
+      <DependentUpon>20200501120653_PlayerItemTag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200501120625_GameItemTag.cs" />
+    <Compile Include="Migrations\Game\20200501120625_GameItemTag.designer.cs">
+      <DependentUpon>20200501120625_GameItemTag.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

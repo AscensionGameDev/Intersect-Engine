@@ -379,9 +379,9 @@ namespace Intersect.Client.Networking
         }
 
 
-		public static void SendMail(string to, string title, string message, Guid itemID, int quantity)
+		public static void SendMail(string to, string title, string message, int slotID, int quantity)
 		{
-			Network.SendPacket(new MailBoxSendPacket(to, title, message, itemID, quantity));
+			Network.SendPacket(new MailBoxSendPacket(to, title, message, slotID, quantity));
 		}
 
 		public static void SendCloseMail()

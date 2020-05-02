@@ -905,13 +905,12 @@ namespace Intersect.Client.Localization
                 {5, @"Legendary"},
             };
 
-            public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
-            {
-                {0, @"HP: {00}"},
-                {1, @"MP: {00}"}
-            };
-
-        }
+			public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
+			{
+				{0, @"HP: {00}"},
+				{1, @"MP: {00}"}
+			};
+		}
 
         public struct Keys
         {

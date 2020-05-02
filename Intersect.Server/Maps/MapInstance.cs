@@ -212,7 +212,7 @@ namespace Intersect.Server.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
-            if (item == null)
+			if (item == null)
             {
                 Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
 
@@ -235,8 +235,8 @@ namespace Intersect.Server.Maps
             };
 
             if (itemBase.ItemType == ItemTypes.Equipment)
-            {
-                mapItem.Quantity = 1;
+			{
+				mapItem.Quantity = 1;
                 if (mapItem.StatBuffs != null && item.StatBuffs != null)
                 {
                     for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
@@ -252,6 +252,11 @@ namespace Intersect.Server.Maps
                 {
                     Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
                 }
+				mapItem.Tags = new Dictionary<string, int>();
+				foreach (KeyValuePair<string, int> pair in item.Tags)
+				{
+					mapItem.Tags.Add(pair.Key, pair.Value);
+				}
             }
             else
             {

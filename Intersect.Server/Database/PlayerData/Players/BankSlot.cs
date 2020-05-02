@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Server.Entities;
@@ -34,6 +35,21 @@ namespace Intersect.Server.Database.PlayerData.Players
 
         public int Slot { get; private set; }
 
-    }
+		[NotMapped, JsonIgnore]
+		public Dictionary<string, int> tags = new Dictionary<string, int>();
+
+		[Column("Tags")]
+		public string JsonTags
+		{
+			get => JsonConvert.SerializeObject(tags);
+			set
+			{
+				if (value == null)
+					tags = new Dictionary<string, int>();
+				else
+					tags = JsonConvert.DeserializeObject<Dictionary<string, int>>(value);
+			}
+		}
+	}
 
 }

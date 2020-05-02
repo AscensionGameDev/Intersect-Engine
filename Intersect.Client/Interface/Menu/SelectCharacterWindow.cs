@@ -263,52 +263,53 @@ namespace Intersect.Client.Interface.Menu
 							mCharacterContainer.Width / 2 - mCharacterHair.Width / 2,
 							mCharacterContainer.Height / 2 - mCharacterHair.Height / 2
 						);
+						mCharacterHair.Show();
 					}
 					
 					for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
+                    {
+						if (mPaperdollPortraits[i] != mCharacterPortrait)
                         {
-                            if (mPaperdollPortraits[i] != mCharacterPortrait)
+                            mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
+                                GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
+                            );
+						
+							if (mPaperdollPortraits[i].Texture != null)
                             {
-                                mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
-                                    GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
-                                );
-
-                                if (mPaperdollPortraits[i].Texture != null)
-                                {
-									if (i == Options.EquipmentSlots.IndexOf("Helmet"))
-									{
+								if (i == 2)
+								{
 									mCharacterHair.Texture = null;
-									}
+									mCharacterHair.Hide();
+								}
 
-									mPaperdollPortraits[i].Show();
-                                    mPaperdollPortraits[i]
-                                        .SetTextureRect(
-                                            0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                            mPaperdollPortraits[i].Texture.GetHeight() / 4
-                                        );
+								mPaperdollPortraits[i].Show();
+                                mPaperdollPortraits[i]
+                                    .SetTextureRect(
+                                        0, 0, mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                        mPaperdollPortraits[i].Texture.GetHeight() / 4
+                                    );
 
-                                    mPaperdollPortraits[i]
-                                        .SetSize(
-                                            mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                            mPaperdollPortraits[i].Texture.GetHeight() / 4
-                                        );
+                                mPaperdollPortraits[i]
+                                    .SetSize(
+                                        mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                        mPaperdollPortraits[i].Texture.GetHeight() / 4
+                                    );
 
-                                    mPaperdollPortraits[i]
-                                        .SetPosition(
-                                            mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
-                                            mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2
-                                        );
-                                }
-                            }
-                            else
-                            {
-                                if (mPaperdollPortraits[i].Texture != null)
-                                {
-                                    mPaperdollPortraits[i].Show();
-                                }
+                                mPaperdollPortraits[i]
+                                    .SetPosition(
+                                        mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
+                                        mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2
+                                    );
                             }
                         }
-                    //}
+                        else
+                        {
+                            if (mPaperdollPortraits[i].Texture != null)
+                            {
+                                mPaperdollPortraits[i].Show();
+                            }
+                        }
+                    }
                 }
             }
             else
@@ -322,7 +323,9 @@ namespace Intersect.Client.Interface.Menu
 
                 mCharacterPortrait.Texture = null;
 				mCharacterHair.Texture = null;
-            }
+				mCharacterHair.Hide();
+
+			}
         }
 
         public void Show()

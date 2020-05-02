@@ -8,19 +8,19 @@ namespace Intersect.Network.Packets.Client
 {
 	public class MailBoxSendPacket : CerasPacket
 	{
-		public MailBoxSendPacket(string to, string title, string message, Guid itemid, int quantity)
+		public MailBoxSendPacket(string to, string title, string message, int slotID, int quantity)
 		{
 			To = to;
 			Title = title;
 			Message = message;
-			ItemID = itemid;
+			SlotID = slotID;
 			Quantity = quantity;
 		}
 
 		public string To { get; set; }
 		public string Title { get; set; }
 		public string Message { get; set; }
-		public Guid ItemID { get; set; }
+		public int SlotID { get; set; }
 		public int Quantity { get; set; }
 	}
 }

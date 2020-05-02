@@ -692,30 +692,85 @@ namespace Intersect.Server.Entities
 
             var baseVital = classVital;
 
-            // TODO: Alternate implementation for the loop
-//            classVital += Equipment?.Select(equipment => ItemBase.Get(Items.ElementAt(equipment)?.ItemId ?? Guid.Empty))
-//                .Sum(
-//                    itemDescriptor => itemDescriptor.VitalsGiven[vital] +
-//                                      (itemDescriptor.PercentageVitalsGiven[vital] * baseVital) / 100
-//                ) ?? 0;
-            // Loop through equipment and see if any items grant vital buffs
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			// TODO: Alternate implementation for the loop
+			//            classVital += Equipment?.Select(equipment => ItemBase.Get(Items.ElementAt(equipment)?.ItemId ?? Guid.Empty))
+			//                .Sum(
+			//                    itemDescriptor => itemDescriptor.VitalsGiven[vital] +
+			//                                      (itemDescriptor.PercentageVitalsGiven[vital] * baseVital) / 100
+			//                ) ?? 0;
+			// Loop through equipment and see if any items grant vital buffs
+
+			/***
+			 * ItemTag Mana & Life
+			 * */
+
+			float flatValue = baseVital;
+			float pctValue = 1.0f;
+			bool halfattacktolife = false;
+			bool halfpowertomana = false;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
                 {
                     if (Items[Equipment[i]].ItemId != Guid.Empty)
                     {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                        if (item != null)
-                        {
-                            classVital += item.VitalsGiven[vital] + item.PercentageVitalsGiven[vital] * baseVital / 100;
-                        }
-                    }
+						var item = Items[Equipment[i]];
+						//var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+						//if (item != null)
+						//{
+						//    classVital += item.VitalsGiven[vital] + item.PercentageVitalsGiven[vital] * baseVital / 100;
+						//}
+						if (vital == (int)Vitals.Health)
+						{
+							if (item.Tags.ContainsKey("life"))
+							{
+								flatValue += item.Tags["life"];
+							}
+							if (item.Tags.ContainsKey("lifeinc"))
+							{
+								pctValue += ((float)item.Tags["lifeinc"] / 10000.0f);
+							}
+							if (item.Tags.ContainsKey("halfattacktolife"))
+							{
+								if (item.Tags["halfattacktolife"] != 0)
+								{
+									halfattacktolife = true;
+								}
+							}
+						}
+						else if (vital == (int)Vitals.Mana)
+						{
+							if (item.Tags.ContainsKey("mana"))
+							{
+								flatValue += item.Tags["mana"];
+							}
+							if (item.Tags.ContainsKey("manainc"))
+							{
+								pctValue += ((float)item.Tags["manainc"] / 10000.0f);
+							}
+							if (item.Tags.ContainsKey("halfpowertomana"))
+							{
+								if (item.Tags["halfpowertomana"] != 0)
+								{
+									halfpowertomana = true;
+								}
+							}
+						}
+					}
                 }
             }
-
-            //Must have at least 1 hp and no less than 0 mp
-            if (vital == (int) Vitals.Health)
+			if (vital == (int)Vitals.Health && halfattacktolife)
+			{
+				flatValue += (float)Stat[(int)Stats.Attack].Value() / 2.0f;
+			}
+			else if (vital == (int)Vitals.Mana && halfpowertomana)
+			{
+				flatValue += (float)Stat[(int)Stats.AbilityPower].Value() / 2.0f;
+			}
+			classVital = (int)Math.Round(flatValue * pctValue);
+			//Must have at least 1 hp and no less than 0 mp
+			if (vital == (int) Vitals.Health)
             {
                 classVital = Math.Max(classVital, 1);
             }
@@ -732,7 +787,163 @@ namespace Intersect.Server.Entities
             return GetMaxVital((int) vital);
         }
 
-        public void FixVitals()
+		public override float CalculCritChance(float baseChance)
+		{
+			float flatValue = baseChance;
+			float pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("critchance"))
+						{
+							flatValue += ((float)item.Tags["critchance"] / 100.0f);
+						}
+						if (item.Tags.ContainsKey("critchanceinc"))
+						{
+							pctValue += ((float)item.Tags["critchanceinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return flatValue * pctValue;
+		}
+
+		public override double CalculCritMul(double baseCritical)
+		{
+			double flatValue = baseCritical;
+			double pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("critmult"))
+						{
+							flatValue += ((float)item.Tags["critmult"] / 100.0f);
+						}
+						if (item.Tags.ContainsKey("critmultinc"))
+						{
+							pctValue += ((float)item.Tags["critmultinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return flatValue * pctValue;
+		}
+
+		public override int CalculWeaponDamage(int baseWeaponDamage)
+		{
+			float flatValue = baseWeaponDamage;
+			float pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("weapondamage"))
+						{
+							flatValue += item.Tags["weapondamage"];
+						}
+						if (item.Tags.ContainsKey("weapondamageinc"))
+						{
+							pctValue += ((float)item.Tags["weapondamageinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return (int)Math.Round(flatValue * pctValue);
+		}
+
+		public override int CalculDamage(int baseDamage)
+		{
+			float flatValue = baseDamage;
+			float pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("damage"))
+						{
+							flatValue += item.Tags["damage"];
+						}
+						if (item.Tags.ContainsKey("damageinc"))
+						{
+							pctValue += ((float)item.Tags["damageinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return (int)Math.Round(flatValue * pctValue);
+		}
+
+		public override int CalculPhysicalDamage(int baseDamage)
+		{
+			float flatValue = baseDamage;
+			float pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("physical"))
+						{
+							flatValue += item.Tags["physical"];
+						}
+						if (item.Tags.ContainsKey("physicalinc"))
+						{
+							pctValue += ((float)item.Tags["physicalinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return (int)Math.Round(flatValue * pctValue);
+		}
+
+		public override int CalculMagicalDamage(int baseDamage)
+		{
+			float flatValue = baseDamage;
+			float pctValue = 1.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("magical"))
+						{
+							flatValue += item.Tags["magical"];
+						}
+						if (item.Tags.ContainsKey("magicalinc"))
+						{
+							pctValue += ((float)item.Tags["magicalinc"] / 10000.0f);
+						}
+					}
+				}
+			}
+			return (int)Math.Round(flatValue * pctValue);
+		}
+
+		public void FixVitals()
         {
             //If add/remove equipment then our vitals might exceed the new max.. this should fix those cases.
             SetVital(Vitals.Health, GetVital(Vitals.Health));
@@ -1179,10 +1390,15 @@ namespace Intersect.Server.Entities
                 60; //subtracting 60 to account for a moderate ping to the server so some attacks dont get cancelled.
         }
 
+		/***
+		 * TODO : A ajouter ItemTag
+		 * **/
         public override int GetStatBuffs(Stats statType)
         {
             var s = 0;
 
+			float flatValue = 0.0f;
+			float incValue = 1.0f;
             //Add up player equipment values
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -1190,20 +1406,75 @@ namespace Intersect.Server.Entities
                 {
                     if (Items[Equipment[i]].ItemId != Guid.Empty)
                     {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                        if (item != null)
-                        {
-                            s += Items[Equipment[i]].StatBuffs[(int) statType] +
-                                 item.StatsGiven[(int) statType] +
-                                 (int) ((Stat[(int) statType].BaseStat + StatPointAllocations[(int) statType]) *
-                                        item.PercentageStatsGiven[(int) statType] /
-                                        100f);
-                        }
-                    }
+						//var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+						//if (item != null)
+						//{
+						//    s += Items[Equipment[i]].StatBuffs[(int) statType] +
+						//         item.StatsGiven[(int) statType] +
+						//         (int) ((Stat[(int) statType].BaseStat + StatPointAllocations[(int) statType]) *
+						//                item.PercentageStatsGiven[(int) statType] /
+						//                100f);
+						//}
+						var item = Items[Equipment[i]];
+						switch (statType)
+						{
+							case Stats.Attack:
+								if (item.Tags.ContainsKey("attack"))
+								{
+									flatValue += item.Tags["attack"];
+								}
+								if (item.Tags.ContainsKey("attackinc"))
+								{
+									incValue += ((float)item.Tags["attackinc"] / 10000.0f);
+								}
+								break;
+							case Stats.AbilityPower:
+								if (item.Tags.ContainsKey("power"))
+								{
+									flatValue += item.Tags["power"];
+								}
+								if (item.Tags.ContainsKey("powerinc"))
+								{
+									incValue += ((float)item.Tags["powerinc"] / 10000.0f);
+								}
+								break;
+							case Stats.Defense:
+								if (item.Tags.ContainsKey("defense"))
+								{
+									flatValue += item.Tags["defense"];
+								}
+								if (item.Tags.ContainsKey("defenseinc"))
+								{
+									incValue += ((float)item.Tags["defenseinc"] / 10000.0f);
+								}
+								break;
+							case Stats.MagicResist:
+								if (item.Tags.ContainsKey("resistance"))
+								{
+									flatValue += item.Tags["resistance"];
+								}
+								if (item.Tags.ContainsKey("resistanceinc"))
+								{
+									incValue += ((float)item.Tags["resistanceinc"] / 10000.0f);
+								}
+								break;
+							case Stats.Speed:
+								if (item.Tags.ContainsKey("speed"))
+								{
+									flatValue += item.Tags["speed"];
+								}
+								if (item.Tags.ContainsKey("speedinc"))
+								{
+									incValue += ((float)item.Tags["speedinc"] / 10000.0f);
+								}
+								break;
+						}
+
+					}
                 }
             }
 
-            return s;
+            return (int)Math.Round(flatValue * incValue);
         }
 
         public void RecalculateStatsAndPoints()
@@ -1425,8 +1696,8 @@ namespace Intersect.Server.Entities
                         }
 
                         UpdateGatherItemQuests(item.ItemId);
-
-                        return true;
+						PacketSender.SendChatMsg(this, $"Vous avez reçu {itemBase.Name} ({item.Quantity})", CustomColors.Alerts.Accepted, Name);
+						return true;
                     }
                 }
             }
@@ -1438,15 +1709,15 @@ namespace Intersect.Server.Entities
 
                 if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
                 {
-                    inventorySlot.Set(item);
+					inventorySlot.Set(item);
                     if (sendUpdate)
-                    {
-                        PacketSender.SendInventoryItemUpdate(this, i);
+					{
+						PacketSender.SendInventoryItemUpdate(this, i);
                     }
 
-                    UpdateGatherItemQuests(item.ItemId);
-
-                    return true;
+					UpdateGatherItemQuests(item.ItemId);
+					PacketSender.SendChatMsg(this, $"Vous avez reçu {itemBase.Name}", CustomColors.Alerts.Accepted, Name);
+					return true;
                 }
             }
 
@@ -1924,6 +2195,10 @@ namespace Intersect.Server.Entities
 
             return count;
         }
+
+		/***
+		 *  A Modifier : ItemTag
+		 * **/
 
         public override int GetWeaponDamage()
         {

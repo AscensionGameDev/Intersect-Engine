@@ -194,6 +194,9 @@ namespace Intersect.Editor.General
             }
         }
 
-    }
+		public static Dictionary<string, TagStat> TagCopyPaste = new Dictionary<string, TagStat>();
+
+
+	}
 
 }

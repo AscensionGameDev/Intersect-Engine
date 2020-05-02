@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Enums;
@@ -227,7 +228,24 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        private void Initialize()
+		[NotMapped]
+		public Dictionary<string, TagStat> tags = new Dictionary<string, TagStat>();
+
+		[Column("Tags")]
+		[JsonIgnore]
+		public string JsonTags
+		{
+			get => JsonConvert.SerializeObject(tags);
+			set
+			{
+				if (value == null)
+					tags = new Dictionary<string, TagStat>();
+				else
+					tags = JsonConvert.DeserializeObject<Dictionary<string, TagStat>>(value);
+			}
+		}
+
+		private void Initialize()
         {
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
@@ -238,11 +256,30 @@ namespace Intersect.GameObjects
             PercentageVitalsGiven = new int[(int) Vitals.VitalCount];
             Consumable = new ConsumableData();
             Effect = new EffectData();
-        }
+			tags = new Dictionary<string, TagStat>();
+		}
 
-    }
+	}
 
-    [Owned]
+	[Owned]
+	public class TagStat
+	{
+		public int Min { get; set; }
+		public int Max { get; set; }
+
+		public int RandomValue
+		{
+			get
+			{
+				if (Min == Max)
+					return Min;
+				Random rand = new Random();
+				return rand.Next(Min, Max + 1);
+			}
+		}
+	}
+
+	[Owned]
     public class ConsumableData
     {
 

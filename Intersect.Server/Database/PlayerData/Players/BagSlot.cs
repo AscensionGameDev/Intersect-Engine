@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Newtonsoft.Json;
@@ -31,7 +32,19 @@ namespace Intersect.Server.Database.PlayerData.Players
         public virtual Bag ParentBag { get; private set; }
 
         public int Slot { get; private set; }
+		
+		[NotMapped, JsonIgnore]
+		public Dictionary<string, int> tags = new Dictionary<string, int>();
 
-    }
+		[Column("Tags")]
+		public string JsonTags
+		{
+			get => JsonConvert.SerializeObject(tags);
+			set
+			{
+				tags = JsonConvert.DeserializeObject<Dictionary<string, int>>(value);
+			}
+		}
+	}
 
 }

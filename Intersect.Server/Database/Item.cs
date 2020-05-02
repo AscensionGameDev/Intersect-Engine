@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database.PlayerData.Players;
@@ -33,18 +34,60 @@ namespace Intersect.Server.Database
             Quantity = quantity;
             BagId = bagId;
             Bag = bag;
+			if (Tags == null)
+			{
+				Tags = new Dictionary<string, int>();
+			}
 
-            if (ItemBase.Get(ItemId) != null && incStatBuffs)
+			ItemBase IB = ItemBase.Get(ItemId);
+			if (IB != null)
             {
-                if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)
-                {
-                    for (var i = 0; i < (int) Stats.StatCount; i++)
-                    {
-                        // TODO: What the fuck?
-                        StatBuffs[i] = Globals.Rand.Next(
-                            -1 * ItemBase.Get(ItemId).StatGrowth, ItemBase.Get(ItemId).StatGrowth + 1
-                        );
-                    }
+                if (IB.ItemType == ItemTypes.Equipment)
+				{
+					if (incStatBuffs)
+					{
+						for (var i = 0; i < (int)Stats.StatCount; i++)
+						{
+							// TODO: What the fuck?
+							StatBuffs[i] = Globals.Rand.Next(
+								-1 * IB.StatGrowth, IB.StatGrowth + 1
+							);
+						}
+					}
+					int totalTag = IB.tags.Count;
+					if (totalTag > 0)
+					{
+						int nbTag = 1;
+						if (IB.tags.ContainsKey("tagcount"))
+						{
+							totalTag -= 1;
+							TagStat tag = IB.tags["tagcount"];
+							nbTag = Math.Min(tag.RandomValue, totalTag);
+						}
+						int tryTag = 5;
+						while (nbTag > 0 && tryTag > 0)
+						{
+							int index = Globals.Rand.Next(IB.tags.Count);
+							KeyValuePair<string, TagStat> pair = IB.tags.ElementAt<KeyValuePair<string, TagStat>>(index);
+							if (pair.Key != "tagcount")
+							{
+								if (Tags.ContainsKey(pair.Key))
+								{
+									tryTag -= 1;
+								}
+								else
+								{
+									Tags.Add(pair.Key, pair.Value.RandomValue);
+									nbTag -= 1;
+									tryTag = 5;
+								}
+							}
+							else
+							{
+								tryTag -= 1;
+							}
+						}
+					}
                 }
             }
         }
@@ -55,6 +98,10 @@ namespace Intersect.Server.Database
             {
                 StatBuffs[i] = item.StatBuffs[i];
             }
+			foreach (KeyValuePair<string, int> tag in item.Tags)
+			{
+				Tags.Add(tag.Key, tag.Value);
+			}
         }
 
         public Guid? BagId { get; set; }
@@ -80,7 +127,25 @@ namespace Intersect.Server.Database
         [JsonIgnore, NotMapped]
         public ItemBase Descriptor => ItemBase.Get(ItemId);
 
-        public static Item None => new Item();
+
+		[NotMapped]
+		public Dictionary<string, int> Tags = new Dictionary<string, int>();
+
+		[Column("Tags")]
+		[JsonIgnore]
+		public string JsonTags
+		{
+			get => JsonConvert.SerializeObject(Tags);
+			set
+			{
+				if (value == null)
+					Tags = new Dictionary<string, int>();
+				else
+					Tags = JsonConvert.DeserializeObject<Dictionary<string, int>>(value);
+			}
+		}
+
+		public static Item None => new Item();
 
         public virtual void Set(Item item)
         {
@@ -88,11 +153,23 @@ namespace Intersect.Server.Database
             Quantity = item.Quantity;
             BagId = item.BagId;
             Bag = item.Bag;
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+			for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBuffs[i] = item.StatBuffs[i];
-            }
-        }
+			}
+			if (item.Tags != null)
+			{
+				Tags = new Dictionary<string, int>();
+				foreach (KeyValuePair<string, int> tag in item.Tags)
+				{
+					//Console.WriteLine($"{tag.Key} => {tag.Value}");
+					if (string.IsNullOrEmpty(tag.Key) == false)
+					{
+						Tags.Add(tag.Key, tag.Value);
+					}
+				}
+			}
+		}
 
         public string Data()
         {

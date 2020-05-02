@@ -1850,7 +1850,7 @@ namespace Intersect.Editor.Forms.Editors
 		{
 			if (lstHairs.SelectedIndex > -1)
 			{
-				mEditorItem.Sprites.RemoveAt(lstHairs.SelectedIndex);
+				mEditorItem.Hairs.RemoveAt(lstHairs.SelectedIndex);
 				lstHairs.Items.RemoveAt(lstHairs.SelectedIndex);
 
 				RefreshHairList(false);
@@ -1866,7 +1866,7 @@ namespace Intersect.Editor.Forms.Editors
 		{
 			if (lstHairs.Items.Count > 0)
 			{
-				cmbHair.SelectedIndex = cmbSprite.FindString(
+				cmbHair.SelectedIndex = cmbHair.FindString(
 					TextUtils.NullToNone(mEditorItem.Hairs[lstHairs.SelectedIndex].Sprite)
 				);
 

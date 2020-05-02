@@ -94,12 +94,13 @@ namespace Intersect.Client.Interface.Game
 		public void UpdateItemList()
 		{
 			mItemComboBox.DeleteAll();
-			mItemComboBox.AddItem(Strings.MailBox.itemnone, "", System.Guid.Empty);
-			foreach (Items.Item item in Globals.Me.Inventory)
+			mItemComboBox.AddItem(Strings.MailBox.itemnone, "", -1);
+			for (int i = 0; i < Globals.Me.Inventory.Length; i++)
 			{
+				Items.Item item = Globals.Me.Inventory[i];
 				if (item.ItemId != Guid.Empty)
 				{
-					mItemComboBox.AddItem(item.Base.Name, "", item.ItemId);
+					mItemComboBox.AddItem(item.Base.Name, "", i);
 				}
 			}
 		}
@@ -107,7 +108,13 @@ namespace Intersect.Client.Interface.Game
 		private void Quantity_ChangeTextBoxNumeric(Base sender, EventArgs e)
 		{
 			var item = mItemComboBox.SelectedItem;
-			Guid itemID = (Guid)(item.UserData);
+			int invSlot = (int)(item.UserData);
+			if (invSlot > 0)
+			{
+				mQuantity.Text = $"{Strings.MailBox.mailquantity}: {0}";
+				return;
+			}
+			Guid itemID = Globals.Me.Inventory[invSlot].ItemId;
 			int val = UpdateQuantity(itemID, (int)mQuantityTextBoxNumeric.Value);
 			mQuantity.Text = $"{Strings.MailBox.mailquantity}: {val}";
 		}
@@ -115,8 +122,8 @@ namespace Intersect.Client.Interface.Game
 		private void Item_SelectedComboBox(Base sender, ItemSelectedEventArgs e)
 		{
 			var item = mItemComboBox.SelectedItem;
-			Guid itemID = (Guid)(item.UserData);
-			if (itemID == Guid.Empty)
+			int invSlot = (int)(item.UserData);
+			if (invSlot < 0)
 			{
 				mQuantityTextBoxNumeric.Value = 0;
 				mQuantityTextBoxNumeric.IsHidden = true;
@@ -124,12 +131,22 @@ namespace Intersect.Client.Interface.Game
 			}
 			else
 			{
-				var ibase = ItemBase.Get(itemID);
-				if (ibase != null)
+				Guid itemID = Globals.Me.Inventory[invSlot].ItemId;
+				if (itemID == Guid.Empty)
 				{
-					mQuantityTextBoxNumeric.Value = 1;
-					mQuantityTextBoxNumeric.IsHidden = !ibase.IsStackable;
-					mQuantity.IsHidden = !ibase.IsStackable;
+					mQuantityTextBoxNumeric.Value = 0;
+					mQuantityTextBoxNumeric.IsHidden = true;
+					mQuantity.IsHidden = true;
+				}
+				else
+				{
+					var ibase = ItemBase.Get(itemID);
+					if (ibase != null)
+					{
+						mQuantityTextBoxNumeric.Value = 1;
+						mQuantityTextBoxNumeric.IsHidden = !ibase.IsStackable;
+						mQuantity.IsHidden = !ibase.IsStackable;
+					}
 				}
 			}
 		}
@@ -165,7 +182,8 @@ namespace Intersect.Client.Interface.Game
 				return;
 			}
 			var item = mItemComboBox.SelectedItem;
-			Guid itemID = (Guid)(item.UserData);
+			int invSlot = (int)(item.UserData);
+			Guid itemID = Globals.Me.Inventory[invSlot].ItemId;
 			int quantity = 0;
 			if (itemID != Guid.Empty)
 			{
@@ -175,7 +193,7 @@ namespace Intersect.Client.Interface.Game
 					itemID = Guid.Empty;
 				}
 			}
-			PacketSender.SendMail(mToTextbox.Text, mTitleTextbox.Text, mMsgTextbox.Text, itemID, quantity);
+			PacketSender.SendMail(mToTextbox.Text, mTitleTextbox.Text, mMsgTextbox.Text, invSlot, quantity);
 		}
 
 		void CloseButton_Clicked(Base sender, ClickedEventArgs arguments)
