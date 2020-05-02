@@ -50,6 +50,16 @@ namespace Intersect.Client.Networking
         {
             Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
+        
+        public static void SendFinalDeath()
+        {
+            Network.SendPacket(new FinalDeathPacket());
+        }
+
+        public static void SendDeathTimer(int sec)
+        {
+            Network.SendPacket(new DeathTimerPacket(sec));
+        }
 
         public static void SendChatMsg(string msg, byte channel)
         {

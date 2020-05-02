@@ -389,6 +389,26 @@ namespace Intersect.Server.Networking
             }
         }
 
+        public void HandlePacket(Client client, Player player, DeathTimerPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            PacketSender.SendActionMsg(player, packet.Sec.ToString(), CustomColors.Combat.Missed);
+        }
+
+        public void HandlePacket(Client client, Player player, FinalDeathPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            player.FinalDeath();
+        }
+
         //MovePacket
         public void HandlePacket(Client client, Player player, MovePacket packet)
         {

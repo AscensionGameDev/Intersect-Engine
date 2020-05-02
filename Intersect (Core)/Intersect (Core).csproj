@@ -313,6 +313,7 @@
     <Compile Include="Network\Packets\Client\CloseCraftingPacket.cs" />
     <Compile Include="Network\Packets\Client\CloseShopPacket.cs" />
     <Compile Include="Network\Packets\Client\CraftItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\DeathTimerPacket.cs" />
     <Compile Include="Network\Packets\Client\CreateAccountPacket.cs" />
     <Compile Include="Network\Packets\Client\CreateCharacterPacket.cs" />
     <Compile Include="Network\Packets\Client\DeclineTradePacket.cs" />
@@ -330,6 +331,7 @@
     <Compile Include="Network\Packets\Client\KeyDownPacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
+    <Compile Include="Network\Packets\Client\FinalDeathPacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />

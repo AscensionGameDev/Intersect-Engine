@@ -27,6 +27,7 @@ namespace Intersect.Client.Core
 
         public static void OnKeyPressed(Keys key)
         {
+            
             if (key == Keys.None)
             {
                 return;

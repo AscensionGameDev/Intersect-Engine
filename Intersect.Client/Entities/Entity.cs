@@ -181,6 +181,8 @@ namespace Intersect.Client.Entities
 
         public byte Z;
 
+        public bool IsDead;
+
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;

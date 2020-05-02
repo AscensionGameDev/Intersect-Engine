@@ -84,6 +84,7 @@ namespace Intersect.Client.Interface.Game
         {
             GameCanvas = myCanvas;
             EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+            DeadMenu = new DeadMenu(GameCanvas) { IsHidden = true };
 
             InitGameGui();
         }
@@ -93,6 +94,9 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull]
         public EscapeMenu EscapeMenu { get; }
+
+        [NotNull]
+        public DeadMenu DeadMenu { get; }
 
         public Menu GameMenu { get; private set; }
 

@@ -720,7 +720,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-
+            
             Entity en = null;
             if (type < EntityTypes.Event)
             {
@@ -728,7 +728,7 @@ namespace Intersect.Client.Networking
                 {
                     return;
                 }
-
+                
                 en = Globals.Entities[id];
             }
             else
@@ -750,6 +750,13 @@ namespace Intersect.Client.Networking
             if (en == null)
             {
                 return;
+            }
+
+            if (type == EntityTypes.Player)
+            {
+                Player player = (Player)en;
+                player.IsDead = true;
+                player.DeathTimer = 5000 + Globals.System.GetTimeMs();
             }
 
             en.ClearAnimations(null);
