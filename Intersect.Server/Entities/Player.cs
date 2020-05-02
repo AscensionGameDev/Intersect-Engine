@@ -1540,50 +1540,43 @@ namespace Intersect.Server.Entities
         /// <param name="sendUpdate"></param>
         private void GiveItem(Item item, bool sendUpdate)
         {
-            // is this item Stackable?
-            if (item.Descriptor.Stackable)
+
+            // Decide how we're going to handle this item.
+            var existingSlot = FindInventoryItemSlot(item.Descriptor.Id);
+            var updateSlots = new List<int>();
+            if (item.Descriptor.Stackable && existingSlot != null) // Stackable, but already exists in the inventory.
             {
-                // Do we already have this item? If so update our stack.
-                var existingSlot = FindInventoryItemSlot(item.Descriptor.Id);
-                if (existingSlot != null)
-                {
-                    Items[existingSlot.Slot].Quantity += item.Quantity;
-                    if (sendUpdate)
-                    {
-                        PacketSender.SendInventoryItemUpdate(this, existingSlot.Slot);
-                    }
-
-                    UpdateGatherItemQuests(item.ItemId);
-                }
-                else
-                {
-                    // If not, then give it to the player!
-                    var newSlot = FindOpenInventorySlot();
-                    newSlot.Set(item);
-                    if (sendUpdate)
-                    {
-                        PacketSender.SendInventoryItemUpdate(this, newSlot.Slot);
-                    }
-
-                    UpdateGatherItemQuests(item.ItemId);
-                }
+                Items[existingSlot.Slot].Quantity += item.Quantity;
+                updateSlots.Add(existingSlot.Slot);
             }
-            else // Not stackable.
+            else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
             {
                 var openSlots = FindOpenInventorySlots();
-                if (openSlots.Count >= item.Quantity)
+                for (var slot = 0; slot < item.Quantity; slot++)
                 {
-                    for (var i = 0; i < item.Quantity; i++)
-                    {
-                        openSlots[i].Set(new Item(item.ItemId, 1));
-                        if (sendUpdate)
-                        {
-                            PacketSender.SendInventoryItemUpdate(this, openSlots[i].Slot);
-                        }
-                    }
-                    UpdateGatherItemQuests(item.ItemId);
+                    openSlots[slot].Set(new Item(item.ItemId, 1));
+                    updateSlots.Add(slot);
                 }
             }
+            else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.
+            {
+                var newSlot = FindOpenInventorySlot();
+                newSlot.Set(item);
+                updateSlots.Add(newSlot.Slot);
+            }
+
+            // Do we need to update the player's inventory?
+            if (sendUpdate)
+            {
+                foreach (var slot in updateSlots)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, slot);
+                }
+            }
+
+            // Update quests for this item.
+            UpdateGatherItemQuests(item.ItemId);
+
         }
 
         /// <summary>
