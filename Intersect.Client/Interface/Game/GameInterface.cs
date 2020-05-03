@@ -352,6 +352,7 @@ namespace Intersect.Client.Interface.Game
             Hotbar?.Update();
             mDebugMenu?.Update();
             EscapeMenu.Update();
+            DeadMenu.Update();
             PlayerBox?.Update();
 
             if (Globals.QuestOffers.Count > 0)

@@ -1498,6 +1498,14 @@ namespace Intersect.Client.Localization
 
         }
 
+        public struct DeadMenu
+        {
+            public static LocalizedString Title = @"You are dead";
+
+            public static LocalizedString Respawn = @"Respawn";
+
+        }
+
         public struct Numbers
         {
 

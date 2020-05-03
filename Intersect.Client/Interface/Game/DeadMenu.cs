@@ -15,24 +15,15 @@ namespace Intersect.Client.Interface.Game
 
     public class DeadMenu : ImagePanel
     {
-
-        [NotNull] private readonly Button mClose;
-
         [NotNull] private readonly ImagePanel mContainer;
 
-        [NotNull] private readonly Button mExitToDesktop;
-
-        [NotNull] private readonly Button mGoToCharacterSelect;
-
-        [NotNull] private readonly Button mLogout;
-
-        [NotNull] private readonly Button mGoHospital;
-
-        [NotNull] private readonly OptionsWindow mOptionsWindow;
+        [NotNull] private readonly Button mRespawn;
 
         [NotNull] private readonly Label mTitle;
 
-        public DeadMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
+        [NotNull] private readonly Label mSec;
+
+        public DeadMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "DeadMenu")
         {
             Interface.InputBlockingElements?.Add(this);
 
@@ -43,52 +34,22 @@ namespace Intersect.Client.Interface.Game
 
             mTitle = new Label(mContainer, "TitleLabel")
             {
-                Text = Strings.EscapeMenu.Title,
+                Text = Strings.DeadMenu.Title,
             };
 
-            mOptionsWindow = new OptionsWindow(gameCanvas, null, null);
-
-            mGoHospital = new Button(mContainer, "GoHospital")
+            mSec = new Label(mContainer, "SecLabel")
             {
-                Text = Strings.EscapeMenu.Options
+                Text = ""
             };
 
-            mGoHospital.Clicked += GoHospital_Clicked;
+            mRespawn = new Button(mContainer, "Respawn")
+            {
+                Text = Strings.DeadMenu.Respawn
+            };
 
-            //mGoToCharacterSelect = new Button(mContainer, "CharacterSelectButton")
-            //{
-            //    Text = Strings.EscapeMenu.CharacterSelect
-            //};
+            mRespawn.Clicked += GoHospital_Clicked;
 
-            //mGoToCharacterSelect.Clicked += GoToCharacterSelect_Clicked;
-
-            //mLogout = new Button(mContainer, "LogoutButton")
-            //{
-            //    Text = Strings.EscapeMenu.Logout
-            //};
-
-            //mLogout.Clicked += Logout_Clicked;
-
-            //mExitToDesktop = new Button(mContainer, "ExitToDesktopButton")
-            //{
-            //    Text = Strings.EscapeMenu.ExitToDesktop
-            //};
-
-            //mExitToDesktop.Clicked += ExitToDesktop_Clicked;
-
-            //mClose = new Button(mContainer, "CloseButton")
-            //{
-            //    Text = Strings.EscapeMenu.Close
-            //};
-
-            //mClose.Clicked += Close_Clicked;
-
-            //mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-            //if (Options.Player.MaxCharacters <= 1)
-            //{
-            //    mGoToCharacterSelect.IsDisabled = true;
-            //}
+            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         public override void Invalidate()
@@ -112,6 +73,12 @@ namespace Intersect.Client.Interface.Game
 
         public void Update()
         {
+            if (Globals.Me.IsDead)
+            {
+                mSec.Text = (Globals.Me.DeathCounter + 1).ToString() + "...";
+                mRespawn.IsDisabled = Globals.Me.DeathCounter >= 3;
+            }
+            
             if (!IsHidden)
             {
                 BringToFront();
@@ -120,113 +87,7 @@ namespace Intersect.Client.Interface.Game
 
         private void GoHospital_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mOptionsWindow.Show();
-            Interface.GameUi?.EscapeMenu?.Hide();
+            Globals.Me.FinalDeath();
         }
-
-        public void OpenSettings()
-        {
-            mOptionsWindow.Show();
-            Interface.GameUi?.EscapeMenu?.Hide();
-        }
-
-        /// <inheritdoc />
-        public override void ToggleHidden()
-        {
-            if (mOptionsWindow.IsVisible())
-            {
-                return;
-            }
-
-            base.ToggleHidden();
-        }
-
-        private void LogoutToCharacterSelect(object sender, EventArgs e)
-        {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Main.Logout(true);
-        }
-
-        private void LogoutToMainMenu(object sender, EventArgs e)
-        {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Main.Logout(false);
-        }
-
-        private void ExitToDesktop(object sender, EventArgs e)
-        {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Globals.IsRunning = false;
-        }
-
-        private void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true, InputBox.InputType.YesNo,
-                    LogoutToCharacterSelect, null, null
-                );
-            }
-            else
-            {
-                LogoutToCharacterSelect(null, null);
-            }
-        }
-
-        private void Logout_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warninglogout, true, InputBox.InputType.YesNo,
-                    LogoutToMainMenu, null, null
-                );
-            }
-            else
-            {
-                LogoutToMainMenu(null, null);
-            }
-        }
-
-        private void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warningexitdesktop, true, InputBox.InputType.YesNo,
-                    ExitToDesktop, null, null
-                );
-            }
-            else
-            {
-                ExitToDesktop(null, null);
-            }
-        }
-
-        private void Close_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            Hide();
-        }
-
     }
-
 }

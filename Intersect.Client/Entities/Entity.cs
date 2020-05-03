@@ -183,6 +183,12 @@ namespace Intersect.Client.Entities
 
         public bool IsDead;
 
+        public long DeathTimer;
+
+        public long DeathInterval;
+
+        public int DeathCounter = 5;
+
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;

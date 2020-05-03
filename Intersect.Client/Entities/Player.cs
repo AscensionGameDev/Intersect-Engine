@@ -61,12 +61,6 @@ namespace Intersect.Client.Entities
 
         public long CombatTimer { get; set; } = 0;
 
-        public long DeathTimer;
-
-        private long mDeathInterval;
-
-        private int mDeathCounter = 5;
-
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -148,22 +142,18 @@ namespace Intersect.Client.Entities
                 }
                 else if (DeathTimer > Globals.System.GetTimeMs())
                 {
-                    if (mDeathInterval < Globals.System.GetTimeMs())
+                    if (DeathInterval < Globals.System.GetTimeMs())
                     {
-                        PacketSender.SendDeathTimer(mDeathCounter);
+                        PacketSender.SendDeathTimer(DeathCounter);
                         Interface.Interface.GameUi?.DeadMenu?.Show();
 
-                        mDeathInterval = Globals.System.GetTimeMs() + 1000;
-                        mDeathCounter--;
+                        DeathInterval = Globals.System.GetTimeMs() + 1000;
+                        DeathCounter--;
                     }
                 }
                 else
                 {
-                    PacketSender.SendFinalDeath();
-                    Interface.Interface.GameUi?.DeadMenu?.Hide();
-
-                    mDeathCounter = 5;
-                    IsDead = false;
+                    FinalDeath();
                 }
             }
 
@@ -195,6 +185,15 @@ namespace Intersect.Client.Entities
             var returnval = base.Update();
 
             return returnval;
+        }
+
+        public void FinalDeath()
+        {
+            PacketSender.SendFinalDeath();
+            Interface.Interface.GameUi?.DeadMenu?.Hide();
+
+            DeathCounter = 5;
+            IsDead = false;
         }
 
         //Loading
