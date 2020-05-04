@@ -1230,9 +1230,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString item = @"Item:";
 
-            [NotNull, JsonProperty]
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Method = @"Method:";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> Methods = new Dictionary<int, LocalizedString>
             {
                 {0, @"Normal"},
