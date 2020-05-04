@@ -51,9 +51,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
         
-        public static void SendFinalDeath()
+        public static void SendFinalDeath(bool noRevive)
         {
-            Network.SendPacket(new FinalDeathPacket());
+            Network.SendPacket(new FinalDeathPacket(noRevive));
         }
 
         public static void SendDeathTimer(int sec)

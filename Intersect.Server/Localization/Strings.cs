@@ -310,6 +310,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString notarget = @"No Target!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString stillalive = @"Still alive!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString removesymbol = @"-";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -361,6 +364,7 @@ namespace Intersect.Server.Localization
                     {10, @"SLEEP!"},
                     {11, @"ON HIT!"},
                     {12, @"TAUNT!"},
+                    {13, @"REVIVE!"},
                 }
             );
 

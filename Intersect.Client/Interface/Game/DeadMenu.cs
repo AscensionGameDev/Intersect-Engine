@@ -76,7 +76,7 @@ namespace Intersect.Client.Interface.Game
             if (Globals.Me.IsDead)
             {
                 mSec.Text = (Globals.Me.DeathCounter + 1).ToString() + "...";
-                mRespawn.IsDisabled = Globals.Me.DeathCounter >= 3;
+                mRespawn.IsDisabled = Globals.Me.DeathCounter >= 55;
             }
             
             if (!IsHidden)
@@ -87,7 +87,7 @@ namespace Intersect.Client.Interface.Game
 
         private void GoHospital_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.FinalDeath();
+            Globals.Me.FinalDeath(true);
         }
     }
 }

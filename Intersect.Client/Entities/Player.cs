@@ -142,6 +142,14 @@ namespace Intersect.Client.Entities
                 }
                 else if (DeathTimer > Globals.System.GetTimeMs())
                 {
+                    for (var n = 0; n < Status.Count; n++)
+                    {
+                        if (Status[n].Type == StatusTypes.Revive)
+                        {
+                            FinalDeath(false);
+                        }
+                    }
+
                     if (DeathInterval < Globals.System.GetTimeMs())
                     {
                         PacketSender.SendDeathTimer(DeathCounter);
@@ -153,7 +161,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    FinalDeath();
+                    FinalDeath(true);
                 }
             }
 
@@ -187,12 +195,12 @@ namespace Intersect.Client.Entities
             return returnval;
         }
 
-        public void FinalDeath()
+        public void FinalDeath(bool noRevive)
         {
-            PacketSender.SendFinalDeath();
+            PacketSender.SendFinalDeath(noRevive);
             Interface.Interface.GameUi?.DeadMenu?.Hide();
 
-            DeathCounter = 5;
+            DeathCounter = 60;
             IsDead = false;
         }
 

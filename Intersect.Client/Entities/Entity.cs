@@ -187,7 +187,7 @@ namespace Intersect.Client.Entities
 
         public long DeathInterval;
 
-        public int DeathCounter = 5;
+        public int DeathCounter = 60;
 
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
@@ -1727,6 +1727,10 @@ namespace Intersect.Client.Entities
                     }
                 }
                 LastActionTime = Globals.System.GetTimeMs();
+            }
+            else if (IsDead)
+            {
+                SpriteAnimation = SpriteAnimations.Dead;
             }
 
             if (SpriteAnimation == SpriteAnimations.Normal)

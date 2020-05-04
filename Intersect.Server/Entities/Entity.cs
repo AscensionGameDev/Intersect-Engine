@@ -1372,6 +1372,13 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            if (spellBase.Combat.Effect == StatusTypes.Revive && !target.IsDead())
+            {
+                PacketSender.SendActionMsg(this, Strings.Combat.stillalive, CustomColors.Combat.NoTarget);
+
+                return;
+            }
+
             //Check for taunt status and trying to attack a target that has not taunted you.
             if (!trapTrigger) //Traps ignore taunts.
             {

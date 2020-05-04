@@ -756,10 +756,22 @@ namespace Intersect.Client.Networking
             {
                 Player player = (Player)en;
                 player.IsDead = true;
-                player.DeathTimer = 5000 + Globals.System.GetTimeMs();
+                player.DeathTimer = 60000 + Globals.System.GetTimeMs();
             }
 
             en.ClearAnimations(null);
+        }
+
+        //RevivePacket
+        private static void HandlePacket(EntityRevivePacket packet)
+        {
+            Entity en = Globals.Entities[packet.Id];
+            if (en == null)
+            {
+                return;
+            }
+
+            en.IsDead = false;
         }
 
         //EventDialogPacket

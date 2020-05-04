@@ -629,14 +629,18 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityDie(this);
             //Reset();
             //Respawn();
-            //PacketSender.SendInventory(this);
+            PacketSender.SendInventory(this);
         }
 
-        public void FinalDeath()
+        public void FinalDeath(bool noRevive)
         {
             Reset();
-            Respawn();
-            PacketSender.SendInventory(this);
+            if (noRevive)
+            {
+                Respawn();
+            }
+
+            PacketSender.SendEntityRevive(this);
         }
 
         public override void ProcessRegen()
@@ -3888,6 +3892,13 @@ namespace Intersect.Server.Entities
                 if (!InRangeOf(target, spell.Combat.CastRange))
                 {
                     PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange, CustomColors.Combat.NoTarget);
+
+                    return false;
+                }
+
+                if (spell.Combat.Effect == StatusTypes.Revive && !target.IsDead())
+                {
+                    PacketSender.SendActionMsg(this, Strings.Combat.stillalive, CustomColors.Combat.NoTarget);
 
                     return false;
                 }

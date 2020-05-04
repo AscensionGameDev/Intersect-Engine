@@ -406,7 +406,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.FinalDeath();
+            player.FinalDeath(packet.NoRevive);
         }
 
         //MovePacket
