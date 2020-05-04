@@ -1353,22 +1353,29 @@ namespace Intersect.Server.Entities
             Warp(mapId, x, y, dir);
         }
 
+        /// <summary>
+        /// Checks whether a player can or can not receive the specified item and its quantity.
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity));
+
         //Inventory
         /// <summary>
         /// Checks whether a player can or can not receive the specified item and its quantity.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool CanGiveItem(Guid itemId, int quantity)
+        public bool CanGiveItem(Item item)
         {
-            var itemDescriptor = ItemBase.Get(itemId);
-            if (itemDescriptor != null)
+            if (item.Descriptor != null)
             {
                 // Is the item stackable?
-                if (itemDescriptor.IsStackable)
+                if (item.Descriptor.IsStackable)
                 {
                     // Does the user have this item already?
-                    if (FindInventoryItemSlot(itemId) != null)
+                    if (FindInventoryItemSlot(item.ItemId) != null)
                     {
                         return true;
                     }
@@ -1382,7 +1389,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     // Not a stacking item, so can we contain the amount we want to give them?
-                    if (FindOpenInventorySlots().Count >= quantity)
+                    if (FindOpenInventorySlots().Count >= item.Quantity)
                     {
                         return true;
                     }
@@ -1479,7 +1486,7 @@ namespace Intersect.Server.Entities
             {
                 // Handle this item like normal, there's no special rules attached to this method.
                 case ItemHandling.Normal:
-                    if (CanGiveItem(item.ItemId, item.Quantity)) // Can receive item under regular rules.
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
                         return true;
@@ -1487,7 +1494,7 @@ namespace Intersect.Server.Entities
 
                     break;
                 case ItemHandling.Overflow:
-                    if (CanGiveItem(item.ItemId, item.Quantity)) // Can receive item under regular rules.
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
                         return true;
@@ -1511,7 +1518,7 @@ namespace Intersect.Server.Entities
 
                     break;
                 case ItemHandling.UpTo:
-                    if (CanGiveItem(item.ItemId, item.Quantity)) // Can receive item under regular rules.
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
                         return true;

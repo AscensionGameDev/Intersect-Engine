@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
+using Intersect.Enums;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -69,7 +70,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.Add = !Convert.ToBoolean(cmbAction.SelectedIndex);
             mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
             mMyCommand.Quantity = (int) nudGiveTakeAmount.Value;
-            mMyCommand.ItemHandling = (Enums.ItemHandling) cmbMethod.SelectedIndex;
+            mMyCommand.ItemHandling = (ItemHandling) cmbMethod.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 
