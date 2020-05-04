@@ -239,8 +239,8 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            var itemBase = ItemBase.Get(item.ItemId);
-            if (itemBase == null)
+            var itemDescriptor = ItemBase.Get(item.ItemId);
+            if (itemDescriptor == null)
             {
                 Log.Warn($"No item found for {item.ItemId}.");
 
@@ -248,7 +248,7 @@ namespace Intersect.Server.Maps
             }
 
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
-            if (itemBase.Stackable || Options.Loot.ConsolidateMapDrops)
+            if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
             {
                 var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
                     X = x,
@@ -262,9 +262,9 @@ namespace Intersect.Server.Maps
                 };
 
                 // If this is a piece of equipment, set up the stat buffs for it.
-                if (itemBase.ItemType == ItemTypes.Equipment)
+                if (itemDescriptor.ItemType == ItemTypes.Equipment)
                 {
-                    mapItem = SetMapItemStatBuffs(mapItem);
+                    mapItem = SetMapItemStatBuffs(mapItem, item);
                 }
 
                 MapItems.Add(mapItem);
@@ -287,9 +287,9 @@ namespace Intersect.Server.Maps
                     };
 
                     // If this is a piece of equipment, set up the stat buffs for it.
-                    if (itemBase.ItemType == ItemTypes.Equipment)
+                    if (itemDescriptor.ItemType == ItemTypes.Equipment)
                     {
-                        mapItem = SetMapItemStatBuffs(mapItem);
+                        mapItem = SetMapItemStatBuffs(mapItem, item);
                     }
 
                     MapItems.Add(mapItem);
@@ -359,15 +359,15 @@ namespace Intersect.Server.Maps
         /// </summary>
         /// <param name="mapItem">The <see cref="MapItem"/> to set the stat buffs up on.</param>
         /// <returns></returns>
-        private MapItem SetMapItemStatBuffs(MapItem mapItem)
+        private MapItem SetMapItemStatBuffs(MapItem mapItem, Item item)
         {
-            var itemBase = mapItem.Descriptor;
+            var itemDescriptor = mapItem.Descriptor;
 
-            if (mapItem.StatBuffs != null && mapItem.StatBuffs != null)
+            if (mapItem.StatBuffs != null && item.StatBuffs != null)
             {
                 for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
                 {
-                    mapItem.StatBuffs[i] = mapItem.StatBuffs.Length > i ? mapItem.StatBuffs[i] : 0;
+                    mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
                 }
             }
             else if (mapItem.StatBuffs == null)
@@ -376,7 +376,7 @@ namespace Intersect.Server.Maps
             }
             else
             {
-                Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
+                Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
             }
 
             return mapItem;
