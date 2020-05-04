@@ -200,7 +200,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework, Version=3.8.0.1217, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\lib\net452\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -215,39 +215,39 @@
     <EmbeddedResource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\lib\net452\MonoGame.Framework.dll">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\lib\net452\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\win-x86\native\SDL2.dll">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\win-x86\native\SDL2.dll">
       <Link>Resources\x86\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\win-x64\native\SDL2.dll">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\win-x64\native\SDL2.dll">
       <Link>Resources\x64\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\win-x86\native\soft_oal.dll">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\win-x86\native\soft_oal.dll">
       <Link>Resources\x86\soft_oal.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\win-x64\native\soft_oal.dll">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\win-x64\native\soft_oal.dll">
       <Link>Resources\x64\soft_oal.dll</Link>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
       <Link>Resources\x86\libSDL2</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
       <Link>Resources\x64\libSDL2</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
       <Link>Resources\x86\libopenal</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
       <Link>Resources\x64\libopenal</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\osx\native\libSDL2-2.0.0.dylib">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\runtimes\osx\native\libopenal.1.dylib">
+    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -300,11 +300,11 @@
     <Error Condition="!Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props'))" />
     <Error Condition="!Exists('..\packages\Fody.4.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.4.2.1\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\build\MonoGame.Framework.DesktopGL.targets'))" />
+    <Error Condition="!Exists('..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\build\AscensionGameDev.Client.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\build\AscensionGameDev.Client.DesktopGL.targets'))" />
   </Target>
   <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
-  <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1217-develop\build\MonoGame.Framework.DesktopGL.targets')" />
+  <Import Project="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\build\AscensionGameDev.Client.DesktopGL.targets" Condition="Exists('..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\build\AscensionGameDev.Client.DesktopGL.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
