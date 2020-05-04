@@ -264,7 +264,7 @@ namespace Intersect.Server.Maps
                 // If this is a piece of equipment, set up the stat buffs for it.
                 if (itemDescriptor.ItemType == ItemTypes.Equipment)
                 {
-                    mapItem = SetMapItemStatBuffs(mapItem, item);
+                    mapItem.SetupStatBuffs(item);
                 }
 
                 MapItems.Add(mapItem);
@@ -289,7 +289,7 @@ namespace Intersect.Server.Maps
                     // If this is a piece of equipment, set up the stat buffs for it.
                     if (itemDescriptor.ItemType == ItemTypes.Equipment)
                     {
-                        mapItem = SetMapItemStatBuffs(mapItem, item);
+                        mapItem.SetupStatBuffs(item);
                     }
 
                     MapItems.Add(mapItem);
@@ -352,34 +352,6 @@ namespace Intersect.Server.Maps
                     MapItems[index] = null;
                 }
             }
-        }
-
-        /// <summary>
-        /// Set the stat buffs on the specified map item.
-        /// </summary>
-        /// <param name="mapItem">The <see cref="MapItem"/> to set the stat buffs up on.</param>
-        /// <returns></returns>
-        private MapItem SetMapItemStatBuffs(MapItem mapItem, Item item)
-        {
-            var itemDescriptor = mapItem.Descriptor;
-
-            if (mapItem.StatBuffs != null && item.StatBuffs != null)
-            {
-                for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
-                {
-                    mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
-                }
-            }
-            else if (mapItem.StatBuffs == null)
-            {
-                Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
-            }
-            else
-            {
-                Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
-            }
-
-            return mapItem;
         }
 
         public void DespawnItems()
