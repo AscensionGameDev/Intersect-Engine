@@ -1356,8 +1356,8 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Checks whether a player can or can not receive the specified item and its quantity.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
+        /// <param name="itemId">The item Id to check if the player can receive.</param>
+        /// <param name="quantity">The amount of this item to check if the player can receive.</param>
         /// <returns></returns>
         public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity));
 
@@ -1365,7 +1365,7 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Checks whether a player can or can not receive the specified item and its quantity.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">The <see cref="Item"/> to check if this player can receive.</param>
         /// <returns></returns>
         public bool CanGiveItem(Item item)
         {
@@ -1403,19 +1403,20 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Checks whether or not a player has enough items in their inventory to be taken.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
-        public bool CanTakeItem(Item item, int quantity) 
-        {
-            var itemDescriptor = ItemBase.Get(item.ItemId);
-            if (itemDescriptor != null)
-            {
-                return FindInventoryItemQuantity(item.ItemId) >= quantity;
-            }
-
-            return false;
+        /// <param name="itemId">The ItemId to see if it can be taken away from the player.</param>
+        /// <param name="quantity">The quantity of above item to see if we can take away from the player.</param>
+        /// <returns>Whether or not the item can be taken away from the player in the requested quantity.</returns>
+        public bool CanTakeItem(Guid itemId, int quantity)
+        {  
+            return FindInventoryItemQuantity(itemId) >= quantity;
         }
+
+        /// <summary>
+        /// Checks whether or not a player has enough items in their inventory to be taken.
+        /// </summary>
+        /// <param name="item">The <see cref="Item"/> to see if it can be taken away from the player.</param>
+        /// <returns>Whether or not the item can be taken away from the player.</returns>
+        public bool CanTakeItem(Item item) => CanTakeItem(item.ItemId, item.Quantity);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -2010,7 +2011,7 @@ namespace Intersect.Server.Entities
             {
                 case ItemHandling.Normal:
                 case ItemHandling.Overflow: // We can't overflow a take command, so process it as if it's a normal one.
-                    if (FindInventoryItemQuantity(itemId) < amount) // Cancel out if we don't have enough items to cover for this.
+                    if (!CanTakeItem(itemId, amount)) // Cancel out if we don't have enough items to cover for this.
                     {
                         return false;
                     }
@@ -2101,10 +2102,10 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// 
+        /// Find the amount of a specific item a player has.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The item Id to look for.</param>
+        /// <returns>The amount of the requested item the player has on them.</returns>
         public int FindInventoryItemQuantity(Guid itemId)
         {
             if (Items == null)
@@ -2126,19 +2127,19 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Finds a slot matching the desired item and quantity.
+        /// Finds an inventoory slot matching the desired item and quantity.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The item Id to look for.</param>
+        /// <param name="quantity">The quantity of the item to look for.</param>
+        /// <returns>An <see cref="InventorySlot"/> that contains the item, or null if none are found.</returns>
         public InventorySlot FindInventoryItemSlot(Guid itemId, int quantity = 1) => FindInventoryItemSlots(itemId, quantity).FirstOrDefault();
 
         /// <summary>
-        /// Finds all slots matching the desired item and quantity.
+        /// Finds all inventory slots matching the desired item and quantity.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The item Id to look for.</param>
+        /// <param name="quantity">The quantity of the item to look for.</param>
+        /// <returns>A list of <see cref="InventorySlot"/> containing the requested item.</returns>
         public List<InventorySlot> FindInventoryItemSlots(Guid itemId, int quantity = 1)
         {
             var slots = new List<InventorySlot>();
