@@ -1420,55 +1420,55 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">The <see cref="Item"/> to give to the player.</param>
+        /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Item item) => TryGiveItem(item, ItemHandling.Normal, false, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="handler"></param>
-        /// <returns></returns>
+        /// <param name="item">The <see cref="Item"/> to give to the player.</param>
+        /// <param name="handler">The way to handle handing out this item.</param>
+        /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Item item, ItemHandling handler) => TryGiveItem(item, handler, false, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The Id for the item to be handed out to the player.</param>
+        /// <param name="quantity">The quantity of items to be handed out to the player.</param>
+        /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Guid itemId, int quantity) => TryGiveItem(new Item(itemId, quantity), ItemHandling.Normal, false, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
-        /// <param name="handler"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The Id for the item to be handed out to the player.</param>
+        /// <param name="quantity">The quantity of items to be handed out to the player.</param>
+        /// <param name="handler">The way to handle handing out this item.</param>
+        /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler) => TryGiveItem(new Item(itemId, quantity), handler, false, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="quantity"></param>
-        /// <param name="handler"></param>
-        /// <param name="bankOverflow"></param>
-        /// <param name="sendUpdate"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The Id for the item to be handed out to the player.</param>
+        /// <param name="quantity">The quantity of items to be handed out to the player.</param>
+        /// <param name="handler">The way to handle handing out this item.</param>
+        /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
+        /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
+        /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler, bool bankOverflow = false, bool sendUpdate = true) => TryGiveItem(new Item(itemId, quantity), handler, bankOverflow, sendUpdate);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="handle"></param>
-        /// <param name="bankOverflow"></param>
-        /// <param name="sendUpdate"></param>
-        /// <returns></returns>
-        public bool TryGiveItem(Item item, ItemHandling handle = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true)
+        /// <param name="item">The <see cref="Item"/> to give to the player.</param>
+        /// <param name="handler">The way to handle handing out this item.</param>
+        /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
+        /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
+        /// <returns>Whether the player received the item or not.</returns>
+        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true)
         {
             // Is this a valid item?
             if (item.Descriptor == null)
@@ -1482,7 +1482,7 @@ namespace Intersect.Server.Entities
             int spawnAmount = 0;
 
             // How are we going to be handling this?
-            switch (handle)
+            switch (handler)
             {
                 // Handle this item like normal, there's no special rules attached to this method.
                 case ItemHandling.Normal:
@@ -1589,7 +1589,7 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Retrieves a list of open inventory slots for this player.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of <see cref="InventorySlot"/></returns>
         public List<InventorySlot> FindOpenInventorySlots()
         {
             var slots = new List<InventorySlot>();
@@ -1608,7 +1608,7 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Finds the first open inventory slot this player has.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An <see cref="InventorySlot"/> instance, or null if none are found.</returns>
         public InventorySlot FindOpenInventorySlot() => FindOpenInventorySlots().FirstOrDefault();
 
         public void SwapItems(int item1, int item2)
@@ -1916,10 +1916,10 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Try to take an item away from the player by slot.
         /// </summary>
-        /// <param name="slot"></param>
-        /// <param name="amount"></param>
-        /// <param name="handler"></param>
-        /// <param name="sendUpdate"></param>
+        /// <param name="slot">The inventory slot to take the item away from.</param>
+        /// <param name="amount">The amount of this item we intend to take away from the player.</param>
+        /// <param name="handler">The method in which we intend to handle taking away the item from our player.</param>
+        /// <param name="sendUpdate">Do we need to send an inventory update after taking away the item.</param>
         /// <returns></returns>
         public bool TryTakeItem(InventorySlot slot, int amount, ItemHandling handler = ItemHandling.Normal, bool sendUpdate = true)
         {
@@ -1992,11 +1992,11 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Try to take away an item from the player by Id.
         /// </summary>
-        /// <param name="itemId"></param>
-        /// <param name="amount"></param>
-        /// <param name="handler"></param>
-        /// <param name="sendUpdate"></param>
-        /// <returns></returns>
+        /// <param name="itemId">The Id of the item we're trying to take away from the player.</param>
+        /// <param name="amount">The amount of this item we intend to take away from the player.</param>
+        /// <param name="handler">The method in which we intend to handle taking away the item from our player.</param>
+        /// <param name="sendUpdate">Do we need to send an inventory update after taking away the item.</param>
+        /// <returns>Whether the item was taken away successfully or not.</returns>
         public bool TryTakeItem(Guid itemId, int amount, ItemHandling handler = ItemHandling.Normal, bool sendUpdate = true)
         {
             if (Items == null)

@@ -213,8 +213,23 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Spawn an item to this map instance.
+        /// </summary>
+        /// <param name="x">The horizontal location of this item</param>
+        /// <param name="y">The vertical location of this item.</param>
+        /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
+        /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
         public void SpawnItem(int x, int y, Item item, int amount) => SpawnItem(x, y, item, amount, Guid.Empty);
 
+        /// <summary>
+        /// Spawn an item to this map instance.
+        /// </summary>
+        /// <param name="x">The horizontal location of this item</param>
+        /// <param name="y">The vertical location of this item.</param>
+        /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
+        /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
+        /// <param name="owner">The player Id that will be the temporary owner of this item.</param>
         public void SpawnItem(int x, int y, Item item, int amount, Guid owner)
         {
             if (item == null)
@@ -232,38 +247,6 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            if (itemBase.ItemType == ItemTypes.Equipment)
-            {
-                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
-                    X = x,
-                    Y = y,
-                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
-                    Owner = owner,
-                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
-                    VisibleToAll = Options.Loot.ShowUnownedItems,
-                    Quantity = 1
-                    
-                };
-                if (mapItem.StatBuffs != null && item.StatBuffs != null)
-                {
-                    for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
-                    {
-                        mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
-                    }
-                }
-                else if (mapItem.StatBuffs == null)
-                {
-                    Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
-                }
-                else
-                {
-                    Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
-                }
-                MapItems.Add(mapItem);
-                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
-                return;
-            }
-
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
             if (itemBase.Stackable || Options.Loot.ConsolidateMapDrops)
             {
@@ -277,6 +260,12 @@ namespace Intersect.Server.Maps
                     Quantity = amount
 
                 };
+
+                // If this is a piece of equipment, set up the stat buffs for it.
+                if (itemBase.ItemType == ItemTypes.Equipment)
+                {
+                    mapItem = SetMapItemStatBuffs(mapItem);
+                }
 
                 MapItems.Add(mapItem);
                 PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
@@ -296,6 +285,13 @@ namespace Intersect.Server.Maps
                         Quantity = 1
 
                     };
+
+                    // If this is a piece of equipment, set up the stat buffs for it.
+                    if (itemBase.ItemType == ItemTypes.Equipment)
+                    {
+                        mapItem = SetMapItemStatBuffs(mapItem);
+                    }
+
                     MapItems.Add(mapItem);
                 }
                 PacketSender.SendMapItemsToProximity(Id);
@@ -356,6 +352,34 @@ namespace Intersect.Server.Maps
                     MapItems[index] = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Set the stat buffs on the specified map item.
+        /// </summary>
+        /// <param name="mapItem">The <see cref="MapItem"/> to set the stat buffs up on.</param>
+        /// <returns></returns>
+        private MapItem SetMapItemStatBuffs(MapItem mapItem)
+        {
+            var itemBase = mapItem.Descriptor;
+
+            if (mapItem.StatBuffs != null && mapItem.StatBuffs != null)
+            {
+                for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
+                {
+                    mapItem.StatBuffs[i] = mapItem.StatBuffs.Length > i ? mapItem.StatBuffs[i] : 0;
+                }
+            }
+            else if (mapItem.StatBuffs == null)
+            {
+                Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
+            }
+            else
+            {
+                Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
+            }
+
+            return mapItem;
         }
 
         public void DespawnItems()
