@@ -1507,13 +1507,14 @@ namespace Intersect.Server.Entities
                     else // Time to give them as much as they can take, and spawn the rest on the map!
                     {
                         spawnAmount = item.Quantity - openSlots;
-                        GiveItem(new Item(item.ItemId, openSlots), sendUpdate);
+                        item.Quantity = openSlots;
+                        GiveItem(item, sendUpdate);
                     }
 
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0)
                     {
-                        Map.SpawnItem(X, Y, new Item(item.ItemId, spawnAmount), spawnAmount, Id);
+                        Map.SpawnItem(X, Y, item, spawnAmount, Id);
                         return true;
                     }
 
@@ -1526,7 +1527,8 @@ namespace Intersect.Server.Entities
                     }
                     else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
                     {
-                        GiveItem(new Item(item.ItemId, openSlots), sendUpdate);
+                        item.Quantity = openSlots;
+                        GiveItem(item, sendUpdate);
                         return true;
                     }
 
@@ -1563,7 +1565,7 @@ namespace Intersect.Server.Entities
                 for (var slot = 0; slot < item.Quantity; slot++)
                 {
                     openSlots[slot].Set(new Item(item.ItemId, 1));
-                    updateSlots.Add(slot);
+                    updateSlots.Add(openSlots[slot].Slot);
                 }
             }
             else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.

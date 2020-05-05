@@ -250,15 +250,13 @@ namespace Intersect.Server.Maps
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
             if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
             {
-                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
+                var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
                     X = x,
                     Y = y,
                     DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
                     Owner = owner,
                     OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
-                    VisibleToAll = Options.Loot.ShowUnownedItems,
-                    Quantity = amount
-
+                    VisibleToAll = Options.Loot.ShowUnownedItems
                 };
 
                 // If this is a piece of equipment, set up the stat buffs for it.
@@ -275,15 +273,13 @@ namespace Intersect.Server.Maps
                 // Oh boy here we go! Set quantity to 1 and drop multiple!
                 for (var i = 0; i < amount; i++)
                 {
-                    var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
+                    var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
                         X = x,
                         Y = y,
                         DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
                         Owner = owner,
                         OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
-                        VisibleToAll = Options.Loot.ShowUnownedItems,
-                        Quantity = 1
-
+                        VisibleToAll = Options.Loot.ShowUnownedItems
                     };
 
                     // If this is a piece of equipment, set up the stat buffs for it.
