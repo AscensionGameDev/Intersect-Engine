@@ -2021,6 +2021,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString commandlist = @"Commands:";
 
+            public static LocalizedString keypress = @"Key press:";
+
+            public static LocalizedString listening = @"Listening...";
+
             public static Dictionary<int, LocalizedString> commontriggers = new Dictionary<int, LocalizedString>
             {
                 {0, @"None"},
@@ -2032,6 +2036,8 @@ Tick timer saved in server config.json.";
                 {6, @"PVP Kill"},
                 {7, @"PVP Death"},
                 {8, @"Player Interact"},
+                {9, @"Key press"},
+                {10, @"Logout"},
             };
 
             public static LocalizedString conditions = @"Conditions";
@@ -4007,6 +4013,7 @@ Tick timer saved in server config.json.";
                 {10, @"Sleep"},
                 {11, @"OnHit"},
                 {12, @"Taunt"},
+                {13, @"Revive"},
             };
 
             public static LocalizedString effectgroup = @"Effect";

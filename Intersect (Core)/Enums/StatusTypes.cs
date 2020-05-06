@@ -30,6 +30,8 @@ namespace Intersect.Enums
 
         Taunt = 12,
 
+        Revive = 13,
+
     }
 
 }

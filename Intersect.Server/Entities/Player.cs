@@ -627,9 +627,20 @@ namespace Intersect.Server.Entities
 
             base.Die(dropitems, killer);
             PacketSender.SendEntityDie(this);
-            Reset();
-            Respawn();
+            //Reset();
+            //Respawn();
             PacketSender.SendInventory(this);
+        }
+
+        public void FinalDeath(bool noRevive)
+        {
+            Reset();
+            if (noRevive)
+            {
+                Respawn();
+            }
+
+            PacketSender.SendEntityRevive(this);
         }
 
         public override void ProcessRegen()
@@ -3884,6 +3895,13 @@ namespace Intersect.Server.Entities
 
                     return false;
                 }
+
+                if (spell.Combat.Effect == StatusTypes.Revive && !target.IsDead())
+                {
+                    PacketSender.SendActionMsg(this, Strings.Combat.stillalive, CustomColors.Combat.NoTarget);
+
+                    return false;
+                }
             }
 
             if (checkVitalReqs)
@@ -5024,6 +5042,17 @@ namespace Intersect.Server.Entities
                                 return true;
                             }
                         }
+                        else if (trigger == CommonEventTrigger.KeyPress)
+                        {
+                            if (param.ToLower() == tmpEvent.PageInstance.MyPage.TriggerKey.ToLower())
+                            {
+                                var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
+                                tmpEvent.PageInstance.Param = param;
+                                tmpEvent.CallStack.Push(newStack);
+
+                                return true;
+                            }
+                        }
                         else
                         {
                             switch (trigger)
@@ -5031,6 +5060,8 @@ namespace Intersect.Server.Entities
                                 case CommonEventTrigger.None:
                                     break;
                                 case CommonEventTrigger.Login:
+                                    break;
+                                case CommonEventTrigger.Logout:
                                     break;
                                 case CommonEventTrigger.LevelUp:
                                     break;

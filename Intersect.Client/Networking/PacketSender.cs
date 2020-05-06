@@ -41,9 +41,24 @@ namespace Intersect.Client.Networking
             }
         }
 
+        public static void SendKeyDown(string key)
+        {
+            Network.SendPacket(new KeyDownPacket(key));
+        }
+
         public static void SendMove()
         {
             Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir, Globals.Me.DeplacementDir));
+        }
+        
+        public static void SendFinalDeath(bool noRevive)
+        {
+            Network.SendPacket(new FinalDeathPacket(noRevive));
+        }
+
+        public static void SendDeathTimer(int sec)
+        {
+            Network.SendPacket(new DeathTimerPacket(sec));
         }
 
         public static void SendChatMsg(string msg, byte channel)

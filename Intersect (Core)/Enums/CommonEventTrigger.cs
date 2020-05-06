@@ -20,7 +20,11 @@
 
         PVPDeath,
 
-        PlayerInteract
+        PlayerInteract,
+
+        KeyPress,
+
+        Logout
 
     }
 

@@ -1384,6 +1384,7 @@ namespace Intersect.Client.Localization
                 {10, @"Makes the target fall asleep"},
                 {11, @"Applies an On Hit effect to the target"},
                 {12, @"Taunts Target"},
+                {13, @"Revive Target"},
             };
 
             public static LocalizedString effects = @"Effects:";
@@ -1495,6 +1496,14 @@ namespace Intersect.Client.Localization
             public static LocalizedString ExitToDesktop = @"Desktop";
 
             public static LocalizedString Close = @"Close";
+
+        }
+
+        public struct DeadMenu
+        {
+            public static LocalizedString Title = @"You are dead";
+
+            public static LocalizedString Respawn = @"Respawn";
 
         }
 

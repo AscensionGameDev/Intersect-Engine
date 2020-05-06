@@ -27,6 +27,7 @@ namespace Intersect.Client.Core
 
         public static void OnKeyPressed(Keys key)
         {
+            
             if (key == Keys.None)
             {
                 return;
@@ -62,6 +63,11 @@ namespace Intersect.Client.Core
             if (Interface.Interface.HasInputFocus())
             {
                 return;
+            }
+
+            if (Globals.GameState == GameStates.InGame)
+            {
+                PacketSender.SendKeyDown(key.ToString());
             }
 
             Controls.Controls.GetControlsFor(key)

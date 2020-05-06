@@ -59,6 +59,8 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public long CombatTimer { get; set; } = 0;
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -69,7 +71,6 @@ namespace Intersect.Client.Entities
             mRenderPriority = 2;
         }
 
-        public long CombatTimer { get; set; } = 0;
 
         public List<PartyMember> Party
         {
@@ -135,7 +136,33 @@ namespace Intersect.Client.Entities
 
             if (Globals.Me == this)
             {
-                HandleInput();
+                if (!IsDead)
+                {
+                    HandleInput();
+                }
+                else if (DeathTimer > Globals.System.GetTimeMs())
+                {
+                    for (var n = 0; n < Status.Count; n++)
+                    {
+                        if (Status[n].Type == StatusTypes.Revive)
+                        {
+                            FinalDeath(false);
+                        }
+                    }
+
+                    if (DeathInterval < Globals.System.GetTimeMs())
+                    {
+                        PacketSender.SendDeathTimer(DeathCounter);
+                        Interface.Interface.GameUi?.DeadMenu?.Show();
+
+                        DeathInterval = Globals.System.GetTimeMs() + 1000;
+                        DeathCounter--;
+                    }
+                }
+                else
+                {
+                    FinalDeath(true);
+                }
             }
 
 
@@ -166,6 +193,15 @@ namespace Intersect.Client.Entities
             var returnval = base.Update();
 
             return returnval;
+        }
+
+        public void FinalDeath(bool noRevive)
+        {
+            PacketSender.SendFinalDeath(noRevive);
+            Interface.Interface.GameUi?.DeadMenu?.Hide();
+
+            DeathCounter = 60;
+            IsDead = false;
         }
 
         //Loading

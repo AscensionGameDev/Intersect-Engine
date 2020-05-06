@@ -720,7 +720,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-
+            
             Entity en = null;
             if (type < EntityTypes.Event)
             {
@@ -728,7 +728,7 @@ namespace Intersect.Client.Networking
                 {
                     return;
                 }
-
+                
                 en = Globals.Entities[id];
             }
             else
@@ -752,7 +752,26 @@ namespace Intersect.Client.Networking
                 return;
             }
 
+            if (type == EntityTypes.Player)
+            {
+                Player player = (Player)en;
+                player.IsDead = true;
+                player.DeathTimer = 60000 + Globals.System.GetTimeMs();
+            }
+
             en.ClearAnimations(null);
+        }
+
+        //RevivePacket
+        private static void HandlePacket(EntityRevivePacket packet)
+        {
+            Entity en = Globals.Entities[packet.Id];
+            if (en == null)
+            {
+                return;
+            }
+
+            en.IsDead = false;
         }
 
         //EventDialogPacket

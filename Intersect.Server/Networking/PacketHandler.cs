@@ -359,6 +359,15 @@ namespace Intersect.Server.Networking
         //LogoutPacket
         public void HandlePacket(Client client, Player player, LogoutPacket packet)
         {
+            //Search for logout activated events and run them
+            foreach (EventBase evt in EventBase.Lookup.Values)
+            {
+                if (evt != null)
+                {
+                    player.StartCommonEvent(evt, CommonEventTrigger.Logout);
+                }
+            }
+
             client?.Logout();
             if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
             {
@@ -378,6 +387,26 @@ namespace Intersect.Server.Networking
                     PacketSender.SendMapGrid(client, map.MapGrid);
                 }
             }
+        }
+
+        public void HandlePacket(Client client, Player player, DeathTimerPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            PacketSender.SendActionMsg(player, packet.Sec.ToString(), CustomColors.Combat.Missed);
+        }
+
+        public void HandlePacket(Client client, Player player, FinalDeathPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            player.FinalDeath(packet.NoRevive);
         }
 
         //MovePacket
@@ -682,6 +711,25 @@ namespace Intersect.Server.Networking
 
                 //No common event /command, invalid command.
                 PacketSender.SendChatMsg(player, Strings.Commands.invalid, CustomColors.Alerts.Error);
+            }
+        }
+
+        //KeyDownPacket
+        public void HandlePacket(Client client, Player player, KeyDownPacket packet)
+        {
+            //Search for key activated events and run them
+            foreach (var evt in EventBase.Lookup)
+            {
+                if ((EventBase)evt.Value != null)
+                {
+                    if (client.Entity.StartCommonEvent(
+                            (EventBase)evt.Value, CommonEventTrigger.KeyPress, "", packet.Key
+                        ) ==
+                        true)
+                    {
+                        return; //Found our key, exit now :)
+                    }
+                }
             }
         }
 

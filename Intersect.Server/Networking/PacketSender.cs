@@ -775,6 +775,12 @@ namespace Intersect.Server.Networking
             SendDataToProximity(en.MapId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId));
         }
 
+        //EntityRevivePacket
+        public static void SendEntityRevive(Entity en)
+        {
+            SendDataToProximity(en.MapId, new EntityRevivePacket(en.Id, en.GetEntityType(), en.MapId));
+        }
+
         //EntityDirectionPacket
         public static void SendEntityDirTo(Player player, Entity en)
         {
