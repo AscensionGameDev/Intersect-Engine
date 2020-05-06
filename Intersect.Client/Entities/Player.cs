@@ -1778,6 +1778,7 @@ namespace Intersect.Client.Entities
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawName(null);
                         }
                     }
                 }
@@ -1804,6 +1805,7 @@ namespace Intersect.Client.Entities
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                         {
                             en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawName(null);
                         }
                     }
                 }
@@ -1836,6 +1838,7 @@ namespace Intersect.Client.Entities
                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int) TargetTypes.Hover);
+                                        en.Value.DrawName(null);
                                     }
                                 }
                             }
@@ -1858,6 +1861,7 @@ namespace Intersect.Client.Entities
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
                                         en.Value.DrawTarget((int) TargetTypes.Hover);
+                                        en.Value.DrawName(null);
                                     }
                                 }
                             }

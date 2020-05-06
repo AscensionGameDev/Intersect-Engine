@@ -371,7 +371,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        //entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -389,7 +389,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        //entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
