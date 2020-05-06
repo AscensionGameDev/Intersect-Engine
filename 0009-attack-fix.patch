@@ -1,0 +1,26 @@
+From 3c2b135911d087d65e594c80d45a6ea5a74390fa Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Sun, 5 Apr 2020 17:58:28 -0400
+Subject: [PATCH 09/12] attack fix
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect.Client/Entities/Player.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 944085ac..dbf50fab 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -1045,7 +1045,7 @@ public bool TryAttack()
+                     if (en.Value != Globals.Me)
+                     {
+                         if (en.Value.CurrentMap == map &&
+-                            en.Value.X == x ||
++                            en.Value.X == x &&
+                             en.Value.Y == y &&
+                             en.Value.CanBeAttacked())
+                         {
+-- 
+2.25.0.windows.1
+
