@@ -1406,10 +1406,7 @@ namespace Intersect.Server.Entities
         /// <param name="itemId">The ItemId to see if it can be taken away from the player.</param>
         /// <param name="quantity">The quantity of above item to see if we can take away from the player.</param>
         /// <returns>Whether or not the item can be taken away from the player in the requested quantity.</returns>
-        public bool CanTakeItem(Guid itemId, int quantity)
-        {  
-            return FindInventoryItemQuantity(itemId) >= quantity;
-        }
+        public bool CanTakeItem(Guid itemId, int quantity) => FindInventoryItemQuantity(itemId) >= quantity;
 
         /// <summary>
         /// Checks whether or not a player has enough items in their inventory to be taken.
@@ -2129,7 +2126,7 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Finds an inventoory slot matching the desired item and quantity.
+        /// Finds an inventory slot matching the desired item and quantity.
         /// </summary>
         /// <param name="itemId">The item Id to look for.</param>
         /// <param name="quantity">The quantity of the item to look for.</param>
