@@ -210,19 +210,24 @@ namespace Intersect.Client.Interface.Game
 
                         if (mHpBar[i].Texture != null)
                         {
-                            var vitalHp = Globals.Me.Party[i].Vital[(int) Vitals.Health];
-                            var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int) Vitals.Health];
-                            var ratioHp = (float) vitalHp / (float) vitalMaxHp;
-                            ratioHp = Math.Min(1, Math.Max(0, ratioHp));
+                            var partyHpWidthRatio = 1f;
+                            if (Globals.Me.Party[i].MaxVital[(int)Vitals.Health] > 0)
+                            {
+                                var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
+                                var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
+                                var ratioHp = (float)vitalHp / (float)vitalMaxHp;
+                                partyHpWidthRatio = Math.Min(1, Math.Max(0, ratioHp));
+                            }
+
                             mHpBar[i]
                                 .SetTextureRect(
-                                    0, 0, Convert.ToInt32(mHpBar[i].Texture.GetWidth() * ratioHp),
+                                    0, 0, Convert.ToInt32(mHpBar[i].Texture.GetWidth() * partyHpWidthRatio),
                                     mHpBar[i].Texture.GetHeight()
                                 );
 
                             mHpBar[i]
                                 .SetSize(
-                                    Convert.ToInt32(ratioHp * mHpBarContainer[i].Width), mHpBarContainer[i].Height
+                                    Convert.ToInt32(partyHpWidthRatio * mHpBarContainer[i].Width), mHpBarContainer[i].Height
                                 );
                         }
 
@@ -233,19 +238,24 @@ namespace Intersect.Client.Interface.Game
 
                         if (mMpBar[i].Texture != null)
                         {
-                            var vitalMp = Globals.Me.Party[i].Vital[(int) Vitals.Mana];
-                            var vitalMaxMp = Globals.Me.Party[i].MaxVital[(int) Vitals.Mana];
-                            var ratioMp = (float) vitalMp / (float) vitalMaxMp;
-                            ratioMp = Math.Min(1, Math.Max(0, ratioMp));
+                            var partyMpWidthRatio = 1f;
+                            if (Globals.Me.Party[i].MaxVital[(int)Vitals.Mana] > 0)
+                            {
+                                var vitalMp = Globals.Me.Party[i].Vital[(int)Vitals.Mana];
+                                var vitalMaxMp = Globals.Me.Party[i].MaxVital[(int)Vitals.Mana];
+                                var ratioMp = (float)vitalMp / (float)vitalMaxMp;
+                                partyMpWidthRatio = Math.Min(1, Math.Max(0, ratioMp));
+                            }
+
                             mMpBar[i]
                                 .SetTextureRect(
-                                    0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * ratioMp),
+                                    0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * partyMpWidthRatio),
                                     mMpBar[i].Texture.GetHeight()
                                 );
 
                             mMpBar[i]
                                 .SetSize(
-                                    Convert.ToInt32(ratioMp * mMpBarContainer[i].Width), mMpBarContainer[i].Height
+                                    Convert.ToInt32(partyMpWidthRatio * mMpBarContainer[i].Width), mMpBarContainer[i].Height
                                 );
                         }
 
