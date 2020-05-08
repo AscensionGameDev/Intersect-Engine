@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(SolutionDir)\scripts\Intersect.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,36 +18,40 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\build\debug\network\</OutputPath>
+    <OutputPath>$(BuildConfigurationDir)\network\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateEachBuild>true</GenerateEachBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\build\release\network\</OutputPath>
+    <OutputPath>$(BuildConfigurationDir)\network\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateEachBuild>true</GenerateEachBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
-    <OutputPath>..\build\tespia\network\</OutputPath>
+    <OutputPath>$(BuildConfigurationDir)\network\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateEachBuild>true</GenerateEachBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Diagnostic\</OutputPath>
+    <OutputPath>$(BuildConfigurationDir)\network\</OutputPath>
     <DefineConstants>TRACE;DEBUG;INTERSECT_DIAGNOSTIC</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateEachBuild>true</GenerateEachBuild>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
@@ -66,13 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientNetwork.cs" />
-    <Compile Include="Crypto\EncryptionKey.cs" />
-    <Compile Include="Crypto\KeyFormat.cs" />
-    <Compile Include="Crypto\Formats\RsaKey.cs" />
-    <Compile Include="Crypto\Formats\AesKey.cs" />
-    <Compile Include="Crypto\IKeyEncoder.cs" />
     <Compile Include="IServer.cs" />
-    <Compile Include="KeyFactory.cs" />
     <Compile Include="Lidgren\LidgrenConnection.cs" />
     <Compile Include="Lidgren\LidgrenBuffer.cs" />
     <Compile Include="Lidgren\LidgrenInterface.cs" />
@@ -88,7 +87,15 @@
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Intersect.Building\Intersect.Building.csproj" ReferenceOutputAssembly="false">
+      <Project>{3ceb8210-e2ad-429c-86f0-eaad9f49c160}</Project>
+      <Name>Intersect.Building</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterResolveReferences">
+    <Exec Command="&quot;$(MSBuildBinPath)\MSBuild.exe&quot; &quot;$(SolutionDir)scripts\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
+  </Target>
 </Project>

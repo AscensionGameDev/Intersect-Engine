@@ -221,6 +221,10 @@
     <Compile Include="Config\Passability.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
+    <Compile Include="Crypto\EncryptionKey.cs" />
+    <Compile Include="Crypto\Formats\AesKey.cs" />
+    <Compile Include="Crypto\Formats\RsaKey.cs" />
+    <Compile Include="Crypto\KeyFormat.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
