@@ -210,17 +210,13 @@ namespace Intersect.Client.Interface.Game
 
                         if (mHpBar[i].Texture != null)
                         {
-                            var partyHpWidthRatio = 0f;
+                            var partyHpWidthRatio = 1f;
                             if (Globals.Me.Party[i].MaxVital[(int)Vitals.Health] > 0)
                             {
                                 var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
                                 var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
                                 var ratioHp = (float)vitalHp / (float)vitalMaxHp;
                                 partyHpWidthRatio = Math.Min(1, Math.Max(0, ratioHp));
-                            }
-                            else
-                            {
-                                partyHpWidthRatio = 1f;
                             }
 
                             mHpBar[i]
@@ -242,7 +238,7 @@ namespace Intersect.Client.Interface.Game
 
                         if (mMpBar[i].Texture != null)
                         {
-                            var partyMpWidthRatio = 0f;
+                            var partyMpWidthRatio = 1f;
                             if (Globals.Me.Party[i].MaxVital[(int)Vitals.Mana] > 0)
                             {
                                 var vitalMp = Globals.Me.Party[i].Vital[(int)Vitals.Mana];
@@ -250,11 +246,7 @@ namespace Intersect.Client.Interface.Game
                                 var ratioMp = (float)vitalMp / (float)vitalMaxMp;
                                 partyMpWidthRatio = Math.Min(1, Math.Max(0, ratioMp));
                             }
-                            else
-                            {
-                                partyMpWidthRatio = 1f;
-                            }
-                            
+
                             mMpBar[i]
                                 .SetTextureRect(
                                     0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * partyMpWidthRatio),
