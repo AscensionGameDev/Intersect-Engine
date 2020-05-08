@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Intersect Editor")]
-[assembly: AssemblyProduct("Intersect Game Engine")]
+[assembly: AssemblyCompany("Drastal")]
+[assembly: AssemblyProduct("Dratal Engine - Based with Intersect Game Engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("2D ORPG Editor - Part of the Intersect Game Creation Suite")]
-[assembly: AssemblyCompany("Ascension Game Development")]
 [assembly: AssemblyCopyright("Copyright ©  2020 Ascension Game Dev")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("0.6.1.0")]
-[assembly: AssemblyFileVersion("0.6.1.0")]
+[assembly: AssemblyVersion("1.2.0")]
+[assembly: AssemblyFileVersion("1.2.0")]

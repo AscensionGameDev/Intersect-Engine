@@ -580,7 +580,7 @@ namespace Intersect.Server.Maps
             var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
             {
-                var npc = new Npc(npcBase, despawnable)
+                var npc = new Npc(npcBase, MapInstance.Get(Id), despawnable)
                 {
                     MapId = Id,
                     X = tileX,

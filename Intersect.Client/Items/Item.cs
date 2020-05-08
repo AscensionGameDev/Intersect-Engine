@@ -18,6 +18,7 @@ namespace Intersect.Client.Items
         public int[] StatBuffs = new int[(int) Stats.StatCount];
 
 		public Dictionary<string, int> Tags = new Dictionary<string, int>();
+		public Dictionary<string, string> StringTags = new Dictionary<string, string>();
 
 		public Item()
         {
@@ -25,7 +26,7 @@ namespace Intersect.Client.Items
 
         public ItemBase Base => ItemBase.Get(ItemId);
 
-        public void Load(Guid id, int quantity, Guid? bagId, int[] statBuffs, Dictionary<string, int> tags)
+        public void Load(Guid id, int quantity, Guid? bagId, int[] statBuffs, Dictionary<string, int> tags, Dictionary<string, string> stringTags)
         {
             ItemId = id;
             Quantity = quantity;
@@ -36,7 +37,12 @@ namespace Intersect.Client.Items
 			{
 				Tags = new Dictionary<string, int>();
 			}
-        }
+			StringTags = stringTags;
+			if (StringTags == null)
+			{
+				StringTags = new Dictionary<string, string>();
+			}
+		}
 
         public Item Clone()
         {
@@ -54,6 +60,10 @@ namespace Intersect.Client.Items
 			foreach (KeyValuePair<string, int> tag in Tags)
 			{
 				newItem.Tags.Add(tag.Key, tag.Value);
+			}
+			foreach (KeyValuePair<string, string> tag in StringTags)
+			{
+				newItem.StringTags.Add(tag.Key, tag.Value);
 			}
 
 			return newItem;

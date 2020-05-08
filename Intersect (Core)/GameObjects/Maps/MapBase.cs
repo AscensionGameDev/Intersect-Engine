@@ -340,7 +340,11 @@ namespace Intersect.GameObjects.Maps
 
         public int WeatherIntensity { get; set; }
 
-        [NotMapped]
+		public int NpcLevelMin { get; set; }
+
+		public int NpcLevelMax { get; set; }
+
+		[NotMapped]
         [JsonIgnore]
         public object MapLock => mMapLock;
 

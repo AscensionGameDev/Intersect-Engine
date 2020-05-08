@@ -191,6 +191,7 @@
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
+    <Compile Include="Config\JobInfo.cs" />
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
@@ -227,7 +228,9 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="Extensions\LogLevelExtensions.cs" />
+    <Compile Include="GameObjects\DropPoolBase.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
+    <Compile Include="GameObjects\HDVBase.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
@@ -298,7 +301,9 @@
     <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
     <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
+    <Compile Include="Network\Packets\Client\ActionHDVPacket.cs" />
     <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />
+    <Compile Include="Network\Packets\Client\AddHDVPacket.cs" />
     <Compile Include="Network\Packets\Client\AdminActionPacket.cs" />
     <Compile Include="Network\Packets\Client\AttackPacket.cs" />
     <Compile Include="Network\Packets\Client\BlockPacket.cs" />
@@ -308,6 +313,7 @@
     <Compile Include="Network\Packets\Client\CloseBagPacket.cs" />
     <Compile Include="Network\Packets\Client\CloseBankPacket.cs" />
     <Compile Include="Network\Packets\Client\CloseCraftingPacket.cs" />
+    <Compile Include="Network\Packets\Client\CloseHDVPacket.cs" />
     <Compile Include="Network\Packets\Client\CloseShopPacket.cs" />
     <Compile Include="Network\Packets\Client\CraftItemPacket.cs" />
     <Compile Include="Network\Packets\Client\CreateAccountPacket.cs" />
@@ -331,9 +337,12 @@
     <Compile Include="Network\Packets\Client\RequestConnectedPacket.cs" />
     <Compile Include="Network\Packets\Client\TakeMailPacket.cs" />
     <Compile Include="Network\Packets\Server\ConnectedPacket.cs" />
+    <Compile Include="Network\Packets\Server\HDVItemPacket.cs" />
+    <Compile Include="Network\Packets\Server\HDVPacket.cs" />
     <Compile Include="Network\Packets\Server\MailBoxPacket.cs" />
     <Compile Include="Network\Packets\Server\MailBoxsUpdatePacket.cs" />
     <Compile Include="Network\Packets\Server\MailBoxUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Server\RemoveHDVItemPacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />
@@ -567,6 +576,7 @@
     <Compile Include="Utilities\Nullability.cs" />
     <Compile Include="Utilities\Retry.cs" />
     <Compile Include="Utilities\StreamUtils.cs" />
+    <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\TextUtils.cs" />
     <Compile Include="Utilities\CSharpFeatures.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />

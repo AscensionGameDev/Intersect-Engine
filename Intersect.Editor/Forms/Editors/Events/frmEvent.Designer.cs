@@ -145,6 +145,26 @@ namespace Intersect.Editor.Forms.Editors.Events
 			System.Windows.Forms.TreeNode treeNode60 = new System.Windows.Forms.TreeNode("Mail Box", new System.Windows.Forms.TreeNode[] {
             treeNode58,
             treeNode59});
+			System.Windows.Forms.TreeNode treeNode61 = new System.Windows.Forms.TreeNode("Set Job");
+			System.Windows.Forms.TreeNode treeNode62 = new System.Windows.Forms.TreeNode("Set Job Level");
+			System.Windows.Forms.TreeNode treeNode63 = new System.Windows.Forms.TreeNode("Add Job Level");
+			System.Windows.Forms.TreeNode treeNode64 = new System.Windows.Forms.TreeNode("Set Job Experience");
+			System.Windows.Forms.TreeNode treeNode65 = new System.Windows.Forms.TreeNode("Add Job Experience");
+			System.Windows.Forms.TreeNode treeNode66 = new System.Windows.Forms.TreeNode("Job", new System.Windows.Forms.TreeNode[] {
+            treeNode61,
+            treeNode62,
+            treeNode63,
+            treeNode64,
+            treeNode65});
+			System.Windows.Forms.TreeNode treeNode67 = new System.Windows.Forms.TreeNode("Ouvrir HDV");
+			System.Windows.Forms.TreeNode treeNode68 = new System.Windows.Forms.TreeNode("Definir le spawn a ca position");
+			System.Windows.Forms.TreeNode treeNode69 = new System.Windows.Forms.TreeNode("Definir le spawn");
+			System.Windows.Forms.TreeNode treeNode70 = new System.Windows.Forms.TreeNode("Teleporter au spawn");
+			System.Windows.Forms.TreeNode treeNode71 = new System.Windows.Forms.TreeNode("Spawn", new System.Windows.Forms.TreeNode[] {
+            treeNode68,
+            treeNode69,
+            treeNode70});
+			System.Windows.Forms.TreeNode treeNode72 = new System.Windows.Forms.TreeNode("Chance de Drop");
 			this.lblName = new System.Windows.Forms.Label();
 			this.txtEventname = new DarkUI.Controls.DarkTextBox();
 			this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
@@ -974,6 +994,40 @@ namespace Intersect.Editor.Forms.Editors.Events
 			treeNode59.Text = "Opend Mail Box";
 			treeNode60.Name = "mailbox";
 			treeNode60.Text = "Mail Box";
+			treeNode61.Name = "setjob";
+			treeNode61.Tag = "442";
+			treeNode61.Text = "Set Job";
+			treeNode62.Name = "setjoblevel";
+			treeNode62.Tag = "443";
+			treeNode62.Text = "Set Job Level";
+			treeNode63.Name = "addjoblevel";
+			treeNode63.Tag = "444";
+			treeNode63.Text = "Add Job Level";
+			treeNode64.Name = "setjobexp";
+			treeNode64.Tag = "445";
+			treeNode64.Text = "Set Job Experience";
+			treeNode65.Name = "addjobexp";
+			treeNode65.Tag = "446";
+			treeNode65.Text = "Add Job Experience";
+			treeNode66.Name = "jobsystem";
+			treeNode66.Text = "Job";
+			treeNode67.Name = "openhdv";
+			treeNode67.Tag = "447";
+			treeNode67.Text = "Ouvrir HDV";
+			treeNode68.Name = "spawnsethere";
+			treeNode68.Tag = "448";
+			treeNode68.Text = "Definir le spawn a ca position";
+			treeNode69.Name = "spawnset";
+			treeNode69.Tag = "449";
+			treeNode69.Text = "Definir le spawn";
+			treeNode70.Name = "spawntp";
+			treeNode70.Tag = "450";
+			treeNode70.Text = "Teleporter au spawn";
+			treeNode71.Name = "spawn";
+			treeNode71.Text = "Spawn";
+			treeNode72.Name = "dropchance";
+			treeNode72.Tag = "451";
+			treeNode72.Text = "Chance de Drop";
 			this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode5,
             treeNode13,
@@ -983,7 +1037,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode51,
             treeNode53,
             treeNode57,
-            treeNode60});
+            treeNode60,
+            treeNode66,
+            treeNode67,
+            treeNode71,
+            treeNode72});
 			this.lstCommands.Size = new System.Drawing.Size(445, 440);
 			this.lstCommands.TabIndex = 2;
 			this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);

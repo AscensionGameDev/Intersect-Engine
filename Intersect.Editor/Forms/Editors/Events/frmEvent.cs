@@ -719,6 +719,46 @@ namespace Intersect.Editor.Forms.Editors.Events
 					tmpCommand = new OpenMailBoxCommand();
 
 					break;
+				case EventCommandType.SetJob:
+					tmpCommand = new SetJobCommand();
+
+					break;
+				case EventCommandType.SetJobLevel:
+					tmpCommand = new SetJobLevelCommand();
+
+					break;
+				case EventCommandType.AddJobLevel:
+					tmpCommand = new AddJobLevelCommand();
+
+					break;
+				case EventCommandType.SetJobExp:
+					tmpCommand = new SetJobExpCommand();
+
+					break;
+				case EventCommandType.AddJobExp:
+					tmpCommand = new AddJobExpCommand();
+
+					break;
+				case EventCommandType.HDV:
+					tmpCommand = new HDVCommand();
+
+					break;
+				case EventCommandType.SetSpawnHere:
+					tmpCommand = new SetSpawnHereCommand();
+
+					break;
+				case EventCommandType.SetSpawn:
+					tmpCommand = new SetSpawnCommand();
+
+					break;
+				case EventCommandType.TpSpawn:
+					tmpCommand = new TpSpawnCommand();
+
+					break;
+				case EventCommandType.DropChanceItem:
+					tmpCommand = new DropChanceItemCommand();
+
+					break;
 				default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1290,6 +1330,34 @@ namespace Intersect.Editor.Forms.Editors.Events
 				case EventCommandType.SendMail:
 					break;
 				case EventCommandType.OpenMailBox:
+					break;
+				case EventCommandType.SetJob:
+					cmdWindow = new EventCommand_Job((SetJobCommand)command, this);
+					break;
+				case EventCommandType.SetJobLevel:
+					cmdWindow = new EventCommand_Job((SetJobLevelCommand)command, this);
+					break;
+				case EventCommandType.AddJobLevel:
+					cmdWindow = new EventCommand_Job((AddJobLevelCommand)command, this);
+					break;
+				case EventCommandType.SetJobExp:
+					cmdWindow = new EventCommand_Job((SetJobExpCommand)command, this);
+					break;
+				case EventCommandType.AddJobExp:
+					cmdWindow = new EventCommand_Job((AddJobExpCommand)command, this);
+					break;
+				case EventCommandType.HDV:
+					cmdWindow = new EventCommand_HDV((HDVCommand)command, this);
+					break;
+				case EventCommandType.SetSpawnHere:
+					break;
+				case EventCommandType.SetSpawn:
+					cmdWindow = new EventCommand_SetSpawn((SetSpawnCommand)command, this);
+					break;
+				case EventCommandType.TpSpawn:
+					break;
+				case EventCommandType.DropChanceItem:
+					cmdWindow = new EventCommand_DropChance((DropChanceItemCommand)command, this);
 					break;
 				default:
                     throw new ArgumentOutOfRangeException();

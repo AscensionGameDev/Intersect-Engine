@@ -140,8 +140,11 @@ namespace Intersect.Client.Entities
                      Globals.GameShop == null &&
                      Globals.InBank == false &&
                      Globals.InCraft == false &&
-                     Globals.InTrade == false &&
-                     !Interface.Interface.HasInputFocus());
+					 Globals.InTrade == false &&
+					 Globals.InMailBox == false &&
+					 Globals.InSendMailBox == false &&
+					 Globals.InHDV == false &&
+					 !Interface.Interface.HasInputFocus());
         }
 
         public override bool Update()
@@ -264,7 +267,9 @@ namespace Intersect.Client.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index))
+            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false &&
+					 Globals.InMailBox == false && Globals.InSendMailBox == false && Globals.InHDV == false && 
+					 !ItemOnCd(index))
             {
                 PacketSender.SendUseItem(index, TargetIndex);
             }
@@ -636,8 +641,25 @@ namespace Intersect.Client.Entities
             }
         }
 
-        //Spell Processing
-        public void SwapSpells(int spell1, int spell2)
+		// Mail Send
+		public void TrySendMailItem(int index)
+		{
+			if (ItemBase.Get(Inventory[index].ItemId) != null)
+			{
+				Interface.Interface.GameUi.UpdateSendMailItem(index);
+			}
+		}
+		// HDV
+		public void TrySellHDVItem(int index)
+		{
+			if (ItemBase.Get(Inventory[index].ItemId) != null)
+			{
+				Interface.Interface.GameUi.UpdateSellHDVItem(index);
+			}
+		}
+
+		//Spell Processing
+		public void SwapSpells(int spell1, int spell2)
         {
             var tmpInstance = Spells[spell2].Clone();
             Spells[spell2] = Spells[spell1].Clone();
@@ -1879,7 +1901,6 @@ namespace Intersect.Client.Entities
                 }
             }
         }
-
 	}
 
     public class FriendInstance

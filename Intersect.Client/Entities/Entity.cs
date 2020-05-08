@@ -166,6 +166,11 @@ namespace Intersect.Client.Entities
 		// Running System
 		public byte Running = 0;
 
+		public float MoveSpeed = 0.0f;
+
+		public float RunSpeed = 0.0f;
+
+
 		public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
@@ -418,20 +423,34 @@ namespace Intersect.Client.Entities
             mDisposed = true;
         }
 
-        //Returns the amount of time required to traverse 1 tile
-        public virtual float GetMovementTime()
+		public virtual float GetWalkSpeed()
+		{
+			return MoveSpeed;
+		}
+
+		public virtual float GetRunSpeed()
+		{
+			return RunSpeed;
+		}
+
+		//Returns the amount of time required to traverse 1 tile
+		public virtual float GetMovementTime()
         {
-            var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+            //var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+			var time = 500f;
+			time *= (1.0f - GetWalkSpeed());
 			if (Running == 1)
 			{
-				time *= 0.75f;
+				time *= (0.75f - GetRunSpeed());
+
 			}
 			if (Blocking)
-            {
-                time += time * (float) Options.BlockingSlow;
-            }
-            return Math.Min(1000f, time);
-        }
+			{
+				time += time * Options.BlockingSlow;
+			}
+
+			return Math.Min(1000f, time);
+		}
 
         //Movement Processing
         public virtual bool Update()

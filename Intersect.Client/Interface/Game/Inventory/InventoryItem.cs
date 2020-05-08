@@ -108,8 +108,16 @@ namespace Intersect.Client.Interface.Game.Inventory
             else if (Globals.InTrade)
             {
                 Globals.Me.TryTradeItem(mMySlot);
-            }
-            else
+			}
+			else if (Globals.InSendMailBox)
+			{
+				Globals.Me.TrySendMailItem(mMySlot);
+			}
+			else if (Globals.InHDV)
+			{
+				Globals.Me.TrySellHDVItem(mMySlot);
+			}
+			else
             {
                 Globals.Me.TryDropItem(mMySlot);
             }
@@ -155,7 +163,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 {
                     mDescWindow = new ItemDescWindow(
                         Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
-                        mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, Globals.Me.Inventory[mMySlot].Tags
+                        mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, Globals.Me.Inventory[mMySlot].Tags, Globals.Me.Inventory[mMySlot].StringTags
 					);
                 }
             }
@@ -183,7 +191,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mDescWindow = new ItemDescWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs,
-							Globals.Me.Inventory[mMySlot].Tags, "",
+							Globals.Me.Inventory[mMySlot].Tags, Globals.Me.Inventory[mMySlot].StringTags, "",
                             Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
                         );
                     }
@@ -197,7 +205,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mDescWindow = new ItemDescWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs,
-							Globals.Me.Inventory[mMySlot].Tags, "",
+							Globals.Me.Inventory[mMySlot].Tags, Globals.Me.Inventory[mMySlot].StringTags, "",
                             Strings.Shop.sellsfor.ToString(hoveredItem.Price, costItem.Name)
                         );
                     }
@@ -208,7 +216,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     {
                         mDescWindow = new ItemDescWindow(
                             invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
-                            invItem.Tags, "", Strings.Shop.wontbuy
+                            invItem.Tags, invItem.StringTags, "", Strings.Shop.wontbuy
                         );
                     }
                 }

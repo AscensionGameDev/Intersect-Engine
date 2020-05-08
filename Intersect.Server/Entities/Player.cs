@@ -82,12 +82,47 @@ namespace Intersect.Server.Entities
         {
             get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
             set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
-        }
+		}
 
-        [NotMapped]
+		[NotMapped]
         public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
-        public DateTime? LastOnline { get; set; }
+
+		[Column("Job"), JsonIgnore]
+		public string JobJson
+		{
+			get => JsonConvert.SerializeObject(Job);
+			set {
+				if (value == null)
+				{
+					Job = new PlayerJob();
+				}
+				else
+				{
+					Job = JsonConvert.DeserializeObject<PlayerJob>(value);
+				}
+			}
+		}
+		[NotMapped]
+		public PlayerJob Job { get; set; } = new PlayerJob();
+
+		//Spawn Info
+		[Column("SpawnMap")]
+		[JsonProperty]
+		public Guid SpawnMapId { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public MapBase SpawnMap
+		{
+			get => MapBase.Get(SpawnMapId);
+			set => SpawnMapId = value?.Id ?? Guid.Empty;
+		}
+		public int SpawnX { get; set; }
+		public int SpawnY { get; set; }
+
+
+		public DateTime? LastOnline { get; set; }
 
         //Bank
         [NotNull, JsonIgnore]
@@ -283,6 +318,7 @@ namespace Intersect.Server.Entities
             InBag = null;
             InBank = false;
 			InMailBox = false;
+			InHDV = false;
 			InShop = null;
 
             //Clear cooldowns that have expired
@@ -601,7 +637,11 @@ namespace Intersect.Server.Entities
             CombatTimer = 0;
 
             var cls = ClassBase.Get(ClassId);
-            if (cls != null)
+			if (SpawnMapId != Guid.Empty)
+			{
+				Warp(SpawnMapId, (byte)SpawnX, (byte)SpawnY, (byte)0);
+			}
+            else if (cls != null)
             {
                 Warp(cls.SpawnMapId, (byte) cls.SpawnX, (byte) cls.SpawnY, (byte) cls.SpawnDir);
             }
@@ -633,7 +673,7 @@ namespace Intersect.Server.Entities
                 evt.PlayerHasDied = true;
             }
 
-            base.Die(dropitems, killer);
+            base.Die(0, killer);
             PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
@@ -725,7 +765,7 @@ namespace Intersect.Server.Entities
 						{
 							if (item.Tags.ContainsKey("life"))
 							{
-								flatValue += item.Tags["life"];
+								flatValue += (int)item.Tags["life"];
 							}
 							if (item.Tags.ContainsKey("lifeinc"))
 							{
@@ -733,7 +773,7 @@ namespace Intersect.Server.Entities
 							}
 							if (item.Tags.ContainsKey("halfattacktolife"))
 							{
-								if (item.Tags["halfattacktolife"] != 0)
+								if ((int)item.Tags["halfattacktolife"] != 0)
 								{
 									halfattacktolife = true;
 								}
@@ -743,7 +783,7 @@ namespace Intersect.Server.Entities
 						{
 							if (item.Tags.ContainsKey("mana"))
 							{
-								flatValue += item.Tags["mana"];
+								flatValue += (int)item.Tags["mana"];
 							}
 							if (item.Tags.ContainsKey("manainc"))
 							{
@@ -751,7 +791,7 @@ namespace Intersect.Server.Entities
 							}
 							if (item.Tags.ContainsKey("halfpowertomana"))
 							{
-								if (item.Tags["halfpowertomana"] != 0)
+								if ((int)item.Tags["halfpowertomana"] != 0)
 								{
 									halfpowertomana = true;
 								}
@@ -760,6 +800,9 @@ namespace Intersect.Server.Entities
 					}
                 }
             }
+
+
+
 			if (vital == (int)Vitals.Health && halfattacktolife)
 			{
 				flatValue += (float)Stat[(int)Stats.Attack].Value() / 2.0f;
@@ -853,7 +896,7 @@ namespace Intersect.Server.Entities
 						var item = Items[Equipment[i]];
 						if (item.Tags.ContainsKey("weapondamage"))
 						{
-							flatValue += item.Tags["weapondamage"];
+							flatValue += (int)item.Tags["weapondamage"];
 						}
 						if (item.Tags.ContainsKey("weapondamageinc"))
 						{
@@ -879,7 +922,7 @@ namespace Intersect.Server.Entities
 						var item = Items[Equipment[i]];
 						if (item.Tags.ContainsKey("damage"))
 						{
-							flatValue += item.Tags["damage"];
+							flatValue += (int)item.Tags["damage"];
 						}
 						if (item.Tags.ContainsKey("damageinc"))
 						{
@@ -905,7 +948,7 @@ namespace Intersect.Server.Entities
 						var item = Items[Equipment[i]];
 						if (item.Tags.ContainsKey("physical"))
 						{
-							flatValue += item.Tags["physical"];
+							flatValue += (int)item.Tags["physical"];
 						}
 						if (item.Tags.ContainsKey("physicalinc"))
 						{
@@ -931,7 +974,7 @@ namespace Intersect.Server.Entities
 						var item = Items[Equipment[i]];
 						if (item.Tags.ContainsKey("magical"))
 						{
-							flatValue += item.Tags["magical"];
+							flatValue += (int)item.Tags["magical"];
 						}
 						if (item.Tags.ContainsKey("magicalinc"))
 						{
@@ -941,6 +984,48 @@ namespace Intersect.Server.Entities
 				}
 			}
 			return (int)Math.Round(flatValue * pctValue);
+		}
+
+		public override float GetWalkSpeed()
+		{
+			float value = 0.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("walkspeed"))
+						{
+							value += (float)item.Tags["walkspeed"];
+						}
+					}
+				}
+			}
+			return value / 10000.0f;
+		}
+
+		public override float GetRunSpeed()
+		{
+			float value = 0.0f;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+				{
+					if (Items[Equipment[i]].ItemId != Guid.Empty)
+					{
+						var item = Items[Equipment[i]];
+						if (item.Tags.ContainsKey("runspeed"))
+						{
+							value += (float)item.Tags["runspeed"];
+						}
+					}
+				}
+			}
+			return value / 10000.0f;
 		}
 
 		public void FixVitals()
@@ -1421,7 +1506,7 @@ namespace Intersect.Server.Entities
 							case Stats.Attack:
 								if (item.Tags.ContainsKey("attack"))
 								{
-									flatValue += item.Tags["attack"];
+									flatValue += (int)item.Tags["attack"];
 								}
 								if (item.Tags.ContainsKey("attackinc"))
 								{
@@ -1431,7 +1516,7 @@ namespace Intersect.Server.Entities
 							case Stats.AbilityPower:
 								if (item.Tags.ContainsKey("power"))
 								{
-									flatValue += item.Tags["power"];
+									flatValue += (int)item.Tags["power"];
 								}
 								if (item.Tags.ContainsKey("powerinc"))
 								{
@@ -1441,7 +1526,7 @@ namespace Intersect.Server.Entities
 							case Stats.Defense:
 								if (item.Tags.ContainsKey("defense"))
 								{
-									flatValue += item.Tags["defense"];
+									flatValue += (int)item.Tags["defense"];
 								}
 								if (item.Tags.ContainsKey("defenseinc"))
 								{
@@ -1451,7 +1536,7 @@ namespace Intersect.Server.Entities
 							case Stats.MagicResist:
 								if (item.Tags.ContainsKey("resistance"))
 								{
-									flatValue += item.Tags["resistance"];
+									flatValue += (int)item.Tags["resistance"];
 								}
 								if (item.Tags.ContainsKey("resistanceinc"))
 								{
@@ -1461,7 +1546,7 @@ namespace Intersect.Server.Entities
 							case Stats.Speed:
 								if (item.Tags.ContainsKey("speed"))
 								{
-									flatValue += item.Tags["speed"];
+									flatValue += (int)item.Tags["speed"];
 								}
 								if (item.Tags.ContainsKey("speedinc"))
 								{
@@ -1853,6 +1938,16 @@ namespace Intersect.Server.Entities
 
                     return;
                 }
+
+				if (Item.Tags.ContainsKey("rlevel"))
+				{
+					if (Item.Tags["rlevel"] > Level)
+					{
+						PacketSender.SendChatMsg(this, Strings.Items.dynamicreq);
+
+						return;
+					}
+				}
 
                 if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.RealTimeMs)
                 {
@@ -2292,7 +2387,7 @@ namespace Intersect.Server.Entities
             return tenacity;
         }
 
-        public double GetLuck()
+        public override double GetLuck()
         {
             double luck = 0;
 
@@ -2744,7 +2839,7 @@ namespace Intersect.Server.Entities
         //Business
         public bool IsBusy()
         {
-            return InShop != null || InBank || CraftingTableId != Guid.Empty || Trading.Counterparty != null;
+            return InShop != null || InBank || CraftingTableId != Guid.Empty || Trading.Counterparty != null || InMailBox || InHDV;
         }
 
         //Bank
@@ -2789,6 +2884,17 @@ namespace Intersect.Server.Entities
 		{
 			InMailBox = true;
 			PacketSender.SendOpenSendMail(this);
+		}
+
+		public void OpenHDV(Guid hdvID)
+		{
+			InHDV = true;
+			PacketSender.SendOpenHDV(this, hdvID);
+		}
+
+		public void CloseHDV()
+		{
+			InHDV = false;
 		}
 
 
@@ -5289,7 +5395,7 @@ namespace Intersect.Server.Entities
                 };
 
                 EventLookup.AddOrUpdate(evtId, tmpEvent, (key, oldValue) => tmpEvent);
-
+				
                 //Try to Spawn a PageInstance.. if we can
                 for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
                 {
@@ -5613,6 +5719,8 @@ namespace Intersect.Server.Entities
 
         [NotMapped] public bool InBank;
 		[NotMapped] public bool InMailBox;
+		[NotMapped] public Guid HdvID = Guid.Empty;
+		[NotMapped] public bool InHDV;
 
 		#endregion
 

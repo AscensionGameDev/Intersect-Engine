@@ -219,6 +219,17 @@
 		SendMail = 440,
 		OpenMailBox = 441,
 
-    }
+		SetJob = 442,
+		SetJobLevel = 443,
+		AddJobLevel = 444,
+		SetJobExp = 445,
+		AddJobExp = 446,
+		HDV = 447,
+
+		SetSpawnHere = 448,
+		SetSpawn = 449,
+		TpSpawn = 450,
+		DropChanceItem = 451
+	}
 
 }

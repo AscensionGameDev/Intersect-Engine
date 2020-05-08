@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -18,8 +18,7 @@ namespace Intersect.Editor.Localization
 
     public static class Strings
     {
-
-        public static string GetEventConditionalDesc(VariableIsCondition condition)
+		public static string GetEventConditionalDesc(VariableIsCondition condition)
         {
             var pVar = GetVariableComparisonString((dynamic) condition.Comparison);
 
@@ -238,9 +237,20 @@ namespace Intersect.Editor.Localization
             }
 
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
-        }
+		}
 
-        public static string GetVariableComparisonString(VariableCompaison comparison)
+		public static string GetEventConditionalDesc(IsJobCondition condition)
+		{
+			
+			return $"Job == {JobInfo.JobName[condition.JobIdentity]}";
+		}
+
+		public static string GetEventConditionalDesc(IsJobLevelCondition condition)
+		{
+			return $"Job Level >= {condition.Level}";
+		}
+
+		public static string GetVariableComparisonString(VariableCompaison comparison)
         {
             return "";
         }
@@ -351,7 +361,8 @@ namespace Intersect.Editor.Localization
             return "";
         }
 
-        public static void Load()
+
+		public static void Load()
         {
             if (File.Exists(Path.Combine("resources", "editor_strings.json")))
             {
@@ -1697,6 +1708,19 @@ Tick timer saved in server config.json.";
 				{"mailbox", @"Mail Box" },
 				{"sendmail", @"Send Mail"},
 				{"openmailbox", @"Open Mail Box"},
+				{"jobsystem", "Job"},
+				{"setjob","Set Job"},
+				{"setjoblevel","Set Job Level"},
+				{"addjoblevel","Add Job Level"},
+				{"setjobexp","Set Job Exp"},
+				{"addjobexp","Add Job Exp"},
+				{"openhdv","Open HDV"},
+
+				{"spawn","Spawn"},
+				{"spawnset","Definir le spawn"},
+				{"spawnsethere","Definir le spawn ICI"},
+				{"spawntp","Teleporter au spawn"},
+				{"dropchance","Chance de drop l'objet"},
 		};
 
         }
@@ -1775,8 +1799,10 @@ Tick timer saved in server config.json.";
                 {14, @"No NPCs on Map"},
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
-                {17, @"Item Equipped is..."},
-            };
+				{17, @"Item Equipped is..."},
+				{(int)ConditionTypes.IsJob, @"Job is..."},
+				{(int)ConditionTypes.IsJobLevel, @"Job Level is..."},
+			};
 
             public static LocalizedString endrange = @"End Range:";
 
@@ -3229,8 +3255,9 @@ Tick timer saved in server config.json.";
                 {"overlay", @"Overlay"},
                 {"fog", @"Fog"},
                 {"audio", @"Audio"},
-                {"weather", @"Weather"}
-            };
+				{"weather", @"Weather"},
+				{"npc", @"NPC"}
+			};
 
             public static Dictionary<string, string> displaynames = new Dictionary<string, string>()
             {
@@ -3258,7 +3285,9 @@ Tick timer saved in server config.json.";
                 {"weatherxspeed", @"Weather X Speed"},
                 {"weatheryspeed", @"Weather Y Speed"},
                 {"weatherintensity", @"Weather Intensity"},
-            };
+				{"npclevelmin", @"NPC Level Min" },
+				{"npclevelmax", @"NPC Level Max" },
+			};
 
             public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
             {
@@ -3297,8 +3326,10 @@ Tick timer saved in server config.json.";
                     @"How fast horizontally weather particles move across the screen. (Range -5 to 5)"
                 },
                 {"weatheryspeeddesc", @"How fast vertically weather particles move across the screen. (Range -5 to 5)"},
-                {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
-            };
+				{"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
+				{"npclevelmindesc", @"NPC Level Minimal in Zone"},
+				{"npclevelmaxdesc", @"NPC Level Maximal in Zone"},
+			};
 
             public static LocalizedString title = @"Map Properties";
 

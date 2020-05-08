@@ -50,6 +50,22 @@ namespace Intersect.Server.Database.PlayerData.Players
 					tags = JsonConvert.DeserializeObject<Dictionary<string, int>>(value);
 			}
 		}
+		[NotMapped]
+		public Dictionary<string, string> StringTags = new Dictionary<string, string>();
+
+		[Column("StringTags")]
+		[JsonIgnore]
+		public string JsonStringTags
+		{
+			get => JsonConvert.SerializeObject(StringTags);
+			set
+			{
+				if (value == null)
+					StringTags = new Dictionary<string, string>();
+				else
+					StringTags = JsonConvert.DeserializeObject<Dictionary<string, string>>(value);
+			}
+		}
 	}
 
 }

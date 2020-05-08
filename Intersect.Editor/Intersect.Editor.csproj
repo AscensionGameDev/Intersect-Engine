@@ -11,7 +11,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect.Editor</RootNamespace>
-    <AssemblyName>Intersect Editor</AssemblyName>
+    <AssemblyName>Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -86,11 +86,47 @@
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_DropChance.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_DropChance.Designer.cs">
+      <DependentUpon>EventCommand_DropChance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_HDV.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_HDV.Designer.cs">
+      <DependentUpon>EventCommand_HDV.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Job.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Job.Designer.cs">
+      <DependentUpon>EventCommand_Job.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetSpawn.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetSpawn.Designer.cs">
+      <DependentUpon>EventCommand_SetSpawn.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\FormRandomPlacer.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Editors\FormRandomPlacer.Designer.cs">
       <DependentUpon>FormRandomPlacer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\FrmDropPool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\FrmDropPool.Designer.cs">
+      <DependentUpon>FrmDropPool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\frmHDV.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmHDV.Designer.cs">
+      <DependentUpon>frmHDV.cs</DependentUpon>
     </Compile>
     <Compile Include="Maps\MapGridItem.cs" />
     <Compile Include="Maps\MapSaveState.cs" />
@@ -663,6 +699,9 @@
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.resx">
       <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_DropChance.resx">
+      <DependentUpon>EventCommand_DropChance.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.resx">
       <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
     </EmbeddedResource>
@@ -696,6 +735,12 @@
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.resx">
       <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_HDV.resx">
+      <DependentUpon>EventCommand_HDV.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Job.resx">
+      <DependentUpon>EventCommand_Job.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Label.resx">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </EmbeddedResource>
@@ -725,6 +770,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.resx">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetSpawn.resx">
+      <DependentUpon>EventCommand_SetSpawn.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.resx">
       <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
@@ -783,11 +831,17 @@
     <EmbeddedResource Include="Forms\Editors\frmCraftingTables.resx">
       <DependentUpon>frmCraftingTables.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\FrmDropPool.resx">
+      <DependentUpon>FrmDropPool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmDynamicRequirements.resx">
       <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmHDV.resx">
+      <DependentUpon>frmHDV.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmItem.resx">
       <DependentUpon>frmItem.cs</DependentUpon>

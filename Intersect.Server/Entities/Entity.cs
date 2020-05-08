@@ -698,21 +698,33 @@ namespace Intersect.Server.Entities
         public virtual bool IsPassable()
         {
             return Passable;
-        }
+		}
 
-        //Returns the amount of time required to traverse 1 tile
-        public virtual float GetMovementTime()
+		public virtual float GetWalkSpeed()
+		{
+			return 0.0f;
+		}
+
+		public virtual float GetRunSpeed()
+		{
+			return 0.0f;
+		}
+
+		//Returns the amount of time required to traverse 1 tile
+		public virtual float GetMovementTime()
         {
-            var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
+			var time = 500f;// / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
+			time *= (1.0f - GetWalkSpeed());
 			if (Running == 1)
 			{
-				time *= 0.75f;
+				time *= (0.75f - GetRunSpeed());
+
 			}
             if (Blocking)
             {
                 time += time * Options.BlockingSlow;
             }
-
+			
             return Math.Min(1000f, time);
         }
 
@@ -1277,16 +1289,20 @@ namespace Intersect.Server.Entities
                         targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract, "", this.Name);
                     }
                 }
+				var playerAttribute = MapInstance.Get(MapId).Attributes[X, Y];
+				var targetAttribute = MapInstance.Get(target.MapId)?.Attributes[target.X, target.Y];
+				if (playerAttribute == null || playerAttribute.Type != MapAttributes.Arena || targetAttribute == null || targetAttribute.Type != MapAttributes.Arena)
+				{
+					if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
+					{
+						return;
+					}
 
-                if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
-                {
-                    return;
-                }
-
-                if (MapInstance.Get(target.MapId).ZoneType == MapZones.Safe)
-                {
-                    return;
-                }
+					if (MapInstance.Get(target.MapId).ZoneType == MapZones.Safe)
+					{
+						return;
+					}
+				}
 
                 if (player.InParty(targetPlayer))
                 {
@@ -1401,16 +1417,21 @@ namespace Intersect.Server.Entities
                         return;
                     }
 
-                    // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
-                    {
-                        return;
-                    }
+					// Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+					var playerAttribute = MapInstance.Get(MapId).Attributes[X, Y];
+					var targetAttribute = MapInstance.Get(target.MapId)?.Attributes[target.X, target.Y];
+					if (playerAttribute == null || playerAttribute.Type != MapAttributes.Arena || targetAttribute == null || targetAttribute.Type != MapAttributes.Arena)
+					{
+						if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
+						{
+							return;
+						}
 
-                    if (MapInstance.Get(target.MapId).ZoneType == MapZones.Safe)
-                    {
-                        return;
-                    }
+						if (MapInstance.Get(target.MapId).ZoneType == MapZones.Safe)
+						{
+							return;
+						}
+					}
                 }
 
                 if (!CanAttack(target, spellBase))
@@ -1593,15 +1614,20 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (MapInstance.Get(MapId)?.ZoneType == MapZones.Safe)
-                {
-                    return;
-                }
+				var playerAttribute = MapInstance.Get(MapId).Attributes[X, Y];
+				var targetAttribute = MapInstance.Get(target.MapId)?.Attributes[target.X, target.Y];
+				if (playerAttribute == null || playerAttribute.Type != MapAttributes.Arena || targetAttribute == null || targetAttribute.Type != MapAttributes.Arena)
+				{
+					if (MapInstance.Get(MapId)?.ZoneType == MapZones.Safe)
+					{
+						return;
+					}
 
-                if (MapInstance.Get(target.MapId)?.ZoneType == MapZones.Safe)
-                {
-                    return;
-                }
+					if (MapInstance.Get(target.MapId)?.ZoneType == MapZones.Safe)
+					{
+						return;
+					}
+				}
             }
 
             //Check for taunt status and trying to attack a target that has not taunted you.
@@ -1961,7 +1987,7 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    enemy.Die(Options.ItemDropChance);
+                    enemy.Die(0);
 
                     //PVP Kill common events
                     if (this.GetType() == typeof(Player))
@@ -2501,6 +2527,41 @@ namespace Intersect.Server.Entities
             return false;
         }
 
+		public virtual double GetLuck()
+		{
+			return 0.0;
+		}
+
+		public virtual bool DropChanceItem(ItemBase item, int quantity, double dropChance)
+		{
+			if (item == null)
+			{
+				return false;
+			}
+			if (this.GetType() == typeof(Player))
+			{
+				if (item.Bound)
+				{
+					return false;
+				}
+				Player player = this as Player;
+				var luck = 1.0 + (player != null ? player.GetLuck() : 0) / 100.0;
+				double dropRng = (Globals.Rand.NextDouble() * 100.0);
+				if (dropRng >= dropChance * luck)
+				{
+					return false;
+				}
+				Item nItem = new Item(item.Id, quantity);
+				if (player.TryGiveItem(nItem) == false)
+				{
+					var map = MapInstance.Get(MapId);
+					map?.SpawnItem(X, Y, nItem, quantity);
+				}
+				return true;
+			}
+			return false;
+		}
+
         //Spawning/Dying
         public virtual void Die(int dropitems = 0, Entity killer = null)
         {
@@ -2537,17 +2598,17 @@ namespace Intersect.Server.Entities
 
                     //Calculate the killers luck (If they are a player)
                     var playerKiller = killer as Player;
-                    var luck = 1.0 + (playerKiller != null ? playerKiller.GetLuck() : 0) / 100;
+                    var luck = 1.0 + (playerKiller != null ? playerKiller.GetLuck() : 0) / 100.0;
 
 					//Player drop rates
-					float dropRng = (float)(Globals.Rand.NextDouble() * 100);
-                    if (dropRng >= dropitems * luck)
-                    {
-                        continue;
-                    }
+					//double dropRng = (Globals.Rand.NextDouble() * 100.0);
+					//               if (dropRng >= dropitems * luck)
+					//               {
+					//                   continue;
+					//               }
 
 					//Npc drop rates
-					dropRng = (float)(Globals.Rand.NextDouble() * 100);
+					double dropRng = (Globals.Rand.NextDouble() * 100.0);
 					if (dropRng >= item.DropChance * luck)
                     {
                         continue;
@@ -2557,8 +2618,8 @@ namespace Intersect.Server.Entities
                     var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity);
 
-                    var player = this as Player;
-                    player?.TakeItemsBySlot(n, item.Quantity);
+                    //var player = this as Player;
+                    //player?.TakeItemsBySlot(n, item.Quantity);
                 }
             }
 

@@ -92,10 +92,16 @@ namespace Intersect.Server.Database.GameData
         //Tilesets
         public DbSet<TilesetBase> Tilesets { get; set; }
 
-        //Time
-        public DbSet<TimeBase> Time { get; set; }
+		//Time
+		public DbSet<TimeBase> Time { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		//Time
+		public DbSet<HDVBase> HDVs { get; set; }
+
+
+		public DbSet<DropPoolBase> DropPool { get; set; }
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
         }
 

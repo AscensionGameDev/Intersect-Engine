@@ -81,7 +81,10 @@ namespace Intersect.Server.Database.PlayerData
 		[NotNull]
 		public DbSet<MailBox> Player_MailBox { get; set; }
 
-		
+		[NotNull]
+		public DbSet<HDV> HDV { get; set; }
+
+
 
 		internal async ValueTask Commit(
             bool commit = false,

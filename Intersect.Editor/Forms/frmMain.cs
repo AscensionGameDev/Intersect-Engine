@@ -70,8 +70,12 @@ namespace Intersect.Editor.Forms
 
         private FrmTime mTimeEditor;
 
-        //General Editting Variables
-        bool mTMouseDown;
+		private frmHDV mFrmHDV;
+		
+		private FrmDropPool mFrmDropPool;
+
+		//General Editting Variables
+		bool mTMouseDown;
 
         public UpdateTimeList TimeDelegate;
 
@@ -1581,10 +1585,26 @@ namespace Intersect.Editor.Forms
                             mTimeEditor = new FrmTime();
                             mTimeEditor.InitEditor(TimeBase.GetTimeBase());
                             mTimeEditor.Show();
-                        }
+						}
 
-                        break;
-                    default:
+						break;
+					case GameObjectType.HDVs:
+						if (mFrmHDV == null || mFrmHDV.Visible == false)
+						{
+							mFrmHDV = new frmHDV();
+							mFrmHDV.InitEditor();
+							mFrmHDV.Show();
+						}
+						break;
+					case GameObjectType.DropPool:
+						if (mFrmDropPool == null || mFrmDropPool.Visible == false)
+						{
+							mFrmDropPool = new FrmDropPool();
+							mFrmDropPool.InitEditor();
+							mFrmDropPool.Show();
+						}
+						break;
+					default:
                         return;
                 }
 
@@ -1744,6 +1764,16 @@ namespace Intersect.Editor.Forms
 			}
 			FormRandomPlacer formRandomPlacer = new FormRandomPlacer();
 			formRandomPlacer.ShowDialog();
+		}
+
+		private void hDVToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			PacketSender.SendOpenEditor(GameObjectType.HDVs);
+		}
+
+		private void dropTableEditorToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			PacketSender.SendOpenEditor(GameObjectType.DropPool);
 		}
 	}
 

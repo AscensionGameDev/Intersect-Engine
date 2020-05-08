@@ -24,7 +24,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbEvent.Items.Clear();
             cmbEvent.Items.AddRange(EventBase.Names);
             cmbEvent.SelectedIndex = EventBase.ListIndex(refCommand.EventId);
-        }
+			chkSyncParty.Checked = mMyCommand.CallToGroupe;
+
+		}
 
         private void InitLocalization()
         {
@@ -32,12 +34,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblCommonEvent.Text = Strings.EventStartCommonEvent.label;
             btnSave.Text = Strings.EventStartCommonEvent.okay;
             btnCancel.Text = Strings.EventStartCommonEvent.cancel;
-        }
+			chkSyncParty.Text = Strings.EventSetVariable.syncparty;
+		}
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.EventId = EventBase.IdFromList(cmbEvent.SelectedIndex);
-            mEventEditor.FinishCommandEdit();
+			mMyCommand.CallToGroupe = chkSyncParty.Checked;
+			mEventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

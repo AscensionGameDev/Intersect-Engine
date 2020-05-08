@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -12,6 +13,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -1219,6 +1221,89 @@ namespace Intersect.Editor.Forms.Editors
 				}
 			}
 			UpdateTagsList();
+		}
+
+		private void btnExport_Click(object sender, EventArgs e)
+		{
+			if (mEditorItem == null)
+				return;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+			saveFileDialog1.Filter = "json files (*.json)|*.json";
+			saveFileDialog1.FilterIndex = 0;
+			saveFileDialog1.RestoreDirectory = true;
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				Stream stream = saveFileDialog1.OpenFile();
+				if (stream != null)
+				{
+					StreamWriter myStream = new StreamWriter(stream);
+					string json = JsonConvert.SerializeObject(mEditorItem);
+					myStream.Write(json);
+					myStream.Close();
+				}
+				stream.Close();
+			}
+		}
+
+		private void btnImport_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnTagsExport_Click(object sender, EventArgs e)
+		{
+			if (mEditorItem == null)
+				return;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+			saveFileDialog1.Filter = "json files (*.json)|*.json";
+			saveFileDialog1.FilterIndex = 0;
+			saveFileDialog1.RestoreDirectory = true;
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				Stream stream = saveFileDialog1.OpenFile();
+				if (stream != null)
+				{
+					StreamWriter myStream = new StreamWriter(stream);
+					string json = JsonConvert.SerializeObject(mEditorItem.tags);
+					myStream.Write(json);
+					myStream.Close();
+				}
+				stream.Close();
+			}
+		}
+
+		private void btnTagsImport_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "json files (*.json)|*.json";
+			openFileDialog.FilterIndex = 0;
+			openFileDialog.RestoreDirectory = true;
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				Stream stream = openFileDialog.OpenFile();
+				if (stream != null)
+				{
+					StreamReader myStream = new StreamReader(stream);
+					string json = "";
+					string line;
+					while ((line = myStream.ReadLine()) != null)
+					{
+						if (!string.IsNullOrEmpty(line))
+						{
+							json += line;
+						}
+					}
+					mEditorItem.tags.Clear();
+					mEditorItem.tags = JsonConvert.DeserializeObject<Dictionary<string, TagStat>>(json);
+					if (mEditorItem.tags == null)
+					{
+						mEditorItem.tags = new Dictionary<string, TagStat>();
+					}
+					UpdateTagsList();
+					myStream.Close();
+				}
+				stream.Close();
+			}
 		}
 	}
 

@@ -38,6 +38,9 @@ namespace Intersect.GameObjects.Events
 
         IsItemEquipped,
 
+		IsJob,
+
+		IsJobLevel,
     }
 
     public class Condition
@@ -202,7 +205,25 @@ namespace Intersect.GameObjects.Events
 
     }
 
-    public class VariableCompaison
+	public class IsJobCondition : Condition
+	{
+
+		public override ConditionTypes Type { get; } = ConditionTypes.IsJob;
+
+		public int JobIdentity { get; set; }
+
+	}
+
+	public class IsJobLevelCondition : Condition
+	{
+
+		public override ConditionTypes Type { get; } = ConditionTypes.IsJobLevel;
+
+		public int Level { get; set; }
+
+	}
+
+	public class VariableCompaison
     {
 
     }

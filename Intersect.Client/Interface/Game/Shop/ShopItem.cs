@@ -136,7 +136,7 @@ namespace Intersect.Client.Interface.Game.Shop
             {
                 mDescWindow = new ItemDescWindow(
                     Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven,
-					new System.Collections.Generic.Dictionary<string, int>(), "",
+					new System.Collections.Generic.Dictionary<string, int>(), new System.Collections.Generic.Dictionary<string, string>(), "",
                     Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
                 );
             }

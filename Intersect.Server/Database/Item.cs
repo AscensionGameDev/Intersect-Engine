@@ -22,13 +22,14 @@ namespace Intersect.Server.Database
         {
         }
 
-        public Item(Guid itemId, int quantity, bool incStatBuffs = true) : this(
-            itemId, quantity, null, null, incStatBuffs
-        )
+
+		public Item(Guid itemId, int quantity, bool incStatBuffs = true, int ilevel = 1, int rlevel = 1) : this(
+            itemId, quantity, null, null, incStatBuffs, ilevel, rlevel
+		)
         {
         }
 
-        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool incStatBuffs = true)
+        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool incStatBuffs = true, int ilevel = 1, int rlevel = 1)
         {
             ItemId = itemId;
             Quantity = quantity;
@@ -54,6 +55,8 @@ namespace Intersect.Server.Database
 							);
 						}
 					}
+					Tags.Add("ilevel", ilevel);
+					Tags.Add("rlevel", rlevel);
 					int totalTag = IB.tags.Count;
 					if (totalTag > 0)
 					{
@@ -77,7 +80,7 @@ namespace Intersect.Server.Database
 								}
 								else
 								{
-									Tags.Add(pair.Key, pair.Value.RandomValue);
+									Tags.Add(pair.Key, (int)Math.Round((float)pair.Value.RandomValue * (1.0f + ((ilevel - 1) / 100.0f))));
 									nbTag -= 1;
 									tryTag = 5;
 								}
@@ -92,17 +95,21 @@ namespace Intersect.Server.Database
             }
         }
 
-        public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId, item.Bag)
+		public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId, item.Bag)
         {
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBuffs[i] = item.StatBuffs[i];
-            }
+			}
 			foreach (KeyValuePair<string, int> tag in item.Tags)
 			{
 				Tags.Add(tag.Key, tag.Value);
 			}
-        }
+			foreach (KeyValuePair<string, string> tag in item.StringTags)
+			{
+				StringTags.Add(tag.Key, tag.Value);
+			}
+		}
 
         public Guid? BagId { get; set; }
 
@@ -144,6 +151,22 @@ namespace Intersect.Server.Database
 					Tags = JsonConvert.DeserializeObject<Dictionary<string, int>>(value);
 			}
 		}
+		[NotMapped]
+		public Dictionary<string, string> StringTags = new Dictionary<string, string>();
+
+		[Column("StringTags")]
+		[JsonIgnore]
+		public string JsonStringTags
+		{
+			get => JsonConvert.SerializeObject(StringTags);
+			set
+			{
+				if (value == null)
+					StringTags = new Dictionary<string, string>();
+				else
+					StringTags = JsonConvert.DeserializeObject<Dictionary<string, string>>(value);
+			}
+		}
 
 		public static Item None => new Item();
 
@@ -166,6 +189,17 @@ namespace Intersect.Server.Database
 					if (string.IsNullOrEmpty(tag.Key) == false)
 					{
 						Tags.Add(tag.Key, tag.Value);
+					}
+				}
+			}
+			if (item.StringTags != null)
+			{
+				StringTags = new Dictionary<string, string>();
+				foreach (KeyValuePair<string, string> tag in item.StringTags)
+				{
+					if (string.IsNullOrEmpty(tag.Key) == false)
+					{
+						StringTags.Add(tag.Key, tag.Value);
 					}
 				}
 			}

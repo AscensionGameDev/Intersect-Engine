@@ -10,7 +10,7 @@
     <ProjectGuid>{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Intersect.Server</RootNamespace>
-    <AssemblyName>Intersect Server</AssemblyName>
+    <AssemblyName>Server</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -90,7 +90,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>false</Optimize>
-    <DocumentationFile>..\build\debug\server\Intersect Server.xml</DocumentationFile>
+    <DocumentationFile>..\build\debug\server\Server.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -430,6 +430,7 @@
     <Compile Include="Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Database\PlayerData\Ban.cs" />
+    <Compile Include="Database\PlayerData\HDV.cs" />
     <Compile Include="Database\PlayerData\Players\Bag.cs" />
     <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
@@ -439,6 +440,7 @@
     <Compile Include="Database\Item.cs" />
     <Compile Include="Database\PlayerData\Players\IPlayerOwned.cs" />
     <Compile Include="Database\PlayerData\Players\ISlot.cs" />
+    <Compile Include="Database\PlayerData\Players\PlayerJob.cs" />
     <Compile Include="Database\PlayerData\Players\MailBox.cs" />
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
@@ -489,9 +491,45 @@
     <Compile Include="Migrations\20200501120653_PlayerItemTag.designer.cs">
       <DependentUpon>20200501120653_PlayerItemTag.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20200503083841_PlayerJob.cs" />
+    <Compile Include="Migrations\20200503083841_PlayerJob.designer.cs">
+      <DependentUpon>20200503083841_PlayerJob.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200503210432_Player_HDV.cs" />
+    <Compile Include="Migrations\20200503210432_Player_HDV.designer.cs">
+      <DependentUpon>20200503210432_Player_HDV.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200504233116_Item_StringTag.cs" />
+    <Compile Include="Migrations\20200504233116_Item_StringTag.designer.cs">
+      <DependentUpon>20200504233116_Item_StringTag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200505220729_Player_SpawnPoint.cs" />
+    <Compile Include="Migrations\20200505220729_Player_SpawnPoint.designer.cs">
+      <DependentUpon>20200505220729_Player_SpawnPoint.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20200501120625_GameItemTag.cs" />
     <Compile Include="Migrations\Game\20200501120625_GameItemTag.designer.cs">
       <DependentUpon>20200501120625_GameItemTag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200503210351_Game_HDV.cs" />
+    <Compile Include="Migrations\Game\20200503210351_Game_HDV.designer.cs">
+      <DependentUpon>20200503210351_Game_HDV.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200505070642_Game_HDV_ItemListed.cs" />
+    <Compile Include="Migrations\Game\20200505070642_Game_HDV_ItemListed.designer.cs">
+      <DependentUpon>20200505070642_Game_HDV_ItemListed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200507175027_DropPool.cs" />
+    <Compile Include="Migrations\Game\20200507175027_DropPool.designer.cs">
+      <DependentUpon>20200507175027_DropPool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200507175319_DropPool_MPC.cs" />
+    <Compile Include="Migrations\Game\20200507175319_DropPool_MPC.designer.cs">
+      <DependentUpon>20200507175319_DropPool_MPC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200507233731_MapProp_NPClvl.cs" />
+    <Compile Include="Migrations\Game\20200507233731_MapProp_NPClvl.designer.cs">
+      <DependentUpon>20200507233731_MapProp_NPClvl.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

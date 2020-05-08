@@ -70,6 +70,35 @@ namespace Intersect.Server.Migrations
                     b.ToTable("Bans");
                 });
 
+            modelBuilder.Entity("Intersect.Server.Database.PlayerData.HDV", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("HDVId");
+
+                    b.Property<Guid>("ItemId");
+
+                    b.Property<string>("JsonStringTags")
+                        .HasColumnName("StringTags");
+
+                    b.Property<string>("JsonTags")
+                        .HasColumnName("Tags");
+
+                    b.Property<int>("Price");
+
+                    b.Property<int>("Quantity");
+
+                    b.Property<Guid>("SellerId");
+
+                    b.Property<string>("StatBuffsJson")
+                        .HasColumnName("StatBuffs");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HDV");
+                });
+
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Mute", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,6 +146,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("ItemId");
 
+                    b.Property<string>("JsonStringTags")
+                        .HasColumnName("StringTags");
+
                     b.Property<string>("JsonTags")
                         .HasColumnName("Tags");
 
@@ -146,6 +178,9 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid?>("BagId");
 
                     b.Property<Guid>("ItemId");
+
+                    b.Property<string>("JsonStringTags")
+                        .HasColumnName("StringTags");
 
                     b.Property<string>("JsonTags")
                         .HasColumnName("Tags");
@@ -218,6 +253,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("ItemId");
 
+                    b.Property<string>("JsonStringTags")
+                        .HasColumnName("StringTags");
+
                     b.Property<string>("JsonTags")
                         .HasColumnName("Tags");
 
@@ -245,6 +283,9 @@ namespace Intersect.Server.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("ItemId");
+
+                    b.Property<string>("JsonStringTags")
+                        .HasColumnName("StringTags");
 
                     b.Property<string>("JsonTags")
                         .HasColumnName("Tags");
@@ -392,6 +433,9 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("ItemCooldownsJson")
                         .HasColumnName("ItemCooldowns");
 
+                    b.Property<string>("JobJson")
+                        .HasColumnName("Job");
+
                     b.Property<DateTime?>("LastOnline");
 
                     b.Property<int>("Level");
@@ -402,6 +446,13 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("NameColorJson")
                         .HasColumnName("NameColor");
+
+                    b.Property<Guid>("SpawnMapId")
+                        .HasColumnName("SpawnMap");
+
+                    b.Property<int>("SpawnX");
+
+                    b.Property<int>("SpawnY");
 
                     b.Property<string>("SpellCooldownsJson")
                         .HasColumnName("SpellCooldowns");

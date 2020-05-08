@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Intersect.Client;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
@@ -10,7 +11,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
-namespace Intersect.Client.Interface.Game
+namespace Intersect.Client.Interface.Game.Mail
 {
     public class MailBoxWindow
     {
@@ -70,7 +71,7 @@ namespace Intersect.Client.Interface.Game
 		private void Take_Clicked(Base sender, ClickedEventArgs e)
 		{
 			var selected = mMailListBox.SelectedRow;
-			Mail mail = selected.UserData as Mail;
+			Client.Mail mail = selected.UserData as Client.Mail;
 			PacketSender.SendTakeMail(mail.MailID);
 		}
 
@@ -79,7 +80,7 @@ namespace Intersect.Client.Interface.Game
 			if (Globals.Mails.Count > 0)
 			{
 				var selected = mMailListBox.SelectedRow;
-				Mail mail = selected.UserData as Mail;
+				Client.Mail mail = selected.UserData as Client.Mail;
 				mSender.Text = $"{Strings.MailBox.sender}: {mail.SenderName}";
 				mTitle.Text = $"{Strings.MailBox.mailtitle}: {mail.Name}";
 				mMessage.ClearText();
@@ -125,7 +126,7 @@ namespace Intersect.Client.Interface.Game
 		{
 			mMailListBox.RemoveAllRows();
 			mMailListBox.ScrollToTop();
-			foreach (Mail mail in Globals.Mails)
+			foreach (Client.Mail mail in Globals.Mails)
 			{
 				var row = mMailListBox.AddRow(mail.Name.Trim(), "", mail);
 				row.SetTextColor(Color.White);

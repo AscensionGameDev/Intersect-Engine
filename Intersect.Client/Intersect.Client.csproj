@@ -8,10 +8,10 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2240F3DD-3694-4606-B181-F204CBBCB971}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect.Client</RootNamespace>
-    <AssemblyName>Intersect Client</AssemblyName>
+    <AssemblyName>Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -93,9 +93,14 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="HDV.cs" />
     <Compile Include="Interface\Game\ConnectedWindow.cs" />
-    <Compile Include="Interface\Game\MailBoxWindow.cs" />
-    <Compile Include="Interface\Game\SendMailBoxWindow.cs" />
+    <Compile Include="Interface\Game\HDV\HDVItem.cs" />
+    <Compile Include="Interface\Game\HDV\HDVSellItem.cs" />
+    <Compile Include="Interface\Game\HDV\HDVWindow.cs" />
+    <Compile Include="Interface\Game\Mail\MailBoxWindow.cs" />
+    <Compile Include="Interface\Game\Mail\MailItem.cs" />
+    <Compile Include="Interface\Game\Mail\SendMailBoxWindow.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\MapItem.cs" />

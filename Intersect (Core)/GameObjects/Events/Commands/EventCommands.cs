@@ -297,6 +297,7 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type { get; } = EventCommandType.StartCommonEvent;
 
         public Guid EventId { get; set; }
+		public bool CallToGroupe { get; set; } = false;
 
     }
 
@@ -837,6 +838,89 @@ namespace Intersect.GameObjects.Events.Commands
 	{
 
 		public override EventCommandType Type { get; } = EventCommandType.OpenMailBox;
+
+	}
+
+	public class SetJobCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.SetJob;
+		public int JobIdentity { get; set; }
+	}
+
+	public class SetJobLevelCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.SetJobLevel;
+		public int JobLevel { get; set; }
+	}
+
+	public class AddJobLevelCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.AddJobLevel;
+		public int JobAddLevel { get; set; }
+	}
+
+	public class SetJobExpCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.SetJobExp;
+		public int JobExp { get; set; }
+	}
+
+	public class AddJobExpCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.AddJobExp;
+		public int JobAddExp { get; set; }
+
+	}
+
+	public class HDVCommand : EventCommand
+	{
+
+		public override EventCommandType Type { get; } = EventCommandType.HDV;
+
+		public Guid HDVid { get; set; }
+	}
+
+	public class SetSpawnHereCommand : EventCommand
+	{
+		public override EventCommandType Type { get; } = EventCommandType.SetSpawnHere;
+
+	}
+
+	public class SetSpawnCommand : EventCommand
+	{
+		public override EventCommandType Type { get; } = EventCommandType.SetSpawn;
+
+		public Guid MapId { get; set; }
+
+		public sbyte X { get; set; }
+
+		public sbyte Y { get; set; }
+
+	}
+
+	public class TpSpawnCommand : EventCommand
+	{
+		public override EventCommandType Type { get; } = EventCommandType.TpSpawn;
+
+	}
+
+	public class DropChanceItemCommand : EventCommand
+	{
+		public override EventCommandType Type { get; } = EventCommandType.DropChanceItem;
+
+		public Guid ItemId { get; set; }
+
+		public int Min { get; set; }
+
+		public int Max { get; set; }
+
+		public double DropChance { get; set; }
+
 
 	}
 

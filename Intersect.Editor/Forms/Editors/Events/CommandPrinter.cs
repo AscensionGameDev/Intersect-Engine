@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
+using Intersect.Config;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
@@ -1071,6 +1071,58 @@ namespace Intersect.Editor.Forms.Editors.Events
 		private static string GetCommandText(SendMailBoxCommand command, MapInstance map)
 		{
 			return Strings.EventCommandList.sendmail;
+		}
+
+		private static string GetCommandText(SetJobCommand command, MapInstance map)
+		{
+			return $"Modifier Job ({JobInfo.JobName[command.JobIdentity]})";
+		}
+
+		private static string GetCommandText(AddJobLevelCommand command, MapInstance map)
+		{
+			return $"Ajouter Job Level = {command.JobAddLevel}";
+		}
+
+		private static string GetCommandText(SetJobLevelCommand command, MapInstance map)
+		{
+			return $"Modifier Job Level = {command.JobLevel}";
+		}
+
+		private static string GetCommandText(SetJobExpCommand command, MapInstance map)
+		{
+			return $"Modifier Job Experience = {command.JobExp}";
+		}
+
+		private static string GetCommandText(AddJobExpCommand command, MapInstance map)
+		{
+			return $"Ajouter Job Experience = {command.JobAddExp}";
+		}
+
+		private static string GetCommandText(HDVCommand command, MapInstance map)
+		{
+			HDVBase hdv = HDVBase.Get(command.HDVid);
+			return $"Ouvrir HDV ({hdv?.Name})";
+		}
+
+		private static string GetCommandText(SetSpawnHereCommand command, MapInstance map)
+		{
+			return $"Definir le Spawn ICI";
+		}
+
+		private static string GetCommandText(SetSpawnCommand command, MapInstance map)
+		{
+			return $"Definir le Spawn";
+		}
+
+		private static string GetCommandText(TpSpawnCommand command, MapInstance map)
+		{
+			return $"Teleporter au Spawn";
+		}
+
+		private static string GetCommandText(DropChanceItemCommand command, MapInstance map)
+		{
+			ItemBase item = ItemBase.Get(command.ItemId);
+			return $"Drop d'objet {item?.Name} x {command.Min} a {command.Max} avec {command.DropChance.ToString("0.00")}% chance.";
 		}
 
 		private static string GetVariableModText(SetVariableCommand command, IntegerVariableMod mod)

@@ -442,6 +442,8 @@ namespace Intersect.Client.Networking
             var dir = packet.Direction;
             var correction = packet.Correction;
 			en.Running = packet.Run;
+			en.MoveSpeed = packet.MoveSpeed;
+			en.RunSpeed = packet.RunSpeed;
 			if ((en.CurrentMap != map || en.X != x || en.Y != y) &&
                 (en != Globals.Me || en == Globals.Me && correction) &&
                 en.Dashing == null)
@@ -845,7 +847,7 @@ namespace Intersect.Client.Networking
         {
             if (Globals.Me != null)
             {
-                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags);
+                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags, packet.StringTags);
                 if (Globals.Me.InventoryUpdatedDelegate != null)
                 {
                     Globals.Me.InventoryUpdatedDelegate();
@@ -1192,7 +1194,7 @@ namespace Intersect.Client.Networking
             if (packet.ItemId != Guid.Empty)
             {
                 Globals.Bank[slot] = new Item();
-                Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags);
+                Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags, packet.StringTags);
             }
             else
             {
@@ -1228,6 +1230,52 @@ namespace Intersect.Client.Networking
 					Interface.Interface.GameUi.OpenMailBox();
 				}
 			}
+		}
+
+		// HDV
+		private static void HandlePacket(HDVItemPacket packet)
+		{
+			Globals.HDVObjet.Add(
+				new HDV(
+					packet.Id,
+					packet.Seller,
+					packet.ItemId,
+					packet.Quantity,
+					packet.StatBuffs,
+					packet.Tags,
+					packet.StringTags,
+					packet.Price
+				)
+			);
+			if (packet.Update)
+			{
+				Interface.Interface.GameUi.OpenHDV();
+			}
+		}
+
+		private static void HandlePacket(RemoveHDVItemPacket packet)
+		{
+			if (Globals.InHDV == false)
+			{
+				return;
+			}
+			HDV item = Globals.HDVObjet.Where(i => i.Id == packet.RemoveItemHDVId).First();
+			if (item != null)
+			{
+				Globals.HDVObjet.Remove(item);
+			}
+			Interface.Interface.GameUi.OpenHDV();
+		}
+
+		private static void HandlePacket(HDVPacket packet)
+		{
+			Globals.HdvID = packet.HdvID;
+			Globals.HDVObjet.Clear();
+			foreach (HDVItemPacket item in packet.HdvItems)
+			{
+				HandlePacket((dynamic)item);
+			}
+			Interface.Interface.GameUi.OpenHDV();
 		}
 
 		//GameObjectPacket
@@ -1507,7 +1555,7 @@ namespace Intersect.Client.Networking
             else
             {
                 Globals.Trade[side, slot] = new Item();
-                Globals.Trade[side, slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags);
+                Globals.Trade[side, slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags, packet.StringTags);
             }
         }
 
@@ -1575,7 +1623,7 @@ namespace Intersect.Client.Networking
             else
             {
                 Globals.Bag[packet.Slot] = new Item();
-                Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags);
+                Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs, packet.Tags, packet.StringTags);
             }
         }
 

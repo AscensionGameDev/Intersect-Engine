@@ -167,6 +167,9 @@ namespace Intersect.Editor.Forms.Editors
 			this.lblSpell = new System.Windows.Forms.Label();
 			this.pnlContainer = new System.Windows.Forms.Panel();
 			this.grpTags = new DarkUI.Controls.DarkGroupBox();
+			this.btnTagPaste = new DarkUI.Controls.DarkButton();
+			this.btnTagCopy = new DarkUI.Controls.DarkButton();
+			this.btnClearTag = new DarkUI.Controls.DarkButton();
 			this.lblTagValueInfo = new System.Windows.Forms.Label();
 			this.nudTagMax = new DarkUI.Controls.DarkNumericUpDown();
 			this.lblTagMax = new System.Windows.Forms.Label();
@@ -192,9 +195,10 @@ namespace Intersect.Editor.Forms.Editors
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.btnClearTag = new DarkUI.Controls.DarkButton();
-			this.btnTagCopy = new DarkUI.Controls.DarkButton();
-			this.btnTagPaste = new DarkUI.Controls.DarkButton();
+			this.btnImport = new System.Windows.Forms.ToolStripButton();
+			this.btnExport = new System.Windows.Forms.ToolStripButton();
+			this.btnTagsImport = new DarkUI.Controls.DarkButton();
+			this.btnTagsExport = new DarkUI.Controls.DarkButton();
 			this.grpItems.SuspendLayout();
 			this.grpGeneral.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
@@ -2225,6 +2229,8 @@ namespace Intersect.Editor.Forms.Editors
 			// 
 			this.grpTags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.grpTags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+			this.grpTags.Controls.Add(this.btnTagsImport);
+			this.grpTags.Controls.Add(this.btnTagsExport);
 			this.grpTags.Controls.Add(this.btnTagPaste);
 			this.grpTags.Controls.Add(this.btnTagCopy);
 			this.grpTags.Controls.Add(this.btnClearTag);
@@ -2245,6 +2251,36 @@ namespace Intersect.Editor.Forms.Editors
 			this.grpTags.TabIndex = 51;
 			this.grpTags.TabStop = false;
 			this.grpTags.Text = "Tags";
+			// 
+			// btnTagPaste
+			// 
+			this.btnTagPaste.Location = new System.Drawing.Point(203, 131);
+			this.btnTagPaste.Name = "btnTagPaste";
+			this.btnTagPaste.Padding = new System.Windows.Forms.Padding(5);
+			this.btnTagPaste.Size = new System.Drawing.Size(172, 28);
+			this.btnTagPaste.TabIndex = 56;
+			this.btnTagPaste.Text = "Paste Tag List";
+			this.btnTagPaste.Click += new System.EventHandler(this.btnTagPaste_Click);
+			// 
+			// btnTagCopy
+			// 
+			this.btnTagCopy.Location = new System.Drawing.Point(203, 93);
+			this.btnTagCopy.Name = "btnTagCopy";
+			this.btnTagCopy.Padding = new System.Windows.Forms.Padding(5);
+			this.btnTagCopy.Size = new System.Drawing.Size(172, 28);
+			this.btnTagCopy.TabIndex = 55;
+			this.btnTagCopy.Text = "Copy Tag List";
+			this.btnTagCopy.Click += new System.EventHandler(this.btnTagCopy_Click);
+			// 
+			// btnClearTag
+			// 
+			this.btnClearTag.Location = new System.Drawing.Point(203, 54);
+			this.btnClearTag.Name = "btnClearTag";
+			this.btnClearTag.Padding = new System.Windows.Forms.Padding(5);
+			this.btnClearTag.Size = new System.Drawing.Size(172, 28);
+			this.btnClearTag.TabIndex = 54;
+			this.btnClearTag.Text = "Clear Tag List";
+			this.btnClearTag.Click += new System.EventHandler(this.btnClearTag_Click);
 			// 
 			// lblTagValueInfo
 			// 
@@ -2441,7 +2477,9 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemCopy,
             this.toolStripItemPaste,
             this.toolStripSeparator3,
-            this.toolStripItemUndo});
+            this.toolStripItemUndo,
+            this.btnExport,
+            this.btnImport});
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
@@ -2547,35 +2585,51 @@ namespace Intersect.Editor.Forms.Editors
 			this.toolStripItemUndo.Text = "Undo";
 			this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
 			// 
-			// btnClearTag
+			// btnImport
 			// 
-			this.btnClearTag.Location = new System.Drawing.Point(203, 54);
-			this.btnClearTag.Name = "btnClearTag";
-			this.btnClearTag.Padding = new System.Windows.Forms.Padding(5);
-			this.btnClearTag.Size = new System.Drawing.Size(172, 28);
-			this.btnClearTag.TabIndex = 54;
-			this.btnClearTag.Text = "Clear Tag List";
-			this.btnClearTag.Click += new System.EventHandler(this.btnClearTag_Click);
+			this.btnImport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.btnImport.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnImport.Margin = new System.Windows.Forms.Padding(0);
+			this.btnImport.Name = "btnImport";
+			this.btnImport.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.btnImport.Size = new System.Drawing.Size(47, 25);
+			this.btnImport.Text = "Import";
+			this.btnImport.Visible = false;
+			this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
 			// 
-			// btnTagCopy
+			// btnExport
 			// 
-			this.btnTagCopy.Location = new System.Drawing.Point(203, 93);
-			this.btnTagCopy.Name = "btnTagCopy";
-			this.btnTagCopy.Padding = new System.Windows.Forms.Padding(5);
-			this.btnTagCopy.Size = new System.Drawing.Size(172, 28);
-			this.btnTagCopy.TabIndex = 55;
-			this.btnTagCopy.Text = "Copy Tag List";
-			this.btnTagCopy.Click += new System.EventHandler(this.btnTagCopy_Click);
+			this.btnExport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.btnExport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.btnExport.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnExport.Margin = new System.Windows.Forms.Padding(0);
+			this.btnExport.Name = "btnExport";
+			this.btnExport.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.btnExport.Size = new System.Drawing.Size(45, 25);
+			this.btnExport.Text = "Export";
+			this.btnExport.Visible = false;
+			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
 			// 
-			// btnTagPaste
+			// btnTagsImport
 			// 
-			this.btnTagPaste.Location = new System.Drawing.Point(203, 131);
-			this.btnTagPaste.Name = "btnTagPaste";
-			this.btnTagPaste.Padding = new System.Windows.Forms.Padding(5);
-			this.btnTagPaste.Size = new System.Drawing.Size(172, 28);
-			this.btnTagPaste.TabIndex = 56;
-			this.btnTagPaste.Text = "Paste Tag List";
-			this.btnTagPaste.Click += new System.EventHandler(this.btnTagPaste_Click);
+			this.btnTagsImport.Location = new System.Drawing.Point(203, 203);
+			this.btnTagsImport.Name = "btnTagsImport";
+			this.btnTagsImport.Padding = new System.Windows.Forms.Padding(5);
+			this.btnTagsImport.Size = new System.Drawing.Size(172, 28);
+			this.btnTagsImport.TabIndex = 58;
+			this.btnTagsImport.Text = "Import Tag List";
+			this.btnTagsImport.Click += new System.EventHandler(this.btnTagsImport_Click);
+			// 
+			// btnTagsExport
+			// 
+			this.btnTagsExport.Location = new System.Drawing.Point(203, 165);
+			this.btnTagsExport.Name = "btnTagsExport";
+			this.btnTagsExport.Padding = new System.Windows.Forms.Padding(5);
+			this.btnTagsExport.Size = new System.Drawing.Size(172, 28);
+			this.btnTagsExport.TabIndex = 57;
+			this.btnTagsExport.Text = "Export Tags List";
+			this.btnTagsExport.Click += new System.EventHandler(this.btnTagsExport_Click);
 			// 
 			// FrmItem
 			// 
@@ -2826,5 +2880,9 @@ namespace Intersect.Editor.Forms.Editors
 		private DarkButton btnTagPaste;
 		private DarkButton btnTagCopy;
 		private DarkButton btnClearTag;
+		private ToolStripButton btnExport;
+		private ToolStripButton btnImport;
+		private DarkButton btnTagsImport;
+		private DarkButton btnTagsExport;
 	}
 }

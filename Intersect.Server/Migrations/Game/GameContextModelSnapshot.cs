@@ -166,6 +166,23 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("CraftingTables");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.DropPoolBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("JsonPool")
+                        .HasColumnName("ItemListed");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DropPool");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -193,6 +210,30 @@ namespace Intersect.Server.Migrations.Game
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.HDVBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnName("Currency");
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("JsonItemListed")
+                        .HasColumnName("ItemListed");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.Property<bool>("isWhiteList");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HDVs");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
@@ -344,6 +385,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("Damage");
 
                     b.Property<int>("DamageType");
+
+                    b.Property<Guid>("DropPoolId")
+                        .HasColumnName("DropPool");
 
                     b.Property<long>("Experience");
 
@@ -732,6 +776,10 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Music");
 
                     b.Property<string>("Name");
+
+                    b.Property<int>("NpcLevelMax");
+
+                    b.Property<int>("NpcLevelMin");
 
                     b.Property<string>("NpcSpawnsJson")
                         .HasColumnName("NpcSpawns");

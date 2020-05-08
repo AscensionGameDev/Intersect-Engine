@@ -545,6 +545,7 @@ namespace Intersect.Server.Database
 
         public static void DeleteCharacter(User usr, Player chr)
         {
+			HDV.DeletePlayer(chr.Id);
             lock (mPlayerDbLock)
             {
                 usr.Players.Remove(chr);
@@ -676,6 +677,15 @@ namespace Intersect.Server.Database
                     break;
 				case GameObjectType.Time:
 					break;
+
+				case GameObjectType.HDVs:
+					HDVBase.Lookup.Clear();
+
+					break;
+				case GameObjectType.DropPool:
+					DropPoolBase.Lookup.Clear();
+
+					break;
 				default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -803,6 +813,19 @@ namespace Intersect.Server.Database
                         break;
                     case GameObjectType.Time:
                         break;
+					case GameObjectType.HDVs:
+						foreach (var psw in sGameDb.HDVs)
+						{
+							HDVBase.Lookup.Set(psw.Id, psw);
+						}
+						break;
+					case GameObjectType.DropPool:
+						foreach (var psw in sGameDb.DropPool)
+						{
+							DropPoolBase.Lookup.Set(psw.Id, psw);
+						}
+
+						break;
 					default:
                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
@@ -895,8 +918,14 @@ namespace Intersect.Server.Database
                     ((QuestBase) dbObj).EndEvent.CommonEvent = false;
 
                     break;
+				case GameObjectType.HDVs:
+					dbObj = new HDVBase(predefinedid);
+					break;
+				case GameObjectType.DropPool:
+					dbObj = new DropPoolBase(predefinedid);
+					break;
 
-                default:
+				default:
                     throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
             }
 
@@ -1013,7 +1042,18 @@ namespace Intersect.Server.Database
                     case GameObjectType.Time:
                         break;
 
-                    default:
+					case GameObjectType.HDVs:
+						sGameDb.HDVs.Add((HDVBase)dbObj);
+						HDVBase.Lookup.Set(dbObj.Id, dbObj);
+
+						break;
+					case GameObjectType.DropPool:
+						sGameDb.DropPool.Add((DropPoolBase)dbObj);
+						DropPoolBase.Lookup.Set(dbObj.Id, dbObj);
+
+						break;
+
+					default:
                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
             }
@@ -1121,7 +1161,15 @@ namespace Intersect.Server.Database
                         break;
                     case GameObjectType.Time:
                         break;
-                }
+					case GameObjectType.HDVs:
+						sGameDb.HDVs.Remove((HDVBase)gameObject);
+
+						break;
+					case GameObjectType.DropPool:
+						sGameDb.DropPool.Remove((DropPoolBase)gameObject);
+
+						break;
+				}
 
                 if (gameObject.Type.GetLookup().Values.Contains(gameObject))
                 {
@@ -1841,8 +1889,9 @@ namespace Intersect.Server.Database
                         MigrateDbSet(sGameDb.ServerVariables, newGameContext.ServerVariables);
                         MigrateDbSet(sGameDb.PlayerVariables, newGameContext.PlayerVariables);
                         MigrateDbSet(sGameDb.Tilesets, newGameContext.Tilesets);
-                        MigrateDbSet(sGameDb.Time, newGameContext.Time);
-                        newGameContext.SaveChanges();
+						MigrateDbSet(sGameDb.Time, newGameContext.Time);
+						MigrateDbSet(sGameDb.HDVs, newGameContext.HDVs);
+						newGameContext.SaveChanges();
                         Options.GameDb = newOpts;
                         Options.SaveToDisk();
                     }
@@ -1862,6 +1911,7 @@ namespace Intersect.Server.Database
                         MigrateDbSet(sPlayerDb.Mutes, newPlayerContext.Mutes);
 						MigrateDbSet(sPlayerDb.Bans, newPlayerContext.Bans);
 						MigrateDbSet(sPlayerDb.Player_MailBox, newPlayerContext.Player_MailBox);
+						MigrateDbSet(sPlayerDb.HDV, newPlayerContext.HDV);
 						newPlayerContext.SaveChanges();
                         Options.PlayerDb = newOpts;
                         Options.SaveToDisk();

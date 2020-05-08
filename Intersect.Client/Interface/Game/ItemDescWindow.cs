@@ -25,18 +25,23 @@ namespace Intersect.Client.Interface.Game
             int y,
             int[] statBuffs,
 			Dictionary<string, int> tags,
+			Dictionary<string, string> stringTag,
 			string titleOverride = "",
             string valueLabel = "",
             bool centerHorizontally = false
         )
         {
             var title = titleOverride;
-            if (string.IsNullOrWhiteSpace(title))
+			if (stringTag.ContainsKey("named"))
+			{
+				title = stringTag["named"];
+			}
+			if (string.IsNullOrWhiteSpace(title))
             {
                 title = item.Name;
             }
 
-            mDescWindow = new ImagePanel(Interface.GameUi.GameCanvas, "ItemDescWindow");
+			mDescWindow = new ImagePanel(Interface.GameUi.GameCanvas, "ItemDescWindow");
             if (item != null && item.ItemType == ItemTypes.Equipment)
             {
                 mDescWindow.Name = "ItemDescWindowExpanded";
@@ -113,8 +118,30 @@ namespace Intersect.Client.Interface.Game
 
                 var stats = "";
                 if (item.ItemType == ItemTypes.Equipment)
-                {
-                    stats = Strings.ItemDesc.bonuses;
+				{
+					bool hasText = false;
+					if (tags.ContainsKey("ilevel"))
+					{
+						itemStats.AddText(
+							$"Niveau de l'objet: {tags["ilevel"]}", itemStats.RenderColor,
+							itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+							itemDescText.Font
+						);
+						itemStats.AddLineBreak();
+						hasText = true;
+					}
+					if (tags.ContainsKey("rlevel"))
+					{
+						itemStats.AddText(
+							$"Niveau requis: {tags["rlevel"]}", itemStats.RenderColor,
+							itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+							itemDescText.Font
+						);
+						itemStats.AddLineBreak();
+						hasText = true;
+					}
+					if (hasText) itemStats.AddLineBreak();
+					stats = Strings.ItemDesc.bonuses;
                     itemStats.AddText(
                         stats, itemStats.RenderColor,
                         itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
@@ -136,10 +163,12 @@ namespace Intersect.Client.Interface.Game
 
 					foreach (KeyValuePair<string, int> tag in tags)
 					{
-						if (tag.Value == 0 || tag.Key == "tagcount") continue;
+						if ((tag.Value is int) == false)
+							continue;
+						if ((int)tag.Value == 0 || tag.Key == "tagcount") continue;
 						var desc = "";
 						string sign = "+";
-						if (tag.Value < 0)
+						if ((int)tag.Value < 0)
 							sign = "-";
 						switch (tag.Key)
 						{
@@ -231,17 +260,28 @@ namespace Intersect.Client.Interface.Game
 							case "halfpowertomana":
 								desc = $"Ajoute la moitier de la stat '{Strings.Combat.stat1}' en {Strings.Combat.vital1}";
 								break;
+							// Deplacement
+							case "walkspeed":
+								desc = $"{sign}{((float)tag.Value / 100.0f).ToString("0.00")}% Vitesse de deplacment";
+								break;
+							case "runspeed":
+								desc = $"{sign}{((float)tag.Value / 100.0f).ToString("0.00")}% Vitesse de course";
+								break;
 							default:
-								desc = $"{tag.Key} : {tag.Value}";
+								//desc = $"{tag.Key} : {tag.Value}";
+								desc = string.Empty;
 								break;
 						}
-						itemStats.AddText(
-							desc, itemStats.RenderColor,
-							itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
-							itemDescText.Font
-						);
+						if (string.IsNullOrEmpty(desc) == false)
+						{
+							itemStats.AddText(
+								desc, itemStats.RenderColor,
+								itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+								itemDescText.Font
+							);
 
-						itemStats.AddLineBreak();
+							itemStats.AddLineBreak();
+						}
 					}
 
 					//for (var i = 0; i < (int) Vitals.VitalCount; i++)
@@ -316,10 +356,20 @@ namespace Intersect.Client.Interface.Game
                         itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
                         itemDescText.Font
                     );
-                }
+				}
+				if (stringTag.ContainsKey("crafted"))
+				{
+					itemStats.AddText(
+						$"Cree par: {stringTag["crafted"]}", Color.ForestGreen,
+						itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left,
+						itemDescText.Font
+					);
 
-                //Load Again for positioning purposes.
-                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+					itemStats.AddLineBreak();
+				}
+
+				//Load Again for positioning purposes.
+				mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
                 var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {

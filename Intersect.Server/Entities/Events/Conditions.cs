@@ -390,19 +390,19 @@ namespace Intersect.Server.Entities.Events
         )
         {
             return player.Gender == condition.Gender;
-        }
+		}
 
-        public static bool MeetsCondition(
-            MapIsCondition condition,
-            Player player,
-            Event eventInstance,
-            QuestBase questBase
-        )
-        {
-            return player.MapId == condition.MapId;
-        }
+		public static bool MeetsCondition(
+			MapIsCondition condition,
+			Player player,
+			Event eventInstance,
+			QuestBase questBase
+		)
+		{
+			return player.MapId == condition.MapId;
+		}
 
-        public static bool MeetsCondition(
+		public static bool MeetsCondition(
             IsItemEquippedCondition condition,
             Player player,
             Event eventInstance,
@@ -421,10 +421,30 @@ namespace Intersect.Server.Entities.Events
             }
 
             return false;
-        }
+		}
 
-        //Variable Comparison Processing
-        public static bool CheckVariableComparison(
+		public static bool MeetsCondition(
+			IsJobCondition condition,
+			Player player,
+			Event eventInstance,
+			QuestBase questBase
+		)
+		{
+			return player.Job.JobIdentity == condition.JobIdentity;
+		}
+
+		public static bool MeetsCondition(
+			IsJobLevelCondition condition,
+			Player player,
+			Event eventInstance,
+			QuestBase questBase
+		)
+		{
+			return player.Job.JobLevel >= condition.Level;
+		}
+
+		//Variable Comparison Processing
+		public static bool CheckVariableComparison(
             VariableValue currentValue,
             VariableCompaison comparison,
             Player player,

@@ -554,7 +554,39 @@ namespace Intersect.Editor.Maps
             }
         }
 
-    }
+		[CustomCategory("npc"), CustomDescription("npclevelmindesc"), CustomDisplayName("npclevelmin"),
+		 DefaultValue(1)]
+		public int NpcLevelMin
+		{
+			get => mMyMap.NpcLevelMin;
+			set
+			{
+				if (mMyMap.NpcLevelMin != value)
+				{
+					Globals.MapEditorWindow.PrepUndoState();
+					mMyMap.NpcLevelMin = Math.Max(value, 1);
+					Globals.MapEditorWindow.AddUndoState();
+				}
+			}
+		}
+
+		[CustomCategory("npc"), CustomDescription("npclevelmaxdesc"), CustomDisplayName("npclevelmax"),
+		 DefaultValue(1)]
+		public int NpcLevelMax
+		{
+			get => mMyMap.NpcLevelMax;
+			set
+			{
+				if (mMyMap.NpcLevelMax != value)
+				{
+					Globals.MapEditorWindow.PrepUndoState();
+					mMyMap.NpcLevelMax = Math.Max(value, mMyMap.NpcLevelMin);
+					Globals.MapEditorWindow.AddUndoState();
+				}
+			}
+		}
+
+	}
 
     public class MapMusicProperty : StringConverter
     {

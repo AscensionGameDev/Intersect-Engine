@@ -5,7 +5,9 @@ using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Crafting;
 using Intersect.Client.Interface.Game.EntityPanel;
+using Intersect.Client.Interface.Game.HDV;
 using Intersect.Client.Interface.Game.Hotbar;
+using Intersect.Client.Interface.Game.Mail;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
 using Intersect.Client.Networking;
@@ -47,6 +49,8 @@ namespace Intersect.Client.Interface.Game
 
 		private SendMailBoxWindow mSendMailBoxWindow;
 		private MailBoxWindow mMailBoxWindow;
+
+		private HDVWindow mHDVWindow;
 
 		private bool mShouldCloseBag;
 
@@ -188,7 +192,20 @@ namespace Intersect.Client.Interface.Game
 				mSendMailBoxWindow.Close();
 			}
 			mSendMailBoxWindow = new SendMailBoxWindow(GameCanvas);
-			mSendMailBoxWindow.UpdateItemList();
+			mSendMailBoxWindow.UpdateItemListBySlot(-1);
+			//mSendMailBoxWindow.UpdateItemList();
+			Globals.InSendMailBox = true;
+		}
+
+		public void CloseSendMailBox()
+		{
+			mSendMailBoxWindow?.Hide();
+			Globals.InSendMailBox = false;
+		}
+
+		public void UpdateSendMailItem(int slot)
+		{
+			mSendMailBoxWindow?.UpdateItemListBySlot(slot);
 		}
 
 		public void OpenMailBox()
@@ -202,16 +219,41 @@ namespace Intersect.Client.Interface.Game
 				mMailBoxWindow = new MailBoxWindow(GameCanvas);
 				mMailBoxWindow.UpdateMail();
 			}
-		}
-
-		public void CloseSendMailBox()
-		{
-			mSendMailBoxWindow?.Hide();
+			Globals.InMailBox = true;
 		}
 
 		public void CloseMailBox()
 		{
 			mMailBoxWindow?.Hide();
+			Globals.InMailBox = false;
+		}
+
+		// HDV
+
+		public void OpenHDV()
+		{
+			if (mHDVWindow != null)
+			{
+				mHDVWindow.UpdateHDV();
+			}
+			else
+			{
+				mHDVWindow = new HDVWindow(GameCanvas);
+				mHDVWindow.UpdateItemListBySlot(-1);
+				mHDVWindow.UpdateHDV();
+			}
+			Globals.InHDV = true;
+		}
+
+		public void CloseHDV()
+		{
+			mHDVWindow?.Hide();
+			Globals.InHDV = false;
+		}
+
+		public void UpdateSellHDVItem(int slot)
+		{
+			mHDVWindow?.UpdateItemListBySlot(slot);
 		}
 
 		//Bank
@@ -418,16 +460,25 @@ namespace Intersect.Client.Interface.Game
 			{
 				mSendMailBoxWindow?.Close();
 				mSendMailBoxWindow = null;
+				Globals.InSendMailBox = false;
 			}
 
 			if (mMailBoxWindow != null && !mMailBoxWindow.IsVisible())
 			{
 				mMailBoxWindow?.Close();
 				mMailBoxWindow = null;
+				Globals.InMailBox = false;
 			}
 
-            //Bank Update
-            if (mShouldOpenBank)
+			if (mHDVWindow != null && !mHDVWindow.IsVisible())
+			{
+				mHDVWindow?.Close();
+				mHDVWindow = null;
+				Globals.InHDV = false;
+			}
+
+			//Bank Update
+			if (mShouldOpenBank)
             {
                 OpenBank();
             }

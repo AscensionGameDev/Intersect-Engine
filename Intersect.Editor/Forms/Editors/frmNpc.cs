@@ -333,7 +333,23 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
-            }
+
+				dmbDropPool.Items.Clear();
+				dmbDropPool.Items.Add("Aucun");
+				dmbDropPool.Items.AddRange(DropPoolBase.Names);
+				if (dmbDropPool.Items.Count > 0)
+				{
+					if (mEditorItem.DropPoolId == Guid.Empty)
+					{
+						dmbDropPool.SelectedIndex = 0;
+					}
+					else
+					{
+						dmbDropPool.SelectedIndex = DropPoolBase.ListIndex(mEditorItem.DropPoolId) + 1;
+					}
+				}
+
+			}
             else
             {
                 pnlContainer.Hide();
@@ -1107,8 +1123,20 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        #endregion
+		#endregion
 
-    }
+		private void dmbDropPool_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (dmbDropPool.SelectedIndex > 0)
+			{
+				mEditorItem.DropPoolId = DropPoolBase.IdFromList(dmbDropPool.SelectedIndex - 1);
+				Console.WriteLine(mEditorItem.DropPool.Name);
+			}
+			else
+			{
+				mEditorItem.DropPoolId = Guid.Empty;
+			}
+		}
+	}
 
 }

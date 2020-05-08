@@ -18,7 +18,7 @@ namespace Intersect.Server.Database.PlayerData.Players
 		{
 		}
 
-		public MailBox(Player sender, Player to, string title, string msg, Guid itemid, int quantity, int[] statBuffs, Dictionary<string, int> tags)
+		public MailBox(Player sender, Player to, string title, string msg, Guid itemid, int quantity, int[] statBuffs, Dictionary<string, int> tags, Dictionary<string, string> stringtags)
 		{
 			Sender = sender;
 			Player = to;
@@ -28,6 +28,7 @@ namespace Intersect.Server.Database.PlayerData.Players
 			Quantity = quantity;
 			StatBuffs = statBuffs;
 			Tags = tags;
+			StringTags = stringtags;
 		}
 
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -79,6 +80,22 @@ namespace Intersect.Server.Database.PlayerData.Players
 		[NotMapped]
 		public int[] StatBuffs { get; set; } = new int[(int)Enums.Stats.StatCount];
 
+		[NotMapped]
+		public Dictionary<string, string> StringTags = new Dictionary<string, string>();
+
+		[Column("StringTags")]
+		[JsonIgnore]
+		public string JsonStringTags
+		{
+			get => JsonConvert.SerializeObject(StringTags);
+			set
+			{
+				if (value == null)
+					StringTags = new Dictionary<string, string>();
+				else
+					StringTags = JsonConvert.DeserializeObject<Dictionary<string, string>>(value);
+			}
+		}
 		public static void GetMails(PlayerContext context, Player player)
 		{
 			var mail = context.Player_MailBox.Where(p => player.Id == p.Player.Id).Include(p => p.Sender).ToList();

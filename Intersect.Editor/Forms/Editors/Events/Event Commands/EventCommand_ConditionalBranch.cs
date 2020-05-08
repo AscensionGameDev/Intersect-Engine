@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-
+using Intersect.Config;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -330,7 +330,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     }
 
                     break;
-                default:
+				case ConditionTypes.IsJob:
+					Condition = new IsJobCondition();
+					if (cmbJob.Items.Count > 0)
+					{
+						cmbJob.SelectedIndex = 0;
+					}
+					break;
+				case ConditionTypes.IsJobLevel:
+					Condition = new IsJobLevelCondition();
+
+					break;
+				default:
                     throw new ArgumentOutOfRangeException();
             }
         }
@@ -351,7 +362,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpGender.Hide();
             grpMapIs.Hide();
             grpEquippedItem.Hide();
-            switch (type)
+			grpJob.Hide();
+
+			switch (type)
             {
                 case ConditionTypes.VariableIs:
                     grpVariable.Show();
@@ -446,7 +459,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbEquippedItem.Items.AddRange(ItemBase.Names);
 
                     break;
-                default:
+				case ConditionTypes.IsJob:
+					grpJob.Show();
+					cmbJob.Items.Clear();
+					cmbJob.Items.AddRange(JobInfo.JobName);
+
+					break;
+				case ConditionTypes.IsJobLevel:
+
+					break;
+				default:
                     throw new ArgumentOutOfRangeException();
             }
         }
@@ -961,16 +983,26 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnSelectMap.Tag = condition.MapId;
         }
 
-        private void SetupFormValues(IsItemEquippedCondition condition)
-        {
-            cmbEquippedItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
-        }
+		private void SetupFormValues(IsItemEquippedCondition condition)
+		{
+			cmbEquippedItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
+		}
 
-        #endregion
+		private void SetupFormValues(IsJobCondition condition)
+		{
+			cmbJob.SelectedIndex = condition.JobIdentity;
+		}
 
-        #region "SaveFormValues"
+		private void SetupFormValues(IsJobLevelCondition condition)
+		{
+			
+		}
 
-        private void SaveFormValues(VariableIsCondition condition)
+		#endregion
+
+		#region "SaveFormValues"
+
+		private void SaveFormValues(VariableIsCondition condition)
         {
             if (rdoGlobalVariable.Checked)
             {
@@ -1094,10 +1126,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(IsItemEquippedCondition condition)
         {
             condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
-        }
+		}
 
-        #endregion
+		private void SaveFormValues(IsJobCondition condition)
+		{
+			condition.JobIdentity = cmbJob.SelectedIndex;
+		}
 
-    }
+		private void SaveFormValues(IsJobLevelCondition condition)
+		{
+
+		}
+
+		#endregion
+
+	}
 
 }

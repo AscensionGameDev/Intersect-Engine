@@ -111,7 +111,7 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CreateCharacterPacket(name, classId, sprite, hair));
         }
 
-        public static void SendPickupItem(int index)
+		public static void SendPickupItem(int index)
         {
             Network.SendPacket(new PickupItemPacket(index));
         }
@@ -397,6 +397,21 @@ namespace Intersect.Client.Networking
 			}
 			Network.SendPacket(new TakeMailPacket(mailID));
 		}
-    }
+
+		public static void SendCloseHDV()
+		{
+			Network.SendPacket(new CloseHDVPacket());
+		}
+		
+		public static void SendAddToHDV(int slot, int quantity, int price)
+		{
+			Network.SendPacket(new AddHDVPacket(slot, quantity, price));
+		}
+
+		public static void SendActionHDV(Guid hdvItemID, int action)
+		{
+			Network.SendPacket(new ActionHDVPacket(hdvItemID, action));
+		}
+	}
 
 }

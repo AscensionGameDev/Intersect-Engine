@@ -135,6 +135,16 @@ namespace Intersect.Client.General
         //Scene management
         public static bool WaitingOnServer = false;
 
+		public static bool InMailBox = false;
+
+		public static bool InSendMailBox = false;
+
+		public static Guid HdvID = Guid.Empty;
+		public static HDVBase HDV { get => HDVBase.Get(HdvID); }
+		public static List<HDV> HDVObjet = new List<HDV>();
+
+		public static bool InHDV = false;
+
         public static Entity GetEntity(Guid id, EntityTypes type)
         {
             if (Entities.ContainsKey(id))

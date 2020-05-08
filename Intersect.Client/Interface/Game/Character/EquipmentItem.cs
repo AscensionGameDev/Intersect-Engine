@@ -34,6 +34,8 @@ namespace Intersect.Client.Interface.Game.Character
 
 		private Dictionary<string, int> mTags;
 
+		private Dictionary<string, string> mStringTags;
+
 
 		public EquipmentItem(int index, WindowControl characterWindow)
         {
@@ -90,7 +92,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, mTags, item.Name);
+            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, mTags, mStringTags, item.Name);
         }
 
         public FloatRect RenderBounds()
@@ -106,13 +108,14 @@ namespace Intersect.Client.Interface.Game.Character
             return rect;
         }
 
-        public void Update(Guid currentItemId, int[] statBoost, Dictionary<string, int> tags)
+        public void Update(Guid currentItemId, int[] statBoost, Dictionary<string, int> tags, Dictionary<string, string> stringTags)
         {
             if (currentItemId != mCurrentItemId || !mTexLoaded)
             {
                 mCurrentItemId = currentItemId;
                 mStatBoost = statBoost;
 				mTags = tags;
+				mStringTags = stringTags;
 				var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {

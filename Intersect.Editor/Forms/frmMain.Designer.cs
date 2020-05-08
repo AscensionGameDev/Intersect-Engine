@@ -74,6 +74,7 @@ namespace Intersect.Editor.Forms
 			this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripButtonQuestion = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
+			this.toolStripRndPlace = new System.Windows.Forms.ToolStripButton();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,6 +115,7 @@ namespace Intersect.Editor.Forms
 			this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.variableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.hDVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.postQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,7 +123,7 @@ namespace Intersect.Editor.Forms
 			this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripRndPlace = new System.Windows.Forms.ToolStripButton();
+			this.dropTableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.statusStrip1.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.menuStrip.SuspendLayout();
@@ -543,6 +545,17 @@ namespace Intersect.Editor.Forms
 			this.toolStrip1.TabIndex = 3;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
+			// toolStripRndPlace
+			// 
+			this.toolStripRndPlace.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripRndPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.toolStripRndPlace.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRndPlace.Image")));
+			this.toolStripRndPlace.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripRndPlace.Name = "toolStripRndPlace";
+			this.toolStripRndPlace.Size = new System.Drawing.Size(23, 22);
+			this.toolStripRndPlace.Text = "Random Placer";
+			this.toolStripRndPlace.Click += new System.EventHandler(this.toolStripRndPlace_Click);
+			// 
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -799,7 +812,9 @@ namespace Intersect.Editor.Forms
             this.shopEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
             this.variableEditorToolStripMenuItem,
-            this.timeEditorToolStripMenuItem});
+            this.timeEditorToolStripMenuItem,
+            this.hDVToolStripMenuItem,
+            this.dropTableEditorToolStripMenuItem});
 			this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
 			this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
@@ -917,6 +932,14 @@ namespace Intersect.Editor.Forms
 			this.timeEditorToolStripMenuItem.Text = "Time Editor";
 			this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
 			// 
+			// hDVToolStripMenuItem
+			// 
+			this.hDVToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.hDVToolStripMenuItem.Name = "hDVToolStripMenuItem";
+			this.hDVToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+			this.hDVToolStripMenuItem.Text = "HDV";
+			this.hDVToolStripMenuItem.Click += new System.EventHandler(this.hDVToolStripMenuItem_Click);
+			// 
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -987,16 +1010,13 @@ namespace Intersect.Editor.Forms
 			this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
 			this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
 			// 
-			// toolStripRndPlace
+			// dropTableEditorToolStripMenuItem
 			// 
-			this.toolStripRndPlace.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripRndPlace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.toolStripRndPlace.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRndPlace.Image")));
-			this.toolStripRndPlace.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripRndPlace.Name = "toolStripRndPlace";
-			this.toolStripRndPlace.Size = new System.Drawing.Size(24, 24);
-			this.toolStripRndPlace.Text = "Random Placer";
-			this.toolStripRndPlace.Click += new System.EventHandler(this.toolStripRndPlace_Click);
+			this.dropTableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.dropTableEditorToolStripMenuItem.Name = "dropTableEditorToolStripMenuItem";
+			this.dropTableEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+			this.dropTableEditorToolStripMenuItem.Text = "Drop Table Editor";
+			this.dropTableEditorToolStripMenuItem.Click += new System.EventHandler(this.dropTableEditorToolStripMenuItem_Click);
 			// 
 			// FrmMain
 			// 
@@ -1117,5 +1137,7 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
         private ToolStripMenuItem packClientTexturesToolStripMenuItem;
 		private ToolStripButton toolStripRndPlace;
+		private ToolStripMenuItem hDVToolStripMenuItem;
+		private ToolStripMenuItem dropTableEditorToolStripMenuItem;
 	}
 }

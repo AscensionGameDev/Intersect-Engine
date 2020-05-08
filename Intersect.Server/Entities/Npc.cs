@@ -46,17 +46,27 @@ namespace Intersect.Server.Entities
         //Respawn/Despawn
         public long RespawnTime;
 
-        public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
+        public Npc([NotNull] NpcBase myBase, MapInstance map, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
-            Level = myBase.Level;
+			if (map != null)
+			{
+				Level = Globals.Rand.Next(map.NpcLevelMin, map.NpcLevelMax + 1);
+			}
+			else
+			{
+				Level = myBase.Level;
+			}
             Base = myBase;
             Despawnable = despawnable;
-
+			
+			/**
+			 * MAP Prop LEVEL Level To Stats
+			 * */
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
-                BaseStats[i] = myBase.Stats[i];
+                BaseStats[i] = myBase.Stats[i] * Level;
                 Stat[i] = new Stat((Stats) i, this);
             }
 
@@ -76,7 +86,12 @@ namespace Intersect.Server.Entities
                 //if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 //{
                 var slot = new InventorySlot(itemSlot);
-                slot.Set(new Item(drop.ItemId, drop.Quantity, true));
+				int rlevel = Globals.Rand.Next(Level - 1, Level + 2);
+				rlevel = Math.Max(rlevel, 1);
+				int ilevel = Globals.Rand.Next(rlevel - 1, rlevel + 2);
+				ilevel = Math.Max(ilevel, 1);
+				Item item = new Item(drop.ItemId, drop.Quantity, true, ilevel, rlevel);
+				slot.Set(item);
                 slot.DropChance = drop.Chance;
                 Items.Add(slot);
                 itemSlot++;
@@ -86,8 +101,8 @@ namespace Intersect.Server.Entities
 
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
-                SetMaxVital(i, myBase.MaxVital[i]);
-                SetVital(i, myBase.MaxVital[i]);
+                SetMaxVital(i, myBase.MaxVital[i] * Level);
+                SetVital(i, myBase.MaxVital[i] * Level);
             }
 
             Range = (byte) myBase.SightRange;
@@ -108,14 +123,66 @@ namespace Intersect.Server.Entities
 
         public override void Die(int dropitems = 100, Entity killer = null)
         {
+			if (Base.DropPoolId != Guid.Empty)
+			{
+				DropPool(killer);
+			}
+
             base.Die(dropitems, killer);
             MapInstance.Get(MapId).RemoveEntity(this);
             PacketSender.SendEntityDie(this);
             PacketSender.SendEntityLeave(this);
         }
 
-        //Targeting
-        public void AssignTarget(Entity en)
+		public void DropPool(Entity killer)
+		{
+			int nb = Globals.Rand.Next(Base.DropPool.ItemPool.Count);
+			while (nb > 0 && Base.DropPool.ItemPool.Count > 0)
+			{
+				foreach (ItemPool ip in Base.DropPool.ItemPool)
+				{
+					if (DropPoolItem(ItemBase.Get(ip.ItemId), ip.Quantity, ip.Chance, killer))
+					{
+						nb--;
+					}
+					if (nb <= 0)
+					{
+						break;
+					}
+				}
+				nb--;
+			}
+		}
+
+		private bool DropPoolItem(ItemBase item, int quantity, double dropChance, Entity killer)
+		{
+			if (killer == null)
+			{
+				return false;
+			}
+			if (item == null)
+			{
+				return false;
+			}
+			var luck = 1.0 + (killer != null ? killer.GetLuck() : 0) / 100.0;
+			double dropRng = (Globals.Rand.NextDouble() * 100.0);
+			if (dropRng >= dropChance * luck)
+			{
+				return false;
+			}
+			int rlevel = Globals.Rand.Next(Level - 1, Level + 2);
+			rlevel = Math.Max(rlevel, 1);
+			int ilevel = Globals.Rand.Next(rlevel - 1, rlevel + 2);
+			ilevel = Math.Max(ilevel, 1);
+			Item nItem = new Item(item.Id, quantity, true, ilevel, rlevel);
+			var map = MapInstance.Get(MapId);
+			map?.SpawnItem(X, Y, nItem, quantity);
+
+			return true;
+		}
+
+		//Targeting
+		public void AssignTarget(Entity en)
         {
             //Can't assign a new target if taunted
             var statuses = Statuses.Values.ToArray();

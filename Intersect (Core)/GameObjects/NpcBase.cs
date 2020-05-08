@@ -117,8 +117,19 @@ namespace Intersect.GameObjects
 
         public int AttackSpeedValue { get; set; }
 
-        //Common Events
-        [Column("OnDeathEvent")]
+		[Column("DropPool")]
+		public Guid DropPoolId { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public DropPoolBase DropPool
+		{
+			get => DropPoolBase.Get(DropPoolId);
+			set => DropPoolId = value?.Id ?? Guid.Empty;
+		}
+
+		//Common Events
+		[Column("OnDeathEvent")]
         public Guid OnDeathEventId { get; set; }
 
         [NotMapped]

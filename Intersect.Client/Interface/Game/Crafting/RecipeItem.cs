@@ -120,8 +120,8 @@ namespace Intersect.Client.Interface.Game.Crafting
             {
                 DescWindow = new ItemDescWindow(
                     ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
-                    new int[(int) Stats.StatCount], new System.Collections.Generic.Dictionary<string, int>()
-                );
+                    new int[(int) Stats.StatCount], new System.Collections.Generic.Dictionary<string, int>(), new System.Collections.Generic.Dictionary<string, string>()
+				);
             }
         }
 

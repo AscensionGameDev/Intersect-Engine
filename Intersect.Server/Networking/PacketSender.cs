@@ -13,6 +13,7 @@ using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
@@ -657,7 +658,7 @@ namespace Intersect.Server.Networking
             SendDataToProximity(
                 en.MapId,
                 new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction, en.Running
+                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction, en.Running, en.GetWalkSpeed(), en.GetRunSpeed()
                 )
             );
         }
@@ -667,8 +668,8 @@ namespace Intersect.Server.Networking
         {
             player.SendPacket(
                 new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction, en.Running
-                )
+                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction, en.Running, en.GetWalkSpeed(), en.GetRunSpeed()
+				)
             );
         }
 
@@ -883,8 +884,8 @@ namespace Intersect.Server.Networking
             {
                 invItems[i] = new InventoryUpdatePacket(
                     i, player.Items[i].ItemId, player.Items[i].Quantity, player.Items[i].BagId,
-                    player.Items[i].StatBuffs, player.Items[i].Tags
-                );
+                    player.Items[i].StatBuffs, player.Items[i].Tags, player.Items[i].StringTags
+				);
             }
 
             player.SendPacket(new InventoryPacket(invItems));
@@ -901,7 +902,7 @@ namespace Intersect.Server.Networking
             player.SendPacket(
                 new InventoryUpdatePacket(
                     slot, player.Items[slot].ItemId, player.Items[slot].Quantity, player.Items[slot].BagId,
-                    player.Items[slot].StatBuffs, player.Items[slot].Tags
+                    player.Items[slot].StatBuffs, player.Items[slot].Tags, player.Items[slot].StringTags
 				)
             );
         }
@@ -1299,13 +1300,13 @@ namespace Intersect.Server.Networking
                 player.SendPacket(
                     new BankUpdatePacket(
                         slot, player.Bank[slot].ItemId, player.Bank[slot].Quantity, player.Bank[slot].BagId,
-                        player.Bank[slot].StatBuffs, player.Bank[slot].tags
-                    )
+                        player.Bank[slot].StatBuffs, player.Bank[slot].tags, player.Bank[slot].StringTags
+					)
                 );
             }
             else
             {
-                player.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null, null));
+                player.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null, null, null));
             }
 		}
 
@@ -1331,6 +1332,75 @@ namespace Intersect.Server.Networking
 		{
 			SendInventory(player);
 			player.SendPacket(new MailBoxPacket(true, true));
+		}
+
+		public static void SendItemHDV(Player player, Guid hdvID, HDV item, bool update = false)
+		{
+			if (!player.InHDV || player.HdvID != hdvID)
+			{
+				return;
+			}
+			Player seller = DbInterface.GetPlayer(item.SellerId);
+			if (seller == null)
+			{
+				return;
+			}
+			player.SendPacket(new HDVItemPacket(
+				item.Id,
+				seller.Name,
+				item.ItemId,
+				item.Quantity,
+				item.StatBuffs,
+				item.Tags,
+				item.StringTags,
+				item.Price,
+				update
+			));
+		}
+
+		public static void SendAddHDVItem(Player player, Guid hdvID, HDV item)
+		{
+			SendItemHDV(player, hdvID, item, true);
+		}
+
+		public static void SendRemoveHDVItem(Player player, Guid removeItem)
+		{
+			player.SendPacket(new RemoveHDVItemPacket(removeItem));
+		}
+
+		public static void SendOpenHDV(Player player, Guid hdvID)
+		{
+			player.HdvID = hdvID;
+			player.InHDV = true;
+			SendInventory(player);
+			HDV[] HDVItems = HDV.List(hdvID).ToArray<HDV>();
+			List<HDVItemPacket> hdvItemPackets = new List<HDVItemPacket>();
+			List<HDV> toRemove = new List<HDV>();
+			for (int i = 0; i < HDVItems.Length; i++)
+			{
+				Player seller = DbInterface.GetPlayer(HDVItems[i].SellerId);
+				if (seller == null)
+				{
+					toRemove.Add(HDVItems[i]);
+					continue;
+				}
+				hdvItemPackets.Add(new HDVItemPacket(
+					HDVItems[i].Id,
+					seller.Name,
+					HDVItems[i].ItemId,
+					HDVItems[i].Quantity,
+					HDVItems[i].StatBuffs,
+					HDVItems[i].Tags,
+					HDVItems[i].StringTags,
+					HDVItems[i].Price
+				));
+			}
+			if (toRemove.Count > 0)
+			{
+				DbInterface.GetPlayerContext().HDV.RemoveRange(toRemove);
+				DbInterface.SavePlayerDatabaseAsync();
+			}
+			player.SendPacket(new HDVPacket(hdvID, hdvItemPackets.ToArray<HDVItemPacket>()));
 		}
 
 		//GameObjectPacket
@@ -1450,6 +1520,20 @@ namespace Intersect.Server.Networking
                     break;
                 case GameObjectType.Time:
                     break;
+
+				case GameObjectType.HDVs:
+					foreach (var obj in HDVBase.Lookup)
+					{
+						SendGameObject(client, obj.Value, false, false, packetList);
+					}
+					break;
+
+				case GameObjectType.DropPool:
+					foreach (var obj in DropPoolBase.Lookup)
+					{
+						SendGameObject(client, obj.Value, false, false, packetList);
+					}
+					break;
 				default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -1680,13 +1764,13 @@ namespace Intersect.Server.Networking
                 player.SendPacket(
                     new TradeUpdatePacket(
                         trader.Id, slot, trader.Trading.Offer[slot].ItemId, trader.Trading.Offer[slot].Quantity,
-                        trader.Trading.Offer[slot].BagId, trader.Trading.Offer[slot].StatBuffs, trader.Trading.Offer[slot].Tags
+                        trader.Trading.Offer[slot].BagId, trader.Trading.Offer[slot].StatBuffs, trader.Trading.Offer[slot].Tags, trader.Trading.Offer[slot].StringTags
 					)
                 );
             }
             else
             {
-                player.SendPacket(new TradeUpdatePacket(trader.Id, slot, Guid.Empty, 0, null, null, null));
+                player.SendPacket(new TradeUpdatePacket(trader.Id, slot, Guid.Empty, 0, null, null, null, null));
             }
         }
 
@@ -1729,11 +1813,11 @@ namespace Intersect.Server.Networking
         {
             if (item != null && item.ItemId != Guid.Empty && item.Quantity > 0)
             {
-                player.SendPacket(new BagUpdatePacket(slot, item.ItemId, item.Quantity, item.BagId, item.StatBuffs, item.Tags));
+                player.SendPacket(new BagUpdatePacket(slot, item.ItemId, item.Quantity, item.BagId, item.StatBuffs, item.Tags, item.StringTags));
             }
             else
             {
-                player.SendPacket(new BagUpdatePacket(slot, Guid.Empty, 0, null, null, null));
+                player.SendPacket(new BagUpdatePacket(slot, Guid.Empty, 0, null, null, null, null));
             }
         }
 

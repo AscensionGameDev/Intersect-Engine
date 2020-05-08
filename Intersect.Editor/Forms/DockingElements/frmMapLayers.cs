@@ -503,13 +503,17 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbGrappleStone.Checked == true)
             {
                 return (int) MapAttributes.GrappleStone;
-            }
-            else if (rbSlide.Checked == true)
-            {
-                return (int) MapAttributes.Slide;
-            }
+			}
+			else if (rbSlide.Checked == true)
+			{
+				return (int)MapAttributes.Slide;
+			}
+			else if (rbArena.Checked == true)
+			{
+				return (int)MapAttributes.Arena;
+			}
 
-            return (int) MapAttributes.Walkable;
+			return (int) MapAttributes.Walkable;
         }
 
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
@@ -582,6 +586,10 @@ namespace Intersect.Editor.Forms.DockingElements
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Slide);
                 ((MapSlideAttribute) tmpMap.Attributes[x, y]).Direction = (byte) cmbSlideDir.SelectedIndex;
             }
+			else if (rbArena.Checked)
+			{
+				tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Arena);
+			}
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
@@ -1078,6 +1086,10 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-    }
+		private void rbArena_CheckedChanged(object sender, EventArgs e)
+		{
+			HideAttributeMenus();
+		}
+	}
 
 }

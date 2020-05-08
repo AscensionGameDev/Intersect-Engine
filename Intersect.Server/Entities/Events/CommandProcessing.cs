@@ -272,12 +272,23 @@ namespace Intersect.Server.Entities.Events
                         var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
                         callStack.Push(commonEventStack);
                     }
-                }
-            }
-        }
+				}
 
-        //Restore Hp Command
-        private static void ProcessCommand(
+				if (command.CallToGroupe)
+				{
+					foreach (var partyMember in player.Party)
+					{
+						if (partyMember != player)
+						{
+							partyMember.StartCommonEvent(commonEvent);
+						}
+					}
+				}
+			}
+		}
+
+		//Restore Hp Command
+		private static void ProcessCommand(
             RestoreHpCommand command,
             Player player,
             Event instance,
@@ -1110,6 +1121,125 @@ namespace Intersect.Server.Entities.Events
 		)
 		{
 			player.SendMail();
+		}
+
+		private static void ProcessCommand(
+			SetJobCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Job.JobIdentity = command.JobIdentity;
+			player.Job.JobExp = 0;
+			player.Job.JobLevel = 1;
+		}
+
+		private static void ProcessCommand(
+			SetJobLevelCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Job.JobLevel = command.JobLevel;
+		}
+
+		private static void ProcessCommand(
+			AddJobLevelCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Job.JobLevel += command.JobAddLevel;
+		}
+
+		private static void ProcessCommand(
+			SetJobExpCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Job.JobExp = command.JobExp;
+			player.Job.CheckLevel(player);
+		}
+
+		private static void ProcessCommand(
+			AddJobExpCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Job.JobExp += command.JobAddExp;
+			player.Job.CheckLevel(player);
+		}
+
+		private static void ProcessCommand(
+			SetSpawnHereCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.SpawnMapId = player.MapId;
+			player.SpawnX = player.X;
+			player.SpawnY = player.Y;
+		}
+
+		private static void ProcessCommand(
+			SetSpawnCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.SpawnMapId = command.MapId;
+			player.SpawnX = command.X;
+			player.SpawnY = command.Y;
+		}
+
+		private static void ProcessCommand(
+			TpSpawnCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.Warp(player.SpawnMapId, (byte)player.SpawnX, (byte)player.SpawnY, (byte)0);
+		}
+
+		private static void ProcessCommand(
+			DropChanceItemCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.DropChanceItem(ItemBase.Get(command.ItemId), Globals.Rand.Next(command.Min, command.Max + 1), command.DropChance);
+		}
+
+
+		private static void ProcessCommand(
+			HDVCommand command,
+			Player player,
+			Event instance,
+			CommandInstance stackInfo,
+			Stack<CommandInstance> callStack
+		)
+		{
+			player.OpenHDV(command.HDVid);
 		}
 
 		//Start Quest Command

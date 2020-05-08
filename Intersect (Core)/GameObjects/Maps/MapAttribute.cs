@@ -40,9 +40,11 @@ namespace Intersect.GameObjects.Maps
                     return new MapAnimationAttribute();
                 case MapAttributes.GrappleStone:
                     return new MapGrappleStoneAttribute();
-                case MapAttributes.Slide:
-                    return new MapSlideAttribute();
-            }
+				case MapAttributes.Slide:
+					return new MapSlideAttribute();
+				case MapAttributes.Arena:
+					return new MapArenaAttribute();
+			}
 
             return null;
         }
@@ -219,5 +221,10 @@ namespace Intersect.GameObjects.Maps
         }
 
     }
+
+	public class MapArenaAttribute : MapAttribute
+	{
+		public override MapAttributes Type { get; } = MapAttributes.Arena;
+	}
 
 }
