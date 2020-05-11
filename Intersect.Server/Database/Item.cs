@@ -101,10 +101,12 @@ namespace Intersect.Server.Database
             {
                 StatBuffs[i] = item.StatBuffs[i];
 			}
+			Tags = new Dictionary<string, int>();
 			foreach (KeyValuePair<string, int> tag in item.Tags)
 			{
 				Tags.Add(tag.Key, tag.Value);
 			}
+			StringTags = new Dictionary<string, string>();
 			foreach (KeyValuePair<string, string> tag in item.StringTags)
 			{
 				StringTags.Add(tag.Key, tag.Value);

@@ -188,9 +188,35 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        #region Instance Variables
+		public static User FindByMail(string usermail, [CanBeNull] PlayerContext playerContext = null)
+		{
+			try
+			{
+				if (playerContext == null)
+				{
+					lock (DbInterface.GetPlayerContextLock())
+					{
+						var context = DbInterface.GetPlayerContext();
 
-        [NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
+						return string.IsNullOrWhiteSpace(usermail) ? null : QueryUserByMail(context, usermail);
+					}
+				}
+				else
+				{
+					return string.IsNullOrWhiteSpace(usermail) ? null : QueryUserByMail(playerContext, usermail);
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error(exception);
+
+				throw;
+			}
+		}
+
+		#region Instance Variables
+
+		[NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
         public bool IsBanned => Ban != null;
 
         [NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
@@ -277,33 +303,62 @@ namespace Intersect.Server.Database.PlayerData
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, string, User> QueryUserByName =
-            EF.CompileQuery(
-                (PlayerContext context, string username) => context.Users.Where(u => u.Name == username)
-                    .Include(p => p.Ban)
-                    .Include(p => p.Mute)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Bank)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Friends)
-                    .ThenInclude(c => c.Target)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Quests)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Variables)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Items)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Spells)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Bank)
-                    .FirstOrDefault()
-            ) ??
-            throw new InvalidOperationException();
+		[NotNull]
+		private static readonly Func<PlayerContext, string, User> QueryUserByName =
+			EF.CompileQuery(
+				(PlayerContext context, string username) => context.Users.Where(u => u.Name == username)
+					.Include(p => p.Ban)
+					.Include(p => p.Mute)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Bank)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Friends)
+					.ThenInclude(c => c.Target)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Hotbar)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Quests)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Variables)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Items)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Spells)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Bank)
+					.FirstOrDefault()
+			) ??
+			throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, Guid, User> QueryUserById =
+
+		[NotNull]
+		private static readonly Func<PlayerContext, string, User> QueryUserByMail =
+			EF.CompileQuery(
+				(PlayerContext context, string usermail) => context.Users.Where(u => u.Email == usermail)
+					.Include(p => p.Ban)
+					.Include(p => p.Mute)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Bank)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Friends)
+					.ThenInclude(c => c.Target)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Hotbar)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Quests)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Variables)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Items)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Spells)
+					.Include(p => p.Players)
+					.ThenInclude(c => c.Bank)
+					.FirstOrDefault()
+			) ??
+			throw new InvalidOperationException();
+
+		[NotNull] private static readonly Func<PlayerContext, Guid, User> QueryUserById =
             EF.CompileQuery(
                 (PlayerContext context, Guid id) => context.Users.Where(u => u.Id == id)
                     .Include(p => p.Ban)

@@ -752,6 +752,7 @@
     <Compile Include="Web\RestApi\RouteProviders\VersionedRouteProvider.cs" />
     <Compile Include="Web\RestApi\Routes\OAuthController.cs" />
     <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\CustemController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />

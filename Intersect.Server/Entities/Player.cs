@@ -761,6 +761,10 @@ namespace Intersect.Server.Entities
 						//{
 						//    classVital += item.VitalsGiven[vital] + item.PercentageVitalsGiven[vital] * baseVital / 100;
 						//}
+						if (item == null)
+						{
+							continue;
+						}
 						if (vital == (int)Vitals.Health)
 						{
 							if (item.Tags.ContainsKey("life"))
@@ -1181,7 +1185,7 @@ namespace Intersect.Server.Entities
                     }
                     else
                     {
-                        GiveExperience(descriptor.Experience);
+                        GiveExperience(descriptor.Experience * ((Npc)entity).Level);
                         UpdateQuestKillTasks(entity);
                     }
 

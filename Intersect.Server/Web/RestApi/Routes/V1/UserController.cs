@@ -89,23 +89,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             return Database.PlayerData.User.Find(userId);
-        }
+		}
 
-        [Route("{userName}")]
-        [HttpGet]
-        public object UserByName(string userName)
-        {
-            var user = Database.PlayerData.User.Find(userName);
+		[Route("{userName}")]
+		[HttpGet]
+		public object UserByName(string userName)
+		{
+			var user = Database.PlayerData.User.Find(userName);
 
-            if (user == null)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
-            }
+			if (user == null)
+			{
+				return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+			}
 
-            return user;
-        }
+			return user;
+		}
 
-        [Route("register")]
+		[Route("register")]
         [HttpPost]
         public object RegisterUser([FromBody] UserInfo user)
         {
