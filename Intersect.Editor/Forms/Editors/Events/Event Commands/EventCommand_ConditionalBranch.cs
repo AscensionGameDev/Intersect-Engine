@@ -868,6 +868,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             );
         }
 
+        private void NudItemAmount_ValueChanged(object sender, System.EventArgs e)
+        {
+            if (nudItemAmount.Value < 1) nudItemAmount.Value = 1;
+        }
+
         #region "SetupFormValues"
 
         private void SetupFormValues(VariableIsCondition condition)
