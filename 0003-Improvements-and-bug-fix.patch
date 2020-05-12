@@ -1,0 +1,356 @@
+From 52df425e6093d10fcfefd1834a9d24fae4d8fc90 Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Fri, 24 Apr 2020 11:45:32 -0400
+Subject: [PATCH 3/4] Improvements and bug fix
+
+---
+ .../EventCommand_ConditionalBranch.cs         |  2 +-
+ .../Forms/Editors/frmItem.Designer.cs         |  1 +
+ Intersect.Editor/Forms/Editors/frmItem.cs     | 25 ++++---
+ Intersect.Editor/Forms/Editors/frmItem.resx   | 74 +++++++++----------
+ .../Forms/Editors/frmNpc.Designer.cs          |  1 +
+ Intersect.Editor/Forms/Editors/frmNpc.cs      | 24 +++---
+ Intersect.Editor/Forms/Editors/frmNpc.resx    | 74 +++++++++----------
+ .../Entities/Events/Conditions.cs             |  4 +-
+ 8 files changed, 104 insertions(+), 101 deletions(-)
+
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs
+index 216ebd12..60a8c8ed 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
+@@ -514,7 +514,7 @@ private void ShowTagCombo(bool isItem)
+             }
+             else
+             {
+-                eqpTags = NpcBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
++                eqpTags = NpcBase.ItemPairs.SelectMany(x => NpcBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
+             }
+ 
+             cmbEquippedItemTag.Items.AddRange(eqpTags.OrderBy(t => t).ToArray());
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+index 457bda8c..8e41c7f4 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+@@ -370,6 +370,7 @@ private void InitializeComponent()
+             this.txtTag.Name = "txtTag";
+             this.txtTag.Size = new System.Drawing.Size(145, 20);
+             this.txtTag.TabIndex = 50;
++            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
+             // 
+             // btnAddFolder
+             // 
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.cs b/Intersect.Editor/Forms/Editors/frmItem.cs
+index 7cd2ea0b..c4bac8ad 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.cs
+@@ -72,17 +72,6 @@ private void btnCancel_Click(object sender, EventArgs e)
+ 
+         private void btnSave_Click(object sender, EventArgs e)
+         {
+-
+-            try
+-            {
+-                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
+-            }
+-            catch
+-            {
+-                MessageBox.Show(Strings.ItemEditor.tagparseerror, Strings.ItemEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+-                return;
+-            }
+-
+             //Send Changed items
+             foreach (var item in mChanged)
+             {
+@@ -507,6 +496,20 @@ private void txtDesc_TextChanged(object sender, EventArgs e)
+             mEditorItem.Description = txtDesc.Text;
+         }
+ 
++        private void txtTag_TextChanged(object sender, EventArgs e)
++        {
++            try
++            {
++                mEditorItem.Tags.Clear();
++                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
++            }
++            catch
++            {
++                MessageBox.Show(Strings.ItemEditor.tagparseerror, Strings.ItemEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
++                return;
++            }
++        }
++
+         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
+         {
+             mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.resx b/Intersect.Editor/Forms/Editors/frmItem.resx
+index 4cc6d5e6..36777ad0 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.resx
++++ b/Intersect.Editor/Forms/Editors/frmItem.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAcABAQHAAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAdABAQHQAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wP2
++        AyoBQAMqAUAIAAP2Af8DLgH/Ay4B/wMuAf8DLgH/Ay4B/wMuAf8DLgH/Ay4B/wMuAf8DLgH/Ay4B/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wP2Af+IAANAAXAByAHeAewB/wFCAbYB3AH/
+-        AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2
+-        AdwB/wFCAbYB3AH/AbYB0wHmAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMwAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
+-        AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZAf8DMAH/AZoCmQH/AWcCZgH/AdsB2QHaAf8B8QHv
+-        AfAB/wMwAf8D9gH/hAADKgFAAd8B6gHxAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
+-        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8DMAH/AdsB2QHaAf8B8QHvAfAB/wMwAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzAB/wHxAe8B8AH/AzAB/wP2Af+EAANRAZ8BqQHOAeYB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wMwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzAB/wHxAe8B8AH/AfEB7wHwAf8DMAH/AfEB7wHwAf8DMAH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
+-        AzAB/wHxAe8B8AH/AzAB/wHFAcQBxQH/AVwBWwFcAf8BmgKZAf8BXAFbAVwB/wHFAcQBxQH/AzAB/wHx
+-        Ae8B8AH/AzAB/wP2Af+EAAP2Af8D9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DLgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay4B/wP2Af+IAANAAXAByAHeAewB/wFAAbYB3AH/
++        AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2
++        AdwB/wFAAbYB3AH/AbYB0wHmAf8BQAG2AdwB/wP2Af8IAAP2Af8DLgH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMuAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHc
++        Af8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUABtgHcAf8D9gH/CAAD9gH/
++        Ay4B/wHxAe8B8AH/AdsB2QHaAf8BZQJkAf8BmgKZAf8DLgH/AZoCmQH/AWUCZAH/AdsB2QHaAf8B8QHv
++        AfAB/wMuAf8D9gH/hAADKgFAAd8B6gHxAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFA
++        AbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQAG2AdwB/wP2Af8IAAP2Af8DLgH/AfEB7wHwAf8DLgH/AdsB2QHaAf8B8QHvAfAB/wMuAf8B8QHv
++        AfAB/wHbAdkB2gH/Ay4B/wHxAe8B8AH/Ay4B/wP2Af+EAANRAZ8BqQHOAeYB/wFAAbYB3AH/AUABtgHc
++        Af8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFAAbYB3AH/A/YB/wgAA/YB/wMuAf8B8QHvAfAB/wMuAf8B8QHv
++        AfAB/wHxAe8B8AH/Ay4B/wHxAe8B8AH/AfEB7wHwAf8DLgH/AfEB7wHwAf8DLgH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHc
++        Af8BQAG2AdwB/wFAAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUABtgHcAf8D9gH/CAAD9gH/
++        Ay4B/wHxAe8B8AH/Ay4B/wHFAcQBxQH/AVoBWQFaAf8BmgKZAf8BWgFZAVoB/wHFAcQBxQH/Ay4B/wHx
++        Ae8B8AH/Ay4B/wP2Af+EAAP2Af8D9gH/AUABtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AzAB/wFnAmYB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFnAmYB/wMwAf8B8QHvAfAB/wMwAf8D9gH/iAAD9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUABtgHcAf8D9gH/CAAD9gH/Ay4B/wHxAe8B8AH/Ay4B/wFlAmQB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFlAmQB/wMuAf8B8QHvAfAB/wMuAf8D9gH/iAAD9gH/AUABtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFnAmYB/wHbAdkB2gH/AfEB7wHwAf8DMAH/A/YB/4gAA/YB/wFCAbYB3AH/
++        AfAB/wHxAe8B8AH/AUABtgHcAf8D9gH/CAAD9gH/Ay4B/wHxAe8B8AH/AdsB2QHaAf8BZQJkAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFlAmQB/wHbAdkB2gH/AfEB7wHwAf8DLgH/A/YB/4gAA/YB/wFAAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFAAbYB3AH/A/YB/wgAA/YB/wMuAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wP2Af+IAAP2Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
+-        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wMwAf8DMAH/A4YB/wNrAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
+-        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wMwAf8DhgH/A2sB7wMhATCUAANcAd8ByAHeAewB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
+-        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wOGAf8DawHv
++        Ay4B/wP2Af+IAAP2Af8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQAG2AdwB/wP2
++        Af8IAAP2Af8DLgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay4B/wMuAf8DLgH/A4YB/wNmAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQAG2AdwB/wP2
++        Af8IAAP2Af8DLgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay4B/wMuAf8DhgH/A2YB7wMhATCUAANcAd8ByAHeAewB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wFA
++        AbYB3AH/AUABtgHcAf8BQAG2AdwB/wFAAbYB3AH/AUABtgHcAf8BQAG2AdwB/wP2Af8IAAP2Af8DLgH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay4B/wOGAf8DZgHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wOGAf8DawHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DawHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        Ay4B/wMuAf8DLgH/Ay4B/wMuAf8DLgH/Ay4B/wOGAf8DZgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DZgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+index 98165c8b..4907c231 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+@@ -303,6 +303,7 @@ private void InitializeComponent()
+             this.txtTag.Name = "txtTag";
+             this.txtTag.Size = new System.Drawing.Size(89, 20);
+             this.txtTag.TabIndex = 68;
++            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
+             // 
+             // btnAddFolder
+             // 
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.cs b/Intersect.Editor/Forms/Editors/frmNpc.cs
+index 3dd21482..315abb60 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.cs
+@@ -66,17 +66,6 @@ private void btnCancel_Click(object sender, EventArgs e)
+ 
+         private void btnSave_Click(object sender, EventArgs e)
+         {
+-            
+-            try
+-            {
+-                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
+-            }
+-            catch
+-            {
+-                MessageBox.Show(Strings.NpcEditor.tagparseerror, Strings.NpcEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+-                return;
+-            }
+-            
+             //Send Changed items
+             foreach (var item in mChanged)
+             {
+@@ -370,7 +359,17 @@ private void txtName_TextChanged(object sender, EventArgs e)
+ 
+         private void txtTag_TextChanged(object sender, EventArgs e)
+         {
+-            
++            try
++            {
++                mEditorItem.Tags.Clear();
++                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
++            }
++            catch
++            {
++                MessageBox.Show(Strings.NpcEditor.tagparseerror, Strings.NpcEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
++                return;
++            }
++
+         }
+ 
+         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+@@ -1127,7 +1126,6 @@ private void txtSearch_Click(object sender, EventArgs e)
+         }
+ 
+         #endregion
+-
+     }
+ 
+ }
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.resx b/Intersect.Editor/Forms/Editors/frmNpc.resx
+index f45b96dc..aa4cf569 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.resx
++++ b/Intersect.Editor/Forms/Editors/frmNpc.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAcABAQHAAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAcgBAQHIAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wP2
++        AyoBQAMqAUAIAAP2Af8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wP2Af+IAANAAXAByAHeAewB/wFCAbYB3AH/
+-        AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2
+-        AdwB/wFCAbYB3AH/AbYB0wHmAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMwAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
+-        AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZAf8DMAH/AZoCmQH/AWcCZgH/AdsB2QHaAf8B8QHv
+-        AfAB/wMwAf8D9gH/hAADKgFAAd8B6gHxAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
+-        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8DMAH/AdsB2QHaAf8B8QHvAfAB/wMwAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzAB/wHxAe8B8AH/AzAB/wP2Af+EAANRAZ8BqQHOAeYB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wMwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzAB/wHxAe8B8AH/AfEB7wHwAf8DMAH/AfEB7wHwAf8DMAH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
+-        Af8BQgG2AdwB/wFCAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
+-        AzAB/wHxAe8B8AH/AzAB/wHFAcQBxQH/AVwBWwFcAf8BmgKZAf8BXAFbAVwB/wHFAcQBxQH/AzAB/wHx
+-        Ae8B8AH/AzAB/wP2Af+EAAP2Af8D9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wP2Af+IAANAAXAByAHeAewB/wFBAbYB3AH/
++        AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2
++        AdwB/wFBAbYB3AH/AbYB0wHmAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMvAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
++        Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZAf8DLwH/AZoCmQH/AWYCZQH/AdsB2QHaAf8B8QHv
++        AfAB/wMvAf8D9gH/hAADKgFAAd8B6gHxAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
++        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/AfEB7wHwAf8DLwH/AdsB2QHaAf8B8QHvAfAB/wMvAf8B8QHv
++        AfAB/wHbAdkB2gH/Ay8B/wHxAe8B8AH/Ay8B/wP2Af+EAANRAZ8BqQHOAeYB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wMvAf8B8QHv
++        AfAB/wHxAe8B8AH/Ay8B/wHxAe8B8AH/AfEB7wHwAf8DLwH/AfEB7wHwAf8DLwH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHc
++        Af8BQQG2AdwB/wFBAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/
++        Ay8B/wHxAe8B8AH/Ay8B/wHFAcQBxQH/AVsBWgFbAf8BmgKZAf8BWwFaAVsB/wHFAcQBxQH/Ay8B/wHx
++        Ae8B8AH/Ay8B/wP2Af+EAAP2Af8D9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AzAB/wFnAmYB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFnAmYB/wMwAf8B8QHvAfAB/wMwAf8D9gH/iAAD9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/Ay8B/wFmAmUB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFmAmUB/wMvAf8B8QHvAfAB/wMvAf8D9gH/iAAD9gH/AUEBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFnAmYB/wHbAdkB2gH/AfEB7wHwAf8DMAH/A/YB/4gAA/YB/wFCAbYB3AH/
++        AfAB/wHxAe8B8AH/AUEBtgHcAf8D9gH/CAAD9gH/Ay8B/wHxAe8B8AH/AdsB2QHaAf8BZgJlAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFmAmUB/wHbAdkB2gH/AfEB7wHwAf8DLwH/A/YB/4gAA/YB/wFBAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFBAbYB3AH/A/YB/wgAA/YB/wMvAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wP2Af+IAAP2Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
+-        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wMwAf8DMAH/A4YB/wNrAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
+-        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzAB/wMwAf8DhgH/A2sB7wMhATCUAANcAd8ByAHeAewB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
+-        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wOGAf8DawHv
++        Ay8B/wP2Af+IAAP2Af8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
++        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay8B/wMvAf8DLwH/A4YB/wNoAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQQG2AdwB/wP2
++        Af8IAAP2Af8DLwH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        Ay8B/wMvAf8DhgH/A2gB7wMhATCUAANcAd8ByAHeAewB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFB
++        AbYB3AH/AUEBtgHcAf8BQQG2AdwB/wFBAbYB3AH/AUEBtgHcAf8BQQG2AdwB/wP2Af8IAAP2Af8DLwH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/Ay8B/wOGAf8DaAHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wOGAf8DawHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DawHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        Ay8B/wMvAf8DLwH/Ay8B/wMvAf8DLwH/Ay8B/wOGAf8DaAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DaAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Server/Entities/Events/Conditions.cs b/Intersect.Server/Entities/Events/Conditions.cs
+index 7fcb9e20..b1887147 100644
+--- a/Intersect.Server/Entities/Events/Conditions.cs
++++ b/Intersect.Server/Entities/Events/Conditions.cs
+@@ -164,7 +164,7 @@ QuestBase questBase
+             {
+                 if (player.Equipment[i] >= 0)
+                 {
+-                    if (ItemBase.Get(player.Items[player.Equipment[i]].ItemId).Tags.Any(x => x.Equals(condition.Tag)))
++                    if (ItemBase.Get(player.Items[player.Equipment[i]].ItemId).Tags.Contains(condition.Tag))
+                     {
+                         return true;
+                     }
+@@ -449,7 +449,7 @@ QuestBase questBase
+                     if (en.GetType() == typeof(Npc))
+                     {
+                         Npc npc = (Npc)en;
+-                        if (npc.Base.Tags.Any(x => x.Equals(condition.Tag)))
++                        if (npc.Base.Tags.Contains(condition.Tag))
+                         {
+                             return true;
+                         }
+-- 
+2.25.0.windows.1
+

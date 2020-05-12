@@ -1,0 +1,599 @@
+From 879f85c130010dddef387531d646a5d071b46fb0 Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Fri, 24 Apr 2020 15:08:54 +0200
+Subject: [PATCH 2/4] Allow for multiple tags per item/npc
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect (Core)/GameObjects/ItemBase.cs      | 12 ++-
+ Intersect (Core)/GameObjects/NpcBase.cs       | 11 ++-
+ .../EventCommand_ConditionalBranch.cs         | 29 +-------
+ .../Forms/Editors/frmItem.Designer.cs         | 43 ++++++-----
+ Intersect.Editor/Forms/Editors/frmItem.cs     | 18 +++--
+ Intersect.Editor/Forms/Editors/frmItem.resx   | 74 +++++++++----------
+ .../Forms/Editors/frmNpc.Designer.cs          | 43 ++++++-----
+ Intersect.Editor/Forms/Editors/frmNpc.cs      | 15 +++-
+ Intersect.Editor/Forms/Editors/frmNpc.resx    | 74 +++++++++----------
+ Intersect.Editor/Localization/Strings.cs      |  8 ++
+ .../Entities/Events/Conditions.cs             |  6 +-
+ 11 files changed, 176 insertions(+), 157 deletions(-)
+
+diff --git a/Intersect (Core)/GameObjects/ItemBase.cs b/Intersect (Core)/GameObjects/ItemBase.cs
+index 6700170f..68b1c5f2 100644
+--- a/Intersect (Core)/GameObjects/ItemBase.cs	
++++ b/Intersect (Core)/GameObjects/ItemBase.cs	
+@@ -1,4 +1,5 @@
+ ﻿using System;
++using System.Collections.Generic;
+ using System.ComponentModel.DataAnnotations.Schema;
+ 
+ using Intersect.Enums;
+@@ -120,7 +121,16 @@ public EventBase Event
+ 
+         public string Description { get; set; } = "";
+ 
+-        public string Tag { get; set; } = "";
++        [NotMapped] 
++        public List<String> Tags = new List<String>();
++
++        [Column("Tag")]
++        [JsonIgnore]
++        public string JsonTags
++        {
++            get => JsonConvert.SerializeObject(Tags);
++            set => Tags = JsonConvert.DeserializeObject<List<String>>(value ?? "[]");
++        }
+ 
+         public string FemalePaperdoll { get; set; } = "";
+ 
+diff --git a/Intersect (Core)/GameObjects/NpcBase.cs b/Intersect (Core)/GameObjects/NpcBase.cs
+index 28a08e9c..7e83c6e8 100644
+--- a/Intersect (Core)/GameObjects/NpcBase.cs	
++++ b/Intersect (Core)/GameObjects/NpcBase.cs	
+@@ -190,7 +190,16 @@ public string CraftsJson
+ 
+         public string Sprite { get; set; } = "";
+ 
+-        public string Tag { get; set; } = "";
++        [NotMapped]
++        public List<String> Tags = new List<String>();
++
++        [Column("Tag")]
++        [JsonIgnore]
++        public string JsonTags
++        {
++            get => JsonConvert.SerializeObject(Tags);
++            set => Tags = JsonConvert.DeserializeObject<List<String>>(value ?? "[]");
++        }
+ 
+         [Column("Stats")]
+         [JsonIgnore]
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs
+index f90d28a9..216ebd12 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
+@@ -495,16 +495,7 @@ private void UpdateFormElements(ConditionTypes type)
+                 case ConditionTypes.HasItemWTag:
+                     grpHasItemWTag.Show();
+                     cmbHasItemWTag.Items.Clear();
+-                    List<string> tags = new List<string>();
+-                    foreach (var p in ItemBase.ItemPairs)
+-                    {
+-                        string tag = ItemBase.Get(p.Key).Tag;
+-                        if (tag != null && tag != "" && !tags.Contains(tag))
+-                        {
+-                            tags.Add(tag);
+-                        }
+-                    }
+-                    cmbHasItemWTag.Items.AddRange(tags.OrderBy(t => t).ToArray());
++                    cmbHasItemWTag.Items.AddRange(ItemBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToArray());
+ 
+                     break;
+                 default:
+@@ -519,25 +510,11 @@ private void ShowTagCombo(bool isItem)
+             List<string> eqpTags = new List<string>();
+             if (isItem)
+             {
+-                foreach (var p in ItemBase.ItemPairs)
+-                {
+-                    string tag = ItemBase.Get(p.Key).Tag;
+-                    if (tag != null && tag != "" && !eqpTags.Contains(tag))
+-                    {
+-                        eqpTags.Add(tag);
+-                    }
+-                }
++                eqpTags = ItemBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
+             }
+             else
+             {
+-                foreach (var p in NpcBase.ItemPairs)
+-                {
+-                    string tag = NpcBase.Get(p.Key).Tag;
+-                    if (tag != null && tag != "" && !eqpTags.Contains(tag))
+-                    {
+-                        eqpTags.Add(tag);
+-                    }
+-                }
++                eqpTags = NpcBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
+             }
+ 
+             cmbEquippedItemTag.Items.AddRange(eqpTags.OrderBy(t => t).ToArray());
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+index 1f65c3f6..457bda8c 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+@@ -42,6 +42,8 @@ private void InitializeComponent()
+             this.btnCancel = new DarkUI.Controls.DarkButton();
+             this.btnSave = new DarkUI.Controls.DarkButton();
+             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
++            this.lblTag = new System.Windows.Forms.Label();
++            this.txtTag = new DarkUI.Controls.DarkTextBox();
+             this.btnAddFolder = new DarkUI.Controls.DarkButton();
+             this.lblFolder = new System.Windows.Forms.Label();
+             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
+@@ -180,8 +182,6 @@ private void InitializeComponent()
+             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+-            this.lblTag = new System.Windows.Forms.Label();
+-            this.txtTag = new DarkUI.Controls.DarkTextBox();
+             this.grpItems.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
+@@ -352,6 +352,25 @@ private void InitializeComponent()
+             this.grpGeneral.TabStop = false;
+             this.grpGeneral.Text = "General";
+             // 
++            // lblTag
++            // 
++            this.lblTag.AutoSize = true;
++            this.lblTag.Location = new System.Drawing.Point(8, 129);
++            this.lblTag.Name = "lblTag";
++            this.lblTag.Size = new System.Drawing.Size(29, 13);
++            this.lblTag.TabIndex = 51;
++            this.lblTag.Text = "Tag:";
++            // 
++            // txtTag
++            // 
++            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
++            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++            this.txtTag.Location = new System.Drawing.Point(53, 127);
++            this.txtTag.Name = "txtTag";
++            this.txtTag.Size = new System.Drawing.Size(145, 20);
++            this.txtTag.TabIndex = 50;
++            // 
+             // btnAddFolder
+             // 
+             this.btnAddFolder.Location = new System.Drawing.Point(180, 58);
+@@ -2376,26 +2395,6 @@ private void InitializeComponent()
+             this.toolStripItemUndo.Text = "Undo";
+             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+             // 
+-            // lblTag
+-            // 
+-            this.lblTag.AutoSize = true;
+-            this.lblTag.Location = new System.Drawing.Point(8, 129);
+-            this.lblTag.Name = "lblTag";
+-            this.lblTag.Size = new System.Drawing.Size(29, 13);
+-            this.lblTag.TabIndex = 51;
+-            this.lblTag.Text = "Tag:";
+-            // 
+-            // txtTag
+-            // 
+-            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+-            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+-            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.txtTag.Location = new System.Drawing.Point(53, 127);
+-            this.txtTag.Name = "txtTag";
+-            this.txtTag.Size = new System.Drawing.Size(145, 20);
+-            this.txtTag.TabIndex = 50;
+-            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
+-            // 
+             // FrmItem
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.cs b/Intersect.Editor/Forms/Editors/frmItem.cs
+index 5bb5a366..7cd2ea0b 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.cs
+@@ -72,6 +72,17 @@ private void btnCancel_Click(object sender, EventArgs e)
+ 
+         private void btnSave_Click(object sender, EventArgs e)
+         {
++
++            try
++            {
++                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
++            }
++            catch
++            {
++                MessageBox.Show(Strings.ItemEditor.tagparseerror, Strings.ItemEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
++                return;
++            }
++
+             //Send Changed items
+             foreach (var item in mChanged)
+             {
+@@ -274,7 +285,7 @@ private void UpdateEditor()
+                 txtName.Text = mEditorItem.Name;
+                 cmbFolder.Text = mEditorItem.Folder;
+                 txtDesc.Text = mEditorItem.Description;
+-                txtTag.Text = mEditorItem.Tag;
++                txtTag.Text = String.Join(";", mEditorItem.Tags);
+                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
+                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
+                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
+@@ -496,11 +507,6 @@ private void txtDesc_TextChanged(object sender, EventArgs e)
+             mEditorItem.Description = txtDesc.Text;
+         }
+ 
+-        private void txtTag_TextChanged(object sender, EventArgs e)
+-        {
+-            mEditorItem.Tag = txtTag.Text;
+-        }
+-
+         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
+         {
+             mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.resx b/Intersect.Editor/Forms/Editors/frmItem.resx
+index a7ea5589..4cc6d5e6 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.resx
++++ b/Intersect.Editor/Forms/Editors/frmItem.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAbgBAQG4AQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAcABAQHAAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wP2
++        AyoBQAMqAUAIAAP2Af8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wP2Af+IAANAAXAByAHeAewB/wFDAbYB3AH/
+-        AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2
+-        AdwB/wFDAbYB3AH/AbYB0wHmAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMxAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
+-        AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZAf8DMQH/AZoCmQH/AWgCZwH/AdsB2QHaAf8B8QHv
+-        AfAB/wMxAf8D9gH/hAADKgFAAd8B6gHxAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
+-        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8DMQH/AdsB2QHaAf8B8QHvAfAB/wMxAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzEB/wHxAe8B8AH/AzEB/wP2Af+EAANRAZ8BqQHOAeYB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wMxAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzEB/wHxAe8B8AH/AfEB7wHwAf8DMQH/AfEB7wHwAf8DMQH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
+-        AzEB/wHxAe8B8AH/AzEB/wHFAcQBxQH/AV0BXAFdAf8BmgKZAf8BXQFcAV0B/wHFAcQBxQH/AzEB/wHx
+-        Ae8B8AH/AzEB/wP2Af+EAAP2Af8D9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wP2Af+IAANAAXAByAHeAewB/wFCAbYB3AH/
++        AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2
++        AdwB/wFCAbYB3AH/AbYB0wHmAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMwAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
++        AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZAf8DMAH/AZoCmQH/AWcCZgH/AdsB2QHaAf8B8QHv
++        AfAB/wMwAf8D9gH/hAADKgFAAd8B6gHxAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
++        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8DMAH/AdsB2QHaAf8B8QHvAfAB/wMwAf8B8QHv
++        AfAB/wHbAdkB2gH/AzAB/wHxAe8B8AH/AzAB/wP2Af+EAANRAZ8BqQHOAeYB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wMwAf8B8QHv
++        AfAB/wHxAe8B8AH/AzAB/wHxAe8B8AH/AfEB7wHwAf8DMAH/AfEB7wHwAf8DMAH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
++        AzAB/wHxAe8B8AH/AzAB/wHFAcQBxQH/AVwBWwFcAf8BmgKZAf8BXAFbAVwB/wHFAcQBxQH/AzAB/wHx
++        Ae8B8AH/AzAB/wP2Af+EAAP2Af8D9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AzEB/wFoAmcB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFoAmcB/wMxAf8B8QHvAfAB/wMxAf8D9gH/iAAD9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AzAB/wFnAmYB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFnAmYB/wMwAf8B8QHvAfAB/wMwAf8D9gH/iAAD9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFoAmcB/wHbAdkB2gH/AfEB7wHwAf8DMQH/A/YB/4gAA/YB/wFDAbYB3AH/
++        AfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFnAmYB/wHbAdkB2gH/AfEB7wHwAf8DMAH/A/YB/4gAA/YB/wFCAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wP2Af+IAAP2Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
+-        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wMxAf8DMQH/A4YB/wNuAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
+-        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wMxAf8DhgH/A24B7wMhATCUAANcAd8ByAHeAewB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
+-        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wOGAf8DbgHv
++        AzAB/wP2Af+IAAP2Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
++        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzAB/wMwAf8DMAH/A4YB/wNrAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
++        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzAB/wMwAf8DhgH/A2sB7wMhATCUAANcAd8ByAHeAewB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
++        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wOGAf8DawHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wOGAf8DbgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DbgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wOGAf8DawHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DawHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+index 073b93ea..98165c8b 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+@@ -38,6 +38,8 @@ private void InitializeComponent()
+             this.lstNpcs = new System.Windows.Forms.TreeView();
+             this.imageList = new System.Windows.Forms.ImageList(this.components);
+             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
++            this.lblTag = new System.Windows.Forms.Label();
++            this.txtTag = new DarkUI.Controls.DarkTextBox();
+             this.btnAddFolder = new DarkUI.Controls.DarkButton();
+             this.lblFolder = new System.Windows.Forms.Label();
+             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
+@@ -156,8 +158,6 @@ private void InitializeComponent()
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
+-            this.txtTag = new DarkUI.Controls.DarkTextBox();
+-            this.lblTag = new System.Windows.Forms.Label();
+             this.grpNpcs.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
+@@ -285,6 +285,25 @@ private void InitializeComponent()
+             this.grpGeneral.TabStop = false;
+             this.grpGeneral.Text = "General";
+             // 
++            // lblTag
++            // 
++            this.lblTag.AutoSize = true;
++            this.lblTag.Location = new System.Drawing.Point(72, 110);
++            this.lblTag.Name = "lblTag";
++            this.lblTag.Size = new System.Drawing.Size(29, 13);
++            this.lblTag.TabIndex = 69;
++            this.lblTag.Text = "Tag:";
++            // 
++            // txtTag
++            // 
++            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
++            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++            this.txtTag.Location = new System.Drawing.Point(106, 108);
++            this.txtTag.Name = "txtTag";
++            this.txtTag.Size = new System.Drawing.Size(89, 20);
++            this.txtTag.TabIndex = 68;
++            // 
+             // btnAddFolder
+             // 
+             this.btnAddFolder.Location = new System.Drawing.Point(177, 45);
+@@ -1939,26 +1958,6 @@ private void InitializeComponent()
+             this.searchableDarkTreeView1.TabIndex = 46;
+             this.searchableDarkTreeView1.Visible = false;
+             // 
+-            // txtTag
+-            // 
+-            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+-            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+-            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.txtTag.Location = new System.Drawing.Point(106, 108);
+-            this.txtTag.Name = "txtTag";
+-            this.txtTag.Size = new System.Drawing.Size(89, 20);
+-            this.txtTag.TabIndex = 68;
+-            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
+-            // 
+-            // lblTag
+-            // 
+-            this.lblTag.AutoSize = true;
+-            this.lblTag.Location = new System.Drawing.Point(72, 110);
+-            this.lblTag.Name = "lblTag";
+-            this.lblTag.Size = new System.Drawing.Size(29, 13);
+-            this.lblTag.TabIndex = 69;
+-            this.lblTag.Text = "Tag:";
+-            // 
+             // FrmNpc
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.cs b/Intersect.Editor/Forms/Editors/frmNpc.cs
+index 81bdd6e2..3dd21482 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.cs
+@@ -66,6 +66,17 @@ private void btnCancel_Click(object sender, EventArgs e)
+ 
+         private void btnSave_Click(object sender, EventArgs e)
+         {
++            
++            try
++            {
++                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
++            }
++            catch
++            {
++                MessageBox.Show(Strings.NpcEditor.tagparseerror, Strings.NpcEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
++                return;
++            }
++            
+             //Send Changed items
+             foreach (var item in mChanged)
+             {
+@@ -239,7 +250,7 @@ private void UpdateEditor()
+                 pnlContainer.Show();
+ 
+                 txtName.Text = mEditorItem.Name;
+-                txtTag.Text = mEditorItem.Tag;
++                txtTag.Text = String.Join(";", mEditorItem.Tags);
+                 cmbFolder.Text = mEditorItem.Folder;
+                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
+                 nudLevel.Value = mEditorItem.Level;
+@@ -359,7 +370,7 @@ private void txtName_TextChanged(object sender, EventArgs e)
+ 
+         private void txtTag_TextChanged(object sender, EventArgs e)
+         {
+-            mEditorItem.Tag = txtTag.Text;
++            
+         }
+ 
+         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.resx b/Intersect.Editor/Forms/Editors/frmNpc.resx
+index d5437557..f45b96dc 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.resx
++++ b/Intersect.Editor/Forms/Editors/frmNpc.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAbgBAQG4AQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAcABAQHAAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wP2
++        AyoBQAMqAUAIAAP2Af8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wP2Af+IAANAAXAByAHeAewB/wFDAbYB3AH/
+-        AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2
+-        AdwB/wFDAbYB3AH/AbYB0wHmAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMxAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
+-        AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZAf8DMQH/AZoCmQH/AWgCZwH/AdsB2QHaAf8B8QHv
+-        AfAB/wMxAf8D9gH/hAADKgFAAd8B6gHxAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
+-        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8DMQH/AdsB2QHaAf8B8QHvAfAB/wMxAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzEB/wHxAe8B8AH/AzEB/wP2Af+EAANRAZ8BqQHOAeYB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wMxAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzEB/wHxAe8B8AH/AfEB7wHwAf8DMQH/AfEB7wHwAf8DMQH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
+-        Af8BQwG2AdwB/wFDAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
+-        AzEB/wHxAe8B8AH/AzEB/wHFAcQBxQH/AV0BXAFdAf8BmgKZAf8BXQFcAV0B/wHFAcQBxQH/AzEB/wHx
+-        Ae8B8AH/AzEB/wP2Af+EAAP2Af8D9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wP2Af+IAANAAXAByAHeAewB/wFCAbYB3AH/
++        AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2
++        AdwB/wFCAbYB3AH/AbYB0wHmAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMwAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
++        AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZAf8DMAH/AZoCmQH/AWcCZgH/AdsB2QHaAf8B8QHv
++        AfAB/wMwAf8D9gH/hAADKgFAAd8B6gHxAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
++        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/AfEB7wHwAf8DMAH/AdsB2QHaAf8B8QHvAfAB/wMwAf8B8QHv
++        AfAB/wHbAdkB2gH/AzAB/wHxAe8B8AH/AzAB/wP2Af+EAANRAZ8BqQHOAeYB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wMwAf8B8QHv
++        AfAB/wHxAe8B8AH/AzAB/wHxAe8B8AH/AfEB7wHwAf8DMAH/AfEB7wHwAf8DMAH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHc
++        Af8BQgG2AdwB/wFCAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/
++        AzAB/wHxAe8B8AH/AzAB/wHFAcQBxQH/AVwBWwFcAf8BmgKZAf8BXAFbAVwB/wHFAcQBxQH/AzAB/wHx
++        Ae8B8AH/AzAB/wP2Af+EAAP2Af8D9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AzEB/wFoAmcB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFoAmcB/wMxAf8B8QHvAfAB/wMxAf8D9gH/iAAD9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AzAB/wFnAmYB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFnAmYB/wMwAf8B8QHvAfAB/wMwAf8D9gH/iAAD9gH/AUIBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFoAmcB/wHbAdkB2gH/AfEB7wHwAf8DMQH/A/YB/4gAA/YB/wFDAbYB3AH/
++        AfAB/wHxAe8B8AH/AUIBtgHcAf8D9gH/CAAD9gH/AzAB/wHxAe8B8AH/AdsB2QHaAf8BZwJmAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFnAmYB/wHbAdkB2gH/AfEB7wHwAf8DMAH/A/YB/4gAA/YB/wFCAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFCAbYB3AH/A/YB/wgAA/YB/wMwAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wP2Af+IAAP2Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
+-        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wMxAf8DMQH/A4YB/wNuAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
+-        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzEB/wMxAf8DhgH/A24B7wMhATCUAANcAd8ByAHeAewB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
+-        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wOGAf8DbgHv
++        AzAB/wP2Af+IAAP2Af8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
++        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzAB/wMwAf8DMAH/A4YB/wNrAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQgG2AdwB/wP2
++        Af8IAAP2Af8DMAH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzAB/wMwAf8DhgH/A2sB7wMhATCUAANcAd8ByAHeAewB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFC
++        AbYB3AH/AUIBtgHcAf8BQgG2AdwB/wFCAbYB3AH/AUIBtgHcAf8BQgG2AdwB/wP2Af8IAAP2Af8DMAH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzAB/wOGAf8DawHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wOGAf8DbgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DbgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        AzAB/wMwAf8DMAH/AzAB/wMwAf8DMAH/AzAB/wOGAf8DawHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DawHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Editor/Localization/Strings.cs b/Intersect.Editor/Localization/Strings.cs
+index 55e1a3e3..c0830688 100644
+--- a/Intersect.Editor/Localization/Strings.cs
++++ b/Intersect.Editor/Localization/Strings.cs
+@@ -2939,6 +2939,10 @@ public struct ItemEditor
+ 
+             public static LocalizedString weaponproperties = @"Weapon Properties";
+ 
++            public static LocalizedString tagparseerrortitle = @"Tag Parse Error";
++
++            public static LocalizedString tagparseerror = @"There was an issue with your Tags, they could not the split properly on ';'.\b\nPlease check your formatting!";
++
+         }
+ 
+         public struct LightEditor
+@@ -3555,6 +3559,10 @@ public struct NpcEditor
+ 
+             public static LocalizedString undotitle = @"Undo Changes";
+ 
++            public static LocalizedString tagparseerrortitle = @"Tag Parse Error";
++
++            public static LocalizedString tagparseerror = @"There was an issue with your Tags, they could not the split properly on ';'.\b\nPlease check your formatting!";
++
+         }
+ 
+         public struct NpcSpawns
+diff --git a/Intersect.Server/Entities/Events/Conditions.cs b/Intersect.Server/Entities/Events/Conditions.cs
+index 8c6c11cb..7fcb9e20 100644
+--- a/Intersect.Server/Entities/Events/Conditions.cs
++++ b/Intersect.Server/Entities/Events/Conditions.cs
+@@ -141,7 +141,7 @@ QuestBase questBase
+             foreach (var item in player.Items)
+             {
+                 ItemBase i = ItemBase.Get(item.ItemId);
+-                if (i != null && i.Tag == condition.Tag)
++                if (i != null && i.Tags.Any(x => x.Equals(condition.Tag)))
+                 {
+                     cpt += player.CountItems(item.ItemId);
+                     if (cpt >= condition.Quantity)
+@@ -164,7 +164,7 @@ QuestBase questBase
+             {
+                 if (player.Equipment[i] >= 0)
+                 {
+-                    if (ItemBase.Get(player.Items[player.Equipment[i]].ItemId).Tag == condition.Tag)
++                    if (ItemBase.Get(player.Items[player.Equipment[i]].ItemId).Tags.Any(x => x.Equals(condition.Tag)))
+                     {
+                         return true;
+                     }
+@@ -449,7 +449,7 @@ QuestBase questBase
+                     if (en.GetType() == typeof(Npc))
+                     {
+                         Npc npc = (Npc)en;
+-                        if (npc.Base.Tag == condition.Tag)
++                        if (npc.Base.Tags.Any(x => x.Equals(condition.Tag)))
+                         {
+                             return true;
+                         }
+-- 
+2.25.0.windows.1
+

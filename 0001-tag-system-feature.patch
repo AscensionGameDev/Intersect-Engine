@@ -1,0 +1,2706 @@
+From 3b484b26af9a312dd8fd15a510b3d29d5a6459dc Mon Sep 17 00:00:00 2001
+From: Bandana <aurelende@protonmail.com>
+Date: Thu, 23 Apr 2020 11:59:29 -0400
+Subject: [PATCH 1/4] tag system feature
+
+---
+ .../GameObjects/Events/Condition.cs           |   32 +
+ Intersect (Core)/GameObjects/ItemBase.cs      |    2 +
+ Intersect (Core)/GameObjects/NpcBase.cs       |    2 +
+ ...EventCommand_ConditionalBranch.Designer.cs |  310 +++--
+ .../EventCommand_ConditionalBranch.cs         |  148 +++
+ .../EventCommand_ConditionalBranch.resx       |   28 +-
+ .../Forms/Editors/frmItem.Designer.cs         |   34 +-
+ Intersect.Editor/Forms/Editors/frmItem.cs     |    8 +-
+ Intersect.Editor/Forms/Editors/frmItem.resx   |   74 +-
+ .../Forms/Editors/frmNpc.Designer.cs          |  194 +--
+ Intersect.Editor/Forms/Editors/frmNpc.cs      |    8 +
+ Intersect.Editor/Forms/Editors/frmNpc.resx    |   74 +-
+ Intersect.Editor/Localization/Strings.cs      |   34 +
+ .../Entities/Events/Conditions.cs             |   79 ++
+ Intersect.Server/Intersect.Server.csproj      |    4 +
+ ...20200423004850_AddingTagSystem.Designer.cs | 1040 +++++++++++++++++
+ .../Game/20200423004850_AddingTagSystem.cs    |   31 +
+ .../Game/GameContextModelSnapshot.cs          |    4 +
+ 18 files changed, 1854 insertions(+), 252 deletions(-)
+ create mode 100644 Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.Designer.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.cs
+
+diff --git a/Intersect (Core)/GameObjects/Events/Condition.cs b/Intersect (Core)/GameObjects/Events/Condition.cs
+index 4fd5a40d..ffb98749 100644
+--- a/Intersect (Core)/GameObjects/Events/Condition.cs	
++++ b/Intersect (Core)/GameObjects/Events/Condition.cs	
+@@ -38,6 +38,12 @@ public enum ConditionTypes
+ 
+         IsItemEquipped,
+ 
++        EquippedItemTagIs,
++
++        HasItemWTag,
++
++        MapHasNpcWTag
++
+     }
+ 
+     public class Condition
+@@ -175,6 +181,15 @@ public class NoNpcsOnMapCondition : Condition
+ 
+     }
+ 
++    public class MapHasNPCWTag : Condition
++    {
++
++        public override ConditionTypes Type { get; } = ConditionTypes.MapHasNpcWTag;
++
++        public string Tag { get; set; }
++
++    }
++
+     public class GenderIsCondition : Condition
+     {
+ 
+@@ -202,6 +217,23 @@ public class IsItemEquippedCondition : Condition
+ 
+     }
+ 
++    public class EquippedItemTagIsCondition : Condition
++    {
++        public override ConditionTypes Type { get; } = ConditionTypes.EquippedItemTagIs;
++
++        public string Tag { get; set; }
++    }
++
++    public class HasItemWTagCondition : Condition
++    {
++        public override ConditionTypes Type { get; } = ConditionTypes.HasItemWTag;
++
++        public string Tag { get; set; }
++
++        public int Quantity { get; set; }
++
++    }
++
+     public class VariableCompaison
+     {
+ 
+diff --git a/Intersect (Core)/GameObjects/ItemBase.cs b/Intersect (Core)/GameObjects/ItemBase.cs
+index 741a8f1e..6700170f 100644
+--- a/Intersect (Core)/GameObjects/ItemBase.cs	
++++ b/Intersect (Core)/GameObjects/ItemBase.cs	
+@@ -120,6 +120,8 @@ public EventBase Event
+ 
+         public string Description { get; set; } = "";
+ 
++        public string Tag { get; set; } = "";
++
+         public string FemalePaperdoll { get; set; } = "";
+ 
+         public ItemTypes ItemType { get; set; }
+diff --git a/Intersect (Core)/GameObjects/NpcBase.cs b/Intersect (Core)/GameObjects/NpcBase.cs
+index 97c62c85..28a08e9c 100644
+--- a/Intersect (Core)/GameObjects/NpcBase.cs	
++++ b/Intersect (Core)/GameObjects/NpcBase.cs	
+@@ -190,6 +190,8 @@ public string CraftsJson
+ 
+         public string Sprite { get; set; } = "";
+ 
++        public string Tag { get; set; } = "";
++
+         [Column("Stats")]
+         [JsonIgnore]
+         public string JsonStat
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.Designer.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.Designer.cs
+index e236aef2..4738506e 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.Designer.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.Designer.cs	
+@@ -32,11 +32,6 @@ private void InitializeComponent()
+         {
+             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandConditionalBranch));
+             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+-            this.chkNegated = new DarkUI.Controls.DarkCheckBox();
+-            this.btnSave = new DarkUI.Controls.DarkButton();
+-            this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
+-            this.lblType = new System.Windows.Forms.Label();
+-            this.btnCancel = new DarkUI.Controls.DarkButton();
+             this.grpVariable = new DarkUI.Controls.DarkGroupBox();
+             this.grpSelectVariable = new DarkUI.Controls.DarkGroupBox();
+             this.rdoPlayerVariable = new DarkUI.Controls.DarkRadioButton();
+@@ -66,6 +61,19 @@ private void InitializeComponent()
+             this.cmbComparePlayerVar = new DarkUI.Controls.DarkComboBox();
+             this.rdoVarComparePlayerVar = new DarkUI.Controls.DarkRadioButton();
+             this.rdoVarCompareGlobalVar = new DarkUI.Controls.DarkRadioButton();
++            this.grpHasItemWTag = new DarkUI.Controls.DarkGroupBox();
++            this.nudHasItemWTag = new DarkUI.Controls.DarkNumericUpDown();
++            this.lblHasAtleastTag = new System.Windows.Forms.Label();
++            this.lblHasItemWTag = new System.Windows.Forms.Label();
++            this.cmbHasItemWTag = new DarkUI.Controls.DarkComboBox();
++            this.grpEquippedItemTag = new DarkUI.Controls.DarkGroupBox();
++            this.lblItemEquippedTag = new System.Windows.Forms.Label();
++            this.cmbEquippedItemTag = new DarkUI.Controls.DarkComboBox();
++            this.chkNegated = new DarkUI.Controls.DarkCheckBox();
++            this.btnSave = new DarkUI.Controls.DarkButton();
++            this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
++            this.lblType = new System.Windows.Forms.Label();
++            this.btnCancel = new DarkUI.Controls.DarkButton();
+             this.grpQuestCompleted = new DarkUI.Controls.DarkGroupBox();
+             this.lblQuestCompleted = new System.Windows.Forms.Label();
+             this.cmbCompletedQuest = new DarkUI.Controls.DarkComboBox();
+@@ -127,6 +135,9 @@ private void InitializeComponent()
+             this.grpBooleanVariable.SuspendLayout();
+             this.grpNumericVariable.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).BeginInit();
++            this.grpHasItemWTag.SuspendLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudHasItemWTag)).BeginInit();
++            this.grpEquippedItemTag.SuspendLayout();
+             this.grpQuestCompleted.SuspendLayout();
+             this.grpQuestInProgress.SuspendLayout();
+             this.grpStartQuest.SuspendLayout();
+@@ -148,12 +159,14 @@ private void InitializeComponent()
+             // 
+             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpConditional.Controls.Add(this.grpVariable);
++            this.grpConditional.Controls.Add(this.grpHasItemWTag);
++            this.grpConditional.Controls.Add(this.grpEquippedItemTag);
+             this.grpConditional.Controls.Add(this.chkNegated);
+             this.grpConditional.Controls.Add(this.btnSave);
+             this.grpConditional.Controls.Add(this.cmbConditionType);
+             this.grpConditional.Controls.Add(this.lblType);
+             this.grpConditional.Controls.Add(this.btnCancel);
+-            this.grpConditional.Controls.Add(this.grpVariable);
+             this.grpConditional.Controls.Add(this.grpQuestCompleted);
+             this.grpConditional.Controls.Add(this.grpQuestInProgress);
+             this.grpConditional.Controls.Add(this.grpStartQuest);
+@@ -175,81 +188,6 @@ private void InitializeComponent()
+             this.grpConditional.TabStop = false;
+             this.grpConditional.Text = "Conditional";
+             // 
+-            // chkNegated
+-            // 
+-            this.chkNegated.Location = new System.Drawing.Point(199, 279);
+-            this.chkNegated.Name = "chkNegated";
+-            this.chkNegated.Size = new System.Drawing.Size(72, 17);
+-            this.chkNegated.TabIndex = 34;
+-            this.chkNegated.Text = "Negated";
+-            // 
+-            // btnSave
+-            // 
+-            this.btnSave.Location = new System.Drawing.Point(12, 307);
+-            this.btnSave.Name = "btnSave";
+-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+-            this.btnSave.TabIndex = 19;
+-            this.btnSave.Text = "Ok";
+-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+-            // 
+-            // cmbConditionType
+-            // 
+-            this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+-            this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+-            this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+-            this.cmbConditionType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+-            this.cmbConditionType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbConditionType.ButtonIcon")));
+-            this.cmbConditionType.DrawDropdownHoverOutline = false;
+-            this.cmbConditionType.DrawFocusRectangle = false;
+-            this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+-            this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+-            this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+-            this.cmbConditionType.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.cmbConditionType.FormattingEnabled = true;
+-            this.cmbConditionType.Items.AddRange(new object[] {
+-            "Variable is...",
+-            "Has item...",
+-            "Class is...",
+-            "Knows spell...",
+-            "Level is....",
+-            "Self Switch is....",
+-            "Power level is....",
+-            "Time is between....",
+-            "Can Start Quest....",
+-            "Quest In Progress....",
+-            "Quest Completed....",
+-            "Player death...",
+-            "No NPCs on the map...",
+-            "Gender is...",
+-            "Item Equipped Is..."});
+-            this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
+-            this.cmbConditionType.Name = "cmbConditionType";
+-            this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
+-            this.cmbConditionType.TabIndex = 22;
+-            this.cmbConditionType.Text = "Variable is...";
+-            this.cmbConditionType.TextPadding = new System.Windows.Forms.Padding(2);
+-            this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
+-            // 
+-            // lblType
+-            // 
+-            this.lblType.AutoSize = true;
+-            this.lblType.Location = new System.Drawing.Point(6, 16);
+-            this.lblType.Name = "lblType";
+-            this.lblType.Size = new System.Drawing.Size(81, 13);
+-            this.lblType.TabIndex = 21;
+-            this.lblType.Text = "Condition Type:";
+-            // 
+-            // btnCancel
+-            // 
+-            this.btnCancel.Location = new System.Drawing.Point(113, 307);
+-            this.btnCancel.Name = "btnCancel";
+-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+-            this.btnCancel.TabIndex = 20;
+-            this.btnCancel.Text = "Cancel";
+-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+-            // 
+             // grpVariable
+             // 
+             this.grpVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+@@ -259,7 +197,7 @@ private void InitializeComponent()
+             this.grpVariable.Controls.Add(this.grpBooleanVariable);
+             this.grpVariable.Controls.Add(this.grpNumericVariable);
+             this.grpVariable.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.grpVariable.Location = new System.Drawing.Point(9, 40);
++            this.grpVariable.Location = new System.Drawing.Point(7, 43);
+             this.grpVariable.Name = "grpVariable";
+             this.grpVariable.Size = new System.Drawing.Size(262, 233);
+             this.grpVariable.TabIndex = 24;
+@@ -690,6 +628,201 @@ private void InitializeComponent()
+             this.rdoVarCompareGlobalVar.Text = "Global Variable Value:";
+             this.rdoVarCompareGlobalVar.CheckedChanged += new System.EventHandler(this.rdoVarCompareGlobalVar_CheckedChanged);
+             // 
++            // grpHasItemWTag
++            // 
++            this.grpHasItemWTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
++            this.grpHasItemWTag.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpHasItemWTag.Controls.Add(this.nudHasItemWTag);
++            this.grpHasItemWTag.Controls.Add(this.lblHasAtleastTag);
++            this.grpHasItemWTag.Controls.Add(this.lblHasItemWTag);
++            this.grpHasItemWTag.Controls.Add(this.cmbHasItemWTag);
++            this.grpHasItemWTag.ForeColor = System.Drawing.Color.Gainsboro;
++            this.grpHasItemWTag.Location = new System.Drawing.Point(6, 43);
++            this.grpHasItemWTag.Name = "grpHasItemWTag";
++            this.grpHasItemWTag.Size = new System.Drawing.Size(262, 96);
++            this.grpHasItemWTag.TabIndex = 56;
++            this.grpHasItemWTag.TabStop = false;
++            this.grpHasItemWTag.Text = "Has Item With Tag:";
++            this.grpHasItemWTag.Visible = false;
++            // 
++            // nudHasItemWTag
++            // 
++            this.nudHasItemWTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.nudHasItemWTag.ForeColor = System.Drawing.Color.Gainsboro;
++            this.nudHasItemWTag.Location = new System.Drawing.Point(92, 19);
++            this.nudHasItemWTag.Maximum = new decimal(new int[] {
++            100000,
++            0,
++            0,
++            0});
++            this.nudHasItemWTag.Name = "nudHasItemWTag";
++            this.nudHasItemWTag.Size = new System.Drawing.Size(162, 20);
++            this.nudHasItemWTag.TabIndex = 9;
++            this.nudHasItemWTag.Value = new decimal(new int[] {
++            0,
++            0,
++            0,
++            0});
++            // 
++            // lblHasAtleastTag
++            // 
++            this.lblHasAtleastTag.AutoSize = true;
++            this.lblHasAtleastTag.Location = new System.Drawing.Point(6, 21);
++            this.lblHasAtleastTag.Name = "lblHasAtleastTag";
++            this.lblHasAtleastTag.Size = new System.Drawing.Size(66, 13);
++            this.lblHasAtleastTag.TabIndex = 6;
++            this.lblHasAtleastTag.Text = "Has at least:";
++            // 
++            // lblHasItemWTag
++            // 
++            this.lblHasItemWTag.AutoSize = true;
++            this.lblHasItemWTag.Location = new System.Drawing.Point(6, 55);
++            this.lblHasItemWTag.Name = "lblHasItemWTag";
++            this.lblHasItemWTag.Size = new System.Drawing.Size(29, 13);
++            this.lblHasItemWTag.TabIndex = 5;
++            this.lblHasItemWTag.Text = "Tag:";
++            // 
++            // cmbHasItemWTag
++            // 
++            this.cmbHasItemWTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbHasItemWTag.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbHasItemWTag.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbHasItemWTag.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbHasItemWTag.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbHasItemWTag.ButtonIcon")));
++            this.cmbHasItemWTag.DrawDropdownHoverOutline = false;
++            this.cmbHasItemWTag.DrawFocusRectangle = false;
++            this.cmbHasItemWTag.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbHasItemWTag.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbHasItemWTag.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbHasItemWTag.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbHasItemWTag.FormattingEnabled = true;
++            this.cmbHasItemWTag.Location = new System.Drawing.Point(92, 52);
++            this.cmbHasItemWTag.Name = "cmbHasItemWTag";
++            this.cmbHasItemWTag.Size = new System.Drawing.Size(162, 21);
++            this.cmbHasItemWTag.TabIndex = 3;
++            this.cmbHasItemWTag.Text = null;
++            this.cmbHasItemWTag.TextPadding = new System.Windows.Forms.Padding(2);
++            // 
++            // grpEquippedItemTag
++            // 
++            this.grpEquippedItemTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
++            this.grpEquippedItemTag.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpEquippedItemTag.Controls.Add(this.lblItemEquippedTag);
++            this.grpEquippedItemTag.Controls.Add(this.cmbEquippedItemTag);
++            this.grpEquippedItemTag.ForeColor = System.Drawing.Color.Gainsboro;
++            this.grpEquippedItemTag.Location = new System.Drawing.Point(6, 41);
++            this.grpEquippedItemTag.Name = "grpEquippedItemTag";
++            this.grpEquippedItemTag.Size = new System.Drawing.Size(262, 71);
++            this.grpEquippedItemTag.TabIndex = 55;
++            this.grpEquippedItemTag.TabStop = false;
++            this.grpEquippedItemTag.Text = "Item Equipped Tag";
++            this.grpEquippedItemTag.Visible = false;
++            // 
++            // lblItemEquippedTag
++            // 
++            this.lblItemEquippedTag.AutoSize = true;
++            this.lblItemEquippedTag.Location = new System.Drawing.Point(6, 21);
++            this.lblItemEquippedTag.Name = "lblItemEquippedTag";
++            this.lblItemEquippedTag.Size = new System.Drawing.Size(29, 13);
++            this.lblItemEquippedTag.TabIndex = 5;
++            this.lblItemEquippedTag.Text = "Tag:";
++            // 
++            // cmbEquippedItemTag
++            // 
++            this.cmbEquippedItemTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbEquippedItemTag.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbEquippedItemTag.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbEquippedItemTag.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbEquippedItemTag.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEquippedItemTag.ButtonIcon")));
++            this.cmbEquippedItemTag.DrawDropdownHoverOutline = false;
++            this.cmbEquippedItemTag.DrawFocusRectangle = false;
++            this.cmbEquippedItemTag.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbEquippedItemTag.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbEquippedItemTag.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbEquippedItemTag.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbEquippedItemTag.FormattingEnabled = true;
++            this.cmbEquippedItemTag.Location = new System.Drawing.Point(92, 18);
++            this.cmbEquippedItemTag.Name = "cmbEquippedItemTag";
++            this.cmbEquippedItemTag.Size = new System.Drawing.Size(162, 21);
++            this.cmbEquippedItemTag.TabIndex = 3;
++            this.cmbEquippedItemTag.Text = null;
++            this.cmbEquippedItemTag.TextPadding = new System.Windows.Forms.Padding(2);
++            // 
++            // chkNegated
++            // 
++            this.chkNegated.Location = new System.Drawing.Point(199, 279);
++            this.chkNegated.Name = "chkNegated";
++            this.chkNegated.Size = new System.Drawing.Size(72, 17);
++            this.chkNegated.TabIndex = 34;
++            this.chkNegated.Text = "Negated";
++            // 
++            // btnSave
++            // 
++            this.btnSave.Location = new System.Drawing.Point(12, 307);
++            this.btnSave.Name = "btnSave";
++            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
++            this.btnSave.Size = new System.Drawing.Size(75, 23);
++            this.btnSave.TabIndex = 19;
++            this.btnSave.Text = "Ok";
++            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
++            // 
++            // cmbConditionType
++            // 
++            this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbConditionType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbConditionType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbConditionType.ButtonIcon")));
++            this.cmbConditionType.DrawDropdownHoverOutline = false;
++            this.cmbConditionType.DrawFocusRectangle = false;
++            this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbConditionType.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbConditionType.FormattingEnabled = true;
++            this.cmbConditionType.Items.AddRange(new object[] {
++            "Variable is...",
++            "Has item...",
++            "Class is...",
++            "Knows spell...",
++            "Level is....",
++            "Self Switch is....",
++            "Power level is....",
++            "Time is between....",
++            "Can Start Quest....",
++            "Quest In Progress....",
++            "Quest Completed....",
++            "Player death...",
++            "No NPCs on the map...",
++            "Gender is...",
++            "Item Equipped Is..."});
++            this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
++            this.cmbConditionType.Name = "cmbConditionType";
++            this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
++            this.cmbConditionType.TabIndex = 22;
++            this.cmbConditionType.Text = "Variable is...";
++            this.cmbConditionType.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
++            // 
++            // lblType
++            // 
++            this.lblType.AutoSize = true;
++            this.lblType.Location = new System.Drawing.Point(6, 16);
++            this.lblType.Name = "lblType";
++            this.lblType.Size = new System.Drawing.Size(81, 13);
++            this.lblType.TabIndex = 21;
++            this.lblType.Text = "Condition Type:";
++            // 
++            // btnCancel
++            // 
++            this.btnCancel.Location = new System.Drawing.Point(113, 307);
++            this.btnCancel.Name = "btnCancel";
++            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
++            this.btnCancel.Size = new System.Drawing.Size(75, 23);
++            this.btnCancel.TabIndex = 20;
++            this.btnCancel.Text = "Cancel";
++            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
++            // 
+             // grpQuestCompleted
+             // 
+             this.grpQuestCompleted.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+@@ -1515,6 +1648,11 @@ private void InitializeComponent()
+             this.grpNumericVariable.ResumeLayout(false);
+             this.grpNumericVariable.PerformLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).EndInit();
++            this.grpHasItemWTag.ResumeLayout(false);
++            this.grpHasItemWTag.PerformLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudHasItemWTag)).EndInit();
++            this.grpEquippedItemTag.ResumeLayout(false);
++            this.grpEquippedItemTag.PerformLayout();
+             this.grpQuestCompleted.ResumeLayout(false);
+             this.grpQuestCompleted.PerformLayout();
+             this.grpQuestInProgress.ResumeLayout(false);
+@@ -1637,5 +1775,13 @@ private void InitializeComponent()
+         private DarkTextBox txtStringValue;
+         private System.Windows.Forms.Label lblStringComparatorValue;
+         private System.Windows.Forms.Label lblStringTextVariables;
++        private DarkGroupBox grpEquippedItemTag;
++        private System.Windows.Forms.Label lblItemEquippedTag;
++        private DarkComboBox cmbEquippedItemTag;
++        private DarkGroupBox grpHasItemWTag;
++        private DarkNumericUpDown nudHasItemWTag;
++        private System.Windows.Forms.Label lblHasAtleastTag;
++        private System.Windows.Forms.Label lblHasItemWTag;
++        private DarkComboBox cmbHasItemWTag;
+     }
+ }
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs
+index cfe57ce8..f90d28a9 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
+@@ -1,4 +1,5 @@
+ ﻿using System;
++using System.Collections.Generic;
+ using System.Linq;
+ using System.Windows.Forms;
+ 
+@@ -132,6 +133,15 @@ private void InitLocalization()
+             grpEquippedItem.Text = Strings.EventConditional.hasitemequipped;
+             lblEquippedItem.Text = Strings.EventConditional.item;
+ 
++            //Item Equipped Has Tag
++            grpEquippedItemTag.Text = Strings.EventConditional.itemequippedhastag;
++            lblItemEquippedTag.Text = Strings.EventConditional.tag;
++
++            //Has Item With Tag
++            grpHasItemWTag.Text = Strings.EventConditional.hasitemwithtag;
++            lblHasAtleastTag.Text = Strings.EventConditional.hasatleast;
++            lblHasItemWTag.Text = Strings.EventConditional.tag;
++
+             //Class is
+             grpClass.Text = Strings.EventConditional.classis;
+             lblClass.Text = Strings.EventConditional.Class;
+@@ -311,6 +321,14 @@ private void ConditionTypeChanged(ConditionTypes type)
+                 case ConditionTypes.NoNpcsOnMap:
+                     Condition = new NoNpcsOnMapCondition();
+ 
++                    break;
++                case ConditionTypes.MapHasNpcWTag:
++                    Condition = new MapHasNPCWTag();
++                    if (cmbEquippedItemTag.Items.Count > 0)
++                    {
++                        cmbEquippedItemTag.SelectedIndex = 0;
++                    }
++
+                     break;
+                 case ConditionTypes.GenderIs:
+                     Condition = new GenderIsCondition();
+@@ -329,6 +347,23 @@ private void ConditionTypeChanged(ConditionTypes type)
+                         cmbEquippedItem.SelectedIndex = 0;
+                     }
+ 
++                    break;
++                case ConditionTypes.EquippedItemTagIs:
++                    Condition = new EquippedItemTagIsCondition();
++                    if (cmbEquippedItemTag.Items.Count > 0)
++                    {
++                        cmbEquippedItemTag.SelectedIndex = 0;
++                    }
++
++                    break;
++                case ConditionTypes.HasItemWTag:
++                    Condition = new HasItemWTagCondition();
++                    if (cmbHasItemWTag.Items.Count > 0)
++                    {
++                        cmbHasItemWTag.SelectedIndex = 0;
++                    }
++                    nudHasItemWTag.Value = 1;
++
+                     break;
+                 default:
+                     throw new ArgumentOutOfRangeException();
+@@ -351,6 +386,8 @@ private void UpdateFormElements(ConditionTypes type)
+             grpGender.Hide();
+             grpMapIs.Hide();
+             grpEquippedItem.Hide();
++            grpHasItemWTag.Hide();
++            grpEquippedItemTag.Hide();
+             switch (type)
+             {
+                 case ConditionTypes.VariableIs:
+@@ -431,6 +468,11 @@ private void UpdateFormElements(ConditionTypes type)
+ 
+                     break;
+                 case ConditionTypes.NoNpcsOnMap:
++                    break;
++                case ConditionTypes.MapHasNpcWTag:
++                    ShowTagCombo(false);
++                    grpEquippedItemTag.Text = Strings.EventConditional.maphasnpcwithtag;
++
+                     break;
+                 case ConditionTypes.GenderIs:
+                     grpGender.Show();
+@@ -445,12 +487,62 @@ private void UpdateFormElements(ConditionTypes type)
+                     cmbEquippedItem.Items.Clear();
+                     cmbEquippedItem.Items.AddRange(ItemBase.Names);
+ 
++                    break;
++                case ConditionTypes.EquippedItemTagIs:
++                    ShowTagCombo(true);
++                    grpEquippedItemTag.Text = Strings.EventConditional.itemequippedhastag;
++                    break;
++                case ConditionTypes.HasItemWTag:
++                    grpHasItemWTag.Show();
++                    cmbHasItemWTag.Items.Clear();
++                    List<string> tags = new List<string>();
++                    foreach (var p in ItemBase.ItemPairs)
++                    {
++                        string tag = ItemBase.Get(p.Key).Tag;
++                        if (tag != null && tag != "" && !tags.Contains(tag))
++                        {
++                            tags.Add(tag);
++                        }
++                    }
++                    cmbHasItemWTag.Items.AddRange(tags.OrderBy(t => t).ToArray());
++
+                     break;
+                 default:
+                     throw new ArgumentOutOfRangeException();
+             }
+         }
+ 
++        private void ShowTagCombo(bool isItem)
++        {
++            grpEquippedItemTag.Show();
++            cmbEquippedItemTag.Items.Clear();
++            List<string> eqpTags = new List<string>();
++            if (isItem)
++            {
++                foreach (var p in ItemBase.ItemPairs)
++                {
++                    string tag = ItemBase.Get(p.Key).Tag;
++                    if (tag != null && tag != "" && !eqpTags.Contains(tag))
++                    {
++                        eqpTags.Add(tag);
++                    }
++                }
++            }
++            else
++            {
++                foreach (var p in NpcBase.ItemPairs)
++                {
++                    string tag = NpcBase.Get(p.Key).Tag;
++                    if (tag != null && tag != "" && !eqpTags.Contains(tag))
++                    {
++                        eqpTags.Add(tag);
++                    }
++                }
++            }
++
++            cmbEquippedItemTag.Items.AddRange(eqpTags.OrderBy(t => t).ToArray());
++        }
++
+         private void btnSave_Click(object sender, EventArgs e)
+         {
+             SaveFormValues((dynamic) Condition);
+@@ -875,6 +967,31 @@ private void SetupFormValues(HasItemCondition condition)
+             nudItemAmount.Value = condition.Quantity;
+         }
+ 
++        private void SetupFormValues(HasItemWTagCondition condition)
++        {
++            for (int i = 0; i < cmbHasItemWTag.Items.Count; i++)
++            {
++                if (cmbHasItemWTag.Items[i].ToString() == condition.Tag)
++                {
++                    cmbHasItemWTag.SelectedIndex = i;
++                    break;
++                }
++            }
++            nudHasItemWTag.Value = condition.Quantity;
++        }
++
++        private void SetupFormValues(EquippedItemTagIsCondition condition)
++        {
++            for (int i = 0; i < cmbEquippedItemTag.Items.Count; i++)
++            {
++                if (cmbEquippedItemTag.Items[i].ToString() == condition.Tag)
++                {
++                    cmbEquippedItemTag.SelectedIndex = i;
++                    break;
++                }
++            }
++        }
++
+         private void SetupFormValues(ClassIsCondition condition)
+         {
+             cmbClass.SelectedIndex = ClassBase.ListIndex(condition.ClassId);
+@@ -946,6 +1063,18 @@ private void SetupFormValues(NoNpcsOnMapCondition condition)
+             //Nothing to do but we need this here so the dynamic will work :) 
+         }
+ 
++        private void SetupFormValues(MapHasNPCWTag condition)
++        {
++            for (int i = 0; i < cmbEquippedItemTag.Items.Count; i++)
++            {
++                if (cmbEquippedItemTag.Items[i].ToString() == condition.Tag)
++                {
++                    cmbEquippedItemTag.SelectedIndex = i;
++                    break;
++                }
++            }
++        }
++
+         private void SetupFormValues(QuestCompletedCondition condition)
+         {
+             cmbCompletedQuest.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
+@@ -1081,6 +1210,12 @@ private void SaveFormValues(NoNpcsOnMapCondition condition)
+             //Nothing to do but we need this here so the dynamic will work :) 
+         }
+ 
++        private void SaveFormValues(MapHasNPCWTag condition)
++        {
++            condition.Tag = cmbEquippedItemTag.SelectedIndex == -1 ? null :
++                cmbEquippedItemTag.Items[cmbEquippedItemTag.SelectedIndex].ToString();
++        }
++
+         private void SaveFormValues(GenderIsCondition condition)
+         {
+             condition.Gender = (Gender) cmbGender.SelectedIndex;
+@@ -1096,6 +1231,19 @@ private void SaveFormValues(IsItemEquippedCondition condition)
+             condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
+         }
+ 
++        private void SaveFormValues(EquippedItemTagIsCondition condition)
++        {
++            condition.Tag = cmbEquippedItemTag.SelectedIndex == -1 ? null :
++                cmbEquippedItemTag.Items[cmbEquippedItemTag.SelectedIndex].ToString();
++        }
++
++        private void SaveFormValues(HasItemWTagCondition condition)
++        {
++            condition.Tag = cmbHasItemWTag.SelectedIndex == -1 ? null :
++                cmbHasItemWTag.Items[cmbHasItemWTag.SelectedIndex].ToString();
++            condition.Quantity = (int)nudHasItemWTag.Value;
++        }
++
+         #endregion
+ 
+     }
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.resx b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.resx
+index fbd6a7cb..4a9b554c 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.resx	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.resx	
+@@ -118,13 +118,6 @@
+     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+   </resheader>
+   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+-  <data name="cmbConditionType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+-    <value>
+-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+-</value>
+-  </data>
+   <data name="cmbVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+@@ -179,6 +172,27 @@
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbHasItemWTag.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbEquippedItemTag.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
++  <data name="cmbConditionType.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
+   <data name="cmbCompletedQuest.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+index d46aa33d..1f65c3f6 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.Designer.cs
+@@ -180,6 +180,8 @@ private void InitializeComponent()
+             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
++            this.lblTag = new System.Windows.Forms.Label();
++            this.txtTag = new DarkUI.Controls.DarkTextBox();
+             this.grpItems.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
+@@ -317,6 +319,8 @@ private void InitializeComponent()
+             // 
+             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpGeneral.Controls.Add(this.lblTag);
++            this.grpGeneral.Controls.Add(this.txtTag);
+             this.grpGeneral.Controls.Add(this.btnAddFolder);
+             this.grpGeneral.Controls.Add(this.lblFolder);
+             this.grpGeneral.Controls.Add(this.cmbFolder);
+@@ -531,7 +535,7 @@ private void InitializeComponent()
+             // lblDesc
+             // 
+             this.lblDesc.AutoSize = true;
+-            this.lblDesc.Location = new System.Drawing.Point(9, 126);
++            this.lblDesc.Location = new System.Drawing.Point(9, 160);
+             this.lblDesc.Name = "lblDesc";
+             this.lblDesc.Size = new System.Drawing.Size(35, 13);
+             this.lblDesc.TabIndex = 13;
+@@ -542,10 +546,10 @@ private void InitializeComponent()
+             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.txtDesc.Location = new System.Drawing.Point(12, 142);
++            this.txtDesc.Location = new System.Drawing.Point(12, 176);
+             this.txtDesc.Multiline = true;
+             this.txtDesc.Name = "txtDesc";
+-            this.txtDesc.Size = new System.Drawing.Size(186, 93);
++            this.txtDesc.Size = new System.Drawing.Size(186, 59);
+             this.txtDesc.TabIndex = 12;
+             this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+             // 
+@@ -2372,6 +2376,26 @@ private void InitializeComponent()
+             this.toolStripItemUndo.Text = "Undo";
+             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+             // 
++            // lblTag
++            // 
++            this.lblTag.AutoSize = true;
++            this.lblTag.Location = new System.Drawing.Point(8, 129);
++            this.lblTag.Name = "lblTag";
++            this.lblTag.Size = new System.Drawing.Size(29, 13);
++            this.lblTag.TabIndex = 51;
++            this.lblTag.Text = "Tag:";
++            // 
++            // txtTag
++            // 
++            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
++            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++            this.txtTag.Location = new System.Drawing.Point(53, 127);
++            this.txtTag.Name = "txtTag";
++            this.txtTag.Size = new System.Drawing.Size(145, 20);
++            this.txtTag.TabIndex = 50;
++            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
++            // 
+             // FrmItem
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+@@ -2602,5 +2626,7 @@ private void InitializeComponent()
+     private Label lblHpRegen;
+     private Label lblManaRegen;
+     private Label lblRegenHint;
+-  }
++        private Label lblTag;
++        private DarkTextBox txtTag;
++    }
+ }
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.cs b/Intersect.Editor/Forms/Editors/frmItem.cs
+index 11cb4269..5bb5a366 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.cs
++++ b/Intersect.Editor/Forms/Editors/frmItem.cs
+@@ -162,6 +162,7 @@ private void InitLocalization()
+             }
+ 
+             lblDesc.Text = Strings.ItemEditor.description;
++            lblTag.Text = Strings.ItemEditor.tag;
+             lblPic.Text = Strings.ItemEditor.picture;
+             lblPrice.Text = Strings.ItemEditor.price;
+             lblAnim.Text = Strings.ItemEditor.animation;
+@@ -273,6 +274,7 @@ private void UpdateEditor()
+                 txtName.Text = mEditorItem.Name;
+                 cmbFolder.Text = mEditorItem.Folder;
+                 txtDesc.Text = mEditorItem.Description;
++                txtTag.Text = mEditorItem.Tag;
+                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
+                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
+                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
+@@ -494,6 +496,11 @@ private void txtDesc_TextChanged(object sender, EventArgs e)
+             mEditorItem.Description = txtDesc.Text;
+         }
+ 
++        private void txtTag_TextChanged(object sender, EventArgs e)
++        {
++            mEditorItem.Tag = txtTag.Text;
++        }
++
+         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
+         {
+             mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
+@@ -1114,7 +1121,6 @@ private void txtSearch_Click(object sender, EventArgs e)
+         }
+ 
+         #endregion
+-
+     }
+ 
+ }
+diff --git a/Intersect.Editor/Forms/Editors/frmItem.resx b/Intersect.Editor/Forms/Editors/frmItem.resx
+index 4c97d54d..a7ea5589 100644
+--- a/Intersect.Editor/Forms/Editors/frmItem.resx
++++ b/Intersect.Editor/Forms/Editors/frmItem.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAbABAQGwAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAbgBAQG4AQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wP2
++        AyoBQAMqAUAIAAP2Af8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wP2Af+IAANAAXAByAHeAewB/wFEAbYB3AH/
+-        AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2
+-        AdwB/wFEAbYB3AH/AbYB0wHmAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMyAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZAf8DMgH/AZoCmQH/AWkCaAH/AdsB2QHaAf8B8QHv
+-        AfAB/wMyAf8D9gH/hAADKgFAAd8B6gHxAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8DMgH/AdsB2QHaAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzIB/wHxAe8B8AH/AzIB/wP2Af+EAANRAZ8BqQHOAeYB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzIB/wHxAe8B8AH/AfEB7wHwAf8DMgH/AfEB7wHwAf8DMgH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AzIB/wHFAcQBxQH/AV4BXQFeAf8BmgKZAf8BXgFdAV4B/wHFAcQBxQH/AzIB/wHx
+-        Ae8B8AH/AzIB/wP2Af+EAAP2Af8D9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wP2Af+IAANAAXAByAHeAewB/wFDAbYB3AH/
++        AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2
++        AdwB/wFDAbYB3AH/AbYB0wHmAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMxAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
++        AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZAf8DMQH/AZoCmQH/AWgCZwH/AdsB2QHaAf8B8QHv
++        AfAB/wMxAf8D9gH/hAADKgFAAd8B6gHxAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
++        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8DMQH/AdsB2QHaAf8B8QHvAfAB/wMxAf8B8QHv
++        AfAB/wHbAdkB2gH/AzEB/wHxAe8B8AH/AzEB/wP2Af+EAANRAZ8BqQHOAeYB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wMxAf8B8QHv
++        AfAB/wHxAe8B8AH/AzEB/wHxAe8B8AH/AfEB7wHwAf8DMQH/AfEB7wHwAf8DMQH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
++        AzEB/wHxAe8B8AH/AzEB/wHFAcQBxQH/AV0BXAFdAf8BmgKZAf8BXQFcAV0B/wHFAcQBxQH/AzEB/wHx
++        Ae8B8AH/AzEB/wP2Af+EAAP2Af8D9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AzIB/wFpAmgB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFpAmgB/wMyAf8B8QHvAfAB/wMyAf8D9gH/iAAD9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AzEB/wFoAmcB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFoAmcB/wMxAf8B8QHvAfAB/wMxAf8D9gH/iAAD9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFpAmgB/wHbAdkB2gH/AfEB7wHwAf8DMgH/A/YB/4gAA/YB/wFEAbYB3AH/
++        AfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFoAmcB/wHbAdkB2gH/AfEB7wHwAf8DMQH/A/YB/4gAA/YB/wFDAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wP2Af+IAAP2Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DMgH/A4YB/wNwAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DhgH/A3AB7wMhATCUAANcAd8ByAHeAewB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wOGAf8DcAHv
++        AzEB/wP2Af+IAAP2Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
++        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzEB/wMxAf8DMQH/A4YB/wNuAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
++        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzEB/wMxAf8DhgH/A24B7wMhATCUAANcAd8ByAHeAewB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
++        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wOGAf8DbgHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wOGAf8DcAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DcAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wOGAf8DbgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DbgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+index 3ffdf8c1..073b93ea 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.Designer.cs
+@@ -71,6 +71,11 @@ private void InitializeComponent()
+             this.lblExp = new System.Windows.Forms.Label();
+             this.pnlContainer = new System.Windows.Forms.Panel();
+             this.grpCombat = new DarkUI.Controls.DarkGroupBox();
++            this.grpAttackSpeed = new DarkUI.Controls.DarkGroupBox();
++            this.nudAttackSpeedValue = new DarkUI.Controls.DarkNumericUpDown();
++            this.lblAttackSpeedValue = new System.Windows.Forms.Label();
++            this.cmbAttackSpeedModifier = new DarkUI.Controls.DarkComboBox();
++            this.lblAttackSpeedModifier = new System.Windows.Forms.Label();
+             this.nudCritMultiplier = new DarkUI.Controls.DarkNumericUpDown();
+             this.lblCritMultiplier = new System.Windows.Forms.Label();
+             this.nudScaling = new DarkUI.Controls.DarkNumericUpDown();
+@@ -151,11 +156,8 @@ private void InitializeComponent()
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
+-            this.grpAttackSpeed = new DarkUI.Controls.DarkGroupBox();
+-            this.nudAttackSpeedValue = new DarkUI.Controls.DarkNumericUpDown();
+-            this.lblAttackSpeedValue = new System.Windows.Forms.Label();
+-            this.cmbAttackSpeedModifier = new DarkUI.Controls.DarkComboBox();
+-            this.lblAttackSpeedModifier = new System.Windows.Forms.Label();
++            this.txtTag = new DarkUI.Controls.DarkTextBox();
++            this.lblTag = new System.Windows.Forms.Label();
+             this.grpNpcs.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
+@@ -173,6 +175,8 @@ private void InitializeComponent()
+             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).BeginInit();
+             this.pnlContainer.SuspendLayout();
+             this.grpCombat.SuspendLayout();
++            this.grpAttackSpeed.SuspendLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudAttackSpeedValue)).BeginInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).BeginInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).BeginInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudDamage)).BeginInit();
+@@ -190,8 +194,6 @@ private void InitializeComponent()
+             this.grpNpcVsNpc.SuspendLayout();
+             this.grpSpells.SuspendLayout();
+             this.toolStrip.SuspendLayout();
+-            this.grpAttackSpeed.SuspendLayout();
+-            ((System.ComponentModel.ISupportInitialize)(this.nudAttackSpeedValue)).BeginInit();
+             this.SuspendLayout();
+             // 
+             // grpNpcs
+@@ -263,6 +265,8 @@ private void InitializeComponent()
+             // 
+             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpGeneral.Controls.Add(this.lblTag);
++            this.grpGeneral.Controls.Add(this.txtTag);
+             this.grpGeneral.Controls.Add(this.btnAddFolder);
+             this.grpGeneral.Controls.Add(this.lblFolder);
+             this.grpGeneral.Controls.Add(this.cmbFolder);
+@@ -367,7 +371,7 @@ private void InitializeComponent()
+             this.cmbSprite.FormattingEnabled = true;
+             this.cmbSprite.Items.AddRange(new object[] {
+             "None"});
+-            this.cmbSprite.Location = new System.Drawing.Point(75, 132);
++            this.cmbSprite.Location = new System.Drawing.Point(75, 150);
+             this.cmbSprite.Name = "cmbSprite";
+             this.cmbSprite.Size = new System.Drawing.Size(120, 21);
+             this.cmbSprite.TabIndex = 11;
+@@ -378,7 +382,7 @@ private void InitializeComponent()
+             // lblPic
+             // 
+             this.lblPic.AutoSize = true;
+-            this.lblPic.Location = new System.Drawing.Point(72, 116);
++            this.lblPic.Location = new System.Drawing.Point(72, 134);
+             this.lblPic.Name = "lblPic";
+             this.lblPic.Size = new System.Drawing.Size(37, 13);
+             this.lblPic.TabIndex = 6;
+@@ -780,6 +784,82 @@ private void InitializeComponent()
+             this.grpCombat.TabStop = false;
+             this.grpCombat.Text = "Combat";
+             // 
++            // grpAttackSpeed
++            // 
++            this.grpAttackSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
++            this.grpAttackSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpAttackSpeed.Controls.Add(this.nudAttackSpeedValue);
++            this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedValue);
++            this.grpAttackSpeed.Controls.Add(this.cmbAttackSpeedModifier);
++            this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedModifier);
++            this.grpAttackSpeed.ForeColor = System.Drawing.Color.Gainsboro;
++            this.grpAttackSpeed.Location = new System.Drawing.Point(12, 310);
++            this.grpAttackSpeed.Name = "grpAttackSpeed";
++            this.grpAttackSpeed.Size = new System.Drawing.Size(192, 86);
++            this.grpAttackSpeed.TabIndex = 64;
++            this.grpAttackSpeed.TabStop = false;
++            this.grpAttackSpeed.Text = "Attack Speed";
++            // 
++            // nudAttackSpeedValue
++            // 
++            this.nudAttackSpeedValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.nudAttackSpeedValue.ForeColor = System.Drawing.Color.Gainsboro;
++            this.nudAttackSpeedValue.Location = new System.Drawing.Point(60, 58);
++            this.nudAttackSpeedValue.Maximum = new decimal(new int[] {
++            10000,
++            0,
++            0,
++            0});
++            this.nudAttackSpeedValue.Name = "nudAttackSpeedValue";
++            this.nudAttackSpeedValue.Size = new System.Drawing.Size(114, 20);
++            this.nudAttackSpeedValue.TabIndex = 56;
++            this.nudAttackSpeedValue.Value = new decimal(new int[] {
++            0,
++            0,
++            0,
++            0});
++            this.nudAttackSpeedValue.ValueChanged += new System.EventHandler(this.nudAttackSpeedValue_ValueChanged);
++            // 
++            // lblAttackSpeedValue
++            // 
++            this.lblAttackSpeedValue.AutoSize = true;
++            this.lblAttackSpeedValue.Location = new System.Drawing.Point(9, 60);
++            this.lblAttackSpeedValue.Name = "lblAttackSpeedValue";
++            this.lblAttackSpeedValue.Size = new System.Drawing.Size(37, 13);
++            this.lblAttackSpeedValue.TabIndex = 29;
++            this.lblAttackSpeedValue.Text = "Value:";
++            // 
++            // cmbAttackSpeedModifier
++            // 
++            this.cmbAttackSpeedModifier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbAttackSpeedModifier.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbAttackSpeedModifier.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbAttackSpeedModifier.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbAttackSpeedModifier.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackSpeedModifier.ButtonIcon")));
++            this.cmbAttackSpeedModifier.DrawDropdownHoverOutline = false;
++            this.cmbAttackSpeedModifier.DrawFocusRectangle = false;
++            this.cmbAttackSpeedModifier.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbAttackSpeedModifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbAttackSpeedModifier.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbAttackSpeedModifier.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbAttackSpeedModifier.FormattingEnabled = true;
++            this.cmbAttackSpeedModifier.Location = new System.Drawing.Point(60, 24);
++            this.cmbAttackSpeedModifier.Name = "cmbAttackSpeedModifier";
++            this.cmbAttackSpeedModifier.Size = new System.Drawing.Size(114, 21);
++            this.cmbAttackSpeedModifier.TabIndex = 28;
++            this.cmbAttackSpeedModifier.Text = null;
++            this.cmbAttackSpeedModifier.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbAttackSpeedModifier.SelectedIndexChanged += new System.EventHandler(this.cmbAttackSpeedModifier_SelectedIndexChanged);
++            // 
++            // lblAttackSpeedModifier
++            // 
++            this.lblAttackSpeedModifier.AutoSize = true;
++            this.lblAttackSpeedModifier.Location = new System.Drawing.Point(9, 27);
++            this.lblAttackSpeedModifier.Name = "lblAttackSpeedModifier";
++            this.lblAttackSpeedModifier.Size = new System.Drawing.Size(47, 13);
++            this.lblAttackSpeedModifier.TabIndex = 0;
++            this.lblAttackSpeedModifier.Text = "Modifier:";
++            // 
+             // nudCritMultiplier
+             // 
+             this.nudCritMultiplier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+@@ -1859,81 +1939,25 @@ private void InitializeComponent()
+             this.searchableDarkTreeView1.TabIndex = 46;
+             this.searchableDarkTreeView1.Visible = false;
+             // 
+-            // grpAttackSpeed
+-            // 
+-            this.grpAttackSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.grpAttackSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+-            this.grpAttackSpeed.Controls.Add(this.nudAttackSpeedValue);
+-            this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedValue);
+-            this.grpAttackSpeed.Controls.Add(this.cmbAttackSpeedModifier);
+-            this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedModifier);
+-            this.grpAttackSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.grpAttackSpeed.Location = new System.Drawing.Point(12, 310);
+-            this.grpAttackSpeed.Name = "grpAttackSpeed";
+-            this.grpAttackSpeed.Size = new System.Drawing.Size(192, 86);
+-            this.grpAttackSpeed.TabIndex = 64;
+-            this.grpAttackSpeed.TabStop = false;
+-            this.grpAttackSpeed.Text = "Attack Speed";
+-            // 
+-            // nudAttackSpeedValue
+-            // 
+-            this.nudAttackSpeedValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+-            this.nudAttackSpeedValue.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.nudAttackSpeedValue.Location = new System.Drawing.Point(60, 58);
+-            this.nudAttackSpeedValue.Maximum = new decimal(new int[] {
+-            10000,
+-            0,
+-            0,
+-            0});
+-            this.nudAttackSpeedValue.Name = "nudAttackSpeedValue";
+-            this.nudAttackSpeedValue.Size = new System.Drawing.Size(114, 20);
+-            this.nudAttackSpeedValue.TabIndex = 56;
+-            this.nudAttackSpeedValue.Value = new decimal(new int[] {
+-            0,
+-            0,
+-            0,
+-            0});
+-            this.nudAttackSpeedValue.ValueChanged += new System.EventHandler(this.nudAttackSpeedValue_ValueChanged);
+-            // 
+-            // lblAttackSpeedValue
++            // txtTag
+             // 
+-            this.lblAttackSpeedValue.AutoSize = true;
+-            this.lblAttackSpeedValue.Location = new System.Drawing.Point(9, 60);
+-            this.lblAttackSpeedValue.Name = "lblAttackSpeedValue";
+-            this.lblAttackSpeedValue.Size = new System.Drawing.Size(37, 13);
+-            this.lblAttackSpeedValue.TabIndex = 29;
+-            this.lblAttackSpeedValue.Text = "Value:";
+-            // 
+-            // cmbAttackSpeedModifier
+-            // 
+-            this.cmbAttackSpeedModifier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+-            this.cmbAttackSpeedModifier.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+-            this.cmbAttackSpeedModifier.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+-            this.cmbAttackSpeedModifier.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+-            this.cmbAttackSpeedModifier.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAttackSpeedModifier.ButtonIcon")));
+-            this.cmbAttackSpeedModifier.DrawDropdownHoverOutline = false;
+-            this.cmbAttackSpeedModifier.DrawFocusRectangle = false;
+-            this.cmbAttackSpeedModifier.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+-            this.cmbAttackSpeedModifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+-            this.cmbAttackSpeedModifier.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+-            this.cmbAttackSpeedModifier.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.cmbAttackSpeedModifier.FormattingEnabled = true;
+-            this.cmbAttackSpeedModifier.Location = new System.Drawing.Point(60, 24);
+-            this.cmbAttackSpeedModifier.Name = "cmbAttackSpeedModifier";
+-            this.cmbAttackSpeedModifier.Size = new System.Drawing.Size(114, 21);
+-            this.cmbAttackSpeedModifier.TabIndex = 28;
+-            this.cmbAttackSpeedModifier.Text = null;
+-            this.cmbAttackSpeedModifier.TextPadding = new System.Windows.Forms.Padding(2);
+-            this.cmbAttackSpeedModifier.SelectedIndexChanged += new System.EventHandler(this.cmbAttackSpeedModifier_SelectedIndexChanged);
++            this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
++            this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++            this.txtTag.Location = new System.Drawing.Point(106, 108);
++            this.txtTag.Name = "txtTag";
++            this.txtTag.Size = new System.Drawing.Size(89, 20);
++            this.txtTag.TabIndex = 68;
++            this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
+             // 
+-            // lblAttackSpeedModifier
++            // lblTag
+             // 
+-            this.lblAttackSpeedModifier.AutoSize = true;
+-            this.lblAttackSpeedModifier.Location = new System.Drawing.Point(9, 27);
+-            this.lblAttackSpeedModifier.Name = "lblAttackSpeedModifier";
+-            this.lblAttackSpeedModifier.Size = new System.Drawing.Size(47, 13);
+-            this.lblAttackSpeedModifier.TabIndex = 0;
+-            this.lblAttackSpeedModifier.Text = "Modifier:";
++            this.lblTag.AutoSize = true;
++            this.lblTag.Location = new System.Drawing.Point(72, 110);
++            this.lblTag.Name = "lblTag";
++            this.lblTag.Size = new System.Drawing.Size(29, 13);
++            this.lblTag.TabIndex = 69;
++            this.lblTag.Text = "Tag:";
+             // 
+             // FrmNpc
+             // 
+@@ -1980,6 +2004,9 @@ private void InitializeComponent()
+             this.pnlContainer.ResumeLayout(false);
+             this.grpCombat.ResumeLayout(false);
+             this.grpCombat.PerformLayout();
++            this.grpAttackSpeed.ResumeLayout(false);
++            this.grpAttackSpeed.PerformLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudAttackSpeedValue)).EndInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).EndInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).EndInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudDamage)).EndInit();
+@@ -2004,9 +2031,6 @@ private void InitializeComponent()
+             this.grpSpells.PerformLayout();
+             this.toolStrip.ResumeLayout(false);
+             this.toolStrip.PerformLayout();
+-            this.grpAttackSpeed.ResumeLayout(false);
+-            this.grpAttackSpeed.PerformLayout();
+-            ((System.ComponentModel.ISupportInitialize)(this.nudAttackSpeedValue)).EndInit();
+             this.ResumeLayout(false);
+ 
+         }
+@@ -2136,5 +2160,7 @@ private void InitializeComponent()
+         private System.Windows.Forms.Label lblAttackSpeedValue;
+         private DarkComboBox cmbAttackSpeedModifier;
+         private System.Windows.Forms.Label lblAttackSpeedModifier;
++        private System.Windows.Forms.Label lblTag;
++        private DarkTextBox txtTag;
+     }
+ }
+\ No newline at end of file
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.cs b/Intersect.Editor/Forms/Editors/frmNpc.cs
+index a290031d..81bdd6e2 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.cs
++++ b/Intersect.Editor/Forms/Editors/frmNpc.cs
+@@ -132,6 +132,8 @@ private void InitLocalization()
+             lblName.Text = Strings.NpcEditor.name;
+             grpBehavior.Text = Strings.NpcEditor.behavior;
+ 
++            lblTag.Text = Strings.EventConditional.tag;
++
+             lblPic.Text = Strings.NpcEditor.sprite;
+             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
+ 
+@@ -237,6 +239,7 @@ private void UpdateEditor()
+                 pnlContainer.Show();
+ 
+                 txtName.Text = mEditorItem.Name;
++                txtTag.Text = mEditorItem.Tag;
+                 cmbFolder.Text = mEditorItem.Folder;
+                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
+                 nudLevel.Value = mEditorItem.Level;
+@@ -354,6 +357,11 @@ private void txtName_TextChanged(object sender, EventArgs e)
+             mChangingName = false;
+         }
+ 
++        private void txtTag_TextChanged(object sender, EventArgs e)
++        {
++            mEditorItem.Tag = txtTag.Text;
++        }
++
+         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+         {
+             mEditorItem.Sprite = TextUtils.SanitizeNone(cmbSprite.Text);
+diff --git a/Intersect.Editor/Forms/Editors/frmNpc.resx b/Intersect.Editor/Forms/Editors/frmNpc.resx
+index 3beb1913..d5437557 100644
+--- a/Intersect.Editor/Forms/Editors/frmNpc.resx
++++ b/Intersect.Editor/Forms/Editors/frmNpc.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAbABAQGwAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAbgBAQG4AQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wP2
++        AyoBQAMqAUAIAAP2Af8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wP2Af+IAANAAXAByAHeAewB/wFEAbYB3AH/
+-        AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2
+-        AdwB/wFEAbYB3AH/AbYB0wHmAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMyAf8D9gH/
+-        iAADXAHfAZEBwgHhAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZAf8DMgH/AZoCmQH/AWkCaAH/AdsB2QHaAf8B8QHv
+-        AfAB/wMyAf8D9gH/hAADKgFAAd8B6gHxAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/AfEB7wHwAf8DMgH/AdsB2QHaAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHbAdkB2gH/AzIB/wHxAe8B8AH/AzIB/wP2Af+EAANRAZ8BqQHOAeYB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wMyAf8B8QHv
+-        AfAB/wHxAe8B8AH/AzIB/wHxAe8B8AH/AfEB7wHwAf8DMgH/AfEB7wHwAf8DMgH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHc
+-        Af8BRAG2AdwB/wFEAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/
+-        AzIB/wHxAe8B8AH/AzIB/wHFAcQBxQH/AV4BXQFeAf8BmgKZAf8BXgFdAV4B/wHFAcQBxQH/AzIB/wHx
+-        Ae8B8AH/AzIB/wP2Af+EAAP2Af8D9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wP2Af+IAANAAXAByAHeAewB/wFDAbYB3AH/
++        AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2
++        AdwB/wFDAbYB3AH/AbYB0wHmAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wMxAf8D9gH/
++        iAADXAHfAZEBwgHhAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
++        AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZAf8DMQH/AZoCmQH/AWgCZwH/AdsB2QHaAf8B8QHv
++        AfAB/wMxAf8D9gH/hAADKgFAAd8B6gHxAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
++        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/AfEB7wHwAf8DMQH/AdsB2QHaAf8B8QHvAfAB/wMxAf8B8QHv
++        AfAB/wHbAdkB2gH/AzEB/wHxAe8B8AH/AzEB/wP2Af+EAANRAZ8BqQHOAeYB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wMxAf8B8QHv
++        AfAB/wHxAe8B8AH/AzEB/wHxAe8B8AH/AfEB7wHwAf8DMQH/AfEB7wHwAf8DMQH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHc
++        Af8BQwG2AdwB/wFDAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/
++        AzEB/wHxAe8B8AH/AzEB/wHFAcQBxQH/AV0BXAFdAf8BmgKZAf8BXQFcAV0B/wHFAcQBxQH/AzEB/wHx
++        Ae8B8AH/AzEB/wP2Af+EAAP2Af8D9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AzIB/wFpAmgB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFpAmgB/wMyAf8B8QHvAfAB/wMyAf8D9gH/iAAD9gH/AUQBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AzEB/wFoAmcB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFoAmcB/wMxAf8B8QHvAfAB/wMxAf8D9gH/iAAD9gH/AUMBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUQBtgHcAf8D9gH/CAAD9gH/AzIB/wHxAe8B8AH/AdsB2QHaAf8BaQJoAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFpAmgB/wHbAdkB2gH/AfEB7wHwAf8DMgH/A/YB/4gAA/YB/wFEAbYB3AH/
++        AfAB/wHxAe8B8AH/AUMBtgHcAf8D9gH/CAAD9gH/AzEB/wHxAe8B8AH/AdsB2QHaAf8BaAJnAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFoAmcB/wHbAdkB2gH/AfEB7wHwAf8DMQH/A/YB/4gAA/YB/wFDAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFEAbYB3AH/A/YB/wgAA/YB/wMyAf8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFDAbYB3AH/A/YB/wgAA/YB/wMxAf8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wP2Af+IAAP2Af8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DMgH/A4YB/wNwAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRAG2AdwB/wP2
+-        Af8IAAP2Af8DMgH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzIB/wMyAf8DhgH/A3AB7wMhATCUAANcAd8ByAHeAewB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFE
+-        AbYB3AH/AUQBtgHcAf8BRAG2AdwB/wFEAbYB3AH/AUQBtgHcAf8BRAG2AdwB/wP2Af8IAAP2Af8DMgH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzIB/wOGAf8DcAHv
++        AzEB/wP2Af+IAAP2Af8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
++        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzEB/wMxAf8DMQH/A4YB/wNuAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BQwG2AdwB/wP2
++        Af8IAAP2Af8DMQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzEB/wMxAf8DhgH/A24B7wMhATCUAANcAd8ByAHeAewB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFD
++        AbYB3AH/AUMBtgHcAf8BQwG2AdwB/wFDAbYB3AH/AUMBtgHcAf8BQwG2AdwB/wP2Af8IAAP2Af8DMQH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzEB/wOGAf8DbgHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzIB/wMyAf8DMgH/AzIB/wMyAf8DMgH/AzIB/wOGAf8DcAHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DcAHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        AzEB/wMxAf8DMQH/AzEB/wMxAf8DMQH/AzEB/wOGAf8DbgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DbgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+diff --git a/Intersect.Editor/Localization/Strings.cs b/Intersect.Editor/Localization/Strings.cs
+index ddb7b964..55e1a3e3 100644
+--- a/Intersect.Editor/Localization/Strings.cs
++++ b/Intersect.Editor/Localization/Strings.cs
+@@ -49,6 +49,16 @@ public static string GetEventConditionalDesc(IsItemEquippedCondition condition)
+             return Strings.EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
+         }
+ 
++        public static string GetEventConditionalDesc(EquippedItemTagIsCondition condition)
++        {
++            return Strings.EventConditionDesc.itemequippedtagis.ToString(condition.Tag ?? ItemBase.Deleted);
++        }
++
++        public static string GetEventConditionalDesc(HasItemWTagCondition condition)
++        {
++            return Strings.EventConditionDesc.hasitemwithtag.ToString(condition.Tag ?? ItemBase.Deleted);
++        }
++
+         public static string GetEventConditionalDesc(ClassIsCondition condition)
+         {
+             return Strings.EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
+@@ -222,6 +232,11 @@ public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
+             return Strings.EventConditionDesc.nonpcsonmap;
+         }
+ 
++        public static string GetEventConditionalDesc(MapHasNPCWTag condition)
++        {
++            return Strings.EventConditionDesc.maphasnpcwithtag.ToString(condition.Tag ?? ItemBase.Deleted);
++        }
++
+         public static string GetEventConditionalDesc(GenderIsCondition condition)
+         {
+             return Strings.EventConditionDesc.gender.ToString(
+@@ -1791,6 +1806,9 @@ public struct EventConditional
+                 {15, @"Gender is..."},
+                 {16, @"Map is..."},
+                 {17, @"Item Equipped is..."},
++                {18, @"Item Equipped Has Tag..."},
++                {19, @"Has Item With Tag..."},
++                {20, @"Map has Npc With Tag..."}
+             };
+ 
+             public static LocalizedString endrange = @"End Range:";
+@@ -1815,10 +1833,18 @@ public struct EventConditional
+ 
+             public static LocalizedString hasitemequipped = @"Has Equipped Item";
+ 
++            public static LocalizedString itemequippedhastag = @"Item Equipped Has Tag";
++
++            public static LocalizedString hasitemwithtag = @"Has Item With Tag";
++
++            public static LocalizedString maphasnpcwithtag = @"Map Has NPCs With Tag";
++
+             public static LocalizedString ignorestatbuffs = @"Ignore equipment & spell buffs.";
+ 
+             public static LocalizedString item = @"Item:";
+ 
++            public static LocalizedString tag = @"Tag:";
++
+             public static LocalizedString knowsspell = @"Knows Spell";
+ 
+             public static LocalizedString level = @"Level";
+@@ -1943,6 +1969,10 @@ public struct EventConditionDesc
+             public static LocalizedString hasitem = @"Player has at least {00} of Item {01}";
+ 
+             public static LocalizedString hasitemequipped = @"Player has Item {00} equipped";
++            
++            public static LocalizedString itemequippedtagis = @"Player equipped Item tag is {00} ";
++            
++            public static LocalizedString hasitemwithtag = @"Player has Item with tag {00}";
+ 
+             public static LocalizedString knowsspell = @"Player knows Spell {00}";
+ 
+@@ -1966,6 +1996,8 @@ public struct EventConditionDesc
+ 
+             public static LocalizedString nonpcsonmap = @"No NPCs on the map";
+ 
++            public static LocalizedString maphasnpcwithtag = @"Map has NPCs with tag {00}";
++
+             public static LocalizedString notequal = @"does not equal {00}";
+ 
+             public static LocalizedString onanytask = @", On Any Task";
+@@ -2786,6 +2818,8 @@ public struct ItemEditor
+ 
+             public static LocalizedString deletetitle = @"Delete Item";
+ 
++            public static LocalizedString tag = @"Tag:";
++
+             public static LocalizedString description = @"Desc:";
+ 
+             public static LocalizedString equipment = @"Equipment";
+diff --git a/Intersect.Server/Entities/Events/Conditions.cs b/Intersect.Server/Entities/Events/Conditions.cs
+index 6683673f..8c6c11cb 100644
+--- a/Intersect.Server/Entities/Events/Conditions.cs
++++ b/Intersect.Server/Entities/Events/Conditions.cs
+@@ -130,6 +130,50 @@ QuestBase questBase
+             return false;
+         }
+ 
++        public static bool MeetsCondition(
++            HasItemWTagCondition condition,
++            Player player,
++            Event eventInstance,
++            QuestBase questBase
++        )
++        {
++            int cpt = 0;
++            foreach (var item in player.Items)
++            {
++                ItemBase i = ItemBase.Get(item.ItemId);
++                if (i != null && i.Tag == condition.Tag)
++                {
++                    cpt += player.CountItems(item.ItemId);
++                    if (cpt >= condition.Quantity)
++                    {
++                        return true;
++                    }
++                }
++            }
++            return false;
++        }
++
++        public static bool MeetsCondition(
++            EquippedItemTagIsCondition condition,
++            Player player,
++            Event eventInstance,
++            QuestBase questBase
++        )
++        {
++            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
++            {
++                if (player.Equipment[i] >= 0)
++                {
++                    if (ItemBase.Get(player.Items[player.Equipment[i]].ItemId).Tag == condition.Tag)
++                    {
++                        return true;
++                    }
++                }
++            }
++
++            return false;
++        }
++
+         public static bool MeetsCondition(
+             ClassIsCondition condition,
+             Player player,
+@@ -382,6 +426,41 @@ QuestBase questBase
+             return false;
+         }
+ 
++        public static bool MeetsCondition(
++            MapHasNPCWTag condition,
++            Player player,
++            Event eventInstance,
++            QuestBase questBase
++        )
++        {
++            var map = MapInstance.Get(eventInstance?.MapId ?? Guid.Empty);
++            if (map == null)
++            {
++                map = MapInstance.Get(player.MapId);
++            }
++
++            if (map != null)
++            {
++                var entities = map.GetEntities();
++                
++
++                foreach (var en in entities)
++                {
++                    if (en.GetType() == typeof(Npc))
++                    {
++                        Npc npc = (Npc)en;
++                        if (npc.Base.Tag == condition.Tag)
++                        {
++                            return true;
++                        }
++                    }
++
++                }
++            }
++
++            return false;
++        }
++
+         public static bool MeetsCondition(
+             GenderIsCondition condition,
+             Player player,
+diff --git a/Intersect.Server/Intersect.Server.csproj b/Intersect.Server/Intersect.Server.csproj
+index 1bbee3dc..5d2fa293 100644
+--- a/Intersect.Server/Intersect.Server.csproj
++++ b/Intersect.Server/Intersect.Server.csproj
+@@ -480,6 +480,10 @@
+     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
+     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
+     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
++    <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.cs" />
++    <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.designer.cs">
++      <DependentUpon>20200423004850_AddingTagSystem.cs</DependentUpon>
++    </Compile>
+     <Compile Include="Networking\Client.cs" />
+     <Compile Include="Entities\Npc.cs" />
+     <Compile Include="Networking\Helpers\NetDebug.cs" />
+diff --git a/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.Designer.cs b/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.Designer.cs
+new file mode 100644
+index 00000000..74a73374
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.Designer.cs
+@@ -0,0 +1,1040 @@
++﻿// <auto-generated />
++using System;
++using Intersect.Server.Database.GameData;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++namespace Intersect.Server.Migrations.Game
++{
++    [DbContext(typeof(GameContext))]
++    [Migration("20200423004850_AddingTagSystem")]
++    partial class AddingTagSystem
++    {
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CompleteSound");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Animations");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<long>("BaseExp");
++
++                    b.Property<int>("BasePoints");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("ExpIncrease");
++
++                    b.Property<string>("ExpOverridesJson")
++                        .HasColumnName("ExperienceOverrides");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("IncreasePercentage");
++
++                    b.Property<string>("JsonBaseStats")
++                        .HasColumnName("BaseStats");
++
++                    b.Property<string>("JsonBaseVitals")
++                        .HasColumnName("BaseVitals");
++
++                    b.Property<string>("JsonItems")
++                        .HasColumnName("Items");
++
++                    b.Property<string>("JsonSpells")
++                        .HasColumnName("Spells");
++
++                    b.Property<string>("JsonSprites")
++                        .HasColumnName("Sprites");
++
++                    b.Property<bool>("Locked");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("PointIncrease");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SpawnDir");
++
++                    b.Property<Guid>("SpawnMapId")
++                        .HasColumnName("SpawnMap");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<string>("StatIncreaseJson")
++                        .HasColumnName("StatIncreases");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalIncreaseJson")
++                        .HasColumnName("VitalIncreases");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Classes");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("IngredientsJson")
++                        .HasColumnName("Ingredients");
++
++                    b.Property<Guid>("ItemId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Time");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Crafts");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Crafts");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CraftingTables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CommonEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("Global");
++
++                    b.Property<Guid>("MapId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PagesJson")
++                        .HasColumnName("Pages");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Events");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<int>("Cooldown");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<string>("Description");
++
++                    b.Property<bool>("DestroySpell");
++
++                    b.Property<Guid>("EquipmentAnimationId")
++                        .HasColumnName("EquipmentAnimation");
++
++                    b.Property<int>("EquipmentSlot");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("FemalePaperdoll");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<int>("ItemType");
++
++                    b.Property<string>("JsonUsageRequirements")
++                        .HasColumnName("UsageRequirements");
++
++                    b.Property<string>("MalePaperdoll");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PercentageStatsJson")
++                        .HasColumnName("PercentageStatsGiven");
++
++                    b.Property<string>("PercentageVitalsJson")
++                        .HasColumnName("PercentageVitalsGiven");
++
++                    b.Property<int>("Price");
++
++                    b.Property<Guid>("ProjectileId")
++                        .HasColumnName("Projectile");
++
++                    b.Property<bool>("QuickCast");
++
++                    b.Property<int>("Rarity");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SlotCount");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<bool>("Stackable");
++
++                    b.Property<int>("StatGrowth");
++
++                    b.Property<string>("StatsJson")
++                        .HasColumnName("StatsGiven");
++
++                    b.Property<string>("Tag");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<bool>("TwoHanded");
++
++                    b.Property<string>("VitalsJson")
++                        .HasColumnName("VitalsGiven");
++
++                    b.Property<string>("VitalsRegenJson")
++                        .HasColumnName("VitalsRegen");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Items");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("JsonData")
++                        .HasColumnName("JsonData");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("MapFolders");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Aggressive");
++
++                    b.Property<bool>("AttackAllies");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<string>("AttackOnSightConditionsJson")
++                        .HasColumnName("AttackOnSightConditions");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Spells");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("Experience");
++
++                    b.Property<byte>("FleeHealthPercentage");
++
++                    b.Property<bool>("FocusHighestDamageDealer");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonAggroList")
++                        .HasColumnName("AggroList");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonMaxVital")
++                        .HasColumnName("MaxVital");
++
++                    b.Property<string>("JsonStat")
++                        .HasColumnName("Stats");
++
++                    b.Property<int>("Level");
++
++                    b.Property<byte>("Movement");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("NpcVsNpcEnabled");
++
++                    b.Property<Guid>("OnDeathEventId")
++                        .HasColumnName("OnDeathEvent");
++
++                    b.Property<Guid>("OnDeathPartyEventId")
++                        .HasColumnName("OnDeathPartyEvent");
++
++                    b.Property<string>("PlayerCanAttackConditionsJson")
++                        .HasColumnName("PlayerCanAttackConditions");
++
++                    b.Property<string>("PlayerFriendConditionsJson")
++                        .HasColumnName("PlayerFriendConditions");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SightRange");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<int>("SpellFrequency");
++
++                    b.Property<string>("Sprite");
++
++                    b.Property<bool>("Swarm");
++
++                    b.Property<string>("Tag");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Npcs");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("PlayerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AmmoItemId")
++                        .HasColumnName("Ammo");
++
++                    b.Property<int>("AmmoRequired");
++
++                    b.Property<string>("AnimationsJson")
++                        .HasColumnName("Animations");
++
++                    b.Property<int>("Delay");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("GrappleHook");
++
++                    b.Property<bool>("IgnoreActiveResources");
++
++                    b.Property<bool>("IgnoreExhaustedResources");
++
++                    b.Property<bool>("IgnoreMapBlocks");
++
++                    b.Property<bool>("IgnoreZDimension");
++
++                    b.Property<int>("Knockback");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("PierceTarget");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Range");
++
++                    b.Property<string>("SpawnsJson")
++                        .HasColumnName("SpawnLocations");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Projectiles");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("BeforeDescription");
++
++                    b.Property<string>("EndDescription");
++
++                    b.Property<Guid>("EndEventId")
++                        .HasColumnName("EndEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("InProgressDescription");
++
++                    b.Property<string>("JsonRequirements")
++                        .HasColumnName("Requirements");
++
++                    b.Property<bool>("LogAfterComplete");
++
++                    b.Property<bool>("LogBeforeOffer");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("Quitable");
++
++                    b.Property<bool>("Repeatable");
++
++                    b.Property<string>("StartDescription");
++
++                    b.Property<Guid>("StartEventId")
++                        .HasColumnName("StartEvent");
++
++                    b.Property<string>("TasksJson")
++                        .HasColumnName("Tasks");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Quests");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonHarvestingRequirements")
++                        .HasColumnName("HarvestingRequirements");
++
++                    b.Property<int>("MaxHp");
++
++                    b.Property<int>("MinHp");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<int>("VitalRegen");
++
++                    b.Property<bool>("WalkableAfter");
++
++                    b.Property<bool>("WalkableBefore");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Resources");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Json")
++                        .HasColumnName("Value");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("ServerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("BuyingWhitelist");
++
++                    b.Property<Guid>("DefaultCurrencyId")
++                        .HasColumnName("DefaultCurrency");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonBuyingItems")
++                        .HasColumnName("BuyingItems");
++
++                    b.Property<string>("JsonSellingItems")
++                        .HasColumnName("SellingItems");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Shops");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<Guid>("CastAnimationId")
++                        .HasColumnName("CastAnimation");
++
++                    b.Property<int>("CastDuration");
++
++                    b.Property<int>("CooldownDuration");
++
++                    b.Property<string>("Description");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<Guid>("HitAnimationId")
++                        .HasColumnName("HitAnimation");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<string>("JsonCastRequirements")
++                        .HasColumnName("CastRequirements");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpellType");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalCostJson")
++                        .HasColumnName("VitalCost");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Spells");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Tilesets");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("DaylightHuesJson")
++                        .HasColumnName("DaylightHues");
++
++                    b.Property<int>("RangeInterval");
++
++                    b.Property<float>("Rate");
++
++                    b.Property<bool>("SyncTime");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Time");
++                });
++
++            modelBuilder.Entity("Intersect.Server.Maps.MapInstance", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<int>("AHue");
++
++                    b.Property<byte[]>("AttributeData")
++                        .HasColumnName("Attributes");
++
++                    b.Property<int>("BHue");
++
++                    b.Property<int>("Brightness");
++
++                    b.Property<Guid>("Down");
++
++                    b.Property<string>("EventIdsJson")
++                        .HasColumnName("Events");
++
++                    b.Property<string>("Fog");
++
++                    b.Property<int>("FogTransparency");
++
++                    b.Property<int>("FogXSpeed");
++
++                    b.Property<int>("FogYSpeed");
++
++                    b.Property<int>("GHue");
++
++                    b.Property<bool>("IsIndoors");
++
++                    b.Property<Guid>("Left");
++
++                    b.Property<string>("LightsJson")
++                        .HasColumnName("Lights");
++
++                    b.Property<string>("Music");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("NpcSpawnsJson")
++                        .HasColumnName("NpcSpawns");
++
++                    b.Property<string>("OverlayGraphic");
++
++                    b.Property<string>("Panorama");
++
++                    b.Property<string>("PlayerLightColorJson")
++                        .HasColumnName("PlayerLightColor");
++
++                    b.Property<float>("PlayerLightExpand");
++
++                    b.Property<byte>("PlayerLightIntensity");
++
++                    b.Property<int>("PlayerLightSize");
++
++                    b.Property<int>("RHue");
++
++                    b.Property<int>("Revision");
++
++                    b.Property<Guid>("Right");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<byte[]>("TileData");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<Guid>("Up");
++
++                    b.Property<Guid>("WeatherAnimationId")
++                        .HasColumnName("WeatherAnimation");
++
++                    b.Property<int>("WeatherIntensity");
++
++                    b.Property<int>("WeatherXSpeed");
++
++                    b.Property<int>("WeatherYSpeed");
++
++                    b.Property<int>("ZoneType");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Maps");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Lower")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Upper")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.Property<int>("Value");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Consumable")
++                                .HasForeignKey("Intersect.GameObjects.ConsumableData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Effect")
++                                .HasForeignKey("Intersect.GameObjects.EffectData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Exhausted")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Initial")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("CastRange");
++
++                            b1.Property<int>("CritChance");
++
++                            b1.Property<double>("CritMultiplier");
++
++                            b1.Property<int>("DamageType");
++
++                            b1.Property<int>("Duration");
++
++                            b1.Property<int>("Effect");
++
++                            b1.Property<bool>("Friendly");
++
++                            b1.Property<int>("HitRadius");
++
++                            b1.Property<bool>("HoTDoT");
++
++                            b1.Property<int>("HotDotInterval");
++
++                            b1.Property<int>("OnHitDuration")
++                                .HasColumnName("OnHit");
++
++                            b1.Property<string>("PercentageStatDiffJson")
++                                .HasColumnName("PercentageStatDiff");
++
++                            b1.Property<Guid>("ProjectileId")
++                                .HasColumnName("Projectile");
++
++                            b1.Property<int>("Scaling");
++
++                            b1.Property<int>("ScalingStat");
++
++                            b1.Property<string>("StatDiffJson")
++                                .HasColumnName("StatDiff");
++
++                            b1.Property<int>("TargetType");
++
++                            b1.Property<string>("TransformSprite");
++
++                            b1.Property<int>("TrapDuration")
++                                .HasColumnName("Trap");
++
++                            b1.Property<string>("VitalDiffJson")
++                                .HasColumnName("VitalDiff");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Combat")
++                                .HasForeignKey("Intersect.GameObjects.SpellCombatData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<bool>("IgnoreActiveResources");
++
++                            b1.Property<bool>("IgnoreInactiveResources");
++
++                            b1.Property<bool>("IgnoreMapBlocks");
++
++                            b1.Property<bool>("IgnoreZDimensionAttributes");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Dash")
++                                .HasForeignKey("Intersect.GameObjects.SpellDashOpts", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("Dir");
++
++                            b1.Property<Guid>("MapId");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Warp")
++                                .HasForeignKey("Intersect.GameObjects.SpellWarpData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.cs b/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.cs
+new file mode 100644
+index 00000000..b2c98990
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200423004850_AddingTagSystem.cs
+@@ -0,0 +1,31 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++namespace Intersect.Server.Migrations.Game
++{
++    public partial class AddingTagSystem : Migration
++    {
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "Tag",
++                table: "Npcs",
++                nullable: true);
++
++            migrationBuilder.AddColumn<string>(
++                name: "Tag",
++                table: "Items",
++                nullable: true);
++        }
++
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "Tag",
++                table: "Npcs");
++
++            migrationBuilder.DropColumn(
++                name: "Tag",
++                table: "Items");
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+index fbfd65a8..8f0ecb1c 100644
+--- a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
++++ b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+@@ -279,6 +279,8 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+                     b.Property<string>("StatsJson")
+                         .HasColumnName("StatsGiven");
+ 
++                    b.Property<string>("Tag");
++
+                     b.Property<long>("TimeCreated");
+ 
+                     b.Property<int>("Tool");
+@@ -396,6 +398,8 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+ 
+                     b.Property<bool>("Swarm");
+ 
++                    b.Property<string>("Tag");
++
+                     b.Property<long>("TimeCreated");
+ 
+                     b.HasKey("Id");
+-- 
+2.25.0.windows.1
+

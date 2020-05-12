@@ -1,0 +1,1603 @@
+From 0df24d0e2d4ec1e794ec29f3a63dbd20d808917a Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Fri, 24 Apr 2020 17:02:41 +0200
+Subject: [PATCH 4/4] Added the ability to add map tags. Generalized methods..
+ Fixed some nonsense I made.
+
+Signed-off-by: Bandana <aurelende@protonmail.com>
+---
+ Intersect (Core)/Enums/TagType.cs             |   11 +
+ .../GameObjects/Events/Condition.cs           |   13 +-
+ Intersect (Core)/GameObjects/Maps/MapBase.cs  |   18 +-
+ Intersect (Core)/Intersect (Core).csproj      |    1 +
+ .../frmMapProperties.Designer.cs              |    2 +-
+ .../Forms/DockingElements/frmMapProperties.cs |    1 -
+ .../EventCommand_ConditionalBranch.cs         |   64 +-
+ Intersect.Editor/Forms/frmMain.Designer.cs    |    4 +-
+ Intersect.Editor/Forms/frmMain.resx           |   18 +-
+ Intersect.Editor/Localization/Strings.cs      |   14 +-
+ Intersect.Editor/Maps/MapProperties.cs        |   16 +
+ .../Entities/Events/Conditions.cs             |   12 +-
+ Intersect.Server/Intersect.Server.csproj      |    4 +
+ .../Game/20200424140012_MapTags.Designer.cs   | 1045 +++++++++++++++++
+ .../Migrations/Game/20200424140012_MapTags.cs |   22 +
+ .../Game/GameContextModelSnapshot.cs          |   13 +-
+ 16 files changed, 1225 insertions(+), 33 deletions(-)
+ create mode 100644 Intersect (Core)/Enums/TagType.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200424140012_MapTags.Designer.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200424140012_MapTags.cs
+
+diff --git a/Intersect (Core)/Enums/TagType.cs b/Intersect (Core)/Enums/TagType.cs
+new file mode 100644
+index 00000000..2a7a31f9
+--- /dev/null
++++ b/Intersect (Core)/Enums/TagType.cs	
+@@ -0,0 +1,11 @@
++﻿namespace Intersect.Enums
++{
++    public enum TagType
++    {
++        Item = 0,
++
++        MapNPC,
++
++        Map
++    }
++}
+diff --git a/Intersect (Core)/GameObjects/Events/Condition.cs b/Intersect (Core)/GameObjects/Events/Condition.cs
+index ffb98749..4af91a84 100644
+--- a/Intersect (Core)/GameObjects/Events/Condition.cs	
++++ b/Intersect (Core)/GameObjects/Events/Condition.cs	
+@@ -42,7 +42,9 @@ public enum ConditionTypes
+ 
+         HasItemWTag,
+ 
+-        MapHasNpcWTag
++        MapHasNpcWTag,
++
++        MapHasTag,
+ 
+     }
+ 
+@@ -208,6 +210,15 @@ public class MapIsCondition : Condition
+ 
+     }
+ 
++    public class MapHasTag : Condition
++    {
++
++        public override ConditionTypes Type { get; } = ConditionTypes.MapHasTag;
++
++        public string Tag { get; set; }
++
++    }
++
+     public class IsItemEquippedCondition : Condition
+     {
+ 
+diff --git a/Intersect (Core)/GameObjects/Maps/MapBase.cs b/Intersect (Core)/GameObjects/Maps/MapBase.cs
+index b0af922f..f2677101 100644
+--- a/Intersect (Core)/GameObjects/Maps/MapBase.cs	
++++ b/Intersect (Core)/GameObjects/Maps/MapBase.cs	
+@@ -1,7 +1,7 @@
+ ﻿using System;
+ using System.Collections.Generic;
+ using System.ComponentModel.DataAnnotations.Schema;
+-
++using System.Linq;
+ using Intersect.Collections;
+ using Intersect.Enums;
+ using Intersect.GameObjects.Events;
+@@ -39,6 +39,17 @@ public class MapBase : DatabaseObject<MapBase>
+         //SyncLock
+         [JsonIgnore] [NotMapped] protected object mMapLock = new object();
+ 
++        [NotMapped]
++        public List<String> Tags = new List<String>();
++
++        [Column("Tag")]
++        [JsonIgnore]
++        public string JsonTags
++        {
++            get => JsonConvert.SerializeObject(Tags);
++            set => Tags = JsonConvert.DeserializeObject<List<String>>(value ?? "[]");
++        }
++
+         [JsonConstructor]
+         public MapBase(Guid id) : base(id)
+         {
+@@ -344,6 +355,11 @@ public AnimationBase WeatherAnimation
+         [JsonIgnore]
+         public object MapLock => mMapLock;
+ 
++        public static List<string> GetTagList()
++        {
++            return Lookup.SelectMany(pair => ((MapBase)pair.Value).Tags).Distinct().ToList();
++        }
++
+         public virtual MapBase[,] GenerateAutotileGrid()
+         {
+             return null;
+diff --git a/Intersect (Core)/Intersect (Core).csproj b/Intersect (Core)/Intersect (Core).csproj
+index d1dbe3f5..38174941 100644
+--- a/Intersect (Core)/Intersect (Core).csproj	
++++ b/Intersect (Core)/Intersect (Core).csproj	
+@@ -221,6 +221,7 @@
+     <Compile Include="Console.cs" />
+     <Compile Include="Config\SmtpSettings.cs" />
+     <Compile Include="CustomColors.cs" />
++    <Compile Include="Enums\TagType.cs" />
+     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
+     <Compile Include="Extensions\ArrayExtensions.cs" />
+     <Compile Include="Extensions\DateTimeExtensions.cs" />
+diff --git a/Intersect.Editor/Forms/DockingElements/frmMapProperties.Designer.cs b/Intersect.Editor/Forms/DockingElements/frmMapProperties.Designer.cs
+index 5cbdce36..88dab1c0 100644
+--- a/Intersect.Editor/Forms/DockingElements/frmMapProperties.Designer.cs
++++ b/Intersect.Editor/Forms/DockingElements/frmMapProperties.Designer.cs
+@@ -56,7 +56,7 @@ private void InitializeComponent()
+             this.gridMapProperties.ViewBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+             this.gridMapProperties.ViewForeColor = System.Drawing.Color.Gainsboro;
+             // 
+-            // frmMapProperties
++            // FrmMapProperties
+             // 
+             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+diff --git a/Intersect.Editor/Forms/DockingElements/frmMapProperties.cs b/Intersect.Editor/Forms/DockingElements/frmMapProperties.cs
+index f849cfe6..91a7f8a7 100644
+--- a/Intersect.Editor/Forms/DockingElements/frmMapProperties.cs
++++ b/Intersect.Editor/Forms/DockingElements/frmMapProperties.cs
+@@ -49,7 +49,6 @@ public GridItem Selection()
+         {
+             return gridMapProperties.SelectedGridItem;
+         }
+-
+     }
+ 
+ }
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs
+index 60a8c8ed..bc4e937d 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ConditionalBranch.cs	
+@@ -364,6 +364,15 @@ private void ConditionTypeChanged(ConditionTypes type)
+                     }
+                     nudHasItemWTag.Value = 1;
+ 
++                    break;
++
++                case ConditionTypes.MapHasTag:
++                    Condition = new MapHasTag();
++                    if (cmbEquippedItemTag.Items.Count > 0)
++                    {
++                        cmbEquippedItemTag.SelectedIndex = 0;
++                    }
++
+                     break;
+                 default:
+                     throw new ArgumentOutOfRangeException();
+@@ -470,7 +479,7 @@ private void UpdateFormElements(ConditionTypes type)
+                 case ConditionTypes.NoNpcsOnMap:
+                     break;
+                 case ConditionTypes.MapHasNpcWTag:
+-                    ShowTagCombo(false);
++                    ShowTagCombo(TagType.MapNPC);
+                     grpEquippedItemTag.Text = Strings.EventConditional.maphasnpcwithtag;
+ 
+                     break;
+@@ -489,7 +498,7 @@ private void UpdateFormElements(ConditionTypes type)
+ 
+                     break;
+                 case ConditionTypes.EquippedItemTagIs:
+-                    ShowTagCombo(true);
++                    ShowTagCombo(TagType.Item);
+                     grpEquippedItemTag.Text = Strings.EventConditional.itemequippedhastag;
+                     break;
+                 case ConditionTypes.HasItemWTag:
+@@ -497,27 +506,41 @@ private void UpdateFormElements(ConditionTypes type)
+                     cmbHasItemWTag.Items.Clear();
+                     cmbHasItemWTag.Items.AddRange(ItemBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToArray());
+ 
++                    break;
++                case ConditionTypes.MapHasTag:
++                    ShowTagCombo(TagType.Map);
++                    grpEquippedItemTag.Text = Strings.EventConditional.maphastag;
++
+                     break;
+                 default:
+                     throw new ArgumentOutOfRangeException();
+             }
+         }
+ 
+-        private void ShowTagCombo(bool isItem)
++        private void ShowTagCombo(TagType type)
+         {
+             grpEquippedItemTag.Show();
+             cmbEquippedItemTag.Items.Clear();
+-            List<string> eqpTags = new List<string>();
+-            if (isItem)
+-            {
+-                eqpTags = ItemBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
+-            }
+-            else
++            List<string> tagList = new List<string>();
++
++            switch (type)
+             {
+-                eqpTags = NpcBase.ItemPairs.SelectMany(x => NpcBase.Get(x.Key).Tags).Distinct().OrderBy(t => t).ToList();
++                case TagType.Item:
++                    tagList = ItemBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().ToList();
++
++                    break;
++
++                case TagType.MapNPC:
++                    tagList = NpcBase.ItemPairs.SelectMany(x => ItemBase.Get(x.Key).Tags).Distinct().ToList();
++
++                    break;
++
++                case TagType.Map:
++                    tagList = GameObjects.Maps.MapBase.GetTagList();
++                    break;
+             }
+ 
+-            cmbEquippedItemTag.Items.AddRange(eqpTags.OrderBy(t => t).ToArray());
++            cmbEquippedItemTag.Items.AddRange(tagList.OrderBy(t => t).ToArray());
+         }
+ 
+         private void btnSave_Click(object sender, EventArgs e)
+@@ -1052,6 +1075,18 @@ private void SetupFormValues(MapHasNPCWTag condition)
+             }
+         }
+ 
++        private void SetupFormValues(MapHasTag condition)
++        {
++            for (int i = 0; i < cmbEquippedItemTag.Items.Count; i++)
++            {
++                if (cmbEquippedItemTag.Items[i].ToString() == condition.Tag)
++                {
++                    cmbEquippedItemTag.SelectedIndex = i;
++                    break;
++                }
++            }
++        }
++
+         private void SetupFormValues(QuestCompletedCondition condition)
+         {
+             cmbCompletedQuest.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
+@@ -1193,6 +1228,12 @@ private void SaveFormValues(MapHasNPCWTag condition)
+                 cmbEquippedItemTag.Items[cmbEquippedItemTag.SelectedIndex].ToString();
+         }
+ 
++        private void SaveFormValues(MapHasTag condition)
++        {
++            condition.Tag = cmbEquippedItemTag.SelectedIndex == -1 ? null :
++                cmbEquippedItemTag.Items[cmbEquippedItemTag.SelectedIndex].ToString();
++        }
++
+         private void SaveFormValues(GenderIsCondition condition)
+         {
+             condition.Gender = (Gender) cmbGender.SelectedIndex;
+@@ -1222,7 +1263,6 @@ private void SaveFormValues(HasItemWTagCondition condition)
+         }
+ 
+         #endregion
+-
+     }
+ 
+ }
+diff --git a/Intersect.Editor/Forms/frmMain.Designer.cs b/Intersect.Editor/Forms/frmMain.Designer.cs
+index 60b650eb..f36ecec3 100644
+--- a/Intersect.Editor/Forms/frmMain.Designer.cs
++++ b/Intersect.Editor/Forms/frmMain.Designer.cs
+@@ -983,7 +983,7 @@ private void InitializeComponent()
+             // 
+             this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
+-            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
++            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+             this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
+             this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
+             // 
+@@ -991,7 +991,7 @@ private void InitializeComponent()
+             // 
+             this.packageUpdateToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.packageUpdateToolStripMenuItem.Name = "packageUpdateToolStripMenuItem";
+-            this.packageUpdateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
++            this.packageUpdateToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+             this.packageUpdateToolStripMenuItem.Text = "Package Update";
+             this.packageUpdateToolStripMenuItem.Click += new System.EventHandler(this.packageUpdateToolStripMenuItem_Click);
+             // 
+diff --git a/Intersect.Editor/Forms/frmMain.resx b/Intersect.Editor/Forms/frmMain.resx
+index 9369b71e..55982554 100644
+--- a/Intersect.Editor/Forms/frmMain.resx
++++ b/Intersect.Editor/Forms/frmMain.resx
+@@ -179,15 +179,15 @@
+   <data name="toolStripBtnRedo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHASURBVDhPjVJNLwNhEF4qEiIkEhec8AOE+g/i6iMREgkO
+-        4toSn3FwcJJeSBxU0fg4qfQgItrQQ1N1WVKk0Q0lot3URtrd9lAyZl5vaxvN8iSTfXfnmWdmnncFPQCg
+-        Kp1OT2OEZFnOYnzg+RpjStO0BnyCqqoRPDfykh9kMpkWTIY3Tm+hfcIFZX12MPXawTzpgi3vHSSTycfX
+-        xDtYHP7fItSZikdXz0HoXi8aAzYPRGMKO+dEeLkg4Ggz1JmSpT12WNi7BOnlDSIvCZjbCbJJKNdqOcgL
+-        0jq8nAmE2qzfSSrG8TzUgUgU7gsJqge38sW/BOJxOUs7U+LhVQH0o4l2JJGxNV9BYS7+FKDvOZFi3hQI
+-        IPGmA92mBF/hBI2t5DkmQjegjwIBfJl16ExcOw4RIYBXV8cpxqBuqVRK0o86vxukq7rHdZo5zRj0I2HH
+-        qHXTnxcZXjmDlKrJuIaZ04yBxHocXbS5RbYKiXQuHkHiPanhNF2cZgxFUWrIxH1fGCr6HUyEfudb6fkT
+-        pxzhNGOgJ+Uosu29eoLaIScTWT4UmbGYM3GaMZBYgiJLohSDaWeAGfrvW9EDRcaxc6z4bQjCFyc+2ILy
+-        tHXhAAAAAElFTkSuQmCC
++        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHASURBVDhPjVJNSwJhEN4ygiIKgi7VqfoBUfYfomsfEAVB
++        dYiuWmQfdOjQKbwUeMjMpI9ThoeISCkPYnax0EJSSkFcwxZRVw8W08zbq60kWw8M++7OM8/MPO8KSgBA
++        Uz6fN2AEkslkEeMDzw8YS7Isd+ATcrlcGM+dvOQHhUKhB5OhvatH6F+wQ92YGTSjZtAu2sHqeoJMJvOa
++        SKVBZ/H8FqHOVDy7cwPC8G7VmDA6ISpK7FwS4eWCgKMtU2dK1o6YYf34DiLxdwjHU7B66GOTUK5Xd1oW
++        pHV4ORMI9Om/k1SM4zmpA5EoHLcRaJ60lot/CYhiskg7U+IlIQH60UU7ksicyV1RWIo/Beh7SaSaNxUC
++        SAwOoNuU4CtcorGNPMdE6AaUUSGALysWhYmmiwARvHh1bZyiDuqWzWYjylHXjnx0Vc+4TjenqYN+JOwY
++        1e97yiLT29eQzclvuIaW09SBxHYc3W90+NkqJDK4cQ6pdEbGaYY4TR2SJLWQiSfuEDSMW5gI/c7BcOwT
++        p5zhNHWgJ/UocuC6j0HrlI2JbJ35mbGY03CaOpBYgyKb/ogIBpuXGfrvW1ECReaxs1j9NgThC/0O2HOk
++        ZCupAAAAAElFTkSuQmCC
+ </value>
+   </data>
+   <data name="toolStripBtnPen.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+diff --git a/Intersect.Editor/Localization/Strings.cs b/Intersect.Editor/Localization/Strings.cs
+index c0830688..623bfc09 100644
+--- a/Intersect.Editor/Localization/Strings.cs
++++ b/Intersect.Editor/Localization/Strings.cs
+@@ -237,6 +237,11 @@ public static string GetEventConditionalDesc(MapHasNPCWTag condition)
+             return Strings.EventConditionDesc.maphasnpcwithtag.ToString(condition.Tag ?? ItemBase.Deleted);
+         }
+ 
++        public static string GetEventConditionalDesc(MapHasTag condition)
++        {
++            return Strings.EventConditionDesc.maphastag.ToString(condition.Tag ?? ItemBase.Deleted);
++        }
++
+         public static string GetEventConditionalDesc(GenderIsCondition condition)
+         {
+             return Strings.EventConditionDesc.gender.ToString(
+@@ -1808,7 +1813,8 @@ public struct EventConditional
+                 {17, @"Item Equipped is..."},
+                 {18, @"Item Equipped Has Tag..."},
+                 {19, @"Has Item With Tag..."},
+-                {20, @"Map has Npc With Tag..."}
++                {20, @"Map has Npc With Tag..."},
++                {21, @"Map has Tag..." },
+             };
+ 
+             public static LocalizedString endrange = @"End Range:";
+@@ -1859,6 +1865,8 @@ public struct EventConditional
+ 
+             public static LocalizedString mapis = @"Map Is...";
+ 
++            public static LocalizedString maphastag = @"Map Has Tag...";
++
+             public static LocalizedString negated = @"Negated";
+ 
+             public static LocalizedString numericvariable = @"Numeric Variable:";
+@@ -1998,6 +2006,8 @@ public struct EventConditionDesc
+ 
+             public static LocalizedString maphasnpcwithtag = @"Map has NPCs with tag {00}";
+ 
++            public static LocalizedString maphastag = @"Map has tag {00}";
++
+             public static LocalizedString notequal = @"does not equal {00}";
+ 
+             public static LocalizedString onanytask = @", On Any Task";
+@@ -3319,6 +3329,7 @@ public struct MapProperties
+                 {"weatherxspeed", @"Weather X Speed"},
+                 {"weatheryspeed", @"Weather Y Speed"},
+                 {"weatherintensity", @"Weather Intensity"},
++                {"tags", @"Tags" },
+             };
+ 
+             public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
+@@ -3359,6 +3370,7 @@ public struct MapProperties
+                 },
+                 {"weatheryspeeddesc", @"How fast vertically weather particles move across the screen. (Range -5 to 5)"},
+                 {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
++                {"tagsdesc", @"The tags that apply to this map. (Semi-Colon ( ; ) separated)" },
+             };
+ 
+             public static LocalizedString title = @"Map Properties";
+diff --git a/Intersect.Editor/Maps/MapProperties.cs b/Intersect.Editor/Maps/MapProperties.cs
+index 67d9a671..9d2e98a8 100644
+--- a/Intersect.Editor/Maps/MapProperties.cs
++++ b/Intersect.Editor/Maps/MapProperties.cs
+@@ -98,6 +98,22 @@ public string ZoneType
+             }
+         }
+ 
++        [CustomCategory("general"), CustomDescription("tagsdesc"), CustomDisplayName("tags"), DefaultValue("")]
++        public string Tags
++        {
++            get => String.Join(";", mMyMap.Tags);
++            set
++            {
++                if (String.Join(";", mMyMap.Tags) != value)
++                {
++                    Globals.MapEditorWindow.PrepUndoState();
++                    mMyMap.Tags.Clear();
++                    mMyMap.Tags.AddRange(value.Split(';'));
++                    Globals.MapEditorWindow.AddUndoState();
++                }
++            }
++        }
++
+         [CustomCategory("audio"), CustomDescription("musicdesc"), CustomDisplayName("music"), DefaultValue("None"),
+          TypeConverter(typeof(MapMusicProperty)), Browsable(true)]
+         public string Music
+diff --git a/Intersect.Server/Entities/Events/Conditions.cs b/Intersect.Server/Entities/Events/Conditions.cs
+index b1887147..759bbf36 100644
+--- a/Intersect.Server/Entities/Events/Conditions.cs
++++ b/Intersect.Server/Entities/Events/Conditions.cs
+@@ -141,7 +141,7 @@ QuestBase questBase
+             foreach (var item in player.Items)
+             {
+                 ItemBase i = ItemBase.Get(item.ItemId);
+-                if (i != null && i.Tags.Any(x => x.Equals(condition.Tag)))
++                if (i != null && i.Tags.Contains(condition.Tag))
+                 {
+                     cpt += player.CountItems(item.ItemId);
+                     if (cpt >= condition.Quantity)
+@@ -481,6 +481,16 @@ QuestBase questBase
+             return player.MapId == condition.MapId;
+         }
+ 
++        public static bool MeetsCondition(
++            MapHasTag condition,
++            Player player,
++            Event eventInstance,
++            QuestBase questBase
++        )
++        {
++            return player.Map.Tags.Contains(condition.Tag);
++        }
++
+         public static bool MeetsCondition(
+             IsItemEquippedCondition condition,
+             Player player,
+diff --git a/Intersect.Server/Intersect.Server.csproj b/Intersect.Server/Intersect.Server.csproj
+index 5d2fa293..6c5bfcda 100644
+--- a/Intersect.Server/Intersect.Server.csproj
++++ b/Intersect.Server/Intersect.Server.csproj
+@@ -484,6 +484,10 @@
+     <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.designer.cs">
+       <DependentUpon>20200423004850_AddingTagSystem.cs</DependentUpon>
+     </Compile>
++    <Compile Include="Migrations\Game\20200424140012_MapTags.cs" />
++    <Compile Include="Migrations\Game\20200424140012_MapTags.designer.cs">
++      <DependentUpon>20200424140012_MapTags.cs</DependentUpon>
++    </Compile>
+     <Compile Include="Networking\Client.cs" />
+     <Compile Include="Entities\Npc.cs" />
+     <Compile Include="Networking\Helpers\NetDebug.cs" />
+diff --git a/Intersect.Server/Migrations/Game/20200424140012_MapTags.Designer.cs b/Intersect.Server/Migrations/Game/20200424140012_MapTags.Designer.cs
+new file mode 100644
+index 00000000..d3f1e3fd
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200424140012_MapTags.Designer.cs
+@@ -0,0 +1,1045 @@
++﻿// <auto-generated />
++using System;
++using Intersect.Server.Database.GameData;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++namespace Intersect.Server.Migrations.Game
++{
++    [DbContext(typeof(GameContext))]
++    [Migration("20200424140012_MapTags")]
++    partial class MapTags
++    {
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CompleteSound");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Animations");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<long>("BaseExp");
++
++                    b.Property<int>("BasePoints");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("ExpIncrease");
++
++                    b.Property<string>("ExpOverridesJson")
++                        .HasColumnName("ExperienceOverrides");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("IncreasePercentage");
++
++                    b.Property<string>("JsonBaseStats")
++                        .HasColumnName("BaseStats");
++
++                    b.Property<string>("JsonBaseVitals")
++                        .HasColumnName("BaseVitals");
++
++                    b.Property<string>("JsonItems")
++                        .HasColumnName("Items");
++
++                    b.Property<string>("JsonSpells")
++                        .HasColumnName("Spells");
++
++                    b.Property<string>("JsonSprites")
++                        .HasColumnName("Sprites");
++
++                    b.Property<bool>("Locked");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("PointIncrease");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SpawnDir");
++
++                    b.Property<Guid>("SpawnMapId")
++                        .HasColumnName("SpawnMap");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<string>("StatIncreaseJson")
++                        .HasColumnName("StatIncreases");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalIncreaseJson")
++                        .HasColumnName("VitalIncreases");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Classes");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("IngredientsJson")
++                        .HasColumnName("Ingredients");
++
++                    b.Property<Guid>("ItemId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Time");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Crafts");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Crafts");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CraftingTables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CommonEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("Global");
++
++                    b.Property<Guid>("MapId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PagesJson")
++                        .HasColumnName("Pages");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Events");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<int>("Cooldown");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<string>("Description");
++
++                    b.Property<bool>("DestroySpell");
++
++                    b.Property<Guid>("EquipmentAnimationId")
++                        .HasColumnName("EquipmentAnimation");
++
++                    b.Property<int>("EquipmentSlot");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("FemalePaperdoll");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<int>("ItemType");
++
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
++                    b.Property<string>("JsonUsageRequirements")
++                        .HasColumnName("UsageRequirements");
++
++                    b.Property<string>("MalePaperdoll");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PercentageStatsJson")
++                        .HasColumnName("PercentageStatsGiven");
++
++                    b.Property<string>("PercentageVitalsJson")
++                        .HasColumnName("PercentageVitalsGiven");
++
++                    b.Property<int>("Price");
++
++                    b.Property<Guid>("ProjectileId")
++                        .HasColumnName("Projectile");
++
++                    b.Property<bool>("QuickCast");
++
++                    b.Property<int>("Rarity");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SlotCount");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<bool>("Stackable");
++
++                    b.Property<int>("StatGrowth");
++
++                    b.Property<string>("StatsJson")
++                        .HasColumnName("StatsGiven");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<bool>("TwoHanded");
++
++                    b.Property<string>("VitalsJson")
++                        .HasColumnName("VitalsGiven");
++
++                    b.Property<string>("VitalsRegenJson")
++                        .HasColumnName("VitalsRegen");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Items");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("JsonData")
++                        .HasColumnName("JsonData");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("MapFolders");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Aggressive");
++
++                    b.Property<bool>("AttackAllies");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<string>("AttackOnSightConditionsJson")
++                        .HasColumnName("AttackOnSightConditions");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Spells");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("Experience");
++
++                    b.Property<byte>("FleeHealthPercentage");
++
++                    b.Property<bool>("FocusHighestDamageDealer");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonAggroList")
++                        .HasColumnName("AggroList");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonMaxVital")
++                        .HasColumnName("MaxVital");
++
++                    b.Property<string>("JsonStat")
++                        .HasColumnName("Stats");
++
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
++                    b.Property<int>("Level");
++
++                    b.Property<byte>("Movement");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("NpcVsNpcEnabled");
++
++                    b.Property<Guid>("OnDeathEventId")
++                        .HasColumnName("OnDeathEvent");
++
++                    b.Property<Guid>("OnDeathPartyEventId")
++                        .HasColumnName("OnDeathPartyEvent");
++
++                    b.Property<string>("PlayerCanAttackConditionsJson")
++                        .HasColumnName("PlayerCanAttackConditions");
++
++                    b.Property<string>("PlayerFriendConditionsJson")
++                        .HasColumnName("PlayerFriendConditions");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SightRange");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<int>("SpellFrequency");
++
++                    b.Property<string>("Sprite");
++
++                    b.Property<bool>("Swarm");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Npcs");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("PlayerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AmmoItemId")
++                        .HasColumnName("Ammo");
++
++                    b.Property<int>("AmmoRequired");
++
++                    b.Property<string>("AnimationsJson")
++                        .HasColumnName("Animations");
++
++                    b.Property<int>("Delay");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("GrappleHook");
++
++                    b.Property<bool>("IgnoreActiveResources");
++
++                    b.Property<bool>("IgnoreExhaustedResources");
++
++                    b.Property<bool>("IgnoreMapBlocks");
++
++                    b.Property<bool>("IgnoreZDimension");
++
++                    b.Property<int>("Knockback");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("PierceTarget");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Range");
++
++                    b.Property<string>("SpawnsJson")
++                        .HasColumnName("SpawnLocations");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Projectiles");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("BeforeDescription");
++
++                    b.Property<string>("EndDescription");
++
++                    b.Property<Guid>("EndEventId")
++                        .HasColumnName("EndEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("InProgressDescription");
++
++                    b.Property<string>("JsonRequirements")
++                        .HasColumnName("Requirements");
++
++                    b.Property<bool>("LogAfterComplete");
++
++                    b.Property<bool>("LogBeforeOffer");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("Quitable");
++
++                    b.Property<bool>("Repeatable");
++
++                    b.Property<string>("StartDescription");
++
++                    b.Property<Guid>("StartEventId")
++                        .HasColumnName("StartEvent");
++
++                    b.Property<string>("TasksJson")
++                        .HasColumnName("Tasks");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Quests");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonHarvestingRequirements")
++                        .HasColumnName("HarvestingRequirements");
++
++                    b.Property<int>("MaxHp");
++
++                    b.Property<int>("MinHp");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<int>("VitalRegen");
++
++                    b.Property<bool>("WalkableAfter");
++
++                    b.Property<bool>("WalkableBefore");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Resources");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Json")
++                        .HasColumnName("Value");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("ServerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("BuyingWhitelist");
++
++                    b.Property<Guid>("DefaultCurrencyId")
++                        .HasColumnName("DefaultCurrency");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonBuyingItems")
++                        .HasColumnName("BuyingItems");
++
++                    b.Property<string>("JsonSellingItems")
++                        .HasColumnName("SellingItems");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Shops");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<Guid>("CastAnimationId")
++                        .HasColumnName("CastAnimation");
++
++                    b.Property<int>("CastDuration");
++
++                    b.Property<int>("CooldownDuration");
++
++                    b.Property<string>("Description");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<Guid>("HitAnimationId")
++                        .HasColumnName("HitAnimation");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<string>("JsonCastRequirements")
++                        .HasColumnName("CastRequirements");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpellType");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalCostJson")
++                        .HasColumnName("VitalCost");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Spells");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Tilesets");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("DaylightHuesJson")
++                        .HasColumnName("DaylightHues");
++
++                    b.Property<int>("RangeInterval");
++
++                    b.Property<float>("Rate");
++
++                    b.Property<bool>("SyncTime");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Time");
++                });
++
++            modelBuilder.Entity("Intersect.Server.Maps.MapInstance", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<int>("AHue");
++
++                    b.Property<byte[]>("AttributeData")
++                        .HasColumnName("Attributes");
++
++                    b.Property<int>("BHue");
++
++                    b.Property<int>("Brightness");
++
++                    b.Property<Guid>("Down");
++
++                    b.Property<string>("EventIdsJson")
++                        .HasColumnName("Events");
++
++                    b.Property<string>("Fog");
++
++                    b.Property<int>("FogTransparency");
++
++                    b.Property<int>("FogXSpeed");
++
++                    b.Property<int>("FogYSpeed");
++
++                    b.Property<int>("GHue");
++
++                    b.Property<bool>("IsIndoors");
++
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
++                    b.Property<Guid>("Left");
++
++                    b.Property<string>("LightsJson")
++                        .HasColumnName("Lights");
++
++                    b.Property<string>("Music");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("NpcSpawnsJson")
++                        .HasColumnName("NpcSpawns");
++
++                    b.Property<string>("OverlayGraphic");
++
++                    b.Property<string>("Panorama");
++
++                    b.Property<string>("PlayerLightColorJson")
++                        .HasColumnName("PlayerLightColor");
++
++                    b.Property<float>("PlayerLightExpand");
++
++                    b.Property<byte>("PlayerLightIntensity");
++
++                    b.Property<int>("PlayerLightSize");
++
++                    b.Property<int>("RHue");
++
++                    b.Property<int>("Revision");
++
++                    b.Property<Guid>("Right");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<byte[]>("TileData");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<Guid>("Up");
++
++                    b.Property<Guid>("WeatherAnimationId")
++                        .HasColumnName("WeatherAnimation");
++
++                    b.Property<int>("WeatherIntensity");
++
++                    b.Property<int>("WeatherXSpeed");
++
++                    b.Property<int>("WeatherYSpeed");
++
++                    b.Property<int>("ZoneType");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Maps");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Lower")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Upper")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.Property<int>("Value");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Consumable")
++                                .HasForeignKey("Intersect.GameObjects.ConsumableData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Effect")
++                                .HasForeignKey("Intersect.GameObjects.EffectData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Exhausted")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Initial")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("CastRange");
++
++                            b1.Property<int>("CritChance");
++
++                            b1.Property<double>("CritMultiplier");
++
++                            b1.Property<int>("DamageType");
++
++                            b1.Property<int>("Duration");
++
++                            b1.Property<int>("Effect");
++
++                            b1.Property<bool>("Friendly");
++
++                            b1.Property<int>("HitRadius");
++
++                            b1.Property<bool>("HoTDoT");
++
++                            b1.Property<int>("HotDotInterval");
++
++                            b1.Property<int>("OnHitDuration")
++                                .HasColumnName("OnHit");
++
++                            b1.Property<string>("PercentageStatDiffJson")
++                                .HasColumnName("PercentageStatDiff");
++
++                            b1.Property<Guid>("ProjectileId")
++                                .HasColumnName("Projectile");
++
++                            b1.Property<int>("Scaling");
++
++                            b1.Property<int>("ScalingStat");
++
++                            b1.Property<string>("StatDiffJson")
++                                .HasColumnName("StatDiff");
++
++                            b1.Property<int>("TargetType");
++
++                            b1.Property<string>("TransformSprite");
++
++                            b1.Property<int>("TrapDuration")
++                                .HasColumnName("Trap");
++
++                            b1.Property<string>("VitalDiffJson")
++                                .HasColumnName("VitalDiff");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Combat")
++                                .HasForeignKey("Intersect.GameObjects.SpellCombatData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<bool>("IgnoreActiveResources");
++
++                            b1.Property<bool>("IgnoreInactiveResources");
++
++                            b1.Property<bool>("IgnoreMapBlocks");
++
++                            b1.Property<bool>("IgnoreZDimensionAttributes");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Dash")
++                                .HasForeignKey("Intersect.GameObjects.SpellDashOpts", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("Dir");
++
++                            b1.Property<Guid>("MapId");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Warp")
++                                .HasForeignKey("Intersect.GameObjects.SpellWarpData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/20200424140012_MapTags.cs b/Intersect.Server/Migrations/Game/20200424140012_MapTags.cs
+new file mode 100644
+index 00000000..f12557bd
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200424140012_MapTags.cs
+@@ -0,0 +1,22 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++namespace Intersect.Server.Migrations.Game
++{
++    public partial class MapTags : Migration
++    {
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "Tag",
++                table: "Maps",
++                nullable: true);
++        }
++
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "Tag",
++                table: "Maps");
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+index 8f0ecb1c..5a4b8cb5 100644
+--- a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
++++ b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+@@ -239,6 +239,9 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+ 
+                     b.Property<int>("ItemType");
+ 
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
+                     b.Property<string>("JsonUsageRequirements")
+                         .HasColumnName("UsageRequirements");
+ 
+@@ -279,8 +282,6 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+                     b.Property<string>("StatsJson")
+                         .HasColumnName("StatsGiven");
+ 
+-                    b.Property<string>("Tag");
+-
+                     b.Property<long>("TimeCreated");
+ 
+                     b.Property<int>("Tool");
+@@ -361,6 +362,9 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+                     b.Property<string>("JsonStat")
+                         .HasColumnName("Stats");
+ 
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
+                     b.Property<int>("Level");
+ 
+                     b.Property<byte>("Movement");
+@@ -398,8 +402,6 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+ 
+                     b.Property<bool>("Swarm");
+ 
+-                    b.Property<string>("Tag");
+-
+                     b.Property<long>("TimeCreated");
+ 
+                     b.HasKey("Id");
+@@ -722,6 +724,9 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+ 
+                     b.Property<bool>("IsIndoors");
+ 
++                    b.Property<string>("JsonTags")
++                        .HasColumnName("Tag");
++
+                     b.Property<Guid>("Left");
+ 
+                     b.Property<string>("LightsJson")
+-- 
+2.25.0.windows.1
+
