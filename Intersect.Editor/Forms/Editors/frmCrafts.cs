@@ -135,6 +135,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudQuantity_ValueChanged(object sender, EventArgs e)
         {
+            // This should never be below 1. We shouldn't accept giving 0 items!
+            nudQuantity.Value = Math.Max(1, nudQuantity.Value);
+
             if (lstIngredients.SelectedIndex > -1)
             {
                 mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity = (int) nudQuantity.Value;
@@ -439,6 +442,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCraftQuantity_ValueChanged(object sender, EventArgs e)
         {
+            // This should never be below 1. We shouldn't accept giving 0 items!
+            nudCraftQuantity.Value = Math.Max(1, nudCraftQuantity.Value);
             mEditorItem.Quantity = (int) nudCraftQuantity.Value;
         }
 

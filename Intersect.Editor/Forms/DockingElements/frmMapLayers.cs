@@ -1078,6 +1078,11 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
+        private void NudItemQuantity_ValueChanged(object sender, System.EventArgs e)
+        {
+            nudItemQuantity.Value = Math.Max(1, nudItemQuantity.Value);
+        }
+
     }
 
 }

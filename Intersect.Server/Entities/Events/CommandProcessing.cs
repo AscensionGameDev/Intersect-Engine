@@ -419,13 +419,14 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
-            if (command.Add) //Try to give item
+
+            if (command.Add)
             {
-                success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
+                success = player.TryGiveItem(command.ItemId, command.Quantity, command.ItemHandling);
             }
             else
             {
-                success = player.TakeItemsById(command.ItemId, command.Quantity);
+                success = player.TryTakeItem(command.ItemId, command.Quantity, command.ItemHandling);
             }
 
             List<EventCommand> newCommandList = null;

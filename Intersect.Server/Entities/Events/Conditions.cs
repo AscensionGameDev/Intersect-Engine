@@ -423,6 +423,24 @@ namespace Intersect.Server.Entities.Events
             return false;
         }
 
+        public static bool MeetsCondition(
+            HasFreeInventorySlots condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase
+        )
+        {
+
+            // Check if the user has (or does not have when negated) the desired amount of inventory slots.
+            var slots = player.FindOpenInventorySlots().Count;
+            if ((!condition.Negated && slots >= condition.Quantity) || (condition.Negated && slots < condition.Quantity))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         //Variable Comparison Processing
         public static bool CheckVariableComparison(
             VariableValue currentValue,

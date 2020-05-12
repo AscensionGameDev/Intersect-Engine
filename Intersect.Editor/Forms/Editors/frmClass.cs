@@ -1229,6 +1229,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudSpawnItemAmount_ValueChanged(object sender, EventArgs e)
         {
+            // This should never be below 1. We shouldn't accept giving 0 items!
+            nudSpawnItemAmount.Value = Math.Max(1, nudSpawnItemAmount.Value);
+
             if (lstSpawnItems.SelectedIndex < lstSpawnItems.Items.Count)
             {
                 return;

@@ -425,6 +425,11 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool Add { get; set; } //If !Add then Remove
 
+        /// <summary>
+        /// Defines how the server is supposed to handle changing the items of this request.
+        /// </summary>
+        public ItemHandling ItemHandling { get; set; } = ItemHandling.Normal;
+
         public int Quantity { get; set; }
 
         public Guid[] BranchIds { get; set; } =

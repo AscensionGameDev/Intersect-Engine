@@ -222,6 +222,7 @@
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Enums\ItemHandling.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />

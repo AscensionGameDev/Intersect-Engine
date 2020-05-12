@@ -454,7 +454,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, itemInfo.BankOverflow, true))
+            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, true))
             {
                 return Request.CreateErrorResponse(
                     HttpStatusCode.InternalServerError,
@@ -506,7 +506,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (player.TakeItemsById(itemInfo.ItemId, itemInfo.Quantity))
+            if (player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
             {
                 return new
                 {

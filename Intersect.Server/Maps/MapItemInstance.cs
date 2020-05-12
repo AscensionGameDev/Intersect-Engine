@@ -41,6 +41,21 @@ namespace Intersect.Server.Maps
             return JsonConvert.SerializeObject(this);
         }
 
+        /// <summary>
+        /// Sets up the Stat Buffs on this map item from a supplied item.
+        /// </summary>
+        /// <param name="item">The item to take the Stat Buffs from and apply them to this MapItem.</param>
+        public void SetupStatBuffs(Item item)
+        {
+            if (StatBuffs != null && item.StatBuffs != null)
+            {
+                for (var i = 0; i < StatBuffs.Length; ++i)
+                {
+                    StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
+                }
+            }
+        }
+
     }
 
 }

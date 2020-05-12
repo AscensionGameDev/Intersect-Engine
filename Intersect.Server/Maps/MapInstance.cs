@@ -213,11 +213,23 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void SpawnItem(int x, int y, Item item, int amount)
-        {
-            this.SpawnItem(x, y, item, amount, Guid.Empty);
-        }
+        /// <summary>
+        /// Spawn an item to this map instance.
+        /// </summary>
+        /// <param name="x">The horizontal location of this item</param>
+        /// <param name="y">The vertical location of this item.</param>
+        /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
+        /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
+        public void SpawnItem(int x, int y, Item item, int amount) => SpawnItem(x, y, item, amount, Guid.Empty);
 
+        /// <summary>
+        /// Spawn an item to this map instance.
+        /// </summary>
+        /// <param name="x">The horizontal location of this item</param>
+        /// <param name="y">The vertical location of this item.</param>
+        /// <param name="item">The <see cref="Item"/> to spawn on the map.</param>
+        /// <param name="amount">The amount of times to spawn this item to the map. Set to the <see cref="Item"/> quantity, overwrites quantity if stackable!</param>
+        /// <param name="owner">The player Id that will be the temporary owner of this item.</param>
         public void SpawnItem(int x, int y, Item item, int amount, Guid owner)
         {
             if (item == null)
@@ -227,51 +239,60 @@ namespace Intersect.Server.Maps
                 return;
             }
 
-            var itemBase = ItemBase.Get(item.ItemId);
-            if (itemBase == null)
+            var itemDescriptor = ItemBase.Get(item.ItemId);
+            if (itemDescriptor == null)
             {
                 Log.Warn($"No item found for {item.ItemId}.");
 
                 return;
             }
 
-            
-
-            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag) {
-                X = x,
-                Y = y,
-                DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
-                Owner = owner,
-                OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
-                VisibleToAll = Options.Loot.ShowUnownedItems
-            };
-
-            if (itemBase.ItemType == ItemTypes.Equipment)
+            // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
+            if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
             {
-                mapItem.Quantity = 1;
-                if (mapItem.StatBuffs != null && item.StatBuffs != null)
+                var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                    Owner = owner,
+                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                    VisibleToAll = Options.Loot.ShowUnownedItems
+                };
+
+                // If this is a piece of equipment, set up the stat buffs for it.
+                if (itemDescriptor.ItemType == ItemTypes.Equipment)
                 {
-                    for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
-                    {
-                        mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
-                    }
+                    mapItem.SetupStatBuffs(item);
                 }
-                else if (mapItem.StatBuffs == null)
-                {
-                    Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
-                }
-                else
-                {
-                    Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
-                }
+
+                MapItems.Add(mapItem);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
             else
             {
-                mapItem.Quantity = amount;
-            }
+                // Oh boy here we go! Set quantity to 1 and drop multiple!
+                for (var i = 0; i < amount; i++)
+                {
+                    var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
+                        X = x,
+                        Y = y,
+                        DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                        Owner = owner,
+                        OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                        VisibleToAll = Options.Loot.ShowUnownedItems
+                    };
 
-            MapItems.Add(mapItem);
-            PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+                    // If this is a piece of equipment, set up the stat buffs for it.
+                    if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                    {
+                        mapItem.SetupStatBuffs(item);
+                    }
+
+                    MapItems.Add(mapItem);
+                }
+                PacketSender.SendMapItemsToProximity(Id);
+            }
+            
         }
 
         private void SpawnAttributeItem(int x, int y)

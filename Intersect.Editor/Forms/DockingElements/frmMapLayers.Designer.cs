@@ -457,13 +457,11 @@ namespace Intersect.Editor.Forms.DockingElements
             0,
             0});
             this.nudItemQuantity.Name = "nudItemQuantity";
+            this.nudItemQuantity.ValueChanged += new System.EventHandler(this.NudItemQuantity_ValueChanged);
             this.nudItemQuantity.Size = new System.Drawing.Size(219, 20);
             this.nudItemQuantity.TabIndex = 10;
-            this.nudItemQuantity.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.nudItemQuantity.Value = 1;
+            
             // 
             // cmbItemAttribute
             // 
