@@ -383,7 +383,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEquipment.Visible = false;
             grpEvent.Visible = false;
             grpBags.Visible = false;
-            chkStackable.Visible = true;
+            chkStackable.Enabled = true;
 
             if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
             {
@@ -445,7 +445,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 // Whether this item type is stackable is not up for debate.
                 chkStackable.Checked = true;
-                chkStackable.Visible = false;
+                chkStackable.Enabled = false;
             }
 
             mEditorItem.ItemType = (ItemTypes) cmbType.SelectedIndex;
