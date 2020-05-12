@@ -383,6 +383,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEquipment.Visible = false;
             grpEvent.Visible = false;
             grpBags.Visible = false;
+            chkStackable.Enabled = true;
 
             if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
             {
@@ -439,6 +440,12 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.SlotCount = Math.Max(1, mEditorItem.SlotCount);
                 grpBags.Visible = true;
                 nudBag.Value = mEditorItem.SlotCount;
+            }
+            else if (cmbType.SelectedIndex == (int)ItemTypes.Currency)
+            {
+                // Whether this item type is stackable is not up for debate.
+                chkStackable.Checked = true;
+                chkStackable.Enabled = false;
             }
 
             mEditorItem.ItemType = (ItemTypes) cmbType.SelectedIndex;
