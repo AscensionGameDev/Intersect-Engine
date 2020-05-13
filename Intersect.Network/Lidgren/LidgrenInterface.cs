@@ -15,7 +15,7 @@ using JetBrains.Annotations;
 
 using Lidgren.Network;
 
-namespace Intersect.Network
+namespace Intersect.Network.Lidgren
 {
 
     public sealed class LidgrenInterface : INetworkLayerInterface
@@ -609,6 +609,10 @@ namespace Intersect.Network
                                     case "Failed to establish connection - no response from remote host":
                                         networkStatus = NetworkStatus.Offline;
 
+                                        break;
+
+                                    case "closing":
+                                        networkStatus = NetworkStatus.Offline;
                                         break;
 
                                     default:

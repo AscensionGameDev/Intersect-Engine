@@ -73,9 +73,9 @@
     <Compile Include="Crypto\IKeyEncoder.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="KeyFactory.cs" />
-    <Compile Include="LidgrenConnection.cs" />
-    <Compile Include="LidgrenBuffer.cs" />
-    <Compile Include="LidgrenInterface.cs" />
+    <Compile Include="Lidgren\LidgrenConnection.cs" />
+    <Compile Include="Lidgren\LidgrenBuffer.cs" />
+    <Compile Include="Lidgren\LidgrenInterface.cs" />
     <Compile Include="NetworkMetaStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -89,5 +89,6 @@
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

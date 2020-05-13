@@ -91,6 +91,8 @@ namespace Intersect.Editor.General
 
         public static Guid LoadingMap = Guid.Empty;
 
+        public static FrmUpdate UpdateForm;
+
         public static FrmLogin LoginForm;
 
         public static FrmMain MainForm;
@@ -123,6 +125,8 @@ namespace Intersect.Editor.General
         public static FrmProgress PackingProgressForm;
 
         public static FrmProgress PreviewProgressForm;
+
+        public static FrmProgress UpdateCreationProgressForm;
 
         //Network Variables
         public static int ReconnectTime = 3000;

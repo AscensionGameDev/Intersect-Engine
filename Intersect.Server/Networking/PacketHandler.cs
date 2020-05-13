@@ -825,11 +825,11 @@ namespace Intersect.Server.Networking
                     {
                         if (projectileBase.AmmoItemId != Guid.Empty)
                         {
-                            var itemSlot = player.FindItem(
+                            var itemSlot = player.FindInventoryItemSlot(
                                 projectileBase.AmmoItemId, projectileBase.AmmoRequired
                             );
 
-                            if (itemSlot == -1)
+                            if (itemSlot == null)
                             {
                                 PacketSender.SendChatMsg(
                                     player,
@@ -844,7 +844,7 @@ namespace Intersect.Server.Networking
                                     Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
                                     CustomColors.NoAmmo);
 #endif
-                            if (!player.TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
+                            if (!player.TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
                             {
 #if INTERSECT_DIAGNOSTIC
                                     PacketSender.SendPlayerMsg(client,
@@ -1134,7 +1134,7 @@ namespace Intersect.Server.Networking
                     if (ItemBase.Get(item.Id) != null)
                     {
                         var tempItem = new Item(item.Id, item.Quantity);
-                        newChar.TryGiveItem(tempItem, false);
+                        newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
                     }
                 }
 
@@ -1156,14 +1156,43 @@ namespace Intersect.Server.Networking
             if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
-                if (MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].X == player.X &&
-                    MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex].Y == player.Y)
+                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
+                if (mapItem.X == player.X &&
+                    mapItem.Y == player.Y)
                 {
-                    if (player.TryGiveItem(MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex]))
+                    var canTake = false;
+                    // Can we actually take this item?
+                    if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
                     {
-                        //Remove Item From Map
-                        MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        // The ownership time has run out, or there's no owner!
+                        canTake = true;
                     }
+                    else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
+                    {
+                        // The current player is the owner, or one of their party members is.
+                        canTake = true;
+                    } 
+
+                    if (canTake)
+                    {
+                        // Try to give the item to our player.
+                        if (player.TryGiveItem(mapItem))
+                        {
+                            // Remove Item From Map
+                            MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                        } 
+                        else 
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
+                        }
+                    } 
+                    else
+                    {
+                        // Item does not belong to them.
+                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
+                    }
+                    
                 }
             }
         }
@@ -1448,7 +1477,7 @@ namespace Intersect.Server.Networking
 
             var target = Player.FindOnline(packet.TargetId);
 
-            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.PartyRange))
+            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.PartyInviteRange))
             {
                 target.InviteToParty(player);
 

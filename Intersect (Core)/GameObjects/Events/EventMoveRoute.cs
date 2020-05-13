@@ -8,11 +8,6 @@ namespace Intersect.GameObjects.Events
 
     public class EventMoveRoute
     {
-
-        public EventMoveRoute()
-        {
-        }
-
         public List<MoveRouteAction> Actions { get; set; } = new List<MoveRouteAction>();
 
         public bool IgnoreIfBlocked { get; set; }

@@ -191,7 +191,9 @@
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
+    <Compile Include="Config\LootOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
+    <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
@@ -219,8 +221,8 @@
     <Compile Include="Config\Passability.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
-    <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Enums\ItemHandling.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -477,6 +479,10 @@
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
     <Compile Include="Threading\Threaded.cs" />
+    <Compile Include="Updater\Update.cs" />
+    <Compile Include="Updater\UpdateFile.cs" />
+    <Compile Include="Updater\Updater.cs" />
+    <Compile Include="Updater\UpdateStatus.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\DatabaseUtils.cs" />
     <Compile Include="Utilities\ExperienceCurve.cs" />

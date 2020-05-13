@@ -10,11 +10,6 @@
 
     public class OpenFileDialog
     {
-
-        public OpenFileDialog()
-        {
-        }
-
         public string Title { get; set; }
 
         public string InitialDirectory { get; set; }

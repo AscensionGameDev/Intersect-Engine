@@ -32,6 +32,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+            this.grpFreeInventorySlots = new DarkUI.Controls.DarkGroupBox();
+            this.nudFreeInventorySlots = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblFreeInventorySlotAmount = new System.Windows.Forms.Label();
             this.chkNegated = new DarkUI.Controls.DarkCheckBox();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
@@ -121,6 +124,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
             this.grpConditional.SuspendLayout();
+            this.grpFreeInventorySlots.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreeInventorySlots)).BeginInit();
             this.grpVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
             this.grpStringVariable.SuspendLayout();
@@ -148,6 +153,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpFreeInventorySlots);
             this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
@@ -174,6 +180,48 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
+            // 
+            // grpFreeInventorySlots
+            // 
+            this.grpFreeInventorySlots.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpFreeInventorySlots.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpFreeInventorySlots.Controls.Add(this.nudFreeInventorySlots);
+            this.grpFreeInventorySlots.Controls.Add(this.lblFreeInventorySlotAmount);
+            this.grpFreeInventorySlots.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpFreeInventorySlots.Location = new System.Drawing.Point(9, 40);
+            this.grpFreeInventorySlots.Name = "grpFreeInventorySlots";
+            this.grpFreeInventorySlots.Size = new System.Drawing.Size(262, 49);
+            this.grpFreeInventorySlots.TabIndex = 55;
+            this.grpFreeInventorySlots.TabStop = false;
+            this.grpFreeInventorySlots.Text = "Has X Free Inventory slots:";
+            // 
+            // nudFreeInventorySlots
+            // 
+            this.nudFreeInventorySlots.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudFreeInventorySlots.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudFreeInventorySlots.Location = new System.Drawing.Point(103, 16);
+            this.nudFreeInventorySlots.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudFreeInventorySlots.Name = "nudFreeInventorySlots";
+            this.nudFreeInventorySlots.Size = new System.Drawing.Size(150, 20);
+            this.nudFreeInventorySlots.TabIndex = 5;
+            this.nudFreeInventorySlots.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblFreeInventorySlotAmount
+            // 
+            this.lblFreeInventorySlotAmount.AutoSize = true;
+            this.lblFreeInventorySlotAmount.Location = new System.Drawing.Point(5, 20);
+            this.lblFreeInventorySlotAmount.Name = "lblFreeInventorySlotAmount";
+            this.lblFreeInventorySlotAmount.Size = new System.Drawing.Size(46, 13);
+            this.lblFreeInventorySlotAmount.TabIndex = 0;
+            this.lblFreeInventorySlotAmount.Text = "Amount:";
             // 
             // chkNegated
             // 
@@ -222,7 +270,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Player death...",
             "No NPCs on the map...",
             "Gender is...",
-            "Item Equipped Is..."});
+            "Item Equipped Is...",
+            "Has X free Inventory slots..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
@@ -592,14 +641,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudVariableValue.Location = new System.Drawing.Point(115, 48);
             this.nudVariableValue.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
+            -1,
+            -1,
+            -1,
             0});
             this.nudVariableValue.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
+            -1,
+            -1,
+            -1,
             -2147483648});
             this.nudVariableValue.Name = "nudVariableValue";
             this.nudVariableValue.Size = new System.Drawing.Size(125, 20);
@@ -1450,10 +1499,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.nudItemAmount.Size = new System.Drawing.Size(150, 20);
             this.nudItemAmount.TabIndex = 4;
             this.nudItemAmount.Value = new decimal(new int[] {
-            0,
+            1,
             0,
             0,
             0});
+            this.nudItemAmount.ValueChanged += new System.EventHandler(this.NudItemAmount_ValueChanged);
             // 
             // cmbItem
             // 
@@ -1505,6 +1555,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.Size = new System.Drawing.Size(287, 345);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
+            this.grpFreeInventorySlots.ResumeLayout(false);
+            this.grpFreeInventorySlots.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFreeInventorySlots)).EndInit();
             this.grpVariable.ResumeLayout(false);
             this.grpSelectVariable.ResumeLayout(false);
             this.grpSelectVariable.PerformLayout();
@@ -1637,5 +1690,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkTextBox txtStringValue;
         private System.Windows.Forms.Label lblStringComparatorValue;
         private System.Windows.Forms.Label lblStringTextVariables;
+        private DarkGroupBox grpFreeInventorySlots;
+        private DarkNumericUpDown nudFreeInventorySlots;
+        private System.Windows.Forms.Label lblFreeInventorySlotAmount;
     }
 }
