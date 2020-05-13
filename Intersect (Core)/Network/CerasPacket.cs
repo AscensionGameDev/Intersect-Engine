@@ -15,11 +15,10 @@ namespace Intersect.Network
         /// <inheritdoc />
         public virtual void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public virtual byte[] Data => sCerasInstance.Serialize(this);
+        [NotNull] public virtual byte[] Data => sCerasInstance.Serialize(this) ?? throw new Exception("Failed to serialize packet.");
 
         public virtual bool IsValid => true;
 

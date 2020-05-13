@@ -185,14 +185,18 @@ namespace Intersect.Network.Lidgren
             mRng.GetNonZeroBytes(handshakeSecret);
 
             var connectionRsa = new RSACryptoServiceProvider(2048);
+            var hailParameters = connectionRsa.ExportParameters(false);
+            var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VersionData, hailParameters);
+            hail.Encrypt();
 
-            var hail = new HailPacket(
-                mRsa, handshakeSecret, SharedConstants.VersionData, connectionRsa.ExportParameters(false)
-            );
+            var hailMessage = mPeer.CreateMessage(hail.Data.Length);
+            if (hailMessage == null)
+            {
+                throw new InvalidOperationException();
+            }
 
-            var hailMessage = mPeer.CreateMessage();
             hailMessage.Data = hail.Data;
-            hailMessage.LengthBytes = hailMessage.Data.Length;
+            hailMessage.LengthBytes = hail.Data.Length;
 
             if (mPeer.Status == NetPeerStatus.NotRunning)
             {
@@ -511,10 +515,7 @@ namespace Intersect.Network.Lidgren
                                 }
 
                                 FireHandler(
-                                    OnConnectionApproved,
-                                    nameof(OnConnectionApproved),
-                                    this,
-                                    new ConnectionEventArgs
+                                    OnConnectionApproved, nameof(OnConnectionApproved), this, new ConnectionEventArgs
                                     {
                                         NetworkStatus = NetworkStatus.Connecting,
                                         Connection = intersectConnection
@@ -522,7 +523,17 @@ namespace Intersect.Network.Lidgren
                                 );
 
                                 Debug.Assert(connection != null, "connection != null");
-                                var approval = (ApprovalPacket) mCeras.Deserialize(connection.RemoteHailMessage.Data);
+                                var approvalPacketData = connection.RemoteHailMessage.Data;
+                                var approval = mCeras.Deserialize<ApprovalPacket>(approvalPacketData);
+
+                                if (!(approval?.Decrypt(intersectConnection.Rsa) ?? false))
+                                {
+                                    Log.Error("Unable to read approval message, disconnecting.");
+                                    mNetwork.Disconnect("client_error");
+                                    connection.Disconnect("client_error");
+
+                                    break;
+                                }
 
                                 if (!intersectConnection.HandleApproval(approval))
                                 {
@@ -562,10 +573,7 @@ namespace Intersect.Network.Lidgren
                             }
 
                             FireHandler(
-                                OnConnected,
-                                nameof(OnConnected),
-                                this,
-                                new ConnectionEventArgs
+                                OnConnected, nameof(OnConnected), this, new ConnectionEventArgs
                                 {
                                     NetworkStatus = NetworkStatus.Online,
                                     Connection = intersectConnection
@@ -590,14 +598,17 @@ namespace Intersect.Network.Lidgren
                                     //Lidgren won't accept a connection with a bad version and sends this message back so we need to manually handle it
                                     case "Wrong application identifier!":
                                         networkStatus = NetworkStatus.VersionMismatch;
+
                                         break;
 
                                     case "Connection timed out":
                                         networkStatus = NetworkStatus.Quitting;
+
                                         break;
 
                                     case "Failed to establish connection - no response from remote host":
                                         networkStatus = NetworkStatus.Offline;
+
                                         break;
 
                                     case "closing":
@@ -605,7 +616,10 @@ namespace Intersect.Network.Lidgren
                                         break;
 
                                     default:
-                                        networkStatus = (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason ?? "<null>", true);
+                                        networkStatus = (NetworkStatus) Enum.Parse(
+                                            typeof(NetworkStatus), reason ?? "<null>", true
+                                        );
+
                                         break;
                                 }
                             }
@@ -625,6 +639,7 @@ namespace Intersect.Network.Lidgren
                                 case NetworkStatus.Failed:
                                     disconnectHandler = OnConnectionDenied;
                                     disconnectHandlerName = nameof(OnConnectionDenied);
+
                                     break;
 
                                 case NetworkStatus.Connecting:
@@ -634,6 +649,7 @@ namespace Intersect.Network.Lidgren
                                 case NetworkStatus.Unknown:
                                     disconnectHandler = OnDisconnected;
                                     disconnectHandlerName = nameof(OnDisconnected);
+
                                     break;
 
                                 default:
@@ -643,7 +659,10 @@ namespace Intersect.Network.Lidgren
                             if (!mGuidLookup.TryGetValue(lidgrenId, out var guid))
                             {
                                 Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
-                                FireHandler(disconnectHandler, disconnectHandlerName, this, new ConnectionEventArgs { NetworkStatus = networkStatus });
+                                FireHandler(
+                                    disconnectHandler, disconnectHandlerName, this,
+                                    new ConnectionEventArgs {NetworkStatus = networkStatus}
+                                );
 
                                 break;
                             }
@@ -653,7 +672,11 @@ namespace Intersect.Network.Lidgren
                             {
                                 client.HandleDisconnected();
 
-                                FireHandler(disconnectHandler, disconnectHandlerName, this, new ConnectionEventArgs { Connection = client, NetworkStatus = NetworkStatus.Offline });
+                                FireHandler(
+                                    disconnectHandler, disconnectHandlerName, this,
+                                    new ConnectionEventArgs {Connection = client, NetworkStatus = NetworkStatus.Offline}
+                                );
+
                                 mNetwork.RemoveConnection(client);
                             }
 
@@ -678,7 +701,14 @@ namespace Intersect.Network.Lidgren
                 {
                     try
                     {
-                        var hail = (HailPacket) mCeras.Deserialize(message.Data);
+                        var hail = mCeras.Deserialize<HailPacket>(message.Data);
+                        if (!(hail?.Decrypt(mRsa) ?? false))
+                        {
+                            Log.Warn($"Failed to read hail, denying connection [{lidgrenIdHex}].");
+                            connection?.Deny(NetworkStatus.HandshakeFailure.ToString());
+
+                            break;
+                        }
 
                         Debug.Assert(SharedConstants.VersionData != null, "SharedConstants.VERSION_DATA != null");
                         Debug.Assert(hail.VersionData != null, "hail.VersionData != null");
@@ -726,11 +756,21 @@ namespace Intersect.Network.Lidgren
 
                         Debug.Assert(mPeer != null, "mPeer != null");
                         var approval = new ApprovalPacket(client.Rsa, hail.HandshakeSecret, aesKey, client.Guid);
-                        var approvalMessage = mPeer.CreateMessage();
+                        approval.Encrypt();
+
+                        var approvalMessage = mPeer.CreateMessage(approval.Data.Length);
+                        if (approvalMessage == null)
+                        {
+                            throw new InvalidOperationException();
+                        }
+
                         approvalMessage.Data = approval.Data;
                         approvalMessage.LengthBytes = approvalMessage.Data.Length;
                         connection.Approve(approvalMessage);
-                        OnConnectionApproved(this, new ConnectionEventArgs { Connection = client, NetworkStatus = NetworkStatus.Online });
+
+                        OnConnectionApproved(
+                            this, new ConnectionEventArgs {Connection = client, NetworkStatus = NetworkStatus.Online}
+                        );
                     }
                     catch
                     {
