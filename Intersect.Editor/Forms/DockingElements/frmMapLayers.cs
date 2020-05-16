@@ -14,6 +14,8 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 
+using JetBrains.Annotations;
+
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
@@ -512,76 +514,137 @@ namespace Intersect.Editor.Forms.DockingElements
             return (int) MapAttributes.Walkable;
         }
 
-        public void PlaceAttribute(MapBase tmpMap, int x, int y)
+        private MapAttributes SelectedMapAttributeType
         {
-            if (rbBlocked.Checked)
+            get
             {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Blocked);
-            }
-            else if (rbItem.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Item);
-                ((MapItemAttribute) tmpMap.Attributes[x, y]).ItemId =
-                    ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
-
-                ((MapItemAttribute) tmpMap.Attributes[x, y]).Quantity = (int) nudItemQuantity.Value;
-            }
-            else if (rbZDimension.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.ZDimension);
-                ((MapZDimensionAttribute) tmpMap.Attributes[x, y]).GatewayTo = GetEditorDimensionGateway();
-                ((MapZDimensionAttribute) tmpMap.Attributes[x, y]).BlockedLevel = GetEditorDimensionBlock();
-            }
-            else if (rbNPCAvoid.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.NpcAvoid);
-            }
-            else if (rbWarp.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Warp);
-                ((MapWarpAttribute) tmpMap.Attributes[x, y]).MapId =
-                    MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
-
-                ((MapWarpAttribute) tmpMap.Attributes[x, y]).X = (byte) nudWarpX.Value;
-                ((MapWarpAttribute) tmpMap.Attributes[x, y]).Y = (byte) nudWarpY.Value;
-                ((MapWarpAttribute) tmpMap.Attributes[x, y]).Direction = (WarpDirection) cmbDirection.SelectedIndex;
-            }
-            else if (rbSound.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Sound);
-                ((MapSoundAttribute) tmpMap.Attributes[x, y]).Distance = (byte) nudSoundDistance.Value;
-                ((MapSoundAttribute) tmpMap.Attributes[x, y]).File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
-            }
-            else if (rbResource.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Resource);
-                ((MapResourceAttribute) tmpMap.Attributes[x, y]).ResourceId =
-                    ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
-
-                if (rbLevel1.Checked)
+                if (rbBlocked.Checked)
                 {
-                    ((MapResourceAttribute) tmpMap.Attributes[x, y]).SpawnLevel = 0;
+                    return MapAttributes.Blocked;
                 }
-                else
+                
+                if (rbItem.Checked)
                 {
-                    ((MapResourceAttribute) tmpMap.Attributes[x, y]).SpawnLevel = 1;
+                    return MapAttributes.Item;
                 }
+
+                if (rbZDimension.Checked)
+                {
+                    return MapAttributes.ZDimension;
+                }
+
+                if (rbNPCAvoid.Checked)
+                {
+                    return MapAttributes.NpcAvoid;
+                }
+
+                if (rbWarp.Checked)
+                {
+                    return MapAttributes.Warp;
+                }
+
+                if (rbSound.Checked)
+                {
+                    return MapAttributes.Sound;
+                }
+
+                if (rbResource.Checked)
+                {
+                    return MapAttributes.Resource;
+                }
+
+                if (rbAnimation.Checked)
+                {
+                    return MapAttributes.Animation;
+                }
+
+                if (rbGrappleStone.Checked)
+                {
+                    return MapAttributes.GrappleStone;
+                }
+
+                if (rbSlide.Checked)
+                {
+                    return MapAttributes.Slide;
+                }
+
+                return (MapAttributes) byte.MaxValue;
             }
-            else if (rbAnimation.Checked)
+        }
+
+        [Obsolete("The entire switch statement should be implemented as a parameterized CreateAttribute().")]
+        [NotNull]
+        public MapAttribute CreateAttribute()
+        {
+            var attributeType = SelectedMapAttributeType;
+            var attribute = MapAttribute.CreateAttribute(attributeType);
+            switch (SelectedMapAttributeType)
             {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Animation);
-                ((MapAnimationAttribute) tmpMap.Attributes[x, y]).AnimationId =
-                    AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                case MapAttributes.Walkable:
+                case MapAttributes.Blocked:
+                case MapAttributes.GrappleStone:
+                case MapAttributes.NpcAvoid:
+                    break;
+
+                case MapAttributes.Item:
+                    var itemAttribute = attribute as MapItemAttribute;
+                    itemAttribute.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
+                    itemAttribute.Quantity = (int)nudItemQuantity.Value;
+                    break;
+
+                case MapAttributes.ZDimension:
+                    var zDimensionAttribute = attribute as MapZDimensionAttribute;
+                    zDimensionAttribute.GatewayTo = GetEditorDimensionGateway();
+                    zDimensionAttribute.BlockedLevel = GetEditorDimensionBlock();
+                    break;
+
+                case MapAttributes.Warp:
+                    var warpAttribute = attribute as MapWarpAttribute;
+                    warpAttribute.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
+                    warpAttribute.X = (byte)nudWarpX.Value;
+                    warpAttribute.Y = (byte)nudWarpY.Value;
+                    warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
+                    break;
+
+                case MapAttributes.Sound:
+                    var soundAttribute = attribute as MapSoundAttribute;
+                    soundAttribute.Distance = (byte)nudSoundDistance.Value;
+                    soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                    break;
+
+                case MapAttributes.Resource:
+                    var resourceAttribute = attribute as MapResourceAttribute;
+                    resourceAttribute.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+                    resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
+                    break;
+
+                case MapAttributes.Animation:
+                    var animationAttribute = attribute as MapAnimationAttribute;
+                    animationAttribute.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                    break;
+
+                case MapAttributes.Slide:
+                    var slideAttribute = attribute as MapSlideAttribute;
+                    slideAttribute.Direction = (byte)cmbSlideDir.SelectedIndex;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(SelectedMapAttributeType), @"The currently selected attribute type has not been fully implemented.");
             }
-            else if (rbGrappleStone.Checked)
+
+            return attribute;
+        }
+
+        public MapAttribute PlaceAttribute(MapBase mapDescriptor, int x, int y, MapAttribute attribute = null)
+        {
+            if (attribute == null)
             {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.GrappleStone);
+                attribute = CreateAttribute();
             }
-            else if (rbSlide.Checked)
-            {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Slide);
-                ((MapSlideAttribute) tmpMap.Attributes[x, y]).Direction = (byte) cmbSlideDir.SelectedIndex;
-            }
+
+            mapDescriptor.Attributes[x, y] = attribute;
+
+            return attribute;
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
