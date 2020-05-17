@@ -17,7 +17,7 @@ namespace Intersect.Server.Database
     public class Item
     {
 
-        [JsonIgnore, NotMapped] public double DropChance = 100;
+        [JsonIgnore] [NotMapped] public double DropChance = 100;
 
         public Item()
         {
@@ -47,13 +47,10 @@ namespace Intersect.Server.Database
                 return;
             }
 
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 // TODO: What the fuck?
-                StatBuffs[i] = Randomization.Next(
-                    -descriptor.StatGrowth,
-                    descriptor.StatGrowth + 1
-                );
+                StatBuffs[i] = Randomization.Next(-descriptor.StatGrowth, descriptor.StatGrowth + 1);
             }
         }
 
@@ -78,14 +75,15 @@ namespace Intersect.Server.Database
         [JsonIgnore]
         public string StatBuffsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatBuffs, (int) Enums.Stats.StatCount);
-            set => StatBuffs = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatBuffs, (int) Stats.StatCount);
+            set => StatBuffs = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
         }
 
         [NotMapped]
-        public int[] StatBuffs { get; set; } = new int[(int) Enums.Stats.StatCount];
+        public int[] StatBuffs { get; set; } = new int[(int) Stats.StatCount];
 
-        [JsonIgnore, NotMapped]
+        [JsonIgnore]
+        [NotMapped]
         public ItemBase Descriptor => ItemBase.Get(ItemId);
 
         public static Item None => new Item();
@@ -120,7 +118,18 @@ namespace Intersect.Server.Database
         [ContractAnnotation(" => true, bag:notnull; => false, bag:null")]
         public bool TryGetBag(out Bag bag)
         {
-            bag = Bag ?? DbInterface.GetBag(BagId);
+            bag = Bag;
+
+            // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
+            if (bag == null)
+            {
+                var descriptor = Descriptor;
+                if (descriptor?.ItemType == ItemTypes.Bag)
+                {
+                    bag = DbInterface.GetBag(BagId);
+                }
+            }
+
             return default != bag;
         }
 
