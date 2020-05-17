@@ -1743,6 +1743,7 @@ namespace Intersect.Server.Entities
         /// <param name="slotIndex">the slot to drop from</param>
         /// <param name="amount">the amount to drop</param>
         /// <see cref="TryDropItemFrom(int, int)"/>
+        [Obsolete("Use TryDropItemFrom(int, int).")]
         public void DropItemFrom(int slotIndex, int amount) => TryDropItemFrom(slotIndex, amount);
 
         public void UseItem(int slot, Entity target = null)
