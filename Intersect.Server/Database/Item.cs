@@ -7,6 +7,8 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Utilities;
 
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database
@@ -108,6 +110,18 @@ namespace Intersect.Server.Database
         public Item Clone()
         {
             return new Item(this);
+        }
+
+        /// <summary>
+        /// Try to get the bag, with an additional attempt to load it if it is not already loaded (it should be if this is even a bag item).
+        /// </summary>
+        /// <param name="bag">the bag if there is one associated with this <see cref="Item"/></param>
+        /// <returns>if <paramref name="bag"/> is not <see langword="null"/></returns>
+        [ContractAnnotation(" => true, bag:notnull; => false, bag:null")]
+        public bool TryGetBag(out Bag bag)
+        {
+            bag = Bag ?? DbInterface.GetBag(BagId);
+            return default != bag;
         }
 
     }

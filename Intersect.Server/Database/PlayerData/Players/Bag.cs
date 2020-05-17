@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
+using Intersect.GameObjects;
+
 using Microsoft.EntityFrameworkCore;
+
+using Newtonsoft.Json;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
@@ -26,6 +30,9 @@ namespace Intersect.Server.Database.PlayerData.Players
                 Slots.Add(new BagSlot(i));
             }
         }
+
+        [JsonIgnore, NotMapped]
+        public bool IsEmpty => Slots?.All(slot => slot?.ItemId == default || ItemBase.Get(slot.ItemId) == default) ?? true;
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
