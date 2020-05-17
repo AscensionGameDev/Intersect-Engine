@@ -25,10 +25,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         public Bag(int slots)
         {
             SlotCount = slots;
-            for (var i = 0; i < slots; i++)
-            {
-                Slots.Add(new BagSlot(i));
-            }
+            ValidateSlots();
         }
 
         [JsonIgnore, NotMapped]
@@ -40,6 +37,55 @@ namespace Intersect.Server.Database.PlayerData.Players
         public int SlotCount { get; private set; }
 
         public virtual List<BagSlot> Slots { get; set; } = new List<BagSlot>();
+
+        public void ValidateSlots(bool checkItemExistence = true)
+        {
+            if (Slots == null)
+            {
+                Slots = new List<BagSlot>(SlotCount);
+            }
+
+            var slots = Slots
+                .Where(bagSlot => bagSlot != null)
+                .OrderBy(bagSlot => bagSlot.Slot)
+                .Select(
+                    bagSlot =>
+                    {
+                        if (checkItemExistence && (bagSlot.ItemId == Guid.Empty || bagSlot.Descriptor == null))
+                        {
+                            bagSlot.Set(new Item());
+                        }
+
+                        return bagSlot;
+                    }
+                )
+                .ToList();
+
+            for (var slotIndex = 0; slotIndex < SlotCount; ++slotIndex)
+            {
+                if (slotIndex < slots.Count)
+                {
+                    var slot = slots[slotIndex];
+                    if (slot != null)
+                    {
+                        if (slot.Slot != slotIndex)
+                        {
+                            slots.Insert(slotIndex, new BagSlot(slotIndex));
+                        }
+                    }
+                    else
+                    {
+                        slots[slotIndex] = new BagSlot(slotIndex);
+                    }
+                }
+                else
+                {
+                    slots.Add(new BagSlot(slotIndex));
+                }
+            }
+
+            Slots = slots;
+        }
 
         public static Bag GetBag(PlayerContext context, Guid id)
         {

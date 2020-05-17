@@ -2440,14 +2440,16 @@ namespace Intersect.Server.Entities
             var canSellItem = true;
             var rewardItemId = Guid.Empty;
             var rewardItemVal = 0;
-            var sellItemNum = Items[slot].ItemId;
+
+            TryGetSlot(slot, out var itemInSlot, true);
+            var sellItemNum = itemInSlot.ItemId;
             var shop = InShop;
             if (shop != null)
             {
-                var itemBase = ItemBase.Get(Items[slot].ItemId);
-                if (itemBase != null)
+                var itemDescriptor = itemInSlot.Descriptor;
+                if (itemDescriptor != null)
                 {
-                    if (itemBase.Bound)
+                    if (itemDescriptor.Bound)
                     {
                         PacketSender.SendChatMsg(this, Strings.Shops.bound, CustomColors.Items.Bound);
 
@@ -2455,19 +2457,13 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == ItemTypes.Bag)
+                    if (itemDescriptor.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null)
+                        if (itemInSlot.TryGetBag(out var bag))
                         {
-                            Items[slot].Bag = DbInterface.GetBag(Items[slot]);
-                        }
-
-                        if (Items[slot].Bag != null)
-                        {
-                            if (!DbInterface.BagEmpty(Items[slot].Bag))
+                            if (!bag.IsEmpty)
                             {
                                 PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, CustomColors.Alerts.Error);
-
                                 return;
                             }
                         }
@@ -2504,19 +2500,16 @@ namespace Intersect.Server.Entities
                         else
                         {
                             rewardItemId = shop.DefaultCurrencyId;
-                            rewardItemVal = itemBase.Price;
+                            rewardItemVal = itemDescriptor.Price;
                         }
                     }
 
-                    if (amount >= Items[slot].Quantity)
-                    {
-                        amount = Items[slot].Quantity;
-                    }
+                    amount = Math.Min(itemInSlot.Quantity, amount);
 
-                    if (amount == Items[slot].Quantity)
+                    if (amount == itemInSlot.Quantity)
                     {
-                        //Definitely can get reward.
-                        Items[slot].Set(Item.None);
+                        // Definitely can get reward.
+                        itemInSlot.Set(Item.None);
                         EquipmentProcessItemLoss(slot);
                     }
                     else
@@ -2528,7 +2521,7 @@ namespace Intersect.Server.Entities
                         }
                         else
                         {
-                            Items[slot].Quantity -= amount;
+                            itemInSlot.Quantity -= amount;
                         }
                     }
 
@@ -3122,44 +3115,36 @@ namespace Intersect.Server.Entities
             PacketSender.SendBankUpdate(this, item2);
         }
 
-        //Bag
-        public bool OpenBag(Item bagItem, ItemBase itemBase)
+        // TODO: Document this. The TODO on bagItem == null needs to be resolved before this is.
+        public bool OpenBag(Item bagItem, ItemBase itemDescriptor)
         {
             if (IsBusy())
             {
                 return false;
             }
 
-            //Bags will never, ever, be stackable. Going to use the value property for the bag id in the Database.
-            if (bagItem.Bag == null)
+            // TODO: Figure out what to return in the event of a bad argument. An NRE would have happened anyway, and I don't have enough awareness of the bag feature to do this differently.
+            if (bagItem == null)
             {
-                bagItem.Bag = DbInterface.GetBag(bagItem);
-                if (bagItem.Bag == null) //Bag doesnt exist, create it!
-                {
-                    //Create the Bag
-                    var slotCount = itemBase.SlotCount;
-                    if (slotCount < 1)
-                    {
-                        slotCount = 1;
-                    }
+                throw new ArgumentNullException(nameof(bagItem));
+            }
 
-                    bagItem.Bag = new Bag(slotCount);
+            // If the bag does not exist, create one.
+            if (!bagItem.TryGetBag(out var bag))
+            {
+                var slotCount = itemDescriptor.SlotCount;
+                if (slotCount < 1)
+                {
+                    slotCount = 1;
                 }
 
-                bagItem.Bag.Slots = bagItem.Bag.Slots.OrderBy(p => p.Slot).ToList();
-
-                foreach (var itm in bagItem.Bag.Slots)
-                {
-                    if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
-                    {
-                        itm.Set(new Item());
-                    }
-                }
+                bag = new Bag(slotCount);
+                bagItem.Bag = bag;
             }
 
             //Send the bag to the player (this will make it appear on screen)
-            InBag = bagItem.Bag;
-            PacketSender.SendOpenBag(this, bagItem.Bag.SlotCount, bagItem.Bag);
+            InBag = bag;
+            PacketSender.SendOpenBag(this, bag.SlotCount, bag);
 
             return true;
         }
@@ -3532,6 +3517,7 @@ namespace Intersect.Server.Entities
 
         public void OfferItem(int slot, int amount)
         {
+            // TODO: Accessor cleanup
             if (Trading.Counterparty == null)
             {
                 return;
@@ -3565,17 +3551,11 @@ namespace Intersect.Server.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null)
+                        if (Items[slot].TryGetBag(out var bag))
                         {
-                            Items[slot].Bag = DbInterface.GetBag(Items[slot]);
-                        }
-
-                        if (Items[slot].Bag != null)
-                        {
-                            if (!DbInterface.BagEmpty(Items[slot].Bag))
+                            if (!bag.IsEmpty)
                             {
                                 PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, CustomColors.Alerts.Error);
-
                                 return;
                             }
                         }

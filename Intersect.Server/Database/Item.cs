@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -61,7 +63,8 @@ namespace Intersect.Server.Database
                 StatBuffs[i] = item.StatBuffs[i];
             }
         }
-
+        
+        // TODO: THIS SHOULD NOT BE A NULLABLE. This needs to be fixed.
         public Guid? BagId { get; set; }
 
         [JsonIgnore]
@@ -124,9 +127,11 @@ namespace Intersect.Server.Database
             if (bag == null)
             {
                 var descriptor = Descriptor;
+                // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
                 if (descriptor?.ItemType == ItemTypes.Bag)
                 {
-                    bag = DbInterface.GetBag(BagId);
+                    bag = DbInterface.GetBag(BagId ?? Guid.Empty);
+                    bag?.ValidateSlots();
                 }
             }
 

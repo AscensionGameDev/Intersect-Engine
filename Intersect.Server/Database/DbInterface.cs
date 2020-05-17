@@ -551,22 +551,23 @@ namespace Intersect.Server.Database
             SavePlayerDatabaseAsync();
         }
 
-        //Bags
-        public static Bag GetBag(Item item)
+        public static Bag GetBag(Guid bagId)
         {
-            return GetBag(item.BagId);
-        }
-
-        public static Bag GetBag(Guid? id)
-        {
-            if (id == null)
+            if (bagId == Guid.Empty)
             {
                 return null;
             }
 
             lock (mPlayerDbLock)
             {
-                return Bag.GetBag(sPlayerDb, (Guid) id);
+                var bag = Bag.GetBag(sPlayerDb, bagId);
+                if (bag == null)
+                {
+                    return default;
+                }
+
+                bag.ValidateSlots();
+                return bag;
             }
         }
 
