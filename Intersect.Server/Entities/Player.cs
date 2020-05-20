@@ -861,7 +861,7 @@ namespace Intersect.Server.Entities
                     // If in party, split the exp.
                     if (Party != null && Party.Count > 0)
                     {
-                        var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.PartySharedXpRange));
+                        var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.Party.SharedXpRange));
                         var partyExperience = descriptor.Experience / partyMembersInXpRange.Count();
                         foreach (var partyMember in partyMembersInXpRange) {
                             partyMember.GiveExperience(partyExperience);
@@ -871,7 +871,7 @@ namespace Intersect.Server.Entities
                         if (partyEvent != null)
                         {
                             foreach (var partyMember in Party) {
-                                if (partyMember.InRangeOf(this, Options.PartyStartCommonEventRange) && !(partyMember == this && playerEvent != null)) {
+                                if (partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange) && !(partyMember == this && playerEvent != null)) {
                                     partyMember.StartCommonEvent(partyEvent);
                                 }
                             }
@@ -3793,7 +3793,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Party.Count < 10)
+            if (Party.Count < Options.Party.MaximumMembers)
             {
                 target.LeaveParty();
                 Party.Add(target);

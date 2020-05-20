@@ -72,7 +72,7 @@ namespace Intersect.Client.Interface.Game
             mHpBarContainer.Clear();
             mHpBar.Clear();
 
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < Options.Party.MaximumMembers; i++)
             {
                 //Labels
                 mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
