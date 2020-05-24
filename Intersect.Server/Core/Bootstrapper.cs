@@ -214,6 +214,8 @@ namespace Intersect.Server.Core
 
             CustomColors.Load();
 
+            ProfanityFilter.Load();
+
             return true;
         }
 

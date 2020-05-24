@@ -466,6 +466,7 @@
     <Compile Include="Entities\Events\CommandProcessing.cs" />
     <Compile Include="Entities\Events\Conditions.cs" />
     <Compile Include="General\Formulas.cs" />
+    <Compile Include="General\ProfanityFilter.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="Localization\CommandsNamespace.cs" />
     <Compile Include="Localization\Strings.cs" />

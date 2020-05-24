@@ -491,6 +491,8 @@ namespace Intersect.Server.Networking
                 msg = msg.Remove(0, cmd.Length);
             }
 
+            msg = ProfanityFilter.FilterWords(msg);
+
             var msgSplit = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             if (cmd == Strings.Chat.localcmd)
