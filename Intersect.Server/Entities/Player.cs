@@ -1504,8 +1504,11 @@ namespace Intersect.Server.Entities
                     else // Time to give them as much as they can take, and spawn the rest on the map!
                     {
                         spawnAmount = item.Quantity - openSlots;
-                        item.Quantity = openSlots;
-                        GiveItem(item, sendUpdate);
+                        if (openSlots > 0)
+                        {
+                            item.Quantity = openSlots;
+                            GiveItem(item, sendUpdate);
+                        }
                     }
 
                     // Do we have any items to spawn to the map?
