@@ -109,10 +109,13 @@ namespace Intersect.Server.General
                 return false;
             }
 
-            // If we filter our string, does it change?
-            if (FilterWords(dirtyString) != dirtyString)
+            // Does our string contain any of our filtered words?
+            foreach (var filter in regexFilters)
             {
-                return true;
+                if (Regex.IsMatch(dirtyString, filter, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                {
+                    return true;
+                }
             }
 
             return false;
