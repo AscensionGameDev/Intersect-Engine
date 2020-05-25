@@ -1497,7 +1497,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    else if (!item.Descriptor.Stackable && openSlots == 0) // Is not stackable and no inventory space.
                     {
                         spawnAmount = item.Quantity;
                     }
