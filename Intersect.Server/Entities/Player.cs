@@ -1416,6 +1416,44 @@ namespace Intersect.Server.Entities
         public bool CanTakeItem(Item item) => CanTakeItem(item.ItemId, item.Quantity);
 
         /// <summary>
+        /// Gets the item at <paramref name="slotIndex"/> and stores it in <paramref name="slot"/>.
+        /// </summary>
+        /// <param name="slotIndex">the slot to load the <see cref="Item"/> from</param>
+        /// <param name="slot">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
+        /// <param name="createSlotIfNull">if the slot is in an invalid state (<see langword="null"/>), set it</param>
+        /// <returns>returns <see langword="false"/> if <paramref name="slot"/> is set to <see langword="null"/></returns>
+        [ContractAnnotation(" => true, slot: notnull; createSlotIfNull:false => false, slot: null")]
+        public bool TryGetSlot(int slotIndex, [CanBeNull] out InventorySlot slot, bool createSlotIfNull = false)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute Justification: slot is never null when this returns true.
+            slot = Items[slotIndex];
+
+            // ReSharper disable once InvertIf
+            if (default == slot && createSlotIfNull)
+            {
+                var createdSlot = new InventorySlot(slotIndex);
+                Items[slotIndex] = createdSlot;
+                slot = createdSlot;
+            }
+
+            return default != slot;
+        }
+
+        /// <summary>
+        /// Gets the item at <paramref name="slotIndex"/> and stores it in <paramref name="item"/>.
+        /// </summary>
+        /// <param name="slotIndex">the slot to load the <see cref="Item"/> from</param>
+        /// <param name="item">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
+        /// <returns>returns <see langword="false"/> if <paramref name="item"/> is set to <see langword="null"/></returns>
+        [ContractAnnotation("=> true, item: notnull; => false, item: null")]
+        public bool TryGetItemAt(int slotIndex, out Item item)
+        {
+            TryGetSlot(slotIndex, out var slot);
+            item = slot;
+            return default != item;
+        }
+
+        /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
         /// <param name="item">The <see cref="Item"/> to give to the player.</param>
@@ -1614,84 +1652,102 @@ namespace Intersect.Server.Entities
         /// <returns>An <see cref="InventorySlot"/> instance, or null if none are found.</returns>
         public InventorySlot FindOpenInventorySlot() => FindOpenInventorySlots().FirstOrDefault();
 
-        public void SwapItems(int item1, int item2)
+        /// <summary>
+        /// Swap items between <paramref name="fromSlotIndex"/> and <paramref name="toSlotIndex"/>.
+        /// </summary>
+        /// <param name="fromSlotIndex">the slot index to swap from</param>
+        /// <param name="toSlotIndex">the slot index to swap to</param>
+        public void SwapItems(int fromSlotIndex, int toSlotIndex)
         {
-            var tmpInstance = Items[item2].Clone();
-            Items[item2].Set(Items[item1]);
-            Items[item1].Set(tmpInstance);
-            PacketSender.SendInventoryItemUpdate(this, item1);
-            PacketSender.SendInventoryItemUpdate(this, item2);
-            EquipmentProcessItemSwap(item1, item2);
+            TryGetSlot(fromSlotIndex, out var fromSlot, true);
+            TryGetSlot(toSlotIndex, out var toSlot, true);
+
+            var toSlotClone = toSlot.Clone();
+            toSlot.Set(fromSlot);
+            fromSlot.Set(toSlotClone);
+
+            PacketSender.SendInventoryItemUpdate(this, fromSlotIndex);
+            PacketSender.SendInventoryItemUpdate(this, toSlotIndex);
+            EquipmentProcessItemSwap(fromSlotIndex, toSlotIndex);
         }
 
-        public void DropItems(int slotIndex, int amount)
+        /// <summary>
+        /// Attempt to drop <paramref name="amount"/> of the item in the slot
+        /// identified by <paramref name="slotIndex"/>, returning false if it
+        /// is unable to drop the item for any reason.
+        /// </summary>
+        /// <param name="slotIndex">the slot to drop from</param>
+        /// <param name="amount">the amount to drop</param>
+        /// <returns>if an item was dropped</returns>
+        public bool TryDropItemFrom(int slotIndex, int amount)
         {
-            var slot = Items[slotIndex];
-            if (slot == null)
+            if (!TryGetItemAt(slotIndex, out var itemInSlot))
             {
-                return;
+                return false;
             }
 
-            amount = Math.Min(amount, slot.Quantity);
-
+            amount = Math.Min(amount, itemInSlot.Quantity);
             if (amount < 1)
             {
                 // Abort if the amount we are trying to drop is below 1.
-                return;
+                return false;
             }
 
             if (Equipment?.Any(equipmentSlotIndex => equipmentSlotIndex == slotIndex) ?? false)
             {
                 PacketSender.SendChatMsg(this, Strings.Items.equipped, CustomColors.Items.Bound);
-
-                return;
+                return false;
             }
 
-            var itemBase = ItemBase.Get(slot.ItemId);
-            if (itemBase == null)
+            var itemDescriptor = itemInSlot.Descriptor;
+            if (itemDescriptor == null)
             {
-                return;
+                return false;
             }
 
-            if (itemBase.Bound)
+            if (itemDescriptor.Bound)
             {
                 PacketSender.SendChatMsg(this, Strings.Items.bound, CustomColors.Items.Bound);
-
-                return;
+                return false;
             }
 
-            if (itemBase.ItemType == ItemTypes.Bag)
+            if (itemInSlot.TryGetBag(out var bag) && !bag.IsEmpty)
             {
-                var bag = DbInterface.GetBag(Items[slotIndex]);
-                if (bag != null && !DbInterface.BagEmpty(bag))
-                {
-                    PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, CustomColors.Alerts.Error);
-
-                    return;
-                }
+                PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, CustomColors.Alerts.Error);
+                return false;
             }
 
-            var map = MapInstance.Get(MapId);
+            var map = Map;
             if (map == null)
             {
                 Log.Error($"Could not find map {MapId} for player '{Name}'.");
-
-                return;
+                return false;
             }
 
-            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1, Id);
+            map.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
 
-            slot.Quantity = Math.Max(0, slot.Quantity - amount);
+            itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
 
-            if (slot.Quantity == 0)
+            if (itemInSlot.Quantity == 0)
             {
-                slot.Set(Item.None);
+                itemInSlot.Set(Item.None);
                 EquipmentProcessItemLoss(slotIndex);
             }
 
-            UpdateGatherItemQuests(itemBase.Id);
+            UpdateGatherItemQuests(itemDescriptor.Id);
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
+
+            return true;
         }
+
+        /// <summary>
+        /// Drops <paramref name="amount"/> of the item in the slot identified by <paramref name="slotIndex"/>.
+        /// </summary>
+        /// <param name="slotIndex">the slot to drop from</param>
+        /// <param name="amount">the amount to drop</param>
+        /// <see cref="TryDropItemFrom(int, int)"/>
+        [Obsolete("Use TryDropItemFrom(int, int).")]
+        public void DropItemFrom(int slotIndex, int amount) => TryDropItemFrom(slotIndex, amount);
 
         public void UseItem(int slot, Entity target = null)
         {
@@ -2388,14 +2444,16 @@ namespace Intersect.Server.Entities
             var canSellItem = true;
             var rewardItemId = Guid.Empty;
             var rewardItemVal = 0;
-            var sellItemNum = Items[slot].ItemId;
+
+            TryGetSlot(slot, out var itemInSlot, true);
+            var sellItemNum = itemInSlot.ItemId;
             var shop = InShop;
             if (shop != null)
             {
-                var itemBase = ItemBase.Get(Items[slot].ItemId);
-                if (itemBase != null)
+                var itemDescriptor = itemInSlot.Descriptor;
+                if (itemDescriptor != null)
                 {
-                    if (itemBase.Bound)
+                    if (itemDescriptor.Bound)
                     {
                         PacketSender.SendChatMsg(this, Strings.Shops.bound, CustomColors.Items.Bound);
 
@@ -2403,19 +2461,13 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == ItemTypes.Bag)
+                    if (itemDescriptor.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null)
+                        if (itemInSlot.TryGetBag(out var bag))
                         {
-                            Items[slot].Bag = DbInterface.GetBag(Items[slot]);
-                        }
-
-                        if (Items[slot].Bag != null)
-                        {
-                            if (!DbInterface.BagEmpty(Items[slot].Bag))
+                            if (!bag.IsEmpty)
                             {
                                 PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, CustomColors.Alerts.Error);
-
                                 return;
                             }
                         }
@@ -2452,19 +2504,16 @@ namespace Intersect.Server.Entities
                         else
                         {
                             rewardItemId = shop.DefaultCurrencyId;
-                            rewardItemVal = itemBase.Price;
+                            rewardItemVal = itemDescriptor.Price;
                         }
                     }
 
-                    if (amount >= Items[slot].Quantity)
-                    {
-                        amount = Items[slot].Quantity;
-                    }
+                    amount = Math.Min(itemInSlot.Quantity, amount);
 
-                    if (amount == Items[slot].Quantity)
+                    if (amount == itemInSlot.Quantity)
                     {
-                        //Definitely can get reward.
-                        Items[slot].Set(Item.None);
+                        // Definitely can get reward.
+                        itemInSlot.Set(Item.None);
                         EquipmentProcessItemLoss(slot);
                     }
                     else
@@ -2476,7 +2525,7 @@ namespace Intersect.Server.Entities
                         }
                         else
                         {
-                            Items[slot].Quantity -= amount;
+                            itemInSlot.Quantity -= amount;
                         }
                     }
 
@@ -3070,44 +3119,36 @@ namespace Intersect.Server.Entities
             PacketSender.SendBankUpdate(this, item2);
         }
 
-        //Bag
-        public bool OpenBag(Item bagItem, ItemBase itemBase)
+        // TODO: Document this. The TODO on bagItem == null needs to be resolved before this is.
+        public bool OpenBag(Item bagItem, ItemBase itemDescriptor)
         {
             if (IsBusy())
             {
                 return false;
             }
 
-            //Bags will never, ever, be stackable. Going to use the value property for the bag id in the Database.
-            if (bagItem.Bag == null)
+            // TODO: Figure out what to return in the event of a bad argument. An NRE would have happened anyway, and I don't have enough awareness of the bag feature to do this differently.
+            if (bagItem == null)
             {
-                bagItem.Bag = DbInterface.GetBag(bagItem);
-                if (bagItem.Bag == null) //Bag doesnt exist, create it!
-                {
-                    //Create the Bag
-                    var slotCount = itemBase.SlotCount;
-                    if (slotCount < 1)
-                    {
-                        slotCount = 1;
-                    }
+                throw new ArgumentNullException(nameof(bagItem));
+            }
 
-                    bagItem.Bag = new Bag(slotCount);
+            // If the bag does not exist, create one.
+            if (!bagItem.TryGetBag(out var bag))
+            {
+                var slotCount = itemDescriptor.SlotCount;
+                if (slotCount < 1)
+                {
+                    slotCount = 1;
                 }
 
-                bagItem.Bag.Slots = bagItem.Bag.Slots.OrderBy(p => p.Slot).ToList();
-
-                foreach (var itm in bagItem.Bag.Slots)
-                {
-                    if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
-                    {
-                        itm.Set(new Item());
-                    }
-                }
+                bag = new Bag(slotCount);
+                bagItem.Bag = bag;
             }
 
             //Send the bag to the player (this will make it appear on screen)
-            InBag = bagItem.Bag;
-            PacketSender.SendOpenBag(this, bagItem.Bag.SlotCount, bagItem.Bag);
+            InBag = bag;
+            PacketSender.SendOpenBag(this, bag.SlotCount, bag);
 
             return true;
         }
@@ -3480,6 +3521,7 @@ namespace Intersect.Server.Entities
 
         public void OfferItem(int slot, int amount)
         {
+            // TODO: Accessor cleanup
             if (Trading.Counterparty == null)
             {
                 return;
@@ -3513,17 +3555,11 @@ namespace Intersect.Server.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null)
+                        if (Items[slot].TryGetBag(out var bag))
                         {
-                            Items[slot].Bag = DbInterface.GetBag(Items[slot]);
-                        }
-
-                        if (Items[slot].Bag != null)
-                        {
-                            if (!DbInterface.BagEmpty(Items[slot].Bag))
+                            if (!bag.IsEmpty)
                             {
                                 PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, CustomColors.Alerts.Error);
-
                                 return;
                             }
                         }
