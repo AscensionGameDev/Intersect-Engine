@@ -127,6 +127,8 @@ namespace Intersect
 
         public static int MaxChatLength => Instance.ChatOpts.MaxChatLength;
 
+        public static bool LogChatMessages => Instance.ChatOpts.LogChatMessages;
+
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static bool UPnP => Instance._upnp;

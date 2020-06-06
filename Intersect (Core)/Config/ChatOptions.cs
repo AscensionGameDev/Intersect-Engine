@@ -9,6 +9,8 @@
 
         public int MinIntervalBetweenChats = 400; //400 ms
 
+        public bool LogChatMessages = false;
+
     }
 
 }

@@ -439,6 +439,11 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            if(Options.LogChatMessages)
+            {
+                Log.Pretty.Info("Client " + client.GetIp() + " Player: " + player.Name + " Message: " + packet.Message);
+            }
+
             var msg = packet.Message;
             var channel = packet.Channel;
             if (client?.User.IsMuted ?? false) //Don't let the toungless toxic kids speak.
