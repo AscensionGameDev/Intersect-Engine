@@ -2028,6 +2028,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudIntervalPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudIntervalPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudIntervalPercentage.Location = new System.Drawing.Point(148, 90);
+            this.nudIntervalPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudIntervalPercentage.Name = "nudIntervalPercentage";
             this.nudIntervalPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudIntervalPercentage.TabIndex = 72;

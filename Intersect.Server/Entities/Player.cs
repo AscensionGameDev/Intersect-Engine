@@ -1816,8 +1816,6 @@ namespace Intersect.Server.Entities
 
                         return;
                     case ItemTypes.Consumable:
-                        var negative = itemBase.Consumable.Value < 0;
-                        var symbol = negative ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
                         var value = 0;
                         var color = CustomColors.Items.ConsumeHp;
                         var die = false;
@@ -1831,7 +1829,7 @@ namespace Intersect.Server.Entities
                                         100;
 
                                 AddVital(Vitals.Health, value);
-                                if (negative)
+                                if (value < 0)
                                 {
                                     color = CustomColors.Items.ConsumePoison;
 
@@ -1865,7 +1863,8 @@ namespace Intersect.Server.Entities
                                 throw new IndexOutOfRangeException();
                         }
 
-                        var number = $"{symbol}{value}";
+                        var symbol = value < 0 ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
+                        var number = $"{symbol}{Math.Abs(value)}";
                         PacketSender.SendActionMsg(this, number, color);
 
                         if (die)
