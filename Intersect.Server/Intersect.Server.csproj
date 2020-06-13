@@ -2,6 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" />
   <Import Project="..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props')" />
+  <Import Project="$(SolutionDir)\scripts\Intersect.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -723,7 +724,6 @@
     <Compile Include="Web\Utilities\HeaderHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="private-intersect.bek" />
     <None Include="app.config" />
     <Compile Include="Entities\Entity.Comparison.cs" />
     <None Include="packages.config" />
@@ -739,6 +739,8 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Icon.ico" />
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <EmbeddedResource Include="$(NetworkHandshakePrivateKey)" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

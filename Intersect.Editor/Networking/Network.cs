@@ -7,8 +7,8 @@ using Intersect.Configuration;
 using Intersect.Editor.General;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
+using Intersect.Crypto;
+using Intersect.Crypto.Formats;
 using Intersect.Network.Events;
 
 using JetBrains.Annotations;
@@ -36,7 +36,7 @@ namespace Intersect.Editor.Networking
                 );
 
                 var assembly = Assembly.GetExecutingAssembly();
-                using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
+                using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.network.handshake.bkey.pub"))
                 {
                     var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                     Debug.Assert(rsaKey != null, "rsaKey != null");
