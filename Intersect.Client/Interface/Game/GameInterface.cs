@@ -360,6 +360,7 @@ namespace Intersect.Client.Interface.Game
             if (mShouldOpenShop)
             {
                 OpenShop();
+                GameMenu.OpenInventory();
             }
 
             if (mShopWindow != null && (!mShopWindow.IsVisible() || mShouldCloseShop))
@@ -374,6 +375,7 @@ namespace Intersect.Client.Interface.Game
             if (mShouldOpenBank)
             {
                 OpenBank();
+                GameMenu.OpenInventory();
             }
 
             if (mBankWindow != null)
@@ -416,6 +418,7 @@ namespace Intersect.Client.Interface.Game
             if (mShouldOpenCraftingTable)
             {
                 OpenCraftingTable();
+                GameMenu.OpenInventory();
             }
 
             if (mCraftingWindow != null)
@@ -437,6 +440,7 @@ namespace Intersect.Client.Interface.Game
             if (mShouldOpenTrading)
             {
                 OpenTrading();
+                GameMenu.OpenInventory();
             }
 
             if (mTradingWindow != null)
