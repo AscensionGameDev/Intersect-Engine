@@ -1581,7 +1581,7 @@ namespace Intersect.Server.Entities
 
 
         /// <summary>
-        /// Gives the player an item. NOTE: This method MAKES ZERO CHECKS to see if this is possible! 
+        /// Gives the player an item. NOTE: This method MAKES ZERO CHECKS to see if this is possible!
         /// Use TryGiveItem where possible!
         /// </summary>
         /// <param name="item"></param>
@@ -1775,7 +1775,7 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                // Unequip items even if you do not meet the requirements. 
+                // Unequip items even if you do not meet the requirements.
                 // (Need this for silly devs who give people items and then later add restrictions...)
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
@@ -2076,7 +2076,7 @@ namespace Intersect.Server.Entities
 
                     // We can take all of the items we need!
                     toTake = amount;
-                    
+
                     break;
                 case ItemHandling.UpTo:
                     // Can we take all our items or just some?
@@ -2135,7 +2135,7 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Take an item away from the player, or an amount of it if they have more. NOTE: This method MAKES ZERO CHECKS to see if this is possible! 
+        /// Take an item away from the player, or an amount of it if they have more. NOTE: This method MAKES ZERO CHECKS to see if this is possible!
         /// Use TryTakeItem where possible!
         /// </summary>
         /// <param name="slot"></param>
@@ -2172,7 +2172,7 @@ namespace Intersect.Server.Entities
             }
 
             var itemCount = 0;
-            for (var i = 0; i < Options.MaxInvItems; i++) 
+            for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 var item = Items[i];
                 if (item.ItemId == itemId)
@@ -5390,7 +5390,7 @@ namespace Intersect.Server.Entities
 
         public override int CanMove(int moveDir)
         {
-            //If crafting or locked by event return blocked 
+            //If crafting or locked by event return blocked
             if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
             {
                 return -5;
