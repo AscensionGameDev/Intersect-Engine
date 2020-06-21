@@ -72,9 +72,13 @@ namespace Intersect.Client.General
         //Crafting station
         public static bool InCraft = false;
 
-        [NotNull] public static GameInput InputManager;
+        public static bool InShop => GameShop != null;
 
         public static bool InTrade = false;
+
+        public static bool CanCloseInventory => !(InBag || InBank || InCraft || InShop || InTrade);
+
+        [NotNull] public static GameInput InputManager;
 
         public static bool IntroComing = true;
 

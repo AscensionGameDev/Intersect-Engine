@@ -53,10 +53,12 @@ namespace Intersect.Client.Interface.Game.Inventory
                 InitItemContainer();
             }
 
-            if (mInventoryWindow.IsHidden == true)
+            if (mInventoryWindow.IsHidden)
             {
                 return;
             }
+
+            mInventoryWindow.IsClosable = Globals.CanCloseInventory;
 
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
@@ -134,9 +136,15 @@ namespace Intersect.Client.Interface.Game.Inventory
             return !mInventoryWindow.IsHidden;
         }
 
-        public void Hide()
+        public bool Hide()
         {
+            if (!Globals.CanCloseInventory)
+            {
+                return false;
+            }
+
             mInventoryWindow.IsHidden = true;
+            return true;
         }
 
         public FloatRect RenderBounds()

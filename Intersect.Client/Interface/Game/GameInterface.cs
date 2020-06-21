@@ -161,10 +161,7 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenShop()
         {
-            if (mShopWindow != null)
-            {
-                mShopWindow.Close();
-            }
+            mShopWindow?.Close();
 
             mShopWindow = new ShopWindow(GameCanvas);
             mShouldOpenShop = false;
@@ -183,10 +180,7 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenBank()
         {
-            if (mBankWindow != null)
-            {
-                mBankWindow.Close();
-            }
+            mBankWindow?.Close();
 
             mBankWindow = new BankWindow(GameCanvas);
             mShouldOpenBank = false;
@@ -206,10 +200,7 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenBag()
         {
-            if (mBagWindow != null)
-            {
-                mBagWindow.Close();
-            }
+            mBagWindow?.Close();
 
             mBagWindow = new BagWindow(GameCanvas);
             mShouldOpenBag = false;

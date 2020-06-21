@@ -200,6 +200,7 @@ namespace Intersect.Client.Interface.Game
                 mInventoryWindow.Show();
             }
         }
+
         public void OpenInventory()
         {
             mInventoryWindow.Show();
