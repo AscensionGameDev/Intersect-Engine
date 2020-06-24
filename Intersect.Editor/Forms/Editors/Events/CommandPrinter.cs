@@ -9,6 +9,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Logging;
 
 namespace Intersect.Editor.Forms.Editors.Events
 {
@@ -182,8 +183,18 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                             mCommandProperties.Add(clp);
 
+                            if ((cnd.BranchIds?.Length ?? 0) < 2)
+                            {
+                                Log.Error("Missing branch ids in conditional branch.");
+                            }
+
+                            if (!page.CommandLists.TryGetValue(cnd.BranchIds[0], out var branchCommandList))
+                            {
+                                Log.Error($"Missing command list for branch {cnd.BranchIds[0]}");
+                            }
+
                             PrintCommandList(
-                                page, page.CommandLists[cnd.BranchIds[0]], indent + "          ", lstEventCommands,
+                                page, branchCommandList, indent + "          ", lstEventCommands,
                                 mCommandProperties, map
                             );
 
@@ -199,8 +210,13 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                             mCommandProperties.Add(clp);
 
+                            if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
+                            {
+                                Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                            }
+
                             PrintCommandList(
-                                page, page.CommandLists[cnd.BranchIds[1]], indent + "          ", lstEventCommands,
+                                page, branchCommandList, indent + "          ", lstEventCommands,
                                 mCommandProperties, map
                             );
 
