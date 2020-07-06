@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-using Intersect.IO.FileSystem;
+using Intersect.IO.Files;
 
 using JetBrains.Annotations;
 

@@ -1,27 +1,28 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 using Intersect.Editor.Core;
 using Intersect.Editor.General;
+using Intersect.IO.Files;
+using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Content
 {
-
     public class Texture
     {
-
-        private int mHeight = -1;
+        private readonly string mPath;
 
         private long mLastAccessTime;
 
         private bool mLoadError;
 
-        private string mPath = "";
-
-        private Texture2D mTex;
-
         private int mWidth = -1;
+
+        private int mHeight = -1;
+
+        private Texture2D mTexture;
 
         public Texture(string path)
         {
@@ -32,25 +33,49 @@ namespace Intersect.Editor.Content
         public void LoadTexture()
         {
             mLoadError = true;
-            if (File.Exists(mPath))
+            if (string.IsNullOrWhiteSpace(mPath))
             {
-                using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                Log.Error("Invalid texture path (empty/null).");
+
+                return;
+            }
+
+            var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
+
+            if (!File.Exists(mPath))
+            {
+                Log.Error($"Texture does not exist: {relativePath}");
+
+                return;
+            }
+
+            using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                try
                 {
-                    mTex = Texture2D.FromStream(Graphics.GetGraphicsDevice(), fileStream);
-                    if (mTex != null)
+                    mTexture = Texture2D.FromStream(Graphics.GetGraphicsDevice(), fileStream);
+                    if (mTexture == null)
                     {
-                        mWidth = mTex.Width;
-                        mHeight = mTex.Height;
-                        mLoadError = false;
+                        Log.Error($"Failed to load texture due to unknown error: {relativePath}");
+
+                        return;
                     }
+
+                    mWidth = mTexture.Width;
+                    mHeight = mTexture.Height;
+                    mLoadError = false;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(
+                        exception,
+                        $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
+                    );
                 }
             }
         }
 
-        public string GetPath()
-        {
-            return mPath;
-        }
+        public string GetPath() => mPath;
 
         public void ResetAccessTime()
         {
@@ -60,17 +85,19 @@ namespace Intersect.Editor.Content
         public int GetWidth()
         {
             ResetAccessTime();
-            if (mWidth == -1)
+            if (mWidth != -1)
             {
-                if (mTex == null)
-                {
-                    LoadTexture();
-                }
+                return mWidth;
+            }
 
-                if (mLoadError)
-                {
-                    mWidth = 0;
-                }
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
+            if (mLoadError)
+            {
+                mWidth = 0;
             }
 
             return mWidth;
@@ -79,17 +106,19 @@ namespace Intersect.Editor.Content
         public int GetHeight()
         {
             ResetAccessTime();
-            if (mHeight == -1)
+            if (mHeight != -1)
             {
-                if (mTex == null)
-                {
-                    LoadTexture();
-                }
+                return mHeight;
+            }
 
-                if (mLoadError)
-                {
-                    mHeight = 0;
-                }
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
+            if (mLoadError)
+            {
+                mHeight = 0;
             }
 
             return mHeight;
@@ -98,26 +127,28 @@ namespace Intersect.Editor.Content
         public Texture2D GetTexture()
         {
             ResetAccessTime();
-            if (mTex == null)
+            if (mTexture == null)
             {
                 LoadTexture();
             }
 
-            return mTex;
+            return mTexture;
         }
 
         public void Update()
         {
-            if (mTex != null)
+            if (mTexture == null)
             {
-                if (mLastAccessTime < Globals.System.GetTimeMs())
-                {
-                    mTex.Dispose();
-                    mTex = null;
-                }
+                return;
             }
+
+            if (mLastAccessTime >= Globals.System.GetTimeMs())
+            {
+                return;
+            }
+
+            mTexture.Dispose();
+            mTexture = null;
         }
-
     }
-
 }
