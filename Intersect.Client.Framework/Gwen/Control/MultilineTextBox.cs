@@ -112,14 +112,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                if (mTextLines == null || mTextLines.Count() == 0)
+                if (mTextLines == null || mTextLines.Count == 0)
                 {
                     return new Point(0, 0);
                 }
 
                 var y = mCursorPos.Y;
                 y = Math.Max(y, 0);
-                y = Math.Min(y, mTextLines.Count() - 1);
+                y = Math.Min(y, mTextLines.Count - 1);
 
                 var x = mCursorPos
                     .X; //X may be beyond the last character, but we will want to draw it at the end of line.
@@ -145,14 +145,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             get
             {
-                if (mTextLines == null || mTextLines.Count() == 0)
+                if (mTextLines == null || mTextLines.Count == 0)
                 {
                     return new Point(0, 0);
                 }
 
                 var y = mCursorEnd.Y;
                 y = Math.Max(y, 0);
-                y = Math.Min(y, mTextLines.Count() - 1);
+                y = Math.Min(y, mTextLines.Count - 1);
 
                 var x = mCursorEnd
                     .X; //X may be beyond the last character, but we will want to draw it at the end of line.
@@ -397,7 +397,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             mCaretBounds.Y += mScrollControl.VerticalScroll;
 
             mCaretBounds.Width = 1;
-            mCaretBounds.Height = 10 + 2;
+            mCaretBounds.Height = mTextLines.Count == 0 ? 12 : mTextLines[mCursorPos.Y].TextHeight;
 
             Redraw();
         }
@@ -425,13 +425,25 @@ namespace Intersect.Client.Framework.Gwen.Control
                 labelLines.Add(GenerateLabel(new Label(mScrollControl), s));
             }
 
-            mTextLines[mCursorPos.Y].Text += labelLines[0].Text;
+            string toEnd = mTextLines[mCursorPos.Y].Text.Substring(mCursorPos.X);
+            if (mCursorPos.X < mTextLines[mCursorPos.Y].Text.Length)
+            {
+                mTextLines[mCursorPos.Y].Text = mTextLines[mCursorPos.Y].Text.Remove(mCursorPos.X);
+            }
+            mTextLines[mCursorPos.Y].Text = mTextLines[mCursorPos.Y].Text.Insert(mCursorPos.X, labelLines[0].Text);
+
             labelLines[0].Dispose();
             labelLines.RemoveAt(0);
-            if (labelLines.Count > 0)
-            {
-                mTextLines.InsertRange(mCursorPos.Y + 1, labelLines);
-            }
+
+            mTextLines.InsertRange(mCursorPos.Y + 1, labelLines);
+            int newY = mCursorPos.Y + labelLines.Count;
+            int newX = mTextLines[mCursorPos.Y + labelLines.Count].Text.Length;
+            mTextLines[mCursorPos.Y + labelLines.Count].Text += toEnd;
+
+            mCursorPos = new Point(newX, newY);
+            mCursorEnd = new Point(newX, newY);
+            mCaretBounds.Y = newY;
+            mCaretBounds.X = newX;
 
             UpdateLabel();
             Invalidate();
@@ -479,7 +491,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             //base.OnSelectAll(from);
             mCursorEnd = new Point(0, 0);
-            mCursorPos = new Point(mTextLines.Last().Text.Length, mTextLines.Count());
+            mCursorPos = new Point(mTextLines.Last().Text.Length, mTextLines.Count - 1);
 
             RefreshCursorBounds();
         }
@@ -946,17 +958,34 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
             else
             {
-                /* Start */
-                mTextLines[start].Text = mTextLines[start].Text.Remove(StartPoint.X);
-
                 /* End */
-                mTextLines[end].Text = mTextLines[end].Text.Remove(0, EndPoint.X);
+                if (!string.IsNullOrEmpty(mTextLines[start].Text))
+                {
+                    mTextLines[end].Text = mTextLines[end].Text.Remove(0, EndPoint.X);
+                }
+                else
+                {
+                    mTextLines[end].Dispose();
+                    mTextLines.RemoveAt(end);
+                }
 
                 /* Middle */
                 for (int i = end - 1; i > start; i--)
                 {
                     mTextLines[i].Dispose();
                     mTextLines.RemoveAt(i);
+                }
+
+                /* Start */
+                if (!string.IsNullOrEmpty(mTextLines[start].Text))
+                {
+                    mTextLines[start].Text = mTextLines[start].Text.Remove(StartPoint.X);
+
+                    if (string.IsNullOrEmpty(mTextLines[start].Text))
+                    {
+                        mTextLines[start].Dispose();
+                        mTextLines.RemoveAt(start);
+                    }
                 }
             }
 
@@ -1044,7 +1073,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             var best = new Point(0, 0);
 
             /* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
-            for (var y = 0; y < mTextLines.Count(); y++)
+            for (var y = 0; y < mTextLines.Count; y++)
             {
                 var cp = mTextLines[mCursorEnd.Y].Height * y;
 
