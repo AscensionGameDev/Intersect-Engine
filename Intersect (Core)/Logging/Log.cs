@@ -4,15 +4,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
 
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
-
     public static class Log
     {
+        internal static readonly DateTime Initial = DateTime.Now;
 
         [NotNull]
         private static string ExecutableName =>
@@ -23,11 +24,8 @@ namespace Intersect.Logging
             DateTime? time = null,
             [CanBeNull] string prefix = null,
             [CanBeNull] string extensionPrefix = null
-        )
-        {
-            return
-                $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
-        }
+        ) =>
+            $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? Initial:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
 
         #region Global
 
@@ -42,7 +40,7 @@ namespace Intersect.Logging
             Pretty = new Logger(
                 new LogConfiguration
                 {
-                    Pretty = true,
+                    Formatters = ImmutableList.Create(new PrettyFormatter()) ?? throw new InvalidOperationException(),
                     LogLevel = LogConfiguration.Default.LogLevel,
                     Outputs = outputs
                 }
@@ -51,18 +49,16 @@ namespace Intersect.Logging
             Default = new Logger(
                 new LogConfiguration
                 {
-                    Pretty = false,
+                    Formatters = ImmutableList.Create(new DefaultFormatter()) ?? throw new InvalidOperationException(),
                     LogLevel = LogConfiguration.Default.LogLevel,
                     Outputs = outputs
                 }
             );
         }
 
-        [NotNull]
-        public static Logger Pretty { get; }
+        [NotNull] public static Logger Pretty { get; internal set; }
 
-        [NotNull]
-        public static Logger Default { get; }
+        [NotNull] public static Logger Default { get; internal set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(LogLevel logLevel, string message)
@@ -245,7 +241,5 @@ namespace Intersect.Logging
         }
 
         #endregion
-
     }
-
 }

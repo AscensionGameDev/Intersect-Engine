@@ -271,9 +271,7 @@
     <Compile Include="Localization\LocaleNamespace.cs" />
     <Compile Include="Logging\Formatting\DefaultFormatter.cs" />
     <Compile Include="Logging\Formatting\ILogFormatter.cs" />
-    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogger.cs" />
-    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLoggerFactory.cs" />
-    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogScope.cs" />
+    <Compile Include="Logging\Formatting\PrettyFormatter.cs" />
     <Compile Include="Logging\LogConfiguration.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
@@ -646,7 +644,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
