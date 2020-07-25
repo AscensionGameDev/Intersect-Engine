@@ -68,6 +68,7 @@
     <Compile Include="Graphics\GameTexture.cs" />
     <Compile Include="Graphics\GameTexturePack.cs" />
     <Compile Include="Graphics\GameTileBuffer.cs" />
+    <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="Input\GameInput.cs" />
     <Compile Include="Network\GameSocket.cs" />
     <Compile Include="Sys\GameSystem.cs" />

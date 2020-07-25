@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -86,6 +87,8 @@ namespace Intersect.Client.Interface.Shared
         private Label mSoundLabel;
 
         private HorizontalSlider mSoundSlider;
+
+        private MenuItem mCustomResolutionMenuItem;
 
         //Init
         public OptionsWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -388,7 +391,24 @@ namespace Intersect.Client.Interface.Shared
             mEdittingControls = new Controls(Controls.ActiveControls);
             if (Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
-                mResolutionList.SelectByText(Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
+                string resolutionLabel;
+                if (Graphics.Renderer.HasOverrideResolution)
+                {
+                    resolutionLabel = Strings.Options.ResolutionCustom;
+
+                    if (mCustomResolutionMenuItem == null)
+                    {
+                        mCustomResolutionMenuItem = mResolutionList.AddItem(Strings.Options.ResolutionCustom);
+                    }
+
+                    mCustomResolutionMenuItem.Show();
+                }
+                else
+                {
+                    resolutionLabel = Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                }
+
+                mResolutionList.SelectByText(resolutionLabel);
             }
 
             switch (Globals.Database.TargetFps)
@@ -482,18 +502,12 @@ namespace Intersect.Client.Interface.Shared
         {
             var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
-            var myModes = Graphics.Renderer.GetValidVideoModes();
-            for (var i = 0; i < myModes.Count; i++)
+            var validVideoModes = Graphics.Renderer.GetValidVideoModes();
+            var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
+            if (targetResolution > -1)
             {
-                if (resolution.Text == myModes[i])
-                {
-                    if (Globals.Database.TargetResolution != i)
-                    {
-                        shouldReset = true;
-                    }
-
-                    Globals.Database.TargetResolution = i;
-                }
+                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.Renderer.HasOverrideResolution;
+                Globals.Database.TargetResolution = targetResolution;
             }
 
             Globals.Database.HideOthersOnWindowOpen = mAutocloseWindowsCheckbox.IsChecked;
@@ -537,6 +551,8 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.SavePreferences();
             if (shouldReset)
             {
+                mCustomResolutionMenuItem?.Hide();
+                Graphics.Renderer.OverrideResolution = Resolution.Empty;
                 Graphics.Renderer.Init();
             }
 

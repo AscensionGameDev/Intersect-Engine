@@ -1,20 +1,28 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
+using CommandLine;
+
+using Intersect.Core;
 using Intersect.Network;
 
 namespace Intersect.Server.Core
 {
 
-    internal class CommandLineOptions
+    internal struct ServerCommandLineOptions : ICommandLineOptions
     {
 
-        public CommandLineOptions(
+        public ServerCommandLineOptions(
             bool doNotShowConsole,
             bool doNotHaltOnError,
             bool noNatPunchthrough,
             bool noNetworkCheck,
             ushort port,
-            ushort apiport
+            ushort apiport,
+            string workingDirectory,
+            bool isInPluginDevelopmentMode,
+            IEnumerable<string> pluginDirectories
         )
         {
             DoNotShowConsole = doNotShowConsole;
@@ -23,6 +31,9 @@ namespace Intersect.Server.Core
             NoNetworkCheck = noNetworkCheck;
             Port = port;
             ApiPort = apiport;
+            WorkingDirectory = workingDirectory;
+            IsInPluginDevelopmentMode = isInPluginDevelopmentMode;
+            PluginDirectories = pluginDirectories?.Select(Path.GetFullPath).ToArray();
         }
 
         [Option('C', "no-console", Default = false, Required = false)]
@@ -42,6 +53,15 @@ namespace Intersect.Server.Core
 
         [Option('a', "apiport", Default = (ushort) 0, Required = false)]
         public ushort ApiPort { get; }
+
+        [Option("working-directory", Default = null, Required = false)]
+        public string WorkingDirectory { get; }
+
+        [Option("plugin-development", Default = false, Required = false)]
+        public bool IsInPluginDevelopmentMode { get; }
+
+        [Option('p', "plugin-directory", Default = null, Required = false)]
+        public IEnumerable<string> PluginDirectories { get; }
 
         public ushort ValidPort(ushort defaultPort)
         {

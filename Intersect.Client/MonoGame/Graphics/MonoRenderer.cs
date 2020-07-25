@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -305,22 +305,27 @@ namespace Intersect.Client.MonoGame.Graphics
                         blend = mNormalState;
 
                         break;
+
                     case GameBlendModes.Alpha:
                         blend = BlendState.AlphaBlend;
 
                         break;
+
                     case GameBlendModes.Multiply:
                         blend = mMultiplyState;
 
                         break;
+
                     case GameBlendModes.Add:
                         blend = BlendState.Additive;
 
                         break;
+
                     case GameBlendModes.Opaque:
                         blend = BlendState.Opaque;
 
                         break;
+
                     case GameBlendModes.Cutout:
                         blend = mCutoutState;
 
@@ -795,13 +800,15 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             var targetVideoMode = validVideoModes?[targetResolution];
-            var resolution = Resolution.Parse(targetVideoMode);
-            mGraphics.PreferredBackBufferWidth = resolution.X;
-            mGraphics.PreferredBackBufferHeight = resolution.Y;
+            if (Resolution.TryParse(targetVideoMode, out var resolution))
+            {
+                PreferredResolution = resolution;
+            }
 
-            UpdateGraphicsState(
-                mGraphics?.PreferredBackBufferWidth ?? 800, mGraphics?.PreferredBackBufferHeight ?? 600, true
-            );
+            mGraphics.PreferredBackBufferWidth = PreferredResolution.X;
+            mGraphics.PreferredBackBufferHeight = PreferredResolution.Y;
+
+            UpdateGraphicsState(ActiveResolution.X, ActiveResolution.Y, true);
 
             if (mWhiteTexture == null)
             {
