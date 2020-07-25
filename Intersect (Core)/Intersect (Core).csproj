@@ -253,6 +253,8 @@
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="Extensions\LogLevelExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Factories\FactoryRegistry.cs" />
+    <Compile Include="Factories\IFactory.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
