@@ -2,29 +2,29 @@
 
 using Intersect.Logging;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Network
 {
 
     public abstract class AbstractConnection : IConnection
     {
+        [NotNull] private readonly object mDisposeLock;
 
         private bool mDisposed;
 
         protected AbstractConnection(Guid? guid = null)
         {
-            if (!guid.HasValue)
-            {
-                guid = Guid.NewGuid();
-            }
+            mDisposeLock = new object();
 
-            Guid = guid.Value;
+            Guid = guid ?? Guid.NewGuid();
         }
 
         public Ceras Ceras { get; } = new Ceras(true);
 
         public virtual void Dispose()
         {
-            lock (this)
+            lock (mDisposeLock)
             {
                 if (mDisposed)
                 {
@@ -61,7 +61,7 @@ namespace Intersect.Network
         {
             IsConnected = false;
 
-            Log.Debug($"Connectioned terminated to remote [{Guid}/{Ip}:{Port}].");
+            Log.Debug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
         }
 
     }
