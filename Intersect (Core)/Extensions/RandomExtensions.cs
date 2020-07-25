@@ -61,7 +61,7 @@ namespace Intersect.Extensions
         {
             if (minimum >= maximum)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than '{nameof(minimum)}'.");
             }
 
             return NextULong(random, maximum - minimum) + minimum;
@@ -71,7 +71,7 @@ namespace Intersect.Extensions
         {
             if (maximum <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than 0.");
             }
 
             return random.NextDecimal() * maximum;
@@ -81,7 +81,7 @@ namespace Intersect.Extensions
         {
             if (minimum >= maximum)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than '{nameof(minimum)}'.");
             }
 
             var midpoint = minimum / 2M + maximum / 2M;
@@ -94,7 +94,7 @@ namespace Intersect.Extensions
         {
             if (maximum <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than 0.");
             }
 
             return random.NextDouble() * maximum;
@@ -104,7 +104,7 @@ namespace Intersect.Extensions
         {
             if (minimum >= maximum)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than '{nameof(minimum)}'.");
             }
 
             var midpoint = minimum / 2D + maximum / 2D;
@@ -122,7 +122,7 @@ namespace Intersect.Extensions
         {
             if (maximum <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than 0.");
             }
 
             return (float) NextDouble(random, maximum);
@@ -132,7 +132,7 @@ namespace Intersect.Extensions
         {
             if (minimum >= maximum)
             {
-                throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+                throw new ArgumentOutOfRangeException(nameof(maximum), $@"'{nameof(maximum)}' must be greater than '{nameof(minimum)}'.");
             }
 
             return (float) NextDouble(random, minimum, maximum);
