@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -17,8 +17,15 @@ namespace Intersect.Client.Framework.Graphics
             ScreenshotRequests = new List<Stream>();
         }
 
-        [NotNull]
-        public List<Stream> ScreenshotRequests { get; }
+        [NotNull] public List<Stream> ScreenshotRequests { get; }
+
+        public Resolution ActiveResolution => new Resolution(PreferredResolution, OverrideResolution);
+
+        public bool HasOverrideResolution => OverrideResolution != Resolution.Empty;
+
+        public Resolution OverrideResolution { get; set; }
+
+        public Resolution PreferredResolution { get; set; }
 
         public abstract void Init();
 

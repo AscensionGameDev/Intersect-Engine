@@ -202,8 +202,8 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
+    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
@@ -440,7 +440,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\Actions\ActionProcessing.cs" />
+    <Compile Include="Core\IServerContext.cs" />
     <Compile Include="Core\ServerTiming.cs" />
+    <Compile Include="Core\Services\IConsoleService.cs" />
+    <Compile Include="Core\Services\ILogicService.cs" />
     <Compile Include="Database\DbLogger.cs" />
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />
@@ -527,7 +530,7 @@
     <Compile Include="Core\CommandParsing\Arguments\ArgumentValues.cs" />
     <Compile Include="Core\CommandParsing\Arguments\ArgumentValuesMap.cs" />
     <Compile Include="Core\Bootstrapper.cs" />
-    <Compile Include="Core\CommandLineOptions.cs" />
+    <Compile Include="Core\ServerCommandLineOptions.cs" />
     <Compile Include="Core\CommandParsing\Commands\Command.cs" />
     <Compile Include="Core\CommandParsing\CommandParser.cs" />
     <Compile Include="Core\CommandParsing\Errors\MissingArgumentError.cs" />
@@ -664,6 +667,8 @@
       <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
+    <Compile Include="Plugins\Helpers\IServerLifecycleHelper.cs" />
+    <Compile Include="Plugins\IServerPluginContext.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
@@ -791,6 +796,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Database\PlayerData\Migrations\" />
+  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
