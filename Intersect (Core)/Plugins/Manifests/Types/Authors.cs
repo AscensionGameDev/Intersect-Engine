@@ -259,7 +259,7 @@ namespace Intersect.Plugins.Manifests.Types
         /// <param name="authors">an array of <see cref="Author"/>s</param>
         /// <returns>an <see cref="Author"/> array</returns>
         public static implicit operator Authors([CanBeNull] Author[] authors) =>
-            new Authors(authors ?? new Author[0]);
+            new Authors(authors ?? Array.Empty<Author>());
 
         /// <summary>
         /// Converts <see cref="Authors"/> to <see cref="string"/> using <see cref="ToString"/>.

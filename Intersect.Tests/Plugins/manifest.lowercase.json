@@ -1,0 +1,20 @@
+﻿{
+  "name": "Test Manifest",
+  "key": "AscensionGameDev.Intersect.Tests",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Test Author"
+    },
+    {
+      "name": "Test Author With Email",
+      "email": "test@email.author"
+    },
+    {
+      "name": "Test Full Author",
+      "email": "test@full.author",
+      "homepage": "https://fullauthor.example.com"
+    }
+  ],
+  "homepage": "https://github.com/AscensionGameDev/Intersect-Engine"
+}
