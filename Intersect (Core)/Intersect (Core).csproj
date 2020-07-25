@@ -257,6 +257,7 @@
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
     <Compile Include="IO\Files\FileSystemHelper.cs" />
@@ -499,14 +500,23 @@
     <Compile Include="Plugins\Manifests\JsonManifest.cs" />
     <Compile Include="Plugins\Manifests\Types\Author.cs" />
     <Compile Include="Plugins\Manifests\Types\Authors.cs" />
+    <Compile Include="Properties\DeveloperStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DeveloperStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Reflection\MemberInfoExtensions.cs" />
+    <Compile Include="Reflection\TypeExtensions.cs" />
     <Compile Include="Security\ApiVisibility.cs" />
     <Compile Include="Security\ApiVisibilityAttribute.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Serialization\Json\SingleOrArrayConverter.cs" />
+    <Compile Include="SuppressionJustifications.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
     <Compile Include="Threading\Threaded.cs" />
+    <Compile Include="Threading\Threaded`1.cs" />
     <Compile Include="Updater\Update.cs" />
     <Compile Include="Updater\UpdateFile.cs" />
     <Compile Include="Updater\Updater.cs" />
@@ -610,14 +620,14 @@
     <Compile Include="Logging\Output\ILogOutput.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\DeveloperStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DeveloperStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Factories\" />
-    <Folder Include="IO\FileSystem\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
