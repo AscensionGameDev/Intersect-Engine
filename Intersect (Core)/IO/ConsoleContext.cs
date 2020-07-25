@@ -281,7 +281,7 @@ namespace Intersect.IO
                                 {
                                     InputBuffer.Clear();
                                     InputBuffer.AddRange(
-                                        mInputHistory[InputHistoryPosition]?.ToCharArray() ?? new char[0]
+                                        mInputHistory[InputHistoryPosition]?.ToCharArray() ?? Array.Empty<char>()
                                     );
                                 }
 
@@ -293,7 +293,7 @@ namespace Intersect.IO
                                 {
                                     InputBuffer.Clear();
                                     InputBuffer.AddRange(
-                                        mInputHistory[InputHistoryPosition]?.ToCharArray() ?? new char[0]
+                                        mInputHistory[InputHistoryPosition]?.ToCharArray() ?? Array.Empty<char>()
                                     );
                                 }
                                 else if (mInputHistory.Count == InputHistoryPosition && InputHistoryPosition > 0)

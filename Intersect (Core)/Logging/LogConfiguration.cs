@@ -12,16 +12,19 @@ using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
-
+    /// <summary>
+    /// Configuration class for <see cref="Logger"/>.
+    /// </summary>
     public sealed class LogConfiguration
     {
-
         [NotNull] private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
 
-        [NotNull] private static readonly ImmutableList<ILogFormatter> DefaultFormatters =
+        [NotNull]
+        private static readonly ImmutableList<ILogFormatter> DefaultFormatters =
             ImmutableList.Create<ILogFormatter>() ?? throw new InvalidOperationException();
 
-        [NotNull] private static readonly ImmutableList<ILogOutput> DefaultOutputs =
+        [NotNull]
+        private static readonly ImmutableList<ILogOutput> DefaultOutputs =
             ImmutableList.Create<ILogOutput>() ?? throw new InvalidOperationException();
 
         private Immutable<IReadOnlyList<ILogFormatter>> mFormatters;
@@ -29,8 +32,6 @@ namespace Intersect.Logging
         private Immutable<LogLevel> mLogLevel;
 
         private Immutable<IReadOnlyList<ILogOutput>> mOutputs;
-
-        private Immutable<bool> mPretty;
 
         private Immutable<string> mTag;
 
@@ -45,13 +46,10 @@ namespace Intersect.Logging
             LogLevel = Debugger.IsAttached ? LogLevel.All : LogLevel.Trace,
 #endif
 
-            Pretty = false,
-
             Tag = null
         };
 
-        [NotNull]
-        public ILogFormatter Formatter => mFormatters.Value?.FirstOrDefault() ?? DefaultFormatter;
+        [NotNull] public ILogFormatter Formatter => mFormatters.Value?[0] ?? DefaultFormatter;
 
         [NotNull]
         public IReadOnlyList<ILogFormatter> Formatters
@@ -73,12 +71,6 @@ namespace Intersect.Logging
             set => mOutputs.Value = value;
         }
 
-        public bool Pretty
-        {
-            get => mPretty;
-            set => mPretty.Value = value;
-        }
-
         public string Tag
         {
             get => mTag;
@@ -86,11 +78,7 @@ namespace Intersect.Logging
         }
 
         [NotNull]
-        internal LogConfiguration Clone()
-        {
-            return MemberwiseClone() as LogConfiguration ?? throw new InvalidOperationException();
-        }
-
+        internal LogConfiguration Clone() =>
+            MemberwiseClone() as LogConfiguration ?? throw new InvalidOperationException();
     }
-
 }
