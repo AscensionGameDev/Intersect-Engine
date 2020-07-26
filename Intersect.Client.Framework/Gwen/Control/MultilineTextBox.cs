@@ -302,7 +302,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             var verticalOffset = 2 - mScrollControl.VerticalScroll;
-            var verticalSize = 10 + 6;
+            var verticalSize = mCaretBounds.Height;
 
             // Draw selection.. if selected..
             if (mCursorPos != mCursorEnd)
@@ -416,6 +416,11 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
+            if (mTextLines.Count == 0)
+            {
+                mTextLines.Add(GenerateLabel(new Label(mScrollControl)));
+            }
+
             var easySplit = str.Replace("\r\n", "\n").Replace("\r", "\n");
             var lines = easySplit.Split('\n');
 
@@ -445,7 +450,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             mCaretBounds.Y = newY;
             mCaretBounds.X = newX;
 
-            UpdateLabel();
+            UpdateLabelsHeight();
             Invalidate();
             RefreshCursorBounds();
         }
@@ -531,7 +536,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             mTextLines[mCursorPos.Y].Text = lhs;
             mTextLines.Insert(mCursorPos.Y + 1, newLine);
 
-            UpdateLabel();
+            UpdateLabelsHeight();
 
             OnKeyDown(true);
             OnKeyHome(true);
@@ -547,12 +552,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             return true;
         }
 
-        private void UpdateLabel()
+        private void UpdateLabelsHeight()
         {
             for (int i = 0; i < mTextLines.Count; i++)
             {
                 mTextLines[i].Y = i * mTextLines[i].TextHeight;
             }
+        }
+
+        private void RemoveLabel(int index)
+        {
+            mTextLines[index].Dispose(); // Have to dispose so the text disappears
+            //mTextLines[index] = null; // Have to set the value to null in order for the vertical scroll bar to update.
+            mScrollControl.InnerPanel.Children.Remove(mTextLines[index]);
+            mTextLines.RemoveAt(index);
+            //mScrollControl.Children.RemoveAt(index);
         }
 
         /// <summary>
@@ -576,30 +590,31 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return true;
             }
 
-            if (mCursorPos.X == 0)
+            if (CursorPosition.X == 0)
             {
-                if (mCursorPos.Y == 0)
+                if (CursorPosition.Y == 0)
                 {
                     return true; //Nothing left to delete
                 }
                 else
                 {
-                    var lhs = mTextLines[mCursorPos.Y - 1].Text;
-                    var rhs = mTextLines[mCursorPos.Y].Text;
-                    mTextLines[mCursorPos.Y].Dispose();
-                    mTextLines.RemoveAt(mCursorPos.Y);
-                    UpdateLabel();
+                    var lhs = mTextLines[CursorPosition.Y - 1].Text;
+                    var rhs = mTextLines[CursorPosition.Y].Text;
+
+                    RemoveLabel(CursorPosition.Y);
+                    UpdateLabelsHeight();
+
                     OnKeyUp(true);
                     OnKeyEnd(true);
-                    mTextLines[mCursorPos.Y].Text = lhs + rhs;
+                    mTextLines[CursorPosition.Y].Text = lhs + rhs;
                 }
             }
             else
             {
-                var currentLine = mTextLines[mCursorPos.Y].Text;
+                var currentLine = mTextLines[CursorPosition.Y].Text;
                 var lhs = currentLine.Substring(0, CursorPosition.X - 1);
                 var rhs = currentLine.Substring(CursorPosition.X);
-                mTextLines[mCursorPos.Y].Text = lhs + rhs;
+                mTextLines[CursorPosition.Y].Text = lhs + rhs;
                 OnKeyLeft(true);
             }
 
@@ -630,31 +645,34 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return true;
             }
 
-            if (mCursorPos.X == mTextLines[mCursorPos.Y].Text.Length)
+            if (CursorPosition.X == mTextLines[CursorPosition.Y].Text.Length)
             {
-                if (mCursorPos.Y == mTextLines.Count - 1)
+                if (CursorPosition.Y == mTextLines.Count - 1)
                 {
                     return true; //Nothing left to delete
                 }
                 else
                 {
-                    var lhs = mTextLines[mCursorPos.Y].Text;
-                    var rhs = mTextLines[mCursorPos.Y + 1].Text;
-                    mTextLines[mCursorPos.Y + 1].Dispose();
-                    mTextLines.RemoveAt(mCursorPos.Y + 1);
-                    UpdateLabel();
+                    var lhs = mTextLines[CursorPosition.Y].Text;
+                    var rhs = mTextLines[CursorPosition.Y + 1].Text;
+
+                    RemoveLabel(CursorPosition.Y + 1);
+                    UpdateLabelsHeight();
+
                     OnKeyEnd(true);
-                    mTextLines[mCursorPos.Y].Text = lhs + rhs;
+                    mTextLines[CursorPosition.Y].Text = lhs + rhs;
                 }
             }
             else
             {
-                var currentLine = mTextLines[mCursorPos.Y].Text;
+                var currentLine = mTextLines[CursorPosition.Y].Text;
+
                 var lhs = currentLine.Substring(0, CursorPosition.X);
                 var rhs = CursorPosition.X < currentLine.Length ?
                     currentLine.Substring(CursorPosition.X + 1) :
                     currentLine.Substring(CursorPosition.X);
-                mTextLines[mCursorPos.Y].Text = lhs + rhs;
+
+                mTextLines[CursorPosition.Y].Text = lhs + rhs;
             }
 
             Invalidate();
@@ -965,26 +983,23 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
                 else
                 {
-                    mTextLines[end].Dispose();
-                    mTextLines.RemoveAt(end);
+                    RemoveLabel(end);
                 }
 
                 /* Middle */
                 for (int i = end - 1; i > start; i--)
                 {
-                    mTextLines[i].Dispose();
-                    mTextLines.RemoveAt(i);
+                    RemoveLabel(i);
                 }
 
                 /* Start */
-                if (!string.IsNullOrEmpty(mTextLines[start].Text))
+                if (!string.IsNullOrEmpty(mTextLines[start].Text) && StartPoint.X < mTextLines[start].Text.Length)
                 {
                     mTextLines[start].Text = mTextLines[start].Text.Remove(StartPoint.X);
 
                     if (string.IsNullOrEmpty(mTextLines[start].Text))
                     {
-                        mTextLines[start].Dispose();
-                        mTextLines.RemoveAt(start);
+                        RemoveLabel(start);
                     }
                 }
             }
@@ -993,7 +1008,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mTextLines.Add(GenerateLabel(new Label(mScrollControl)));
             }
-            UpdateLabel();
+
+            UpdateLabelsHeight();
 
             // Move the cursor to the start of the selection, 
             // since the end is probably outside of the string now.
@@ -1050,12 +1066,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Label GenerateLabel(Label label, string text = "")
         {
             label.Font = Font;
-            label.TextColor = TextColor;
-            label.TextColorOverride = TextColorOverride;
-            label.RestrictToParent = RestrictToParent;
-            label.Alignment = Alignment;
+            label.SetText(text);
+            label.SetTextColor(mNormalTextColor, ControlState.Normal);
+            label.SetTextColor(mClickedTextColor, ControlState.Clicked);
+            label.SetTextColor(mHoverTextColor, ControlState.Hovered);
+            label.SetTextColor(mDisabledTextColor, ControlState.Disabled);
+            label.SetTextScale(mText.GetScale());
             label.SetPosition(X, Y);
-            label.Text = text;
 
             return label;
         }
@@ -1208,7 +1225,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             mTextLines = labelLines;
 
-            UpdateLabel();
+            UpdateLabelsHeight();
             Invalidate();
             RefreshCursorBounds();
         }
