@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Client.Core;
@@ -43,9 +43,9 @@ namespace Intersect.Client.Interface
 
         public static bool SetupHandlers { get; set; }
 
-        public static GameInterface GameUi { get; set; }
+        public static GameInterface GameUi { get; private set; }
 
-        public static MenuGuiBase MenuUi { get; set; }
+        public static MenuGuiBase MenuUi { get; private set; }
 
         public static TexturedBase Skin { get; set; }
 
@@ -71,15 +71,9 @@ namespace Intersect.Client.Interface
                 };
             }
 
-            if (MenuUi != null)
-            {
-                MenuUi.Dispose();
-            }
+            MenuUi?.Dispose();
 
-            if (GameUi != null)
-            {
-                GameUi.Dispose();
-            }
+            GameUi?.Dispose();
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(Skin, "MainMenu")

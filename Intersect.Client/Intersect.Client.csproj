@@ -107,7 +107,7 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
-    <Compile Include="Interface\IMutableInterface.cs" />
+    <Compile Include="Interface\MutableInterface.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\MapItem.cs" />
