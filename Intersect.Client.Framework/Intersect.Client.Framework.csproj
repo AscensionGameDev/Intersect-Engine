@@ -60,6 +60,7 @@
     <Compile Include="Audio\GameAudioSource.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
+    <Compile Include="General\GameStates.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />
     <Compile Include="Graphics\GameRenderer.cs" />
