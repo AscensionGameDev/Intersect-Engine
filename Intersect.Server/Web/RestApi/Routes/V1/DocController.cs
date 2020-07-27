@@ -39,7 +39,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object Authorized(string path)
         {
-            var segments = path?.Trim().Split('/') ?? new string[0];
+            var segments = path?.Trim().Split('/') ?? Array.Empty<string>();
 
             var pathSegments = new List<string>();
             var descriptions = Descriptions.OrderBy(description => description?.RelativePath)
@@ -224,7 +224,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (parameters)
             {
                 json.parameters = description.ParameterDescriptions?.Select(parameter => parameter?.ToJson()) ??
-                                  new object[0];
+                                  Array.Empty<object>();
             }
 
             return json;

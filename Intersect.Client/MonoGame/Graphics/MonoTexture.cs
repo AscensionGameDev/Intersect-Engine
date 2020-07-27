@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using Intersect.Client.Framework.Graphics;
@@ -8,15 +8,15 @@ using Intersect.Client.Localization;
 using Intersect.IO.Files;
 using Intersect.Logging;
 
+using JetBrains.Annotations;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-
     public class MonoTexture : GameTexture
     {
-
         private GraphicsDevice mGraphicsDevice;
 
         private int mHeight = -1;
@@ -52,6 +52,19 @@ namespace Intersect.Client.MonoGame.Graphics
             mHeight = packFrame.SourceRect.Height;
         }
 
+        private void Load([NotNull] Stream stream)
+        {
+            mTexture = Texture2D.FromStream(mGraphicsDevice, stream);
+            if (mTexture == null)
+            {
+                throw new InvalidDataException("Failed to load texture, received no data.");
+            }
+
+            mWidth = mTexture.Width;
+            mHeight = mTexture.Height;
+            mLoadError = false;
+        }
+
         public void LoadTexture()
         {
             if (mTexture != null)
@@ -65,7 +78,6 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 return;
             }
-
 
             mLoadError = true;
             if (string.IsNullOrWhiteSpace(mPath))
@@ -88,22 +100,7 @@ namespace Intersect.Client.MonoGame.Graphics
             {
                 try
                 {
-                    mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
-                    if (mTexture == null)
-                    {
-                        Log.Error($"Failed to load texture due to unknown error: {relativePath}");
-                        ChatboxMsg.AddMessage(
-                            new ChatboxMsg(
-                                Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
-                                new Color(0xBF, 0x0, 0x0)
-                            )
-                        );
-                        return;
-                    }
-
-                    mWidth = mTexture.Width;
-                    mHeight = mTexture.Height;
-                    mLoadError = false;
+                    Load(fileStream);
                 }
                 catch (Exception exception)
                 {
@@ -111,6 +108,7 @@ namespace Intersect.Client.MonoGame.Graphics
                         exception,
                         $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
                     );
+
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
                             Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
@@ -247,7 +245,5 @@ namespace Intersect.Client.MonoGame.Graphics
             mTexture.Dispose();
             mTexture = null;
         }
-
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -101,7 +101,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "GAMEDB",
-                        Pretty = false,
                         LogLevel = Options.GameDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
@@ -116,7 +115,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "PLAYERDB",
-                        Pretty = false,
                         LogLevel = Options.PlayerDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)

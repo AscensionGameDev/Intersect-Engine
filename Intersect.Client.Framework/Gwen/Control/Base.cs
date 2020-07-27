@@ -11,10 +11,11 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
+
+using JetBrains.Annotations;
 #if DEBUG || DIAGNOSTIC
 using Intersect.Logging;
 #endif
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -860,26 +861,32 @@ namespace Intersect.Client.Framework.Gwen.Control
                             AddAlignment(Alignments.Top);
 
                             break;
+
                         case "bottom":
                             AddAlignment(Alignments.Bottom);
 
                             break;
+
                         case "left":
                             AddAlignment(Alignments.Left);
 
                             break;
+
                         case "right":
                             AddAlignment(Alignments.Right);
 
                             break;
+
                         case "center":
                             AddAlignment(Alignments.Center);
 
                             break;
+
                         case "centerh":
                             AddAlignment(Alignments.CenterH);
 
                             break;
+
                         case "centerv":
                             AddAlignment(Alignments.CenterV);
 
@@ -1369,33 +1376,53 @@ namespace Intersect.Client.Framework.Gwen.Control
         }
 
         /// <summary>
+        /// Finds the first child that matches the predicate.
+        /// </summary>
+        /// <param name="predicate">The <see cref="T:System.Predicate`1" /> delegate that defines the conditions of the element to search for.</param>
+        /// <param name="recurse">Whether or not the search will recurse through the element tree.</param>
+        /// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <see cref="Base" />.</returns>
+        public virtual Base Find([NotNull] Predicate<Base> predicate, bool recurse = false)
+        {
+            var child = mChildren.Find(predicate);
+            if (child != null)
+            {
+                return child;
+            }
+
+            return recurse
+                ? mChildren.Select(selectChild => selectChild?.Find(predicate, true)).FirstOrDefault()
+                : default;
+        }
+
+        /// <summary>
+        /// Finds all children that match the predicate.
+        /// </summary>
+        /// <param name="predicate">The <see cref="T:System.Predicate`1" /> delegate that defines the conditions of the element to search for.</param>
+        /// <param name="recurse">Whether or not the search will recurse through the element tree.</param>
+        /// <returns>All elements that matches the conditions defined by the specified predicate.</returns>
+        [NotNull]
+        public virtual IEnumerable<Base> FindAll([NotNull] Predicate<Base> predicate, bool recurse = false)
+        {
+            var children = new List<Base>();
+
+            children.AddRange(mChildren.FindAll(predicate));
+
+            if (recurse)
+            {
+                children.AddRange(mChildren.SelectMany(selectChild => selectChild?.FindAll(predicate, true)));
+            }
+
+            return children;
+        }
+
+        /// <summary>
         ///     Finds a child by name.
         /// </summary>
         /// <param name="name">Child name.</param>
         /// <param name="recursive">Determines whether the search should be recursive.</param>
         /// <returns>Found control or null.</returns>
-        public virtual Base FindChildByName(string name, bool recursive = false)
-        {
-            var b = mChildren.Find(x => x.mName == name);
-            if (b != null)
-            {
-                return b;
-            }
-
-            if (recursive)
-            {
-                foreach (var child in mChildren)
-                {
-                    b = child.FindChildByName(name, true);
-                    if (b != null)
-                    {
-                        return b;
-                    }
-                }
-            }
-
-            return null;
-        }
+        public virtual Base FindChildByName(string name, bool recursive = false) =>
+            Find(child => string.Equals(child?.Name, name));
 
         /// <summary>
         ///     Attaches specified control as a child of this one.
@@ -2715,46 +2742,57 @@ namespace Intersect.Client.Framework.Gwen.Control
                     handled = OnKeyTab(down);
 
                     break;
+
                 case Key.Space:
                     handled = OnKeySpace(down);
 
                     break;
+
                 case Key.Home:
                     handled = OnKeyHome(down);
 
                     break;
+
                 case Key.End:
                     handled = OnKeyEnd(down);
 
                     break;
+
                 case Key.Return:
                     handled = OnKeyReturn(down);
 
                     break;
+
                 case Key.Backspace:
                     handled = OnKeyBackspace(down);
 
                     break;
+
                 case Key.Delete:
                     handled = OnKeyDelete(down);
 
                     break;
+
                 case Key.Right:
                     handled = OnKeyRight(down);
 
                     break;
+
                 case Key.Left:
                     handled = OnKeyLeft(down);
 
                     break;
+
                 case Key.Up:
                     handled = OnKeyUp(down);
 
                     break;
+
                 case Key.Down:
                     handled = OnKeyDown(down);
 
                     break;
+
                 case Key.Escape:
                     handled = OnKeyEscape(down);
 

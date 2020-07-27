@@ -224,7 +224,6 @@
     <Compile Include="Collections\DatabaseObjectLookup.cs" />
     <Compile Include="Collections\IGameObjectLookup.cs" />
     <Compile Include="Collections\ILookup.cs" />
-    <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Configuration\ClientConfiguration.cs" />
     <Compile Include="Config\CombatOptions.cs" />
     <Compile Include="Config\DatabaseOptions.cs" />

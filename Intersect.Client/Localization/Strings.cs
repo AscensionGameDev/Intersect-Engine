@@ -1147,6 +1147,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString resolution = @"Resolution:";
 
+            public static LocalizedString ResolutionCustom = @"Custom Resolution";
+
             public static LocalizedString restore = @"Restore Defaults";
 
             public static LocalizedString soundvolume = @"Sound Volume: {00}%";

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -172,26 +172,37 @@ namespace Intersect.Client.Framework.File_Management
             {
                 case TextureType.Tileset:
                     return mTilesetDict.Keys.ToArray();
+
                 case TextureType.Item:
                     return mItemDict.Keys.ToArray();
+
                 case TextureType.Entity:
                     return mEntityDict.Keys.ToArray();
+
                 case TextureType.Spell:
                     return mSpellDict.Keys.ToArray();
+
                 case TextureType.Animation:
                     return mAnimationDict.Keys.ToArray();
+
                 case TextureType.Face:
                     return mFaceDict.Keys.ToArray();
+
                 case TextureType.Image:
                     return mImageDict.Keys.ToArray();
+
                 case TextureType.Fog:
                     return mFogDict.Keys.ToArray();
+
                 case TextureType.Resource:
                     return mResourceDict.Keys.ToArray();
+
                 case TextureType.Paperdoll:
                     return mPaperdollDict.Keys.ToArray();
+
                 case TextureType.Gui:
                     return mGuiDict.Keys.ToArray();
+
                 case TextureType.Misc:
                     return mMiscDict.Keys.ToArray();
             }
@@ -214,50 +225,62 @@ namespace Intersect.Client.Framework.File_Management
                     textureDict = mTilesetDict;
 
                     break;
+
                 case TextureType.Item:
                     textureDict = mItemDict;
 
                     break;
+
                 case TextureType.Entity:
                     textureDict = mEntityDict;
 
                     break;
+
                 case TextureType.Spell:
                     textureDict = mSpellDict;
 
                     break;
+
                 case TextureType.Animation:
                     textureDict = mAnimationDict;
 
                     break;
+
                 case TextureType.Face:
                     textureDict = mFaceDict;
 
                     break;
+
                 case TextureType.Image:
                     textureDict = mImageDict;
 
                     break;
+
                 case TextureType.Fog:
                     textureDict = mFogDict;
 
                     break;
+
                 case TextureType.Resource:
                     textureDict = mResourceDict;
 
                     break;
+
                 case TextureType.Paperdoll:
                     textureDict = mPaperdollDict;
 
                     break;
+
                 case TextureType.Gui:
                     textureDict = mGuiDict;
 
                     break;
+
                 case TextureType.Misc:
                     textureDict = mMiscDict;
 
                     break;
+
                 default:
                     return null;
             }
