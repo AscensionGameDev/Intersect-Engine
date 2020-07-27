@@ -58,6 +58,8 @@
   <ItemGroup>
     <Compile Include="Audio\GameAudioInstance.cs" />
     <Compile Include="Audio\GameAudioSource.cs" />
+    <Compile Include="Content\IAsset.cs" />
+    <Compile Include="Content\IContentManager.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
     <Compile Include="General\GameStates.cs" />
@@ -71,7 +73,11 @@
     <Compile Include="Graphics\GameTileBuffer.cs" />
     <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="Input\GameInput.cs" />
+    <Compile Include="Interface\IMutableInterface.cs" />
     <Compile Include="Network\GameSocket.cs" />
+    <Compile Include="Plugins\ClientPluginEntry.cs" />
+    <Compile Include="Plugins\IClientPluginContext.cs" />
+    <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Clipboard.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
