@@ -1,5 +1,9 @@
 ﻿using JetBrains.Annotations;
 
+using Microsoft;
+
+using System;
+
 namespace Intersect.Plugins
 {
     /// <summary>
@@ -7,24 +11,24 @@ namespace Intersect.Plugins
     /// in order to be discovered by the plugin loader.
     /// </summary>
     /// <see cref="Loaders.PluginLoader.LoadFrom(Core.IApplicationContext, System.Reflection.Assembly)"/>
-    public interface IPluginEntry
+    public interface IPluginEntry : IDisposable
     {
         /// <summary>
         /// Invoked during application bootstrapping before startup.
         /// </summary>
         /// <param name="context">the current plugin context</param>
-        void OnBootstrap([NotNull] IPluginBootstrapContext context);
+        void OnBootstrap([NotNull, ValidatedNotNull] IPluginBootstrapContext context);
 
         /// <summary>
         /// Invoked during application startup after basic initialization.
         /// </summary>
         /// <param name="context">the current plugin context</param>
-        void OnStart([NotNull] IPluginContext context);
+        void OnStart([NotNull, ValidatedNotNull] IPluginContext context);
 
         /// <summary>
         /// Invoked during application shutdown.
         /// </summary>
         /// <param name="context">the current plugin context</param>
-        void OnStop([NotNull] IPluginContext context);
+        void OnStop([NotNull, ValidatedNotNull] IPluginContext context);
     }
 }
