@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -61,6 +61,9 @@
   <ItemGroup>
     <Compile Include="Audio\GameAudioInstance.cs" />
     <Compile Include="Audio\GameAudioSource.cs" />
+    <Compile Include="Content\AssetTypeAttribute.cs" />
+    <Compile Include="Content\ContentTypes.cs" />
+    <Compile Include="Content\ContentTypesExtensions.cs" />
     <Compile Include="Content\IAsset.cs" />
     <Compile Include="Content\IContentManager.cs" />
     <Compile Include="Database\GameDatabase.cs" />
