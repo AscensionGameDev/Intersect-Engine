@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,13 +9,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Intersect Client Framework")]
-[assembly: AssemblyDescription("2D ORPG Client Framework - Part of the Intersect Game Creation Suite")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDescription("Client Framework - Part of the Intersect 2D Game Creation Suite")]
+[assembly: AssemblyProduct("Intersect Game Engine")]
 [assembly: AssemblyCompany("Ascension Game Development")]
-[assembly: AssemblyProduct("Intersect Client Framework")]
-[assembly: AssemblyCopyright("Copyright ©  2020 Ascension Game Dev")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © Ascension Game Dev 2020")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
+[assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -36,3 +37,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("0.7.0.0")]
 [assembly: AssemblyFileVersion("0.7.0.0")]
+[assembly: NeutralResourcesLanguage("en-US")]

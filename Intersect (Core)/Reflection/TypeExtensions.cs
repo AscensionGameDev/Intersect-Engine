@@ -6,11 +6,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
+using Microsoft;
+
 namespace Intersect.Reflection
 {
-
     public static class TypeExtensions
     {
+        [NotNull]
+        public static string QualifiedGenericName([NotNull, ValidatedNotNull] this Type type) =>
+            $"{type.Name}<{string.Join(", ", type.GenericTypeArguments.Select(parameterType => parameterType.Name))}>";
 
         [NotNull]
         public static IEnumerable<ConstructorInfo> FindConstructors(
@@ -58,7 +62,5 @@ namespace Intersect.Reflection
                     return true;
                 }
             );
-
     }
-
 }

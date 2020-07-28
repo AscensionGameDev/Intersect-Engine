@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+
+using Intersect.Logging;
+using Intersect.Properties;
+using Intersect.Reflection;
 
 using JetBrains.Annotations;
 
@@ -8,6 +14,10 @@ namespace Intersect.Factories
     /// Utility class that stores instances of <see cref="IFactory{TValue}"/>.
     /// </summary>
     /// <typeparam name="TValue">the type of created instances</typeparam>
+    [SuppressMessage(
+        "Design", "CA1000:Do not declare static members on generic types",
+        Justification = "Static members on this type are actually desirable."
+    )]
     public static class FactoryRegistry<TValue>
     {
         /// <summary>
@@ -43,6 +53,10 @@ namespace Intersect.Factories
         /// <returns>if the instance was created</returns>
         /// <see cref="Create(object[])"/>
         [Pure]
+        [SuppressMessage(
+            "Design", "CA1031:Do not catch general exception types",
+            Justification = "This exception is intended to log but not throw."
+        )]
         public static bool TryCreate(out TValue value, [NotNull] params object[] args)
         {
             try
@@ -50,11 +64,23 @@ namespace Intersect.Factories
                 value = Create(args);
                 return true;
             }
-            catch
+            catch (InvalidOperationException exception)
             {
-                value = default;
-                return false;
+                Log.Warn(exception);
             }
+            catch (Exception exception)
+            {
+                Log.Error(
+                    exception,
+                    string.Format(
+                        CultureInfo.CurrentCulture, ExceptionMessages.SwallowingExceptionFromWithQualifiedName,
+                        typeof(FactoryRegistry<TValue>).QualifiedGenericName(), nameof(Create)
+                    )
+                );
+            }
+
+            value = default;
+            return false;
         }
 
         /// <summary>
