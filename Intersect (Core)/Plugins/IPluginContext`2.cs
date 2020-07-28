@@ -8,8 +8,8 @@ namespace Intersect.Plugins
     /// Defines the API of the <typeparamref name="TPluginContext"/> with a
     /// specialized <see cref="ILifecycleHelper"/> during application runtime.
     /// </summary>
-    /// <typeparam name="TPluginContext">a <see cref="IPluginContext"/> subtype</typeparam>
-    /// <typeparam name="TLifecycleHelper">a <see cref="ILifecycleHelper"/> subtype</typeparam>
+    /// <typeparam name="TPluginContext"><see cref="IPluginContext"/> extension type</typeparam>
+    /// <typeparam name="TLifecycleHelper"><see cref="ILifecycleHelper"/> extension type used by <typeparamref name="TPluginContext"/></typeparam>
     public interface IPluginContext<TPluginContext, out TLifecycleHelper> : IPluginContext<TPluginContext>
         where TPluginContext : IPluginContext<TPluginContext> where TLifecycleHelper : ILifecycleHelper
     {

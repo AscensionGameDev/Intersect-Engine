@@ -119,6 +119,9 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
+    </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
@@ -493,6 +496,12 @@
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
     <Compile Include="Network\Packets\SlotSwapPacket.cs" />
+    <Compile Include="Plugins\Helpers\CommandLineHelper.cs" />
+    <Compile Include="Plugins\Helpers\ContextHelper.cs" />
+    <Compile Include="Plugins\Helpers\EmbeddedResourceHelper.cs" />
+    <Compile Include="Plugins\Helpers\LoggingHelper.cs" />
+    <Compile Include="Plugins\Contexts\PluginBootstrapContext.cs" />
+    <Compile Include="Plugins\Contexts\PluginContext.cs" />
     <Compile Include="Plugins\Interfaces\ICommandLineHelper.cs" />
     <Compile Include="Plugins\Interfaces\IEmbeddedResourceHelper.cs" />
     <Compile Include="Plugins\Interfaces\ILifecycleHelper.cs" />
@@ -510,10 +519,23 @@
     <Compile Include="Plugins\Manifests\JsonManifest.cs" />
     <Compile Include="Plugins\Manifests\Types\Author.cs" />
     <Compile Include="Plugins\Manifests\Types\Authors.cs" />
+    <Compile Include="Plugins\PluginConfiguration.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\Plugin.PluginReference.cs" />
+    <Compile Include="Plugins\PluginEntry.cs" />
+    <Compile Include="Plugins\PluginEntry`1.cs" />
+    <Compile Include="Plugins\PluginHelper.cs" />
+    <Compile Include="Plugins\PluginInstance.cs" />
+    <Compile Include="Plugins\PluginService.cs" />
     <Compile Include="Properties\DeveloperStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DeveloperStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Reflection\AssemblyExtensions.cs" />
     <Compile Include="Reflection\MemberInfoExtensions.cs" />
@@ -633,6 +655,10 @@
     <EmbeddedResource Include="Properties\DeveloperStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DeveloperStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\ExceptionMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

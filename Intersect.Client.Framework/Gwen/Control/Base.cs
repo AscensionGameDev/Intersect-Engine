@@ -714,6 +714,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             mChildren?.ForEach(child => child?.Dispose());
             mChildren?.Clear();
 
+            mInnerPanel?.Dispose();
+
             mDisposed = true;
             GC.SuppressFinalize(this);
         }
