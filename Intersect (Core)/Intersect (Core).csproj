@@ -211,7 +211,9 @@
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
-    <Compile Include="Core\ApplicationContext.cs" />
+    <Compile Include="Core\ApplicationContext`2.cs" />
+    <Compile Include="Core\ApplicationService`2.cs" />
+    <Compile Include="Core\ApplicationService`3.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />
     <Compile Include="Core\ExperimentalFeatures\ExperimentalFlag.cs" />
