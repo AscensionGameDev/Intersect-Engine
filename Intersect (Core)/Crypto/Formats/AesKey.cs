@@ -2,12 +2,10 @@
 
 using Intersect.Memory;
 
-namespace Intersect.Network.Crypto.Formats
+namespace Intersect.Crypto.Formats
 {
-
     public class AesKey : EncryptionKey
     {
-
         private byte[] mData;
 
         public AesKey() : this(null)
@@ -46,7 +44,5 @@ namespace Intersect.Network.Crypto.Formats
 
             return true;
         }
-
     }
-
 }

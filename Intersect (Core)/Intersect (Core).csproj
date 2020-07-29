@@ -138,6 +138,9 @@
     <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Abstractions, Version=12.0.0.0, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.12.0.4\lib\net461\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Linq.Async, Version=4.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Async.4.0.0\lib\net461\System.Linq.Async.dll</HintPath>
     </Reference>
@@ -221,6 +224,10 @@
     <Compile Include="Config\Passability.cs" />
     <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
+    <Compile Include="Crypto\EncryptionKey.cs" />
+    <Compile Include="Crypto\Formats\AesKey.cs" />
+    <Compile Include="Crypto\Formats\RsaKey.cs" />
+    <Compile Include="Crypto\KeyFormat.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="Enums\ItemHandling.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
@@ -229,11 +236,12 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="Extensions\LogLevelExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
-    <Compile Include="IO\FileSystem\FileSystemHelper.cs" />
+    <Compile Include="IO\Files\FileSystemHelper.cs" />
     <Compile Include="IO\ILoadable.cs" />
     <Compile Include="IO\ISaveable.cs" />
     <Compile Include="IO\ISaveableProvider.cs" />
@@ -589,6 +597,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />
+    <Folder Include="IO\FileSystem\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

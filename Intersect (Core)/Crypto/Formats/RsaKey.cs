@@ -4,12 +4,10 @@ using System.Security.Cryptography;
 
 using Intersect.Memory;
 
-namespace Intersect.Network.Crypto.Formats
+namespace Intersect.Crypto.Formats
 {
-
     public class RsaKey : EncryptionKey
     {
-
         private RSAParameters mParameters;
 
         public RsaKey() : this(null)
@@ -141,7 +139,5 @@ namespace Intersect.Network.Crypto.Formats
 
             return true;
         }
-
     }
-
 }

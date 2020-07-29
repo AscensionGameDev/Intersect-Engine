@@ -29,6 +29,9 @@ _Licensed under MIT to allow for public distribution of binaries without disclos
 #### [Intersect (Core)/LICENSE.md](/Intersect%20(Core)/LICENSE.md)
 The backbone library that contains (most) of the common code between all of the projects.
 
+#### [Intersect.Building/LICENSE.md (GPL v3)](/Intersect.Building/LICENSE.md)
+The build scripts library that is used in the compilation of other projects.
+
 #### [Intersect.Network/LICENSE.md (MIT)](/Intersect.Network/LICENSE.md)
 The common networking library for all "client" applications (both the client and the editor).
 

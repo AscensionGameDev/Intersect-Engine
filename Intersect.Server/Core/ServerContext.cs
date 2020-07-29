@@ -7,8 +7,8 @@ using System.Threading;
 using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Crypto;
-using Intersect.Network.Crypto.Formats;
+using Intersect.Crypto;
+using Intersect.Crypto.Formats;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -189,7 +189,7 @@ namespace Intersect.Server.Core
             #region Create Network
 
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.network.handshake.bkey"))
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");

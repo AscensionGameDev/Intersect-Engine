@@ -2,17 +2,15 @@
 using System.IO;
 using System.IO.Compression;
 
+using Intersect.Crypto.Formats;
 using Intersect.Memory;
-using Intersect.Network.Crypto.Formats;
 
 using JetBrains.Annotations;
 
-namespace Intersect.Network.Crypto
+namespace Intersect.Crypto
 {
-
     public abstract class EncryptionKey
     {
-
         protected EncryptionKey(KeyFormat format)
         {
             Format = format;
@@ -58,10 +56,8 @@ namespace Intersect.Network.Crypto
             return InternalWrite(buffer);
         }
 
-        public static bool ToStream([NotNull] EncryptionKey encryptionKey, [NotNull] Stream stream)
-        {
-            return encryptionKey.Write(stream);
-        }
+        public static bool ToStream([NotNull] EncryptionKey encryptionKey, [NotNull] Stream stream) =>
+            encryptionKey.Write(stream);
 
         [NotNull]
         public static EncryptionKey FromStream([NotNull] Stream stream)
@@ -121,7 +117,5 @@ namespace Intersect.Network.Crypto
 
             return castedKey;
         }
-
     }
-
 }

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 
-using Intersect.Network.Crypto.Formats;
+using Intersect.Crypto.Formats;
 
 namespace Intersect.Utilities.Scripts
 {
