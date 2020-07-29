@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Client.Core;
@@ -12,6 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared.Errors;
+using Intersect.Client.Plugins.Interfaces;
 
 using JetBrains.Annotations;
 
@@ -127,6 +128,8 @@ namespace Intersect.Client.Interface
                 GameUi = new GameInterface(sGameCanvas);
                 MenuUi = null;
             }
+
+            Globals.OnLifecycleChangeState();
 
             GwenInitialized = true;
         }

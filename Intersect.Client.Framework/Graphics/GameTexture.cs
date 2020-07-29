@@ -1,9 +1,11 @@
-using System;
+﻿using System;
+
+using Intersect.Client.Framework.Content;
 
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameTexture
+    public abstract class GameTexture : IAsset
     {
 
         public string Name => GetName() ?? throw new ArgumentNullException(nameof(GetName));

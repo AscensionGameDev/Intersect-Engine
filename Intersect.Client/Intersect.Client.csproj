@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -78,6 +78,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Core\Audio.cs" />
+    <Compile Include="Core\Bootstrapper.cs" />
+    <Compile Include="Core\ClientContext.cs" />
     <Compile Include="Core\ClientCommandLineOptions.cs" />
     <Compile Include="Core\Controls\ControlEnum.cs" />
     <Compile Include="Core\Controls\ControlMap.cs" />
@@ -137,8 +139,8 @@
     <Compile Include="Interface\Menu\CreditsWindow.cs" />
     <Compile Include="Interface\Menu\ResetPasswordWindow.cs" />
     <Compile Include="Interface\Menu\ForgotPasswordWindow.cs" />
-    <Compile Include="Plugins\IClientPluginContext.cs" />
-    <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
+    <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
+    <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicSource.cs" />
@@ -216,6 +218,9 @@
       <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.2\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.8.0.1217, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
@@ -250,13 +255,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x86\libSDL2</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
       <Link>Resources\x64\libSDL2</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x86\libopenal</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\AscensionGameDev.Client.DesktopGL.3.8.0.1217-develop\runtimes\linux-x64\native\libopenal.so.1">
       <Link>Resources\x64\libopenal</Link>

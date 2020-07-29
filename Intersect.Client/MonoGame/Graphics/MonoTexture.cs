@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 using Intersect.Client.Framework.Graphics;
@@ -35,11 +35,21 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private int mWidth = -1;
 
+        private readonly Func<Stream> CreateStream;
+
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
         {
             mGraphicsDevice = graphicsDevice;
             mPath = filename;
             mName = Path.GetFileName(filename);
+        }
+
+        public MonoTexture([NotNull] GraphicsDevice graphicsDevice, [NotNull] string assetName, [NotNull] Func<Stream> createStream)
+        {
+            mGraphicsDevice = graphicsDevice;
+            mPath = assetName;
+            mName = assetName;
+            CreateStream = createStream;
         }
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame)
@@ -70,6 +80,15 @@ namespace Intersect.Client.MonoGame.Graphics
             if (mTexture != null)
             {
                 return;
+            }
+
+            if (CreateStream != null)
+            {
+                using (var stream = CreateStream())
+                {
+                    Load(stream);
+                    return;
+                }
             }
 
             if (mPackFrame != null)

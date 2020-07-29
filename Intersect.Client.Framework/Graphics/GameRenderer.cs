@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -87,6 +87,11 @@ namespace Intersect.Client.Framework.Graphics
         public abstract GameRenderTexture CreateRenderTexture(int width, int height);
 
         public abstract GameTexture LoadTexture(string filename);
+
+        public abstract GameTexture LoadTexture(
+            [NotNull] string assetName,
+            [NotNull] Func<Stream> createStream
+        );
 
         public abstract GameTexture GetWhiteTexture();
 
