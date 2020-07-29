@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -520,8 +520,12 @@
     <Compile Include="Plugins\IPluginEntry.cs" />
     <Compile Include="Plugins\IPluginService.cs" />
     <Compile Include="Plugins\Loaders\ManifestLoader.cs" />
+    <Compile Include="Plugins\Loaders\MissingPluginEntryException.cs" />
+    <Compile Include="Plugins\Loaders\PluginLoader.Configuration.cs" />
+    <Compile Include="Plugins\Loaders\PluginLoader.Discovery.cs" />
     <Compile Include="Plugins\Manifests\JsonManifest.cs" />
     <Compile Include="Plugins\Manifests\Types\Author.cs" />
+    <Compile Include="Plugins\Loaders\PluginLoader.Assembly.cs" />
     <Compile Include="Plugins\Manifests\Types\Authors.cs" />
     <Compile Include="Plugins\PluginConfiguration.cs" />
     <Compile Include="Plugins\Plugin.cs" />

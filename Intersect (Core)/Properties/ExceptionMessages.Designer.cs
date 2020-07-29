@@ -61,6 +61,42 @@ namespace Intersect.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugin entry type found in the assembly does not have a generic constructor..
+        /// </summary>
+        internal static string FoundPluginEntryTypeMissingDefaultConstructor {
+            get {
+                return ResourceManager.GetString("FoundPluginEntryTypeMissingDefaultConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No plugin assembly was found for the provided path..
+        /// </summary>
+        internal static string MissingPluginAssembly {
+            get {
+                return ResourceManager.GetString("MissingPluginAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find a plugin entry type in:.
+        /// </summary>
+        internal static string MissingPluginEntryExceptionAssemblyName {
+            get {
+                return ResourceManager.GetString("MissingPluginEntryExceptionAssemblyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find a plugin entry type in the assembly..
+        /// </summary>
+        internal static string MissingPluginEntryExceptionDefault {
+            get {
+                return ResourceManager.GetString("MissingPluginEntryExceptionDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PluginBootstrap factory needs at lease one non-null argument of type &apos;{0}&apos;..
         /// </summary>
         internal static string PluginBootstrapContextMissingPluginArgument {
@@ -70,7 +106,7 @@ namespace Intersect.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Swallowing unexpected exception from {0}..
         /// </summary>
         internal static string SwallowingExceptionFrom {
             get {
@@ -79,7 +115,7 @@ namespace Intersect.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Swallowing unexpected exception from {0}.{1}..
         /// </summary>
         internal static string SwallowingExceptionFromWithQualifiedName {
             get {
