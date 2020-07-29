@@ -1,10 +1,4 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
@@ -18,21 +12,27 @@ using Intersect.Client.MonoGame.Input;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Client.MonoGame.System;
 using Intersect.Configuration;
-using Intersect.Logging;
 using Intersect.Updater;
+
+using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 
 namespace Intersect.Client.MonoGame
 {
-
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
-    public class IntersectGame : Game
+    internal class IntersectGame : Game
     {
         private bool mInitialized;
 
@@ -58,18 +58,25 @@ namespace Intersect.Client.MonoGame
 
         #endregion
 
-        public IntersectGame()
+        [NotNull] private IClientContext Context { get; }
+
+        [NotNull] private Action PostStartupAction { get; }
+
+        private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
-            //Setup an error handler
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Context = context;
+            PostStartupAction = postStartupAction;
 
             Strings.Load();
 
-            mGraphics = new GraphicsDeviceManager(this);
-            mGraphics.PreferredBackBufferWidth = 800;
-            mGraphics.PreferredBackBufferHeight = 480;
-            mGraphics.PreferHalfPixelOffset = true;
-            mGraphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
+            mGraphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = 800,
+                PreferredBackBufferHeight = 480,
+                PreferHalfPixelOffset = true
+            };
+
+            mGraphics.PreparingDeviceSettings += (s, args) =>
             {
                 args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
                     RenderTargetUsage.PreserveContents;
@@ -85,14 +92,16 @@ namespace Intersect.Client.MonoGame
 
             Globals.Database.LoadPreferences();
 
+            Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
+
+            var renderer = new MonoRenderer(mGraphics, Content, this)
+            {
+                OverrideResolution = Context.StartupOptions.ScreenResolution
+            };
+
             Globals.InputManager = new MonoInput(this);
 
-            var renderer = new MonoRenderer(mGraphics, Content, this);
             Core.Graphics.Renderer = renderer;
-            if (renderer == null)
-            {
-                throw new NullReferenceException("No renderer.");
-            }
 
             Globals.System = new MonoSystem();
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
@@ -100,20 +109,14 @@ namespace Intersect.Client.MonoGame
             Controls.Init();
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
-            Window.IsBorderless = false;
             Window.AllowAltF4 = false;
 
             if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.UpdateUrl))
             {
-                mUpdater = new Updater.Updater(ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), true, 5);
+                mUpdater = new Updater.Updater(
+                    ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), true, 5
+                );
             }
-        }
-
-        //Really basic error handler for debugging purposes
-        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
-        {
-            Log.Error((Exception)exception?.ExceptionObject);
-            Environment.Exit(-1);
         }
 
         /// <summary>
@@ -152,6 +155,8 @@ namespace Intersect.Client.MonoGame
             Main.Start();
 
             mInitialized = true;
+
+            PostStartupAction();
         }
 
         /// <summary>
@@ -478,6 +483,27 @@ namespace Intersect.Client.MonoGame
             {
                 return;
             }
+
+            if (!Context.IsDisposed)
+            {
+                Context.Dispose();
+            }
         }
 
+        /// <summary>
+        /// Implements <see cref="IPlatformRunner"/> for MonoGame.
+        /// </summary>
+        [UsedImplicitly]
+        internal class MonoGameRunner : IPlatformRunner
+        {
+            /// <inheritdoc />
+            public void Start(IClientContext context, Action postStartupAction)
+            {
+                using (var game = new IntersectGame(context, postStartupAction))
+                {
+                    game.Run();
+                }
+            }
+        }
+    }
 }

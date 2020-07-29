@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -877,6 +877,10 @@ namespace Intersect.Client.MonoGame.Graphics
 
             return tex;
         }
+
+        /// <inheritdoc />
+        public override GameTexture LoadTexture(string assetName, Func<Stream> createStream) =>
+            new MonoTexture(mGraphicsDevice, assetName, createStream);
 
         public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
         {
