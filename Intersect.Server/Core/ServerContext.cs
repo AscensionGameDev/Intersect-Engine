@@ -1,14 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-
-using Intersect.Core;
+﻿using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
+using Intersect.Server.Core.Services;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -20,45 +15,51 @@ using JetBrains.Annotations;
 
 using Open.Nat;
 
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Intersect.Factories;
+using Intersect.Plugins;
+using Intersect.Server.Plugins;
+
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
 #endif
 
 namespace Intersect.Server.Core
 {
-
-    internal sealed class ServerContext : ApplicationContext<ServerContext>
+    /// <summary>
+    /// Implements <see cref="IServerContext"/>.
+    /// </summary>
+    internal sealed class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
-
-        public ServerContext([NotNull] CommandLineOptions startupOptions)
+        internal ServerContext(ServerCommandLineOptions startupOptions, [NotNull] Logger logger) : base(
+            startupOptions, logger
+        )
         {
-            StartupOptions = startupOptions;
+            // Register the factory for creating service plugin contexts
+            FactoryRegistry<IPluginContext>.RegisterFactory(new ServerPluginContext.Factory());
 
             if (startupOptions.Port > 0)
             {
                 Options.ServerPort = startupOptions.Port;
             }
 
-            ServerConsole = new ServerConsole();
-            ServerLogic = new ServerLogic();
             RestApi = new RestApi(startupOptions.ApiPort);
 
             Network = CreateNetwork();
         }
 
-        [NotNull]
-        public CommandLineOptions StartupOptions { get; }
+        public IConsoleService ConsoleService => GetExpectedService<IConsoleService>();
 
-        [NotNull]
-        public ServerConsole ServerConsole { get; }
+        public ILogicService LogicService => GetExpectedService<ILogicService>();
 
-        [NotNull]
-        public ServerLogic ServerLogic { get; }
-
-        [NotNull]
         public ServerNetwork Network { get; }
 
-        [NotNull]
         public RestApi RestApi { get; }
 
         #region Startup
@@ -68,13 +69,6 @@ namespace Intersect.Server.Core
             try
             {
                 InternalStartNetworking();
-
-                if (!StartupOptions.DoNotShowConsole)
-                {
-                    ThreadConsole = ServerConsole.Start();
-                }
-
-                ThreadLogic = ServerLogic.Start();
             }
             catch (Exception exception)
             {
@@ -167,9 +161,9 @@ namespace Intersect.Server.Core
 
         #region Threads
 
-        private Thread ThreadConsole { get; set; }
+        private Thread ThreadConsole => ConsoleService.Thread;
 
-        private Thread ThreadLogic { get; set; }
+        private Thread ThreadLogic => LogicService.Thread;
 
         #endregion
 
@@ -232,7 +226,7 @@ namespace Intersect.Server.Core
 
             RestApi.Start();
 
-            if (!Options.UPnP || ServerContext.Instance.StartupOptions.NoNatPunchthrough)
+            if (!Options.UPnP || Instance.StartupOptions.NoNatPunchthrough)
             {
                 return;
             }
@@ -260,6 +254,19 @@ namespace Intersect.Server.Core
 
         #endregion
 
-    }
+        #region Exception Handling
 
+        protected override void NotifyNonTerminatingExceptionOccurred() =>
+            Console.WriteLine(Strings.Errors.errorlogged);
+
+        internal static void DispatchUnhandledException([NotNull] Exception exception, bool isTerminating = true)
+        {
+            var sender = Thread.CurrentThread;
+            Task.Factory.StartNew(
+                () => HandleUnhandledException(sender, new UnhandledExceptionEventArgs(exception, isTerminating))
+            );
+        }
+
+        #endregion Exception Handling
+    }
 }

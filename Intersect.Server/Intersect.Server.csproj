@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -429,6 +429,8 @@
   <ItemGroup>
     <Compile Include="Admin\Actions\ActionProcessing.cs" />
     <Compile Include="Core\IServerContext.cs" />
+    <Compile Include="Core\LogicService.cs" />
+    <Compile Include="Core\LogicService.LogicThread.cs" />
     <Compile Include="Core\ServerTiming.cs" />
     <Compile Include="Core\Services\IConsoleService.cs" />
     <Compile Include="Core\Services\ILogicService.cs" />
@@ -502,7 +504,6 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Database\DbInterface.cs" />
     <Compile Include="Maps\MapGrid.cs" />
-    <Compile Include="Core\ServerLoop.cs" />
     <Compile Include="Networking\Helpers\PortChecker.cs" />
     <Compile Include="Networking\Helpers\UPnP.cs" />
     <Compile Include="Notifications\Notification.cs" />
@@ -554,9 +555,8 @@
     <Compile Include="Core\Commands\NetDebugCommand.cs" />
     <Compile Include="Core\Commands\OnlineListCommand.cs" />
     <Compile Include="Core\ExperimentalFeatures\Experiments.cs" />
-    <Compile Include="Core\ServerConsole.cs" />
+    <Compile Include="Core\ConsoleService.cs" />
     <Compile Include="Core\ServerContext.cs" />
-    <Compile Include="Core\ServerLogic.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
@@ -656,7 +656,9 @@
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Plugins\Helpers\IServerLifecycleHelper.cs" />
+    <Compile Include="Plugins\Helpers\ServerLifecycleHelper.cs" />
     <Compile Include="Plugins\IServerPluginContext.cs" />
+    <Compile Include="Plugins\ServerPluginContext.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
@@ -739,6 +741,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <Compile Include="Entities\Entity.Comparison.cs" />
+    <Compile Include="Core\ConsoleService.ConsoleThread.cs" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
