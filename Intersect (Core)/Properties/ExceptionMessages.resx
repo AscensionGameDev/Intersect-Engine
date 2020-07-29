@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MissingPluginEntryExceptionAssemblyName" xml:space="preserve">
+    <value>Unable to find a plugin entry type in:</value>
+  </data>
+  <data name="MissingPluginEntryExceptionDefault" xml:space="preserve">
+    <value>Unable to find a plugin entry type in the assembly.</value>
+  </data>
   <data name="PluginBootstrapContextMissingPluginArgument" xml:space="preserve">
     <value>PluginBootstrap factory needs at lease one non-null argument of type '{0}'.</value>
   </data>
@@ -125,5 +131,11 @@
   </data>
   <data name="SwallowingExceptionFromWithQualifiedName" xml:space="preserve">
     <value>Swallowing unexpected exception from {0}.{1}.</value>
+  </data>
+  <data name="FoundPluginEntryTypeMissingDefaultConstructor" xml:space="preserve">
+    <value>Plugin entry type found in the assembly does not have a generic constructor.</value>
+  </data>
+  <data name="MissingPluginAssembly" xml:space="preserve">
+    <value>No plugin assembly was found for the provided path.</value>
   </data>
 </root>
