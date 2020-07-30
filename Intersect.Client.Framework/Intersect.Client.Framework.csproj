@@ -250,6 +250,12 @@
     <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
   </Target>
+  <Target Name="PrepareClientFrameworkPackage" AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <PackageBuildDirectory>..\build\$(Configuration.ToLower())\nuget-client-framework\</PackageBuildDirectory>
+    </PropertyGroup>
+    <RemoveDir Directories="$(PackageBuildDirectory)" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild"></Target><Target Name="AfterBuild"></Target>
