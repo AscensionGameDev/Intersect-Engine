@@ -49,10 +49,10 @@
       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="Intersect Client Framework, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\lib\net461\Intersect Client Framework.dll</HintPath>
+      <HintPath>..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\lib\net461\Intersect Client Framework.dll</HintPath>
     </Reference>
     <Reference Include="Intersect Core, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\lib\net461\Intersect Core.dll</HintPath>
+      <HintPath>..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\lib\net461\Intersect Core.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=2020.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2020.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -115,7 +115,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\build\AscensionGameDev.Intersect.Client.Framework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\build\AscensionGameDev.Intersect.Client.Framework.targets'))" />
+    <Error Condition="!Exists('..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\build\AscensionGameDev.Intersect.Client.Framework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\build\AscensionGameDev.Intersect.Client.Framework.targets'))" />
   </Target>
-  <Import Project="..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\build\AscensionGameDev.Intersect.Client.Framework.targets" Condition="Exists('..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.2-beta\build\AscensionGameDev.Intersect.Client.Framework.targets')" />
+  <Import Project="..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\build\AscensionGameDev.Intersect.Client.Framework.targets" Condition="Exists('..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.3-beta\build\AscensionGameDev.Intersect.Client.Framework.targets')" />
 </Project>
