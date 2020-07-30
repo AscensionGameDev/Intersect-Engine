@@ -10,25 +10,15 @@
     <StartAction>Program</StartAction>
     <StartProgram>$(IntersectClientExecutablePath)</StartProgram>
     <StartWorkingDirectory>$(IntersectClientDirectoryPath)</StartWorkingDirectory>
-    <StartArguments>--plugin-development --plugin-directory $(TargetDir)</StartArguments>
+    <StartArguments>--plugin-directory $(TargetDir)</StartArguments>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Semver, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Semver.2.0.6\lib\net452\Semver.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
 
   <Target Name="BeforeBuild">
     <Error Condition="!Exists('$(IntersectClientDirectoryPath)')" Text="Unable to find path working directory for the Intersect Client, '$(IntersectClientDirectoryPath)' does not exist." />
     <Error Condition="!Exists('$(IntersectClientExecutablePath)')" Text="Unable to find path to Intersect Client, '$(IntersectClientExecutablePath)' does not exist." />
+  </Target>
+
+  <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild">
+    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).dll" DestinationFolder="$(TargetDir)\$(AssemblyName)" />
   </Target>
 </Project>

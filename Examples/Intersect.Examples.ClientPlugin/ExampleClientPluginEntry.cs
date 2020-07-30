@@ -5,15 +5,14 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Plugins;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
-
 using JetBrains.Annotations;
-
 using Microsoft;
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Intersect.Client.General;
+using Intersect.Client.Interface;
 
 namespace Intersect.Examples.ClientPlugin
 {
@@ -89,6 +88,17 @@ namespace Intersect.Examples.ClientPlugin
                 return;
             }
 
+            switch (lifecycleChangeStateArgs.State)
+            {
+                case GameStates.Menu:
+                    AddButtonToMainMenu(context, activeInterface);
+                    break;
+            }
+        }
+
+        private void AddButtonToMainMenu([NotNull, ValidatedNotNull] IClientPluginContext context,
+            [NotNull, ValidatedNotNull] IMutableInterface activeInterface)
+        {
             var button = activeInterface.Create<Button>("DiscordButton");
             Debug.Assert(button != null, nameof(button) + " != null");
 
