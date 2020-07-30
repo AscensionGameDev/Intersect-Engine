@@ -50,7 +50,7 @@ namespace Intersect.Plugins.Loaders
             var manifest = ManifestLoader.FindManifest(assembly);
             if (manifest == null)
             {
-                applicationContext.Logger.Warn($"Unable to find a manifest in '{assembly.FullName}', skipping.");
+                applicationContext.Logger.Warn($"Unable to find a manifest in '{assembly.FullName}' ({assembly.Location})");
                 return default;
             }
 
@@ -62,7 +62,7 @@ namespace Intersect.Plugins.Loaders
                 return Plugin.Create(applicationContext, manifest, pluginReference);
             }
 
-            applicationContext.Logger.Error($"Unable to find a plugin entry point in '{assembly.FullName}', skipping.");
+            applicationContext.Logger.Error($"Unable to find a plugin entry point in '{assembly.FullName}' ({assembly.Location})");
             return default;
         }
     }

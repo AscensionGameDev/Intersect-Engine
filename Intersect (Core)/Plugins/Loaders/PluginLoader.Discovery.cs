@@ -78,16 +78,6 @@ namespace Intersect.Plugins.Loaders
                         .Where(File.Exists)
                 );
 
-                if (applicationContext.StartupOptions.IsInPluginDevelopmentMode)
-                {
-                    pluginFiles.AddRange(
-                        Directory.EnumerateFiles(pluginDirectory)
-                            .Where(
-                                file => string.Equals(".dll", Path.GetExtension(file ?? ""), StringComparison.Ordinal)
-                            )
-                    );
-                }
-
                 return pluginFiles.Select(
                         file =>
                         {

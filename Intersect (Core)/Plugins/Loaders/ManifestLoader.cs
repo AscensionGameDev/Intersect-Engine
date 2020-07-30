@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace Intersect.Plugins.Loaders
     /// </summary>
     public static class ManifestLoader
     {
+        private static readonly Type ManifestType = typeof(IManifestHelper);
+
         /// <summary>
         /// Delegate signature for manifest loading functions.
         /// </summary>
@@ -43,7 +46,10 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This method is supposed to be safe and not leak exceptions upwards, only log them.")]
+        [SuppressMessage(
+            "Design", "CA1031:Do not catch general exception types",
+            Justification = "This method is supposed to be safe and not leak exceptions upwards, only log them."
+        )]
         public static IManifestHelper FindManifest([NotNull] Assembly assembly)
         {
             if (ManifestLoaderDelegates.Count < 1)
@@ -80,7 +86,6 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This method is supposed to be safe and not leak exceptions upwards, only log them.")]
         public static IManifestHelper LoadJsonManifestFrom([NotNull] Assembly assembly)
         {
             try
@@ -101,7 +106,7 @@ namespace Intersect.Plugins.Loaders
                     using (var manifestReader = new StreamReader(manifestStream))
                     {
                         var manifestSource = manifestReader.ReadToEnd();
-                        
+
                         if (string.IsNullOrWhiteSpace(manifestSource))
                         {
                             throw new InvalidDataException("Manifest is empty or failed to load and is null.");
@@ -113,8 +118,7 @@ namespace Intersect.Plugins.Loaders
             }
             catch (Exception exception)
             {
-                Log.Warn(exception, $"Failed to load manifest.json from {assembly.FullName}.");
-                return default;
+                throw new Exception($"Failed to load manifest.json from {assembly.FullName}.", exception);
             }
         }
 
@@ -126,8 +130,32 @@ namespace Intersect.Plugins.Loaders
                 return false;
             }
 
-            if (!typeof(IManifestHelper).IsAssignableFrom(type))
+            if (!ManifestType.IsAssignableFrom(type))
             {
+                var mismatchedType = type.GetInterfaces()
+                    .FirstOrDefault(
+                        interfaceType => string.Equals(
+                            ManifestType.FullName, interfaceType.FullName, StringComparison.Ordinal
+                        )
+                    );
+
+                if (mismatchedType != null)
+                {
+                    Log.Debug($"Expected: {ManifestType.AssemblyQualifiedName} in {ManifestType.Assembly.Location}");
+                    Log.Debug($"Loaded: {mismatchedType.AssemblyQualifiedName} in {mismatchedType.Assembly.Location}");
+
+                    if (!string.Equals(
+                        ManifestType.Assembly.Location, mismatchedType.Assembly.Location, StringComparison.Ordinal
+                    ))
+                    {
+                        Log.Warn(
+                            $"Manifest loaded the core library from the wrong location." +
+                            $"\n\tExpected: {ManifestType.Assembly.Location}" +
+                            $"\n\t  Actual: {mismatchedType.Assembly.Location}"
+                        );
+                    }
+                }
+
                 return false;
             }
 
@@ -151,7 +179,6 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This method is supposed to be safe and not leak exceptions upwards, only log them.")]
         public static IManifestHelper LoadVirtualManifestFrom([NotNull] Assembly assembly)
         {
             try
@@ -165,7 +192,7 @@ namespace Intersect.Plugins.Loaders
             }
             catch (Exception exception)
             {
-                Log.Warn(exception, $"Failed to load virtual manifest from {assembly.FullName}.");
+                throw new Exception($"Failed to load virtual manifest from {assembly.FullName}.", exception);
             }
 
             return default;

@@ -21,7 +21,6 @@ namespace Intersect.Server.Core
             ushort port,
             ushort apiport,
             string workingDirectory,
-            bool isInPluginDevelopmentMode,
             IEnumerable<string> pluginDirectories
         )
         {
@@ -32,7 +31,6 @@ namespace Intersect.Server.Core
             Port = port;
             ApiPort = apiport;
             WorkingDirectory = workingDirectory;
-            IsInPluginDevelopmentMode = isInPluginDevelopmentMode;
             PluginDirectories = pluginDirectories?.Select(Path.GetFullPath).ToArray();
         }
 
@@ -56,9 +54,6 @@ namespace Intersect.Server.Core
 
         [Option("working-directory", Default = null, Required = false)]
         public string WorkingDirectory { get; }
-
-        [Option("plugin-development", Default = false, Required = false)]
-        public bool IsInPluginDevelopmentMode { get; }
 
         [Option('p', "plugin-directory", Default = null, Required = false)]
         public IEnumerable<string> PluginDirectories { get; }

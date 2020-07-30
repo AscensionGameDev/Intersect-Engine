@@ -17,7 +17,6 @@ namespace Intersect.Client.Core
             int screenHeight,
             string server,
             string workingDirectory,
-            bool isInPluginDevelopmentMode,
             IEnumerable<string> pluginDirectories
         )
         {
@@ -26,7 +25,6 @@ namespace Intersect.Client.Core
             ScreenHeight = screenHeight;
             Server = server;
             WorkingDirectory = workingDirectory;
-            IsInPluginDevelopmentMode = isInPluginDevelopmentMode;
             PluginDirectories = pluginDirectories?.Select(Path.GetFullPath).ToArray();
         }
 
@@ -44,9 +42,6 @@ namespace Intersect.Client.Core
 
         [Option("working-directory", Default = null, Required = false)]
         public string WorkingDirectory { get; }
-
-        [Option("plugin-development", Default = false, Required = false)]
-        public bool IsInPluginDevelopmentMode { get; }
 
         [Option('p',  "plugin-directory", Default = null, Required = false)]
         public IEnumerable<string> PluginDirectories { get; }
