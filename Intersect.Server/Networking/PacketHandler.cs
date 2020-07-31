@@ -14,6 +14,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Client;
 using Intersect.Server.Admin.Actions;
 using Intersect.Server.Core;
@@ -31,10 +32,8 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Networking
 {
-
     public class PacketHandler
     {
-
         public bool PreProcessPacket(IConnection connection, long pSize)
         {
             var client = Client.FindBeta4Client(connection);
@@ -75,7 +74,7 @@ namespace Intersect.Server.Networking
                 return false;
             }
 
-            if (client.PacketTimer > Globals.Timing.TimeMs)
+            if (client.PacketTimer > Timing.Global.TimeMs)
             {
                 client.PacketCount++;
                 if (client.PacketCount > thresholds.MaxPacketPerSec)
@@ -136,7 +135,7 @@ namespace Intersect.Server.Networking
                 }
 
                 client.PacketCount = 0;
-                client.PacketTimer = Globals.Timing.TimeMs + 1000;
+                client.PacketTimer = Timing.Global.TimeMs + 1000;
                 client.PacketFloodDetect = false;
             }
 
@@ -212,6 +211,44 @@ namespace Intersect.Server.Networking
                 return false;
             }
 
+            if (packet is AbstractTimedPacket timedPacket)
+            {
+                var serverMs = Timing.Global.TimeMs;
+                var deltaMs = serverMs - timedPacket.TimeMs;
+                var scaledPing = connection.Statistics.Ping * 1.1;
+                var pingDelta = scaledPing - deltaMs;
+                var detectedUnnaturalPacketTiming = pingDelta < 0;
+                Log.Debug(
+                    "\n\t" +
+                    $"ping={connection.Statistics.Ping} scaled={scaledPing}\n\t" +
+                    $"packet server={serverMs} client+offset={timedPacket.TimeMs} delta={deltaMs}\n\t" +
+                    $"offset={timedPacket.OffsetMs} client raw={timedPacket.RawTimeMs}\n\t" +
+                    $"real client={timedPacket.RealTimeMs} server={Timing.Global.RealTimeMs} delta={Timing.Global.RealTimeMs - timedPacket.RealTimeMs}\n\t" +
+                    $"pingDelta={pingDelta} unnatural={detectedUnnaturalPacketTiming}"
+                );
+
+                if (pingDelta < 0)
+                {
+                    Log.Debug(
+                        $"Speedhacking detected! Ping: {connection.Statistics.Ping} Scaled: {scaledPing} packetDelta: {deltaMs} pingDelta: {pingDelta}"
+                    );
+
+                    try
+                    {
+                        HandleDroppedPacket(client, packet);
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Debug(
+                            exception,
+                            $"Exception thrown dropping packet ({packet.GetType().Name}/{client.GetIp()}/{client.Name ?? ""}/{client.Entity?.Name ?? ""})"
+                        );
+                    }
+
+                    return false;
+                }
+            }
+
             try
             {
                 HandlePacket(client, client.Entity, (dynamic) packet);
@@ -245,6 +282,16 @@ namespace Intersect.Server.Networking
         }
 
         #region "Client Packets"
+
+        public void HandleDroppedPacket(Client client, IPacket packet)
+        {
+            switch (packet)
+            {
+                case MovePacket _:
+                    PacketSender.SendEntityPositionTo(client, client.Entity);
+                    break;
+            }
+        }
 
         //PingPacket
         public void HandlePacket(Client client, Player player, PingPacket packet)
@@ -471,14 +518,17 @@ namespace Intersect.Server.Networking
                         cmd = Strings.Chat.localcmd;
 
                         break;
+
                     case 1: //global
                         cmd = Strings.Chat.allcmd;
 
                         break;
+
                     case 2: //party
                         cmd = Strings.Chat.partycmd;
 
                         break;
+
                     case 3: //admin
                         cmd = Strings.Chat.admincmd;
 
@@ -777,14 +827,17 @@ namespace Intersect.Server.Networking
                     attackingTile.Translate(0, -1);
 
                     break;
+
                 case 1:
                     attackingTile.Translate(0, 1);
 
                     break;
+
                 case 2:
                     attackingTile.Translate(-1, 0);
 
                     break;
+
                 case 3:
                     attackingTile.Translate(1, 0);
 
@@ -799,20 +852,17 @@ namespace Intersect.Server.Networking
                 if (player.Equipment[Options.WeaponIndex] >= 0 &&
                     ItemBase.Get(player.Items[player.Equipment[Options.WeaponIndex]].ItemId) != null)
                 {
-                    var weaponItem = ItemBase.Get(
-                        player.Items[player.Equipment[Options.WeaponIndex]].ItemId
-                    );
+                    var weaponItem = ItemBase.Get(player.Items[player.Equipment[Options.WeaponIndex]].ItemId);
 
                     //Check for animation
-                    var attackAnim = ItemBase
-                        .Get(player.Items[player.Equipment[Options.WeaponIndex]].ItemId)
+                    var attackAnim = ItemBase.Get(player.Items[player.Equipment[Options.WeaponIndex]].ItemId)
                         .AttackAnimation;
 
                     if (attackAnim != null && attackingTile.TryFix())
                     {
                         PacketSender.SendAnimationToProximity(
                             attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
-                            attackingTile.GetY(), (sbyte)player.Dir
+                            attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
 
@@ -866,9 +916,8 @@ namespace Intersect.Server.Networking
 #endif
                         MapInstance.Get(player.MapId)
                             .SpawnMapProjectile(
-                                player, projectileBase, null, weaponItem, player.MapId,
-                                (byte)player.X, (byte)player.Y, (byte)player.Z,
-                                (byte)player.Dir, null
+                                player, projectileBase, null, weaponItem, player.MapId, (byte) player.X,
+                                (byte) player.Y, (byte) player.Z, (byte) player.Dir, null
                             );
 
                         return;
@@ -908,7 +957,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendAnimationToProximity(
                             classBase.AttackAnimationId, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
-                            attackingTile.GetY(), (sbyte)player.Dir
+                            attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
                 }
@@ -1157,10 +1206,10 @@ namespace Intersect.Server.Networking
                 MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
             {
                 var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
-                if (mapItem.X == player.X &&
-                    mapItem.Y == player.Y)
+                if (mapItem.X == player.X && mapItem.Y == player.Y)
                 {
                     var canTake = false;
+
                     // Can we actually take this item?
                     if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
                     {
@@ -1171,7 +1220,7 @@ namespace Intersect.Server.Networking
                     {
                         // The current player is the owner, or one of their party members is.
                         canTake = true;
-                    } 
+                    }
 
                     if (canTake)
                     {
@@ -1180,19 +1229,18 @@ namespace Intersect.Server.Networking
                         {
                             // Remove Item From Map
                             MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
-                        } 
-                        else 
+                        }
+                        else
                         {
                             // We couldn't give the player their item, notify them.
                             PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
                         }
-                    } 
+                    }
                     else
                     {
                         // Item does not belong to them.
                         PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
                     }
-                    
                 }
             }
         }
@@ -1898,7 +1946,9 @@ namespace Intersect.Server.Networking
         //SelectCharacterPacket
         public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
         {
-            if (client.User == null) return;
+            if (client.User == null)
+                return;
+
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
@@ -1920,7 +1970,9 @@ namespace Intersect.Server.Networking
         //DeleteCharacterPacket
         public void HandlePacket(Client client, Player player, DeleteCharacterPacket packet)
         {
-            if (client.User == null) return;
+            if (client.User == null)
+                return;
+
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
@@ -2372,6 +2424,7 @@ namespace Intersect.Server.Networking
                     MapList.List.HandleMove(packet.TargetType, packet.TargetId, packet.ParentType, packet.ParentId);
 
                     break;
+
                 case MapListUpdates.AddFolder:
                     if (packet.ParentId == Guid.Empty)
                     {
@@ -2404,6 +2457,7 @@ namespace Intersect.Server.Networking
                     }
 
                     break;
+
                 case MapListUpdates.Rename:
                     if (packet.TargetType == 0)
                     {
@@ -2421,6 +2475,7 @@ namespace Intersect.Server.Networking
                     }
 
                     break;
+
                 case MapListUpdates.Delete:
                     if (packet.TargetType == 0)
                     {
@@ -2541,8 +2596,8 @@ namespace Intersect.Server.Networking
             long gridY = packet.GridY;
             var canLink = true;
 
-            lock (ServerLoop.Lock) 
-            { 
+            lock (ServerLoop.Lock)
+            {
                 if (adjacentMap != null && linkMap != null)
                 {
                     //Clear to test if we can link.
@@ -2565,7 +2620,8 @@ namespace Intersect.Server.Networking
                                         linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                     {
                                         //Incompatible Link!
-                                        PacketSender.SendError(client,
+                                        PacketSender.SendError(
+                                            client,
                                             Strings.Mapping.linkfailerror.ToString(
                                                 MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
                                                 MapBase.GetName(adjacentGrid.MyGrid[x, y]),
@@ -2601,30 +2657,42 @@ namespace Intersect.Server.Networking
 
                                             if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up =
+                                                    adjacentGrid.MyGrid[x, y - 1];
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down =
+                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
                                             }
 
-                                            if (inXBounds && y + 1 < adjacentGrid.Height && adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
+                                            if (inXBounds &&
+                                                y + 1 < adjacentGrid.Height &&
+                                                adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down =
+                                                    adjacentGrid.MyGrid[x, y + 1];
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up =
+                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
                                             }
 
                                             if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left =
+                                                    adjacentGrid.MyGrid[x - 1, y];
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right =
+                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
                                             }
 
-                                            if (inYBounds && x + 1 < adjacentGrid.Width && adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
+                                            if (inYBounds &&
+                                                x + 1 < adjacentGrid.Width &&
+                                                adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right =
+                                                    adjacentGrid.MyGrid[x + 1, y];
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left =
+                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
                                             }
                                         }
                                     }
@@ -2692,6 +2760,7 @@ namespace Intersect.Server.Networking
                     obj = AnimationBase.Get(id);
 
                     break;
+
                 case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
                     {
@@ -2703,60 +2772,76 @@ namespace Intersect.Server.Networking
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Item:
                     obj = ItemBase.Get(id);
 
                     break;
+
                 case GameObjectType.Npc:
                     obj = NpcBase.Get(id);
 
                     break;
+
                 case GameObjectType.Projectile:
                     obj = ProjectileBase.Get(id);
 
                     break;
+
                 case GameObjectType.Quest:
                     obj = QuestBase.Get(id);
 
                     break;
+
                 case GameObjectType.Resource:
                     obj = ResourceBase.Get(id);
 
                     break;
+
                 case GameObjectType.Shop:
                     obj = ShopBase.Get(id);
 
                     break;
+
                 case GameObjectType.Spell:
                     obj = SpellBase.Get(id);
 
                     break;
+
                 case GameObjectType.CraftTables:
                     obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Crafts:
                     obj = DatabaseObject<CraftBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Map:
                     break;
+
                 case GameObjectType.Event:
                     obj = EventBase.Get(id);
 
                     break;
+
                 case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Get(id);
 
                     break;
+
                 case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Get(id);
 
                     break;
+
                 case GameObjectType.Tileset:
                     break;
+
                 case GameObjectType.Time:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -2801,64 +2886,81 @@ namespace Intersect.Server.Networking
                     obj = AnimationBase.Get(id);
 
                     break;
+
                 case GameObjectType.Class:
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Item:
                     obj = ItemBase.Get(id);
 
                     break;
+
                 case GameObjectType.Npc:
                     obj = NpcBase.Get(id);
 
                     break;
+
                 case GameObjectType.Projectile:
                     obj = ProjectileBase.Get(id);
 
                     break;
+
                 case GameObjectType.Quest:
                     obj = QuestBase.Get(id);
 
                     break;
+
                 case GameObjectType.Resource:
                     obj = ResourceBase.Get(id);
 
                     break;
+
                 case GameObjectType.Shop:
                     obj = ShopBase.Get(id);
 
                     break;
+
                 case GameObjectType.Spell:
                     obj = SpellBase.Get(id);
 
                     break;
+
                 case GameObjectType.CraftTables:
                     obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Crafts:
                     obj = DatabaseObject<CraftBase>.Lookup.Get(id);
 
                     break;
+
                 case GameObjectType.Map:
                     break;
+
                 case GameObjectType.Event:
                     obj = EventBase.Get(id);
 
                     break;
+
                 case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Get(id);
 
                     break;
+
                 case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Get(id);
 
                     break;
+
                 case GameObjectType.Tileset:
                     break;
+
                 case GameObjectType.Time:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -2870,22 +2972,22 @@ namespace Intersect.Server.Networking
                     //if Item or Resource, kill all global entities of that kind
                     if (type == GameObjectType.Item)
                     {
-                        Globals.KillItemsOf((ItemBase)obj);
+                        Globals.KillItemsOf((ItemBase) obj);
                     }
                     else if (type == GameObjectType.Npc)
                     {
-                        Globals.KillNpcsOf((NpcBase)obj);
+                        Globals.KillNpcsOf((NpcBase) obj);
                     }
                     else if (type == GameObjectType.Projectile)
                     {
-                        Globals.KillProjectilesOf((ProjectileBase)obj);
+                        Globals.KillProjectilesOf((ProjectileBase) obj);
                     }
 
                     obj.Load(packet.Data);
 
                     if (type == GameObjectType.Quest)
                     {
-                        var qst = (QuestBase)obj;
+                        var qst = (QuestBase) obj;
                         foreach (var evt in qst.RemoveEvents)
                         {
                             var evtb = EventBase.Get(evt);
@@ -2897,7 +2999,7 @@ namespace Intersect.Server.Networking
 
                         foreach (var evt in qst.AddEvents)
                         {
-                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                            var evtb = (EventBase) DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
                             evtb.CommonEvent = false;
                             foreach (var tsk in qst.Tasks)
                             {
@@ -2917,6 +3019,7 @@ namespace Intersect.Server.Networking
                     PacketSender.CacheGameDataPacket();
                     PacketSender.SendGameObjectToAll(obj, false);
                 }
+
                 DbInterface.SaveGameDatabase();
             }
         }
@@ -3010,7 +3113,5 @@ namespace Intersect.Server.Networking
         }
 
         #endregion
-
     }
-
 }

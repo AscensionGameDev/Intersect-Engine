@@ -420,7 +420,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\Actions\ActionProcessing.cs" />
-    <Compile Include="Core\ServerTiming.cs" />
     <Compile Include="Database\DbLogger.cs" />
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />

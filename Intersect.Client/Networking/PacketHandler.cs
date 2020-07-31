@@ -20,6 +20,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Networking
 {
@@ -44,6 +45,8 @@ namespace Intersect.Client.Networking
         //PingPacket
         private static void HandlePacket(PingPacket packet)
         {
+            Timing.Global.Synchronize(packet.TimeMs);
+
             if (packet.RequestingReply)
             {
                 PacketSender.SendPing();

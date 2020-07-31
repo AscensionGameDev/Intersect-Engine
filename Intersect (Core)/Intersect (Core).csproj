@@ -306,9 +306,11 @@
     <Compile Include="Models\INamedObject.cs" />
     <Compile Include="Network\Ceras.cs" />
     <Compile Include="Network\ConnectionPacket.cs" />
+    <Compile Include="Network\ConnectionStatistics.cs" />
     <Compile Include="Network\Events\ConnectionEventArgs.cs" />
     <Compile Include="Network\NetworkStatus.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
+    <Compile Include="Network\Packets\AbstractTimedPacket.cs" />
     <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
     <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />
     <Compile Include="Network\Packets\Client\AdminActionPacket.cs" />
@@ -579,6 +581,7 @@
     <Compile Include="Utilities\TextUtils.cs" />
     <Compile Include="Utilities\CSharpFeatures.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />
+    <Compile Include="Utilities\Timing.cs" />
     <Compile Include="Utilities\ValueUtils.cs" />
     <Compile Include="Utilities\VersionHelper.cs" />
     <Compile Include="Localization\LocaleArgument.cs" />
