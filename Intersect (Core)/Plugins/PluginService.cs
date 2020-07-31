@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -91,7 +92,7 @@ namespace Intersect.Plugins
                 CreateInstances();
 
                 // Run bootstrap plugin
-                RunOnAllInstances(OnBootstrap);
+                RunOnAllInstances(applicationContext, OnBootstrap);
 
                 return true;
             }
@@ -102,12 +103,13 @@ namespace Intersect.Plugins
         }
 
         /// <inheritdoc />
-        protected override void TaskStart(IApplicationContext applicationContext) => RunOnAllInstances(OnStart);
+        protected override void TaskStart(IApplicationContext applicationContext) =>
+            RunOnAllInstances(applicationContext, OnStart);
 
         /// <inheritdoc />
         protected override void TaskStop(IApplicationContext applicationContext)
         {
-            RunOnAllInstances(OnStop);
+            RunOnAllInstances(applicationContext, OnStop);
 
             Instances.Clear();
             Plugins.Clear();
@@ -175,8 +177,43 @@ namespace Intersect.Plugins
             }
         }
 
-        private void RunOnAllInstances([NotNull] Action<KeyValuePair<Plugin, PluginInstance>> action) =>
-            Instances.Where(instance => instance.Key?.IsEnabled ?? false).ToList().ForEach(action);
+        [SuppressMessage(
+            "Design", "CA1031:Do not catch general exception types",
+            Justification = "This is meant to catch, log, and display errors from individual plugins, " +
+                            "otherwise the application will crash and burn before logging can occur. " +
+                            "Not all exceptions here are fatal to the engine core itself."
+        )]
+        private void RunOnAllInstances(
+            [NotNull] IApplicationContext applicationContext,
+            [NotNull] Action<KeyValuePair<Plugin, PluginInstance>> action
+        ) =>
+            Instances.Where(instance => instance.Key?.IsEnabled ?? false)
+                .ToList()
+                .ForEach(
+                    pair =>
+                    {
+                        try
+                        {
+                            action(pair);
+                        }
+                        catch (Exception exception)
+                        {
+                            // TODO: Implement something like this for displaying errors to the user
+                            // var manifestName = pair.Key.Manifest.Name;
+                            // var lifecycleState = action == OnStop
+                            //     ? applicationContext.Strings.Errors.PluginLifecycleShutdownLowercase
+                            //     : applicationContext.Strings.Errors.PluginLifecycleStartupLowercase;
+                            //
+                            // applicationContext.UserDisplay.Error(
+                            //     applicationContext.Strings.Errors.PluginLifecycleFailed.ToString(lifecycleState)
+                            // );
+
+                            applicationContext.Logger.Error(
+                                exception, $"Failed to invoke {action.Method?.Name} for {pair.Key.Key}."
+                            );
+                        }
+                    }
+                );
 
         private void OnBootstrap(KeyValuePair<Plugin, PluginInstance> instancePair)
         {
