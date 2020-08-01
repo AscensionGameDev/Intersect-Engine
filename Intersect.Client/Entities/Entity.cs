@@ -444,7 +444,7 @@ namespace Intersect.Client.Entities
                 time += time * (float) Options.BlockingSlow;
             }
 
-            return Math.Min(1000f, time);
+            return Math.Min(1000f, time); // * 0.1f;
         }
 
         //Movement Processing

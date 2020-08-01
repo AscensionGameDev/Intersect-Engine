@@ -65,9 +65,10 @@ namespace Intersect.Network.Packets
                 buffer.Write(HandshakeSecret, SIZE_HANDSHAKE_SECRET);
                 buffer.Write(AesKey, SIZE_AES_KEY);
                 buffer.Write(Guid.ToByteArray(), SIZE_GUID);
-                buffer.Write(TimeMs);
+                buffer.Write(Adjusted);
 #if DEBUG
-                buffer.Write(RawTimeMs);
+                buffer.Write(UTC);
+                buffer.Write(Local);
                 buffer.Write(Offset);
 #endif
 
@@ -108,13 +109,18 @@ namespace Intersect.Network.Packets
 
                 Guid = new Guid(guidData);
 
-                if (!buffer.Read(out mTimeMs))
+                if (!buffer.Read(out mAdjusted))
                 {
                     return false;
                 }
 
 #if DEBUG
-                if (!buffer.Read(out mRawTimeMs))
+                if (!buffer.Read(out mUTC))
+                {
+                    return false;
+                }
+
+                if (!buffer.Read(out mLocal))
                 {
                     return false;
                 }

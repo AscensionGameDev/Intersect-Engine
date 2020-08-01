@@ -18,13 +18,11 @@ namespace Intersect.Network
         protected const int SIZE_HANDSHAKE_SECRET = 32;
 
         protected RSACryptoServiceProvider mRsa;
-
-        private byte[] mEncryptedData;
-
         protected byte[] mHandshakeSecret;
 
-        protected long mTimeMs;
-        protected long mRawTimeMs;
+        protected long mAdjusted;
+        protected long mUTC;
+        protected long mLocal;
         protected long mOffset;
 
         protected ConnectionPacket()
@@ -37,9 +35,10 @@ namespace Intersect.Network
 
             mHandshakeSecret = handshakeSecret;
 
-            TimeMs = Timing.Global.TimeMs;
-            RawTimeMs = Timing.Global.RawTimeMs;
-            Offset = Timing.Global.Offset.Ticks / TimeSpan.TicksPerMillisecond;
+            Adjusted = Timing.Global.Ticks;
+            Local = Timing.Global.TicksLocal;
+            Offset = Timing.Global.OffsetTicks;
+            UTC = Timing.Global.TicksUTC;
         }
 
         [Exclude]
@@ -50,17 +49,24 @@ namespace Intersect.Network
         }
 
         [Exclude]
-        public long TimeMs
+        public long Adjusted
         {
-            get => mTimeMs;
-            set => mTimeMs = value;
+            get => mAdjusted;
+            set => mAdjusted = value;
         }
 
         [Exclude]
-        public long RawTimeMs
+        public long UTC
         {
-            get => mRawTimeMs;
-            set => mRawTimeMs = value;
+            get => mUTC;
+            set => mUTC = value;
+        }
+
+        [Exclude]
+        public long Local
+        {
+            get => mLocal;
+            set => mLocal = value;
         }
 
         [Exclude]
@@ -71,11 +77,7 @@ namespace Intersect.Network
         }
 
         [Include, NotNull]
-        protected byte[] EncryptedData
-        {
-            get => mEncryptedData;
-            set => mEncryptedData = value;
-        }
+        protected byte[] EncryptedData { get; set; }
 
         public abstract bool Encrypt();
 

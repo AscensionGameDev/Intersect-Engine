@@ -19,7 +19,7 @@ namespace Intersect.Tests.Server
 
             stopwatch.Start();
             var expected = (long) DateTime.UtcNow.AsUnixTimeSpan().TotalMilliseconds;
-            var actual = timing.RealTimeMs;
+            var actual = timing.MillisecondsUTC;
             stopwatch.Stop();
 
             var errorDelta = (long) Math.Ceiling(stopwatch.Elapsed.TotalMilliseconds);
@@ -28,21 +28,6 @@ namespace Intersect.Tests.Server
                 Math.Abs(expected - actual) <= errorDelta,
                 $"Expected difference to be less than {errorDelta}ms but was {Math.Abs(expected - actual)}ms."
             );
-        }
-
-        [Test]
-        public void TestStopwatchNotNull()
-        {
-            var timing = new Timing();
-            Assert.IsNotNull(timing.Stopwatch);
-        }
-
-        [Test]
-        public void TestTimeMs()
-        {
-            var timing = new Timing();
-            timing.Stopwatch.Stop();
-            Assert.AreEqual(timing.Stopwatch.ElapsedMilliseconds, timing.TimeMs);
         }
     }
 }

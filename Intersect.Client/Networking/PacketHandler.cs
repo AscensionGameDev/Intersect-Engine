@@ -19,6 +19,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
@@ -34,9 +35,14 @@ namespace Intersect.Client.Networking
 
         public static bool HandlePacket(IPacket packet)
         {
+            if (packet is AbstractTimedPacket timedPacket)
+            {
+                Timing.Global.Synchronize(timedPacket.Adjusted);
+            }
+
             if (packet is CerasPacket)
             {
-                HandlePacket((dynamic) packet);
+                HandlePacket((dynamic)packet);
             }
 
             return true;
@@ -45,8 +51,6 @@ namespace Intersect.Client.Networking
         //PingPacket
         private static void HandlePacket(PingPacket packet)
         {
-            Timing.Global.Synchronize(packet.TimeMs);
-
             if (packet.RequestingReply)
             {
                 PacketSender.SendPing();
@@ -309,6 +313,11 @@ namespace Intersect.Client.Networking
                 }
 
                 en = MapInstance.Get(mapId).LocalEntities[id];
+            }
+
+            if (en == Globals.Me)
+            {
+                Log.Debug($"received epp: {Timing.Global.Milliseconds}");
             }
 
             if (en == Globals.Me &&

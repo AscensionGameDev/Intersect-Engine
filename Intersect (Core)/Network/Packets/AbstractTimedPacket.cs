@@ -9,18 +9,18 @@ namespace Intersect.Network.Packets
     {
         protected AbstractTimedPacket()
         {
-            TimeMs = Timing.Global.TimeMs;
-            RealTimeMs = Timing.Global.RealTimeMs;
-            RawTimeMs = Timing.Global.RawTimeMs;
-            OffsetMs = Timing.Global.Offset.Ticks / TimeSpan.TicksPerMillisecond;
+            Adjusted = Timing.Global.Ticks;
+            Local = Timing.Global.TicksLocal;
+            Offset = Timing.Global.OffsetTicks;
+            UTC = Timing.Global.TicksUTC;
         }
 
-        public long TimeMs { get; set; }
+        public long Adjusted { get; set; }
 
-        public long RealTimeMs { get; set; }
+        public long UTC { get; set; }
 
-        public long RawTimeMs { get; set; }
+        public long Local { get; set; }
 
-        public long OffsetMs { get; set; }
+        public long Offset { get; set; }
     }
 }

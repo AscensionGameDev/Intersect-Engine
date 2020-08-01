@@ -83,26 +83,19 @@ namespace Intersect.Network.Lidgren
 
             if (Debugger.IsAttached)
             {
+                mPeerConfiguration.ConnectionTimeout = 60;
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.DebugMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.Error);
             }
             else
             {
+                mPeerConfiguration.ConnectionTimeout = 15;
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.ErrorMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.Error);
-            }
-
-            if (Debugger.IsAttached)
-            {
-                mPeerConfiguration.ConnectionTimeout = 60;
-                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
-            }
-            else
-            {
-                mPeerConfiguration.ConnectionTimeout = 15;
-                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             }
 
             mPeerConfiguration.PingInterval = 2.5f;
@@ -729,6 +722,11 @@ namespace Intersect.Network.Lidgren
 
                             break;
                         }
+
+                        Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Raw={hail.Local / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
+                        Log.Debug($"local Time={Timing.Global.Milliseconds} Raw={Timing.Global.MillisecondsLocal} Offset={(long)Timing.Global.OffsetMilliseconds} Real={Timing.Global.MillisecondsUTC}");
+                        Log.Debug($"real delta={(Timing.Global.TicksUTC - hail.UTC) / TimeSpan.TicksPerMillisecond}");
+                        Log.Debug($"NCPing={(long)Math.Ceiling(senderConnection.AverageRoundtripTime * 1000)}");
 
                         if (OnConnectionApproved == null)
                         {

@@ -1,9 +1,7 @@
-﻿using Intersect.Extensions;
+﻿using System;
+using System.Runtime.CompilerServices;
 
-using JetBrains.Annotations;
-
-using System;
-using System.Diagnostics;
+using Intersect.Logging;
 
 namespace Intersect.Utilities
 {
@@ -17,53 +15,87 @@ namespace Intersect.Utilities
         /// </summary>
         public static Timing Global { get; } = new Timing();
 
+        private long mInitial;
+
         /// <summary>
-        /// Initializes a <see cref="Timing"/> and calls <see cref="Stopwatch.Start"/>.
+        /// Initializes a <see cref="Timing"/> instance.
         /// </summary>
         public Timing()
         {
-            Offset = TimeSpan.Zero;
-            Stopwatch = new Stopwatch();
-            Stopwatch.Start();
+            mInitial = DateTime.UtcNow.Ticks;
+            OffsetTicks = 0;
         }
 
         /// <summary>
         /// Synchronizes this <see cref="Timing"/> instance with another based on the other's current time.
         ///
-        /// Sets <see cref="Offset"/>.
+        /// Sets <see cref="OffsetTicks"/>.
         /// </summary>
-        /// <param name="timeMs">a point in time to synchronize to in milliseconds</param>
-        public void Synchronize(long timeMs)
+        /// <param name="remoteTicks">a point in time to synchronize to in ticks</param>
+        public void Synchronize(long remoteTicks)
         {
-            var currentTimeMs = TimeMs;
-            var offset = timeMs - currentTimeMs;
-            Offset = new TimeSpan(TimeSpan.TicksPerMillisecond * offset);
+            OffsetTicks = remoteTicks - TicksLocal;
         }
 
         /// <summary>
-        /// The <see cref="TimeSpan"/> offset from the master <see cref="Timing"/> instance.
+        /// The offset from the master instance in ticks.
         /// </summary>
-        public TimeSpan Offset { get; set; }
+        public long OffsetTicks { get; set; }
 
         /// <summary>
-        /// The <see cref="Stopwatch"/> instance used to keep track of time.
+        /// The offset from the master instance in milliseconds.
         /// </summary>
-        [NotNull]
-        public Stopwatch Stopwatch { get; }
+        public long OffsetMilliseconds
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => OffsetTicks / TimeSpan.TicksPerMillisecond;
+        }
 
         /// <summary>
-        /// Gets the total elapsed time in milliseconds since this instance was created without including the offset.
+        /// Ticks since the instance started adjusted by <see cref="OffsetTicks"/>.
         /// </summary>
-        public long RawTimeMs => Stopwatch.Elapsed.Ticks / TimeSpan.TicksPerMillisecond;
+        public long Ticks
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksLocal + OffsetTicks;
+        }
+
+        /// <summary>
+        /// Ticks since the instance started.
+        /// </summary>
+        public long TicksLocal
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUTC - mInitial;
+        }
+
+        /// <summary>
+        /// Real-world unix time in ticks.
+        /// </summary>
+        public long TicksUTC
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => DateTime.UtcNow.Ticks;
+        }
 
         /// <summary>
         /// Gets the total elapsed time in milliseconds since this instance was created.
         /// </summary>
-        public long TimeMs => (Stopwatch.Elapsed + Offset).Ticks / TimeSpan.TicksPerMillisecond;
+        public long Milliseconds
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Ticks / TimeSpan.TicksPerMillisecond;
+        }
+
+        /// <summary>
+        /// Gets the total elapsed time in milliseconds since this instance was created without including the offset.
+        /// </summary>
+        public long MillisecondsLocal
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksLocal / TimeSpan.TicksPerMillisecond;
+        }
 
         /// <summary>
         /// Gets the real-world unix time in milliseconds.
         /// </summary>
-        public long RealTimeMs => DateTime.UtcNow.AsUnixTimeSpan().Ticks / TimeSpan.TicksPerMillisecond;
+        public long MillisecondsUTC
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUTC / TimeSpan.TicksPerMillisecond;
+        }
     }
 }

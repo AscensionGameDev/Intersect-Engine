@@ -38,13 +38,13 @@ namespace Intersect.Server.Entities.Combat
                 return;
             } //Remove dash instance if no where to dash
 
-            TransmittionTimer = Globals.Timing.TimeMs + (long) ((float) Options.MaxDashSpeed / (float) Range);
+            TransmittionTimer = Globals.Timing.Milliseconds + (long) ((float) Options.MaxDashSpeed / (float) Range);
             PacketSender.SendEntityDash(
                 en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.MaxDashSpeed * (Range / 10f)),
                 Direction == Facing ? (sbyte) Direction : (sbyte) -1
             );
 
-            en.MoveTimer = Globals.Timing.TimeMs + Options.MaxDashSpeed;
+            en.MoveTimer = Globals.Timing.Milliseconds + Options.MaxDashSpeed;
         }
 
         public void CalculateRange(

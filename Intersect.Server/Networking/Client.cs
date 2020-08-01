@@ -42,8 +42,8 @@ namespace Intersect.Server.Networking
         public Client(IConnection connection = null)
         {
             this.mConnection = connection;
-            mConnectTime = Globals.Timing.TimeMs;
-            mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
+            mConnectTime = Globals.Timing.Milliseconds;
+            mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
             PacketSender.SendServerConfig(this);
         }
 
@@ -62,6 +62,13 @@ namespace Intersect.Server.Networking
 
         //Security/Flooding Variables
         public long AccountAttempts { get; set; }
+
+        public long Ping => mConnection.Statistics.Ping;
+
+        /// <summary>
+        /// Number of "grace" packets that the client has remaining if speedhacking is accidentally detected.
+        /// </summary>
+        public int TimedBufferPacketsRemaining { get; set; }
 
         public long TimeoutMs { get; set; }
 
@@ -128,7 +135,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
+                mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
             }
         }
 
@@ -234,7 +241,7 @@ namespace Intersect.Server.Networking
 
         public void ResetTimeout()
         {
-            TimeoutMs = Globals.Timing.TimeMs + 5000;
+            TimeoutMs = Globals.Timing.Milliseconds + 5000;
             if (AccountAttempts > 3)
             {
                 TimeoutMs += 1000 * AccountAttempts;

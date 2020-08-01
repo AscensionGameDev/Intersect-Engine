@@ -57,8 +57,8 @@
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=2012.1.7.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.2\lib\net46\Lidgren.Network.dll</HintPath>
+    <Reference Include="Lidgren.Network, Version=1.7.7517.41041, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7517.41041\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

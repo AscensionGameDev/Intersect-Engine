@@ -17,15 +17,15 @@ namespace Intersect.Server.Core
         {
             try
             {
-                var cpsTimer = Globals.Timing.TimeMs + 1000;
+                var cpsTimer = Globals.Timing.Milliseconds + 1000;
                 long cps = 0;
                 long minuteTimer = 0;
-                var lastGameSave = Globals.Timing.TimeMs + 60000;
+                var lastGameSave = Globals.Timing.Milliseconds + 60000;
                 var lastDbUpdate = DateTime.Now;
                 long dbBackupMinutes = 120;
                 while (ServerContext.Instance.IsRunning)
                 {
-                    var timeMs = Globals.Timing.TimeMs;
+                    var timeMs = Globals.Timing.Milliseconds;
 
                     lock (Lock)
                     {
@@ -60,7 +60,7 @@ namespace Intersect.Server.Core
                     }
 
                     Time.Update();
-                    var currentTime = Globals.Timing.TimeMs;
+                    var currentTime = Globals.Timing.Milliseconds;
                     if (Globals.CpsLock && currentTime < timeMs + 10)
                     {
                         var waitTime = (int)(timeMs + 10 - currentTime);

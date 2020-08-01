@@ -296,7 +296,7 @@ namespace Intersect.Server.Entities
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
-            if (AttackTimer < Globals.Timing.TimeMs)
+            if (AttackTimer < Globals.Timing.Milliseconds)
             {
                 if (Base.AttackAnimation != null)
                 {
@@ -430,12 +430,12 @@ namespace Intersect.Server.Entities
             }
 
             //Check if NPC is casting a spell
-            if (CastTime > Globals.Timing.TimeMs)
+            if (CastTime > Globals.Timing.Milliseconds)
             {
                 return; //can't move while casting
             }
 
-            if (CastFreq >= Globals.Timing.TimeMs)
+            if (CastFreq >= Globals.Timing.Milliseconds)
             {
                 return;
             }
@@ -478,14 +478,14 @@ namespace Intersect.Server.Entities
                 var dirToEnemy = DirToEnemy(Target);
                 if (dirToEnemy != Dir)
                 {
-                    if (LastRandomMove >= Globals.Timing.TimeMs)
+                    if (LastRandomMove >= Globals.Timing.Milliseconds)
                     {
                         return;
                     }
 
                     //Face the target -- next frame fire -- then go on with life
                     ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.Milliseconds + Randomization.Next(1000, 3000);
 
                     return;
                 }
@@ -512,7 +512,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Globals.Timing.RealTimeMs)
+            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Globals.Timing.MillisecondsUTC)
             {
                 return;
             }
@@ -528,7 +528,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            CastTime = Globals.Timing.TimeMs + spellBase.CastDuration;
+            CastTime = Globals.Timing.Milliseconds + spellBase.CastDuration;
 
             if (spellBase.VitalCost[(int) Vitals.Mana] > 0)
             {
@@ -560,27 +560,27 @@ namespace Intersect.Server.Entities
             switch (Base.SpellFrequency)
             {
                 case 0:
-                    CastFreq = Globals.Timing.TimeMs + 30000;
+                    CastFreq = Globals.Timing.Milliseconds + 30000;
 
                     break;
 
                 case 1:
-                    CastFreq = Globals.Timing.TimeMs + 15000;
+                    CastFreq = Globals.Timing.Milliseconds + 15000;
 
                     break;
 
                 case 2:
-                    CastFreq = Globals.Timing.TimeMs + 8000;
+                    CastFreq = Globals.Timing.Milliseconds + 8000;
 
                     break;
 
                 case 3:
-                    CastFreq = Globals.Timing.TimeMs + 4000;
+                    CastFreq = Globals.Timing.Milliseconds + 4000;
 
                     break;
 
                 case 4:
-                    CastFreq = Globals.Timing.TimeMs + 2000;
+                    CastFreq = Globals.Timing.Milliseconds + 2000;
 
                     break;
             }
@@ -615,7 +615,7 @@ namespace Intersect.Server.Entities
             }
 
             //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
-            if (Target == null && Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
+            if (Target == null && Globals.Timing.Milliseconds > CombatTimer && Globals.Timing.Milliseconds > RegenTimer)
             {
                 DamageMap.Clear();
             }
@@ -630,7 +630,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (MoveTimer < Globals.Timing.TimeMs)
+            if (MoveTimer < Globals.Timing.Milliseconds)
             {
                 var targetMap = Guid.Empty;
                 var targetX = 0;
@@ -893,21 +893,21 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (LastRandomMove >= Globals.Timing.TimeMs || CastTime > 0)
+                if (LastRandomMove >= Globals.Timing.Milliseconds || CastTime > 0)
                 {
                     return;
                 }
 
                 if (Base.Movement == (int) NpcMovement.StandStill)
                 {
-                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.Milliseconds + Randomization.Next(1000, 3000);
 
                     return;
                 }
                 else if (Base.Movement == (int) NpcMovement.TurnRandomly)
                 {
                     ChangeDir((byte)Randomization.Next(0, 4));
-                    LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.Milliseconds + Randomization.Next(1000, 3000);
 
                     return;
                 }
@@ -934,11 +934,11 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                LastRandomMove = Globals.Timing.TimeMs + Randomization.Next(1000, 3000);
+                LastRandomMove = Globals.Timing.Milliseconds + Randomization.Next(1000, 3000);
 
                 if (fleeing)
                 {
-                    LastRandomMove = Globals.Timing.TimeMs + (long) GetMovementTime();
+                    LastRandomMove = Globals.Timing.Milliseconds + (long) GetMovementTime();
                 }
             }
 
