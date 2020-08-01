@@ -214,40 +214,57 @@ namespace Intersect.Server.Networking
 
             if (packet is AbstractTimedPacket timedPacket)
             {
-                var serverUtcMs = Timing.Global.MillisecondsUTC;
-                var serverTicks = Timing.Global.Ticks;
-                var serverAdjustedMs = serverTicks / TimeSpan.TicksPerMillisecond;
-                var remoteUtcMs = timedPacket.UTC / TimeSpan.TicksPerMillisecond;
-                var remoteAdjustedMs = timedPacket.Adjusted / TimeSpan.TicksPerMillisecond;
-                var remoteLocalMs = timedPacket.Local / TimeSpan.TicksPerMillisecond;
-                var remoteOffsetMs = timedPacket.Offset / TimeSpan.TicksPerMillisecond;
-                var deltaTicks = serverTicks - timedPacket.Adjusted;
-                var deltaGameMs = deltaTicks / TimeSpan.TicksPerMillisecond;
-                var deltaUtcMs = serverUtcMs - remoteUtcMs;
-                var thresholdMs = Math.Max(connection.Statistics.Ping * 1.25, connection.Statistics.Ping + 25);
-                var pingDeltaMixedMs = thresholdMs - (deltaGameMs + deltaUtcMs) / 2;
-                var pingDeltaGameMs = thresholdMs - deltaGameMs;
+                var ping = connection.Statistics.Ping;
                 var ncPing = (long) Math.Ceiling(
                     (connection as LidgrenConnection).NetConnection.AverageRoundtripTime * 1000
                 );
 
-                var detectedUnnaturalPacketTiming = pingDeltaMixedMs < 0;
+                var localAdjusted = Timing.Global.Ticks;
+                var localAdjustedMs = localAdjusted / TimeSpan.TicksPerMillisecond;
+                var localOffsetMs = Timing.Global.MillisecondsOffset;
+                var localUtcMs = localOffsetMs + localAdjustedMs;
+
+                var remoteAdjusted = timedPacket.Adjusted;
+                var remoteAdjustedMs = remoteAdjusted / TimeSpan.TicksPerMillisecond;
+                var remoteUtcMs = timedPacket.UTC / TimeSpan.TicksPerMillisecond;
+                var remoteOffsetMs = timedPacket.Offset / TimeSpan.TicksPerMillisecond;
+
+                var deltaAdjusted = localAdjustedMs - remoteAdjustedMs;
+                var deltaWithPing = deltaAdjusted - ping;
+
+                var configurableMininumPing = 10;
+                var configurableErrorMarginFactor = 1.25f;
+                var configurableNaturalLowerMargin = 0;
+                var configurableNaturalUpperMargin = 500;
+                var configurableAllowedSpikePackets = 5;
+
+                var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
+                var deltaWithError = deltaAdjusted - errorMargin;
+
+                var natural = configurableNaturalLowerMargin < deltaAdjusted &&
+                              deltaAdjusted < configurableNaturalUpperMargin;
+
+                var naturalWithError = configurableNaturalLowerMargin < deltaWithError &&
+                                       deltaWithError < configurableNaturalUpperMargin;
+
+                var naturalWithPing = configurableNaturalLowerMargin < deltaWithPing &&
+                                      deltaWithPing < configurableNaturalUpperMargin;
+
                 Log.Debug(
                     "\n\t" +
-                    $"ping={connection.Statistics.Ping} thresholdMs={thresholdMs} ncPing={ncPing}\n\t" +
-                    $"packet server={serverAdjustedMs} client+offset={remoteAdjustedMs} delta={deltaGameMs}\n\t" +
-                    $"offset={remoteOffsetMs} client raw={remoteLocalMs}\n\t" +
-                    $"real client={remoteUtcMs} server={serverUtcMs} delta={deltaUtcMs}\n\t" +
-                    $"pingDelta={pingDeltaMixedMs} unnatural={detectedUnnaturalPacketTiming}"
+                    $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                    $"TG[Local={localAdjustedMs}, Remote={remoteAdjustedMs}, Error={Math.Abs(localAdjustedMs - remoteAdjustedMs)}]\n\t" +
+                    $"TR[Local={localUtcMs}, Remote={remoteUtcMs}, Error={Math.Abs(localUtcMs - remoteUtcMs)}]\n\t" +
+                    $"TO[Local={localOffsetMs}, Remote={remoteOffsetMs}, Error={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                    $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing} AWE={deltaWithError}]\n\t" +
+                    $"Natural[A={natural} WP={naturalWithPing}, WE={naturalWithError}]"
                 );
 
-                if (Math.Max(pingDeltaMixedMs, pingDeltaGameMs) < 0 || Math.Min(pingDeltaGameMs, pingDeltaMixedMs) > 500)
+                if (!(natural || naturalWithError || naturalWithPing))
                 {
                     if (client.TimedBufferPacketsRemaining-- < 1)
                     {
-                        Log.Debug(
-                            $"Speedhacking detected! Ping: {connection.Statistics.Ping} threshold={thresholdMs} packetDelta: {deltaTicks} pingDelta: {pingDeltaMixedMs}"
-                        );
+                        Log.Debug("Speedhacking detected!");
 
                         try
                         {
@@ -264,6 +281,19 @@ namespace Intersect.Server.Networking
                         return false;
                     }
 
+                    PacketSender.SendPing(client);
+                }
+                else if (natural && naturalWithPing && naturalWithError)
+                {
+                    client.TimedBufferPacketsRemaining = configurableAllowedSpikePackets;
+                }
+                else if (natural && naturalWithPing || naturalWithPing && naturalWithError || naturalWithError && natural)
+                {
+                    client.TimedBufferPacketsRemaining += (int)Math.Ceiling((configurableAllowedSpikePackets - client.TimedBufferPacketsRemaining) / 2.0);
+                }
+                else
+                {
+                    ++client.TimedBufferPacketsRemaining;
                     PacketSender.SendPing(client);
                 }
             }

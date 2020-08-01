@@ -68,7 +68,6 @@ namespace Intersect.Network.Packets
                 buffer.Write(Adjusted);
 #if DEBUG
                 buffer.Write(UTC);
-                buffer.Write(Local);
                 buffer.Write(Offset);
 #endif
 
@@ -116,11 +115,6 @@ namespace Intersect.Network.Packets
 
 #if DEBUG
                 if (!buffer.Read(out mUTC))
-                {
-                    return false;
-                }
-
-                if (!buffer.Read(out mLocal))
                 {
                     return false;
                 }

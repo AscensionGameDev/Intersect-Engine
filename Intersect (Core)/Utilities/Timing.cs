@@ -15,56 +15,39 @@ namespace Intersect.Utilities
         /// </summary>
         public static Timing Global { get; } = new Timing();
 
-        private long mInitial;
 
         /// <summary>
         /// Initializes a <see cref="Timing"/> instance.
         /// </summary>
         public Timing()
         {
-            mInitial = DateTime.UtcNow.Ticks;
-            OffsetTicks = 0;
+            TicksOffset = DateTime.UtcNow.Ticks;
         }
 
         /// <summary>
         /// Synchronizes this <see cref="Timing"/> instance with another based on the other's current time.
         ///
-        /// Sets <see cref="OffsetTicks"/>.
+        /// Sets <see cref="TicksOffset"/>.
         /// </summary>
-        /// <param name="remoteTicks">a point in time to synchronize to in ticks</param>
-        public void Synchronize(long remoteTicks)
+        /// <param name="remoteOffset">a point in time to synchronize to in ticks</param>
+        public void Synchronize(long remoteOffset)
         {
-            OffsetTicks = remoteTicks - TicksLocal;
+            TicksOffset = remoteOffset;
+        }
+
+        /// <summary>
+        /// Ticks since the instance started adjusted by <see cref="TicksOffset"/>.
+        /// </summary>
+        public long Ticks
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => TicksUTC - TicksOffset;
         }
 
         /// <summary>
         /// The offset from the master instance in ticks.
         /// </summary>
-        public long OffsetTicks { get; set; }
-
-        /// <summary>
-        /// The offset from the master instance in milliseconds.
-        /// </summary>
-        public long OffsetMilliseconds
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => OffsetTicks / TimeSpan.TicksPerMillisecond;
-        }
-
-        /// <summary>
-        /// Ticks since the instance started adjusted by <see cref="OffsetTicks"/>.
-        /// </summary>
-        public long Ticks
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksLocal + OffsetTicks;
-        }
-
-        /// <summary>
-        /// Ticks since the instance started.
-        /// </summary>
-        public long TicksLocal
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUTC - mInitial;
-        }
+        public long TicksOffset { get; set; }
 
         /// <summary>
         /// Real-world unix time in ticks.
@@ -83,11 +66,12 @@ namespace Intersect.Utilities
         }
 
         /// <summary>
-        /// Gets the total elapsed time in milliseconds since this instance was created without including the offset.
+        /// The offset from UTC in milliseconds.
         /// </summary>
-        public long MillisecondsLocal
+        public long MillisecondsOffset
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksLocal / TimeSpan.TicksPerMillisecond;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => TicksOffset / TimeSpan.TicksPerMillisecond;
         }
 
         /// <summary>

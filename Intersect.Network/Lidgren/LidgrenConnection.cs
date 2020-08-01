@@ -121,9 +121,9 @@ namespace Intersect.Network.Lidgren
 
             CreateAes();
 
-            Timing.Global.Synchronize(approval.Adjusted);
-            Log.Debug($"approval Time={approval.Adjusted / TimeSpan.TicksPerMillisecond} Raw={approval.Local / TimeSpan.TicksPerMillisecond} Offset={approval.Offset / TimeSpan.TicksPerMillisecond} Real={approval.UTC / TimeSpan.TicksPerMillisecond}");
-            Log.Debug($"local Time={Timing.Global.Milliseconds} Raw={Timing.Global.MillisecondsLocal} Offset={Timing.Global.OffsetMilliseconds} Real={Timing.Global.MillisecondsUTC}");
+            Timing.Global.Synchronize(approval.Offset);
+            Log.Debug($"approval Time={approval.Adjusted / TimeSpan.TicksPerMillisecond} Offset={approval.Offset / TimeSpan.TicksPerMillisecond} Real={approval.UTC / TimeSpan.TicksPerMillisecond}");
+            Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
             Log.Debug($"real delta={(Timing.Global.TicksUTC - approval.UTC) / TimeSpan.TicksPerMillisecond}");
             Log.Debug($"this.Statistics.Ping={this.Statistics.Ping} NCPing={(long)Math.Ceiling(NetConnection.AverageRoundtripTime * 1000)}");
 

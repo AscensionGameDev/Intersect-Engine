@@ -10,16 +10,13 @@ namespace Intersect.Network.Packets
         protected AbstractTimedPacket()
         {
             Adjusted = Timing.Global.Ticks;
-            Local = Timing.Global.TicksLocal;
-            Offset = Timing.Global.OffsetTicks;
+            Offset = Timing.Global.TicksOffset;
             UTC = Timing.Global.TicksUTC;
         }
 
         public long Adjusted { get; set; }
 
         public long UTC { get; set; }
-
-        public long Local { get; set; }
 
         public long Offset { get; set; }
     }

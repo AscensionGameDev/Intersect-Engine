@@ -81,8 +81,8 @@ namespace Intersect.Network.Lidgren
                 mPeerConfiguration.Port = configuration.Port;
             } else
             {
-                mPeerConfiguration.SimulatedMinimumLatency = 0.5f;
-                mPeerConfiguration.SimulatedRandomLatency = 0.5f;
+                mPeerConfiguration.SimulatedMinimumLatency = 0.125f;
+                mPeerConfiguration.SimulatedRandomLatency = 0.375f;
             }
 
             if (Debugger.IsAttached)
@@ -727,8 +727,8 @@ namespace Intersect.Network.Lidgren
                             break;
                         }
 
-                        Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Raw={hail.Local / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
-                        Log.Debug($"local Time={Timing.Global.Milliseconds} Raw={Timing.Global.MillisecondsLocal} Offset={(long)Timing.Global.OffsetMilliseconds} Real={Timing.Global.MillisecondsUTC}");
+                        Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
+                        Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={(long)Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
                         Log.Debug($"real delta={(Timing.Global.TicksUTC - hail.UTC) / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"NCPing={(long)Math.Ceiling(senderConnection.AverageRoundtripTime * 1000)}");
 

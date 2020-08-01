@@ -22,7 +22,6 @@ namespace Intersect.Network
 
         protected long mAdjusted;
         protected long mUTC;
-        protected long mLocal;
         protected long mOffset;
 
         protected ConnectionPacket()
@@ -36,8 +35,7 @@ namespace Intersect.Network
             mHandshakeSecret = handshakeSecret;
 
             Adjusted = Timing.Global.Ticks;
-            Local = Timing.Global.TicksLocal;
-            Offset = Timing.Global.OffsetTicks;
+            Offset = Timing.Global.TicksOffset;
             UTC = Timing.Global.TicksUTC;
         }
 
@@ -60,13 +58,6 @@ namespace Intersect.Network
         {
             get => mUTC;
             set => mUTC = value;
-        }
-
-        [Exclude]
-        public long Local
-        {
-            get => mLocal;
-            set => mLocal = value;
         }
 
         [Exclude]
