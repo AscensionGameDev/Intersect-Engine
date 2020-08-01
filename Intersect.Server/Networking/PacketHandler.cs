@@ -224,7 +224,7 @@ namespace Intersect.Server.Networking
                 var deltaTicks = serverTicks - timedPacket.Adjusted;
                 var deltaGameMs = deltaTicks / TimeSpan.TicksPerMillisecond;
                 var deltaUtcMs = serverUtcMs - remoteUtcMs;
-                var thresholdMs = Math.Max(connection.Statistics.Ping * 1.1, connection.Statistics.Ping + 25);
+                var thresholdMs = Math.Max(connection.Statistics.Ping * 1.25, connection.Statistics.Ping + 25);
                 var pingDeltaMixedMs = thresholdMs - (deltaGameMs + deltaUtcMs) / 2;
                 var pingDeltaGameMs = thresholdMs - deltaGameMs;
                 var ncPing = (long) Math.Ceiling(
@@ -241,7 +241,7 @@ namespace Intersect.Server.Networking
                     $"pingDelta={pingDeltaMixedMs} unnatural={detectedUnnaturalPacketTiming}"
                 );
 
-                if (pingDeltaMixedMs < 0 || Math.Min(pingDeltaGameMs, pingDeltaMixedMs) > 500)
+                if (Math.Max(pingDeltaMixedMs, pingDeltaGameMs) < 0 || Math.Min(pingDeltaGameMs, pingDeltaMixedMs) > 500)
                 {
                     if (client.TimedBufferPacketsRemaining-- < 1)
                     {
@@ -482,7 +482,7 @@ namespace Intersect.Server.Networking
             {
                 player.Move(packet.Dir, player, false);
                 var utcDeltaMs = (Globals.Timing.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
-                var latencyAdjustmentMs = (client.Ping - Math.Min(0, utcDeltaMs)) / 2;
+                var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
                 var currentMs = Globals.Timing.Milliseconds;
                 if (player.MoveTimer > currentMs)
                 {
