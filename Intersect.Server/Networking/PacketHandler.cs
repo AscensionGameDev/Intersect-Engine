@@ -233,19 +233,26 @@ namespace Intersect.Server.Networking
                 var deltaWithPing = deltaAdjusted - ping;
 
                 var configurableMininumPing = 10;
-                var configurableErrorMarginFactor = 1.25f;
+                var configurableErrorMarginFactor = 0.25f;
                 var configurableNaturalLowerMargin = 0;
                 var configurableNaturalUpperMargin = 500;
                 var configurableAllowedSpikePackets = 5;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
-                var deltaWithError = deltaAdjusted - errorMargin;
+                var errorRangeMinimum = ping - errorMargin;
+                var errorRangeMaximum = ping + errorMargin;
+                
+                var deltaWithErrorMinimum = deltaAdjusted - errorRangeMinimum;
+                var deltaWithErrorMaximum = deltaAdjusted - errorRangeMaximum;
 
                 var natural = configurableNaturalLowerMargin < deltaAdjusted &&
                               deltaAdjusted < configurableNaturalUpperMargin;
 
-                var naturalWithError = configurableNaturalLowerMargin < deltaWithError &&
-                                       deltaWithError < configurableNaturalUpperMargin;
+                var naturalWithErrorMinimum = configurableNaturalLowerMargin < deltaWithErrorMinimum &&
+                                              deltaWithErrorMinimum < configurableNaturalUpperMargin;
+
+                var naturalWithErrorMaximum = configurableNaturalLowerMargin < deltaWithErrorMaximum &&
+                                              deltaWithErrorMaximum < configurableNaturalUpperMargin;
 
                 var naturalWithPing = configurableNaturalLowerMargin < deltaWithPing &&
                                       deltaWithPing < configurableNaturalUpperMargin;
@@ -253,12 +260,12 @@ namespace Intersect.Server.Networking
                 Log.Debug(
                     "\n\t" +
                     $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                    $"TG[Local={localAdjustedMs}, Remote={remoteAdjustedMs}, Error={Math.Abs(localAdjustedMs - remoteAdjustedMs)}]\n\t" +
-                    $"TR[Local={localUtcMs}, Remote={remoteUtcMs}, Error={Math.Abs(localUtcMs - remoteUtcMs)}]\n\t" +
-                    $"TO[Local={localOffsetMs}, Remote={remoteOffsetMs}, Error={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                    $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing} AWE={deltaWithError}]\n\t" +
-                    $"Natural[A={natural} WP={naturalWithPing}, WE={naturalWithError}]"
+                    $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                    $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                    $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]"
                 );
+
+                var naturalWithError = naturalWithErrorMinimum || naturalWithErrorMaximum;
 
                 if (!(natural || naturalWithError || naturalWithPing))
                 {
@@ -511,9 +518,9 @@ namespace Intersect.Server.Networking
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
                 player.Move(packet.Dir, player, false);
-                var utcDeltaMs = (Globals.Timing.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+                var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
                 var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
-                var currentMs = Globals.Timing.Milliseconds;
+                var currentMs = Timing.Global.Milliseconds;
                 if (player.MoveTimer > currentMs)
                 {
                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
