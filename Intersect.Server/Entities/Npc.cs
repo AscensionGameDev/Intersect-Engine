@@ -136,21 +136,15 @@ namespace Intersect.Server.Entities
 
 		public void DropPool(Entity killer)
 		{
-			int nb = Globals.Rand.Next(Base.DropPool.ItemPool.Count);
-			while (nb > 0 && Base.DropPool.ItemPool.Count > 0)
+			if (Base.DropPool.ItemPool.Count > 0)
 			{
 				foreach (ItemPool ip in Base.DropPool.ItemPool)
 				{
 					if (DropPoolItem(ItemBase.Get(ip.ItemId), ip.Quantity, ip.Chance, killer))
 					{
-						nb--;
-					}
-					if (nb <= 0)
-					{
-						break;
+						return;
 					}
 				}
-				nb--;
 			}
 		}
 

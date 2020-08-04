@@ -713,7 +713,7 @@ namespace Intersect.Server.Entities
 		//Returns the amount of time required to traverse 1 tile
 		public virtual float GetMovementTime()
         {
-			var time = 500f;// / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
+			var time = 400f;// / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
 			time *= (1.0f - GetWalkSpeed());
 			if (Running == 1)
 			{
