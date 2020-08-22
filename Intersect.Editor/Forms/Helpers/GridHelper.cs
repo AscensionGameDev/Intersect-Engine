@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Editor.Forms.Helpers
 {
@@ -52,7 +49,7 @@ namespace Intersect.Editor.Forms.Helpers
 
         public GridTile WithLabel(string label)
         {
-            if (string.Equals(Label, label, StringComparison.Ordinal))
+            if (String.Equals(Label, label, StringComparison.Ordinal))
             {
                 return this;
             }
@@ -69,6 +66,9 @@ namespace Intersect.Editor.Forms.Helpers
 
             return new GridTile(X, Y, Color, Label, labelColor);
         }
+
+        public static int CalculatePrecedenceKey(GridTile gridTile) =>
+            (String.IsNullOrEmpty(gridTile.Label) ? 0 : 2) + (gridTile.Color == null ? 0 : 1);
     }
 
     public static class GridHelper
@@ -80,9 +80,6 @@ namespace Intersect.Editor.Forms.Helpers
         public static Color ColorSelection { get; set; } = Color.Red;
 
         public static Font DefaultFont { get; set; } = new Font(new FontFamily("Arial"), 14);
-
-        private static int OrderKeyForGridTile(GridTile gridTile) =>
-            (string.IsNullOrEmpty(gridTile.Label) ? 0 : 2) + (gridTile.Color == null ? 0 : 1);
 
         public static Bitmap DrawGrid(
             int bitmapWidth,
@@ -129,7 +126,7 @@ namespace Intersect.Editor.Forms.Helpers
             {
                 graphics.Clear(ColorBackground);
 
-                foreach (var gridTile in gridTiles.OrderBy(OrderKeyForGridTile))
+                foreach (var gridTile in gridTiles.OrderBy(GridTile.CalculatePrecedenceKey))
                 {
                     var x = gridTile.X * cellWidth;
                     var y = gridTile.Y * cellHeight;
