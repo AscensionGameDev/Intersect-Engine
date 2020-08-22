@@ -181,7 +181,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateSpawnPreview()
         {
-            pnlSpawnLoc.BackgroundImage = GridHelper.DrawGrid(pnlSpawnLoc.Width, pnlSpawnLoc.Height, 5, 5, new GridTile(2, 2, null, "E"), new GridTile(mSpawnX + 2, mSpawnY + 2, System.Drawing.Color.Red));
+            pnlSpawnLoc.BackgroundImage = GridHelper.DrawGrid(pnlSpawnLoc.Width, pnlSpawnLoc.Height, 5, 5, new GridCell(2, 2, null, "E"), new GridCell(mSpawnX + 2, mSpawnY + 2, System.Drawing.Color.Red));
         }
 
         private void btnSave_Click(object sender, EventArgs e)
