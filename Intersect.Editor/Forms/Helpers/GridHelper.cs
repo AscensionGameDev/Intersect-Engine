@@ -177,28 +177,33 @@ namespace Intersect.Editor.Forms.Helpers
             {
                 graphics.Clear(ColorBackground);
 
-                foreach (var gridTile in gridCells.OrderBy(GridCell.CalculatePrecedenceKey))
+                // Draw the cell contents in order of precedence (color-only first, then text, so that text doesn't get rendered under background colors)
+                foreach (var gridCell in gridCells.OrderBy(GridCell.CalculatePrecedenceKey))
                 {
-                    var x = gridTile.X * cellWidth;
-                    var y = gridTile.Y * cellHeight;
+                    var x = gridCell.X * cellWidth;
+                    var y = gridCell.Y * cellHeight;
 
-                    if (gridTile.Color != null && gridTile.Color != Color.Transparent && gridTile.Color.Value.A != 0)
+                    // Draw the background color (if any for this cell)
+                    if (gridCell.Color != null && gridCell.Color != Color.Transparent && gridCell.Color.Value.A != 0)
                     {
                         graphics.FillRectangle(
                             new SolidBrush(ColorSelection), new Rectangle(x, y, cellWidth, cellHeight)
                         );
                     }
 
-                    if (!string.IsNullOrWhiteSpace(gridTile.Label))
+                    // Draw the text (if any for this cell)
+                    if (!string.IsNullOrWhiteSpace(gridCell.Label))
                     {
-                        var measurement = graphics.MeasureString(gridTile.Label, font);
+                        var measurement = graphics.MeasureString(gridCell.Label, font);
                         graphics.DrawString(
-                            gridTile.Label, font, new SolidBrush(gridTile.LabelColor ?? ColorForeground),
+                            gridCell.Label, font, new SolidBrush(gridCell.LabelColor ?? ColorForeground),
                             x + (cellWidth - measurement.Width) / 2, y + (cellHeight - measurement.Height) / 2
                         );
                     }
                 }
 
+                // Draw separator lines (1 less than the number of columns/rows
+                // Columns and rows are combined into a single for-loop to reduce the number of iterations
                 for (var lineIndex = 1; lineIndex < Math.Max(gridColumns, gridRows); ++lineIndex)
                 {
                     if (lineIndex < gridColumns)
