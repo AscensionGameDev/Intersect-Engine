@@ -6,7 +6,7 @@ namespace Intersect.Editor.Forms.Helpers
 {
     using Color = System.Drawing.Color;
 
-    public struct GridTile
+    public struct GridCell
     {
         public int X { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Helpers
 
         public Color? LabelColor { get; private set; }
 
-        public GridTile(int x, int y, Color? color = default, string label = null, Color? labelColor = default)
+        public GridCell(int x, int y, Color? color = default, string label = null, Color? labelColor = default)
         {
             X = x;
             Y = y;
@@ -27,88 +27,139 @@ namespace Intersect.Editor.Forms.Helpers
             LabelColor = labelColor;
         }
 
-        public GridTile At(int x, int y)
+        public GridCell At(int x, int y)
         {
             if (X == x && Y == y)
             {
                 return this;
             }
 
-            return new GridTile(x, y, Color, Label);
+            return new GridCell(x, y, Color, Label);
         }
 
-        public GridTile WithColor(Color color)
+        public GridCell WithColor(Color color)
         {
             if (Color == color)
             {
                 return this;
             }
 
-            return new GridTile(X, Y, color, Label);
+            return new GridCell(X, Y, color, Label);
         }
 
-        public GridTile WithLabel(string label)
+        public GridCell WithLabel(string label)
         {
             if (String.Equals(Label, label, StringComparison.Ordinal))
             {
                 return this;
             }
 
-            return new GridTile(X, Y, Color, label);
+            return new GridCell(X, Y, Color, label);
         }
 
-        public GridTile WithLabelColor(Color labelColor)
+        public GridCell WithLabelColor(Color labelColor)
         {
             if (LabelColor == labelColor)
             {
                 return this;
             }
 
-            return new GridTile(X, Y, Color, Label, labelColor);
+            return new GridCell(X, Y, Color, Label, labelColor);
         }
 
-        public static int CalculatePrecedenceKey(GridTile gridTile) =>
-            (String.IsNullOrEmpty(gridTile.Label) ? 0 : 2) + (gridTile.Color == null ? 0 : 1);
+        public static int CalculatePrecedenceKey(GridCell gridCell) =>
+            (String.IsNullOrEmpty(gridCell.Label) ? 0 : 2) + (gridCell.Color == null ? 0 : 1);
     }
 
+    /// <summary>
+    /// Helper class for drawing grids on <see cref="Bitmap"/>s.
+    /// </summary>
     public static class GridHelper
     {
+        /// <summary>
+        /// Mutable background color for all grids, default <see cref="Color.White"/>.
+        /// </summary>
         public static Color ColorBackground { get; set; } = Color.White;
 
+        /// <summary>
+        /// Mutable foreground color for all grids (only affects the grid lines, not text color), default <see cref="Color.Black"/>.
+        /// </summary>
         public static Color ColorForeground { get; set; } = Color.Black;
 
+        /// <summary>
+        /// Mutable selection tile color for all grids, default <see cref="Color.Red"/>.
+        /// </summary>
         public static Color ColorSelection { get; set; } = Color.Red;
 
+        /// <summary>
+        /// Mutable fallback font for text rendering on grids, default Arial 14pt.
+        /// </summary>
         public static Font DefaultFont { get; set; } = new Font(new FontFamily("Arial"), 14);
 
+        /// <summary>
+        /// Creates a bitmap of the given dimensions and renders a grid with the specified dimensions and optional cell contents.
+        /// </summary>
+        /// <param name="bitmapWidth">width of the bitmap in pixels</param>
+        /// <param name="bitmapHeight">height of the bitmap in pixels</param>
+        /// <param name="gridColumns">number of columns the grid should have</param>
+        /// <param name="gridRows">number of rows the grid should have</param>
+        /// <param name="gridCells">the optional cell contents</param>
+        /// <returns>a bitmap with the configured grid drawn on it</returns>
         public static Bitmap DrawGrid(
             int bitmapWidth,
             int bitmapHeight,
             int gridColumns,
             int gridRows,
-            params GridTile[] gridTiles
+            params GridCell[] gridCells
         ) =>
-            DrawGrid(bitmapWidth, bitmapHeight, gridColumns, gridRows, DefaultFont, gridTiles);
+            DrawGrid(bitmapWidth, bitmapHeight, gridColumns, gridRows, DefaultFont, gridCells);
 
+        /// <summary>
+        /// Creates a bitmap of the given dimensions and renders a grid with the specified dimensions and optional cell contents.
+        /// </summary>
+        /// <param name="bitmapWidth">width of the bitmap in pixels</param>
+        /// <param name="bitmapHeight">height of the bitmap in pixels</param>
+        /// <param name="gridColumns">number of columns the grid should have</param>
+        /// <param name="gridRows">number of rows the grid should have</param>
+        /// <param name="font">the font to use for text rendering</param>
+        /// <param name="gridCells">the optional cell contents</param>
+        /// <returns>a bitmap with the configured grid drawn on it</returns>
         public static Bitmap DrawGrid(
             int bitmapWidth,
             int bitmapHeight,
             int gridColumns,
             int gridRows,
             Font font,
-            params GridTile[] gridTiles
+            params GridCell[] gridCells
         ) =>
-            DrawGrid(new Bitmap(bitmapWidth, bitmapHeight), gridColumns, gridRows, font, gridTiles);
+            DrawGrid(new Bitmap(bitmapWidth, bitmapHeight), gridColumns, gridRows, font, gridCells);
 
-        public static Bitmap DrawGrid(Bitmap bitmap, int gridColumns, int gridRows, params GridTile[] gridTiles) =>
-            DrawGrid(bitmap, gridColumns, gridRows, DefaultFont, gridTiles);
+        /// <summary>
+        /// Renders a grid on the provided bitmap with the specified dimensions and optional cell contents.
+        /// </summary>
+        /// <param name="bitmap">the bitmap to render the grid on</param>
+        /// <param name="gridColumns">number of columns the grid should have</param>
+        /// <param name="gridRows">number of rows the grid should have</param>
+        /// <param name="gridCells">the optional cell contents</param>
+        /// <returns>a bitmap with the configured grid drawn on it</returns>
+        public static Bitmap DrawGrid(Bitmap bitmap, int gridColumns, int gridRows, params GridCell[] gridCells) =>
+            DrawGrid(bitmap, gridColumns, gridRows, DefaultFont, gridCells);
 
+        /// <summary>
+        /// Renders a grid on the provided bitmap with the specified dimensions and optional cell contents.
+        /// </summary>
+        /// <param name="bitmap">the bitmap to render the grid on</param>
+        /// <param name="gridColumns">number of columns the grid should have</param>
+        /// <param name="gridRows">number of rows the grid should have</param>
+        /// <param name="font">the font to use for text rendering</param>
+        /// <param name="gridCells">the optional cell contents</param>
+        /// <returns>a bitmap with the configured grid drawn on it</returns>
         public static Bitmap DrawGrid(
             Bitmap bitmap,
             int gridColumns,
             int gridRows,
             Font font,
-            params GridTile[] gridTiles
+            params GridCell[] gridCells
         )
         {
             if (bitmap == null)
@@ -126,7 +177,7 @@ namespace Intersect.Editor.Forms.Helpers
             {
                 graphics.Clear(ColorBackground);
 
-                foreach (var gridTile in gridTiles.OrderBy(GridTile.CalculatePrecedenceKey))
+                foreach (var gridTile in gridCells.OrderBy(GridCell.CalculatePrecedenceKey))
                 {
                     var x = gridTile.X * cellWidth;
                     var y = gridTile.Y * cellHeight;
