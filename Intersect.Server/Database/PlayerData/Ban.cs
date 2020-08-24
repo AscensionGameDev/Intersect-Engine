@@ -17,10 +17,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData
 {
-
     public class Ban
     {
-
         public Ban() { }
 
         private Ban(string ip, string reason, int durationDays, string banner)
@@ -65,6 +63,11 @@ namespace Intersect.Server.Database.PlayerData
 
         public string Banner { get; private set; }
 
+        [NotMapped]
+        public bool IsExpired => Expired(this);
+
+        public static bool Expired(Ban ban) => ban.EndTime <= DateTime.UtcNow;
+
         public static bool Add([NotNull] Ban ban, [CanBeNull] PlayerContext playerContext = null)
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -94,10 +97,8 @@ namespace Intersect.Server.Database.PlayerData
             [NotNull] string banner,
             string ip,
             [CanBeNull] PlayerContext playerContext = null
-        )
-        {
-            return Add(new Ban(userId, ip, reason, duration, banner), playerContext);
-        }
+        ) =>
+            Add(new Ban(userId, ip, reason, duration, banner), playerContext);
 
         public static bool Add(
             [NotNull] User user,
@@ -106,10 +107,8 @@ namespace Intersect.Server.Database.PlayerData
             [NotNull] string banner,
             string ip,
             [CanBeNull] PlayerContext playerContext = null
-        )
-        {
-            return Add(new Ban(user, ip, reason, duration, banner), playerContext);
-        }
+        ) =>
+            Add(new Ban(user, ip, reason, duration, banner), playerContext);
 
         public static bool Add(
             [NotNull] Client client,
@@ -118,12 +117,10 @@ namespace Intersect.Server.Database.PlayerData
             [NotNull] string banner,
             string ip,
             [CanBeNull] PlayerContext playerContext = null
-        )
-        {
-            return client.User != null && Add(client.User, duration, reason, banner, ip, playerContext);
-        }
+        ) =>
+            client.User != null && Add(client.User, duration, reason, banner, ip, playerContext);
 
-        public static bool Remove(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        public static bool Remove(Ban ban)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
@@ -133,13 +130,58 @@ namespace Intersect.Server.Database.PlayerData
                     return false;
                 }
 
-                var ban = context.Bans.FirstOrDefault(p => p.UserId == userId);
-                if (ban == null)
+                context.Bans.Remove(ban);
+
+                DbInterface.SavePlayerDatabaseAsync();
+
+                return true;
+            }
+        }
+
+        public static bool Remove(string ip, bool expired = true)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                var bans = context.Bans.Where(e => e.Ip == ip && (!expired || Expired(e))).ToList();
+
+                if ((bans?.Count ?? 0) == 0)
                 {
                     return true;
                 }
 
-                context.Bans.Remove(ban);
+                context.Bans.RemoveRange(bans);
+
+                DbInterface.SavePlayerDatabaseAsync();
+
+                return true;
+            }
+        }
+
+        public static bool Remove(Guid userId, bool expired = true)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                var bans = context.Bans.Where(e => e.UserId == userId && (!expired || Expired(e))).ToList();
+
+                if ((bans?.Count ?? 0) == 0)
+                {
+                    return true;
+                }
+
+                context.Bans.RemoveRange(bans);
+
                 DbInterface.SavePlayerDatabaseAsync();
 
                 return true;
@@ -148,7 +190,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
         {
-            if (!Remove(user.Id, playerContext))
+            if (!Remove(user.Ban))
             {
                 return false;
             }
@@ -158,10 +200,8 @@ namespace Intersect.Server.Database.PlayerData
             return true;
         }
 
-        public static bool Remove([NotNull] Client client, [CanBeNull] PlayerContext playerContext = null)
-        {
-            return client.User != null && Remove(client.User, playerContext);
-        }
+        public static bool Remove([NotNull] Client client, [CanBeNull] PlayerContext playerContext = null) =>
+            client.User != null && Remove(client.User, playerContext);
 
         public static string CheckBan(User user, string ip)
         {
@@ -177,20 +217,23 @@ namespace Intersect.Server.Database.PlayerData
                 }
             }
 
-            return ban != null
-                ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason)
-                : null;
+            var expired = ban?.IsExpired ?? true;
+
+            if (expired && ban != null)
+            {
+                Remove(ban);
+                user.IpBan = null;
+                user.UserBan = null;
+            }
+
+            return expired
+                ? null
+                : Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
         }
 
-        public static string CheckBan(string ip)
-        {
-            return CheckBan(null, ip);
-        }
+        public static string CheckBan(string ip) => CheckBan(null, ip);
 
-        public static Ban Find([NotNull] User user)
-        {
-            return Find(user.Id);
-        }
+        public static Ban Find([NotNull] User user) => Find(user.Id);
 
         public static Ban Find(Guid userId)
         {
@@ -213,30 +256,23 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<Ban> FindAll([NotNull] User user)
-        {
-            return ByUser(DbInterface.GetPlayerContext(), user.Id);
-        }
+        public static IEnumerable<Ban> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
 
-        public static IEnumerable<Ban> FindAll(Guid userId)
-        {
-            return ByUser(DbInterface.GetPlayerContext(), userId);
-        }
+        public static IEnumerable<Ban> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
 
-        public static IEnumerable<Ban> FindAll(string ip)
-        {
-            return ByIp(DbInterface.GetPlayerContext(), ip);
-        }
+        public static IEnumerable<Ban> FindAll(string ip) => ByIp(DbInterface.GetPlayerContext(), ip);
 
         #region Compiled Queries
 
-        [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Ban>> ByUser =
+        [NotNull]
+        private static readonly Func<PlayerContext, Guid, IEnumerable<Ban>> ByUser =
             EF.CompileQuery<PlayerContext, Guid, Ban>(
                 (context, userId) => context.Bans.Where(ban => ban.UserId == userId && ban.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Ban>> ByIp =
+        [NotNull]
+        private static readonly Func<PlayerContext, string, IEnumerable<Ban>> ByIp =
             EF.CompileQuery<PlayerContext, string, Ban>(
                 (context, ip) => context.Bans.Where(
                     ban => string.Equals(ban.Ip, ip, StringComparison.OrdinalIgnoreCase) &&
@@ -246,7 +282,5 @@ namespace Intersect.Server.Database.PlayerData
             throw new InvalidOperationException();
 
         #endregion Compiled Queries
-
     }
-
 }
