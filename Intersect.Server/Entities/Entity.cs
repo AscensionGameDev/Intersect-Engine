@@ -2104,27 +2104,19 @@ namespace Intersect.Server.Entities
             {
                 decimal cooldownReduction = 1;
 
-                if (GetType() == typeof(Player)) //Only apply cdr for players with equipment
+                var thisPlayer = this as Player;
+
+                if (thisPlayer != null) //Only apply cdr for players with equipment
                 {
-                    cooldownReduction = 1 - (decimal) ((Player) this).GetCooldownReduction() / 100;
+                    cooldownReduction = 1 - thisPlayer.GetCooldownReduction() / 100;
                 }
 
-                if (SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId))
-                {
-                    SpellCooldowns[Spells[spellSlot].SpellId] =
-                        Globals.Timing.RealTimeMs + (int) (spellBase.CooldownDuration * cooldownReduction);
-                }
-                else
-                {
-                    SpellCooldowns.Add(
-                        Spells[spellSlot].SpellId,
-                        Globals.Timing.RealTimeMs + (int) (spellBase.CooldownDuration * cooldownReduction)
-                    );
-                }
+                SpellCooldowns[Spells[spellSlot].SpellId] =
+                    Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
 
-                if (GetType() == typeof(Player))
+                if (thisPlayer != null)
                 {
-                    PacketSender.SendSpellCooldown((Player) this, Spells[spellSlot].SpellId);
+                    PacketSender.SendSpellCooldown(thisPlayer, Spells[spellSlot].SpellId);
                 }
             }
         }
