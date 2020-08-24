@@ -386,7 +386,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Users.Any(
-                    p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                    p => string.Equals(p.Email, email, StringComparison.CurrentCultureIgnoreCase)
                 );
             }
         }
@@ -396,7 +396,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Players.Any(
-                    p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                    p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)
                 );
             }
         }
@@ -406,7 +406,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Players.Where(
-                        p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                        p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)
                     )
                     ?.First()
                     ?.Id;
