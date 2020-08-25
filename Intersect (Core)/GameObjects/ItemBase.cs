@@ -104,7 +104,8 @@ namespace Intersect.GameObjects
 
         public bool QuickCast { get; set; }
 
-        public bool DestroySpell { get; set; } = true;
+        [Column("DestroySpell")]
+        public bool SingleUse { get; set; } = true;
 
         [Column("Event")]
         [JsonProperty]
