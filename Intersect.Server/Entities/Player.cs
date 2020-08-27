@@ -1918,7 +1918,7 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        if (itemBase.DestroySpell)
+                        if (itemBase.SingleUse)
                         {
                             TryTakeItem(Items[slot], 1);
                         }
@@ -1931,7 +1931,10 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        TryTakeItem(Items[slot], 1);
+                        if (itemBase.SingleUse)
+                        {
+                            TryTakeItem(Items[slot], 1);
+                        }
 
                         break;
                     case ItemTypes.Bag:
