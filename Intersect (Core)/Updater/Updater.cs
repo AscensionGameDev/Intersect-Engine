@@ -105,7 +105,9 @@ namespace Intersect.Updater
                     {
                         mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' }) + "/update.json";
                     }
-                    var json = wc.DownloadString(mConfigUrl + "?token=" + Environment.TickCount);
+
+                    var jsonBytes = wc.DownloadData(mConfigUrl + "?token=" + Environment.TickCount);
+                    var json = Encoding.UTF8.GetString(jsonBytes);
                     mUpdate = JsonConvert.DeserializeObject<Update>(json);
 
                     var downloadFirst = new List<UpdateFile>();
@@ -487,7 +489,14 @@ namespace Intersect.Updater
                         //Use WebClient to Download File To Memory
                         var wc = new WebClient();
                         wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] = args.BytesReceived);
-                        var fileData = await wc.DownloadDataTaskAsync(new Uri(mBaseUrl + "/" + file.Path + "?token=" + Environment.TickCount));
+                        var rawUri = mBaseUrl +
+                                     "/" +
+                                     Uri.EscapeUriString(file.Path) +
+                                     "?token=" +
+                                     Environment.TickCount;
+
+                        var fileUri = new Uri(rawUri);
+                        var fileData = await wc.DownloadDataTaskAsync(fileUri);
                         wc.Dispose();
 
                         CheckFileData(file, fileData);
