@@ -4385,7 +4385,7 @@ Negative values for time to flow backwards.";
 
             public static LocalizedString Done = @"Update complete! Launching game!";
 
-            public static LocalizedString Error = @"Errpr: {00}";
+            public static LocalizedString Error = @"Error: {00}";
 
             public static LocalizedString Files = @"{00} Files Remaining";
 
