@@ -2013,26 +2013,26 @@ namespace Intersect.Editor.Core
             {
                 StartSpritebatch(blendMode, shader, null, false, null);
                 sSpriteBatch.Draw(
-                    tex, null,
+                    tex,
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
                     ),
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0
+                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
                 );
             }
             else
             {
                 StartSpritebatch(blendMode, shader, renderTarget, false, null);
                 sSpriteBatch.Draw(
-                    tex, null,
+                    tex,
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
                     ),
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0
+                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
                 );
             }
         }
