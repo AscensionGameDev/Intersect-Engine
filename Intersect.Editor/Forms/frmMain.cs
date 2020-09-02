@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
@@ -1829,7 +1830,17 @@ namespace Intersect.Editor.Forms
                     var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.meta");
                     foreach (var pack in packs)
                     {
-                        var obj = JObject.Parse(File.ReadAllText(pack))["frames"];
+
+                        var json = String.Empty;
+                        using (var stream = File.OpenRead(pack))
+                        {
+                            using (var reader = new StreamReader(new GZipStream(stream, CompressionMode.Decompress, true)))
+                            {
+                                json = reader.ReadToEnd();
+                            }
+                        }
+
+                        var obj = JObject.Parse(json)["frames"];
                         foreach (var frame in obj.Children())
                         {
                             var filename = frame["filename"].ToString();
