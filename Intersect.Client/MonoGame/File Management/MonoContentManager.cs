@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.IO.Compression;
+using System.Text;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -49,6 +50,24 @@ namespace Intersect.Client.MonoGame.File_Management
             TilesetsLoaded = true;
         }
 
+        public static void Decompress(FileInfo fileToDecompress)
+        {
+            using (FileStream originalFileStream = fileToDecompress.OpenRead())
+            {
+                string currentFileName = fileToDecompress.FullName;
+                string newFileName = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
+
+                using (FileStream decompressedFileStream = File.Create(newFileName))
+                {
+                    using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                    {
+                        decompressionStream.CopyTo(decompressedFileStream);
+                        Console.WriteLine("Decompressed: {0}", fileToDecompress.Name);
+                    }
+                }
+            }
+        }
+
         public override void LoadTexturePacks()
         {
             mTexturePackDict.Clear();
@@ -58,10 +77,20 @@ namespace Intersect.Client.MonoGame.File_Management
                 Directory.CreateDirectory(dir);
             }
 
-            var items = Directory.GetFiles(dir, "*.json");
+            var items = Directory.GetFiles(dir, "*.meta");
             for (var i = 0; i < items.Length; i++)
             {
-                var json = File.ReadAllText(items[i]);
+
+                var json = string.Empty;
+                using (var stream = File.OpenRead(items[i]))
+                {
+                    using (var reader = new StreamReader(new GZipStream(stream, CompressionMode.Decompress, true)))
+                    {
+                        json = reader.ReadToEnd();
+                    }
+                }
+
+                // var json = File.ReadAllText(items[i]);
                 var obj = JObject.Parse(json);
                 var frames = (JArray) obj["frames"];
                 var img = obj["meta"]["image"].ToString();

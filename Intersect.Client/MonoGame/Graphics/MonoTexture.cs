@@ -10,6 +10,7 @@ using Intersect.Logging;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Utilities.Deflate;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
@@ -84,11 +85,26 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
+            
+
             using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
+
                 try
                 {
-                    mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
+                    if (Path.GetExtension(mPath) == ".asset")
+                    {
+                        using (var gzip = new GZipStream(fileStream, CompressionMode.Decompress, true))
+                        {
+                            mTexture = Texture2D.FromStream(mGraphicsDevice, gzip);
+                        }
+                    }
+                    else
+                    {
+                        mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
+
+                    }
+
                     if (mTexture == null)
                     {
                         Log.Error($"Failed to load texture due to unknown error: {relativePath}");
@@ -104,7 +120,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     mWidth = mTexture.Width;
                     mHeight = mTexture.Height;
                     mLoadError = false;
-                }
+                }   
                 catch (Exception exception)
                 {
                     Log.Error(

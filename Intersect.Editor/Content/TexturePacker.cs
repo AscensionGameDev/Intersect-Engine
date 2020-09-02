@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-
+using System.IO.Compression;
+using System.Text;
 using Intersect.Editor.Content;
 
 using Newtonsoft.Json.Linq;
@@ -161,7 +162,16 @@ namespace Intersect.Editor.Classes.ContentManagement
                 var size = new JObject();
                 size["w"] = croppedImg.Width;
                 size["h"] = croppedImg.Height;
-                croppedImg.Save(Path.Combine("resources", "packs", index + ".png"), ImageFormat.Png);
+
+
+                using (var stream = new MemoryStream())
+                {
+                    using (var gzip = new GZipStream(stream, CompressionMode.Compress, true))
+                    {
+                        croppedImg.Save(gzip, ImageFormat.Png);
+                    }
+                    stream.WriteTo(File.Create(Path.Combine("resources", "packs", index + ".asset")));
+                }
                 croppedImg.Dispose();
 
                 //Create Metadata
@@ -169,12 +179,20 @@ namespace Intersect.Editor.Classes.ContentManagement
                 jobj.Add(new JProperty("frames", frames));
 
                 var meta = new JObject();
-                meta["image"] = index + ".png";
+                meta["image"] = index + ".asset";
                 meta["size"] = size;
                 jobj.Add(new JProperty("meta", meta));
 
                 //Save Metadata
-                File.WriteAllText(Path.Combine("resources", "packs", index + ".json"), jobj.ToString());
+                using (var stream = new MemoryStream())
+                {
+                    using (var gzip = new GZipStream(stream, CompressionMode.Compress, true))
+                    {
+                        var data = Encoding.UTF8.GetBytes(jobj.ToString());
+                        gzip.Write(data, 0, data.Length);
+                    }
+                    stream.WriteTo(File.Create(Path.Combine("resources", "packs", index + ".meta")));
+                }
             }
 
             img.Dispose();
