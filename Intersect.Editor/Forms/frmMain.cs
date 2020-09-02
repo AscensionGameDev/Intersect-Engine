@@ -1826,7 +1826,7 @@ namespace Intersect.Editor.Forms
 
                 if (Directory.Exists(Path.Combine("resources", "packs")))
                 {
-                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.json");
+                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.meta");
                     foreach (var pack in packs)
                     {
                         var obj = JObject.Parse(File.ReadAllText(pack))["frames"];
