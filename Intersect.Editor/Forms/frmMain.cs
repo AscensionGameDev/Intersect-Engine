@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using DarkUI.Controls;
 using DarkUI.Forms;
-
+using Intersect.Compression;
 using Intersect.Editor.Classes.ContentManagement;
 using Intersect.Editor.Content;
 using Intersect.Editor.Forms.DockingElements;
@@ -1826,10 +1826,10 @@ namespace Intersect.Editor.Forms
 
                 if (Directory.Exists(Path.Combine("resources", "packs")))
                 {
-                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.json");
+                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.meta");
                     foreach (var pack in packs)
                     {
-                        var obj = JObject.Parse(File.ReadAllText(pack))["frames"];
+                        var obj = JObject.Parse(GzipCompression.ReadDecompressedString(pack))["frames"];
                         foreach (var frame in obj.Children())
                         {
                             var filename = frame["filename"].ToString();

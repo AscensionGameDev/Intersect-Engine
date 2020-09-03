@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
+using Intersect.Compression;
 using Intersect.IO.Files;
 using Intersect.Logging;
 
@@ -119,7 +120,17 @@ namespace Intersect.Client.MonoGame.Graphics
             {
                 try
                 {
-                    Load(fileStream);
+                    if (Path.GetExtension(mPath) == ".asset")
+                    {
+                        using (var gzip = GzipCompression.CreateDecompressedFileStream(fileStream))
+                        {
+                            Load(gzip);
+                        }
+                    }
+                    else
+                    {
+                        Load(fileStream);
+                    }
                 }
                 catch (Exception exception)
                 {

@@ -5,13 +5,16 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Client.MonoGame.Graphics;
+using Intersect.Compression;
 using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.IO;
+using System.IO.Compression;
 
 namespace Intersect.Client.MonoGame.File_Management
 {
@@ -59,10 +62,10 @@ namespace Intersect.Client.MonoGame.File_Management
                 Directory.CreateDirectory(dir);
             }
 
-            var items = Directory.GetFiles(dir, "*.json");
+            var items = Directory.GetFiles(dir, "*.meta");
             for (var i = 0; i < items.Length; i++)
             {
-                var json = File.ReadAllText(items[i]);
+                var json = GzipCompression.ReadDecompressedString(items[i]);
                 var obj = JObject.Parse(json);
                 var frames = (JArray) obj["frames"];
                 var img = obj["meta"]["image"].ToString();
