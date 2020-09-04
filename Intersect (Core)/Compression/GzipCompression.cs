@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Intersect.Compression
@@ -9,6 +11,17 @@ namespace Intersect.Compression
     /// </summary>
     public static class GzipCompression
     {
+
+        // Not the most amazing encryption, can be swapped out relatively easily if desired.
+        private static DESCryptoServiceProvider cryptoProvider;
+        private static string cryptoKey = "*m$2B6A2";
+
+        private static void CreateProvider()
+        {
+            cryptoProvider = new DESCryptoServiceProvider();
+            cryptoProvider.Key = ASCIIEncoding.ASCII.GetBytes(cryptoKey);
+            cryptoProvider.IV = ASCIIEncoding.ASCII.GetBytes(cryptoKey);
+        }
 
         /// <summary>
         /// Read a decompressed string from a specified file.
@@ -27,20 +40,31 @@ namespace Intersect.Compression
         /// Read a Decompressed stream from a specified file.
         /// </summary>
         /// <param name="fileName">The file to decompress.</param>
-        /// <returns>Returns a decompressed <see cref="GZipStream"/> of the file's content.</returns>
-        public static GZipStream CreateDecompressedFileStream(string fileName)
+        /// <returns>Returns a decompressed <see cref="CryptoStream"/> of the file's content.</returns>
+        public static CryptoStream CreateDecompressedFileStream(string fileName)
         {
-            return new GZipStream(File.OpenRead(fileName), CompressionMode.Decompress, false);
+            if (cryptoProvider == null)
+            {
+                CreateProvider();
+            }
+
+            return new CryptoStream(new GZipStream(File.OpenRead(fileName), CompressionMode.Decompress, false), cryptoProvider.CreateDecryptor(), CryptoStreamMode.Read);
         }
 
         /// <summary>
         /// Read decompressed data from an existing filestream.
         /// </summary>
         /// <param name="stream">The Filestream to write data from.</param>
-        /// <returns>Returns a decompressed <see cref="GZipStream"/> of the stream's content.</returns>
-        public static GZipStream CreateDecompressedFileStream(FileStream stream)
+        /// <returns>Returns a decompressed <see cref="CryptoStream"/> of the stream's content.</returns>
+        public static CryptoStream CreateDecompressedFileStream(FileStream stream)
         {
-            return new GZipStream(stream, CompressionMode.Decompress, false);
+            if (cryptoProvider == null)
+            {
+                CreateProvider();
+            }
+
+
+            return new CryptoStream(new GZipStream(stream, CompressionMode.Decompress, false), cryptoProvider.CreateDecryptor(), CryptoStreamMode.Read);
         }
 
         /// <summary>
@@ -61,10 +85,15 @@ namespace Intersect.Compression
         /// Creates a compressed FileStream to write data to.
         /// </summary>
         /// <param name="fileName">The file to write the data to.</param>
-        /// <returns>Returns a <see cref="GZipStream"/> to write data to, saving compressed data to a file.</returns>
-        public static GZipStream CreateCompressedFileStream(string fileName)
+        /// <returns>Returns a <see cref="CryptoStream"/> to write data to, saving compressed data to a file.</returns>
+        public static CryptoStream CreateCompressedFileStream(string fileName)
         {
-            return new GZipStream(new FileStream(fileName, FileMode.Create), CompressionMode.Compress, false);
+            if (cryptoProvider == null)
+            {
+                CreateProvider();
+            }
+
+            return new CryptoStream(new GZipStream(new FileStream(fileName, FileMode.Create), CompressionMode.Compress, false), cryptoProvider.CreateEncryptor(), CryptoStreamMode.Write);
         }
 
     }
