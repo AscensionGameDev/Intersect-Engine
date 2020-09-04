@@ -1643,6 +1643,11 @@ namespace Intersect.Server.Networking
         //RevokeTradeItemPacket
         public void HandlePacket(Client client, Player player, [NotNull] RevokeTradeItemPacket packet)
         {
+            if (player == null || player.Trading.Counterparty == null)
+            {
+                return;
+            }
+
             if (player.Trading.Counterparty.Trading.Accepted)
             {
                 PacketSender.SendChatMsg(player, Strings.Trading.revokenotallowed.ToString(player.Trading.Counterparty.Name), CustomColors.Alerts.Declined);
