@@ -1240,6 +1240,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString revokeinvalid = @"Invalid item selected to revoke!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString revokenotallowed = @"You can't revoke this item, {00} already accepted the trade!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString tradenospace = @"There is no space left in the trade window for that item!";
 
         }
