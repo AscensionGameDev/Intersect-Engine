@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
@@ -62,7 +61,6 @@ namespace Intersect.Compression
             {
                 CreateProvider();
             }
-
 
             return new CryptoStream(new GZipStream(stream, CompressionMode.Decompress, false), cryptoProvider.CreateDecryptor(), CryptoStreamMode.Read);
         }

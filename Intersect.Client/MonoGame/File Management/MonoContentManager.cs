@@ -12,9 +12,7 @@ using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.IO.Compression;
 
 namespace Intersect.Client.MonoGame.File_Management
 {
