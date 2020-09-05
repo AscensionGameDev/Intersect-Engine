@@ -207,6 +207,12 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString replycmd = @"/reply";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildCmd = @"/guild";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString toofast = @"You are chatting too fast!";
 
         }
@@ -1296,6 +1302,10 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Welcome = @"Welcome to {00}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotInGuild = @"You are not in a guild.";
+
         }
 
         #region Serialization

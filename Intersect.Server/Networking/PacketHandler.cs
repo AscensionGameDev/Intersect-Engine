@@ -479,7 +479,12 @@ namespace Intersect.Server.Networking
                         cmd = Strings.Chat.partycmd;
 
                         break;
-                    case 3: //admin
+                    case 3: //guild
+                        cmd = Strings.Chat.GuildCmd;
+
+                        break;
+
+                    case 4: //admin
                         cmd = Strings.Chat.admincmd;
 
                         break;
@@ -662,6 +667,22 @@ namespace Intersect.Server.Networking
                 {
                     PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
                 }
+            }
+            else if (cmd == Strings.Chat.GuildCmd)
+            {
+                if (player.Guild == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
+                    return;
+                }
+                
+                if (msg.Trim().Length == 0)
+                {
+                    return;
+                }
+
+                PacketSender.SendGuildMsg(player, Strings.Chat.Guild.ToString(player.Name, msg), CustomColors.Chat.GuildChat);
+
             }
             else
             {

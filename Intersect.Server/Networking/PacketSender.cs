@@ -657,6 +657,18 @@ namespace Intersect.Server.Networking
             }
         }
 
+        //ChatMsgPacket
+        public static void SendGuildMsg(Player player, string message, Color clr, string target = "")
+        {
+            foreach (var p in player.Guild.FindOnlineMembers())
+            {
+                if (p != null)
+                {
+                    SendChatMsg(p, message, clr, target);
+                }
+            }
+        }
+
         //ProjectileDeadPacket
         public static void SendRemoveProjectileSpawn(Guid mapId, Guid baseEntityId, int spawnIndex)
         {
