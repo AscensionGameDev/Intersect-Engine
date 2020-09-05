@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 using Intersect.Enums;
 using Intersect.Server.Entities;
-
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
@@ -31,6 +31,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// The database Id of the guild.
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [NotNull]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -40,6 +41,8 @@ namespace Intersect.Server.Database.PlayerData.Players
 
         public DateTime FoundingDate { get; set; }
 
+        [NotMapped]
+        [JsonIgnore]
         /// <summary>
         /// Contains a record of all guild members
         /// </summary>

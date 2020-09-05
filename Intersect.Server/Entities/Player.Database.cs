@@ -214,6 +214,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .Include(p => p.Guild)
             ) ??
             throw new InvalidOperationException();
 
@@ -232,6 +233,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .Include(p => p.Guild)
             ) ??
             throw new InvalidOperationException();
 
@@ -251,6 +253,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .Include(p => p.Guild)
             ) ??
             throw new InvalidOperationException();
 
@@ -265,6 +268,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .Include(p => p.Guild)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -280,6 +284,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .Include(p => p.Guild)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
