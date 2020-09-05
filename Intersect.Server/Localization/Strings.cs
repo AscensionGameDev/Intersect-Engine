@@ -1280,6 +1280,24 @@ namespace Intersect.Server.Localization
 
         }
 
+        public sealed class GuildsNamespace : LocaleNamespace
+        {
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString VariableNotString = @"The given guild name does not contain any text.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString VariableNotMatchLength = @"A guild name needs to be between {00} and {01} characters!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildNameInUse = @"Your chosen guild name is already in use!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString AlreadyInGuild = @"You are already in a guild!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Welcome = @"Welcome to {00}!";
+        }
+
         #region Serialization
 
         public static bool Load()
@@ -1413,6 +1431,8 @@ namespace Intersect.Server.Localization
 
             [NotNull] public readonly UpnpNamespace Upnp = new UpnpNamespace();
 
+            [NotNull] public readonly GuildsNamespace Guild = new GuildsNamespace();
+
         }
 
         // ReSharper restore MemberHidesStaticFromOuterClass
@@ -1517,6 +1537,9 @@ namespace Intersect.Server.Localization
 
         [NotNull]
         public static UpnpNamespace Upnp => Root.Upnp;
+
+        [NotNull]
+        public static GuildsNamespace Guilds => Root.Guild;
 
         #endregion
 

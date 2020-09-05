@@ -56,6 +56,8 @@ namespace Intersect
 
         [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
 
+        [JsonProperty("Guild")] public GuildOptions GuildOpts = new GuildOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         [NotNull]
@@ -167,6 +169,9 @@ namespace Intersect
 
         [NotNull]
         public static CombatOptions Combat => Instance.CombatOpts;
+
+        [NotNull]
+        public static GuildOptions Guild => Instance.GuildOpts;
 
         [NotNull]
         public static MapOptions Map => Instance.MapOpts;

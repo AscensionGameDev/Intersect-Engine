@@ -711,6 +711,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ShowPlayerCommand();
 
                     break;
+                case EventCommandType.CreateGuild:
+                    tmpCommand = new CreateGuildCommand(CurrentPage.CommandLists);
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1279,6 +1283,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmdWindow = new EventCommandEndQuest((EndQuestCommand) command, this);
 
                     break;
+
+                case EventCommandType.CreateGuild:
+                    cmdWindow = new EventCommandCreateGuild((CreateGuildCommand) command, CurrentPage, this);
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1764,7 +1773,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         }
 
         #endregion
-
     }
 
     public class CommandListProperties

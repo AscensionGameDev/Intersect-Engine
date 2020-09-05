@@ -432,6 +432,68 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
 
                             break;
+                        case EventCommandType.CreateGuild:
+                            var gld = (CreateGuildCommand)commandList[i];
+                            lstEventCommands.Items.Add(
+                                indent +
+                                Strings.EventCommandList.linestart +
+                                GetCommandText((dynamic)commandList[i], map)
+                            );
+
+                            clp = new CommandListProperties {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            //When the guild is created successfully:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildcreated);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[gld.BranchIds[0]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            //When the guild was not created for any reason:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildfailed);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[gld.BranchIds[1]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endcreateguild);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            break;
                         default:
                             lstEventCommands.Items.Add(
                                 indent +
@@ -1023,6 +1085,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.endquest.ToString(
                 QuestBase.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent
             );
+        }
+
+        private static string GetCommandText(CreateGuildCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.createguild.ToString(PlayerVariableBase.GetName(command.VariableId));
         }
 
         //Set Variable Modification Texts

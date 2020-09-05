@@ -10,10 +10,13 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Database;
+using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+using Intersect.Server.Migrations;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
@@ -1165,6 +1168,87 @@ namespace Intersect.Server.Entities.Events
         )
         {
             player.CompleteQuest(command.QuestId, command.SkipCompletionEvent);
+        }
+
+        //Create Guild Command
+        private static void ProcessCommand(
+            CreateGuildCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            var success = false;
+            var playerVariable = PlayerVariableBase.Get(command.VariableId);
+
+            // We only accept Strings as our Guild Names!
+            if (playerVariable.Type == VariableDataTypes.String)
+            {
+                // Get our intended guild name
+                var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();
+
+                // Can we use this name according to our configuration?
+                if (gname != null && gname.Length >= Options.Guild.MinimumGuildNameSize && gname.Length <= Options.Guild.MaximumGuildNameSize)
+                {
+                    // Is the name already in use?
+                    if (Guild.GetGuild(PlayerContext.Current, gname) == null)
+                    {
+                        // Is the player already in a guild?
+                        if (player.Guild == null)
+                        {
+                            // Finally, we can actually MAKE this guild happen!
+                            var guild = new Guild(player, gname);
+                            PlayerContext.Current.Guilds.Add(guild);
+                            player.Guild = guild;
+
+                            // Send them a welcome message!
+                            PacketSender.SendChatMsg(player, Strings.Guilds.Welcome.ToString(gname), CustomColors.Alerts.Success);
+
+                            // Denote that we were successful.
+                            success = true;
+                        }
+                        else
+                        {
+                            // This cheeky bugger is already in a guild, tell him so!
+                            PacketSender.SendChatMsg(player, Strings.Guilds.AlreadyInGuild, CustomColors.Alerts.Error);
+                        }
+                    }
+                    else
+                    {
+                        // This name already exists, oh dear!
+                        PacketSender.SendChatMsg(player, Strings.Guilds.GuildNameInUse, CustomColors.Alerts.Error);
+                    }
+                }
+                else
+                {
+                    // Let our player know they need to adjust their name.
+                    PacketSender.SendChatMsg(player, Strings.Guilds.VariableNotMatchLength.ToString(Options.Guild.MinimumGuildNameSize, Options.Guild.MaximumGuildNameSize), CustomColors.Alerts.Error);
+                }
+            }
+            else 
+            {
+                // Notify the user that something went wrong, the user really shouldn't see this.. Assuming the creator set up his events properly.
+                PacketSender.SendChatMsg(player, Strings.Guilds.VariableNotString, CustomColors.Alerts.Error);
+            }
+
+            List<EventCommand> newCommandList = null;
+            if (success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[0]))
+            {
+                newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
+            }
+
+            if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
+            {
+                newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];
+            }
+
+            var tmpStack = new CommandInstance(stackInfo.Page) {
+                CommandList = newCommandList,
+                CommandIndex = 0,
+            };
+
+            callStack.Push(tmpStack);
         }
 
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)

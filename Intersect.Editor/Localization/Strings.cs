@@ -1392,6 +1392,23 @@ Tick timer saved in server config.json.";
 
         }
 
+        public struct EventCreateGuild
+        {
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)] 
+            public static LocalizedString Cancel = @"Cancel";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SelectVariable = @"Player Variable containing Guild Name:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Ok";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Create Guild";
+
+        }
+
         public struct EventCommandList
         {
 
@@ -1663,6 +1680,18 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString whenoption = @"When [{00}]";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString createguild = @"Create Guild [Player Variable {00} as name]";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildcreated = @"Guild created successfully.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildfailed = @"Guild failed to create.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString endcreateguild = @"End Create Guild";
+
         }
 
         public struct EventCommands
@@ -1728,6 +1757,8 @@ Tick timer saved in server config.json.";
                 {"changenamecolor", @"Change Name Color"},
                 {"inputvariable", @"Input Variable"},
                 {"changeplayerlabel", @"Change Player Label"},
+                {"guilds", @"Guilds"},
+                {"createguild", @"Create Guild"},
             };
 
         }
