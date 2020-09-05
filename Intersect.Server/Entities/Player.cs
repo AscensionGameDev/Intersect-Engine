@@ -557,6 +557,8 @@ namespace Intersect.Server.Entities
             var pkt = (PlayerEntityPacket) packet;
             pkt.Gender = Gender;
             pkt.ClassId = ClassId;
+            pkt.Guild = Guild?.Name;
+            
 
             if (Power.IsAdmin)
             {

@@ -24,8 +24,6 @@ namespace Intersect.Server.Database.PlayerData.Players
         public Guild(Player creator, string name)
         {
             Name = name;
-            Members.Add(creator);
-            MemberRanks.Add(creator.Id, GuildRanks.Guildmaster);
             FoundingDate = DateTime.Now;
         }
         
@@ -33,25 +31,25 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// The database Id of the guild.
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// The name of the guild.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        public DateTime FoundingDate { get; private set; }
+        public DateTime FoundingDate { get; set; }
 
         /// <summary>
         /// Contains a record of all guild members
         /// </summary>
-        public List<Player> Members { get; private set; } = new List<Player>();
+        public List<Player> Members { get; set; } = new List<Player>();
 
         /// <summary>
         /// Contains a record of all guild members ranks.
         /// </summary>
         [NotMapped]
-        public Dictionary<Guid, GuildRanks> MemberRanks = new Dictionary<Guid, GuildRanks>();
+        public Dictionary<Guid, GuildRanks> MemberRanks { get; set; } = new Dictionary<Guid, GuildRanks>();
 
         /// <summary>
         /// A Jsonified version of the guild member ranks record.
@@ -80,6 +78,18 @@ namespace Intersect.Server.Database.PlayerData.Players
             }
 
             return online;
+        }
+
+        /// <summary>
+        /// Joins a player into the guild.
+        /// </summary>
+        /// <param name="player">The player to join into the guild.</param>
+        /// <param name="rank">The rank to give this new member.</param>
+        public void AddMember(Player player, GuildRanks rank)
+        {
+            player.Guild = this;
+            Members.Add(player);
+            SetPlayerRank(player, rank);
         }
 
         /// <summary>

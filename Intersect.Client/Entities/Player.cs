@@ -59,6 +59,8 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public string Guild;
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -175,6 +177,7 @@ namespace Intersect.Client.Entities
             var pkt = (PlayerEntityPacket) packet;
             Gender = pkt.Gender;
             Class = pkt.ClassId;
+            Guild = pkt.Guild;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
@@ -1760,6 +1763,99 @@ namespace Intersect.Client.Entities
             base.DrawName(textColor, borderColor, backgroundColor);
             DrawLabels(HeaderLabel.Text, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
             DrawLabels(FooterLabel.Text, 1, FooterLabel.Color, textColor, borderColor, backgroundColor);
+            DrawGuildName(textColor, borderColor, backgroundColor);
+        }
+
+        public virtual void DrawGuildName(Color textColor, Color borderColor = null, Color backgroundColor = null)
+        {
+            if (HideName || Guild == null || Guild.Trim().Length == 0)
+            {
+                return;
+            }
+
+            if (borderColor == null)
+            {
+                borderColor = Color.Transparent;
+            }
+
+            if (backgroundColor == null)
+            {
+                backgroundColor = Color.Transparent;
+            }
+
+            //Check for npc colors
+            if (textColor == null)
+            {
+                LabelColor? color = null;
+                switch (Type)
+                {
+                    case -1: //When entity has a target (showing aggression)
+                        color = CustomColors.Names.Npcs["Aggressive"];
+
+                        break;
+                    case 0: //Attack when attacked
+                        color = CustomColors.Names.Npcs["AttackWhenAttacked"];
+
+                        break;
+                    case 1: //Attack on sight
+                        color = CustomColors.Names.Npcs["AttackOnSight"];
+
+                        break;
+                    case 3: //Guard
+                        color = CustomColors.Names.Npcs["Guard"];
+
+                        break;
+                    case 2: //Neutral
+                    default:
+                        color = CustomColors.Names.Npcs["Neutral"];
+
+                        break;
+                }
+
+                if (color != null)
+                {
+                    textColor = color?.Name;
+                    backgroundColor = color?.Background;
+                    borderColor = color?.Outline;
+                }
+            }
+
+            //Check for stealth amoungst status effects.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                //If unit is stealthed, don't render unless the entity is the player.
+                if (Status[n].Type == StatusTypes.Stealth)
+                {
+                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            var map = MapInstance;
+            if (map == null)
+            {
+                return;
+            }
+
+            var textSize = Graphics.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
+
+            var x = (int)Math.Ceiling(GetCenterPos().X);
+            var y = GetLabelLocation(LabelType.Guild);
+
+            if (backgroundColor != Color.Transparent)
+            {
+                Graphics.DrawGameTexture(
+                    Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
+                    new Framework.GenericClasses.FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
+                );
+            }
+
+            Graphics.Renderer.DrawString(
+                Guild, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
+                Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
+            );
         }
 
         public void DrawTargets()
