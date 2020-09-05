@@ -78,6 +78,9 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull]
         public DbSet<BagSlot> Bag_Items { get; set; }
 
+        [NotNull]
+        public DbSet<Guild> Guilds { get; set; }
+
         internal async ValueTask Commit(
             bool commit = false,
             CancellationToken cancellationToken = default(CancellationToken)
@@ -124,6 +127,8 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<Quest>().HasIndex(p => new {p.QuestId, CharacterId = p.PlayerId}).IsUnique();
 
             modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Player);
+
+            modelBuilder.Entity<Player>().HasOne(p => p.Guild).WithMany(g => g.Members);
 
             modelBuilder.Entity<Bag>()
                 .HasMany(b => b.Slots)

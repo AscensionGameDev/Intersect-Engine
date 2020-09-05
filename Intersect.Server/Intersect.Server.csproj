@@ -444,6 +444,7 @@
     <Compile Include="Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Database\PlayerData\Ban.cs" />
+    <Compile Include="Database\PlayerData\Players\Guild.cs" />
     <Compile Include="Database\PlayerData\Players\Bag.cs" />
     <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
@@ -494,6 +495,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\20200905092015_Guilds.cs" />
+    <Compile Include="Migrations\20200905092015_Guilds.designer.cs">
+      <DependentUpon>20200905092015_Guilds.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

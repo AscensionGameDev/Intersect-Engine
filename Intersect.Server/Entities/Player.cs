@@ -111,6 +111,12 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
 
+        // Guilds
+        public Guild Guild { get; set; }
+
+        [NotMapped]
+        public Tuple<Player, Guild> GuildInvite { get; set; }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
