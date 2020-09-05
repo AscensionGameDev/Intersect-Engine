@@ -41,11 +41,11 @@ namespace Intersect.Server.Database.PlayerData.Players
 
         public DateTime FoundingDate { get; set; }
 
-        [NotMapped]
-        [JsonIgnore]
         /// <summary>
         /// Contains a record of all guild members
         /// </summary>
+        [NotMapped]
+        [JsonIgnore]
         public List<Player> Members { get; set; } = new List<Player>();
 
         /// <summary>
@@ -57,12 +57,11 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// A Jsonified version of the guild member ranks record.
         /// </summary>
-        [JsonIgnore]
         [Column("MemberRanks")]
         public string MemberRanksJson
         {
             get => JsonConvert.SerializeObject(MemberRanks);
-            set => JsonConvert.DeserializeObject<Dictionary<Guid, GuildRanks>>(value);
+            set => MemberRanks = JsonConvert.DeserializeObject<Dictionary<Guid, GuildRanks>>(value);
         }
 
         /// <summary>
@@ -126,7 +125,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <returns>Returns the rank of a player within this guild.</returns>
         public GuildRanks GetPlayerRank(Guid id)
         {
-            return MemberRanks.Where(m => m.Key == id).Single().Value;
+            return MemberRanks.Where(m => m.Key == id).SingleOrDefault().Value;
         }
 
         /// <summary>

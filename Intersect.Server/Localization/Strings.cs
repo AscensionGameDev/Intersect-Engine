@@ -213,6 +213,15 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildInviteCmd = @"/guildinvite";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildAcceptCmd = @"/guildaccept";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildDeclineCmd = @"/guilddecline";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString toofast = @"You are chatting too fast!";
 
         }
@@ -1304,7 +1313,34 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString Welcome = @"Welcome to {00}!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Joined = @"{00} has joined {01}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString NotInGuild = @"You are not in a guild.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotReceivedInvite = @"You've not received any guild invites yet.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotAllowedInvite = @"You do not have the permission to invite people to the guild.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteNotOnline = @"The player you're trying to invite is either not online or does not exist.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteAlreadyInGuild = @"The player you're trying to invite is already in a guild or has a pending invite.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteSent = @"You've invited {00} to join {01}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteReceived = @"You've received a guild invite from {00} to join {01}, to accept or decline this invite use /guildaccept or /guilddecline";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteDeclinedResponse = @"{00} has declined your request for them to join {01}.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InviteDeclined = @"You have declined {00} their request to join {01}.";
 
         }
 

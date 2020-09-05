@@ -684,6 +684,100 @@ namespace Intersect.Server.Networking
                 PacketSender.SendGuildMsg(player, Strings.Chat.Guild.ToString(player.Name, msg), CustomColors.Chat.GuildChat);
 
             }
+            else if (cmd == Strings.Chat.GuildInviteCmd)
+            {
+                // Are we in a guild?
+                if (player.Guild == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Are we allowed to invite players?
+                if ((int)player.Guild.GetPlayerRank(player) < (int)GuildRanks.Officer)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotAllowedInvite, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Did we enter anything sensible?
+                if (msg.Trim().Length == 0)
+                {
+                    return;
+                }
+
+                // Does our target player exist online?
+                var target = Player.FindOnline(msg.Trim());
+                if (target != null)
+                {
+                    // Are they already in a guild? or have a pending invite?
+                    if (target.Guild == null && target.GuildInvite == null)
+                    {
+                        // Thank god, we can FINALLY get started!
+                        // Set our invite and send our players the relevant messages.
+                        target.GuildInvite = new Tuple<Player, Database.PlayerData.Players.Guild>(player, player.Guild);
+
+                        PacketSender.SendChatMsg(player, Strings.Guilds.InviteSent.ToString(target.Name, player.Guild.Name), CustomColors.Alerts.Info);
+                        PacketSender.SendChatMsg(target, Strings.Guilds.InviteReceived.ToString(target.Name, player.Guild.Name), CustomColors.Alerts.Info);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Guilds.InviteAlreadyInGuild, CustomColors.Alerts.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.InviteNotOnline, CustomColors.Alerts.Error);
+                    return;
+                }
+            }
+            else if (cmd == Strings.Chat.GuildAcceptCmd)
+            {
+                // Have we received an invite at all?
+                if (player.GuildInvite == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotReceivedInvite, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Accept our invite!
+                player.GuildInvite.Item2.AddMember(player, GuildRanks.Recruit);
+                player.GuildInvite = null;
+
+                // Notify everyone involved!
+                PacketSender.SendGuildMsg(player, Strings.Guilds.Joined.ToString(player.Name, player.Guild.Name), CustomColors.Alerts.Success);
+
+                // Send the updated data around.
+                PacketSender.SendEntityDataToProximity(player);
+            }
+            else if (cmd == Strings.Chat.GuildDeclineCmd)
+            {
+                // Have we received an invite at all?
+                if (player.GuildInvite == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotReceivedInvite, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Politely decline our invite.
+                if (player.GuildInvite.Item1 != null)
+                {
+                    var onlinePlayer = Player.FindOnline(player.GuildInvite.Item1.Id);
+                    if (onlinePlayer != null)
+                    {
+                        PacketSender.SendChatMsg(onlinePlayer, Strings.Guilds.InviteDeclinedResponse.ToString(player.Name, player.GuildInvite.Item2.Name), CustomColors.Alerts.Info);
+                        PacketSender.SendChatMsg(player, Strings.Guilds.InviteDeclined.ToString(onlinePlayer.Name, player.GuildInvite.Item2.Name), CustomColors.Alerts.Info);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Guilds.InviteDeclined.ToString("someone", player.GuildInvite.Item2.Name), CustomColors.Alerts.Info);
+                    }
+
+                    player.GuildInvite = null;
+                }
+                
+            }
             else
             {
                 //Search for command activated events and run them
