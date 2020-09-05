@@ -187,9 +187,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<DateTime>("FoundingDate");
 
-                    b.Property<string>("MemberRanksJson")
-                        .HasColumnName("MemberRanks");
-
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
@@ -361,6 +358,8 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("Gender");
 
                     b.Property<Guid?>("GuildId");
+
+                    b.Property<int>("GuildRank");
 
                     b.Property<string>("HeaderLabelJson")
                         .HasColumnName("HeaderLabel");

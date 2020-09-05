@@ -12,14 +12,19 @@ namespace Intersect.Server.Migrations
                 table: "Players",
                 nullable: true);
 
+            migrationBuilder.AddColumn<int>(
+                name: "GuildRank",
+                table: "Players",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "Guilds",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    FoundingDate = table.Column<DateTime>(nullable: false),
-                    MemberRanks = table.Column<string>(nullable: true)
+                    FoundingDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,12 +35,10 @@ namespace Intersect.Server.Migrations
                 name: "IX_Players_GuildId",
                 table: "Players",
                 column: "GuildId");
-
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.DropTable(
                 name: "Guilds");
 
@@ -45,6 +48,10 @@ namespace Intersect.Server.Migrations
 
             migrationBuilder.DropColumn(
                 name: "GuildId",
+                table: "Players");
+
+            migrationBuilder.DropColumn(
+                name: "GuildRank",
                 table: "Players");
         }
     }

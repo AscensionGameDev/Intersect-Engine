@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20200905092015_Guilds")]
+    [Migration("20200905170245_Guilds")]
     partial class Guilds
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -189,9 +189,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<DateTime>("FoundingDate");
 
-                    b.Property<string>("MemberRanksJson")
-                        .HasColumnName("MemberRanks");
-
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
@@ -363,6 +360,8 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("Gender");
 
                     b.Property<Guid?>("GuildId");
+
+                    b.Property<int>("GuildRank");
 
                     b.Property<string>("HeaderLabelJson")
                         .HasColumnName("HeaderLabel");

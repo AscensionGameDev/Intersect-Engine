@@ -495,9 +495,9 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Migrations\20200905092015_Guilds.cs" />
-    <Compile Include="Migrations\20200905092015_Guilds.designer.cs">
-      <DependentUpon>20200905092015_Guilds.cs</DependentUpon>
+    <Compile Include="Migrations\20200905170245_Guilds.cs" />
+    <Compile Include="Migrations\20200905170245_Guilds.designer.cs">
+      <DependentUpon>20200905170245_Guilds.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

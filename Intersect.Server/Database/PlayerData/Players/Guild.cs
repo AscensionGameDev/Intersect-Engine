@@ -49,22 +49,6 @@ namespace Intersect.Server.Database.PlayerData.Players
         public List<Player> Members { get; set; } = new List<Player>();
 
         /// <summary>
-        /// Contains a record of all guild members ranks.
-        /// </summary>
-        [NotMapped]
-        public Dictionary<Guid, GuildRanks> MemberRanks { get; set; } = new Dictionary<Guid, GuildRanks>();
-
-        /// <summary>
-        /// A Jsonified version of the guild member ranks record.
-        /// </summary>
-        [Column("MemberRanks")]
-        public string MemberRanksJson
-        {
-            get => JsonConvert.SerializeObject(MemberRanks);
-            set => MemberRanks = JsonConvert.DeserializeObject<Dictionary<Guid, GuildRanks>>(value);
-        }
-
-        /// <summary>
         /// Find all online members of this guild.
         /// </summary>
         /// <returns>A list of online players.</returns>
@@ -95,38 +79,48 @@ namespace Intersect.Server.Database.PlayerData.Players
         }
 
         /// <summary>
-        /// Sets a player's guild rank.
+        /// Removes a player from the guild.
         /// </summary>
-        /// <param name="player">The player to set the rank for.</param>
-        /// <param name="rank">The rank to assign.</param>
-        public void SetPlayerRank(Player player, GuildRanks rank) => SetPlayerRank(player.Id, rank);
+        /// <param name="player">The player to remove from the guild.</param>
+        public void RemoveMember(Player player)
+        {
+            player.Guild = null;
+            player.GuildRank = GuildRanks.Recruit;
+            player.GuildInvite = null;
+
+            Members.Remove(player);
+        }
 
         /// <summary>
         /// Sets a player's guild rank.
         /// </summary>
         /// <param name="id">The player to set the rank for.</param>
         /// <param name="rank">The rank to assign.</param>
-        public void SetPlayerRank(Guid id, GuildRanks rank)
-        {
-            MemberRanks[id] = rank;
-        }
+        public void SetPlayerRank(Guid id, GuildRanks rank) => SetPlayerRank(Player.Find(id), rank);
 
         /// <summary>
-        /// Returns the rank of a player within this guild.
+        /// Sets a player's guild rank.
         /// </summary>
-        /// <param name="player">The player to search for.</param>
-        /// <returns>Returns the rank of a player within this guild.</returns>
-        public GuildRanks GetPlayerRank(Player player) => GetPlayerRank(player.Id);
+        /// <param name="player">The player to set the rank for.</param>
+        /// <param name="rank">The rank to assign.</param>
+        public void SetPlayerRank(Player player, GuildRanks rank)
+        {
+            player.GuildRank = rank;
+        }
 
         /// <summary>
         /// Returns the rank of a player within this guild.
         /// </summary>
         /// <param name="id">The Id of the player to search for.</param>
         /// <returns>Returns the rank of a player within this guild.</returns>
-        public GuildRanks GetPlayerRank(Guid id)
-        {
-            return MemberRanks.Where(m => m.Key == id).SingleOrDefault().Value;
-        }
+        public GuildRanks GetPlayerRank(Guid id) => GetPlayerRank(Player.Find(id));
+
+        /// <summary>
+        /// Returns the rank of a player within this guild.
+        /// </summary>
+        /// <param name="player">The player to search for.</param>
+        /// <returns>Returns the rank of a player within this guild.</returns>
+        public GuildRanks GetPlayerRank(Player player) => player.GuildRank;
 
         /// <summary>
         /// Check whether a specified player is a member of this guild.

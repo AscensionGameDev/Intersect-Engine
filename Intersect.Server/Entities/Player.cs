@@ -114,6 +114,8 @@ namespace Intersect.Server.Entities
         // Guilds
         public Guild Guild { get; set; }
 
+        public GuildRanks GuildRank { get; set; }
+
         [NotMapped]
         public Tuple<Player, Guild> GuildInvite { get; set; }
 
