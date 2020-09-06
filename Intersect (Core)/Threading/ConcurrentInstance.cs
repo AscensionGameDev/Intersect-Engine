@@ -21,6 +21,8 @@ namespace Intersect.Threading
             mLock = new object();
         }
 
+        public bool HasInstance => mInstance != null;
+
         [NotNull]
         public TInstance Instance => mInstance ?? throw new InvalidOperationException();
 

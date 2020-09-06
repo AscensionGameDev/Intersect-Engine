@@ -32,7 +32,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         )
         {
             ArgumentName = argumentName;
-            mValues = new List<object>(values ?? new object[0]);
+            mValues = new List<object>(values ?? Array.Empty<object>());
             IsImplicit = isImplicit;
         }
 

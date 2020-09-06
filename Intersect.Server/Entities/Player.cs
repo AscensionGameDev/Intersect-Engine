@@ -3834,7 +3834,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Party.Count < Options.Party.MaximumMembers)
+            if (Party.Count < 4)
             {
                 target.LeaveParty();
                 Party.Add(target);

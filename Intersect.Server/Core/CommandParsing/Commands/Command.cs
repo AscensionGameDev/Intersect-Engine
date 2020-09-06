@@ -21,7 +21,7 @@ namespace Intersect.Server.Core.CommandParsing.Commands
             Localization = localization;
 
             var argumentList = new List<ICommandArgument>(
-                (arguments ?? new ICommandArgument[0]).Where(argument => argument != null)
+                (arguments ?? Array.Empty<ICommandArgument>()).Where(argument => argument != null)
             );
 
             UnsortedArguments = argumentList.ToImmutableList() ?? throw new InvalidOperationException();

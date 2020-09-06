@@ -8,6 +8,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -59,7 +60,30 @@ namespace Intersect.Client.General
         public static ShopBase GameShop;
 
         //Crucial game variables
-        public static GameStates GameState = GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
+
+        [NotNull]
+        internal static List<IClientLifecycleHelper> ClientLifecycleHelpers { get; } =
+            new List<IClientLifecycleHelper>();
+
+        internal static void OnLifecycleChangeState()
+        {
+            ClientLifecycleHelpers.ForEach(
+                clientLifecycleHelper => clientLifecycleHelper?.OnLifecycleChangeState(GameState)
+            );
+        }
+
+        private static GameStates mGameState = GameStates.Intro;
+
+        /// <see cref="GameStates" />
+        public static GameStates GameState
+        {
+            get => mGameState;
+            set
+            {
+                mGameState = value;
+                OnLifecycleChangeState();
+            }
+        }
 
         public static List<Guid> GridMaps = new List<Guid>();
 

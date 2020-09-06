@@ -101,7 +101,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "GAMEDB",
-                        Pretty = false,
                         LogLevel = Options.GameDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
@@ -116,7 +115,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "PLAYERDB",
-                        Pretty = false,
                         LogLevel = Options.PlayerDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
@@ -170,7 +168,7 @@ namespace Intersect.Server.Database
         }
 
         // Database setup, version checking
-        internal static bool InitDatabase([NotNull] ServerContext serverContext)
+        internal static bool InitDatabase([NotNull] IServerContext serverContext)
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
@@ -1427,9 +1425,9 @@ namespace Intersect.Server.Database
                         gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
                         gameDbTraces.TryDequeue(out _);
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        if (ex is InvalidOperationException)
+                        if (exception is InvalidOperationException)
                         {
                             //Collection was modified?
                             //Loop and try to save again!
@@ -1440,14 +1438,10 @@ namespace Intersect.Server.Database
                                     "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                                 );
 
-                                Task.Factory.StartNew(
-                                    () => Bootstrapper.OnUnhandledException(
-                                        Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                    )
-                                );
+                                ServerContext.DispatchUnhandledException(exception);
 
                                 gameDbLogger?.Error(
-                                    ex,
+                                    exception,
                                     "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " +
                                     failures +
                                     "]"
@@ -1459,7 +1453,7 @@ namespace Intersect.Server.Database
                             //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
                             //TODO change to .Warn
                             gameDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Collection was modified? while trying to save game db, will loop and try to save again! [Failures: " +
                                 failures +
                                 "]"
@@ -1471,14 +1465,10 @@ namespace Intersect.Server.Database
                                 "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
-                            Task.Factory.StartNew(
-                                () => Bootstrapper.OnUnhandledException(
-                                    Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                )
-                            );
+                            ServerContext.DispatchUnhandledException(exception);
 
                             gameDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
@@ -1568,9 +1558,9 @@ namespace Intersect.Server.Database
                                 : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
                         );
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        if (ex is InvalidOperationException)
+                        if (exception is InvalidOperationException)
                         {
                             //Collection was modified?
                             //Loop and try to save again!
@@ -1581,14 +1571,10 @@ namespace Intersect.Server.Database
                                     "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                                 );
 
-                                Task.Factory.StartNew(
-                                    () => Bootstrapper.OnUnhandledException(
-                                        Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                    )
-                                );
+                                ServerContext.DispatchUnhandledException(exception);
 
                                 playerDbLogger?.Error(
-                                    ex,
+                                    exception,
                                     "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " +
                                     failures +
                                     "]"
@@ -1600,7 +1586,7 @@ namespace Intersect.Server.Database
                             //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
                             //TODO change to .Warn
                             playerDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Collection was modified? while trying to save player db, will loop and try to save again! [Failures: " +
                                 failures +
                                 "]"
@@ -1612,14 +1598,10 @@ namespace Intersect.Server.Database
                                 "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
-                            Task.Factory.StartNew(
-                                () => Bootstrapper.OnUnhandledException(
-                                    Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                )
-                            );
+                            ServerContext.DispatchUnhandledException(exception);
 
                             playerDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
@@ -1883,7 +1865,7 @@ namespace Intersect.Server.Database
             }
 
             Console.WriteLine(Strings.Migration.migrationcomplete);
-            Bootstrapper.Context.ServerConsole.Wait(true);
+            Bootstrapper.Context.ConsoleService.Wait(true);
             Environment.Exit(0);
         }
 

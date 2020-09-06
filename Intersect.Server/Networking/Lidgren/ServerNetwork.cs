@@ -15,7 +15,7 @@ using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
 {
-
+    // TODO: Migrate to a proper service
     public class ServerNetwork : AbstractNetwork, IServer
     {
 

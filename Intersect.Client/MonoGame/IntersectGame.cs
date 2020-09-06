@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
@@ -18,49 +12,71 @@ using Intersect.Client.MonoGame.Input;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Client.MonoGame.System;
 using Intersect.Configuration;
-using Intersect.Logging;
 using Intersect.Updater;
+
+using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 
 namespace Intersect.Client.MonoGame
 {
-
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
-    public class IntersectGame : Game
+    internal class IntersectGame : Game
     {
         private bool mInitialized;
+
         private double mLastUpdateTime = 0;
 
         private GraphicsDeviceManager mGraphics;
 
         #region "Autoupdate Variables"
+
         private Updater.Updater mUpdater;
+
         private Texture2D updaterBackground;
+
         private SpriteFont updaterFont;
+
         private SpriteFont updaterFontSmall;
+
         private Texture2D updaterProgressBar;
+
         private SpriteBatch updateBatch;
+
         private bool updaterGraphicsReset;
+
         #endregion
 
-        public IntersectGame()
+        [NotNull] private IClientContext Context { get; }
+
+        [NotNull] private Action PostStartupAction { get; }
+
+        private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
-            //Setup an error handler
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Context = context;
+            PostStartupAction = postStartupAction;
 
             Strings.Load();
 
-            mGraphics = new GraphicsDeviceManager(this);
-            mGraphics.PreferredBackBufferWidth = 800;
-            mGraphics.PreferredBackBufferHeight = 480;
-            mGraphics.PreferHalfPixelOffset = true;
-            mGraphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
+            mGraphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = 800,
+                PreferredBackBufferHeight = 480,
+                PreferHalfPixelOffset = true
+            };
+
+            mGraphics.PreparingDeviceSettings += (s, args) =>
             {
                 args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
                     RenderTargetUsage.PreserveContents;
@@ -76,14 +92,16 @@ namespace Intersect.Client.MonoGame
 
             Globals.Database.LoadPreferences();
 
+            Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
+
+            var renderer = new MonoRenderer(mGraphics, Content, this)
+            {
+                OverrideResolution = Context.StartupOptions.ScreenResolution
+            };
+
             Globals.InputManager = new MonoInput(this);
 
-            var renderer = new MonoRenderer(mGraphics, Content, this);
             Core.Graphics.Renderer = renderer;
-            if (renderer == null)
-            {
-                throw new NullReferenceException("No renderer.");
-            }
 
             Globals.System = new MonoSystem();
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
@@ -91,20 +109,14 @@ namespace Intersect.Client.MonoGame
             Controls.Init();
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
-            Window.IsBorderless = false;
             Window.AllowAltF4 = false;
 
             if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.UpdateUrl))
             {
-                mUpdater = new Updater.Updater(ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), true, 5);
+                mUpdater = new Updater.Updater(
+                    ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), true, 5
+                );
             }
-        }
-
-        //Really basic error handler for debugging purposes
-        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
-        {
-            Log.Error((Exception)exception?.ExceptionObject);
-            Environment.Exit(-1);
         }
 
         /// <summary>
@@ -116,7 +128,7 @@ namespace Intersect.Client.MonoGame
         protected override void Initialize()
         {
             base.Initialize();
-            
+
             if (mUpdater != null)
             {
                 LoadUpdaterContent();
@@ -131,12 +143,20 @@ namespace Intersect.Client.MonoGame
 
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket();
-            Networking.Network.Socket.Connected += (sender, connectionEventArgs) => MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-            Networking.Network.Socket.ConnectionFailed += (sender, connectionEventArgs, denied) => MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-            Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) => MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+            Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
+                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+
+            Networking.Network.Socket.ConnectionFailed += (sender, connectionEventArgs, denied) =>
+                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+
+            Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
+                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
             Main.Start();
+
             mInitialized = true;
+
+            PostStartupAction();
         }
 
         /// <summary>
@@ -177,11 +197,11 @@ namespace Intersect.Client.MonoGame
                                     ? string.Join(" ", Environment.GetCommandLineArgs().Skip(1))
                                     : null
                             );
+
                             Exit();
                             break;
                     }
                 }
-
             }
 
             if (mUpdater == null)
@@ -190,6 +210,7 @@ namespace Intersect.Client.MonoGame
                 {
                     IntersectInit();
                 }
+
                 if (Globals.IsRunning)
                 {
                     if (mLastUpdateTime < gameTime.TotalGameTime.TotalMilliseconds)
@@ -198,6 +219,7 @@ namespace Intersect.Client.MonoGame
                         {
                             Main.Update();
                         }
+
                         ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                     }
                 }
@@ -270,10 +292,14 @@ namespace Intersect.Client.MonoGame
                 var exception = false;
                 try
                 {
-                    var platform = GetType().GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this);
-                    var field = platform.GetType().GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
-                    field.SetValue(platform, 0);
+                    var platform = GetType()
+                        .GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .GetValue(this);
 
+                    var field = platform.GetType()
+                        .GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    field.SetValue(platform, 0);
                 }
                 catch
                 {
@@ -285,8 +311,8 @@ namespace Intersect.Client.MonoGame
                 {
                     //Show Message Getting Exit Confirmation From Player to Leave in Combat
                     var box = new InputBox(
-                        Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true, InputBox.InputType.YesNo,
-                        ExitToDesktop, null, null
+                        Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true,
+                        InputBox.InputType.YesNo, ExitToDesktop, null, null
                     );
 
                     //Restart the MonoGame RunLoop
@@ -299,13 +325,15 @@ namespace Intersect.Client.MonoGame
             {
                 mUpdater?.Stop();
             }
-            catch { }
+            catch
+            {
+            }
+
             //Just close if we don't need to show a combat warning
             base.OnExiting(sender, args);
             Networking.Network.Close("quitting");
-            base.Dispose();
+            Dispose();
         }
-
 
         private void DrawUpdater()
         {
@@ -339,31 +367,37 @@ namespace Intersect.Client.MonoGame
                 case UpdateStatus.Checking:
                     status = Strings.Update.Checking;
                     break;
+
                 case UpdateStatus.Updating:
                     status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.Percent.ToString((int)mUpdater.Progress);
+                    progress = Strings.Update.Percent.ToString((int) mUpdater.Progress);
                     filesRemaining = mUpdater.FilesRemaining + " Files Remaining";
                     sizeRemaining = mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining) + " Left";
                     break;
+
                 case UpdateStatus.Restart:
                     status = Strings.Update.Restart.ToString(Strings.Main.gamename);
                     progressPercent = 100;
                     progress = Strings.Update.Percent.ToString(100);
                     break;
+
                 case UpdateStatus.Done:
                     status = Strings.Update.Done;
                     progressPercent = 100;
                     progress = Strings.Update.Percent.ToString(100);
                     break;
+
                 case UpdateStatus.Error:
                     status = Strings.Update.Error;
                     progress = mUpdater.Exception?.Message ?? "";
                     progressPercent = 100;
                     break;
+
                 case UpdateStatus.None:
                     //Nothing here!
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -372,8 +406,7 @@ namespace Intersect.Client.MonoGame
             {
                 var size = updaterFont.MeasureString(status);
                 updateBatch.DrawString(
-                    updaterFont, status, new Vector2(800 / 2 - size.X / 2, 360),
-                    Microsoft.Xna.Framework.Color.White
+                    updaterFont, status, new Vector2(800 / 2 - size.X / 2, 360), Microsoft.Xna.Framework.Color.White
                 );
             }
 
@@ -381,9 +414,12 @@ namespace Intersect.Client.MonoGame
             if (updaterProgressBar != null)
             {
                 updateBatch.Draw(
-                    updaterProgressBar, new Rectangle(100, 400, (int)(600 * progressPercent), 32),
-                    new Rectangle?(new Rectangle(0, 0, (int)(updaterProgressBar.Width * progressPercent), updaterProgressBar.Height)),
-                    Microsoft.Xna.Framework.Color.White
+                    updaterProgressBar, new Rectangle(100, 400, (int) (600 * progressPercent), 32),
+                    new Rectangle?(
+                        new Rectangle(
+                            0, 0, (int) (updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
+                        )
+                    ), Microsoft.Xna.Framework.Color.White
                 );
             }
 
@@ -399,21 +435,18 @@ namespace Intersect.Client.MonoGame
 
                 //Draw files remaining on bottom left
                 updateBatch.DrawString(
-                    updaterFontSmall, filesRemaining, new Vector2(100, 440),
-                    Microsoft.Xna.Framework.Color.White
+                    updaterFontSmall, filesRemaining, new Vector2(100, 440), Microsoft.Xna.Framework.Color.White
                 );
 
                 //Draw total remaining on bottom right
                 size = updaterFontSmall.MeasureString(sizeRemaining);
                 updateBatch.DrawString(
-                    updaterFontSmall, sizeRemaining, new Vector2(700 - size.X, 440),
-                    Microsoft.Xna.Framework.Color.White
+                    updaterFontSmall, sizeRemaining, new Vector2(700 - size.X, 440), Microsoft.Xna.Framework.Color.White
                 );
             }
 
             updateBatch.End();
         }
-
 
         private void LoadUpdaterContent()
         {
@@ -441,6 +474,36 @@ namespace Intersect.Client.MonoGame
                 updaterFontSmall = Content.Load<SpriteFont>(Path.Combine("resources", "updater", "fontsmall"));
             }
         }
-    }
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (!disposing)
+            {
+                return;
+            }
+
+            if (!Context.IsDisposed)
+            {
+                Context.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Implements <see cref="IPlatformRunner"/> for MonoGame.
+        /// </summary>
+        [UsedImplicitly]
+        internal class MonoGameRunner : IPlatformRunner
+        {
+            /// <inheritdoc />
+            public void Start(IClientContext context, Action postStartupAction)
+            {
+                using (var game = new IntersectGame(context, postStartupAction))
+                {
+                    game.Run();
+                }
+            }
+        }
+    }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
+﻿using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -11,6 +8,10 @@ using Intersect.Client.MonoGame.Graphics;
 using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Intersect.Client.MonoGame.File_Management
 {
@@ -95,7 +96,7 @@ namespace Intersect.Client.MonoGame.File_Management
             }
         }
 
-        public void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)
+        public void LoadTextureGroup(string directory, Dictionary<string, IAsset> dict)
         {
             dict.Clear();
             var dir = Path.Combine("resources", directory);
@@ -116,7 +117,7 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 foreach (var itm in packItems)
                 {
-                    var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\","/"));
+                    var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\", "/"));
                     if (!dict.ContainsKey(filename))
                     {
                         dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename)));
@@ -259,6 +260,46 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
+            }
+        }
+
+        /// <inheritdoc />
+        protected override TAsset Load<TAsset>(
+            Dictionary<string, IAsset> lookup,
+            ContentTypes contentType,
+            string name,
+            Func<Stream> createStream
+        )
+        {
+            switch (contentType)
+            {
+                case ContentTypes.Animation:
+                case ContentTypes.Entity:
+                case ContentTypes.Face:
+                case ContentTypes.Fog:
+                case ContentTypes.Image:
+                case ContentTypes.Interface:
+                case ContentTypes.Item:
+                case ContentTypes.Miscellaneous:
+                case ContentTypes.Paperdoll:
+                case ContentTypes.Resource:
+                case ContentTypes.Spell:
+                case ContentTypes.TexturePack:
+                case ContentTypes.TileSet:
+                    return Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+
+                case ContentTypes.Font:
+                    throw new NotImplementedException();
+
+                case ContentTypes.Shader:
+                    throw new NotImplementedException();
+
+                case ContentTypes.Music:
+                case ContentTypes.Sound:
+                    throw new NotImplementedException();
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
             }
         }
 

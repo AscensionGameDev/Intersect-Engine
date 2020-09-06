@@ -54,9 +54,9 @@ namespace Intersect.Server.Maps
         //Traps
         [JsonIgnore] [NotMapped] public List<MapTrapInstance> MapTraps = new List<MapTrapInstance>();
 
-        [NotMapped] private BytePoint[] mMapBlocks = new BytePoint[0];
+        [NotMapped] private BytePoint[] mMapBlocks = Array.Empty<BytePoint>();
 
-        private BytePoint[] mNpcMapBlocks = new BytePoint[0];
+        private BytePoint[] mNpcMapBlocks = Array.Empty<BytePoint>();
 
         private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
 

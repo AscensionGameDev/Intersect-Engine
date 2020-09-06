@@ -2179,7 +2179,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            lock (ServerLoop.Lock)
+            lock (ServerContext.Instance.LogicService.LogicLock)
             {
                 var newMap = Guid.Empty;
                 var tmpMap = new MapInstance(true);
@@ -2436,7 +2436,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        lock (ServerLoop.Lock)
+                        lock (ServerContext.Instance.LogicService.LogicLock)
                         {
                             mapId = packet.TargetId;
                             var players = MapInstance.Get(mapId).GetPlayersOnMap();
@@ -2476,7 +2476,7 @@ namespace Intersect.Server.Networking
             {
                 if (client.IsEditor)
                 {
-                    lock (ServerLoop.Lock)
+                    lock (ServerContext.Instance.LogicService.LogicLock)
                     {
                         var map = MapInstance.Get(mapId);
                         if (map != null)
@@ -2541,7 +2541,7 @@ namespace Intersect.Server.Networking
             long gridY = packet.GridY;
             var canLink = true;
 
-            lock (ServerLoop.Lock) 
+            lock (ServerContext.Instance.LogicService.LogicLock) 
             { 
                 if (adjacentMap != null && linkMap != null)
                 {
@@ -2865,7 +2865,7 @@ namespace Intersect.Server.Networking
 
             if (obj != null)
             {
-                lock (ServerLoop.Lock)
+                lock (ServerContext.Instance.LogicService.LogicLock)
                 {
                     //if Item or Resource, kill all global entities of that kind
                     if (type == GameObjectType.Item)
