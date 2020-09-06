@@ -32,21 +32,24 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [NotNull]
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// The name of the guild.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public DateTime FoundingDate { get; set; }
+        /// <summary>
+        /// The date on which this guild was founded.
+        /// </summary>
+        public DateTime FoundingDate { get; private set; }
 
         /// <summary>
         /// Contains a record of all guild members
         /// </summary>
         [NotMapped]
         [JsonIgnore]
-        public List<Player> Members { get; set; } = new List<Player>();
+        public List<Player> Members { get; private set; } = new List<Player>();
 
         /// <summary>
         /// Find all online members of this guild.
@@ -125,23 +128,18 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// Check whether a specified player is a member of this guild.
         /// </summary>
-        /// <param name="player">The player to check against.</param>
+        /// <param name="id">The Id to check against.</param>
         /// <returns>Whether or not this player is a member of this guild</returns>
-        public bool IsMember(Player player) => IsMember(player.Id);
+        public bool IsMember(Guid id) => IsMember(Player.Find(id));
 
         /// <summary>
         /// Check whether a specified player is a member of this guild.
         /// </summary>
-        /// <param name="id">The Id to check against.</param>
+        /// <param name="player">The player to check against.</param>
         /// <returns>Whether or not this player is a member of this guild</returns>
-        public bool IsMember(Guid id)
+        public bool IsMember(Player player)
         {
-            if (Members.Any(m => m.Id == id))
-            {
-                return true;
-            }
-
-            return false;
+            return Members.Any(m => m == player);
         }
 
         /// <summary>
