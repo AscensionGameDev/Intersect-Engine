@@ -1842,9 +1842,21 @@ namespace Intersect.Editor.Forms
                             clientExcludeFiles.Add(filename);
                         }
                     }
+
+                    var soundIndex = Path.Combine("resources", "packs", "sound.index");
+                    if (File.Exists(soundIndex))
+                    {
+                        using (var soundPacker = new AssetPacker(soundIndex, Path.Combine("resources", "packs")))
+                        {
+                            foreach (var sound in soundPacker.FileList)
+                            {
+                                clientExcludeFiles.Add(Path.Combine("resources", "sounds", sound.ToLower()).Replace('\\', '/'));
+                            }
+                        }
+                    }
+                    
+
                 }
-
-
 
                 var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
 
