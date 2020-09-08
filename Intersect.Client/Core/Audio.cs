@@ -109,6 +109,12 @@ namespace Intersect.Client.Core
                     sGameSounds.RemoveAt(i);
                 }
             }
+
+            // Update our pack sound cache if we have any packs loaded.
+            if (Globals.ContentManager.SoundPacks != null)
+            {
+                Globals.ContentManager.SoundPacks.UpdateCache();
+            }
         }
 
         //Music
