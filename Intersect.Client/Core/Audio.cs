@@ -6,6 +6,7 @@ using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
+using Intersect.Compression;
 using Intersect.Logging;
 
 namespace Intersect.Client.Core

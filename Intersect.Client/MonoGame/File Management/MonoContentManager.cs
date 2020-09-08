@@ -245,6 +245,23 @@ namespace Intersect.Client.MonoGame.File_Management
                     )
                 );
             }
+
+            // If we have a sound index file, load from it!
+            if (File.Exists(Path.Combine("resources", "packs", "sound.index")))
+            {
+                SoundPacks = new AssetPacker(Path.Combine("resources", "packs", "sound.index"), Path.Combine("resources", "packs"));
+                foreach(var item in SoundPacks.FileList)
+                {
+                    if (!mSoundDict.ContainsKey(RemoveExtension(item)))
+                    {
+                        mSoundDict.Add(
+                            RemoveExtension(item),
+                            new MonoSoundSource(item, ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
+                        );
+                    }
+                }
+            }
+            
         }
 
         public override void LoadMusic()

@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 
 using Intersect.Plugins;
+using Intersect.Compression;
 
 namespace Intersect.Client.Framework.File_Management
 {
@@ -85,6 +86,11 @@ namespace Intersect.Client.Framework.File_Management
         protected Dictionary<string, GameShader> mShaderDict = new Dictionary<string, GameShader>();
 
         protected Dictionary<string, GameAudioSource> mSoundDict = new Dictionary<string, GameAudioSource>();
+
+        /// <summary>
+        /// Contains all indexed files and their caches from sound pack files.
+        /// </summary>
+        public AssetPacker SoundPacks { get; set; }
 
         protected Dictionary<string, IAsset> mSpellDict = new Dictionary<string, IAsset>();
 
