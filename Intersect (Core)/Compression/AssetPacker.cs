@@ -139,6 +139,7 @@ namespace Intersect.Compression
 				if (pack.Value.StreamCache != null)
 				{
 					pack.Value.StreamCache.Dispose();
+					pack.Value.StreamCache = null;
 				}
 			}
 		}

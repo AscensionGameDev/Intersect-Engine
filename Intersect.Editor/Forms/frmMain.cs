@@ -1854,6 +1854,7 @@ namespace Intersect.Editor.Forms
                         {
                             foreach (var sound in soundPacker.FileList)
                             {
+                                // Add as lowercase as our update generator checks for lowercases!
                                 clientExcludeFiles.Add(Path.Combine("resources", "sounds", sound.ToLower()).Replace('\\', '/'));
                             }
                         }
@@ -1866,6 +1867,7 @@ namespace Intersect.Editor.Forms
                         {
                             foreach (var music in musicPacker.FileList)
                             {
+                                // Add as lowercase as our update generator checks for lowercases!
                                 clientExcludeFiles.Add(Path.Combine("resources", "music", music.ToLower()).Replace('\\', '/'));
                             }
                         }
