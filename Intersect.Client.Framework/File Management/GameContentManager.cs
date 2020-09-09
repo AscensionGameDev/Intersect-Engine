@@ -92,6 +92,11 @@ namespace Intersect.Client.Framework.File_Management
         /// </summary>
         public AssetPacker SoundPacks { get; set; }
 
+        /// <summary>
+        /// Contains all indexed files and their caches from music pack files.
+        /// </summary>
+        public AssetPacker MusicPacks { get; set; }
+
         protected Dictionary<string, IAsset> mSpellDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, IAsset> mTexturePackDict = new Dictionary<string, IAsset>();

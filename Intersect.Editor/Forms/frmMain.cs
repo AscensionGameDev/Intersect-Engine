@@ -1736,10 +1736,14 @@ namespace Intersect.Editor.Forms
             }
 
             // Package up sounds!
-            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 50, false);
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
             Application.DoEvents();
             AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", 20);
 
+            // Package up music!
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
+            Application.DoEvents();
+            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", 10);
 
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();
@@ -1854,7 +1858,18 @@ namespace Intersect.Editor.Forms
                             }
                         }
                     }
-                    
+
+                    var musicIndex = Path.Combine("resources", "packs", "music.index");
+                    if (File.Exists(musicIndex))
+                    {
+                        using (var musicPacker = new AssetPacker(musicIndex, Path.Combine("resources", "packs")))
+                        {
+                            foreach (var music in musicPacker.FileList)
+                            {
+                                clientExcludeFiles.Add(Path.Combine("resources", "music", music.ToLower()).Replace('\\', '/'));
+                            }
+                        }
+                    }
 
                 }
 

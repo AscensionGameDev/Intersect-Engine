@@ -40,7 +40,7 @@ namespace Intersect.Compression
 		private Dictionary<string, PackageCacheEntry> packageCache = new Dictionary<string, PackageCacheEntry>();
 
 		// Our timer defining how long to keep items cached in memory.
-		private long cacheTimeOutTimer = 5 * TimeSpan.TicksPerMinute;
+		private long cacheTimeOutTimer = 1 * TimeSpan.TicksPerMinute;
 
 		/// <summary>
 		/// Create a new instance of <see cref="AssetPacker"/>
@@ -113,6 +113,7 @@ namespace Intersect.Compression
 				if (pack.Value.StreamCache != null && (DateTime.Now.Ticks - pack.Value.LastAccessTime) > cacheTimeOutTimer)
 				{
 					pack.Value.StreamCache.Dispose();
+					pack.Value.StreamCache = null;
 				}
 			}
 		}

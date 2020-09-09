@@ -115,6 +115,12 @@ namespace Intersect.Client.Core
             {
                 Globals.ContentManager.SoundPacks.UpdateCache();
             }
+
+            // Update our pack music cache if we have any packs loaded.
+            if (Globals.ContentManager.MusicPacks != null)
+            {
+                Globals.ContentManager.MusicPacks.UpdateCache();
+            }
         }
 
         //Music

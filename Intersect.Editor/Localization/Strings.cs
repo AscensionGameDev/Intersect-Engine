@@ -4282,6 +4282,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString sounds = "Packing up sounds...";
 
+            public static LocalizedString music = "Packing up music...";
+
             public static LocalizedString done = "Done!";
 
         }
