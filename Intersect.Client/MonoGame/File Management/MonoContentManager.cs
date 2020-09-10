@@ -245,6 +245,23 @@ namespace Intersect.Client.MonoGame.File_Management
                     )
                 );
             }
+
+            // If we have a sound index file, load from it!
+            if (File.Exists(Path.Combine("resources", "packs", "sound.index")))
+            {
+                SoundPacks = new AssetPacker(Path.Combine("resources", "packs", "sound.index"), Path.Combine("resources", "packs"));
+                foreach(var item in SoundPacks.FileList)
+                {
+                    if (!mSoundDict.ContainsKey(RemoveExtension(item)))
+                    {
+                        mSoundDict.Add(
+                            RemoveExtension(item),
+                            new MonoSoundSource(item, ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
+                        );
+                    }
+                }
+            }
+            
         }
 
         public override void LoadMusic()
@@ -261,6 +278,22 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
+            }
+
+            // If we have a music index file, load from it!
+            if (File.Exists(Path.Combine("resources", "packs", "music.index")))
+            {
+                MusicPacks = new AssetPacker(Path.Combine("resources", "packs", "music.index"), Path.Combine("resources", "packs"));
+                foreach (var item in MusicPacks.FileList)
+                {
+                    if (!mMusicDict.ContainsKey(RemoveExtension(item)))
+                    {
+                        mMusicDict.Add(
+                            RemoveExtension(item),
+                            new MonoMusicSource(item)
+                        );
+                    }
+                }
             }
         }
 

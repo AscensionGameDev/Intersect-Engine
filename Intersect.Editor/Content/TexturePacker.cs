@@ -162,7 +162,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 size["w"] = croppedImg.Width;
                 size["h"] = croppedImg.Height;
                 
-                using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine("resources", "packs", index + ".asset")))
+                using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine("resources", "packs", "graphics" + index + ".asset")))
                 {
                     croppedImg.Save(stream, ImageFormat.Png);
                 }
@@ -174,12 +174,12 @@ namespace Intersect.Editor.Classes.ContentManagement
                 jobj.Add(new JProperty("frames", frames));
 
                 var meta = new JObject();
-                meta["image"] = index + ".asset";
+                meta["image"] = "graphics" + index + ".asset";
                 meta["size"] = size;
                 jobj.Add(new JProperty("meta", meta));
 
                 //Save Metadata
-                GzipCompression.WriteCompressedString(Path.Combine("resources", "packs", index + ".meta"), jobj.ToString());
+                GzipCompression.WriteCompressedString(Path.Combine("resources", "packs", "graphics" + index + ".meta"), jobj.ToString());
             }
 
             img.Dispose();

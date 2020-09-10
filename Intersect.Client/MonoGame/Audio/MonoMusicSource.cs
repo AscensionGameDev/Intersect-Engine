@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 
 using Intersect.Client.Framework.Audio;
@@ -56,13 +58,23 @@ namespace Intersect.Client.MonoGame.Audio
         {
             lock (mInstanceLock)
             {
-                if (!string.IsNullOrWhiteSpace(mPath))
+                try
                 {
-                    try
+                    if (!string.IsNullOrWhiteSpace(mPath))
                     {
+
                         if (Reader == null)
                         {
-                            Reader = new VorbisReader(mPath);
+                            // Do we have this cached?
+                            if (Globals.ContentManager.MusicPacks != null && Globals.ContentManager.MusicPacks.FileList.Any( f => Path.GetFileName(mPath).Equals(f, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                // Read from cache, but close reader when we're done with it!
+                                Reader = new VorbisReader(Globals.ContentManager.MusicPacks.GetAsset(Path.GetFileName(mPath)), true);
+                            }
+                            else
+                            {
+                                Reader = new VorbisReader(mPath);
+                            }
                         }
 
                         if (Instance != null)
@@ -76,16 +88,17 @@ namespace Intersect.Client.MonoGame.Audio
                         );
                         mActiveSource = this;
                         return Instance;
+
                     }
-                    catch (Exception exception)
-                    {
-                        Log.Error($"Error loading '{mPath}'.", exception);
-                        ChatboxMsg.AddMessage(
-                            new ChatboxMsg(
-                                Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
-                            )
-                        );
-                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.Error($"Error loading '{mPath}'.", exception);
+                    ChatboxMsg.AddMessage(
+                        new ChatboxMsg(
+                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
+                        )
+                    );
                 }
             }
             mActiveSource = this;

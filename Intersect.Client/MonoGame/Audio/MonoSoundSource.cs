@@ -2,6 +2,7 @@
 using System.IO;
 
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
@@ -59,23 +60,34 @@ namespace Intersect.Client.MonoGame.Audio
 
         private void LoadSound()
         {
-            using (var fileStream = new FileStream(mFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            try
             {
-                try
+                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.FileList.Contains(mFilename))
                 {
-                    mSound = SoundEffect.FromStream(fileStream);
+                    using (var stream = Globals.ContentManager.SoundPacks.GetAsset(mFilename))
+                    {
+                        mSound = SoundEffect.FromStream(stream);
+                    }
                 }
-                catch (Exception exception)
+                else
                 {
-                    Log.Error($"Error loading '{mFilename}'.", exception);
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]",
-                            new Color(0xBF, 0x0, 0x0)
-                        )
-                    );
+                    using (var fileStream = new FileStream(mFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        mSound = SoundEffect.FromStream(fileStream);
+                    }  
                 }
             }
+            catch (Exception exception)
+            {
+                Log.Error($"Error loading '{mFilename}'.", exception);
+                ChatboxMsg.AddMessage(
+                    new ChatboxMsg(
+                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]",
+                        new Color(0xBF, 0x0, 0x0)
+                    )
+                );
+            }
+
         }
 
     }
