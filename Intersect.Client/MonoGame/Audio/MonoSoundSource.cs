@@ -62,7 +62,7 @@ namespace Intersect.Client.MonoGame.Audio
         {
             try
             {
-                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.FileList.Contains(mFilename))
+                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.Contains(mFilename))
                 {
                     using (var stream = Globals.ContentManager.SoundPacks.GetAsset(mFilename))
                     {

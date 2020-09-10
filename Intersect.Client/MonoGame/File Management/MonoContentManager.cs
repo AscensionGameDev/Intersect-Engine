@@ -289,7 +289,7 @@ namespace Intersect.Client.MonoGame.File_Management
                     if (!mMusicDict.ContainsKey(RemoveExtension(item)))
                     {
                         mMusicDict.Add(
-                            RemoveExtension(item),
+                            RemoveExtension(item).ToLower(),
                             new MonoMusicSource(item)
                         );
                     }

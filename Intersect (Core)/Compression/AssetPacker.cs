@@ -103,6 +103,13 @@ namespace Intersect.Compression
 		}
 
 		/// <summary>
+		/// Checks whether or not an asset is contained within the loaded index file. This check is case insensitive!
+		/// </summary>
+		/// <param name="fileName">The file to look for.</param>
+		/// <returns>Returns whether or not the file was found in the loaded Asset Packs.</returns>
+		public bool Contains(string fileName) => findAsset(fileName) != null ? true : false;
+
+		/// <summary>
 		/// Updates our cache timers and disposes of items no longer within the caching time limit.
 		/// </summary>
 		public void UpdateCache()

@@ -66,7 +66,7 @@ namespace Intersect.Client.MonoGame.Audio
                         if (Reader == null)
                         {
                             // Do we have this cached?
-                            if (Globals.ContentManager.MusicPacks != null && Globals.ContentManager.MusicPacks.FileList.Any( f => Path.GetFileName(mPath).Equals(f, StringComparison.OrdinalIgnoreCase)))
+                            if (Globals.ContentManager.MusicPacks != null && Globals.ContentManager.MusicPacks.Contains(Path.GetFileName(mPath)))
                             {
                                 // Read from cache, but close reader when we're done with it!
                                 Reader = new VorbisReader(Globals.ContentManager.MusicPacks.GetAsset(Path.GetFileName(mPath)), true);
