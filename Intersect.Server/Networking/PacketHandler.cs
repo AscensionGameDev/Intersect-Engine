@@ -237,6 +237,7 @@ namespace Intersect.Server.Networking
                 var configurableNaturalLowerMargin = 0;
                 var configurableNaturalUpperMargin = 500;
                 var configurableAllowedSpikePackets = 5;
+                var configurableDesyncForgiveness = 2.0f;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
                 var errorRangeMinimum = ping - errorMargin;
@@ -257,19 +258,25 @@ namespace Intersect.Server.Networking
                 var naturalWithPing = configurableNaturalLowerMargin < deltaWithPing &&
                                       deltaWithPing < configurableNaturalUpperMargin;
 
+
+                var adjustedDesync = Math.Abs(deltaAdjusted);
+                var timeDesync = adjustedDesync > errorRangeMaximum * configurableDesyncForgiveness;
+
                 Log.Debug(
                     "\n\t" +
                     $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
                     $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
                     $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                    $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]"
+                    $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                    $"Time Desync[{timeDesync}]\n\t" +
+                    $"Packet[{packet.ToString()}]"
                 );
 
                 var naturalWithError = naturalWithErrorMinimum || naturalWithErrorMaximum;
 
                 if (!(natural || naturalWithError || naturalWithPing))
                 {
-                    if (client.TimedBufferPacketsRemaining-- < 1)
+                    if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
                         Log.Debug("Speedhacking detected!");
 
@@ -514,7 +521,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var clientTime = packet.Adjusted;
+            var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
             if (player.ClientActionTimer < clientTime)
             {
                 var canMove = player.CanMove(packet.Dir);
@@ -523,7 +530,7 @@ namespace Intersect.Server.Networking
                     player.Move(packet.Dir, player, false);
                     var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
                     var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
-                    var currentMs = Timing.Global.Milliseconds;
+                    var currentMs = Globals.Timing.Milliseconds;
                     if (player.MoveTimer > currentMs)
                     {
                         //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
