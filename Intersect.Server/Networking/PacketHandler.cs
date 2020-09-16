@@ -514,7 +514,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var clientTime = packet.UTC / TimeSpan.TicksPerMillisecond;
+            var clientTime = packet.Adjusted;
             if (player.ClientActionTimer < clientTime)
             {
                 var canMove = player.CanMove(packet.Dir);
