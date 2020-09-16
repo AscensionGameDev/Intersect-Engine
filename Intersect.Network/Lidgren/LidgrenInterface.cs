@@ -81,8 +81,8 @@ namespace Intersect.Network.Lidgren
                 mPeerConfiguration.Port = configuration.Port;
             } else
             {
-                mPeerConfiguration.SimulatedMinimumLatency = 0.375f;
-                mPeerConfiguration.SimulatedRandomLatency = 0.625f;
+                mPeerConfiguration.SimulatedMinimumLatency = 0.2f;
+                mPeerConfiguration.SimulatedRandomLatency = 0.1f;
             }
 
             if (Debugger.IsAttached)
