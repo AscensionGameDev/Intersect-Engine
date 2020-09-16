@@ -142,6 +142,8 @@ namespace Intersect.Client
                 }
             }
 
+            platformId = PlatformID.Unix;
+
             var folder = Environment.Is64BitProcess ? "x64" : "x86";
 
             switch (platformId)
@@ -168,8 +170,8 @@ namespace Intersect.Client
 
                 case PlatformID.Unix:
                 default:
-                    ExportDependency("libopenal.so.1", folder);
-                    ExportDependency("libSDL2-2.0.so.0", folder);
+                    ExportDependency("libopenal.so.1", "x64");
+                    ExportDependency("libSDL2-2.0.so.0", "x64");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
 

@@ -233,18 +233,12 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x86\libSDL2</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x64\libSDL2</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x86\libopenal</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x64\libopenal</Link>
-    </EmbeddedResource>
+    <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+      <Link>Resources\x64\libSDL2-2.0.so.0</Link>
+    </Resource>
+    <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
+      <Link>Resources\x64\libopenal.so.1</Link>
+    </Resource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
