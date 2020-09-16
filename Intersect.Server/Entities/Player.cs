@@ -111,6 +111,9 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
 
+        [NotMapped, JsonIgnore]
+        public long ClientActionTimer { get; set; }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;

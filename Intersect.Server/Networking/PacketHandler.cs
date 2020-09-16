@@ -514,17 +514,28 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var canMove = player.CanMove(packet.Dir);
-            if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
+            var clientTime = packet.UTC / TimeSpan.TicksPerMillisecond;
+            if (player.ClientActionTimer < clientTime)
             {
-                player.Move(packet.Dir, player, false);
-                var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
-                var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
-                var currentMs = Timing.Global.Milliseconds;
-                if (player.MoveTimer > currentMs)
+                var canMove = player.CanMove(packet.Dir);
+                if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
                 {
-                    //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
-                    player.MoveTimer = currentMs + latencyAdjustmentMs + (long) (player.GetMovementTime() * .75f);
+                    player.Move(packet.Dir, player, false);
+                    var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+                    var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
+                    var currentMs = Timing.Global.Milliseconds;
+                    if (player.MoveTimer > currentMs)
+                    {
+                        //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
+                        player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
+                        player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
+                    }
+                }
+                else
+                {
+                    PacketSender.SendEntityPositionTo(client, client.Entity);
+
+                    return;
                 }
             }
             else
