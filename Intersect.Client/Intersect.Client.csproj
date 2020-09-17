@@ -234,10 +234,10 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x64\libSDL2-2.0.so.0</Link>
+      <Link>Resources\x64\libSDL2</Link>
     </Resource>
     <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x64\libopenal.so.1</Link>
+      <Link>Resources\x64\libopenal</Link>
     </Resource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>

@@ -142,8 +142,6 @@ namespace Intersect.Client
                 }
             }
 
-            platformId = PlatformID.Unix;
-
             var folder = Environment.Is64BitProcess ? "x64" : "x86";
 
             switch (platformId)
