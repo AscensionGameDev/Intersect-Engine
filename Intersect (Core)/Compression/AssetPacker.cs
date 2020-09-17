@@ -40,7 +40,7 @@ namespace Intersect.Compression
 		private Dictionary<string, PackageCacheEntry> packageCache = new Dictionary<string, PackageCacheEntry>();
 
 		// Our timer defining how long to keep items cached in memory.
-		private long cacheTimeOutTimer = 1 * TimeSpan.TicksPerMinute;
+		private long cacheTimeOutTimer = 2 * TimeSpan.TicksPerMinute;
 
 		/// <summary>
 		/// Create a new instance of <see cref="AssetPacker"/>
@@ -165,6 +165,12 @@ namespace Intersect.Compression
 		/// <param name="batchSize">The maximum amount of files to pack up in each asset pack.</param>
 		public static void PackageAssets(string inputDir, string inputFilter, string outputDir, string indexName, string packPrefix, string packExt, int batchSize)
 		{
+			// We can't do less than one file at a time.
+			if (batchSize < 1)
+			{
+				batchSize = 1;
+			}
+
 			var fileBatches = Directory.GetFiles(inputDir, inputFilter).Split(batchSize).ToArray();
 			var index = new List<PackageIndexEntry>();
 			for (var n = 0; n < fileBatches.Length; n++)

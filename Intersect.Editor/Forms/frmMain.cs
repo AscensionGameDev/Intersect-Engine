@@ -184,7 +184,6 @@ namespace Intersect.Editor.Forms
             timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
 
             toolsToolStripMenuItem.Text = Strings.MainForm.tools;
-            packClientTexturesToolStripMenuItem.Text = Strings.MainForm.packassets;
 
             helpToolStripMenuItem.Text = Strings.MainForm.help;
             postQuestionToolStripMenuItem.Text = Strings.MainForm.postquestion;
@@ -1629,17 +1628,13 @@ namespace Intersect.Editor.Forms
 
         private void packClientTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Globals.PackingProgressForm = new FrmProgress();
-            Globals.PackingProgressForm.SetTitle(Strings.AssetPacking.title);
-            var packingthread = new Thread(() => packAssets());
-            packingthread.Start();
-            Globals.PackingProgressForm.ShowDialog();
+            
         }
 
         private void packAssets()
         {
-            //TODO: Make the max pack size a configurable option, along with the packing heuristic that the texture packer class should use.
-            var maxPackSize = 2048;
+            //TODO: Make packing heuristic that the texture packer class should use configurable.
+            var maxPackSize = Convert.ToInt32(Preferences.LoadPreference("TexturePackSize"));
             var packsPath = Path.Combine("resources", "packs");
 
             //Delete Old Packs
@@ -1738,12 +1733,12 @@ namespace Intersect.Editor.Forms
             // Package up sounds!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", 20);
+            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundBatchSize")));
 
             // Package up music!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", 10);
+            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicBatchSize")));
 
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();
@@ -1795,7 +1790,18 @@ namespace Intersect.Editor.Forms
                             return;
                         }
                     }
-                    
+
+                    // Are we configured to package up our assets for an update?
+                    var packageUpdateAssets = Preferences.LoadPreference("PackageUpdateAssets");
+                    if (packageUpdateAssets != "" && Convert.ToBoolean(packageUpdateAssets))
+                    {
+                        Globals.PackingProgressForm = new FrmProgress();
+                        Globals.PackingProgressForm.SetTitle(Strings.AssetPacking.title);
+                        var assetThread = new Thread(() => packAssets());
+                        assetThread.Start();
+                        Globals.PackingProgressForm.ShowDialog();
+                    }
+
                     Globals.UpdateCreationProgressForm = new FrmProgress();
                     Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.Title);
                     Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Deleting,10,false);

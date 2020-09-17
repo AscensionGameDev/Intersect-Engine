@@ -3057,8 +3057,6 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString overlay = @"Overlay";
 
-            public static LocalizedString packassets = @"Pack Client Assets";
-
             public static LocalizedString paste = @"Paste";
 
             public static LocalizedString pen = @"Pen Tool";
@@ -3588,6 +3586,23 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString title = @"Options";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UpdateTab = @"Update";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PackageUpdates = @"Package assets when generating updates.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PackageOptions = @"Asset Packing Options";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MusicBatch = @"Music Batch Size";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SoundBatch = @"Sound Batch Size";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TextureSize = @"Texture Pack Size";
         }
 
         public struct ProgressForm
