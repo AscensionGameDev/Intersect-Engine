@@ -38,12 +38,12 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase));
                 if (t != "" &&
-                    (realFilename != null ||
+                    (!string.IsNullOrWhiteSpace(realFilename) ||
                      GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) &&
                     !mTilesetDict.ContainsKey(t.ToLower()))
                 {
                     mTilesetDict.Add(
-                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", realFilename != null ? realFilename : t))
+                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", !string.IsNullOrWhiteSpace(realFilename) ? realFilename : t))
                     );
                 }
             }
