@@ -199,6 +199,7 @@
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
+    <Compile Include="Config\SpriteOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />

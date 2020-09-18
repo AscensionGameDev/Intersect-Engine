@@ -59,9 +59,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 g.DrawImage(
                     sourceBitmap,
                     new Rectangle(
-                        pnlPreview.Width / 2 - sourceBitmap.Width / 8, pnlPreview.Height / 2 - sourceBitmap.Height / 8,
-                        sourceBitmap.Width / 4, sourceBitmap.Height / 4
-                    ), new Rectangle(0, 0, sourceBitmap.Width / 4, sourceBitmap.Height / 4), GraphicsUnit.Pixel
+                        pnlPreview.Width / 2 - sourceBitmap.Width / (Options.Instance.SpriteOpts.NormalFrames * 2), pnlPreview.Height / 2 - sourceBitmap.Height / (Options.Instance.SpriteOpts.Directions * 2),
+                        sourceBitmap.Width / Options.Instance.SpriteOpts.NormalFrames, sourceBitmap.Height / Options.Instance.SpriteOpts.Directions
+                    ), new Rectangle(0, 0, sourceBitmap.Width / Options.Instance.SpriteOpts.NormalFrames, sourceBitmap.Height / Options.Instance.SpriteOpts.Directions), GraphicsUnit.Pixel
                 );
             }
 

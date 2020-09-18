@@ -179,8 +179,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
                 sourceBitmap = new Bitmap("resources/entities/" + cmbGraphic.Text);
-                mSpriteWidth = sourceBitmap.Width / 4;
-                mSpriteHeight = sourceBitmap.Height / 4;
+                mSpriteWidth = sourceBitmap.Width / Options.Instance.SpriteOpts.NormalFrames;
+                mSpriteHeight = sourceBitmap.Height / Options.Instance.SpriteOpts.Directions;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
@@ -201,8 +201,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     graphics.DrawRectangle(
                         new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(
-                            mTmpGraphic.X * sourceBitmap.Width / 4, mTmpGraphic.Y * sourceBitmap.Height / 4,
-                            sourceBitmap.Width / 4, sourceBitmap.Height / 4
+                            mTmpGraphic.X * sourceBitmap.Width / Options.Instance.SpriteOpts.NormalFrames, mTmpGraphic.Y * sourceBitmap.Height / Options.Instance.SpriteOpts.Directions,
+                            sourceBitmap.Width / Options.Instance.SpriteOpts.NormalFrames, sourceBitmap.Height / Options.Instance.SpriteOpts.Directions
                         )
                     );
                 }
