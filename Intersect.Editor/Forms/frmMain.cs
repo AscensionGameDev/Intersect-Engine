@@ -1375,7 +1375,7 @@ namespace Intersect.Editor.Forms
 
         private void toolStripButtonBug_Click(object sender, EventArgs e)
         {
-            Process.Start("https://www.ascensiongamedev.com/community/bug_tracker/intersect/");
+            Process.Start("https://github.com/AscensionGameDev/Intersect-Engine/issues/new/choose");
         }
 
         private void UpdateTimeSimulationList()
