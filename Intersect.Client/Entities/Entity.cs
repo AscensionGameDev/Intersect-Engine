@@ -247,6 +247,31 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public virtual int SpriteFrames
+        {
+            get
+            {
+                switch (SpriteAnimation)
+                {
+                    case SpriteAnimations.Normal:
+                        return Options.Instance.SpriteOpts.NormalFrames;
+                    case SpriteAnimations.Idle:
+                        return Options.Instance.SpriteOpts.IdleFrames;
+                    case SpriteAnimations.Attack:
+                        return Options.Instance.SpriteOpts.AttackFrames;
+                    case SpriteAnimations.Shoot:
+                        return Options.Instance.SpriteOpts.ShootFrames;
+                    case SpriteAnimations.Cast:
+                        return Options.Instance.SpriteOpts.CastFrames;
+                    case SpriteAnimations.Weapon:
+                        return Options.Instance.SpriteOpts.WeaponFrames;
+                }
+
+                return Options.Instance.SpriteOpts.NormalFrames;
+
+            }
+        }
+
         public MapInstance MapInstance => MapInstance.Get(CurrentMap);
 
         public virtual Guid CurrentMap { get; set; }
@@ -492,16 +517,16 @@ namespace Intersect.Client.Entities
                     if (IsMoving)
                     {
                         WalkFrame++;
-                        if (WalkFrame >= GetSpriteFrames())
+                        if (WalkFrame >= SpriteFrames)
                         {
                             WalkFrame = 0;
                         }
                     }
                     else
                     {
-                        if (WalkFrame > 0 && WalkFrame / GetSpriteFrames() < 0.7f)
+                        if (WalkFrame > 0 && WalkFrame / SpriteFrames < 0.7f)
                         {
-                            WalkFrame = (int)GetSpriteFrames() / 2;
+                            WalkFrame = (int)SpriteFrames / 2;
                         }
                         else
                         {
@@ -656,7 +681,7 @@ namespace Intersect.Client.Entities
             {
                 AnimationTimer = Globals.System.GetTimeMs() + 200;
                 AnimationFrame++;
-                if (AnimationFrame >= GetSpriteFrames())
+                if (AnimationFrame >= SpriteFrames)
                 {
                     AnimationFrame = 0;
                 }
@@ -876,7 +901,7 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
-                destRectangle.X -= texture.GetWidth() / (GetSpriteFrames() * 2);
+                destRectangle.X -= texture.GetWidth() / (SpriteFrames * 2);
                 switch (Dir)
                 {
                     case 0:
@@ -907,8 +932,8 @@ namespace Intersect.Client.Entities
                 if (Options.AnimatedSprites.Contains(sprite.ToLower()))
                 {
                     srcRectangle = new FloatRect(
-                        AnimationFrame * (int)texture.GetWidth() / GetSpriteFrames(), d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
-                        (int)texture.GetWidth() / GetSpriteFrames(), (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                        AnimationFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
+                        (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
                     );
                 }
                 else
@@ -919,24 +944,24 @@ namespace Intersect.Client.Entities
                         if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
                         {
                             srcRectangle = new FloatRect(
-                                Options.Instance.SpriteOpts.NormalSheetAttackFrame * (int)texture.GetWidth() / GetSpriteFrames(), d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
-                                (int)texture.GetWidth() / GetSpriteFrames(), (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                Options.Instance.SpriteOpts.NormalSheetAttackFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
+                                (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
                             );
                         }
                         else
                         {
                             //Restore Original Attacking/Blocking Code
                             srcRectangle = new FloatRect(
-                                WalkFrame * (int) texture.GetWidth() / GetSpriteFrames(), d * (int) texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
-                                (int) texture.GetWidth() / GetSpriteFrames(), (int) texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                WalkFrame * (int) texture.GetWidth() / SpriteFrames, d * (int) texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
+                                (int) texture.GetWidth() / SpriteFrames, (int) texture.GetHeight() / Options.Instance.SpriteOpts.Directions
                             );
                         }
                     }
                     else
                     {
                         srcRectangle = new FloatRect(
-                            SpriteFrame * (int)texture.GetWidth() / GetSpriteFrames(), d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
-                            (int)texture.GetWidth() / GetSpriteFrames(), (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                            SpriteFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions,
+                            (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.SpriteOpts.Directions
                         );
                     }
                 }
@@ -1031,7 +1056,7 @@ namespace Intersect.Client.Entities
                 GameContentManager.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
             );
 
-            var spriteFrames = GetSpriteFrames();
+            var spriteFrames = SpriteFrames;
 
             if (paperdollTex == null)
             {
@@ -1635,27 +1660,6 @@ namespace Intersect.Client.Entities
             Status = Status.OrderByDescending(x => x.RemainingMs()).ToList();
         }
 
-        private float GetSpriteFrames()
-        {
-            switch (SpriteAnimation)
-            {
-                case SpriteAnimations.Normal:
-                    return Options.Instance.SpriteOpts.NormalFrames;
-                case SpriteAnimations.Idle:
-                    return Options.Instance.SpriteOpts.IdleFrames;
-                case SpriteAnimations.Attack:
-                    return Options.Instance.SpriteOpts.AttackFrames;
-                case SpriteAnimations.Shoot:
-                    return Options.Instance.SpriteOpts.ShootFrames;
-                case SpriteAnimations.Cast:
-                    return Options.Instance.SpriteOpts.CastFrames;
-                case SpriteAnimations.Weapon:
-                    return Options.Instance.SpriteOpts.WeaponFrames;
-            }
-
-            return Options.Instance.SpriteOpts.NormalFrames;
-        }
-
         public void UpdateSpriteAnimation()
         {
             var oldAnim = SpriteAnimation;
@@ -1680,7 +1684,7 @@ namespace Intersect.Client.Entities
                 if (AnimatedTextures[SpriteAnimations.Attack] != null)
                 {
                     SpriteAnimation = SpriteAnimations.Attack;
-                    SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / GetSpriteFrames())));
+                    SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / (float)SpriteFrames)));
                 }
 
                 if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length)
@@ -1725,7 +1729,7 @@ namespace Intersect.Client.Entities
                 {
                     var duration = spell.CastDuration;
                     var timeIn = duration - (CastTime - Globals.System.GetTimeMs());
-                    SpriteFrame = (int)Math.Floor((timeIn / (duration / GetSpriteFrames())));
+                    SpriteFrame = (int)Math.Floor((timeIn / (duration / (float)SpriteFrames)));
 
                     if (AnimatedTextures[SpriteAnimations.Cast] != null)
                     {
@@ -1750,7 +1754,7 @@ namespace Intersect.Client.Entities
                 if (SpriteFrameTimer + Options.Instance.SpriteOpts.IdleFrameDuration < Globals.System.GetTimeMs())
                 {
                     SpriteFrame++;
-                    if (SpriteFrame >= GetSpriteFrames())
+                    if (SpriteFrame >= SpriteFrames)
                     {
                         SpriteFrame = 0;
                     }
