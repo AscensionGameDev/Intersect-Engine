@@ -277,12 +277,12 @@ namespace Intersect.Client.Interface.Menu
                         else
                         {
                             mCharacterPortrait.SetTextureRect(
-                                0, 0, mCharacterPortrait.Texture.GetWidth() / Options.Instance.SpriteOpts.NormalFrames,
-                                mCharacterPortrait.Texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                0, 0, mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
                             );
 
                             mCharacterPortrait.SetSize(
-                                mCharacterPortrait.Texture.GetWidth() / Options.Instance.SpriteOpts.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
                             );
 
                             mCharacterPortrait.SetPosition(
