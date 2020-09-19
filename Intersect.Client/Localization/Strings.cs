@@ -757,9 +757,9 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Guilds
+        public struct Guild
         {
-            public static LocalizedString Title = @"Guild";
+            public static LocalizedString Invite = @"Invite";
         }
 
         public struct GameMenu

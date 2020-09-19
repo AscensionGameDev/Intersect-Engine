@@ -48,7 +48,7 @@ namespace Intersect.Client.Interface.Game
 
             mAddPopupButton = new Button(mGuildWindow, "InvitePopupButton");
             mAddPopupButton.IsHidden = true;
-            mAddPopupButton.SetText(Strings.Friends.addfriend);
+            mAddPopupButton.SetText(Strings.Guild.Invite);
             mAddPopupButton.Clicked += addPopupButton_Clicked;
 
             UpdateList();
