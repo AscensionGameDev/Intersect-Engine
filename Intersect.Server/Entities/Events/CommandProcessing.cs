@@ -1188,8 +1188,8 @@ namespace Intersect.Server.Entities.Events
                 // Get our intended guild name
                 var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();
 
-                // Can we use this name according to our configuration?
-                if (gname != null && gname.Length >= Options.Guild.MinimumGuildNameSize && gname.Length <= Options.Guild.MaximumGuildNameSize)
+                // Can we use this name?
+                if (!string.IsNullOrEmpty(gname))
                 {
                     // Is the name already in use?
                     if (Guild.GetGuild(PlayerContext.Current, gname) == null)
@@ -1226,7 +1226,7 @@ namespace Intersect.Server.Entities.Events
                 else
                 {
                     // Let our player know they need to adjust their name.
-                    PacketSender.SendChatMsg(player, Strings.Guilds.VariableNotMatchLength.ToString(Options.Guild.MinimumGuildNameSize, Options.Guild.MaximumGuildNameSize), CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Guilds.VariableNoText, CustomColors.Alerts.Error);
                 }
             }
             else 

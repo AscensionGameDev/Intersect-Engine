@@ -9,14 +9,9 @@ namespace Intersect.Config
     {
 
         /// <summary>
-        /// Denotes the minimum amount of characters a guild name must contain before being accepted.
+        /// Configures whether or not to allow guild members to attack eachother.
         /// </summary>
-        public int MinimumGuildNameSize = 3;
-
-        /// <summary>
-        /// Denotes the maximum amount of characters a guild name can contain before being rejected.
-        /// </summary>
-        public int MaximumGuildNameSize = 25;
+        public bool AllowGuildMemberPvP = false;
 
     }
 }

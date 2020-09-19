@@ -1301,7 +1301,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString VariableNotString = @"The given guild name does not contain any text.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString VariableNotMatchLength = @"A guild name needs to be between {00} and {01} characters!";
+            public readonly LocalizedString VariableNoText = @"A guild name can not be empty!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString GuildNameInUse = @"Your chosen guild name is already in use!";

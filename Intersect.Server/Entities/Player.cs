@@ -1118,7 +1118,7 @@ namespace Intersect.Server.Entities
             var friendly = spell?.Combat != null && spell.Combat.Friendly;
             switch (entity)
             {
-                case Player player when friendly != player.InParty(this):
+                case Player player when friendly != player.InParty(this) || (!Options.Guild.AllowGuildMemberPvP && friendly != (player.Guild == this.Guild)):
                 case Resource _ when spell != null:
                     return false;
                 case Npc npc:
