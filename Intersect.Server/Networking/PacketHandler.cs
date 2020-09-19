@@ -871,7 +871,7 @@ namespace Intersect.Server.Networking
 
                 // Oh boy, here we go.. Sending a message to everyone then nuking this guild!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
-                Guild.DeleteGuild(PlayerContext.Current, player.Guild);
+                Guild.DeleteGuild(player.Guild);
             }
             else
             {
