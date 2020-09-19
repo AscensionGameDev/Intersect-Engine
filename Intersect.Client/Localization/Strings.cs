@@ -760,6 +760,8 @@ namespace Intersect.Client.Localization
         public struct Guild
         {
             public static LocalizedString Invite = @"Invite";
+
+            public static LocalizedString NotInGuild = @"You are not currently in a guild!";
         }
 
         public struct GameMenu

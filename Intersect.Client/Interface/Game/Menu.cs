@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Character;
+using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
@@ -177,6 +178,11 @@ namespace Intersect.Client.Interface.Game
             mGuildWindow.Hide();
         }
 
+        public void HideGuildWindow()
+        {
+            mGuildWindow.Hide();
+        }
+
         public void ToggleCharacterWindow()
         {
             if (mCharacterWindow.IsVisible())
@@ -299,7 +305,14 @@ namespace Intersect.Client.Interface.Game
 
         private void GuildBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ToggleGuildWindow();
+            if (!string.IsNullOrEmpty(Globals.Me.Guild))
+            {
+                ToggleGuildWindow();
+            }
+            else
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guild.NotInGuild, CustomColors.Alerts.Error));
+            }
         }
 
         private void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)

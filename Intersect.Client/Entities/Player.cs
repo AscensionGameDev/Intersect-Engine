@@ -197,6 +197,12 @@ namespace Intersect.Client.Entities
                     this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
                 }
             }
+
+            // Hide our Guild window if we're not in a guild!
+            if (string.IsNullOrEmpty(Guild))
+            {
+                Interface.Interface.GameUi.HideGuildWindow();
+            }
         }
 
         public override EntityTypes GetEntityType()
