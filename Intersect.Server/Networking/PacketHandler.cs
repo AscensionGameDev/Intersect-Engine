@@ -19,6 +19,7 @@ using Intersect.Server.Admin.Actions;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -717,10 +718,9 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                // Notify people there's a kickage going on, then remove this player from the guild and send their updated info around!
+                // Notify people there's a kickage going on, then remove the player!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.Kicked.ToString(target.Name, player.Guild.Name), CustomColors.Alerts.Info);
                 player.Guild.RemoveMember(target);
-                PacketSender.SendEntityDataToProximity(target);
             }
             else if (cmd == Strings.Chat.PromoteCmd)
             {
@@ -813,6 +813,65 @@ namespace Intersect.Server.Networking
                     // We can't promote them further.
                     PacketSender.SendChatMsg(player, Strings.Guilds.DemotionFailed.ToString(target.Name), CustomColors.Alerts.Error);
                 }
+            }
+            else if (cmd == Strings.Chat.MakeGuildmasterCmd)
+            {
+                // Are we in a guild?
+                if (player.Guild == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Are we allowed to do this?
+                if (player.Guild.GetPlayerRank(player) != GuildRanks.Guildmaster)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotAllowed, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Find our potential player.
+                var target = Player.Find(msg.Trim());
+
+                // Does our elusive player exist, or are they even a part of this guild?
+                if (target == null || !player.Guild.IsMember(target))
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer.ToString(msg), CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Do not allow this on ourselves, or the guild master.
+                if (player == target || target.GuildRank == GuildRanks.Guildmaster)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotAllowed, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Make this player the guild master and set ourselves to be an Officer.
+                player.Guild.SetPlayerRank(target, GuildRanks.Guildmaster);
+                player.Guild.SetPlayerRank(player, GuildRanks.Officer);
+                PacketSender.SendGuildMsg(player, Strings.Guilds.Demoted.ToString(target.Name, Strings.Guilds.RankNames[GuildRanks.Guildmaster]), CustomColors.Alerts.Success);
+
+            }
+            else if (cmd == Strings.Chat.DisbandCmd)
+            {
+                // Are we in a guild?
+                if (player.Guild == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Are we allowed to do this?
+                if (player.Guild.GetPlayerRank(player) != GuildRanks.Guildmaster)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotAllowed, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                // Oh boy, here we go.. Sending a message to everyone then nuking this guild!
+                PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
+                Guild.DeleteGuild(PlayerContext.Current, player.Guild);
             }
             else
             {
@@ -2048,9 +2107,6 @@ namespace Intersect.Server.Networking
 
             // Notify everyone involved!
             PacketSender.SendGuildMsg(player, Strings.Guilds.Joined.ToString(player.Name, player.Guild.Name), CustomColors.Alerts.Success);
-
-            // Send the updated data around.
-            PacketSender.SendEntityDataToProximity(player);
         }
 
         //GuildInviteDeclinePacket
@@ -2099,11 +2155,7 @@ namespace Intersect.Server.Networking
 
             // Notify the guild a player has left and remove them from the roster.
             PacketSender.SendGuildMsg(player, Strings.Guilds.Left.ToString(player.Name, player.Guild.Name), CustomColors.Alerts.Info);
-            player.Guild.RemoveMember(player);
-
-            // Send the newly updated player information to their surroundings.
-            PacketSender.SendEntityDataToProximity(player);
-            
+            player.Guild.RemoveMember(player);      
         }
 
         //FriendRequestResponsePacket
@@ -2207,6 +2259,13 @@ namespace Intersect.Server.Networking
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
+                // Do not allow a guild master character to be deleted, they have to disband or move ownership first.
+                if (character.GuildRank == GuildRanks.Guildmaster)
+                {
+                    PacketSender.SendError(client, Strings.Account.DeleteCharGuildmaster, Strings.Account.deleted);
+                    return;
+                }
+                
                 foreach (var chr in client.Characters.ToArray())
                 {
                     if (chr.Id == packet.CharacterId)

@@ -50,6 +50,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString deletechar = @"The character has been deleted.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString DeleteCharGuildmaster = @"You can not delete a character that is a guildmaster, please disband the guild or transfer ownership before trying again.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString deleted = @"Delete Character";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -217,6 +220,12 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString KickCmd = @"/gkick";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString MakeGuildmasterCmd = @"/makeguildmaster";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DisbandCmd = @"/disbandguild";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
@@ -1362,6 +1371,9 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString DemotionFailed = @"{00} can not be demoted any further.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DisbandGuild = @"{00} has been disbanded!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly Dictionary<GuildRanks, String> RankNames = new Dictionary<GuildRanks, string>() {

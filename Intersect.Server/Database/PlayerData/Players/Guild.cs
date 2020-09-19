@@ -88,10 +88,10 @@ namespace Intersect.Server.Database.PlayerData.Players
             SetPlayerRank(player, rank);
 
             // Send our new guild list to everyone that's online.
-            foreach(var member in FindOnlineMembers())
-            {
-                PacketSender.SendGuild(member);
-            }
+            UpdateMemberList();
+
+            // Send our entity data to nearby players.
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         /// <summary>
@@ -108,6 +108,9 @@ namespace Intersect.Server.Database.PlayerData.Players
 
             // Send our new guild list to everyone that's online.
             UpdateMemberList();
+
+            // Send our entity data to nearby players.
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         /// <summary>
@@ -196,6 +199,22 @@ namespace Intersect.Server.Database.PlayerData.Players
             var guild = context.Guilds.Where(p => p.Name == name).SingleOrDefault();
 
             return guild;
+        }
+
+        /// <summary>
+        /// Completely removes a guild from the game.
+        /// </summary>
+        /// <param name="context">The playercontext to delete the guild from.</param>
+        /// <param name="guild">The <see cref="Guild"/> to delete.</param>
+        public static void DeleteGuild(PlayerContext context, Guild guild)
+        {
+            // Remove our members cleanly before deleting this from our database.
+            foreach (var member in guild.Members.ToArray())
+            {
+                guild.RemoveMember(member);
+            }
+
+            context.Guilds.Remove(guild);
         }
     }
 }

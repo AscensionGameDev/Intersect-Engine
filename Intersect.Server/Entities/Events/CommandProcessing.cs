@@ -1205,9 +1205,6 @@ namespace Intersect.Server.Entities.Events
                             // Send them a welcome message!
                             PacketSender.SendChatMsg(player, Strings.Guilds.Welcome.ToString(gname), CustomColors.Alerts.Success);
 
-                            // Send the newly updated player information to everyone.
-                            PacketSender.SendEntityDataToProximity(player);
-
                             // Denote that we were successful.
                             success = true;
                         }
