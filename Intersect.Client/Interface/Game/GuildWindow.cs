@@ -119,10 +119,10 @@ namespace Intersect.Client.Interface.Game
 
         void addPopupButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            //var iBox = new InputBox(
-            //    Strings.Friends.addfriend, Strings.Friends.addfriendprompt, true, InputBox.InputType.TextInput,
-            //    AddFriend, null, 0
-            //);
+            var iBox = new InputBox(
+                Strings.Guild.InviteMemberTitle, Strings.Guild.InviteMemberPrompt, true, InputBox.InputType.TextInput,
+                AddMember, null, 0
+            );
         }
 
         void member_Clicked(Base sender, ClickedEventArgs arguments)
@@ -131,7 +131,7 @@ namespace Intersect.Client.Interface.Game
 
             //Only pm online players
             foreach (var member in Globals.Me.GuildMembers)
-                if (member.Name.ToLower() == member.Name.ToLower())
+                if (member.Name.ToLower() == ((string)row.UserData).ToLower())
                 {
                     if (member.Online == true)
                     {
@@ -161,7 +161,7 @@ namespace Intersect.Client.Interface.Game
             var ibox = (InputBox) sender;
             if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                PacketSender.SendAddFriend(ibox.TextValue);
+                PacketSender.SendInviteGuild(ibox.TextValue);
             }
         }
 

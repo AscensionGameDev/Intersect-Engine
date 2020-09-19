@@ -3493,6 +3493,25 @@ namespace Intersect.Server.Entities
             }
         }
 
+        // Guilds
+        public void SendGuildInvite(Player from)
+        {
+            // Are we already in a guild? or have a pending invite?
+            if (Guild == null && GuildInvite == null)
+            {
+                // Thank god, we can FINALLY get started!
+                // Set our invite and send our players the relevant messages.
+                GuildInvite = new Tuple<Player, Guild>(from, from.Guild);
+
+                PacketSender.SendChatMsg(from, Strings.Guilds.InviteSent.ToString(Name, from.Guild.Name), CustomColors.Alerts.Info);
+                PacketSender.SendGuildInvite(this, from);
+            }
+            else
+            {
+                PacketSender.SendChatMsg(from, Strings.Guilds.InviteAlreadyInGuild, CustomColors.Alerts.Error);
+            }
+        }
+
         //Trading
         public void InviteToTrade(Player fromPlayer)
         {

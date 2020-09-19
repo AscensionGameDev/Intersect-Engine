@@ -1815,6 +1815,12 @@ namespace Intersect.Server.Networking
             player.SendPacket(new FriendRequestPacket(partner.Id, partner.Name));
         }
 
+        //GuildRequestPacket
+        public static void SendGuildInvite(Player player, Player from)
+        {
+            player.SendPacket(new GuildInvitePacket(from.Name, from.Guild.Name));
+        }
+
         /// <summary>
         /// Send a player their guild member list.
         /// </summary>

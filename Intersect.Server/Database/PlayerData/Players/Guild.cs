@@ -107,6 +107,14 @@ namespace Intersect.Server.Database.PlayerData.Players
             Members.Remove(player);
 
             // Send our new guild list to everyone that's online.
+            UpdateMemberList();
+        }
+
+        /// <summary>
+        /// Send an updated version of our guild's memberlist to each online member.
+        /// </summary>
+        public void UpdateMemberList()
+        {
             foreach (var member in FindOnlineMembers())
             {
                 PacketSender.SendGuild(member);

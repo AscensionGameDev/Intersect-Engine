@@ -213,15 +213,6 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString GuildInviteCmd = @"/guildinvite";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString GuildAcceptCmd = @"/guildaccept";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString GuildDeclineCmd = @"/guilddecline";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString toofast = @"You are chatting too fast!";
 
         }
@@ -1332,9 +1323,6 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString InviteSent = @"You've invited {00} to join {01}!";
-
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString InviteReceived = @"You've received a guild invite from {00} to join {01}, to accept or decline this invite use /guildaccept or /guilddecline";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString InviteDeclinedResponse = @"{00} has declined your request for them to join {01}.";
