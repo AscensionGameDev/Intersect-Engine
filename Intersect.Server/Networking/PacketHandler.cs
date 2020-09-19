@@ -717,9 +717,10 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                // Notify people there's a kickage going on, then remove this player from the guild!
+                // Notify people there's a kickage going on, then remove this player from the guild and send their updated info around!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.Kicked.ToString(target.Name, player.Guild.Name), CustomColors.Alerts.Info);
                 player.Guild.RemoveMember(target);
+                PacketSender.SendEntityDataToProximity(target);
             }
             else if (cmd == Strings.Chat.PromoteCmd)
             {
