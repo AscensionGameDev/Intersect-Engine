@@ -91,7 +91,10 @@ namespace Intersect.Server.Database.PlayerData.Players
             UpdateMemberList();
 
             // Send our entity data to nearby players.
-            PacketSender.SendEntityDataToProximity(player);
+            if (Player.FindOnline(player.Id) != null)
+            {
+                PacketSender.SendEntityDataToProximity(player);
+            }
         }
 
         /// <summary>
@@ -110,7 +113,10 @@ namespace Intersect.Server.Database.PlayerData.Players
             UpdateMemberList();
 
             // Send our entity data to nearby players.
-            PacketSender.SendEntityDataToProximity(player);
+            if (Player.FindOnline(player.Id) != null)
+            {
+                PacketSender.SendEntityDataToProximity(player);
+            }
         }
 
         /// <summary>
