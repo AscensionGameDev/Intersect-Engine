@@ -1684,7 +1684,7 @@ namespace Intersect.Server.Networking
 
             if (player.Trading.Counterparty.Trading.Accepted)
             {
-                PacketSender.SendChatMsg(player, Strings.Trading.revokenotallowed.ToString(player.Trading.Counterparty.Name), CustomColors.Alerts.Declined);
+                PacketSender.SendChatMsg(player, Strings.Trading.RevokeNotAllowed.ToString(player.Trading.Counterparty.Name), CustomColors.Alerts.Declined);
             }
             else
             {
