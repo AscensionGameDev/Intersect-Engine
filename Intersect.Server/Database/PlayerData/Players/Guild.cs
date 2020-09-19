@@ -181,11 +181,21 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <param name="context">The playercontext to search through.</param>
         /// <param name="id">The guild Id to search for.</param>
         /// <returns>Returns a <see cref="Guild"/> that matches the Id, if any.</returns>
-        public static Guild GetGuild(PlayerContext context, Guid id)
+        public static Guild GetGuild(Guid id, PlayerContext context = null)
         {
-            var guild = context.Guilds.Where(p => p.Id == id).SingleOrDefault();
+            if (context == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    context = DbInterface.GetPlayerContext();
 
-            return guild;
+                    return context.Guilds.Where(p => p.Id == id).SingleOrDefault();
+                }
+            }
+            else
+            {
+                return context.Guilds.Where(p => p.Id == id).SingleOrDefault();
+            }
         }
 
         /// <summary>
@@ -194,11 +204,21 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <param name="context">The playercontext to search through.</param>
         /// <param name="name">The guild Name to search for.</param>
         /// <returns>Returns a <see cref="Guild"/> that matches the Name, if any.</returns>
-        public static Guild GetGuild(PlayerContext context, string name)
+        public static Guild GetGuild(string name, PlayerContext context = null)
         {
-            var guild = context.Guilds.Where(p => p.Name == name).SingleOrDefault();
+            if (context == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    context = DbInterface.GetPlayerContext();
 
-            return guild;
+                    return context.Guilds.Where(p => p.Name == name).SingleOrDefault();
+                }
+            }
+            else
+            {
+                return context.Guilds.Where(p => p.Name == name).SingleOrDefault();
+            }
         }
 
         /// <summary>
@@ -206,7 +226,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// </summary>
         /// <param name="context">The playercontext to delete the guild from.</param>
         /// <param name="guild">The <see cref="Guild"/> to delete.</param>
-        public static void DeleteGuild(PlayerContext context, Guild guild)
+        public static void DeleteGuild(Guild guild, PlayerContext context = null)
         {
             // Remove our members cleanly before deleting this from our database.
             foreach (var member in guild.Members.ToArray())
@@ -214,7 +234,19 @@ namespace Intersect.Server.Database.PlayerData.Players
                 guild.RemoveMember(member);
             }
 
-            context.Guilds.Remove(guild);
+            if (context == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    context = DbInterface.GetPlayerContext();
+
+                    context.Guilds.Remove(guild);
+                }
+            }
+            else
+            {
+                context.Guilds.Remove(guild);
+            }
         }
     }
 }
