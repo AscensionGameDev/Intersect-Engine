@@ -358,6 +358,11 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new UpdateGuildMemberPacket(name, Enums.GuildMemberUpdateActions.Invite));
         }
 
+        public static void SendLeaveGuild()
+        {
+            Network.SendPacket(new GuildLeavePacket());
+        }
+
         public static void SendSelectCharacter(Guid charId)
         {
             Network.SendPacket(new SelectCharacterPacket(charId));

@@ -1951,6 +1951,31 @@ namespace Intersect.Server.Networking
             }
         }
 
+        //GuildLeavePacket
+        public void HandlePacket(Client client, Player player, GuildLeavePacket packet)
+        {
+            // Are we in a guild at all?
+            if (player.Guild == null)
+            {
+                return;
+            }
+
+            // Are we the guild master? If so, they're not allowed to leave.
+            if (player.GuildRank == GuildRanks.Guildmaster) 
+            {
+                PacketSender.SendChatMsg(player, Strings.Guilds.GuildLeaderLeave, CustomColors.Alerts.Error);
+                return;
+            }
+
+            // Notify the guild a player has left and remove them from the roster.
+            PacketSender.SendGuildMsg(player, Strings.Guilds.Left.ToString(player.Name, player.Guild.Name), CustomColors.Alerts.Info);
+            player.Guild.RemoveMember(player);
+
+            // Send the newly updated player information to their surroundings.
+            PacketSender.SendEntityDataToProximity(player);
+            
+        }
+
         //FriendRequestResponsePacket
         public void HandlePacket(Client client, Player player, FriendRequestResponsePacket packet)
         {

@@ -1307,6 +1307,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString Joined = @"{00} has joined {01}!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Left = @"{00} has left {01}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString NotInGuild = @"You are not in a guild.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1329,6 +1332,9 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString InviteDeclined = @"You have declined {00} their request to join {01}.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString GuildLeaderLeave = @"A Guildmaster can not leave their own guild, please transfer ownership rights first!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly Dictionary<GuildRanks, String> RankNames = new Dictionary<GuildRanks, string>() {

@@ -761,6 +761,8 @@ namespace Intersect.Client.Localization
         {
             public static LocalizedString Invite = @"Invite";
 
+            public static LocalizedString Leave = "Leave";
+
             public static LocalizedString NotInGuild = @"You are not currently in a guild!";
 
             public static LocalizedString InviteMemberTitle = @"Invite Player";
@@ -770,6 +772,10 @@ namespace Intersect.Client.Localization
             public static LocalizedString InviteRequestTitle = @"Guild Invite";
 
             public static LocalizedString InviteRequestPrompt = @"{00} would like to invite you to join their guild, {01}. Do you accept?";
+
+            public static LocalizedString LeaveTitle = @"Leave Guild";
+
+            public static LocalizedString LeavePrompt = @"Are you sure you would like to leave your guild?";
         }
 
         public struct GameMenu

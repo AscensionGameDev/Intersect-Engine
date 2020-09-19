@@ -18,15 +18,14 @@ namespace Intersect.Client.Interface.Game
 
         private Button mAddPopupButton;
 
+        private Button mLeave;
+
         private ListBox mGuildMembers;
 
         //Controls
         private WindowControl mGuildWindow;
 
         private TextBox mSearchTextbox;
-
-        //Temp variables
-        private string mTempName;
 
         private ImagePanel mTextboxContainer;
 
@@ -45,6 +44,10 @@ namespace Intersect.Client.Interface.Game
             mAddButton = new Button(mGuildWindow, "InviteButton");
             mAddButton.SetText("+");
             mAddButton.Clicked += addButton_Clicked;
+
+            mLeave = new Button(mGuildWindow, "LeaveButton");
+            mLeave.SetText(Strings.Guild.Leave);
+            mLeave.Clicked += leave_Clicked;
 
             mAddPopupButton = new Button(mGuildWindow, "InvitePopupButton");
             mAddPopupButton.IsHidden = true;
@@ -93,7 +96,6 @@ namespace Intersect.Client.Interface.Game
                 var row = mGuildMembers.AddRow(f.Name + " - " + f.Rank);
                 row.UserData = f.Name;
                 row.Clicked += member_Clicked;
-                row.RightClicked += member_RightClicked;
 
                 //Row Render color (red = offline, green = online)
                 if (f.Online == true)
@@ -113,16 +115,29 @@ namespace Intersect.Client.Interface.Game
         {
             if (mSearchTextbox.Text.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                PacketSender.SendAddFriend(mSearchTextbox.Text);
+                PacketSender.SendInviteGuild(mSearchTextbox.Text);
             }
         }
 
         void addPopupButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var iBox = new InputBox(
-                Strings.Guild.InviteMemberTitle, Strings.Guild.InviteMemberPrompt, true, InputBox.InputType.TextInput,
+                Strings.Guild.InviteMemberTitle, Strings.Guild.InviteMemberPrompt.ToString(Globals.Me.Guild), true, InputBox.InputType.TextInput,
                 AddMember, null, 0
             );
+        }
+
+        private void leave_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var iBox = new InputBox(
+                Strings.Guild.LeaveTitle, Strings.Guild.LeavePrompt, true, InputBox.InputType.YesNo, 
+                LeaveGuild, null, 0
+            );
+        }
+
+        private void LeaveGuild(object sender, EventArgs e)
+        {
+            PacketSender.SendLeaveGuild();
         }
 
         void member_Clicked(Base sender, ClickedEventArgs arguments)
@@ -138,22 +153,6 @@ namespace Intersect.Client.Interface.Game
                         Interface.GameUi.SetChatboxText("/pm " + (string) row.UserData + " ");
                     }
             }
-        }
-
-        void member_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
-            //var row = (ListBoxRow) sender;
-            //mTempName = (string) row.UserData;
-
-            //var iBox = new InputBox(
-            //    Strings.Friends.removefriend, Strings.Friends.removefriendprompt.ToString(mTempName), true,
-            //    InputBox.InputType.YesNo, RemoveFriend, null, 0
-            //);
-        }
-
-        private void RemoveMember(Object sender, EventArgs e)
-        {
-            PacketSender.SendRemoveFriend(mTempName);
         }
 
         private void AddMember(Object sender, EventArgs e)

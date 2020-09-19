@@ -360,6 +360,7 @@
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\GuildInviteAcceptPacket.cs" />
     <Compile Include="Network\Packets\Client\GuildInviteDeclinePacket.cs" />
+    <Compile Include="Network\Packets\Client\GuildLeavePacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />

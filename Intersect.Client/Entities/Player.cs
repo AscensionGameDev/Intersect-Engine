@@ -199,7 +199,7 @@ namespace Intersect.Client.Entities
             }
 
             // Hide our Guild window if we're not in a guild!
-            if (string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
+            if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
             {
                 Interface.Interface.GameUi.HideGuildWindow();
             }
