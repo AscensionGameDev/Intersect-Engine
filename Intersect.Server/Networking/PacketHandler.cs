@@ -2010,6 +2010,17 @@ namespace Intersect.Server.Networking
             }
         }
 
+        //RequestGuildPacket
+        public void HandlePacket(Client client, Player player, RequestGuildPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            PacketSender.SendGuild(player);
+        }
+
         //SelectCharacterPacket
         public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
         {

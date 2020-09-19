@@ -71,6 +71,8 @@ namespace Intersect.Client.Interface.Game
 
         private bool mShouldUpdateFriendsList;
 
+        private bool mShouldUpdateGuildList;
+
         private string mTradingTarget;
 
         private TradingWindow mTradingWindow;
@@ -119,6 +121,11 @@ namespace Intersect.Client.Interface.Game
         public void NotifyUpdateFriendsList()
         {
             mShouldUpdateFriendsList = true;
+        }
+
+        public void NotifyUpdateGuildList()
+        {
+            mShouldUpdateGuildList = true;
         }
 
         //Admin Window
@@ -458,6 +465,11 @@ namespace Intersect.Client.Interface.Game
             if (mShouldUpdateFriendsList)
             {
                 GameMenu.UpdateFriendsList();
+            }
+
+            if (mShouldUpdateGuildList)
+            {
+                GameMenu.UpdateGuildList();
             }
 
             mShouldCloseTrading = false;

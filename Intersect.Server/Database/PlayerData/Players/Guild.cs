@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Intersect.Enums;
 using Intersect.Server.Entities;
 using JetBrains.Annotations;
+using Intersect.Server.Networking;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
@@ -17,10 +18,16 @@ namespace Intersect.Server.Database.PlayerData.Players
     public class Guild
     {
 
+        // Entity Framework Garbage.
         public Guild()
         {
         }
 
+        /// <summary>
+        /// Create a new Guild instance.
+        /// </summary>
+        /// <param name="creator">The <see cref="Player"/> that created the guild.</param>
+        /// <param name="name">The Name of the guild.</param>
         public Guild(Player creator, string name)
         {
             Name = name;
@@ -79,6 +86,12 @@ namespace Intersect.Server.Database.PlayerData.Players
             player.Guild = this;
             Members.Add(player);
             SetPlayerRank(player, rank);
+
+            // Send our new guild list to everyone that's online.
+            foreach(var member in FindOnlineMembers())
+            {
+                PacketSender.SendGuild(member);
+            }
         }
 
         /// <summary>
@@ -92,6 +105,12 @@ namespace Intersect.Server.Database.PlayerData.Players
             player.GuildInvite = null;
 
             Members.Remove(player);
+
+            // Send our new guild list to everyone that's online.
+            foreach (var member in FindOnlineMembers())
+            {
+                PacketSender.SendGuild(member);
+            }
         }
 
         /// <summary>

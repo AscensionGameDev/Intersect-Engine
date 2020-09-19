@@ -757,6 +757,11 @@ namespace Intersect.Client.Localization
 
         }
 
+        public struct Guilds
+        {
+            public static LocalizedString Title = @"Guild";
+        }
+
         public struct GameMenu
         {
 
@@ -765,6 +770,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString Menu = @"Open Menu";
 
             public static LocalizedString friends = @"Friends";
+
+            public static LocalizedString Guild = "Guild";
 
             public static LocalizedString items = @"Inventory";
 

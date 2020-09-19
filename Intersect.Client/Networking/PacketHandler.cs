@@ -1607,6 +1607,36 @@ namespace Intersect.Client.Networking
             Interface.Interface.GameUi.NotifyUpdateFriendsList();
         }
 
+        //GuildPacket
+        private static void HandlePacket(GuildPacket packet)
+        {
+            Globals.Me.GuildMembers.Clear();
+
+            foreach (var member in packet.OnlineMembers)
+            {
+                var f = new GuildInstance() {
+                    Name = member.Key,
+                    Rank = member.Value,
+                    Online = true
+                };
+
+                Globals.Me.GuildMembers.Add(f);
+            }
+
+            foreach (var member in packet.OfflineMembers)
+            {
+                var f = new GuildInstance() {
+                    Name = member.Key,
+                    Rank = member.Value,
+                    Online = false
+                };
+
+                Globals.Me.GuildMembers.Add(f);
+            }
+
+            Interface.Interface.GameUi.NotifyUpdateGuildList();
+        }
+
         //FriendRequestPacket
         private static void HandlePacket(FriendRequestPacket packet)
         {

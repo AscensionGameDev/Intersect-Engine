@@ -23,6 +23,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 
 using JetBrains.Annotations;
+using Microsoft.Diagnostics.Runtime.Interop;
 
 namespace Intersect.Server.Networking
 {
@@ -1812,6 +1813,36 @@ namespace Intersect.Server.Networking
         public static void SendFriendRequest(Player player, Player partner)
         {
             player.SendPacket(new FriendRequestPacket(partner.Id, partner.Name));
+        }
+
+        /// <summary>
+        /// Send a player their guild member list.
+        /// </summary>
+        /// <param name="player"></param>
+        public static void SendGuild(Player player)
+        {
+            if (player == null || player.Guild == null)
+            {
+                return;
+            }
+
+            var online = new Dictionary<string, string>();
+            var offline = new Dictionary<string, string>();
+
+            var onlineMembers = player.Guild.FindOnlineMembers();
+            foreach (var member in player.Guild.Members)
+            {
+                if (onlineMembers.Contains(member))
+                {
+                    online.Add(member.Name, Strings.Guilds.RankNames[member.GuildRank]);
+                }
+                else
+                {
+                    offline.Add(member.Name, Strings.Guilds.RankNames[member.GuildRank]);
+                }
+            }
+
+            player.SendPacket(new GuildPacket(online, offline));
         }
 
         //PasswordResetResultPacket

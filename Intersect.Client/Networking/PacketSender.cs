@@ -318,6 +318,11 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new RequestFriendsPacket());
         }
 
+        public static void SendRequestGuild()
+        {
+            Network.SendPacket(new RequestGuildPacket());
+        }
+
         public static void SendAddFriend(string name)
         {
             Network.SendPacket(new UpdateFriendsPacket(name, true));

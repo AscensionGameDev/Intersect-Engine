@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Logging;
 
@@ -1341,6 +1341,14 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString InviteDeclined = @"You have declined {00} their request to join {01}.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly Dictionary<GuildRanks, String> RankNames = new Dictionary<GuildRanks, string>() {
+                { GuildRanks.Recruit, "Recruit" },
+                { GuildRanks.Member, "Member" },
+                { GuildRanks.Officer, "Officer" },
+                { GuildRanks.Guildmaster, "Guildmaster" }
+            };
 
         }
 
