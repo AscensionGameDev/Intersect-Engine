@@ -136,6 +136,9 @@ namespace Intersect.Server.Database.PlayerData.Players
         public void SetPlayerRank(Player player, GuildRanks rank)
         {
             player.GuildRank = rank;
+
+            // Send our new guild list to everyone that's online.
+            UpdateMemberList();
         }
 
         /// <summary>

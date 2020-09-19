@@ -209,6 +209,15 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString GuildCmd = @"/guild";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PromoteCmd = @"/promote";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DemoteCmd = @"/demote";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString KickCmd = @"/gkick";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
 
@@ -1316,7 +1325,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString NotReceivedInvite = @"You've not received any guild invites yet.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString NotAllowedInvite = @"You do not have the permission to invite people to the guild.";
+            public readonly LocalizedString NotAllowed = @"You do not have the permission to do this.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString InviteNotOnline = @"The player you're trying to invite is either not online or does not exist.";
@@ -1335,6 +1344,24 @@ namespace Intersect.Server.Localization
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString GuildLeaderLeave = @"A Guildmaster can not leave their own guild, please transfer ownership rights first!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NoSuchPlayer = @"There is no player called '{00}' in this guild.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Kicked = @"{00} has been kicked from {01}.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Promoted = @"{00} has been promoted to {01}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PromotionFailed = @"{00} can not be promoted any further.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Demoted = @"{00} has been demoted to {01}!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DemotionFailed = @"{00} can not be demoted any further.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly Dictionary<GuildRanks, String> RankNames = new Dictionary<GuildRanks, string>() {
