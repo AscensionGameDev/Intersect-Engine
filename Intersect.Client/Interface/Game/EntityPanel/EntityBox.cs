@@ -719,7 +719,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 if (entityTex != EntityFace.Texture)
                 {
                     EntityFace.Texture = entityTex;
-                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.SpriteOpts.NormalFrames, entityTex.GetHeight() / Options.Instance.SpriteOpts.Directions);
+                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
                     mCurrentSprite = MyEntity.MySprite;
@@ -791,14 +791,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         {
                             PaperdollPanels[n]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.SpriteOpts.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]
                                 .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.SpriteOpts.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.SpriteOpts.Directions
+                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]
