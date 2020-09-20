@@ -494,6 +494,68 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
 
                             break;
+                        case EventCommandType.DisbandGuild:
+                            var gldd = (DisbandGuildCommand)commandList[i];
+                            lstEventCommands.Items.Add(
+                                indent +
+                                Strings.EventCommandList.linestart +
+                                GetCommandText((dynamic)commandList[i], map)
+                            );
+
+                            clp = new CommandListProperties {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            //When the guild is disbanded successfully:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildisbanded);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[gldd.BranchIds[0]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            //When the guild was not disbanded for any reason:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guilddisbandfailed);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[gldd.BranchIds[1]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.enddisbandguild);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            break;
                         default:
                             lstEventCommands.Items.Add(
                                 indent +
@@ -1090,6 +1152,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(CreateGuildCommand command, MapInstance map)
         {
             return Strings.EventCommandList.createguild.ToString(PlayerVariableBase.GetName(command.VariableId));
+        }
+
+        private static string GetCommandText(DisbandGuildCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.disbandguild;
         }
 
         //Set Variable Modification Texts

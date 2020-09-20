@@ -141,8 +141,10 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode55,
             treeNode56});
             System.Windows.Forms.TreeNode treeNode58 = new System.Windows.Forms.TreeNode("Create Guild");
-            System.Windows.Forms.TreeNode treeNode59 = new System.Windows.Forms.TreeNode("Guilds", new System.Windows.Forms.TreeNode[] {
-            treeNode58});
+            System.Windows.Forms.TreeNode treeNode59 = new System.Windows.Forms.TreeNode("Disband Guild");
+            System.Windows.Forms.TreeNode treeNode60 = new System.Windows.Forms.TreeNode("Guilds", new System.Windows.Forms.TreeNode[] {
+            treeNode58,
+            treeNode59});
             this.lblName = new System.Windows.Forms.Label();
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
@@ -967,8 +969,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode58.Name = "createguild";
             treeNode58.Tag = "51";
             treeNode58.Text = "Create Guild";
-            treeNode59.Name = "guilds";
-            treeNode59.Text = "Guilds";
+            treeNode59.Name = "disbandguild";
+            treeNode59.Tag = "52";
+            treeNode59.Text = "Disband Guild";
+            treeNode60.Name = "guilds";
+            treeNode60.Text = "Guilds";
             this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode5,
             treeNode13,
@@ -978,7 +983,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode51,
             treeNode53,
             treeNode57,
-            treeNode59});
+            treeNode60});
             this.lstCommands.Size = new System.Drawing.Size(445, 440);
             this.lstCommands.TabIndex = 2;
             this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);

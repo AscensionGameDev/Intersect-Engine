@@ -218,6 +218,8 @@
         // Guilds
         CreateGuild,
 
+        DisbandGuild,
+
     }
 
 }

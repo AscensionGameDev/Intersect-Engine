@@ -1256,7 +1256,52 @@ namespace Intersect.Server.Entities.Events
             callStack.Push(tmpStack);
         }
 
-        private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
+        private static void ProcessCommand(
+            DisbandGuildCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            var success = false;
+
+            // Is this player in a guild?
+            if (player.Guild != null)
+            {
+                // Send the members a notification, then start wiping the guild from existence through sheer willpower!
+                PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
+                Guild.DeleteGuild(player.Guild);
+
+                // :(
+                success = true;
+            }
+            else
+            {
+                // They're not in a guild.. tell them?
+                PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
+            }
+
+            List<EventCommand> newCommandList = null;
+            if (success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[0]))
+            {
+                newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
+            }
+
+            if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
+            {
+                newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];
+            }
+
+            var tmpStack = new CommandInstance(stackInfo.Page) {
+                CommandList = newCommandList,
+                CommandIndex = 0,
+            };
+
+            callStack.Push(tmpStack);
+        }
+
+            private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             var newStack = new Stack<CommandInstance>();
             newStack.Push(new CommandInstance(currentPage)); //Start from the top

@@ -340,6 +340,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     nudFreeInventorySlots.Value = 1;
 
                     break;
+                case ConditionTypes.InGuildWithRank:
+                    Condition = new InGuildWithRank();
+                    cmbRank.SelectedIndex = 0;
+                    break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -363,6 +367,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpMapIs.Hide();
             grpEquippedItem.Hide();
             grpFreeInventorySlots.Hide();
+            grpInGuild.Hide();
             switch (type)
             {
                 case ConditionTypes.VariableIs:
@@ -461,6 +466,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                 case ConditionTypes.HasFreeInventorySlots:
                     grpFreeInventorySlots.Show();
+
+                    break;
+                case ConditionTypes.InGuildWithRank:
+                    cmbRank.Items.Clear();
+                    cmbRank.Items.AddRange(Strings.GuildGeneral.Ranks.Values.ToArray());
+                    grpInGuild.Show();
 
                     break;
                 default:
@@ -993,6 +1004,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudFreeInventorySlots.Value = condition.Quantity;
         }
 
+        private void SetupFormValues(InGuildWithRank condition)
+        {
+            cmbRank.SelectedIndex = (int)condition.Rank;
+        }
 
         #endregion
 
@@ -1128,8 +1143,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             condition.Quantity = (int) nudFreeInventorySlots.Value;
         }
+
+        private void SaveFormValues(InGuildWithRank condition)
+        {
+            condition.Rank = (GuildRanks)cmbRank.SelectedIndex;
+        }
         #endregion
 
+        
     }
 
 }

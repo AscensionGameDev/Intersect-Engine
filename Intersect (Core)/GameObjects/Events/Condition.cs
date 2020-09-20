@@ -40,6 +40,8 @@ namespace Intersect.GameObjects.Events
 
         HasFreeInventorySlots,
 
+        InGuildWithRank,
+
     }
 
     public class Condition
@@ -218,6 +220,22 @@ namespace Intersect.GameObjects.Events
         /// Defines the amount of inventory slots that need to be free to clear this condition.
         /// </summary>
         public int Quantity { get; set; }
+    }
+
+    /// <summary>
+    /// Defines the condition class used when checking whether a player is in a guild with at least a specified rank.
+    /// </summary>
+    public class InGuildWithRank : Condition
+    {
+        /// <summary>
+        /// Defines the type of condition.
+        /// </summary>
+        public override ConditionTypes Type { get; } = ConditionTypes.InGuildWithRank;
+
+        /// <summary>
+        /// The Guild Rank the condition checks for as a minimum.
+        /// </summary>
+        public GuildRanks Rank { get; set; }
     }
 
     public class VariableCompaison

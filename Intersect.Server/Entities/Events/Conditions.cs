@@ -441,8 +441,24 @@ namespace Intersect.Server.Entities.Events
             return false;
         }
 
-        //Variable Comparison Processing
-        public static bool CheckVariableComparison(
+        public static bool MeetsCondition(
+            InGuildWithRank condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase
+        )
+        {
+            // Check whether or not we match our condition, be it negated or not.
+            if (condition.Negated != (player.Guild != null && (int)player.GuildRank >= (int)condition.Rank))
+            {
+                return true;
+            }      
+
+            return false;
+        }
+
+            //Variable Comparison Processing
+            public static bool CheckVariableComparison(
             VariableValue currentValue,
             VariableCompaison comparison,
             Player player,

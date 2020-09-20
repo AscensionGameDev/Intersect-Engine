@@ -224,9 +224,6 @@ namespace Intersect.Server.Localization
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString MakeGuildmasterCmd = @"/makeguildmaster";
 
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString DisbandCmd = @"/disbandguild";
-
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Guild = @"[GUILD] {00}: {01}";
 

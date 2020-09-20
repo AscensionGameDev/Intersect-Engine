@@ -245,6 +245,11 @@ namespace Intersect.Editor.Localization
             return Strings.EventConditionDesc.HasFreeInventorySlots.ToString(condition.Quantity);
         }
 
+        public static string GetEventConditionalDesc(InGuildWithRank condition)
+        {
+            return Strings.EventConditionDesc.InGuildWithRank.ToString(Strings.GuildGeneral.Ranks[condition.Rank]);
+        }
+
         public static string GetVariableComparisonString(VariableCompaison comparison)
         {
             return "";
@@ -1692,6 +1697,18 @@ Tick timer saved in server config.json.";
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString endcreateguild = @"End Create Guild";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString disbandguild = @"Disband Guild";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildisbanded = @"Guild disbanded successfully.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guilddisbandfailed = @"Guild failed to disband.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString enddisbandguild = @"End Disband Guild";
+
         }
 
         public struct EventCommands
@@ -1759,6 +1776,7 @@ Tick timer saved in server config.json.";
                 {"changeplayerlabel", @"Change Player Label"},
                 {"guilds", @"Guilds"},
                 {"createguild", @"Create Guild"},
+                {"disbandguild", "Disband Guild" },
             };
 
         }
@@ -1821,6 +1839,7 @@ Tick timer saved in server config.json.";
                 {5, @"Does Not Equal"}
             };
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> conditions = new Dictionary<int, LocalizedString>
             {
                 {0, @"Variable Is..."},
@@ -1838,7 +1857,8 @@ Tick timer saved in server config.json.";
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
-                {18, @"Has X free Inventory slots..." }
+                {18, @"Has X free Inventory slots..." },
+                {19, @"Is in Guild with at least rank X..." }
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -2037,8 +2057,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString selfswitch = @"Self Switch {00} is {01}";
 
-            [NotNull, JsonProperty]
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString HasFreeInventorySlots = @"Player has {00} free inventory slot(s)";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InGuildWithRank = @"Player is in Guild with at least rank: {00}";
 
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
@@ -4481,6 +4504,17 @@ Negative values for time to flow backwards.";
 
             public static LocalizedString title = @"Warp Tile Selection";
 
+        }
+
+        public struct GuildGeneral
+        {
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<GuildRanks, string> Ranks = new Dictionary<GuildRanks, string>() {
+                { GuildRanks.Recruit, "Recruit" },
+                { GuildRanks.Member, "Member" },
+                { GuildRanks.Officer, "Officer" },
+                { GuildRanks.Guildmaster, "Guildmaster" },
+            };
         }
 
     }

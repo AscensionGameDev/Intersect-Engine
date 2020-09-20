@@ -853,26 +853,6 @@ namespace Intersect.Server.Networking
                 PacketSender.SendGuildMsg(player, Strings.Guilds.Demoted.ToString(target.Name, Strings.Guilds.RankNames[GuildRanks.Guildmaster]), CustomColors.Alerts.Success);
 
             }
-            else if (cmd == Strings.Chat.DisbandCmd)
-            {
-                // Are we in a guild?
-                if (player.Guild == null)
-                {
-                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, CustomColors.Alerts.Error);
-                    return;
-                }
-
-                // Are we allowed to do this?
-                if (player.Guild.GetPlayerRank(player) != GuildRanks.Guildmaster)
-                {
-                    PacketSender.SendChatMsg(player, Strings.Guilds.NotAllowed, CustomColors.Alerts.Error);
-                    return;
-                }
-
-                // Oh boy, here we go.. Sending a message to everyone then nuking this guild!
-                PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
-                Guild.DeleteGuild(player.Guild);
-            }
             else
             {
                 //Search for command activated events and run them

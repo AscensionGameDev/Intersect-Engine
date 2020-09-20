@@ -715,6 +715,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new CreateGuildCommand(CurrentPage.CommandLists);
 
                     break;
+                case EventCommandType.DisbandGuild:
+                    tmpCommand = new DisbandGuildCommand(CurrentPage.CommandLists);
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1287,6 +1291,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.CreateGuild:
                     cmdWindow = new EventCommandCreateGuild((CreateGuildCommand) command, CurrentPage, this);
 
+                    break;
+
+                case EventCommandType.DisbandGuild:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
