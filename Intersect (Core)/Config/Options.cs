@@ -56,6 +56,10 @@ namespace Intersect
 
         [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
 
+        public SpriteOptions Sprites = new SpriteOptions();
+
+        [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         [NotNull]
@@ -128,6 +132,8 @@ namespace Intersect
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static LootOptions Loot => Instance.LootOpts;
+
+        public static NpcOptions Npc => Instance.NpcOpts;
 
         public static PartyOptions Party => Instance.PartyOpts;
 
