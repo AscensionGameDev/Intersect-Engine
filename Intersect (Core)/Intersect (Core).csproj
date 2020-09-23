@@ -208,12 +208,14 @@
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
     <Compile Include="Config\LootOptions.cs" />
+    <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext`2.cs" />
     <Compile Include="Core\ApplicationService`2.cs" />
     <Compile Include="Core\ApplicationService`3.cs" />
+    <Compile Include="Config\SpriteOptions.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />
     <Compile Include="Core\ExperimentalFeatures\ExperimentalFlag.cs" />

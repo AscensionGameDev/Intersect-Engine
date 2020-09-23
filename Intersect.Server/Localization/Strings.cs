@@ -1242,6 +1242,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString offerinvalid = @"Invalid item selected to offer!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString RevokeNotAllowed = @"You can't revoke this item, {00} already accepted the trade!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

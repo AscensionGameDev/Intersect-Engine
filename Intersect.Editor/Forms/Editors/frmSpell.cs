@@ -517,9 +517,9 @@ namespace Intersect.Editor.Forms.Editors
                     g.DrawImage(
                         src,
                         new Rectangle(
-                            picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
-                            src.Height / 4
-                        ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                            picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
+                            src.Height / Options.Instance.Sprites.Directions
+                        ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
                     );
 
                     g.Dispose();
@@ -575,9 +575,9 @@ namespace Intersect.Editor.Forms.Editors
                 g.DrawImage(
                     src,
                     new Rectangle(
-                        picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
-                        src.Height / 4
-                    ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                        picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
+                        src.Height / Options.Instance.Sprites.Directions
+                    ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
                 );
 
                 g.Dispose();
