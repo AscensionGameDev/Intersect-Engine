@@ -59,8 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\AudioState.cs" />
+    <Compile Include="Audio\AudioType.cs" />
     <Compile Include="Audio\GameAudioInstance.cs" />
     <Compile Include="Audio\GameAudioSource.cs" />
+    <Compile Include="Audio\IAudioInstance.cs" />
+    <Compile Include="Audio\IAudioSource.cs" />
     <Compile Include="Content\AssetTypeAttribute.cs" />
     <Compile Include="Content\ContentTypes.cs" />
     <Compile Include="Content\ContentTypesExtensions.cs" />
@@ -79,6 +83,7 @@
     <Compile Include="Graphics\GameTileBuffer.cs" />
     <Compile Include="Input\GameClipboard.cs" />
     <Compile Include="Graphics\Resolution.cs" />
+    <Compile Include="IGameContext.cs" />
     <Compile Include="Input\GameInput.cs" />
     <Compile Include="Interface\IMutableInterface.cs" />
     <Compile Include="Network\GameSocket.cs" />

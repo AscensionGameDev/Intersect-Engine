@@ -1,48 +1,44 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
-
-using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework.Audio;
 
+using System;
+
 namespace Intersect.Client.MonoGame.Audio
 {
-
     public class MonoSoundInstance : MonoAudioInstance<MonoSoundSource>
     {
-
         private readonly SoundEffectInstance mInstance;
 
-        private bool mDisposed;
-
-        private int mVolume;
-
         // ReSharper disable once SuggestBaseTypeForParameter
-        public MonoSoundInstance([NotNull] MonoSoundSource source) : base(source)
+        public MonoSoundInstance(MonoSoundSource source) : base(source)
         {
-            mInstance = Source.Effect?.CreateInstance();
+            mInstance = AudioSource.Effect?.CreateInstance();
         }
 
-        public override AudioInstanceState State
+        public override AudioState State
         {
             get
             {
-                if (mDisposed || mInstance == null)
+                if (mInstance == null || mInstance.IsDisposed)
                 {
-                    return AudioInstanceState.Disposed;
+                    return AudioState.Disposed;
                 }
 
                 switch (mInstance.State)
                 {
                     case SoundState.Playing:
-                        return AudioInstanceState.Playing;
+                        return AudioState.Playing;
+
                     case SoundState.Stopped:
-                        return AudioInstanceState.Stopped;
+                        return AudioState.Stopped;
+
                     case SoundState.Paused:
-                        return AudioInstanceState.Paused;
+                        return AudioState.Paused;
+
                     default:
-                        return AudioInstanceState.Disposed;
+                        return AudioState.Disposed;
                 }
             }
         }
@@ -53,7 +49,14 @@ namespace Intersect.Client.MonoGame.Audio
             //I'm adding a catch-all so that maybe it stops crashing games :/
             try
             {
-                mInstance?.Play();
+                if (State == AudioState.Paused)
+                {
+                    mInstance?.Resume();
+                }
+                else
+                {
+                    mInstance?.Play();
+                }
             }
             catch (Exception ex)
             {
@@ -61,42 +64,19 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override void Pause()
-        {
-            mInstance?.Pause();
-        }
+        public override void Pause() => mInstance?.Pause();
 
-        public override void Stop()
-        {
-            mInstance?.Stop();
-        }
+        public override void Stop() => mInstance?.Stop();
 
-        public override void SetVolume(int volume, bool isMusic = false)
+        protected override void VolumeSet()
         {
-            mVolume = volume;
-            try
+            if (mInstance != null)
             {
-                if (mInstance != null)
-                {
-                    mInstance.Volume = mVolume * (float) (Globals.Database.SoundVolume / 100f) / 100f;
-                }
-            }
-            catch (NullReferenceException)
-            {
-                // song changed while changing volume
-            }
-            catch (Exception)
-            {
-                // device not ready
+                mInstance.Volume = Volume * Globals.Database.SoundVolume / 10000f;
             }
         }
 
-        public override int GetVolume()
-        {
-            return mVolume;
-        }
-
-        protected override void InternalLoopSet()
+        protected override void IsLoopingSet()
         {
             if (mInstance != null)
             {
@@ -104,28 +84,23 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (mDisposed || mInstance == null)
+            if (disposing)
             {
-                return;
-            }
+                if (mInstance.State != SoundState.Stopped)
+                {
+                    mInstance.Stop();
+                }
 
-            mDisposed = true;
-            if (mInstance.State != SoundState.Stopped)
-            {
-                mInstance.Stop();
+                mInstance.Dispose();
+                AudioSource.ReleaseEffect();
             }
-
-            mInstance.Dispose();
-            Source.ReleaseEffect();
         }
 
         ~MonoSoundInstance()
         {
-            Dispose();
+            Dispose(false);
         }
-
     }
-
 }

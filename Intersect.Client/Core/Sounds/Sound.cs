@@ -16,7 +16,7 @@ namespace Intersect.Client.Core.Sounds
 
         protected bool mLoop;
 
-        protected GameAudioInstance mSound;
+        protected IAudioInstance mSound;
 
         protected float mVolume;
 
@@ -34,7 +34,7 @@ namespace Intersect.Client.Core.Sounds
             {
                 mSound = sound.CreateInstance();
                 mSound.IsLooping = mLoop;
-                mSound.SetVolume(Globals.Database.SoundVolume);
+                mSound.Volume = Globals.Database.SoundVolume;
                 mSound.Play();
                 Loaded = true;
             }
@@ -60,7 +60,7 @@ namespace Intersect.Client.Core.Sounds
                 return false;
             }
 
-            if (mLoop || mSound?.State != GameAudioInstance.AudioInstanceState.Stopped)
+            if (mLoop || mSound?.State != AudioState.Stopped)
             {
                 return true;
             }

@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 namespace Intersect.Client.MonoGame.Audio
 {
 
-    public abstract class MonoAudioInstance<TSource> : GameAudioInstance where TSource : GameAudioSource
+    public abstract class MonoAudioInstance<TAudioSource> : GameAudioInstance where TAudioSource : GameAudioSource
     {
 
         /// <inheritdoc />
@@ -16,8 +16,7 @@ namespace Intersect.Client.MonoGame.Audio
         }
 
         [NotNull]
-        public new TSource Source => base.Source as TSource ?? throw new InvalidOperationException();
-
+        public new TAudioSource AudioSource => base.AudioSource as TAudioSource ?? throw new InvalidOperationException();
     }
 
 }

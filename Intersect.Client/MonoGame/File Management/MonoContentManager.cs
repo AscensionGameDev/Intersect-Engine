@@ -17,6 +17,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using Intersect.Client.General;
+
 namespace Intersect.Client.MonoGame.File_Management
 {
 
@@ -252,9 +254,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 mSoundDict.Add(
                     RemoveExtension(filename),
-                    new MonoSoundSource(
-                        Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))
-                    )
+                    new MonoSoundSource(Path.Combine(dir, filename), ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
                 );
             }
         }
@@ -272,7 +272,7 @@ namespace Intersect.Client.MonoGame.File_Management
             for (var i = 0; i < items.Length; i++)
             {
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
             }
         }
 

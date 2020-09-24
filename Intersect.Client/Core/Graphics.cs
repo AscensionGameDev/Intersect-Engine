@@ -60,7 +60,7 @@ namespace Intersect.Client.Core
         public static ColorF PlayerLightColor = ColorF.White;
 
         //Game Renderer
-        public static GameRenderer Renderer;
+        public static GameRenderer Renderer { get; set; }
 
         //Cache the Y based rendering
         public static HashSet<Entity>[,] RenderingEntities;
