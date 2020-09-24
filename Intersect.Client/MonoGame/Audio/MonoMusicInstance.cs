@@ -1,27 +1,19 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 
 using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
+
+using System;
 
 namespace Intersect.Client.MonoGame.Audio
 {
-
     public class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
     {
-
-        public static MonoMusicInstance Instance = null;
+        public static MonoMusicInstance Instance { get; set; } = null;
 
         private readonly DynamicSoundEffectInstance mSong;
-
-        private readonly MonoMusicSource mSource;
-
-        private bool mDisposed;
-
-        private int mVolume;
 
         // ReSharper disable once SuggestBaseTypeForParameter
         public MonoMusicInstance([NotNull] MonoMusicSource source) : base(source)
@@ -35,31 +27,32 @@ namespace Intersect.Client.MonoGame.Audio
             }
 
             Instance = this;
-            mSource = source;
 
-
-            mSong = source.LoadSong();
+            mSong = AudioSource.LoadSong();
         }
 
-        public override AudioInstanceState State
+        public override AudioState State
         {
             get
             {
                 if (mSong == null || mSong.IsDisposed)
                 {
-                    return AudioInstanceState.Disposed;
+                    return AudioState.Disposed;
                 }
 
                 switch (mSong.State)
                 {
                     case SoundState.Playing:
-                        return AudioInstanceState.Playing;
+                        return AudioState.Playing;
+
                     case SoundState.Paused:
-                        return AudioInstanceState.Paused;
+                        return AudioState.Paused;
+
                     case SoundState.Stopped:
-                        return AudioInstanceState.Stopped;
+                        return AudioState.Stopped;
+
                     default:
-                        return AudioInstanceState.Disposed;
+                        return AudioState.Disposed;
                 }
             }
         }
@@ -68,7 +61,14 @@ namespace Intersect.Client.MonoGame.Audio
         {
             if (mSong != null && !mSong.IsDisposed)
             {
-                mSong.Play();
+                if (State == AudioState.Paused)
+                {
+                    mSong.Resume();
+                }
+                else
+                {
+                    mSong.Play();
+                }
             }
         }
 
@@ -88,14 +88,13 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override void SetVolume(int volume, bool isMusic = false)
+        protected override void VolumeSet()
         {
             if (mSong != null && !mSong.IsDisposed)
             {
-                mVolume = volume;
                 try
                 {
-                    mSong.Volume = mVolume * (Globals.Database.MusicVolume / 100f) / 100f;
+                    mSong.Volume = Volume * Globals.Database.MusicVolume / 10000f;
                 }
                 catch (NullReferenceException)
                 {
@@ -108,12 +107,7 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override int GetVolume()
-        {
-            return mVolume;
-        }
-
-        protected override void InternalLoopSet()
+        protected override void IsLoopingSet()
         {
             if (mSong != null)
             {
@@ -121,28 +115,25 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            mDisposed = true;
-            try
+            if (disposing)
             {
-                mSong?.Stop();
-                //Closing the source will lock the processing thread and then properly dispose of the song.
-                mSource.Close();
-            }
-            catch
-            {
-                /* This is just to catch any B.S. errors that MonoGame shouldn't be throwing to us. */
+                try
+                {
+                    mSong?.Stop();
+                    (AudioSource as MonoMusicSource).Close();
+                }
+                catch
+                {
+                    /* This is just to catch any B.S. errors that MonoGame shouldn't be throwing to us. */
+                }
             }
         }
 
         ~MonoMusicInstance()
         {
-            mDisposed = true;
-
-            //We don't want to call MediaPlayer.Stop() here because it's static and another song has likely started playing.
+            Dispose(false);
         }
-
     }
-
 }

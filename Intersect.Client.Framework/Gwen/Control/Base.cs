@@ -2147,7 +2147,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 var soundInstance = sound.CreateInstance();
                 if (soundInstance != null)
                 {
-                    soundInstance.SetVolume(100, false);
+                    soundInstance.Volume = 100;
                     soundInstance.Play();
                 }
             }

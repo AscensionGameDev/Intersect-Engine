@@ -34,7 +34,7 @@ namespace Intersect.Client.Core
         //Music
         private static string sQueuedMusic = "";
 
-        private static GameAudioInstance sMyMusic { get; set; }
+        private static IAudioInstance sMyMusic { get; set; }
 
         //Init
         public static void Init()
@@ -52,7 +52,7 @@ namespace Intersect.Client.Core
         {
             if (sMyMusic != null)
             {
-                sMyMusic.SetVolume(sMyMusic.GetVolume(), true);
+                sMyMusic.Volume = sMyMusic.Volume;
             }
 
             for (var i = 0; i < sGameSounds.Count; i++)
@@ -74,8 +74,8 @@ namespace Intersect.Client.Core
                 {
                     if (sFadingOut)
                     {
-                        sMyMusic.SetVolume(sMyMusic.GetVolume() - 1, true);
-                        if (sMyMusic.GetVolume() <= 1)
+                        sMyMusic.Volume = sMyMusic.Volume - 1;
+                        if (sMyMusic.Volume <= 1)
                         {
                             StopMusic();
                             PlayMusic(sQueuedMusic, 0f, sQueuedFade, sQueuedLoop);
@@ -87,8 +87,8 @@ namespace Intersect.Client.Core
                     }
                     else
                     {
-                        sMyMusic.SetVolume(sMyMusic.GetVolume() + 1, true);
-                        if (sMyMusic.GetVolume() < 100)
+                        sMyMusic.Volume = sMyMusic.Volume + 1;
+                        if (sMyMusic.Volume < 100)
                         {
                             sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
                         }
@@ -127,9 +127,9 @@ namespace Intersect.Client.Core
             if (sMyMusic != null)
             {
                 if (fadeout < 0.01 ||
-                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
-                    sMyMusic.GetVolume() == 0)
+                    sMyMusic.State == AudioState.Stopped ||
+                    sMyMusic.State == AudioState.Paused ||
+                    sMyMusic.Volume == 0)
                 {
                     StopMusic();
                     StartMusic(filename, fadein, loop);
@@ -139,7 +139,7 @@ namespace Intersect.Client.Core
                     //Start fadeout
                     if (!string.Equals(sCurrentSong, filename, StringComparison.CurrentCultureIgnoreCase) || sFadingOut)
                     {
-                        sFadeRate = sMyMusic.GetVolume() / fadeout;
+                        sFadeRate = sMyMusic.Volume / fadeout;
                         sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
                         sFadingOut = true;
                         sQueuedMusic = filename;
@@ -177,7 +177,7 @@ namespace Intersect.Client.Core
             sMyMusic = music.CreateInstance();
             sCurrentSong = filename;
             sMyMusic.Play();
-            sMyMusic.SetVolume(0, true);
+            sMyMusic.Volume = 0;
             sMyMusic.IsLooping = loop;
             sFadeRate = (float) 100 / fadein;
             sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000) + 1;
@@ -192,9 +192,9 @@ namespace Intersect.Client.Core
             }
 
             if (Math.Abs(fadeout) < 0.01 ||
-                sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
-                sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused ||
-                sMyMusic.GetVolume() == 0)
+                sMyMusic.State == AudioState.Stopped ||
+                sMyMusic.State == AudioState.Paused ||
+                sMyMusic.Volume == 0)
             {
                 sCurrentSong = "";
                 sMyMusic.Stop();
@@ -205,7 +205,7 @@ namespace Intersect.Client.Core
             else
             {
                 //Start fadeout
-                sFadeRate = (float) sMyMusic.GetVolume() / fadeout;
+                sFadeRate = (float) sMyMusic.Volume / fadeout;
                 sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
                 sFadingOut = true;
             }

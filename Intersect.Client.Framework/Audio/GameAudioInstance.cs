@@ -1,33 +1,30 @@
-﻿using JetBrains.Annotations;
+﻿using System;
 
 namespace Intersect.Client.Framework.Audio
 {
-
-    public abstract class GameAudioInstance
+    public abstract class GameAudioInstance : IAudioInstance
     {
-
-        public enum AudioInstanceState
-        {
-
-            Stopped = 0,
-
-            Playing = 1,
-
-            Paused = 2,
-
-            Disposed = 3,
-
-        }
-
         private bool mIsLooping;
 
-        protected GameAudioInstance([NotNull] GameAudioSource source)
+        private int mVolume;
+
+        protected GameAudioInstance(IAudioSource audioSource)
         {
-            Source = source;
+            if (audioSource == null)
+            {
+                throw new ArgumentNullException(nameof(audioSource));
+            }
+
+            AudioSource = audioSource;
         }
 
-        [NotNull]
-        public GameAudioSource Source { get; }
+        public IAudioSource AudioSource { get; }
+
+        /// <inheritdoc />
+        public AudioType AudioType => AudioSource.AudioType;
+
+        /// <inheritdoc />
+        public abstract AudioState State { get; }
 
         public bool IsLooping
         {
@@ -35,13 +32,19 @@ namespace Intersect.Client.Framework.Audio
             set
             {
                 mIsLooping = value;
-                InternalLoopSet();
+                IsLoopingSet();
             }
         }
 
-        public abstract AudioInstanceState State { get; }
-
-        protected abstract void InternalLoopSet();
+        public int Volume
+        {
+            get => mVolume;
+            set
+            {
+                mVolume = value;
+                VolumeSet();
+            }
+        }
 
         public abstract void Play();
 
@@ -49,12 +52,16 @@ namespace Intersect.Client.Framework.Audio
 
         public abstract void Stop();
 
-        public abstract void SetVolume(int volume, bool isMusic = false);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-        public abstract int GetVolume();
+        protected virtual void IsLoopingSet() { }
 
-        public abstract void Dispose();
+        protected virtual void VolumeSet() { }
 
+        protected virtual void Dispose(bool disposing) { }
     }
-
 }

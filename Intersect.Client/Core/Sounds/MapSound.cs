@@ -41,7 +41,7 @@ namespace Intersect.Client.Core.Sounds
             mY = y;
             mMapId = mapId;
             mEntity = parent;
-            mSound.SetVolume(0);
+            mSound.Volume = 0;
         }
 
         public void UpdatePosition(int x, int y, Guid mapId)
@@ -67,7 +67,7 @@ namespace Intersect.Client.Core.Sounds
         {
             if (mMapId == Guid.Empty)
             {
-                mSound.SetVolume(0);
+                mSound.Volume = 0;
 
                 return;
             }
@@ -109,7 +109,7 @@ namespace Intersect.Client.Core.Sounds
 
             if ((mX == -1 || mY == -1 || mDistance <= 0) && sameMap)
             {
-                mSound.SetVolume(100);
+                mSound.Volume = 100;
             }
             else
             {
@@ -121,11 +121,12 @@ namespace Intersect.Client.Core.Sounds
                         volume = 0f;
                     }
 
-                    mSound.SetVolume((int) volume);
+
+                    mSound.Volume = (int) volume;
                 }
                 else
                 {
-                    mSound.SetVolume(0);
+                    mSound.Volume = 0;
                 }
             }
         }

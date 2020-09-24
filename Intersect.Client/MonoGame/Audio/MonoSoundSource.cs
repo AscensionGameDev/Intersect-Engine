@@ -11,19 +11,17 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Intersect.Client.MonoGame.Audio
 {
-
     public class MonoSoundSource : GameAudioSource
     {
-
         private readonly string mFilename;
 
         private int mInstanceCount;
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(string filename, ContentManager contentManager)
+        public MonoSoundSource(string name, ContentManager contentManager) : base(name, AudioType.SoundEffect)
         {
-            mFilename = filename;
+            mFilename = name;
         }
 
         public SoundEffect Effect
@@ -39,7 +37,7 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override GameAudioInstance CreateInstance()
+        public override IAudioInstance CreateInstance()
         {
             mInstanceCount++;
 
@@ -77,7 +75,5 @@ namespace Intersect.Client.MonoGame.Audio
                 }
             }
         }
-
     }
-
 }

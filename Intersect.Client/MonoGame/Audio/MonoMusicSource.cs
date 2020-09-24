@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-
-using Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
@@ -9,31 +6,31 @@ using Intersect.Client.Utilities;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 
 using NVorbis;
 
+using System;
+using System.Threading;
+
 namespace Intersect.Client.MonoGame.Audio
 {
-
     public class MonoMusicSource : GameAudioSource
     {
-
-        private readonly string mPath;
+        private readonly string mName;
 
         public VorbisReader Reader { get; set; }
+
         public DynamicSoundEffectInstance Instance { get; set; }
 
-
         private static Thread mUnderlyingThread;
+
         private static object mInstanceLock = new object();
+
         private static MonoMusicSource mActiveSource;
 
-        
-
-        public MonoMusicSource(string path)
+        public MonoMusicSource(string name) : base(name, AudioType.Music)
         {
-            mPath = path;
+            mName = name;
 
             if (mUnderlyingThread == null)
             {
@@ -47,22 +44,19 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override GameAudioInstance CreateInstance()
-        {
-            return new MonoMusicInstance(this);
-        }
+        public override IAudioInstance CreateInstance() => new MonoMusicInstance(this);
 
         public DynamicSoundEffectInstance LoadSong()
         {
             lock (mInstanceLock)
             {
-                if (!string.IsNullOrWhiteSpace(mPath))
+                if (!string.IsNullOrWhiteSpace(mName))
                 {
                     try
                     {
                         if (Reader == null)
                         {
-                            Reader = new VorbisReader(mPath);
+                            Reader = new VorbisReader(mName);
                         }
 
                         if (Instance != null)
@@ -74,12 +68,13 @@ namespace Intersect.Client.MonoGame.Audio
                         Instance = new DynamicSoundEffectInstance(
                             Reader.SampleRate, Reader.Channels == 1 ? AudioChannels.Mono : AudioChannels.Stereo
                         );
+
                         mActiveSource = this;
                         return Instance;
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"Error loading '{mPath}'.", exception);
+                        Log.Error($"Error loading '{mName}'.", exception);
                         ChatboxMsg.AddMessage(
                             new ChatboxMsg(
                                 Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
@@ -88,6 +83,7 @@ namespace Intersect.Client.MonoGame.Audio
                     }
                 }
             }
+
             mActiveSource = this;
             return null;
         }
@@ -114,7 +110,7 @@ namespace Intersect.Client.MonoGame.Audio
 
             while (Globals.IsRunning)
             {
-                Thread.Sleep((int)(1000 / Math.Max(updateRate,1)));
+                Thread.Sleep((int) (1000 / Math.Max(updateRate, 1)));
                 lock (mInstanceLock)
                 {
                     if (mActiveSource != null)
@@ -122,7 +118,8 @@ namespace Intersect.Client.MonoGame.Audio
                         var reader = mActiveSource.Reader;
                         var soundInstance = mActiveSource.Instance;
 
-                        if (reader != null && soundInstance != null && !soundInstance.IsDisposed) {
+                        if (reader != null && soundInstance != null && !soundInstance.IsDisposed)
+                        {
                             float[] sampleBuffer = null;
                             while (soundInstance.PendingBufferCount < buffers)
                             {
@@ -139,9 +136,14 @@ namespace Intersect.Client.MonoGame.Audio
                                 var dataBuffer = new byte[read << 1];
                                 for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
                                 {
-                                    var sample = (short)MathHelper.Clamp(sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue);
+                                    var sample = (short) MathHelper.Clamp(
+                                        sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue
+                                    );
+
                                     var sampleData = BitConverter.GetBytes(sample);
-                                    for (var sampleByteIndex = 0; sampleByteIndex < sampleData.Length; ++sampleByteIndex)
+                                    for (var sampleByteIndex = 0;
+                                        sampleByteIndex < sampleData.Length;
+                                        ++sampleByteIndex)
                                         dataBuffer[(sampleIndex << 1) + sampleByteIndex] = sampleData[sampleByteIndex];
                                 }
 
@@ -158,5 +160,4 @@ namespace Intersect.Client.MonoGame.Audio
             Close();
         }
     }
-
 }
