@@ -18,6 +18,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 
 using Newtonsoft.Json;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Entities
 {
@@ -1098,6 +1099,11 @@ namespace Intersect.Client.Entities
 
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
+
+            Entity bestMatch = null;
+            var bestAreaMatch = 0f;
+
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
@@ -1118,63 +1124,16 @@ namespace Intersect.Client.Entities
                         {
                             foreach (var en in Globals.Entities)
                             {
-                                if (en.Value == null)
+                                if (en.Value == null || en.Value.CurrentMap != mapId || en.Value is Projectile || en.Value is Resource || (en.Value.IsStealthed() && (!(en.Value is Player player) || Globals.Me.IsInMyParty(player))))
                                 {
                                     continue;
                                 }
 
-                                if (en.Value.CurrentMap == mapId &&
-                                    en.Value.X == x &&
-                                    en.Value.Y == y &&
-                                    (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
+                                var intersectRect = FloatRect.Intersect(en.Value.WorldPos, targetRect);
+                                if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
                                 {
-                                    if (en.Value.GetType() != typeof(Projectile) &&
-                                        en.Value.GetType() != typeof(Resource))
-                                    {
-                                        if (TargetBox != null)
-                                        {
-                                            TargetBox.Dispose();
-                                            TargetBox = null;
-                                        }
-
-                                        if (en.Value != Globals.Me)
-                                        {
-                                            if (en.Value.GetType() == typeof(Player))
-                                            {
-                                                TargetBox = new EntityBox(
-                                                    Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, en.Value
-                                                );
-                                            }
-                                            else
-                                            {
-                                                TargetBox = new EntityBox(
-                                                    Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
-                                                    en.Value
-                                                );
-                                            }
-                                        }
-
-                                        if (TargetType == 0 && TargetIndex == en.Value.Id)
-                                        {
-                                            ClearTarget();
-
-                                            return true;
-                                        }
-
-                                        if (en.Value.GetType() == typeof(Player))
-                                        {
-                                            //Select in admin window if open
-                                            if (Interface.Interface.GameUi.AdminWindowOpen())
-                                            {
-                                                Interface.Interface.GameUi.AdminWindowSelectName(en.Value.Name);
-                                            }
-                                        }
-
-                                        TargetType = 0;
-                                        TargetIndex = en.Value.Id;
-
-                                        return true;
-                                    }
+                                    bestAreaMatch = intersectRect.Width * intersectRect.Height;
+                                    bestMatch = en.Value;
                                 }
                             }
 
@@ -1182,40 +1141,73 @@ namespace Intersect.Client.Entities
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {
-                                    if (en.Value == null)
+                                    if (en.Value == null || en.Value.CurrentMap != mapId || ((Event)en.Value).DisablePreview)
                                     {
                                         continue;
                                     }
 
-                                    if (en.Value.CurrentMap == mapId &&
-                                        en.Value.X == x &&
-                                        en.Value.Y == y &&
-                                        !((Event) en.Value).DisablePreview &&
-                                        (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
+                                    var intersectRect = FloatRect.Intersect(en.Value.WorldPos, targetRect);
+                                    if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
                                     {
-                                        if (TargetBox != null)
-                                        {
-                                            TargetBox.Dispose();
-                                            TargetBox = null;
-                                        }
-
-                                        TargetBox = new EntityBox(
-                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, en.Value
-                                        );
-
-                                        if (TargetType == 1 && TargetIndex == en.Value.Id)
-                                        {
-                                            ClearTarget();
-
-                                            return true;
-                                        }
-
-                                        TargetType = 1;
-                                        TargetIndex = en.Value.Id;
-
-                                        return true;
+                                        bestAreaMatch = intersectRect.Width * intersectRect.Height;
+                                        bestMatch = en.Value;
                                     }
                                 }
+                            }
+
+                            if (bestMatch != null)
+                            {
+                                if (TargetBox != null)
+                                {
+                                    TargetBox.Dispose();
+                                    TargetBox = null;
+                                }
+
+                                var targetType = bestMatch is Event ? 1 : 0;
+
+                                if (bestMatch != Globals.Me)
+                                {
+                                    if (bestMatch is Player)
+                                    {
+                                        TargetBox = new EntityBox(
+                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, bestMatch
+                                        );
+                                    }
+                                    else if (bestMatch is Event)
+                                    {
+                                        TargetBox = new EntityBox(
+                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, bestMatch
+                                        );
+                                    }
+                                    else
+                                    {
+                                        TargetBox = new EntityBox(
+                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
+                                            bestMatch
+                                        );
+                                    }
+                                }
+
+                                if (TargetType == targetType && TargetIndex == bestMatch.Id)
+                                {
+                                    ClearTarget();
+
+                                    return true;
+                                }
+
+                                if (bestMatch.GetType() == typeof(Player))
+                                {
+                                    //Select in admin window if open
+                                    if (Interface.Interface.GameUi.AdminWindowOpen())
+                                    {
+                                        Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
+                                    }
+                                }
+
+                                TargetType = targetType;
+                                TargetIndex = bestMatch.Id;
+
+                                return true;
                             }
                         }
 
