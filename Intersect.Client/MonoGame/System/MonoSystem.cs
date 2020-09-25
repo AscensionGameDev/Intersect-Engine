@@ -8,13 +8,13 @@ namespace Intersect.Client.MonoGame.System
 
     public class MonoSystem : GameSystem
     {
-        public long StartTime = DateTime.UtcNow.Ticks;
+        public readonly long StartTime;
 
         public long TotalMilliseconds;
 
         public MonoSystem()
         {
-
+             StartTime = DateTime.UtcNow.Ticks;
         }
 
         public override long GetTimeMs()
