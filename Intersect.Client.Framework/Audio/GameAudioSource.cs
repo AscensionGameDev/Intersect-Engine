@@ -1,5 +1,8 @@
 ﻿namespace Intersect.Client.Framework.Audio
 {
+    /// <summary>
+    /// Abstract core implementation for audio sources.
+    /// </summary>
     public abstract class GameAudioSource : IAudioSource
     {
         /// <inheritdoc />
@@ -8,12 +11,13 @@
         /// <inheritdoc />
         public AudioType AudioType { get; }
 
-        public GameAudioSource(string name, AudioType audioType)
+        protected GameAudioSource(string name, AudioType audioType)
         {
             Name = name;
             AudioType = audioType;
         }
 
+        /// <inheritdoc />
         public abstract IAudioInstance CreateInstance();
     }
 }

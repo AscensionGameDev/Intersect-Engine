@@ -1,5 +1,8 @@
 ﻿namespace Intersect.Client.Framework.Audio
 {
+    /// <summary>
+    /// Enumeration of the different audio playback states.
+    /// </summary>
     public enum AudioState
     {
         Stopped = 0,
