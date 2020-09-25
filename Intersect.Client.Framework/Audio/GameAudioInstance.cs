@@ -2,6 +2,9 @@
 
 namespace Intersect.Client.Framework.Audio
 {
+    /// <summary>
+    /// Abstract core implementation for audio instances.
+    /// </summary>
     public abstract class GameAudioInstance : IAudioInstance
     {
         private bool mIsLooping;
@@ -10,12 +13,7 @@ namespace Intersect.Client.Framework.Audio
 
         protected GameAudioInstance(IAudioSource audioSource)
         {
-            if (audioSource == null)
-            {
-                throw new ArgumentNullException(nameof(audioSource));
-            }
-
-            AudioSource = audioSource;
+            AudioSource = audioSource ?? throw new ArgumentNullException(nameof(audioSource));
         }
 
         public IAudioSource AudioSource { get; }
@@ -26,6 +24,7 @@ namespace Intersect.Client.Framework.Audio
         /// <inheritdoc />
         public abstract AudioState State { get; }
 
+        /// <inheritdoc />
         public bool IsLooping
         {
             get => mIsLooping;
@@ -36,6 +35,7 @@ namespace Intersect.Client.Framework.Audio
             }
         }
 
+        /// <inheritdoc />
         public int Volume
         {
             get => mVolume;
@@ -46,12 +46,16 @@ namespace Intersect.Client.Framework.Audio
             }
         }
 
+        /// <inheritdoc />
         public abstract void Play();
 
+        /// <inheritdoc />
         public abstract void Pause();
 
+        /// <inheritdoc />
         public abstract void Stop();
 
+        /// <inheritdoc />
         public void Dispose()
         {
             Dispose(true);
