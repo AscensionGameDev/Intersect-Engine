@@ -230,7 +230,7 @@ namespace Intersect.Server.Entities.Events
                                 if (Player.Power.IsModerator)
                                 {
                                     PacketSender.SendChatMsg(
-                                        Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red
+                                        Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), ChatMessageType.Error, Color.Red
                                     );
                                 }
                             }
@@ -242,7 +242,7 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     PacketSender.SendChatMsg(
                                         Player, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name),
-                                        Color.Red
+                                        ChatMessageType.Error, Color.Red
                                     );
                                 }
                             }

@@ -10,6 +10,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
+using Intersect.Enums;
 
 namespace Intersect.Client.Interface.Game.Chat
 {
@@ -35,6 +36,16 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private Label mChatboxTitle;
 
+        private Button mBtnAllTab;
+
+        private Button mBtnLocalTab;
+
+        private Button mBtnPartyTab;
+
+        private Button mBtnGlobalTab;
+
+        private Button mBtnSystemTab;
+
         //Window Controls
         private ImagePanel mChatboxWindow;
 
@@ -45,6 +56,8 @@ namespace Intersect.Client.Interface.Game.Chat
         private int mMessageIndex;
 
         private bool mReceivedMessage;
+
+        private ChatBoxTabs mLastTab = ChatBoxTabs.All;
 
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
@@ -60,6 +73,26 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxTitle = new Label(mChatboxWindow, "ChatboxTitle");
             mChatboxTitle.Text = Strings.Chatbox.title;
             mChatboxTitle.IsHidden = true;
+
+            mBtnAllTab = new Button(mChatboxWindow, "AllTabButton");
+            mBtnAllTab.Text = Strings.Chatbox.AllButton;
+            mBtnAllTab.Clicked += TabButtonClicked;
+
+            mBtnLocalTab = new Button(mChatboxWindow, "LocalTabButton");
+            mBtnLocalTab.Text = Strings.Chatbox.LocalButton;
+            mBtnLocalTab.Clicked += TabButtonClicked;
+
+            mBtnPartyTab = new Button(mChatboxWindow, "PartyTabButton");
+            mBtnPartyTab.Text = Strings.Chatbox.PartyButton;
+            mBtnPartyTab.Clicked += TabButtonClicked;
+
+            mBtnGlobalTab = new Button(mChatboxWindow, "GlobalTabButton");
+            mBtnGlobalTab.Text = Strings.Chatbox.GlobalButton;
+            mBtnGlobalTab.Clicked += TabButtonClicked;
+
+            mBtnSystemTab = new Button(mChatboxWindow, "SystemTabButton");
+            mBtnSystemTab.Text = Strings.Chatbox.SystemButton;
+            mBtnSystemTab.Clicked += TabButtonClicked;
 
             mChatbar = new ImagePanel(mChatboxWindow, "Chatbar");
             mChatbar.IsHidden = true;
@@ -103,21 +136,57 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxText.IsHidden = true;
         }
 
+        private void TabButtonClicked(Base sender, ClickedEventArgs arguments)
+        {
+            switch (sender.Name)
+            {
+                case "AllTabButton":
+                    Globals.CurrentChatTab = ChatBoxTabs.All;
+                    break;
+
+                case "LocalTabButton":
+                    Globals.CurrentChatTab = ChatBoxTabs.Local;
+                    break;
+
+                case "PartyTabButton":
+                    Globals.CurrentChatTab = ChatBoxTabs.Party;
+                    break;
+
+                case "GlobalTabButton":
+                    Globals.CurrentChatTab = ChatBoxTabs.Global;
+                    break;
+
+                case "SystemTabButton":
+                    Globals.CurrentChatTab = ChatBoxTabs.System;
+                    break;
+            }
+        }
+
         //Update
         public void Update()
         {
+            // Did the tab change recently? If so, we need to reset a few things to make it work...
+            if (mLastTab != Globals.CurrentChatTab)
+            {
+                mChatboxMessages.Clear();
+                mMessageIndex = 0;
+                mReceivedMessage = true;
+
+                mLastTab = Globals.CurrentChatTab;
+            }
+
             if (mReceivedMessage)
             {
                 mChatboxMessages.ScrollToBottom();
                 mReceivedMessage = false;
             }
 
-            var msgs = ChatboxMsg.GetMessages();
+            var msgs = ChatboxMsg.GetMessages(Globals.CurrentChatTab);
             for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
                 var myText = Interface.WrapText(
-                    msg.GetMessage(), mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
+                    msg.Message, mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
                     mChatboxText.Font
                 );
 
@@ -125,9 +194,9 @@ namespace Intersect.Client.Interface.Game.Chat
                 {
                     var rw = mChatboxMessages.AddRow(t.Trim());
                     rw.SetTextFont(mChatboxText.Font);
-                    rw.SetTextColor(msg.GetColor());
+                    rw.SetTextColor(msg.Color);
                     rw.ShouldDrawBackground = false;
-                    rw.UserData = msg.GetTarget();
+                    rw.UserData = msg.Target;
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
@@ -194,7 +263,7 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             if (mLastChatTime > Globals.System.GetTimeMs())
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red));
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));
                 mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
 
                 return;

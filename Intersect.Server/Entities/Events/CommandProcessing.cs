@@ -115,15 +115,15 @@ namespace Intersect.Server.Entities.Events
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendChatMsg(player, txt, color);
+                    PacketSender.SendChatMsg(player, txt, command.MessageType, color);
 
                     break;
                 case ChatboxChannel.Local:
-                    PacketSender.SendProximityMsg(txt, player.MapId, color);
+                    PacketSender.SendProximityMsg(txt, command.MessageType, player.MapId, color);
 
                     break;
                 case ChatboxChannel.Global:
-                    PacketSender.SendGlobalMsg(txt, color);
+                    PacketSender.SendGlobalMsg(txt, color, string.Empty, command.MessageType);
 
                     break;
             }
@@ -594,7 +594,7 @@ namespace Intersect.Server.Entities.Events
             }
 
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice ,Color.Red);
         }
 
         //Warp Player Command

@@ -177,6 +177,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public string Text { get; set; } = "";
 
+        public ChatMessageType MessageType { get; set; } = ChatMessageType.Notice;
+
         public string Color { get; set; } = "";
 
         public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;

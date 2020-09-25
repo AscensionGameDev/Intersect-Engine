@@ -784,17 +784,17 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), CustomColors.Combat.LevelUp, Name);
+            PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
             PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.Combat.LevelUp);
             foreach (var message in messages)
             {
-                PacketSender.SendChatMsg(this, message, CustomColors.Alerts.Info, Name);
+                PacketSender.SendChatMsg(this, message, ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
             }
 
             if (StatPoints > 0)
             {
                 PacketSender.SendChatMsg(
-                    this, Strings.Player.statpoints.ToString(StatPoints), CustomColors.Combat.StatPoints, Name
+                    this, Strings.Player.statpoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
                 );
             }
 
@@ -935,7 +935,8 @@ namespace Intersect.Server.Entities
                                         Strings.Quests.npctask.ToString(
                                             quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                             NpcBase.GetName(questTask.TargetId)
-                                        )
+                                        ),
+                                        ChatMessageType.Quest
                                     );
                                 }
                             }
@@ -972,7 +973,7 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs);
+                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
 
                     return;
                 }
@@ -982,7 +983,7 @@ namespace Intersect.Server.Entities
                     if (parentItem == null || descriptor.Tool != parentItem.Tool)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool])
+                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                         );
 
                         return;
@@ -997,7 +998,7 @@ namespace Intersect.Server.Entities
         {
             if (CastTime >= Globals.Timing.TimeMs)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack);
+                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Error);
 
                 return;
             }
@@ -1044,7 +1045,7 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs);
+                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
 
                     return;
                 }
@@ -1054,7 +1055,7 @@ namespace Intersect.Server.Entities
                     if (weapon == null || descriptor.Tool != weapon.Tool)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool])
+                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                         );
 
                         return;
@@ -1695,7 +1696,7 @@ namespace Intersect.Server.Entities
 
             if (Equipment?.Any(equipmentSlotIndex => equipmentSlotIndex == slotIndex) ?? false)
             {
-                PacketSender.SendChatMsg(this, Strings.Items.equipped, CustomColors.Items.Bound);
+                PacketSender.SendChatMsg(this, Strings.Items.equipped, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
             }
 
@@ -1707,13 +1708,13 @@ namespace Intersect.Server.Entities
 
             if (itemDescriptor.Bound)
             {
-                PacketSender.SendChatMsg(this, Strings.Items.bound, CustomColors.Items.Bound);
+                PacketSender.SendChatMsg(this, Strings.Items.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
             }
 
             if (itemInSlot.TryGetBag(out var bag) && !bag.IsEmpty)
             {
-                PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 return false;
             }
 
@@ -1762,14 +1763,14 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Items.stunned);
+                        PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
 
                         return;
                     }
 
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Items.sleep);
+                        PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
 
                         return;
                     }
@@ -1795,7 +1796,7 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq);
+                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
 
                     return;
                 }
@@ -1803,7 +1804,7 @@ namespace Intersect.Server.Entities
                 if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.RealTimeMs)
                 {
                     //Cooldown warning!
-                    PacketSender.SendChatMsg(this, Strings.Items.cooldown);
+                    PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
 
                     return;
                 }
@@ -1812,7 +1813,7 @@ namespace Intersect.Server.Entities
                 {
                     case ItemTypes.None:
                     case ItemTypes.Currency:
-                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse);
+                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
 
                         return;
                     case ItemTypes.Consumable:
@@ -1942,7 +1943,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     default:
-                        PacketSender.SendChatMsg(this, Strings.Items.notimplemented);
+                        PacketSender.SendChatMsg(this, Strings.Items.notimplemented, ChatMessageType.Error);
 
                         return;
                 }
@@ -2457,7 +2458,7 @@ namespace Intersect.Server.Entities
                 {
                     if (itemDescriptor.Bound)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Shops.bound, CustomColors.Items.Bound);
+                        PacketSender.SendChatMsg(this, Strings.Shops.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
 
                         return;
                     }
@@ -2469,7 +2470,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!bag.IsEmpty)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                                 return;
                             }
                         }
@@ -2481,7 +2482,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!shop.BuyingWhitelist)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                                 return;
                             }
@@ -2499,7 +2500,7 @@ namespace Intersect.Server.Entities
                     {
                         if (shop.BuyingWhitelist)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                             return;
                         }
@@ -2603,14 +2604,14 @@ namespace Intersect.Server.Entities
                                 else
                                 {
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Shops.inventoryfull, CustomColors.Alerts.Error, Name
+                                        this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name
                                     );
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, CustomColors.Alerts.Error, Name);
+                            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                         }
                     }
                 }
@@ -2723,7 +2724,7 @@ namespace Intersect.Server.Entities
                 if (TryGiveItem(CraftBase.Get(id).ItemId, quantity))
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+                        this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Success
                     );
                 }
@@ -2736,7 +2737,7 @@ namespace Intersect.Server.Entities
 
                     PacketSender.SendInventory(this);
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+                        this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Error
                     );
                 }
@@ -2902,11 +2903,11 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Banks.banknospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
                 }
             }
 
@@ -2965,11 +2966,11 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Banks.banknospace, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
 
             return false;
@@ -3055,7 +3056,7 @@ namespace Intersect.Server.Entities
                 /* If we don't have a slot send an error. */
                 if (inventorySlot < 0)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Banks.inventorynospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                     return; //Panda forgot this :P
                 }
@@ -3087,7 +3088,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Banks.withdrawinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.withdrawinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
         }
 
@@ -3215,14 +3216,14 @@ namespace Intersect.Server.Entities
                     //Make Sure we are not Storing a Bag inside of itself
                     if (Items[slot].Bag == InBag)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginself, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return;
                     }
 
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginbag, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return;
                     }
@@ -3284,11 +3285,11 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.depositinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.depositinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3356,7 +3357,7 @@ namespace Intersect.Server.Entities
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.inventorynospace, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return; //Panda forgot this :P
                     }
@@ -3389,7 +3390,7 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3444,12 +3445,12 @@ namespace Intersect.Server.Entities
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(this, fromPlayer);
-                    PacketSender.SendChatMsg(fromPlayer, Strings.Friends.sent, CustomColors.Alerts.RequestSent);
+                    PacketSender.SendChatMsg(fromPlayer, Strings.Friends.sent, ChatMessageType.Friend, CustomColors.Alerts.RequestSent);
                 }
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Friends.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Friends.busy.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3503,7 +3504,7 @@ namespace Intersect.Server.Entities
 
             if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
             else
             {
@@ -3515,7 +3516,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Trading.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Trading.busy.ToString(Name), ChatMessageType.Trading, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3549,7 +3550,7 @@ namespace Intersect.Server.Entities
                     //Check if the item is bound.. if so don't allow trade
                     if (itemBase.Bound)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.tradebound, CustomColors.Items.Bound);
+                        PacketSender.SendChatMsg(this, Strings.Bags.tradebound, ChatMessageType.Trading, CustomColors.Items.Bound);
 
                         return;
                     }
@@ -3561,7 +3562,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!bag.IsEmpty)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, ChatMessageType.Trading, CustomColors.Alerts.Error);
                                 return;
                             }
                         }
@@ -3624,11 +3625,11 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Trading.tradenospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.tradenospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Trading.offerinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.offerinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3653,7 +3654,7 @@ namespace Intersect.Server.Entities
 
             if (Trading.Offer[slot] == null || Trading.Offer[slot].ItemId == Guid.Empty)
             {
-                PacketSender.SendChatMsg(this, Strings.Trading.revokeinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.revokeinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -3691,7 +3692,7 @@ namespace Intersect.Server.Entities
             /* If we don't have a slot send an error. */
             if (inventorySlot < 0)
             {
-                PacketSender.SendChatMsg(this, Strings.Trading.inventorynospace, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.inventorynospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
 
             if (amount > Trading.Offer[slot].Quantity)
@@ -3745,7 +3746,7 @@ namespace Intersect.Server.Entities
                 if (!TryGiveItem(offer.ItemId, offer.Quantity))
                 {
                     MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity, Id);
-                    PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
 
                 offer.ItemId = Guid.Empty;
@@ -3763,12 +3764,12 @@ namespace Intersect.Server.Entities
             }
 
             Trading.Counterparty.ReturnTradeItems();
-            PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.declined, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
             PacketSender.SendTradeClose(Trading.Counterparty);
             Trading.Counterparty.Trading.Counterparty = null;
 
             ReturnTradeItems();
-            PacketSender.SendChatMsg(this, Strings.Trading.declined, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
             PacketSender.SendTradeClose(this);
             Trading.Counterparty = null;
         }
@@ -3778,7 +3779,7 @@ namespace Intersect.Server.Entities
         {
             if (Party.Count != 0)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -3790,7 +3791,7 @@ namespace Intersect.Server.Entities
 
             if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
             else
             {
@@ -3802,7 +3803,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Parties.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Parties.busy.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3819,7 +3820,7 @@ namespace Intersect.Server.Entities
             {
                 if (Party[0] != this)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                     return;
                 }
@@ -3845,13 +3846,13 @@ namespace Intersect.Server.Entities
                     Party[i].Party = Party;
                     PacketSender.SendParty(Party[i]);
                     PacketSender.SendChatMsg(
-                        Party[i], Strings.Parties.joined.ToString(target.Name), CustomColors.Alerts.Accepted
+                        Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
                     );
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Parties.limitreached, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Parties.limitreached, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
         }
 
@@ -3866,7 +3867,7 @@ namespace Intersect.Server.Entities
                     {
                         oldMember.Party = new List<Player>();
                         PacketSender.SendParty(oldMember);
-                        PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
                         Party.Remove(oldMember);
 
                         if (Party.Count > 1) //Need atleast 2 party members to function
@@ -3878,6 +3879,7 @@ namespace Intersect.Server.Entities
                                 PacketSender.SendParty(Party[i]);
                                 PacketSender.SendChatMsg(
                                     Party[i], Strings.Parties.memberkicked.ToString(oldMember.Name),
+                                    ChatMessageType.Party,
                                     CustomColors.Alerts.Error
                                 );
                             }
@@ -3887,7 +3889,7 @@ namespace Intersect.Server.Entities
                             var remainder = Party[0];
                             remainder.Party.Clear();
                             PacketSender.SendParty(remainder);
-                            PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
                         }
                     }
                 }
@@ -3909,7 +3911,7 @@ namespace Intersect.Server.Entities
                         Party[i].Party = Party;
                         PacketSender.SendParty(Party[i]);
                         PacketSender.SendChatMsg(
-                            Party[i], Strings.Parties.memberleft.ToString(oldMember.Name), CustomColors.Alerts.Error
+                            Party[i], Strings.Parties.memberleft.ToString(oldMember.Name), ChatMessageType.Party, CustomColors.Alerts.Error
                         );
                     }
                 }
@@ -3918,10 +3920,10 @@ namespace Intersect.Server.Entities
                     var remainder = Party[0];
                     remainder.Party.Clear();
                     PacketSender.SendParty(remainder);
-                    PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Parties.left, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Parties.left, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
 
             Party = new List<Player>();
@@ -4038,7 +4040,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell);
+                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
             }
         }
 
@@ -4075,7 +4077,7 @@ namespace Intersect.Server.Entities
 
             if (spellBase.Bound)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell);
+                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
 
                 return false;
             }
@@ -4108,7 +4110,7 @@ namespace Intersect.Server.Entities
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq);
+                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
 
                 return false;
             }
@@ -4121,21 +4123,21 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Silence)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.silenced);
+                        PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.stunned);
+                        PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.sleep);
+                        PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
 
                         return false;
                     }
@@ -4159,6 +4161,7 @@ namespace Intersect.Server.Entities
                     {
                         PacketSender.SendChatMsg(
                             this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            ChatMessageType.Inventory,
                             CustomColors.Alerts.Error
                         );
 
@@ -4207,14 +4210,14 @@ namespace Intersect.Server.Entities
             {
                 if (spell.VitalCost[(int) Vitals.Mana] > GetVital(Vitals.Mana))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowmana);
+                    PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
 
                     return false;
                 }
 
                 if (spell.VitalCost[(int) Vitals.Health] > GetVital(Vitals.Health))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowhealth);
+                    PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
 
                     return false;
                 }
@@ -4303,12 +4306,12 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.channeling);
+                    PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.cooldown);
+                PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
             }
         }
 
@@ -4646,7 +4649,7 @@ namespace Intersect.Server.Entities
 
                 StartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendChatMsg(
-                    this, Strings.Quests.started.ToString(quest.Name), CustomColors.Quests.Started
+                    this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.Quests.Started
                 );
 
                 PacketSender.SendQuestProgress(this, quest.Id);
@@ -4697,7 +4700,7 @@ namespace Intersect.Server.Entities
                 {
                     QuestOffers.Remove(questId);
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), CustomColors.Quests.Declined
+                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.Quests.Declined
                     );
 
                     foreach (var evt in EventLookup)
@@ -4739,7 +4742,7 @@ namespace Intersect.Server.Entities
                         questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
                         PacketSender.SendChatMsg(
-                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), Color.Red
+                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, Color.Red
                         );
 
                         PacketSender.SendQuestProgress(this, questId);
@@ -4763,7 +4766,7 @@ namespace Intersect.Server.Entities
                         {
                             if (quest.Tasks[i].Id == taskId)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Quests.taskcompleted);
+                                PacketSender.SendChatMsg(this, Strings.Quests.taskcompleted, ChatMessageType.Quest);
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
@@ -4777,7 +4780,7 @@ namespace Intersect.Server.Entities
 
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Quests.completed.ToString(quest.Name), Color.Green
+                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green
                                     );
                                 }
                                 else
@@ -4797,6 +4800,7 @@ namespace Intersect.Server.Entities
 
                                     PacketSender.SendChatMsg(
                                         this, Strings.Quests.updated.ToString(quest.Name),
+                                        ChatMessageType.Quest,
                                         CustomColors.Quests.TaskUpdated
                                     );
                                 }
@@ -4824,7 +4828,7 @@ namespace Intersect.Server.Entities
                     if (!skipCompletionEvent)
                     {
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
-                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), Color.Green);
+                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
                     }
                 }
             }
@@ -4863,7 +4867,8 @@ namespace Intersect.Server.Entities
                                             Strings.Quests.itemtask.ToString(
                                                 quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                                 ItemBase.GetName(questTask.TargetId)
-                                            )
+                                            ),
+                                            ChatMessageType.Quest
                                         );
                                     }
                                 }
