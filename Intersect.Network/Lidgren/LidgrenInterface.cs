@@ -79,6 +79,7 @@ namespace Intersect.Network.Lidgren
                 //mPeerConfiguration.LocalAddress = DnsUtils.Resolve(config.Host);
                 //mPeerConfiguration.EnableUPnP = true;
                 mPeerConfiguration.Port = configuration.Port;
+            }
 
             if (Debugger.IsAttached)
             {
