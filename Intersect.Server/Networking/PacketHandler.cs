@@ -536,7 +536,6 @@ namespace Intersect.Server.Networking
                     var currentMs = Globals.Timing.Milliseconds;
                     if (player.MoveTimer > currentMs)
                     {
-                        //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
                         player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
                     }
@@ -870,6 +869,17 @@ namespace Intersect.Server.Networking
             var unequippedAttack = false;
             var target = packet.Target;
 
+            var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
+            if (player.ClientActionTimer < clientTime)
+            {
+                return;
+            }
+
+            if (player.AttackTimer >= Globals.Timing.Milliseconds)
+            {
+                return;
+            }
+
             if (player.CastTime >= Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack);
@@ -928,6 +938,8 @@ namespace Intersect.Server.Networking
             }
 
             PacketSender.SendEntityAttack(player, player.CalculateAttackTime());
+
+            player.ClientActionTimer = clientTime + (long)player.CalculateAttackTime();
 
             //Fire projectile instead if weapon has it
             if (Options.WeaponIndex > -1)
@@ -1014,6 +1026,9 @@ namespace Intersect.Server.Networking
                             return;
                         }
 #endif
+
+                    player.AttackTimer = Globals.Timing.Milliseconds + player.CalculateAttackTime();
+
                 }
                 else
                 {
