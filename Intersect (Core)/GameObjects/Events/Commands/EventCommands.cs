@@ -177,6 +177,7 @@ namespace Intersect.GameObjects.Events.Commands
 
         public string Text { get; set; } = "";
 
+        // TODO: Expose this option to the user?
         public ChatMessageType MessageType { get; set; } = ChatMessageType.Notice;
 
         public string Color { get; set; } = "";
