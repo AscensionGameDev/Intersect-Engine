@@ -23,7 +23,8 @@ namespace Intersect.Client.Interface.Game.Chat
             { ChatBoxTabs.System, new ChatMessageType[] { 
                 ChatMessageType.Experience, ChatMessageType.Loot, ChatMessageType.Inventory, ChatMessageType.Bank, 
                 ChatMessageType.Combat, ChatMessageType.Quest, ChatMessageType.Crafting, ChatMessageType.Trading, 
-                ChatMessageType.Friend, ChatMessageType.Spells, ChatMessageType.Notice, ChatMessageType.Error } },
+                ChatMessageType.Friend, ChatMessageType.Spells, ChatMessageType.Notice, ChatMessageType.Error,
+                ChatMessageType.Admin } },
         };
 
         private string mMsg = "";
