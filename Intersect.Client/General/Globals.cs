@@ -178,11 +178,6 @@ namespace Intersect.Client.General
             return null;
         }
 
-        /// <summary>
-        /// Defines which chat tab we are currently looking at.
-        /// </summary>
-        public static ChatBoxTabs CurrentChatTab = ChatBoxTabs.All;
-
     }
 
 }

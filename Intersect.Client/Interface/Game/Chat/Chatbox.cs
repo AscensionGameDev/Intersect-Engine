@@ -57,6 +57,14 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private bool mReceivedMessage;
 
+        /// <summary>
+        /// Defines which chat tab we are currently looking at.
+        /// </summary>
+        private ChatBoxTabs mCurrentTab = ChatBoxTabs.All;
+
+        /// <summary>
+        /// The last tab that was looked at before switching around, if a switch was made at all.
+        /// </summary>
         private ChatBoxTabs mLastTab = ChatBoxTabs.All;
 
         //Init
@@ -77,7 +85,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mBtnAllTab = new Button(mChatboxWindow, "AllTabButton");
             mBtnAllTab.Text = Strings.Chatbox.AllButton;
             mBtnAllTab.Clicked += TabButtonClicked;
-
+            
             mBtnLocalTab = new Button(mChatboxWindow, "LocalTabButton");
             mBtnLocalTab.Text = Strings.Chatbox.LocalButton;
             mBtnLocalTab.Clicked += TabButtonClicked;
@@ -134,30 +142,43 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
+
+            // Disable this by default, since this is the default tab.
+            mBtnAllTab.Disable();
         }
 
         private void TabButtonClicked(Base sender, ClickedEventArgs arguments)
         {
+            // Enable all buttons again!
+            mBtnAllTab.Enable();
+            mBtnGlobalTab.Enable();
+            mBtnLocalTab.Enable();
+            mBtnPartyTab.Enable();
+            mBtnSystemTab.Enable();
+
+            // Disable the clicked button.
+            sender.Disable();
+
             switch (sender.Name)
             {
                 case "AllTabButton":
-                    Globals.CurrentChatTab = ChatBoxTabs.All;
+                    mCurrentTab = ChatBoxTabs.All;
                     break;
 
                 case "LocalTabButton":
-                    Globals.CurrentChatTab = ChatBoxTabs.Local;
+                    mCurrentTab = ChatBoxTabs.Local;
                     break;
 
                 case "PartyTabButton":
-                    Globals.CurrentChatTab = ChatBoxTabs.Party;
+                    mCurrentTab = ChatBoxTabs.Party;
                     break;
 
                 case "GlobalTabButton":
-                    Globals.CurrentChatTab = ChatBoxTabs.Global;
+                    mCurrentTab = ChatBoxTabs.Global;
                     break;
 
                 case "SystemTabButton":
-                    Globals.CurrentChatTab = ChatBoxTabs.System;
+                    mCurrentTab = ChatBoxTabs.System;
                     break;
             }
         }
@@ -166,13 +187,13 @@ namespace Intersect.Client.Interface.Game.Chat
         public void Update()
         {
             // Did the tab change recently? If so, we need to reset a few things to make it work...
-            if (mLastTab != Globals.CurrentChatTab)
+            if (mLastTab != mCurrentTab)
             {
                 mChatboxMessages.Clear();
                 mMessageIndex = 0;
                 mReceivedMessage = true;
 
-                mLastTab = Globals.CurrentChatTab;
+                mLastTab = mCurrentTab;
             }
 
             if (mReceivedMessage)
@@ -181,7 +202,7 @@ namespace Intersect.Client.Interface.Game.Chat
                 mReceivedMessage = false;
             }
 
-            var msgs = ChatboxMsg.GetMessages(Globals.CurrentChatTab);
+            var msgs = ChatboxMsg.GetMessages(mCurrentTab);
             for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
