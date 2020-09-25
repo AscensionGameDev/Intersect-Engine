@@ -79,11 +79,6 @@ namespace Intersect.Network.Lidgren
                 //mPeerConfiguration.LocalAddress = DnsUtils.Resolve(config.Host);
                 //mPeerConfiguration.EnableUPnP = true;
                 mPeerConfiguration.Port = configuration.Port;
-            } else
-            {
-                mPeerConfiguration.SimulatedMinimumLatency = 0.2f;
-                mPeerConfiguration.SimulatedRandomLatency = 0.1f;
-            }
 
             if (Debugger.IsAttached)
             {

@@ -43,26 +43,9 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static long adjustedShift;
-        private static long utcShift;
         public static void SendMove()
         {
-            Log.Debug($"sending pmp: {Timing.Global.Milliseconds}");
-            var pkt = new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir);
-            if (utcShift == 0)
-            {
-                adjustedShift = pkt.Adjusted;
-                utcShift = pkt.UTC;
-            }
-            else
-            {
-                adjustedShift += 200;
-                utcShift += (200 * TimeSpan.TicksPerMillisecond);
-                pkt.UTC = utcShift;
-                pkt.Adjusted = adjustedShift;
-
-            }
-            Network.SendPacket(pkt);
+            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
 
         public static void SendChatMsg(string msg, byte channel)

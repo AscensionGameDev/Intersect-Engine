@@ -262,15 +262,18 @@ namespace Intersect.Server.Networking
                 var adjustedDesync = Math.Abs(deltaAdjusted);
                 var timeDesync = adjustedDesync > errorRangeMaximum * configurableDesyncForgiveness;
 
-                Log.Debug(
-                    "\n\t" +
-                    $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                    $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                    $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                    $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                    $"Time Desync[{timeDesync}]\n\t" +
-                    $"Packet[{packet.ToString()}]"
-                );
+                if (Debugger.IsAttached)
+                {
+                    Log.Debug(
+                        "\n\t" +
+                        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                        $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                        $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                        $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                        $"Time Desync[{timeDesync}]\n\t" +
+                        $"Packet[{packet.ToString()}]"
+                    );
+                }
 
                 var naturalWithError = naturalWithErrorMinimum || naturalWithErrorMaximum;
 
