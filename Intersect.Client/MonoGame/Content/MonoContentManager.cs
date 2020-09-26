@@ -54,15 +54,13 @@ namespace Intersect.Client.MonoGame.Content
 
                 if (t != "" &&
                     (!string.IsNullOrWhiteSpace(realFilename) ||
-                     GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) &&
-                    !AssetLookup.Contains(ContentType.Tileset, t.ToLower()))
+                     GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t)) != null) &&
+                    !AssetLookup.Contains(ContentType.Tileset, t))
                 {
                     AssetLookup.Add(
                         ContentType.Tileset,
                         Core.Graphics.GameRenderer.LoadTexture(
-                            Path.Combine(
-                                "resources", "tilesets", !string.IsNullOrWhiteSpace(realFilename) ? realFilename : t
-                            )
+                            TextureType.Tileset, !string.IsNullOrWhiteSpace(realFilename) ? realFilename : t
                         )
                     );
                 }
@@ -108,100 +106,118 @@ namespace Intersect.Client.MonoGame.Content
                                 int.Parse(frame["spriteSourceSize"]["h"].ToString())
                             );
 
-                            GameTexturePacks.AddFrame(
-                                new GameTexturePackFrame(filename, sourceRect, rotated, sourceSize, platformText)
+                            var texturePackFrame = new GameTexturePackFrame(
+                                filename, sourceRect, rotated, sourceSize, platformText
                             );
+
+                            GameTexturePacks.AddFrame(texturePackFrame);
+
+                            AssetLookup.Add(ContentType.TexturePack, texturePackFrame);
                         }
                     }
                 }
             }
         }
 
-        public void LoadTextureGroup(string directory, ContentType contentType)
+        public IEnumerable<ITexturePackFrame> FindTexturePackFramesFor(TextureType textureType)
         {
+            var assetTypeDirectory = GetPathForAssetType(textureType.ToContentType());
+            return AssetLookup.FindAll<ITexturePackFrame>(
+                ContentType.TexturePack,
+                texturePackFrame => texturePackFrame.Name.StartsWith(assetTypeDirectory, StringComparison.Ordinal)
+            );
+        }
+
+        public override ITexturePackFrame FindTexturePackFrameFor(TextureType textureType, string textureName)
+        {
+            var assetPath = GetPathForAsset(textureType.ToContentType(), textureName);
+            return AssetLookup.Find<ITexturePackFrame>(
+                ContentType.TexturePack,
+                texturePackFrame => string.Equals(texturePackFrame.Name, assetPath, StringComparison.Ordinal)
+            );
+        }
+
+        public void LoadTextureGroup(TextureType textureType)
+        {
+            var contentType = textureType.ToContentType();
             AssetLookup.Clear(contentType);
-            var dir = Path.Combine("resources", directory);
-            if (!Directory.Exists(dir))
+            var directory = Path.Combine("resources", textureType.ToContentType().GetDirectory());
+            if (!Directory.Exists(directory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(directory);
             }
 
-            var items = Directory.GetFiles(dir, "*.png");
-            for (var i = 0; i < items.Length; i++)
+            var unpacked = Directory.GetFiles(directory, "*.png");
+            for (var i = 0; i < unpacked.Length; i++)
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar);
-                AssetLookup.Add(contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename)));
+                var filename = unpacked[i].Replace(directory, "").TrimStart(Path.DirectorySeparatorChar);
+                AssetLookup.Add(contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(directory, filename)));
             }
 
-            var texturePackFrames = GameTexturePacks.GetFolderFrames(directory);
-            if (texturePackFrames != null)
+            var texturePackFramesForType = FindTexturePackFramesFor(textureType).ToList();
+            foreach (var texturePackFrame in texturePackFramesForType)
             {
-                foreach (var texturePackFrame in texturePackFrames)
+                var assetName = Path.GetFileName(texturePackFrame.Name);
+                if (!AssetLookup.Contains(contentType, assetName))
                 {
-                    var filename = Path.GetFileName(texturePackFrame.Name.Replace("\\", "/"));
-                    if (!AssetLookup.Contains(contentType, filename))
-                    {
-                        AssetLookup.Add(
-                            contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename), texturePackFrame)
-                        );
-                    }
+                    AssetLookup.Add(contentType, Core.Graphics.GameRenderer.LoadTexture(assetName, texturePackFrame));
                 }
             }
         }
 
         public override void LoadItems()
         {
-            LoadTextureGroup("items", ContentType.Item);
+            LoadTextureGroup(TextureType.Item);
         }
 
         public override void LoadEntities()
         {
-            LoadTextureGroup("entities", ContentType.Entity);
+            LoadTextureGroup(TextureType.Entity);
         }
 
         public override void LoadSpells()
         {
-            LoadTextureGroup("spells", ContentType.Spell);
+            LoadTextureGroup(TextureType.Spell);
         }
 
         public override void LoadAnimations()
         {
-            LoadTextureGroup("animations", ContentType.Animation);
+            LoadTextureGroup(TextureType.Animation);
         }
 
         public override void LoadFaces()
         {
-            LoadTextureGroup("faces", ContentType.Face);
+            LoadTextureGroup(TextureType.Face);
         }
 
         public override void LoadImages()
         {
-            LoadTextureGroup("images", ContentType.Image);
+            LoadTextureGroup(TextureType.Image);
         }
 
         public override void LoadFogs()
         {
-            LoadTextureGroup("fogs", ContentType.Fog);
+            LoadTextureGroup(TextureType.Fog);
         }
 
         public override void LoadResources()
         {
-            LoadTextureGroup("resources", ContentType.Resource);
+            LoadTextureGroup(TextureType.Resource);
         }
 
         public override void LoadPaperdolls()
         {
-            LoadTextureGroup("paperdolls", ContentType.Paperdoll);
+            LoadTextureGroup(TextureType.Paperdoll);
         }
 
         public override void LoadGui()
         {
-            LoadTextureGroup("gui", ContentType.Interface);
+            LoadTextureGroup(TextureType.Interface);
         }
 
         public override void LoadMisc()
         {
-            LoadTextureGroup("misc", ContentType.Miscellaneous);
+            LoadTextureGroup(TextureType.Miscellaneous);
         }
 
         public override void LoadFonts()

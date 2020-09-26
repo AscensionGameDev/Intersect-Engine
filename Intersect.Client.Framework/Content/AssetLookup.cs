@@ -42,13 +42,24 @@ namespace Intersect.Client.Framework.Content
 
         public TAsset Find<TAsset>(ContentType contentType, string assetName) => (TAsset) Find(contentType, assetName);
 
-        public TAsset Find<TAsset>(ContentType contentType, Func<TAsset, bool> predicate) where TAsset : IAsset =>
-            FindDictionaryFor(contentType).Values.Select(asset => (TAsset) asset).FirstOrDefault(predicate);
+        public IEnumerable<TAsset> FindAll<TAsset>(ContentType contentType, Func<TAsset, bool> predicate)
+            where TAsset : IAsset
+        {
+            var assets = FindDictionaryFor(contentType).Values.Cast<TAsset>();
+            return assets.Where(predicate);
+        }
 
-        public void Add(ContentType contentType, params IAsset[] assets) =>
-            Add(contentType, assets as IEnumerable<IAsset>);
+        public TAsset Find<TAsset>(ContentType contentType, Func<TAsset, bool> predicate) where TAsset : IAsset
+        {
+            var assets = FindDictionaryFor(contentType).Values.Cast<TAsset>();
+            var asset = assets.FirstOrDefault(predicate);
+            return asset;
+        }
 
-        public void Add(ContentType contentType, IEnumerable<IAsset> assets)
+        public void Add<TAsset>(ContentType contentType, params TAsset[] assets) where TAsset : IAsset =>
+            Add(contentType, assets as IEnumerable<TAsset>);
+
+        public void Add<TAsset>(ContentType contentType, IEnumerable<TAsset> assets) where TAsset : IAsset
         {
             if (assets == null)
             {
