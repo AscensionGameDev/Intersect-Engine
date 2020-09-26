@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
@@ -36,15 +36,10 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private Label mChatboxTitle;
 
-        private Button mBtnAllTab;
-
-        private Button mBtnLocalTab;
-
-        private Button mBtnPartyTab;
-
-        private Button mBtnGlobalTab;
-
-        private Button mBtnSystemTab;
+        /// <summary>
+        /// A dictionary of all chat tab buttons based on the <see cref="ChatboxTabs"/> enum.
+        /// </summary>
+        private Dictionary<ChatboxTabs, Button> mTabButtons = new Dictionary<ChatboxTabs, Button>();
 
         //Window Controls
         private ImagePanel mChatboxWindow;
@@ -60,12 +55,12 @@ namespace Intersect.Client.Interface.Game.Chat
         /// <summary>
         /// Defines which chat tab we are currently looking at.
         /// </summary>
-        private ChatBoxTabs mCurrentTab = ChatBoxTabs.All;
+        private ChatboxTabs mCurrentTab = ChatboxTabs.All;
 
         /// <summary>
         /// The last tab that was looked at before switching around, if a switch was made at all.
         /// </summary>
-        private ChatBoxTabs mLastTab = ChatBoxTabs.All;
+        private ChatboxTabs mLastTab = ChatboxTabs.All;
 
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
@@ -82,25 +77,14 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxTitle.Text = Strings.Chatbox.title;
             mChatboxTitle.IsHidden = true;
 
-            mBtnAllTab = new Button(mChatboxWindow, "AllTabButton");
-            mBtnAllTab.Text = Strings.Chatbox.AllButton;
-            mBtnAllTab.Clicked += TabButtonClicked;
-            
-            mBtnLocalTab = new Button(mChatboxWindow, "LocalTabButton");
-            mBtnLocalTab.Text = Strings.Chatbox.LocalButton;
-            mBtnLocalTab.Clicked += TabButtonClicked;
-
-            mBtnPartyTab = new Button(mChatboxWindow, "PartyTabButton");
-            mBtnPartyTab.Text = Strings.Chatbox.PartyButton;
-            mBtnPartyTab.Clicked += TabButtonClicked;
-
-            mBtnGlobalTab = new Button(mChatboxWindow, "GlobalTabButton");
-            mBtnGlobalTab.Text = Strings.Chatbox.GlobalButton;
-            mBtnGlobalTab.Clicked += TabButtonClicked;
-
-            mBtnSystemTab = new Button(mChatboxWindow, "SystemTabButton");
-            mBtnSystemTab.Text = Strings.Chatbox.SystemButton;
-            mBtnSystemTab.Clicked += TabButtonClicked;
+            // Generate tab butons.
+            for (var btn = 0; btn < (int)ChatboxTabs.Count; btn++)
+            {
+                mTabButtons.Add((ChatboxTabs)btn, new Button(mChatboxWindow, $"{(ChatboxTabs)btn}TabButton"));
+                mTabButtons[(ChatboxTabs)btn].Text = Strings.Chatbox.ChatTabButtons[(ChatboxTabs)btn];
+                mTabButtons[(ChatboxTabs)btn].Clicked += TabButtonClicked;
+                mTabButtons[(ChatboxTabs)btn].UserData = (ChatboxTabs)btn;
+            }
 
             mChatbar = new ImagePanel(mChatboxWindow, "Chatbar");
             mChatbar.IsHidden = true;
@@ -143,44 +127,35 @@ namespace Intersect.Client.Interface.Game.Chat
 
             mChatboxText.IsHidden = true;
 
-            // Disable this by default, since this is the default tab.
-            mBtnAllTab.Disable();
+            // Disable this to start, since this is the default tab we open the client on.
+            mTabButtons[ChatboxTabs.All].Disable();
         }
 
+        /// <summary>
+        /// Enables all the chat tab buttons.
+        /// </summary>
+        private void EnableChatTabs()
+        {
+            for (var btn = 0; btn < (int)ChatboxTabs.Count; btn++)
+            {
+                mTabButtons[(ChatboxTabs)btn].Enable();
+            }
+
+        }
+
+        /// <summary>
+        /// Handles the click event of a chat tab button.
+        /// </summary>
+        /// <param name="sender">The button that was clicked.</param>
+        /// <param name="arguments">The arguments passed by the event.</param>
         private void TabButtonClicked(Base sender, ClickedEventArgs arguments)
         {
             // Enable all buttons again!
-            mBtnAllTab.Enable();
-            mBtnGlobalTab.Enable();
-            mBtnLocalTab.Enable();
-            mBtnPartyTab.Enable();
-            mBtnSystemTab.Enable();
+            EnableChatTabs();
 
-            // Disable the clicked button.
+            // Disable the clicked button to fake our tab being selected and set our selected chat tab.
             sender.Disable();
-
-            switch (sender.Name)
-            {
-                case "AllTabButton":
-                    mCurrentTab = ChatBoxTabs.All;
-                    break;
-
-                case "LocalTabButton":
-                    mCurrentTab = ChatBoxTabs.Local;
-                    break;
-
-                case "PartyTabButton":
-                    mCurrentTab = ChatBoxTabs.Party;
-                    break;
-
-                case "GlobalTabButton":
-                    mCurrentTab = ChatBoxTabs.Global;
-                    break;
-
-                case "SystemTabButton":
-                    mCurrentTab = ChatBoxTabs.System;
-                    break;
-            }
+            mCurrentTab = (ChatboxTabs)sender.UserData;
         }
 
         //Update
