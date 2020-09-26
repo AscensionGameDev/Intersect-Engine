@@ -458,12 +458,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString toofast = @"You are chatting too fast!";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<ChatboxTabs, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTabs, LocalizedString>() {
-                { ChatboxTabs.All, @"All" },
-                { ChatboxTabs.Local, @"Local" },
-                { ChatboxTabs.Party, @"Party" },
-                { ChatboxTabs.Global, @"Global" },
-                { ChatboxTabs.System, @"System" },
+            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
+                { ChatboxTab.All, @"All" },
+                { ChatboxTab.Local, @"Local" },
+                { ChatboxTab.Party, @"Party" },
+                { ChatboxTab.Global, @"Global" },
+                { ChatboxTab.System, @"System" },
             };
         }
 

@@ -37,9 +37,9 @@ namespace Intersect.Client.Interface.Game.Chat
         private Label mChatboxTitle;
 
         /// <summary>
-        /// A dictionary of all chat tab buttons based on the <see cref="ChatboxTabs"/> enum.
+        /// A dictionary of all chat tab buttons based on the <see cref="ChatboxTab"/> enum.
         /// </summary>
-        private Dictionary<ChatboxTabs, Button> mTabButtons = new Dictionary<ChatboxTabs, Button>();
+        private Dictionary<ChatboxTab, Button> mTabButtons = new Dictionary<ChatboxTab, Button>();
 
         //Window Controls
         private ImagePanel mChatboxWindow;
@@ -55,12 +55,12 @@ namespace Intersect.Client.Interface.Game.Chat
         /// <summary>
         /// Defines which chat tab we are currently looking at.
         /// </summary>
-        private ChatboxTabs mCurrentTab = ChatboxTabs.All;
+        private ChatboxTab mCurrentTab = ChatboxTab.All;
 
         /// <summary>
         /// The last tab that was looked at before switching around, if a switch was made at all.
         /// </summary>
-        private ChatboxTabs mLastTab = ChatboxTabs.All;
+        private ChatboxTab mLastTab = ChatboxTab.All;
 
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
@@ -78,12 +78,12 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxTitle.IsHidden = true;
 
             // Generate tab butons.
-            for (var btn = 0; btn < (int)ChatboxTabs.Count; btn++)
+            for (var btn = 0; btn < (int)ChatboxTab.Count; btn++)
             {
-                mTabButtons.Add((ChatboxTabs)btn, new Button(mChatboxWindow, $"{(ChatboxTabs)btn}TabButton"));
-                mTabButtons[(ChatboxTabs)btn].Text = Strings.Chatbox.ChatTabButtons[(ChatboxTabs)btn];
-                mTabButtons[(ChatboxTabs)btn].Clicked += TabButtonClicked;
-                mTabButtons[(ChatboxTabs)btn].UserData = (ChatboxTabs)btn;
+                mTabButtons.Add((ChatboxTab)btn, new Button(mChatboxWindow, $"{(ChatboxTab)btn}TabButton"));
+                mTabButtons[(ChatboxTab)btn].Text = Strings.Chatbox.ChatTabButtons[(ChatboxTab)btn];
+                mTabButtons[(ChatboxTab)btn].Clicked += TabButtonClicked;
+                mTabButtons[(ChatboxTab)btn].UserData = (ChatboxTab)btn;
             }
 
             mChatbar = new ImagePanel(mChatboxWindow, "Chatbar");
@@ -128,7 +128,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxText.IsHidden = true;
 
             // Disable this to start, since this is the default tab we open the client on.
-            mTabButtons[ChatboxTabs.All].Disable();
+            mTabButtons[ChatboxTab.All].Disable();
         }
 
         /// <summary>
@@ -136,9 +136,9 @@ namespace Intersect.Client.Interface.Game.Chat
         /// </summary>
         private void EnableChatTabs()
         {
-            for (var btn = 0; btn < (int)ChatboxTabs.Count; btn++)
+            for (var btn = 0; btn < (int)ChatboxTab.Count; btn++)
             {
-                mTabButtons[(ChatboxTabs)btn].Enable();
+                mTabButtons[(ChatboxTab)btn].Enable();
             }
 
         }
@@ -155,7 +155,7 @@ namespace Intersect.Client.Interface.Game.Chat
 
             // Disable the clicked button to fake our tab being selected and set our selected chat tab.
             sender.Disable();
-            mCurrentTab = (ChatboxTabs)sender.UserData;
+            mCurrentTab = (ChatboxTab)sender.UserData;
         }
 
         //Update

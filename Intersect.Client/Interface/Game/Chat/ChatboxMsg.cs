@@ -15,12 +15,12 @@ namespace Intersect.Client.Interface.Game.Chat
         /// <summary>
         /// Contains the configuration of which message types to display in each chat tab.
         /// </summary>
-        private static Dictionary<ChatboxTabs, ChatMessageType[]> sTabMessageTypes = new Dictionary<ChatboxTabs, ChatMessageType[]>() {
+        private static Dictionary<ChatboxTab, ChatMessageType[]> sTabMessageTypes = new Dictionary<ChatboxTab, ChatMessageType[]>() {
             // All has ALL tabs unlocked, so really we don't have to worry about that one.
-            { ChatboxTabs.Local, new ChatMessageType[] { ChatMessageType.Local, ChatMessageType.PM, ChatMessageType.Admin } },
-            { ChatboxTabs.Party, new ChatMessageType[] { ChatMessageType.Party, ChatMessageType.PM, ChatMessageType.Admin } },
-            { ChatboxTabs.Global, new ChatMessageType[] { ChatMessageType.Global, ChatMessageType.PM, ChatMessageType.Admin } },
-            { ChatboxTabs.System, new ChatMessageType[] { 
+            { ChatboxTab.Local, new ChatMessageType[] { ChatMessageType.Local, ChatMessageType.PM, ChatMessageType.Admin } },
+            { ChatboxTab.Party, new ChatMessageType[] { ChatMessageType.Party, ChatMessageType.PM, ChatMessageType.Admin } },
+            { ChatboxTab.Global, new ChatMessageType[] { ChatMessageType.Global, ChatMessageType.PM, ChatMessageType.Admin } },
+            { ChatboxTab.System, new ChatMessageType[] { 
                 ChatMessageType.Experience, ChatMessageType.Loot, ChatMessageType.Inventory, ChatMessageType.Bank, 
                 ChatMessageType.Combat, ChatMessageType.Quest, ChatMessageType.Crafting, ChatMessageType.Trading, 
                 ChatMessageType.Friend, ChatMessageType.Spells, ChatMessageType.Notice, ChatMessageType.Error,
@@ -91,12 +91,12 @@ namespace Intersect.Client.Interface.Game.Chat
         /// </summary>
         /// <param name="tab">The tab for which to retrieve all messages.</param>
         /// <returns>Returns a list of chat messages.</returns>
-        public static List<ChatboxMsg> GetMessages(ChatboxTabs tab)
+        public static List<ChatboxMsg> GetMessages(ChatboxTab tab)
         {
             var output = new List<ChatboxMsg>();
 
             // Are we looking for all messages?
-            if (tab == ChatboxTabs.All)
+            if (tab == ChatboxTab.All)
             {
                 output = GetMessages();
             }
