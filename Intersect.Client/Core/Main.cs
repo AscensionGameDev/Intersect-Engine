@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -61,7 +61,7 @@ namespace Intersect.Client.Core
             //TODO - Destroy Graphics and Networking peacefully
             //Network.Close();
             Interface.Interface.DestroyGwen();
-            Graphics.Renderer.Close();
+            Graphics.GameRenderer.Close();
         }
 
         public static void Update()
@@ -113,8 +113,8 @@ namespace Intersect.Client.Core
         {
             if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
-                GameTexture imageTex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                ITexture imageTex = Globals.ContentManager.LoadTexture(
+                    TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
                 );
 
                 if (imageTex != null)

@@ -77,7 +77,7 @@ namespace Intersect.Client.Core
                         switch (control)
                         {
                             case Control.Screenshot:
-                                Graphics.Renderer?.RequestScreenshot();
+                                Graphics.GameRenderer?.RequestScreenshot();
 
                                 break;
 

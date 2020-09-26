@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -131,7 +131,7 @@ namespace Intersect.Client.Interface.Game.Character
                 Items[i].Setup();
             }
 
-            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         //Update Button Event Handlers
@@ -175,8 +175,8 @@ namespace Intersect.Client.Interface.Game.Character
 
             //Load Portrait
             //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
-            var entityTex = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Entity, Globals.Me.MySprite
+            var entityTex = Globals.ContentManager.LoadTexture(
+                TextureType.Entity, Globals.Me.MySprite
             );
 
             /* UNCOMMENT THIS BLOCK IF YOU"D RATHER HAVE A FACE HERE if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
@@ -225,37 +225,37 @@ namespace Intersect.Client.Interface.Game.Character
                     else if (Options.PaperdollOrder[1][z] == "Player")
                     {
                         PaperdollPanels[z].Show();
-                        PaperdollPanels[z].Texture = entityTex;
-                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
+                        PaperdollPanels[z].GameTexture = entityTex;
+                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.Width / Options.Instance.Sprites.NormalFrames, entityTex.Height / Options.Instance.Sprites.Directions);
                         PaperdollPanels[z].SizeToContents();
                         Align.Center(PaperdollPanels[z]);
                     }
 
                     if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.PaperdollOrder[1][z] != "Player")
                     {
-                        PaperdollPanels[z].Texture = null;
+                        PaperdollPanels[z].GameTexture = null;
                         PaperdollPanels[z].Hide();
                         PaperdollTextures[z] = "";
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
-                        var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                        var paperdollTex = Globals.ContentManager.LoadTexture(
+                            TextureType.Paperdoll, paperdoll
                         );
 
-                        PaperdollPanels[z].Texture = paperdollTex;
+                        PaperdollPanels[z].GameTexture = paperdollTex;
                         if (paperdollTex != null)
                         {
                             PaperdollPanels[z]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    0, 0, PaperdollPanels[z].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[z].GameTexture.Height / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[z]
                                 .SetSize(
-                                    PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    PaperdollPanels[z].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[z].GameTexture.Height / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[z]

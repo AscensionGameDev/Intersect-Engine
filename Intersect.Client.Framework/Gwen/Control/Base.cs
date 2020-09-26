@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Anim;
@@ -123,9 +123,9 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private string mToolTipBackgroundFilename;
 
-        private GameTexture mToolTipBackgroundImage;
+        private ITexture mToolTipBackgroundImage;
 
-        private GameFont mToolTipFont;
+        private IFont mToolTipFont;
 
         private Color mToolTipFontColor;
 
@@ -175,13 +175,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Font.
         /// </summary>
-        public GameFont ToolTipFont
+        public IFont ToolTipFont
         {
             get => mToolTipFont;
             set
             {
                 mToolTipFont = value;
-                mToolTipFontInfo = $"{value?.GetName()},{value?.GetSize()}";
+                mToolTipFontInfo = value?.ToString();
             }
         }
 
@@ -971,21 +971,21 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["ToolTipBackground"] != null)
             {
                 var fileName = (string) obj["ToolTipBackground"];
-                GameTexture texture = null;
+                ITexture gameTexture = null;
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                    gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Interface, fileName);
                 }
 
                 mToolTipBackgroundFilename = fileName;
-                mToolTipBackgroundImage = texture;
+                mToolTipBackgroundImage = gameTexture;
             }
 
             if (obj["ToolTipFont"] != null && obj["ToolTipFont"].Type != JTokenType.Null)
             {
                 var fontArr = ((string) obj["ToolTipFont"]).Split(',');
                 mToolTipFontInfo = (string) obj["ToolTipFont"];
-                mToolTipFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                mToolTipFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             if (obj["ToolTipTextColor"] != null)

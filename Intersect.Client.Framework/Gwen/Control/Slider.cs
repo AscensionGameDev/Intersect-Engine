@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -19,7 +19,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected readonly SliderBar mSliderBar;
 
-        private GameTexture mBackgroundImage;
+        private ITexture mBackgroundImage;
 
         private string mBackgroundImageFilename;
 
@@ -138,8 +138,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["BackgroundImage"]
                     ), (string) obj["BackgroundImage"]
                 );
             }
@@ -336,13 +336,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             //skin.DrawKeyboardHighlight(this, RenderBounds, 0);
         }
 
-        public void SetImage(GameTexture img, string fileName)
+        public void SetImage(ITexture img, string fileName)
         {
             mBackgroundImage = img;
             mBackgroundImageFilename = fileName;
         }
 
-        public GameTexture GetImage()
+        public ITexture GetImage()
         {
             return mBackgroundImage;
         }
@@ -352,12 +352,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             return mBackgroundImageFilename;
         }
 
-        public void SetDraggerImage(GameTexture img, string fileName, Dragger.ControlState state)
+        public void SetDraggerImage(ITexture img, string fileName, Dragger.ControlState state)
         {
             mSliderBar.SetImage(img, fileName, state);
         }
 
-        public GameTexture GetDraggerImage(Dragger.ControlState state)
+        public ITexture GetDraggerImage(Dragger.ControlState state)
         {
             return mSliderBar.GetImage(state);
         }

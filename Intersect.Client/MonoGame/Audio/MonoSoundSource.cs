@@ -13,15 +13,15 @@ namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoSoundSource : GameAudioSource
     {
-        private readonly string mFilename;
+        private readonly string mAssetPath;
 
         private int mInstanceCount;
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(string name, ContentManager contentManager) : base(name, AudioType.SoundEffect)
+        public MonoSoundSource(string name, string assetPath) : base(name, AudioType.SoundEffect)
         {
-            mFilename = name;
+            mAssetPath = assetPath;
         }
 
         public SoundEffect Effect
@@ -57,7 +57,7 @@ namespace Intersect.Client.MonoGame.Audio
 
         private void LoadSound()
         {
-            using (var fileStream = new FileStream(mFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var fileStream = new FileStream(mAssetPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 try
                 {
@@ -65,10 +65,10 @@ namespace Intersect.Client.MonoGame.Audio
                 }
                 catch (Exception exception)
                 {
-                    Log.Error($"Error loading '{mFilename}'.", exception);
+                    Log.Error($"Error loading '{mAssetPath}'.", exception);
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]",
+                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mAssetPath}]",
                             new Color(0xBF, 0x0, 0x0)
                         )
                     );

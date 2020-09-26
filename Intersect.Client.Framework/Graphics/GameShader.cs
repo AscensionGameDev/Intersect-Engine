@@ -1,29 +1,56 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 
+using System;
+
 namespace Intersect.Client.Framework.Graphics
 {
-
-    public abstract class GameShader
+    public abstract class GameShader : IShader
     {
+        /// <inheritdoc />
+        public string Name { get; }
 
-        public GameShader(string shaderName)
+        /// <inheritdoc />
+        public bool Dirty { get; private set; }
+
+        /// <inheritdoc />
+        public object ShaderObject { get; protected set; }
+
+        protected GameShader(string name, object shaderObject)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            Name = name;
+            ShaderObject = shaderObject ?? throw new ArgumentNullException(nameof(shaderObject));
         }
 
-        public abstract void SetFloat(string key, float val);
+        /// <inheritdoc />
+        public virtual void SetFloat(string key, float value) => Dirty = true;
 
-        public abstract void SetInt(string key, int val);
+        /// <inheritdoc />
+        public virtual void SetInt(string key, int value) => Dirty = true;
 
-        public abstract void SetColor(string key, Color val);
+        /// <inheritdoc />
+        public virtual void SetColor(string key, Color value) => Dirty = true;
 
-        public abstract void SetVector2(string key, Pointf val);
+        /// <inheritdoc />
+        public virtual void SetVector2(string key, Pointf value) => Dirty = true;
 
-        public abstract bool ValuesChanged();
+        /// <inheritdoc />
+        public virtual void MarkClean() => Dirty = false;
 
-        public abstract void ResetChanged();
-
-        public abstract object GetShader();
-
+        /// <inheritdoc />
+        public TShader GetShader<TShader>() where TShader : class => ShaderObject as TShader;
     }
 
+    public abstract class GameShader<TShader> : GameShader where TShader : class {
+        public TShader Shader { get; private set; }
+
+        protected GameShader(string name, TShader shader) : base(name, shader)
+        {
+            Shader = shader;
+        }
+    }
 }

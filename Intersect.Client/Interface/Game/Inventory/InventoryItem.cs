@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -76,7 +76,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.GameTexture = Graphics.GameRenderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;
@@ -256,10 +256,10 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
-                        Pnl.Texture = itemTex;
+                        Pnl.GameTexture = itemTex;
                         if (Globals.Me.ItemOnCd(mMySlot))
                         {
                             Pnl.RenderColor = new Color(100, 255, 255, 255);
@@ -271,9 +271,9 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else
                     {
-                        if (Pnl.Texture != null)
+                        if (Pnl.GameTexture != null)
                         {
-                            Pnl.Texture = null;
+                            Pnl.GameTexture = null;
                         }
                     }
 
@@ -297,9 +297,9 @@ namespace Intersect.Client.Interface.Game.Inventory
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
+                    if (Pnl.GameTexture != null)
                     {
-                        Pnl.Texture = null;
+                        Pnl.GameTexture = null;
                     }
 
                     mTexLoaded = "";
@@ -350,7 +350,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.GameTexture
                                     );
                                 }
                             }

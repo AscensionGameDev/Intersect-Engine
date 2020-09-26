@@ -128,9 +128,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             mCheckBox.SetSize(w, h);
         }
 
-        public void SetImage(GameTexture texture, string fileName, CheckBox.ControlState state)
+        public void SetImage(ITexture gameTexture, string fileName, CheckBox.ControlState state)
         {
-            mCheckBox.SetImage(texture, fileName, state);
+            mCheckBox.SetImage(gameTexture, fileName, state);
         }
 
         public void SetTextColor(Color clr, Label.ControlState state)

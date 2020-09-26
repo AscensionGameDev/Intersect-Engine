@@ -7,7 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -149,12 +149,12 @@ namespace Intersect.Client.Entities
 
         public int Target = -1;
 
-        public GameTexture Texture;
+        public ITexture GameTexture;
 
         #region "Animation Textures and Timing"
         public SpriteAnimations SpriteAnimation = SpriteAnimations.Normal;
 
-        public Dictionary<SpriteAnimations,GameTexture> AnimatedTextures = new Dictionary<SpriteAnimations, GameTexture>();
+        public Dictionary<SpriteAnimations, ITexture> AnimatedTextures = new Dictionary<SpriteAnimations, ITexture>();
 
         public int SpriteFrame = 0;
 
@@ -228,7 +228,7 @@ namespace Intersect.Client.Entities
             set
             {
                 mTransformedSprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mTransformedSprite);
+                GameTexture = Globals.ContentManager.LoadTexture(TextureType.Entity, mTransformedSprite);
                 LoadAnimationTextures(mTransformedSprite);
                 if (value == "")
                 {
@@ -243,7 +243,7 @@ namespace Intersect.Client.Entities
             set
             {
                 mMySprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
+                GameTexture = Globals.ContentManager.LoadTexture(TextureType.Entity, mMySprite);
                 LoadAnimationTextures(mMySprite);
             }
         }
@@ -894,14 +894,14 @@ namespace Intersect.Client.Entities
             }
 
 
-            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
+            var texture = AnimatedTextures[SpriteAnimation] ?? GameTexture;
 
             if (texture != null)
             {
-                if (texture.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
+                if (texture.Height / Options.Instance.Sprites.Directions > Options.TileHeight)
                 {
                     destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
-                    destRectangle.Y = GetCenterPos().Y - texture.GetHeight() / (Options.Instance.Sprites.Directions * 2);
+                    destRectangle.Y = GetCenterPos().Y - texture.Height / (Options.Instance.Sprites.Directions * 2);
                 }
                 else
                 {
@@ -909,7 +909,7 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
-                destRectangle.X -= texture.GetWidth() / (SpriteFrames * 2);
+                destRectangle.X -= texture.Width / (SpriteFrames * 2);
                 switch (Dir)
                 {
                     case 0:
@@ -940,8 +940,8 @@ namespace Intersect.Client.Entities
                 if (Options.AnimatedSprites.Contains(sprite.ToLower()))
                 {
                     srcRectangle = new FloatRect(
-                        AnimationFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                        (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
+                        AnimationFrame * (int)texture.Width / SpriteFrames, d * (int)texture.Height / Options.Instance.Sprites.Directions,
+                        (int)texture.Width / SpriteFrames, (int)texture.Height / Options.Instance.Sprites.Directions
                     );
                 }
                 else
@@ -952,24 +952,24 @@ namespace Intersect.Client.Entities
                         if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || Blocking)
                         {
                             srcRectangle = new FloatRect(
-                                Options.Instance.Sprites.NormalSheetAttackFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
+                                Options.Instance.Sprites.NormalSheetAttackFrame * (int)texture.Width / SpriteFrames, d * (int)texture.Height / Options.Instance.Sprites.Directions,
+                                (int)texture.Width / SpriteFrames, (int)texture.Height / Options.Instance.Sprites.Directions
                             );
                         }
                         else
                         {
                             //Restore Original Attacking/Blocking Code
                             srcRectangle = new FloatRect(
-                                WalkFrame * (int) texture.GetWidth() / SpriteFrames, d * (int) texture.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int) texture.GetWidth() / SpriteFrames, (int) texture.GetHeight() / Options.Instance.Sprites.Directions
+                                WalkFrame * (int) texture.Width / SpriteFrames, d * (int) texture.Height / Options.Instance.Sprites.Directions,
+                                (int) texture.Width / SpriteFrames, (int) texture.Height / Options.Instance.Sprites.Directions
                             );
                         }
                     }
                     else
                     {
                         srcRectangle = new FloatRect(
-                            SpriteFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
+                            SpriteFrame * (int)texture.Width / SpriteFrames, d * (int)texture.Height / Options.Instance.Sprites.Directions,
+                            (int)texture.Width / SpriteFrames, (int)texture.Height / Options.Instance.Sprites.Directions
                         );
                     }
                 }
@@ -1058,26 +1058,26 @@ namespace Intersect.Client.Entities
             var destRectangle = new FloatRect();
             var d = 0;
 
-            GameTexture paperdollTex = null;
+            ITexture paperdollTex = null;
             var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
-            paperdollTex = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
+            paperdollTex = Globals.ContentManager.LoadTexture(
+                TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
             );
 
             var spriteFrames = SpriteFrames;
 
             if (paperdollTex == null)
             {
-                paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, filename);
+                paperdollTex = Globals.ContentManager.LoadTexture(TextureType.Paperdoll, filename);
                 spriteFrames = Options.Instance.Sprites.NormalFrames;
             }
 
             if (paperdollTex != null)
             {
-                if (paperdollTex.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
+                if (paperdollTex.Height / Options.Instance.Sprites.Directions > Options.TileHeight)
                 {
                     destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                    destRectangle.Y = GetCenterPos().Y - paperdollTex.GetHeight() / (Options.Instance.Sprites.Directions * 2);
+                    destRectangle.Y = GetCenterPos().Y - paperdollTex.Height / (Options.Instance.Sprites.Directions * 2);
                 }
                 else
                 {
@@ -1085,9 +1085,9 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
-                if (paperdollTex.GetWidth() / spriteFrames > Options.TileWidth)
+                if (paperdollTex.Width / spriteFrames > Options.TileWidth)
                 {
-                    destRectangle.X -= (paperdollTex.GetWidth() / spriteFrames - Options.TileWidth) / 2;
+                    destRectangle.X -= (paperdollTex.Width / spriteFrames - Options.TileWidth) / 2;
                 }
 
                 switch (Dir)
@@ -1117,23 +1117,23 @@ namespace Intersect.Client.Entities
                     if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || Blocking)
                     {
                         srcRectangle = new FloatRect(
-                            3 * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
+                            3 * (int)paperdollTex.Width / spriteFrames, d * (int)paperdollTex.Height / Options.Instance.Sprites.Directions,
+                            (int)paperdollTex.Width / spriteFrames, (int)paperdollTex.Height / Options.Instance.Sprites.Directions
                         );
                     }
                     else
                     {
                         srcRectangle = new FloatRect(
-                            WalkFrame * (int) paperdollTex.GetWidth() / spriteFrames, d * (int) paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int) paperdollTex.GetWidth() / spriteFrames, (int) paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
+                            WalkFrame * (int) paperdollTex.Width / spriteFrames, d * (int) paperdollTex.Height / Options.Instance.Sprites.Directions,
+                            (int) paperdollTex.Width / spriteFrames, (int) paperdollTex.Height / Options.Instance.Sprites.Directions
                         );
                     }
                 }
                 else
                 {
                     srcRectangle = new FloatRect(
-                        SpriteFrame * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                        (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
+                        SpriteFrame * (int)paperdollTex.Width / spriteFrames, d * (int)paperdollTex.Height / Options.Instance.Sprites.Directions,
+                        (int)paperdollTex.Width / spriteFrames, (int)paperdollTex.Height / Options.Instance.Sprites.Directions
                     );
                 }
 
@@ -1152,10 +1152,10 @@ namespace Intersect.Client.Entities
                 LatestMap.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2
             );
 
-            if (Texture != null)
+            if (GameTexture != null)
             {
                 pos.Y += Options.TileHeight / 2;
-                pos.Y -= Texture.GetHeight() / (Options.Instance.Sprites.Directions * 2);
+                pos.Y -= GameTexture.Height / (Options.Instance.Sprites.Directions * 2);
             }
 
             mCenterPos = pos;
@@ -1188,9 +1188,9 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                if (Texture != null)
+                if (GameTexture != null)
                 {
-                    y = y - (int) (Texture.GetHeight() / (Options.Instance.Sprites.Directions * 2));
+                    y = y - (int) (GameTexture.Height / (Options.Instance.Sprites.Directions * 2));
                     y -= 12;
                 }
             }
@@ -1262,7 +1262,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
+            var textSize = Graphics.GameRenderer.MeasureText(label, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = position == 0 ? GetLabelLocation(LabelType.Header) : GetLabelLocation(LabelType.Footer);
@@ -1270,12 +1270,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    Graphics.GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
+            Graphics.GameRenderer.DrawString(
                 label, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
@@ -1354,7 +1354,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+            var textSize = Graphics.GameRenderer.MeasureText(Name, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Name);
@@ -1362,12 +1362,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    Graphics.GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
+            Graphics.GameRenderer.DrawString(
                 Name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
@@ -1385,7 +1385,7 @@ namespace Intersect.Client.Entities
                     }
 
                     y = GetLabelLocation(LabelType.Name);
-                    var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+                    var headerSize = Graphics.GameRenderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
                     y -= headerSize.Y;
 
                     break;
@@ -1395,13 +1395,13 @@ namespace Intersect.Client.Entities
                         break;
                     }
 
-                    var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+                    var footerSize = Graphics.GameRenderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
                     y -= footerSize.Y - 8;
 
                     break;
                 case LabelType.Name:
                     y = GetLabelLocation(LabelType.Footer);
-                    var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+                    var nameSize = Graphics.GameRenderer.MeasureText(Name, Graphics.EntityNameFont, 1);
                     if (string.IsNullOrEmpty(FooterLabel.Text))
                     {
                         y -= nameSize.Y - 8;
@@ -1487,26 +1487,26 @@ namespace Intersect.Client.Entities
 
             var y = (int) Math.Ceiling(GetCenterPos().Y);
             var x = (int) Math.Ceiling(GetCenterPos().X);
-            var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+            var entityTex = Globals.ContentManager.LoadTexture(TextureType.Entity, MySprite);
             if (entityTex != null)
             {
-                y = y - (int) (entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
+                y = y - (int) (entityTex.Height / (Options.Instance.Sprites.Directions * 2));
                 y -= 8;
             }
 
-            var hpBackground = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Misc, "hpbackground.png"
+            var hpBackground = Globals.ContentManager.LoadTexture(
+                TextureType.Miscellaneous, "hpbackground.png"
             );
 
-            var hpForeground = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "hpbar.png");
-            var shieldForeground = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Misc, "shieldbar.png"
+            var hpForeground = Globals.ContentManager.LoadTexture(TextureType.Miscellaneous, "hpbar.png");
+            var shieldForeground = Globals.ContentManager.LoadTexture(
+                TextureType.Miscellaneous, "shieldbar.png"
             );
 
             if (hpBackground != null)
             {
                 Graphics.DrawGameTexture(
-                    hpBackground, new FloatRect(0, 0, hpBackground.GetWidth(), hpBackground.GetHeight()),
+                    hpBackground, new FloatRect(0, 0, hpBackground.Width, hpBackground.Height),
                     new FloatRect((int) (x - width / 2), (int) (y - 1), width, 6), Color.White
                 );
             }
@@ -1514,7 +1514,7 @@ namespace Intersect.Client.Entities
             if (hpForeground != null)
             {
                 Graphics.DrawGameTexture(
-                    hpForeground, new FloatRect(0, 0, hpfillWidth, hpForeground.GetHeight()),
+                    hpForeground, new FloatRect(0, 0, hpfillWidth, hpForeground.Height),
                     new FloatRect((int) (x - width / 2), (int) (y - 1), hpfillWidth, 6), Color.White
                 );
             }
@@ -1523,7 +1523,7 @@ namespace Intersect.Client.Entities
             {
                 Graphics.DrawGameTexture(
                     shieldForeground,
-                    new FloatRect((float) (width - shieldfillWidth), 0, shieldfillWidth, shieldForeground.GetHeight()),
+                    new FloatRect((float) (width - shieldfillWidth), 0, shieldfillWidth, shieldForeground.Height),
                     new FloatRect((int) (x - width / 2) + hpfillWidth, (int) (y - 1), shieldfillWidth, 6), Color.White
                 );
             }
@@ -1551,25 +1551,25 @@ namespace Intersect.Client.Entities
                 var castFillWidth = fillratio * width;
                 var y = (int) Math.Ceiling(GetCenterPos().Y);
                 var x = (int) Math.Ceiling(GetCenterPos().X);
-                var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+                var entityTex = Globals.ContentManager.LoadTexture(TextureType.Entity, MySprite);
                 if (entityTex != null)
                 {
-                    y = y + (int) (entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
+                    y = y + (int) (entityTex.Height / (Options.Instance.Sprites.Directions * 2));
                     y += 3;
                 }
 
-                var castBackground = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Misc, "castbackground.png"
+                var castBackground = Globals.ContentManager.LoadTexture(
+                    TextureType.Miscellaneous, "castbackground.png"
                 );
 
-                var castForeground = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Misc, "castbar.png"
+                var castForeground = Globals.ContentManager.LoadTexture(
+                    TextureType.Miscellaneous, "castbar.png"
                 );
 
                 if (castBackground != null)
                 {
                     Graphics.DrawGameTexture(
-                        castBackground, new FloatRect(0, 0, castBackground.GetWidth(), castBackground.GetHeight()),
+                        castBackground, new FloatRect(0, 0, castBackground.Width, castBackground.Height),
                         new FloatRect((int) (x - width / 2), (int) (y - 1), width, 6), Color.White
                     );
                 }
@@ -1578,7 +1578,7 @@ namespace Intersect.Client.Entities
                 {
                     Graphics.DrawGameTexture(
                         castForeground,
-                        new FloatRect(0, 0, castForeground.GetWidth() * fillratio, castForeground.GetHeight()),
+                        new FloatRect(0, 0, castForeground.Width * fillratio, castForeground.Height),
                         new FloatRect((int) (x - width / 2), (int) (y - 1), castFillWidth, 6), Color.White
                     );
                 }
@@ -1601,15 +1601,15 @@ namespace Intersect.Client.Entities
 
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
-            var targetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "target.png");
+            var targetTex = Globals.ContentManager.LoadTexture(TextureType.Miscellaneous, "target.png");
             if (targetTex != null)
             {
-                destRectangle.X = GetCenterPos().X - (int) targetTex.GetWidth() / 4;
-                destRectangle.Y = GetCenterPos().Y - (int) targetTex.GetHeight() / 2;
+                destRectangle.X = GetCenterPos().X - (int) targetTex.Width / 4;
+                destRectangle.Y = GetCenterPos().Y - (int) targetTex.Height / 2;
 
                 srcRectangle = new FloatRect(
-                    priority * (int) targetTex.GetWidth() / 2, 0, (int) targetTex.GetWidth() / 2,
-                    (int) targetTex.GetHeight()
+                    priority * (int) targetTex.Width / 2, 0, (int) targetTex.Width / 2,
+                    (int) targetTex.Height
                 );
 
                 destRectangle.Width = srcRectangle.Width;
@@ -1785,7 +1785,7 @@ namespace Intersect.Client.Entities
             AnimatedTextures.Clear();
             foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
             {
-                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, $@"{file}_{anim}.png"));
+                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.LoadTexture(TextureType.Entity, $@"{file}_{anim}.png"));
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 
@@ -30,7 +30,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private bool mCenterImage;
 
-        private GameTexture mClickedImage;
+        private ITexture mClickedImage;
 
         private string mClickedImageFilename;
 
@@ -38,11 +38,11 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private bool mDepressed;
 
-        private GameTexture mDisabledImage;
+        private ITexture mDisabledImage;
 
         private string mDisabledImageFilename;
 
-        private GameTexture mHoverImage;
+        private ITexture mHoverImage;
 
         private string mHoverImageFilename;
 
@@ -53,7 +53,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected string mMouseUpSound;
 
-        private GameTexture mNormalImage;
+        private ITexture mNormalImage;
 
         private string mNormalImageFilename;
 
@@ -200,8 +200,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["NormalImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["NormalImage"]
                     ), (string) obj["NormalImage"], ControlState.Normal
                 );
             }
@@ -209,8 +209,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["HoveredImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["HoveredImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["HoveredImage"]
                     ), (string) obj["HoveredImage"], ControlState.Hovered
                 );
             }
@@ -218,8 +218,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["ClickedImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ClickedImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["ClickedImage"]
                     ), (string) obj["ClickedImage"], ControlState.Clicked
                 );
             }
@@ -227,8 +227,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["DisabledImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["DisabledImage"]
                     ), (string) obj["DisabledImage"], ControlState.Disabled
                 );
             }
@@ -468,33 +468,33 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Sets the button's image.
         /// </summary>
         /// <param name="textureName">Texture name. Null to remove.</param>
-        public void SetImage(GameTexture texture, string fileName, ControlState state)
+        public void SetImage(ITexture gameTexture, string fileName, ControlState state)
         {
-            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            if (gameTexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
             }
 
             switch (state)
             {
                 case ControlState.Normal:
                     mNormalImageFilename = fileName;
-                    mNormalImage = texture;
+                    mNormalImage = gameTexture;
 
                     break;
                 case ControlState.Hovered:
                     mHoverImageFilename = fileName;
-                    mHoverImage = texture;
+                    mHoverImage = gameTexture;
 
                     break;
                 case ControlState.Clicked:
                     mClickedImageFilename = fileName;
-                    mClickedImage = texture;
+                    mClickedImage = gameTexture;
 
                     break;
                 case ControlState.Disabled:
                     mDisabledImageFilename = fileName;
-                    mDisabledImage = texture;
+                    mDisabledImage = gameTexture;
 
                     break;
                 default:
@@ -502,7 +502,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetImage(ControlState state)
+        public ITexture GetImage(ControlState state)
         {
             switch (state)
             {

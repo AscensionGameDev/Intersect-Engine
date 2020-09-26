@@ -2,7 +2,7 @@
 using System.Linq;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -65,7 +65,7 @@ namespace Intersect.Client.Interface
             {
                 Skin = new TexturedBase(
                     GwenRenderer,
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png")
+                    Globals.ContentManager.LoadTexture(TextureType.Interface, "defaultskin.png")
                 )
                 {
                     DefaultFont = Graphics.UIFont
@@ -79,12 +79,12 @@ namespace Intersect.Client.Interface
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(Skin, "MainMenu")
             {
-                Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
+                Scale = 1f //(GameGraphics.Renderer.ScreenWidth/1920f);
             };
 
             sMenuCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
+                (int) (Graphics.GameRenderer.ScreenWidth / sMenuCanvas.Scale),
+                (int) (Graphics.GameRenderer.ScreenHeight / sMenuCanvas.Scale)
             );
 
             sMenuCanvas.ShouldDrawBackground = false;
@@ -94,10 +94,10 @@ namespace Intersect.Client.Interface
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             sGameCanvas = new Canvas(Skin, "InGame");
 
-            //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
+            //_gameCanvas.Scale = (GameGraphics.Renderer.ScreenWidth / 1920f);
             sGameCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
+                (int) (Graphics.GameRenderer.ScreenWidth / sGameCanvas.Scale),
+                (int) (Graphics.GameRenderer.ScreenHeight / sGameCanvas.Scale)
             );
 
             sGameCanvas.ShouldDrawBackground = false;
@@ -218,7 +218,7 @@ namespace Intersect.Client.Interface
             return false;
         }
 
-        public static string[] WrapText(string input, int width, GameFont font)
+        public static string[] WrapText(string input, int width, IFont font)
         {
             var myOutput = new List<string>();
             if (input == null)
@@ -238,7 +238,7 @@ namespace Intersect.Client.Interface
                 while (curPos + curLen < input.Length)
                 {
                     line = input.Substring(curPos, curLen);
-                    measured = Graphics.Renderer.MeasureText(line, font, 1).X;
+                    measured = Graphics.GameRenderer.MeasureText(line, font, 1).X;
                     if (measured < width)
                     {
                         lastOk = lastSpace;

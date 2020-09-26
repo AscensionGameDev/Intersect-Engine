@@ -1,5 +1,5 @@
 ﻿using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -80,8 +80,8 @@ namespace Intersect.Client.Interface.Game
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();
                     mEventDialogWindow.BringToFront();
-                    var faceTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Face, Globals.EventDialogs[0].Face
+                    var faceTex = Globals.ContentManager.LoadTexture(
+                        TextureType.Face, Globals.EventDialogs[0].Face
                     );
 
                     var responseCount = 0;
@@ -144,13 +144,13 @@ namespace Intersect.Client.Interface.Game
                     }
 
                     mEventDialogWindow.LoadJsonUi(
-                        GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString()
+                        GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString()
                     );
 
                     if (faceTex != null)
                     {
                         mEventFace.Show();
-                        mEventFace.Texture = faceTex;
+                        mEventFace.GameTexture = faceTex;
                         mEventDialogArea.Show();
                         mEventDialogAreaNoFace.Hide();
                     }
@@ -213,7 +213,7 @@ namespace Intersect.Client.Interface.Game
                     }
 
                     mEventDialogWindow.SetSize(
-                        mEventDialogWindow.Texture.GetWidth(), mEventDialogWindow.Texture.GetHeight()
+                        mEventDialogWindow.GameTexture.Width, mEventDialogWindow.GameTexture.Height
                     );
 
                     if (faceTex != null)

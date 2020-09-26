@@ -189,8 +189,8 @@ namespace Intersect.Client.MonoGame.Input
 
                 if (state.X != mMouseX || state.Y != mMouseY)
                 {
-                    mMouseX = (int) (state.X * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().X);
-                    mMouseY = (int) (state.Y * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().Y);
+                    mMouseX = (int) (state.X * ((MonoGameRenderer) Core.Graphics.GameRenderer).GetMouseOffset().X);
+                    mMouseY = (int) (state.Y * ((MonoGameRenderer) Core.Graphics.GameRenderer).GetMouseOffset().Y);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
                             IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int) MouseButtons.None, Keys.Alt

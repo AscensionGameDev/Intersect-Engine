@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Entities;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -115,20 +115,20 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     Container.Show();
                     if (spell != null)
                     {
-                        var spellTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Spell, spell.Icon
+                        var spellTex = Globals.ContentManager.LoadTexture(
+                            TextureType.Spell, spell.Icon
                         );
 
                         if (spellTex != null)
                         {
-                            Pnl.Texture = spellTex;
+                            Pnl.GameTexture = spellTex;
                             Pnl.IsHidden = false;
                         }
                         else
                         {
-                            if (Pnl.Texture != null)
+                            if (Pnl.GameTexture != null)
                             {
-                                Pnl.Texture = null;
+                                Pnl.GameTexture = null;
                             }
                         }
 
@@ -137,9 +137,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                     else
                     {
-                        if (Pnl.Texture != null)
+                        if (Pnl.GameTexture != null)
                         {
-                            Pnl.Texture = null;
+                            Pnl.GameTexture = null;
                         }
 
                         mTexLoaded = "";
@@ -147,9 +147,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else if (remaining <= 0)
                 {
-                    if (Pnl.Texture != null)
+                    if (Pnl.GameTexture != null)
                     {
-                        Pnl.Texture = null;
+                        Pnl.GameTexture = null;
                     }
 
                     Container.Hide();

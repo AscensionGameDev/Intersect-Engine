@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Client.Entities;
+﻿using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -13,34 +11,35 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 
+using System;
+using System.Collections.Generic;
+
 namespace Intersect.Client.Core
 {
-
     public static class Graphics
     {
-
-        public static GameFont ActionMsgFont;
+        public static IFont ActionMsgFont;
 
         public static object AnimationLock = new object();
 
         //Darkness Stuff
         public static float BrightnessLevel;
 
-        public static GameFont ChatBubbleFont;
+        public static IFont ChatBubbleFont;
 
         public static FloatRect CurrentView;
 
-        public static GameShader DefaultShader;
+        public static IShader DefaultShader;
 
         //Rendering Variables
         public static int DrawCalls;
 
         public static int EntitiesDrawn;
 
-        public static GameFont EntityNameFont;
+        public static IFont EntityNameFont;
 
         //Screen Values
-        public static GameFont GameFont;
+        public static IFont GameFont;
 
         public static object GfxLock = new object();
 
@@ -60,14 +59,14 @@ namespace Intersect.Client.Core
         public static ColorF PlayerLightColor = ColorF.White;
 
         //Game Renderer
-        public static GameRenderer Renderer { get; set; }
+        public static IRenderer GameRenderer => Globals.GameContext.Renderer;
 
         //Cache the Y based rendering
         public static HashSet<Entity>[,] RenderingEntities;
 
-        private static GameContentManager sContentManager;
+        private static IGameContext GameContext { get; set; }
 
-        private static GameRenderTexture sDarknessTexture;
+        private static IRenderTexture sDarknessTexture;
 
         private static long sFadeTimer;
 
@@ -89,14 +88,14 @@ namespace Intersect.Client.Core
 
         private static float sPlayerLightSize;
 
-        public static GameFont UIFont;
+        public static IFont UIFont;
 
         //Init Functions
         public static void InitGraphics()
         {
-            Renderer.Init();
-            sContentManager = Globals.ContentManager;
-            sContentManager.LoadAll();
+            GameRenderer.Init();
+            GameContext = Globals.GameContext;
+            GameContext.ContentManager.LoadAll();
             GameFont = FindFont(ClientConfiguration.Instance.GameFont);
             UIFont = FindFont(ClientConfiguration.Instance.UIFont);
             EntityNameFont = FindFont(ClientConfiguration.Instance.EntityNameFont);
@@ -104,7 +103,7 @@ namespace Intersect.Client.Core
             ActionMsgFont = FindFont(ClientConfiguration.Instance.ActionMsgFont);
         }
 
-        public static GameFont FindFont(string font)
+        public static IFont FindFont(string font)
         {
             var size = 8;
 
@@ -115,7 +114,7 @@ namespace Intersect.Client.Core
                 int.TryParse(parts[1], out size);
             }
 
-            return sContentManager.GetFont(font, size);
+            return GameContext.ContentManager.LoadFont(font, size);
         }
 
         public static void InitInGame()
@@ -132,8 +131,8 @@ namespace Intersect.Client.Core
 
         public static void DrawIntro()
         {
-            var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+            var imageTex = GameContext.ContentManager.LoadTexture(
+                TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
             );
 
             if (imageTex != null)
@@ -144,8 +143,8 @@ namespace Intersect.Client.Core
 
         public static void DrawMenu()
         {
-            var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
+            var imageTex = GameContext.ContentManager.LoadTexture(
+                TextureType.Interface, ClientConfiguration.Instance.MenuBackground
             );
 
             if (imageTex != null)
@@ -431,28 +430,28 @@ namespace Intersect.Client.Core
         public static void Render()
         {
             var takingScreenshot = false;
-            if (Renderer?.ScreenshotRequests.Count > 0)
+            if (GameRenderer?.ScreenshotRequests.Count > 0)
             {
-                takingScreenshot = Renderer.BeginScreenshot();
+                takingScreenshot = GameRenderer.BeginScreenshot();
             }
 
-            if (!(Renderer?.Begin() ?? false))
+            if (!(GameRenderer?.Begin() ?? false))
             {
                 return;
             }
 
-            if (Renderer.GetScreenWidth() != sOldWidth ||
-                Renderer.GetScreenHeight() != sOldHeight ||
-                Renderer.DisplayModeChanged())
+            if (GameRenderer.ScreenWidth != sOldWidth ||
+                GameRenderer.ScreenHeight != sOldHeight ||
+                GameRenderer.DisplayModeChanged())
             {
                 sDarknessTexture = null;
                 Interface.Interface.DestroyGwen();
                 Interface.Interface.InitGwen();
-                sOldWidth = Renderer.GetScreenWidth();
-                sOldHeight = Renderer.GetScreenHeight();
+                sOldWidth = GameRenderer.ScreenWidth;
+                sOldHeight = GameRenderer.ScreenHeight;
             }
 
-            Renderer.Clear(Color.Black);
+            GameRenderer.Clear(Color.Black);
             DrawCalls = 0;
             MapsDrawn = 0;
             EntitiesDrawn = 0;
@@ -466,18 +465,23 @@ namespace Intersect.Client.Core
                     DrawIntro();
 
                     break;
+
                 case GameStates.Menu:
                     DrawMenu();
 
                     break;
+
                 case GameStates.Loading:
                     break;
+
                 case GameStates.InGame:
                     DrawInGame();
 
                     break;
+
                 case GameStates.Error:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -485,7 +489,7 @@ namespace Intersect.Client.Core
             Interface.Interface.DrawGui();
 
             DrawGameTexture(
-                Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
+                GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
                 new Color((int) Fade.GetFade(), 0, 0, 0), null, GameBlendModes.None
             );
 
@@ -494,15 +498,15 @@ namespace Intersect.Client.Core
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+                    Globals.ContentManager.LoadTexture(TextureType.Miscellaneous, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
-            
-            Renderer.End();
+
+            GameRenderer.End();
 
             if (takingScreenshot)
             {
-                Renderer.EndScreenshot();
+                GameRenderer.EndScreenshot();
             }
         }
 
@@ -654,84 +658,83 @@ namespace Intersect.Client.Core
                 }
             }
 
-            DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
+            DrawGameTexture(GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
             sOverlayUpdate = Globals.System.GetTimeMs();
         }
 
-        public static FloatRect GetSourceRect(GameTexture gameTexture)
+        public static FloatRect GetSourceRect(ITexture gameTexture)
         {
-            return gameTexture == null
-                ? new FloatRect()
-                : new FloatRect(0, 0, gameTexture.GetWidth(), gameTexture.GetHeight());
+            return gameTexture == null ? new FloatRect() : new FloatRect(0, 0, gameTexture.Width, gameTexture.Height);
         }
 
-        public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
+        public static void DrawFullScreenTexture(ITexture tex, float alpha = 1f)
         {
-            var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
-            var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
-            var bgw = tex.GetWidth();
-            var bgh = tex.GetHeight();
+            var bgx = GameRenderer.ScreenWidth / 2 - tex.Width / 2;
+            var bgy = GameRenderer.ScreenHeight / 2 - tex.Height / 2;
+            var bgw = tex.Width;
+            var bgh = tex.Height;
             var diff = 0;
-            if (bgw < Renderer.GetScreenWidth())
+            if (bgw < GameRenderer.ScreenWidth)
             {
-                diff = Renderer.GetScreenWidth() - bgw;
+                diff = GameRenderer.ScreenWidth - bgw;
                 bgx -= diff / 2;
                 bgw += diff;
             }
 
-            if (bgh < Renderer.GetScreenHeight())
+            if (bgh < GameRenderer.ScreenHeight)
             {
-                diff = Renderer.GetScreenHeight() - bgh;
+                diff = GameRenderer.ScreenHeight - bgh;
                 bgy -= diff / 2;
                 bgh += diff;
             }
 
             DrawGameTexture(
                 tex, GetSourceRect(tex),
-                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),
+                new FloatRect(bgx + GameRenderer.GetView().X, bgy + GameRenderer.GetView().Y, bgw, bgh),
                 new Color((int) (alpha * 255f), 255, 255, 255)
             );
         }
 
-        public static void DrawFullScreenTextureStretched(GameTexture tex)
+        public static void DrawFullScreenTextureStretched(ITexture tex)
         {
             DrawGameTexture(
                 tex, GetSourceRect(tex),
                 new FloatRect(
-                    Renderer.GetView().X, Renderer.GetView().Y, Renderer.GetScreenWidth(), Renderer.GetScreenHeight()
+                    GameRenderer.GetView().X, GameRenderer.GetView().Y, GameRenderer.ScreenWidth,
+                    GameRenderer.ScreenHeight
                 ), Color.White
             );
         }
 
-        public static void DrawFullScreenTextureFitWidth(GameTexture tex)
+        public static void DrawFullScreenTextureFitWidth(ITexture tex)
         {
-            var scale = Renderer.GetScreenWidth() / (float) tex.GetWidth();
-            var scaledHeight = tex.GetHeight() * scale;
-            var offsetY = (Renderer.GetScreenHeight() - tex.GetHeight()) / 2f;
+            var scale = GameRenderer.ScreenWidth / (float) tex.Width;
+            var scaledHeight = tex.Height * scale;
+            var offsetY = (GameRenderer.ScreenHeight - tex.Height) / 2f;
             DrawGameTexture(
                 tex, GetSourceRect(tex),
                 new FloatRect(
-                    Renderer.GetView().X, Renderer.GetView().Y + offsetY, Renderer.GetScreenWidth(), scaledHeight
+                    GameRenderer.GetView().X, GameRenderer.GetView().Y + offsetY, GameRenderer.ScreenWidth, scaledHeight
                 ), Color.White
             );
         }
 
-        public static void DrawFullScreenTextureFitHeight(GameTexture tex)
+        public static void DrawFullScreenTextureFitHeight(ITexture tex)
         {
-            var scale = Renderer.GetScreenHeight() / (float) tex.GetHeight();
-            var scaledWidth = tex.GetWidth() * scale;
-            var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
+            var scale = GameRenderer.ScreenHeight / (float) tex.Height;
+            var scaledWidth = tex.Width * scale;
+            var offsetX = (GameRenderer.ScreenWidth - scaledWidth) / 2f;
             DrawGameTexture(
                 tex, GetSourceRect(tex),
                 new FloatRect(
-                    Renderer.GetView().X + offsetX, Renderer.GetView().Y, scaledWidth, Renderer.GetScreenHeight()
+                    GameRenderer.GetView().X + offsetX, GameRenderer.GetView().Y, scaledWidth, GameRenderer.ScreenHeight
                 ), Color.White
             );
         }
 
-        public static void DrawFullScreenTextureFitMinimum(GameTexture tex)
+        public static void DrawFullScreenTextureFitMinimum(ITexture tex)
         {
-            if (Renderer.GetScreenWidth() > Renderer.GetScreenHeight())
+            if (GameRenderer.ScreenWidth > GameRenderer.ScreenHeight)
             {
                 DrawFullScreenTextureFitHeight(tex);
             }
@@ -741,9 +744,9 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawFullScreenTextureFitMaximum(GameTexture tex)
+        public static void DrawFullScreenTextureFitMaximum(ITexture tex)
         {
-            if (Renderer.GetScreenWidth() < Renderer.GetScreenHeight())
+            if (GameRenderer.ScreenWidth < GameRenderer.ScreenHeight)
             {
                 DrawFullScreenTextureFitHeight(tex);
             }
@@ -757,8 +760,8 @@ namespace Intersect.Client.Core
         {
             if (Globals.Me == null)
             {
-                CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
-                Renderer.SetView(CurrentView);
+                CurrentView = new FloatRect(0, 0, GameRenderer.ScreenWidth, GameRenderer.ScreenHeight);
+                GameRenderer.SetView(CurrentView);
 
                 return;
             }
@@ -795,9 +798,9 @@ namespace Intersect.Client.Core
                 var h = y1 - y;
                 var restrictView = new FloatRect(x, y, w, h);
                 CurrentView = new FloatRect(
-                    (int) Math.Ceiling(en.GetCenterPos().X - Renderer.GetScreenWidth() / 2f),
-                    (int) Math.Ceiling(en.GetCenterPos().Y - Renderer.GetScreenHeight() / 2f),
-                    Renderer.GetScreenWidth(), Renderer.GetScreenHeight()
+                    (int) Math.Ceiling(en.GetCenterPos().X - GameRenderer.ScreenHeight / 2f),
+                    (int) Math.Ceiling(en.GetCenterPos().Y - GameRenderer.ScreenWidth / 2f), GameRenderer.ScreenWidth,
+                    GameRenderer.ScreenHeight
                 );
 
                 if (restrictView.Width >= CurrentView.Width)
@@ -830,10 +833,10 @@ namespace Intersect.Client.Core
             }
             else
             {
-                CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+                CurrentView = new FloatRect(0, 0, GameRenderer.ScreenWidth, GameRenderer.ScreenHeight);
             }
 
-            Renderer.SetView(CurrentView);
+            GameRenderer.SetView(CurrentView);
         }
 
         //Lighting
@@ -841,7 +844,9 @@ namespace Intersect.Client.Core
         {
             if (sDarknessTexture == null)
             {
-                sDarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+                sDarknessTexture = GameRenderer.CreateRenderTexture(
+                    GameRenderer.ScreenWidth, GameRenderer.ScreenHeight
+                );
             }
 
             sDarknessTexture.Clear(Color.Black);
@@ -863,22 +868,22 @@ namespace Intersect.Client.Core
             if (map.IsIndoors)
             {
                 DrawGameTexture(
-                    Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
+                    GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect(0, 0, sDarknessTexture.Width, sDarknessTexture.Height),
                     new Color((byte) BrightnessLevel, 255, 255, 255), sDarknessTexture, GameBlendModes.Add
                 );
             }
             else
             {
                 DrawGameTexture(
-                    Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
-                    new Color(255, 255, 255, 255), sDarknessTexture, GameBlendModes.Add
+                    GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect(0, 0, sDarknessTexture.Width, sDarknessTexture.Height), new Color(255, 255, 255, 255),
+                    sDarknessTexture, GameBlendModes.Add
                 );
 
                 DrawGameTexture(
-                    Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
+                    GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect(0, 0, sDarknessTexture.Width, sDarknessTexture.Height),
                     new Color(
                         (int) Time.GetTintColor().A, (int) Time.GetTintColor().R, (int) Time.GetTintColor().G,
                         (int) Time.GetTintColor().B
@@ -896,12 +901,12 @@ namespace Intersect.Client.Core
             );
 
             DrawLights();
-            sDarknessTexture.End();
+            sDarknessTexture.EndFrame();
         }
 
         public static void DrawDarkness()
         {
-            var radialShader = Globals.ContentManager.GetShader("radialgradient");
+            var radialShader = Globals.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 DrawGameTexture(sDarknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
@@ -916,7 +921,7 @@ namespace Intersect.Client.Core
 
         private static void DrawLights()
         {
-            var radialShader = Globals.ContentManager.GetShader("radialgradient");
+            var radialShader = Globals.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 foreach (var l in sLightQueue)
@@ -928,7 +933,7 @@ namespace Intersect.Client.Core
                     radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(
-                        Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                        GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                         new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255), sDarknessTexture,
                         GameBlendModes.Add, radialShader, 0, true
                     );
@@ -1147,23 +1152,23 @@ namespace Intersect.Client.Core
         /// <param name="tex">The texture to draw</param>
         /// <param name="x">X coordinate on the render target to draw to</param>
         /// <param name="y">Y coordinate on the render target to draw to</param>
-        /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="gameRenderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(
-            GameTexture tex,
+            ITexture tex,
             float x,
             float y,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0.0f,
             bool drawImmediate = false
         )
         {
-            var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+            var destRectangle = new FloatRect(x, y, tex.Width, tex.Height);
+            var srcRectangle = new FloatRect(0, 0, tex.Width, tex.Height);
             DrawGameTexture(
-                tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader, rotationDegrees,
+                tex, srcRectangle, destRectangle, Color.White, gameRenderTarget, blendMode, shader, rotationDegrees,
                 drawImmediate
             );
         }
@@ -1176,24 +1181,24 @@ namespace Intersect.Client.Core
         /// <param name="x">X coordinate on the render target to draw to</param>
         /// <param name="y">Y coordinate on the render target to draw to</param>
         /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
-        /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="gameRenderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(
-            GameTexture tex,
+            ITexture tex,
             float x,
             float y,
             Color renderColor,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0.0f,
             bool drawImmediate = false
         )
         {
-            var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
-            var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+            var destRectangle = new FloatRect(x, y, tex.Width, tex.Height);
+            var srcRectangle = new FloatRect(0, 0, tex.Width, tex.Height);
             DrawGameTexture(
-                tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader, rotationDegrees,
+                tex, srcRectangle, destRectangle, renderColor, gameRenderTarget, blendMode, shader, rotationDegrees,
                 drawImmediate
             );
         }
@@ -1209,19 +1214,19 @@ namespace Intersect.Client.Core
         /// <param name="sy">Y coordinate on the source texture to grab from.</param>
         /// <param name="w">Width of the texture part we are rendering.</param>
         /// <param name="h">Height of the texture part we are rendering.</param>
-        /// <param name="renderTarget">>Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="gameRenderTarget">>Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
         public static void DrawGameTexture(
-            GameTexture tex,
+            ITexture tex,
             float dx,
             float dy,
             float sx,
             float sy,
             float w,
             float h,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0.0f,
             bool drawImmediate = false
         )
@@ -1231,20 +1236,20 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            Renderer.DrawTexture(
-                tex, sx, sy, w, h, dx, dy, w, h, Color.White, renderTarget, blendMode, shader, rotationDegrees, false,
-                drawImmediate
+            GameRenderer.DrawTexture(
+                tex, sx, sy, w, h, dx, dy, w, h, Color.White, gameRenderTarget, blendMode, shader, rotationDegrees,
+                false, drawImmediate
             );
         }
 
         public static void DrawGameTexture(
-            GameTexture tex,
+            ITexture tex,
             FloatRect srcRectangle,
             FloatRect targetRect,
             Color renderColor,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0.0f,
             bool drawImmediate = false
         )
@@ -1254,14 +1259,12 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            Renderer.DrawTexture(
+            GameRenderer.DrawTexture(
                 tex, srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height, targetRect.X,
                 targetRect.Y, targetRect.Width, targetRect.Height,
-                Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
+                Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), gameRenderTarget, blendMode,
                 shader, rotationDegrees, false, drawImmediate
             );
         }
-
     }
-
 }

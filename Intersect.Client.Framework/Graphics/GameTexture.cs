@@ -1,32 +1,77 @@
 ﻿using System;
 
-using Intersect.Client.Framework.Content;
-
 namespace Intersect.Client.Framework.Graphics
 {
-
-    public abstract class GameTexture : IAsset
+    /// <summary>
+    /// Abstract core implementation for texture assets.
+    /// </summary>
+    public abstract class GameTexture<TPlatformTexture> : ITexture, IDisposable where TPlatformTexture : IDisposable
     {
-
-        public string Name => GetName() ?? throw new ArgumentNullException(nameof(GetName));
-
-        public abstract string GetName();
-
-        public abstract int GetWidth();
-
-        public abstract int GetHeight();
-
-        public abstract object GetTexture();
-
-        public abstract Color GetPixel(int x1, int y1);
-
-        public abstract GameTexturePackFrame GetTexturePackFrame();
-
-        public static string ToString(GameTexture tex)
+        protected GameTexture(string name)
         {
-            return tex?.GetName() ?? "";
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            Name = name;
         }
 
-    }
+        protected GameTexture(string name, TPlatformTexture platformTexture) : this(name)
+        {
+            if (platformTexture == null)
+            {
+                throw new ArgumentNullException(nameof(platformTexture));
+            }
 
+            PlatformTexture = platformTexture;
+        }
+
+        /// <summary>
+        /// The platform-specific texture data container.
+        /// </summary>
+        protected TPlatformTexture PlatformTexture { get; set; }
+
+        /// <inheritdoc />
+        public string Name { get; }
+
+        /// <inheritdoc />
+        public abstract int Width { get; }
+
+        /// <inheritdoc />
+        public abstract int Height { get; }
+
+        /// <inheritdoc />
+        public abstract Color GetPixel(int x, int y);
+
+        /// <inheritdoc />
+        public virtual TTexture AsPlatformTexture<TTexture>()
+        {
+            if (TexturePackFrame != null)
+            {
+                return TexturePackFrame.PackedTexture.AsPlatformTexture<TTexture>();
+            }
+
+            return PlatformTexture is TTexture platformTexture ? platformTexture : default;
+        }
+
+        /// <inheritdoc />
+        public virtual ITexturePackFrame TexturePackFrame { get; private set; }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <see cref="Dispose"/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                PlatformTexture?.Dispose();
+            }
+        }
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
@@ -16,15 +16,15 @@ namespace Intersect.Client.Interface.Game
 
         ImagePanel mPnl;
 
-        public Draggable(int x, int y, GameTexture tex)
+        public Draggable(int x, int y, ITexture tex)
         {
             mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
-            mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
             mPnl.SetPosition(
                 InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
             );
 
-            mPnl.Texture = tex;
+            mPnl.GameTexture = tex;
             Active = this;
         }
 

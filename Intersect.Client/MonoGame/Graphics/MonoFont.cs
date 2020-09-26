@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Logging;
 
@@ -30,10 +30,7 @@ namespace Intersect.Client.MonoGame.Graphics
             }
         }
 
-        public override object GetFont()
-        {
-            return mFont;
-        }
+        public override TFont AsPlatformFont<TFont>() => (TFont) (mFont as object);
 
     }
 

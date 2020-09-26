@@ -8,8 +8,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Framework.Graphics
 {
-
-    public abstract class GameRenderer
+    public abstract class GameRenderer : IRenderer
     {
 
         public GameRenderer()
@@ -40,7 +39,7 @@ namespace Intersect.Client.Framework.Graphics
         /// <summary>
         ///     Called when the frame is done being drawn, generally used to finally display the content to the screen.
         /// </summary>
-        public abstract void End();
+        public abstract void End(bool frame = true);
 
         public abstract void EndScreenshot();
 
@@ -49,14 +48,17 @@ namespace Intersect.Client.Framework.Graphics
         /// </summary>
         public abstract void Clear(Color color);
 
+        /// <inheritdoc />
+        public abstract void SetRenderTexture(IRenderTexture renderTexture);
+
         public abstract void SetView(FloatRect view);
 
         public abstract FloatRect GetView();
 
-        public abstract GameFont LoadFont(string filename);
+        public abstract IFont LoadFont(string filename);
 
         public abstract void DrawTexture(
-            GameTexture tex,
+            ITexture tex,
             float sx,
             float sy,
             float sw,
@@ -66,58 +68,56 @@ namespace Intersect.Client.Framework.Graphics
             float tw,
             float th,
             Color renderColor,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0.0f,
             bool isUi = false,
             bool drawImmediate = false
         );
 
-        public abstract int GetFps();
+        public abstract int Fps { get; protected set; }
 
-        public abstract int GetScreenWidth();
+        public abstract int ScreenWidth { get; }
 
-        public abstract int GetScreenHeight();
-
-        public abstract string GetResolutionString();
+        public abstract int ScreenHeight { get; }
 
         public abstract bool DisplayModeChanged();
 
-        public abstract GameRenderTexture CreateRenderTexture(int width, int height);
+        public abstract IRenderTexture CreateRenderTexture(int width, int height);
 
-        public abstract GameTexture LoadTexture(string filename, string realFilename);
+        public abstract ITexture LoadTexture(string filename);
 
-        public abstract GameTexture LoadTexture(
+        public abstract ITexture LoadTexture(
             [NotNull] string assetName,
             [NotNull] Func<Stream> createStream
         );
 
-        public abstract GameTexture GetWhiteTexture();
+        public abstract ITexture GetWhiteTexture();
 
-        public abstract Pointf MeasureText(string text, GameFont gameFont, float fontScale);
+        public abstract Pointf MeasureText(string text, IFont gameFont, float fontScale);
 
         public abstract void DrawString(
             string text,
-            GameFont gameFont,
+            IFont gameFont,
             float x,
             float y,
             float fontScale,
             Color fontColor,
             bool worldPos = true,
-            GameRenderTexture renderTexture = null,
+            IRenderTexture gameRenderTexture = null,
             Color borderColor = null
         );
 
         public abstract void DrawString(
             string text,
-            GameFont gameFont,
+            IFont gameFont,
             float x,
             float y,
             float fontScale,
             Color fontColor,
             bool worldPos,
-            GameRenderTexture renderTexture,
+            IRenderTexture gameRenderTexture,
             FloatRect clipRect,
             Color borderColor = null
         );
@@ -131,7 +131,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract List<string> GetValidVideoModes();
 
-        public abstract GameShader LoadShader(string shaderName);
+        public abstract IShader LoadShader(string name);
 
         public void RequestScreenshot(string screenshotDir = "screenshots")
         {

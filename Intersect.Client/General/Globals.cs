@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Database;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
@@ -34,12 +35,14 @@ namespace Intersect.Client.General
 
         public static bool ConnectionLost;
 
+        public static IGameContext GameContext { get; set; }
+
         //Game Systems
-        public static GameContentManager ContentManager;
+        public static IContentManager ContentManager => GameContext.ContentManager;
 
         public static int CurrentMap = -1;
 
-        [NotNull] public static GameDatabase Database;
+        [NotNull] public static GameDatabase Database { get; set; }
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();

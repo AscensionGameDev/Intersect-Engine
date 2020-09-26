@@ -38,21 +38,21 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
         public override bool Supported { get; } = true;
 
-        public override GameTexture Texture { get; protected set; }
+        public override ITexture GameTexture { get; protected set; }
 
-        public override bool AddTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
+        public override bool AddTile(ITexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
         {
-            var platformTex = tex?.GetTexture();
+            var platformTex = tex?.AsPlatformTexture <Texture2D>();
             if (platformTex == null)
             {
                 return false;
             }
 
-            if (Texture == null)
+            if (GameTexture == null)
             {
-                Texture = tex;
+                GameTexture = tex;
             }
-            else if (Texture.GetTexture() != platformTex)
+            else if (GameTexture.AsPlatformTexture<Texture2D>() != platformTex)
             {
                 return false;
             }
@@ -63,16 +63,16 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             }
 
             var rotated = false;
-            var pack = tex.GetTexturePackFrame();
+            var pack = tex.TexturePackFrame;
             if (pack != null)
             {
-                if (pack.Rotated)
+                if (pack.IsRotated)
                 {
                     rotated = true;
 
                     var z = srcX;
-                    srcX = pack.Rect.Right - srcY - srcH;
-                    srcY = pack.Rect.Top + z;
+                    srcX = pack.Bounds.Right - srcY - srcH;
+                    srcY = pack.Bounds.Top + z;
 
                     z = srcW;
                     srcW = srcH;
@@ -80,12 +80,12 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 }
                 else
                 {
-                    srcX += pack.Rect.X;
-                    srcY += pack.Rect.Y;
+                    srcX += pack.Bounds.X;
+                    srcY += pack.Bounds.Y;
                 }
             }
 
-            var texture = (Texture2D) tex.GetTexture();
+            var texture = tex.AsPlatformTexture<Texture2D>();
 
             var textureSizeX = 1f / texture.Width;
             var textureSizeY = 1f / texture.Height;
@@ -132,7 +132,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 mGraphicsDevice.SetVertexBuffer(vertexBuffer);
                 mGraphicsDevice.Indices = indexBuffer;
 
-                basicEffect.Texture = (Texture2D) Texture.GetTexture();
+                basicEffect.Texture = (Texture2D) GameTexture.AsPlatformTexture<Texture2D>();
                 foreach (var pass in basicEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -184,7 +184,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             disposed = true;
         }
 
-        public override bool UpdateTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
+        public override bool UpdateTile(ITexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
         {
             var key = new Tuple<float, float>(x, y);
             var vertexIndex = -1;
@@ -198,7 +198,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 return false;
             }
 
-            var platformTex = tex?.GetTexture();
+            var platformTex = tex?.AsPlatformTexture<Texture2D>();
             if (platformTex == null)
             {
                 return false;
@@ -209,7 +209,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 return false;
             }
 
-            if (tex.GetTexture() != platformTex)
+            if (tex.AsPlatformTexture<Texture2D>() != platformTex)
             {
                 return false;
             }
@@ -219,18 +219,18 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 return false;
             }
 
-            var pack = tex.GetTexturePackFrame();
+            var pack = tex.TexturePackFrame;
 
             var rotated = false;
             if (pack != null)
             {
-                if (pack.Rotated)
+                if (pack.IsRotated)
                 {
                     rotated = true;
 
                     var z = srcX;
-                    srcX = pack.Rect.Right - srcY - srcH;
-                    srcY = pack.Rect.Top + z;
+                    srcX = pack.Bounds.Right - srcY - srcH;
+                    srcY = pack.Bounds.Top + z;
 
                     z = srcW;
                     srcW = srcH;
@@ -238,12 +238,12 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 }
                 else
                 {
-                    srcX += pack.Rect.X;
-                    srcY += pack.Rect.Y;
+                    srcX += pack.Bounds.X;
+                    srcY += pack.Bounds.Y;
                 }
             }
 
-            var texture = (Texture2D) tex.GetTexture();
+            var texture = tex.AsPlatformTexture<Texture2D>();
 
             var textureSizeX = 1f / texture.Width;
             var textureSizeY = 1f / texture.Height;

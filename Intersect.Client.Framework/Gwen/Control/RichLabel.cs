@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
@@ -20,7 +20,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private readonly List<TextBlock> mTextBlocks;
 
-        private GameFont mFont;
+        private IFont mFont;
 
         private string mFontInfo;
 
@@ -54,7 +54,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["Font"]).Split(',');
                 mFontInfo = (string) obj["Font"];
-                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                mFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="text">Text to add.</param>
         /// <param name="color">Text color.</param>
         /// <param name="font">Font to use.</param>
-        public void AddText(string text, Color color, Alignments alignment = Alignments.Left, GameFont font = null)
+        public void AddText(string text, Color color, Alignments alignment = Alignments.Left, IFont font = null)
         {
             if (String.IsNullOrEmpty(text))
             {
@@ -123,7 +123,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.SizeToChildren(width, height);
         }
 
-        protected void SplitLabel(string text, GameFont font, TextBlock block, ref int x, ref int y, ref int lineHeight)
+        protected void SplitLabel(string text, IFont font, TextBlock block, ref int x, ref int y, ref int lineHeight)
         {
             var spaced = Util.SplitAndKeep(text, " ");
             if (spaced.Length == 0)
@@ -159,7 +159,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
-            var newString = String.Empty;
+            var newString = string.Empty;
             for (var i = 0; i < spaced.Length; i++)
             {
                 wordSize = Skin.Renderer.MeasureText(font, newString + spaced[i]);
@@ -322,7 +322,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             public Color Color;
 
-            public GameFont Font;
+            public IFont Font;
 
             public Alignments Alignment;
 

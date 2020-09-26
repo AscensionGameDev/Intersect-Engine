@@ -1,9 +1,10 @@
 using Intersect.Client.Framework.Content;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Intersect.Client.Framework.File_Management;
+
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
@@ -18,15 +19,19 @@ using System.Collections.Generic;
 using System.IO;
 
 using Intersect.Client.General;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.File_Management
 {
-
     public class MonoContentManager : GameContentManager
     {
+        protected ContentManager ContentManager { get; }
 
-        public MonoContentManager()
+        public MonoContentManager(ContentManager contentManager)
         {
+            ContentManager = contentManager;
+
             Init(this);
             if (!Directory.Exists("resources"))
             {
@@ -37,27 +42,30 @@ namespace Intersect.Client.MonoGame.File_Management
         }
 
         //Graphic Loading
-        public override void LoadTilesets(string[] tilesetnames)
+        public override void LoadTilesets(IEnumerable<string> tilesetnames)
         {
-            mTilesetDict.Clear();
+            AssetLookup.Clear(ContentType.Tileset);
+            var tilesetFiles = Directory.GetFiles(Path.Combine("resources", "tilesets"))
+                .Select(f => Path.GetFileName(f));
 
-            var dir = Path.Combine("resources", "tilesets");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            var tilesetFiles = Directory.GetFiles(dir).Select(f => Path.GetFileName(f));
             foreach (var t in tilesetnames)
             {
-                var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? string.Empty;
-                if (!string.IsNullOrWhiteSpace(t) &&
+                var realFilename = tilesetFiles.FirstOrDefault(
+                    file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)
+                );
+
+                if (t != "" &&
                     (!string.IsNullOrWhiteSpace(realFilename) ||
                      GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) &&
-                    !mTilesetDict.ContainsKey(t.ToLower()))
+                    !AssetLookup.Contains(ContentType.Tileset, t.ToLower()))
                 {
-                    mTilesetDict.Add(
-                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t), Path.Combine("resources", "tilesets", realFilename))
+                    AssetLookup.Add(
+                        ContentType.Tileset,
+                        Core.Graphics.GameRenderer.LoadTexture(
+                            Path.Combine(
+                                "resources", "tilesets", !string.IsNullOrWhiteSpace(realFilename) ? realFilename : t
+                            )
+                        )
                     );
                 }
             }
@@ -67,7 +75,7 @@ namespace Intersect.Client.MonoGame.File_Management
 
         public override void LoadTexturePacks()
         {
-            mTexturePackDict.Clear();
+            AssetLookup.Clear(ContentType.TexturePack);
             var dir = Path.Combine("resources", "packs");
             if (!Directory.Exists(dir))
             {
@@ -83,7 +91,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 var img = obj["meta"]["image"].ToString();
                 if (File.Exists(Path.Combine("resources", "packs", img)))
                 {
-                    var platformText = Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "packs", img), Path.Combine("resources", "packs", img));
+                    var platformText = Core.Graphics.GameRenderer.LoadTexture(Path.Combine("resources", "packs", img));
                     if (platformText != null)
                     {
                         foreach (var frame in frames)
@@ -111,9 +119,9 @@ namespace Intersect.Client.MonoGame.File_Management
             }
         }
 
-        public void LoadTextureGroup(string directory, Dictionary<string, IAsset> dict)
+        public void LoadTextureGroup(string directory, ContentType contentType)
         {
-            dict.Clear();
+            AssetLookup.Clear(contentType);
             var dir = Path.Combine("resources", directory);
             if (!Directory.Exists(dir))
             {
@@ -123,8 +131,8 @@ namespace Intersect.Client.MonoGame.File_Management
             var items = Directory.GetFiles(dir, "*.png");
             for (var i = 0; i < items.Length; i++)
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar);
+                AssetLookup.Add(contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename)));
             }
 
             var packItems = GameTexturePacks.GetFolderFrames(directory);
@@ -132,10 +140,12 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 foreach (var itm in packItems)
                 {
-                    var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\", "/"));
-                    if (!dict.ContainsKey(filename))
+                    var filename = Path.GetFileName(itm.Name.Replace("\\", "/"));
+                    if (!AssetLookup.Contains(contentType, filename))
                     {
-                        dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
+                        AssetLookup.Add(
+                            contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename))
+                        );
                     }
                 }
             }
@@ -143,62 +153,62 @@ namespace Intersect.Client.MonoGame.File_Management
 
         public override void LoadItems()
         {
-            LoadTextureGroup("items", mItemDict);
+            LoadTextureGroup("items", ContentType.Item);
         }
 
         public override void LoadEntities()
         {
-            LoadTextureGroup("entities", mEntityDict);
+            LoadTextureGroup("entities", ContentType.Entity);
         }
 
         public override void LoadSpells()
         {
-            LoadTextureGroup("spells", mSpellDict);
+            LoadTextureGroup("spells", ContentType.Spell);
         }
 
         public override void LoadAnimations()
         {
-            LoadTextureGroup("animations", mAnimationDict);
+            LoadTextureGroup("animations", ContentType.Animation);
         }
 
         public override void LoadFaces()
         {
-            LoadTextureGroup("faces", mFaceDict);
+            LoadTextureGroup("faces", ContentType.Face);
         }
 
         public override void LoadImages()
         {
-            LoadTextureGroup("images", mImageDict);
+            LoadTextureGroup("images", ContentType.Image);
         }
 
         public override void LoadFogs()
         {
-            LoadTextureGroup("fogs", mFogDict);
+            LoadTextureGroup("fogs", ContentType.Fog);
         }
 
         public override void LoadResources()
         {
-            LoadTextureGroup("resources", mResourceDict);
+            LoadTextureGroup("resources", ContentType.Resource);
         }
 
         public override void LoadPaperdolls()
         {
-            LoadTextureGroup("paperdolls", mPaperdollDict);
+            LoadTextureGroup("paperdolls", ContentType.Paperdoll);
         }
 
         public override void LoadGui()
         {
-            LoadTextureGroup("gui", mGuiDict);
+            LoadTextureGroup("gui", ContentType.Interface);
         }
 
         public override void LoadMisc()
         {
-            LoadTextureGroup("misc", mMiscDict);
+            LoadTextureGroup("misc", ContentType.Miscellaneous);
         }
 
         public override void LoadFonts()
         {
-            mFontDict.Clear();
+            AssetLookup.Clear(ContentType.Font);
             var dir = Path.Combine("resources", "fonts");
             if (!Directory.Exists(dir))
             {
@@ -209,17 +219,17 @@ namespace Intersect.Client.MonoGame.File_Management
             for (var i = 0; i < items.Length; i++)
             {
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                var font = Core.Graphics.Renderer.LoadFont(Path.Combine(dir, filename));
-                if (mFontDict.IndexOf(font) == -1)
+                var font = Core.Graphics.GameRenderer.LoadFont(Path.Combine(dir, filename));
+                if (!AssetLookup.Contains(ContentType.Font, font.Name))
                 {
-                    mFontDict.Add(font);
+                    AssetLookup.Add(ContentType.Font, font);
                 }
             }
         }
 
         public override void LoadShaders()
         {
-            mShaderDict.Clear();
+            AssetLookup.Clear(ContentType.Shader);
             var dir = Path.Combine("resources", "shaders");
             if (!Directory.Exists(dir))
             {
@@ -232,90 +242,94 @@ namespace Intersect.Client.MonoGame.File_Management
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 if (!filename.Contains("_editor"))
                 {
-                    mShaderDict.Add(
-                        filename.Replace(".xnb", ""), Core.Graphics.Renderer.LoadShader(Path.Combine(dir, filename))
-                    );
+                    var name = RemoveExtension(filename);
+                    var effect = ContentManager.Load<Effect>(Path.Combine(dir, name));
+                    AssetLookup.Add(ContentType.Shader, new MonoShader(name, effect));
                 }
             }
         }
 
         public override void LoadSounds()
         {
-            mSoundDict.Clear();
-            var dir = Path.Combine("resources", "sounds");
-            if (!Directory.Exists(dir))
+            AssetLookup.Clear(ContentType.Sound);
+            var directory = Path.Combine("resources", "sounds");
+            if (!Directory.Exists(directory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(directory);
             }
 
-            var items = Directory.GetFiles(dir, "*.wav");
-            for (var i = 0; i < items.Length; i++)
-            {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mSoundDict.Add(
-                    RemoveExtension(filename),
-                    new MonoSoundSource(Path.Combine(dir, filename), ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
-                );
-            }
+            var filePaths = Directory.GetFiles(directory, "*.wav");
+            AssetLookup.Add(
+                ContentType.Sound,
+                filePaths.Select(filePath => new MonoSoundSource(RemoveExtension(Path.GetFileName(filePath)), filePath))
+            );
         }
 
         public override void LoadMusic()
         {
-            mMusicDict.Clear();
-            var dir = Path.Combine("resources", "music");
-            if (!Directory.Exists(dir))
+            AssetLookup.Clear(ContentType.Music);
+            var directory = Path.Combine("resources", "music");
+            if (!Directory.Exists(directory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(directory);
             }
 
-            var items = Directory.GetFiles(dir, "*.ogg");
-            for (var i = 0; i < items.Length; i++)
-            {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename)));
-            }
+            var filePaths = Directory.GetFiles(directory, "*.ogg");
+            AssetLookup.Add(
+                ContentType.Music,
+                filePaths.Select(filePath => new MonoMusicSource(RemoveExtension(Path.GetFileName(filePath)), filePath))
+            );
         }
 
         /// <inheritdoc />
-        protected override TAsset Load<TAsset>(
-            Dictionary<string, IAsset> lookup,
-            ContentTypes contentType,
-            string name,
-            Func<Stream> createStream
+        protected override TAsset InternalLoad<TAsset>(
+            ContentType contentType,
+            string assetName,
+            Func<string, Stream> createStream
         )
         {
+            var directoryName = contentType.GetDirectory();
+            var assetPath = Path.Combine("resources", directoryName, assetName);
+
+            if (!File.Exists(assetPath))
+            {
+                return default;
+            }
+
             switch (contentType)
             {
-                case ContentTypes.Animation:
-                case ContentTypes.Entity:
-                case ContentTypes.Face:
-                case ContentTypes.Fog:
-                case ContentTypes.Image:
-                case ContentTypes.Interface:
-                case ContentTypes.Item:
-                case ContentTypes.Miscellaneous:
-                case ContentTypes.Paperdoll:
-                case ContentTypes.Resource:
-                case ContentTypes.Spell:
-                case ContentTypes.TexturePack:
-                case ContentTypes.TileSet:
-                    return Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                case ContentType.Animation:
+                case ContentType.Entity:
+                case ContentType.Face:
+                case ContentType.Fog:
+                case ContentType.Image:
+                case ContentType.Interface:
+                case ContentType.Item:
+                case ContentType.Miscellaneous:
+                case ContentType.Paperdoll:
+                case ContentType.Resource:
+                case ContentType.Spell:
+                case ContentType.TexturePack:
+                case ContentType.Tileset:
+                    return Core.Graphics.GameRenderer.LoadTexture(
+                        assetPath, createStream == null ? null : (Func<Stream>) (() => createStream(assetPath))
+                    ) as TAsset;
 
-                case ContentTypes.Font:
-                    throw new NotImplementedException();
+                case ContentType.Font:
+                    return Core.Graphics.GameRenderer.LoadFont(assetPath) as TAsset;
 
-                case ContentTypes.Shader:
-                    throw new NotImplementedException();
+                case ContentType.Shader:
+                    return Core.Graphics.GameRenderer.LoadShader(assetPath) as TAsset;
 
-                case ContentTypes.Music:
-                case ContentTypes.Sound:
-                    throw new NotImplementedException();
+                case ContentType.Music:
+                    return new MonoMusicSource(assetName, $"{assetPath}.ogg") as TAsset;
+
+                case ContentType.Sound:
+                    return new MonoSoundSource(assetName, $"{assetPath}.wav") as TAsset;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
             }
         }
-
     }
-
 }

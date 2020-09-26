@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-
-using Intersect.Client.Classes.MonoGame.Graphics;
-using Intersect.Client.Framework.File_Management;
+﻿using Intersect.Client.Classes.MonoGame.Graphics;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
-using Intersect.Client.Interface;
 using Intersect.Client.Localization;
 
 using JetBrains.Annotations;
@@ -17,16 +11,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using XNARectangle = Microsoft.Xna.Framework.Rectangle;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+
 using XNAColor = Microsoft.Xna.Framework.Color;
+using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-
-    public class MonoRenderer : GameRenderer
+    internal class MonoGameRenderer : GameRenderer
     {
-
-        [NotNull] private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();
+        [NotNull] private readonly List<MonoGameTexture> mAllTextures = new List<MonoGameTexture>();
 
         private BasicEffect mBasicEffect;
 
@@ -34,11 +31,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private GameBlendModes mCurrentBlendmode = GameBlendModes.None;
 
-        private GameShader mCurrentShader;
+        private IShader mCurrentShader;
 
         private FloatRect mCurrentSpriteView;
 
-        private GameRenderTexture mCurrentTarget;
+        private IRenderTexture mCurrentTarget;
 
         private FloatRect mCurrentView;
 
@@ -50,21 +47,25 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private int mDisplayWidth;
 
-        private int mFps;
-
         private int mFpsCount;
 
         private long mFpsTimer;
 
         private long mFsChangedTimer = -1;
 
-        private Game mGame;
+        private IntersectGame mGame;
 
         [NotNull] private GameWindow mGameWindow;
 
         private GraphicsDeviceManager mGraphics;
 
         private GraphicsDevice mGraphicsDevice;
+
+        public GraphicsDevice GraphicsDevice
+        {
+            get => mGraphicsDevice;
+            private set => mGraphicsDevice = value;
+        }
 
         private bool mInitialized;
 
@@ -90,13 +91,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private List<string> mValidVideoModes;
 
-        private GameRenderTexture mWhiteTexture;
+        private IRenderTexture mWhiteTexture;
 
-        public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, [NotNull] Game monoGame)
+        public MonoGameRenderer(IntersectGame intersectGame)
         {
-            mGame = monoGame;
-            mGraphics = graphics;
-            mContentManager = contentManager;
+            mGame = intersectGame;
+            mGraphics = intersectGame.GraphicsDeviceManager;
+            mContentManager = intersectGame.Content;
 
             mNormalState = new BlendState()
             {
@@ -123,7 +124,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 AlphaDestinationBlend = Blend.InverseSourceAlpha
             };
 
-            mGameWindow = monoGame.Window;
+            mGameWindow = intersectGame.Window;
         }
 
         public IList<string> ValidVideoModes => GetValidVideoModes();
@@ -215,9 +216,9 @@ namespace Intersect.Client.MonoGame.Graphics
         public void CreateWhiteTexture()
         {
             mWhiteTexture = CreateRenderTexture(1, 1);
-            mWhiteTexture.Begin();
+            mWhiteTexture.BeginFrame();
             mWhiteTexture.Clear(Color.White);
-            mWhiteTexture.End();
+            mWhiteTexture.EndFrame();
         }
 
         public override bool Begin()
@@ -261,8 +262,8 @@ namespace Intersect.Client.MonoGame.Graphics
         private void StartSpritebatch(
             FloatRect view,
             GameBlendModes mode = GameBlendModes.None,
-            GameShader shader = null,
-            GameRenderTexture target = null,
+            IShader shader = null,
+            IRenderTexture target = null,
             bool forced = false,
             RasterizerState rs = null,
             bool drawImmediate = false
@@ -275,7 +276,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             if (mode != mCurrentBlendmode ||
                 shader != mCurrentShader ||
-                shader != null && shader.ValuesChanged() ||
+                shader != null && shader.Dirty ||
                 target != mCurrentTarget ||
                 viewsDiff ||
                 forced ||
@@ -289,7 +290,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 if (target != null)
                 {
-                    mGraphicsDevice?.SetRenderTarget((RenderTarget2D) target.GetTexture());
+                    SetRenderTexture(target);
                 }
                 else
                 {
@@ -334,8 +335,8 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 if (shader != null)
                 {
-                    useEffect = (Effect) shader.GetShader();
-                    shader.ResetChanged();
+                    useEffect = shader.GetShader<Effect>();
+                    shader.MarkClean();
                 }
 
                 mSpriteBatch.Begin(
@@ -398,7 +399,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
         }
 
-        public override GameTexture GetWhiteTexture()
+        public override ITexture GetWhiteTexture()
         {
             return mWhiteTexture;
         }
@@ -408,20 +409,29 @@ namespace Intersect.Client.MonoGame.Graphics
             return mContentManager;
         }
 
-        public override GameRenderTexture CreateRenderTexture(int width, int height)
+        public override IRenderTexture CreateRenderTexture(int width, int height)
         {
-            return new MonoRenderTexture(mGraphicsDevice, width, height);
+            var renderTarget = new RenderTarget2D(
+                GraphicsDevice, width, height, false, GraphicsDevice.PresentationParameters.BackBufferFormat,
+                GraphicsDevice.PresentationParameters.DepthStencilFormat,
+                GraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
+            );
+
+            return new MonoRenderTexture(this, renderTarget);
         }
+
+        public override void SetRenderTexture(IRenderTexture renderTexture) =>
+            GraphicsDevice.SetRenderTarget(renderTexture?.AsPlatformTexture<RenderTarget2D>());
 
         public override void DrawString(
             string text,
-            GameFont gameFont,
+            IFont gameFont,
             float x,
             float y,
             float fontScale,
             Color fontColor,
             bool worldPos = true,
-            GameRenderTexture renderTexture = null,
+            IRenderTexture gameRenderTexture = null,
             Color borderColor = null
         )
         {
@@ -430,13 +440,13 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
-            var font = (SpriteFont) gameFont.GetFont();
+            var font = gameFont.AsPlatformFont<SpriteFont>();
             if (font == null)
             {
                 return;
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, null);
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, gameRenderTexture, false, null);
             foreach (var chr in text)
             {
                 if (!font.Characters.Contains(chr))
@@ -473,13 +483,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void DrawString(
             string text,
-            GameFont gameFont,
+            IFont gameFont,
             float x,
             float y,
             float fontScale,
             Color fontColor,
             bool worldPos,
-            GameRenderTexture renderTexture,
+            IRenderTexture gameRenderTexture,
             FloatRect clipRect,
             Color borderColor = null
         )
@@ -494,7 +504,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             //clipRect.X += _currentView.X;
             //clipRect.Y += _currentView.Y;
-            var font = (SpriteFont) gameFont.GetFont();
+            var font = gameFont.AsPlatformFont<SpriteFont>();
             if (font == null)
             {
                 return;
@@ -504,7 +514,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             //Copy the current scissor rect so we can restore it after
             var currentRect = mSpriteBatch.GraphicsDevice.ScissorRectangle;
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, mRasterizerState, true);
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, gameRenderTexture, false, mRasterizerState, true);
 
             //Set the current scissor rectangle
             mSpriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle(
@@ -559,7 +569,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawTexture(
-            GameTexture tex,
+            ITexture tex,
             float sx,
             float sy,
             float sw,
@@ -569,15 +579,15 @@ namespace Intersect.Client.MonoGame.Graphics
             float tw,
             float th,
             Color renderColor,
-            GameRenderTexture renderTarget = null,
+            IRenderTexture gameRenderTarget = null,
             GameBlendModes blendMode = GameBlendModes.None,
-            GameShader shader = null,
+            IShader shader = null,
             float rotationDegrees = 0,
             bool isUi = false,
             bool drawImmediate = false
         )
         {
-            var texture = tex?.GetTexture();
+            var texture = tex?.AsPlatformTexture<Texture2D>();
             if (texture == null)
             {
                 return;
@@ -585,10 +595,10 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var packRotated = false;
 
-            var pack = tex.GetTexturePackFrame();
+            var pack = tex.TexturePackFrame;
             if (pack != null)
             {
-                if (pack.Rotated)
+                if (pack.IsRotated)
                 {
                     rotationDegrees -= 90;
                     var z = tw;
@@ -596,8 +606,8 @@ namespace Intersect.Client.MonoGame.Graphics
                     th = z;
 
                     z = sx;
-                    sx = pack.Rect.Right - sy - sh;
-                    sy = pack.Rect.Top + z;
+                    sx = pack.Bounds.Right - sy - sh;
+                    sy = pack.Bounds.Top + z;
 
                     z = sw;
                     sw = sh;
@@ -606,8 +616,8 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
                 else
                 {
-                    sx += pack.Rect.X;
-                    sy += pack.Rect.Y;
+                    sx += pack.Bounds.X;
+                    sy += pack.Bounds.Y;
                 }
             }
 
@@ -641,7 +651,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 ty += height / 2f;
             }
 
-            if (renderTarget == null)
+            if (gameRenderTarget == null)
             {
                 if (isUi)
                 {
@@ -660,8 +670,8 @@ namespace Intersect.Client.MonoGame.Graphics
             else
             {
                 StartSpritebatch(
-                    new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), blendMode, shader,
-                    renderTarget, false, null, drawImmediate
+                    new FloatRect(0, 0, gameRenderTarget.Width, gameRenderTarget.Height), blendMode, shader,
+                    gameRenderTarget, false, null, drawImmediate
                 );
 
                 mSpriteBatch.Draw(
@@ -689,43 +699,13 @@ namespace Intersect.Client.MonoGame.Graphics
             );
         }
 
-        public override void End()
-        {
-            EndSpriteBatch();
-            mFpsCount++;
-            if (mFpsTimer < Globals.System.GetTimeMs())
-            {
-                mFps = mFpsCount;
-                mFpsCount = 0;
-                mFpsTimer = Globals.System.GetTimeMs() + 1000;
-                mGameWindow.Title = Strings.Main.gamename;
-            }
+        public override int Fps { get; protected set; }
 
-            foreach (var texture in mAllTextures)
-            {
-                texture?.Update();
-            }
-        }
+        /// <inheritdoc />
+        public override int ScreenWidth => mScreenWidth;
 
-        public override int GetFps()
-        {
-            return mFps;
-        }
-
-        public override int GetScreenHeight()
-        {
-            return mScreenHeight;
-        }
-
-        public override int GetScreenWidth()
-        {
-            return mScreenWidth;
-        }
-
-        public override string GetResolutionString()
-        {
-            return mScreenWidth + "x" + mScreenHeight;
-        }
+        /// <inheritdoc />
+        public override int ScreenHeight => mScreenHeight;
 
         public override List<string> GetValidVideoModes()
         {
@@ -827,7 +807,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatch = new SpriteBatch(mGraphicsDevice);
         }
 
-        public override GameFont LoadFont(string filename)
+        public override IFont LoadFont(string filename)
         {
             //Get font size from filename, format should be name_size.xnb or whatever
             var name = GameContentManager.RemoveExtension(filename)
@@ -856,40 +836,39 @@ namespace Intersect.Client.MonoGame.Graphics
             return null;
         }
 
-        public override GameShader LoadShader(string shaderName)
-        {
-            return new MonoShader(shaderName, mContentManager);
-        }
+        public override IShader LoadShader(string name) => new MonoShader(
+            name, mContentManager.Load<Effect>(GameContentManager.RemoveExtension(name))
+        );
 
-        public override GameTexture LoadTexture(string filename, string realFilename)
+        public override ITexture LoadTexture(string filename)
         {
             var packFrame = GameTexturePacks.GetFrame(filename);
             if (packFrame != null)
             {
-                var tx = new MonoTexture(mGraphicsDevice, filename, packFrame);
+                var tx = new MonoGameTexture(mGraphicsDevice, filename, packFrame);
                 mAllTextures.Add(tx);
 
                 return tx;
             }
 
-            var tex = new MonoTexture(mGraphicsDevice, filename, realFilename);
+            var tex = new MonoGameTexture(mGraphicsDevice, filename);
             mAllTextures.Add(tex);
 
             return tex;
         }
 
         /// <inheritdoc />
-        public override GameTexture LoadTexture(string assetName, Func<Stream> createStream) =>
-            new MonoTexture(mGraphicsDevice, assetName, createStream);
+        public override ITexture LoadTexture(string assetName, Func<Stream> createStream) =>
+            new MonoGameTexture(mGraphicsDevice, assetName, createStream);
 
-        public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
+        public override Pointf MeasureText(string text, IFont gameFont, float fontScale)
         {
             if (gameFont == null)
             {
                 return Pointf.Empty;
             }
 
-            var font = (SpriteFont) gameFont.GetFont();
+            var font = gameFont.AsPlatformFont<SpriteFont>();
             if (font == null)
             {
                 return Pointf.Empty;
@@ -941,6 +920,28 @@ namespace Intersect.Client.MonoGame.Graphics
             return true;
         }
 
+        /// <inheritdoc />
+        public override void End(bool frame = true)
+        {
+            EndSpriteBatch();
+            if (frame)
+            {
+                mFpsCount++;
+                if (mFpsTimer < Globals.System.GetTimeMs())
+                {
+                    Fps = mFpsCount;
+                    mFpsCount = 0;
+                    mFpsTimer = Globals.System.GetTimeMs() + 1000;
+                    mGameWindow.Title = Strings.Main.gamename;
+                }
+
+                foreach (var texture in mAllTextures)
+                {
+                    texture?.Update();
+                }
+            }
+        }
+
         public override void EndScreenshot()
         {
             if (mScreenshotRenderTarget == null)
@@ -983,7 +984,5 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatch?.Draw(skippedFrame, new XNARectangle(), XNAColor.White);
             End();
         }
-
     }
-
 }

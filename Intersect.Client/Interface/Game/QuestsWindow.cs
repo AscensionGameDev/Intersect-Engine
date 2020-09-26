@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -68,7 +68,7 @@ namespace Intersect.Client.Interface.Game
             mQuitButton.SetText(Strings.QuestLog.abandon);
             mQuitButton.Clicked += _quitButton_Clicked;
 
-            mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         private void _quitButton_Clicked(Base sender, ClickedEventArgs arguments)

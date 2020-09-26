@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -39,7 +39,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private string mBackgroundTemplateFilename;
 
-        private GameTexture mBackgroundTemplateTex;
+        private ITexture mBackgroundTemplateTex;
 
         protected Color mClickedTextColor;
 
@@ -68,7 +68,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             mAutoSizeToContents = true;
         }
 
-        public GameTexture ToolTipBackground { get; set; }
+        public ITexture ToolTipBackground { get; set; }
 
         /// <summary>
         ///     Text alignment.
@@ -95,7 +95,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Font.
         /// </summary>
-        public GameFont Font
+        public IFont Font
         {
             get => mText?.Font;
             set
@@ -105,7 +105,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     if (mText != null)
                     {
                         mText.Font = value;
-                        fontInfo = $"{value?.GetName()},{value?.GetSize()}";
+                        fontInfo = value?.ToString();
                     }
 
                     if (mAutoSizeToContents)
@@ -123,8 +123,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public string FontName
         {
-            get => mText?.Font?.GetName() ?? "arial";
-            set => Font = GameContentManager.Current?.GetFont(value, FontSize);
+            get => (mText?.Font).Name ?? "arial";
+            set => Font = GameContentManager.Current?.LoadFont(value, FontSize);
         }
 
         /// <summary>
@@ -132,8 +132,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public int FontSize
         {
-            get => mText?.Font?.GetSize() ?? 12;
-            set => Font = GameContentManager.Current?.GetFont(FontName, value);
+            get => mText?.Font?.Size ?? 12;
+            set => Font = GameContentManager.Current?.LoadFont(FontName, value);
         }
 
         /// <summary>
@@ -239,8 +239,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundTemplate"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
             }
@@ -281,7 +281,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["Font"]).Split(',');
                 fontInfo = (string) obj["Font"];
-                Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                Font = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             if (obj["TextScale"] != null)
@@ -290,20 +290,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetTemplate()
+        public ITexture GetTemplate()
         {
             return mBackgroundTemplateTex;
         }
 
-        public void SetBackgroundTemplate(GameTexture texture, string fileName)
+        public void SetBackgroundTemplate(ITexture gameTexture, string fileName)
         {
-            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            if (gameTexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;
-            mBackgroundTemplateTex = texture;
+            mBackgroundTemplateTex = gameTexture;
         }
 
         public virtual void MakeColorNormal()

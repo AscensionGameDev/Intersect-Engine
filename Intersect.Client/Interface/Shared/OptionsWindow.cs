@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -117,7 +117,7 @@ namespace Intersect.Client.Interface.Shared
             mResolutionLabel.SetText(Strings.Options.resolution);
 
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
-            var myModes = Graphics.Renderer.GetValidVideoModes();
+            var myModes = Graphics.GameRenderer.GetValidVideoModes();
             myModes?.ForEach(
                 t =>
                 {
@@ -197,7 +197,7 @@ namespace Intersect.Client.Interface.Shared
             mRestoreKeybindingsButton.Clicked += RestoreKeybindingsButton_Clicked;
 
             var row = 0;
-            var defaultFont = GameContentManager.Current?.GetFont("sourcesansproblack", 16);
+            var defaultFont = GameContentManager.Current?.LoadFont("sourcesansproblack", 16);
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
                 var offset = row * 32;
@@ -253,7 +253,7 @@ namespace Intersect.Client.Interface.Shared
 
             mOptionsPanel.LoadJsonUi(
                 mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu,
-                Graphics.Renderer.GetResolutionString()
+                Graphics.GameRenderer.ActiveResolution.ToString()
             );
 
             CloseKeybindings();
@@ -389,10 +389,10 @@ namespace Intersect.Client.Interface.Shared
             mPreviousMusicVolume = Globals.Database.MusicVolume;
             mPreviousSoundVolume = Globals.Database.SoundVolume;
             mEdittingControls = new Controls(Controls.ActiveControls);
-            if (Graphics.Renderer.GetValidVideoModes().Count > 0)
+            if (Graphics.GameRenderer.GetValidVideoModes().Count > 0)
             {
                 string resolutionLabel;
-                if (Graphics.Renderer.HasOverrideResolution)
+                if (Graphics.GameRenderer.HasOverrideResolution)
                 {
                     resolutionLabel = Strings.Options.ResolutionCustom;
 
@@ -405,7 +405,7 @@ namespace Intersect.Client.Interface.Shared
                 }
                 else
                 {
-                    resolutionLabel = Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                    resolutionLabel = Graphics.GameRenderer.GetValidVideoModes()[Globals.Database.TargetResolution];
                 }
 
                 mResolutionList.SelectByText(resolutionLabel);
@@ -502,11 +502,11 @@ namespace Intersect.Client.Interface.Shared
         {
             var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
-            var validVideoModes = Graphics.Renderer.GetValidVideoModes();
+            var validVideoModes = Graphics.GameRenderer.GetValidVideoModes();
             var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
             if (targetResolution > -1)
             {
-                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.Renderer.HasOverrideResolution;
+                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.GameRenderer.HasOverrideResolution;
                 Globals.Database.TargetResolution = targetResolution;
             }
 
@@ -552,8 +552,8 @@ namespace Intersect.Client.Interface.Shared
             if (shouldReset)
             {
                 mCustomResolutionMenuItem?.Hide();
-                Graphics.Renderer.OverrideResolution = Resolution.Empty;
-                Graphics.Renderer.Init();
+                Graphics.GameRenderer.OverrideResolution = Resolution.Empty;
+                Graphics.GameRenderer.Init();
             }
 
             if (Globals.GameState == GameStates.InGame)

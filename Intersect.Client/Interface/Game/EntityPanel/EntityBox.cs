@@ -5,7 +5,7 @@ using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -192,7 +192,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             SetEntity(myEntity);
 
-            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             UpdateSpellStatus();
 
@@ -381,9 +381,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 if (!MyEntity.StatusActive(status))
                 {
                     var s = mActiveStatuses[status];
-                    s.Pnl.Texture = null;
+                    s.Pnl.GameTexture = null;
                     s.Container.Hide();
-                    s.Container.Texture = null;
+                    s.Container.GameTexture = null;
                     EntityStatusPanel.RemoveChild(s.Container, true);
                     s.pnl_HoverLeave(null, null);
                     mActiveStatuses.Remove(status);
@@ -413,7 +413,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     itm.Setup();
 
-                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
                     itm.Container.Name = "";
                     mActiveStatuses.Add(id, itm);
                 }
@@ -686,12 +686,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateImage()
         {
-            var faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
-            var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
-            if (faceTex != null && faceTex != EntityFace.Texture)
+            var faceTex = Globals.ContentManager.LoadTexture(TextureType.Face, MyEntity.Face);
+            var entityTex = Globals.ContentManager.LoadTexture(TextureType.Entity, MyEntity.MySprite);
+            if (faceTex != null && faceTex != EntityFace.GameTexture)
             {
-                EntityFace.Texture = faceTex;
-                EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+                EntityFace.GameTexture = faceTex;
+                EntityFace.SetTextureRect(0, 0, faceTex.Width, faceTex.Height);
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
@@ -714,12 +714,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                 }
             }
-            else if (entityTex != null && faceTex == null || faceTex != null && faceTex != EntityFace.Texture)
+            else if (entityTex != null && faceTex == null || faceTex != null && faceTex != EntityFace.GameTexture)
             {
-                if (entityTex != EntityFace.Texture)
+                if (entityTex != EntityFace.GameTexture)
                 {
-                    EntityFace.Texture = entityTex;
-                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
+                    EntityFace.GameTexture = entityTex;
+                    EntityFace.SetTextureRect(0, 0, entityTex.Width / Options.Instance.Sprites.NormalFrames, entityTex.Height / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
                     mCurrentSprite = MyEntity.MySprite;
@@ -776,29 +776,29 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     if (paperdoll == "" && PaperdollTextures[n] != "")
                     {
-                        PaperdollPanels[n].Texture = null;
+                        PaperdollPanels[n].GameTexture = null;
                         PaperdollPanels[n].Hide();
                         PaperdollTextures[n] = "";
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
-                        var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                        var paperdollTex = Globals.ContentManager.LoadTexture(
+                            TextureType.Paperdoll, paperdoll
                         );
 
-                        PaperdollPanels[n].Texture = paperdollTex;
+                        PaperdollPanels[n].GameTexture = paperdollTex;
                         if (paperdollTex != null)
                         {
                             PaperdollPanels[n]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    0, 0, PaperdollPanels[n].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].GameTexture.Height / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]
                                 .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    PaperdollPanels[n].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].GameTexture.Height / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]

@@ -2,7 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -100,7 +100,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             mContentPanel.Clicked += pnl_Clicked;
 
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.GameTexture = Graphics.GameRenderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;
@@ -336,8 +336,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
-                    mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Item, mCurrentItem.Icon
+                    mContentPanel.GameTexture = Globals.ContentManager.LoadTexture(
+                        TextureType.Item, mCurrentItem.Icon
                     );
 
                     if (mInventoryItemIndex > -1)
@@ -377,8 +377,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 else if (mCurrentSpell != null)
                 {
                     mContentPanel.Show();
-                    mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Spell, mCurrentSpell.Icon
+                    mContentPanel.GameTexture = Globals.ContentManager.LoadTexture(
+                        TextureType.Spell, mCurrentSpell.Icon
                     );
 
                     EquipPanel.IsHidden = true;
@@ -476,7 +476,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                                         IsDragging = true;
                                         mDragIcon = new Draggable(
                                             Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                            Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, mContentPanel.Texture
+                                            Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, mContentPanel.GameTexture
                                         );
 
                                         //SOMETHING SHOULD BE RENDERED HERE, RIGHT?

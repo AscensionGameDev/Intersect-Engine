@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.File_Management;
+﻿using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -34,10 +34,10 @@ namespace Intersect.Client.Interface.Game
             Size = size;
             Clickable = clickable;
 
-            mPicture.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, picture);
-            if (mPicture.Texture != null)
+            mPicture.GameTexture = Globals.ContentManager.LoadTexture(TextureType.Image, picture);
+            if (mPicture.GameTexture != null)
             {
-                mPicture.SetSize(mPicture.Texture.GetWidth(), mPicture.Texture.GetHeight());
+                mPicture.SetSize(mPicture.GameTexture.Width, mPicture.GameTexture.Height);
                 Align.Center(mPicture);
 
                 if (size != (int) PictureSize.Original) // Don't scale if you want to keep the original size.

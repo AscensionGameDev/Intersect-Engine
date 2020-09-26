@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -110,7 +110,7 @@ namespace Intersect.Client.Interface.Menu
             mLogoutButton.IsHidden = true;
             mLogoutButton.Clicked += mLogoutButton_Clicked;
 
-            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         public bool IsHidden => mCharacterSelectionPanel.IsHidden;
@@ -187,35 +187,35 @@ namespace Intersect.Client.Interface.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Face, Characters[mSelectedChar].Face
+                mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                    TextureType.Face, Characters[mSelectedChar].Face
                 );
 
-                if (mCharacterPortrait.Texture == null)
+                if (mCharacterPortrait.GameTexture == null)
                 {
-                    mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite
+                    mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                        TextureType.Entity, Characters[mSelectedChar].Sprite
                     );
 
                     isFace = false;
                 }
 
-                if (mCharacterPortrait.Texture != null)
+                if (mCharacterPortrait.GameTexture != null)
                 {
                     if (isFace)
                     {
                         mCharacterPortrait.SetTextureRect(
-                            0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
+                            0, 0, mCharacterPortrait.GameTexture.Width, mCharacterPortrait.GameTexture.Height
                         );
 
                         var scale = Math.Min(
-                            mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
-                            mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
+                            mCharacterContainer.InnerWidth / (double) mCharacterPortrait.GameTexture.Width,
+                            mCharacterContainer.InnerHeight / (double) mCharacterPortrait.GameTexture.Height
                         );
 
                         mCharacterPortrait.SetSize(
-                            (int) (mCharacterPortrait.Texture.GetWidth() * scale),
-                            (int) (mCharacterPortrait.Texture.GetHeight() * scale)
+                            (int) (mCharacterPortrait.GameTexture.Width * scale),
+                            (int) (mCharacterPortrait.GameTexture.Height * scale)
                         );
 
                         mCharacterPortrait.SetPosition(
@@ -228,11 +228,11 @@ namespace Intersect.Client.Interface.Menu
                     else
                     {
                         mCharacterPortrait.SetTextureRect(
-                            0, 0, mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                            0, 0, mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
                         );
 
                         mCharacterPortrait.SetSize(
-                            mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                            mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
                         );
 
                         mCharacterPortrait.SetPosition(
@@ -244,23 +244,23 @@ namespace Intersect.Client.Interface.Menu
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
-                                    GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
+                                mPaperdollPortraits[i].GameTexture = Globals.ContentManager.LoadTexture(
+                                    TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
                                 );
 
-                                if (mPaperdollPortraits[i].Texture != null)
+                                if (mPaperdollPortraits[i].GameTexture != null)
                                 {
                                     mPaperdollPortraits[i].Show();
                                     mPaperdollPortraits[i]
                                         .SetTextureRect(
-                                            0, 0, mPaperdollPortraits[i].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                            mPaperdollPortraits[i].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                            0, 0, mPaperdollPortraits[i].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                            mPaperdollPortraits[i].GameTexture.Height / Options.Instance.Sprites.Directions
                                         );
 
                                     mPaperdollPortraits[i]
                                         .SetSize(
-                                            mPaperdollPortraits[i].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                            mPaperdollPortraits[i].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                            mPaperdollPortraits[i].GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                            mPaperdollPortraits[i].GameTexture.Height / Options.Instance.Sprites.Directions
                                         );
 
                                     mPaperdollPortraits[i]
@@ -272,7 +272,7 @@ namespace Intersect.Client.Interface.Menu
                             }
                             else
                             {
-                                if (mPaperdollPortraits[i].Texture != null)
+                                if (mPaperdollPortraits[i].GameTexture != null)
                                 {
                                     mPaperdollPortraits[i].Show();
                                 }
@@ -290,7 +290,7 @@ namespace Intersect.Client.Interface.Menu
                 mCharnameLabel.SetText(Strings.CharacterSelection.empty);
                 mInfoLabel.SetText("");
 
-                mCharacterPortrait.Texture = null;
+                mCharacterPortrait.GameTexture = null;
             }
         }
 

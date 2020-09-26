@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
@@ -49,7 +49,7 @@ namespace Intersect.Client.Entities
                 {
                     if (GameContentManager.Current.TilesetsLoaded)
                     {
-                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, mMySprite);
+                        GameTexture = Globals.ContentManager.LoadTexture(TextureType.Tileset, mMySprite);
                     }
                     else
                     {
@@ -58,7 +58,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                    GameTexture = Globals.ContentManager.LoadTexture(TextureType.Resource, mMySprite);
                 }
 
                 mHasRenderBounds = false;
@@ -248,7 +248,7 @@ namespace Intersect.Client.Entities
                 MySprite = MySprite;
             }
 
-            if (Texture != null)
+            if (GameTexture != null)
             {
                 mSrcRectangle.X = 0;
                 mSrcRectangle.Y = 0;
@@ -268,8 +268,8 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    mSrcRectangle.Width = Texture.GetWidth();
-                    mSrcRectangle.Height = Texture.GetHeight();
+                    mSrcRectangle.Width = GameTexture.Width;
+                    mSrcRectangle.Height = GameTexture.Height;
                 }
 
                 mDestRectangle.Width = mSrcRectangle.Width;
@@ -298,9 +298,9 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (Texture != null)
+            if (GameTexture != null)
             {
-                Graphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
+                Graphics.DrawGameTexture(GameTexture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
             }
         }
 

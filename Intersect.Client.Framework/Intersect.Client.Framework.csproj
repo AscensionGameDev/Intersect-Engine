@@ -65,23 +65,32 @@
     <Compile Include="Audio\GameAudioSource.cs" />
     <Compile Include="Audio\IAudioInstance.cs" />
     <Compile Include="Audio\IAudioSource.cs" />
+    <Compile Include="Content\AssetLookup.cs" />
     <Compile Include="Content\AssetTypeAttribute.cs" />
-    <Compile Include="Content\ContentTypes.cs" />
+    <Compile Include="Content\ContentType.cs" />
     <Compile Include="Content\ContentTypesExtensions.cs" />
     <Compile Include="Content\IAsset.cs" />
     <Compile Include="Content\IContentManager.cs" />
+    <Compile Include="Content\TextureType.cs" />
     <Compile Include="Database\GameDatabase.cs" />
-    <Compile Include="File Management\GameContentManager.cs" />
+    <Compile Include="Content\GameContentManager.cs" />
     <Compile Include="General\GameStates.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />
     <Compile Include="Graphics\GameRenderer.cs" />
+    <Compile Include="Graphics\GameTexturePackFrame.cs" />
+    <Compile Include="Graphics\IFont.cs" />
+    <Compile Include="Graphics\IRenderTexture.cs" />
+    <Compile Include="Graphics\ITexturePackFrame.cs" />
     <Compile Include="Graphics\GameRenderTexture.cs" />
     <Compile Include="Graphics\GameShader.cs" />
     <Compile Include="Graphics\GameTexture.cs" />
     <Compile Include="Graphics\GameTexturePack.cs" />
     <Compile Include="Graphics\GameTileBuffer.cs" />
     <Compile Include="Input\GameClipboard.cs" />
+    <Compile Include="Graphics\ITexture.cs" />
+    <Compile Include="Graphics\IRenderer.cs" />
+    <Compile Include="Graphics\IShader.cs" />
     <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="IGameContext.cs" />
     <Compile Include="Input\GameInput.cs" />
@@ -240,6 +249,7 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
@@ -23,7 +23,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private readonly Table mTable;
 
-        private GameFont mFont;
+        private IFont mFont;
 
         private string mFontInfo;
 
@@ -240,7 +240,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["Font"]).Split(',');
                 mFontInfo = (string) obj["Font"];
-                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                mFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             foreach (var itm in mTable.Children)

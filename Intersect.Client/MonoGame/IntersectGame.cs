@@ -39,7 +39,7 @@ namespace Intersect.Client.MonoGame
 
         private double mLastUpdateTime = 0;
 
-        private GraphicsDeviceManager mGraphics;
+        public GraphicsDeviceManager GraphicsDeviceManager { get; }
 
         #region "Autoupdate Variables"
 
@@ -63,6 +63,8 @@ namespace Intersect.Client.MonoGame
 
         [NotNull] private Action PostStartupAction { get; }
 
+        private MonoGameContext GameContext { get; }
+
         private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
             Context = context;
@@ -70,14 +72,14 @@ namespace Intersect.Client.MonoGame
 
             Strings.Load();
 
-            mGraphics = new GraphicsDeviceManager(this)
+            GraphicsDeviceManager = new GraphicsDeviceManager(this)
             {
                 PreferredBackBufferWidth = 800,
                 PreferredBackBufferHeight = 480,
                 PreferHalfPixelOffset = true
             };
 
-            mGraphics.PreparingDeviceSettings += (s, args) =>
+            GraphicsDeviceManager.PreparingDeviceSettings += (s, args) =>
             {
                 args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
                     RenderTargetUsage.PreserveContents;
@@ -85,7 +87,11 @@ namespace Intersect.Client.MonoGame
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
-            Globals.ContentManager = new MonoContentManager();
+
+            GameContext = new MonoGameContext(this);
+
+            Globals.GameContext = GameContext;
+
             Globals.Database = new MonoDatabase();
 
             /* Load configuration */
@@ -95,18 +101,13 @@ namespace Intersect.Client.MonoGame
 
             Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
 
-            var renderer = new MonoRenderer(mGraphics, Content, this)
-            {
-                OverrideResolution = Context.StartupOptions.ScreenResolution
-            };
+            GameContext.Renderer.OverrideResolution = Context.StartupOptions.ScreenResolution;
 
             Globals.InputManager = new MonoInput(this);
             GameClipboard.Instance = new MonoClipboard();
 
-            Core.Graphics.Renderer = renderer;
-
             Globals.System = new MonoSystem();
-            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
+            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.GameRenderer);
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
@@ -143,16 +144,16 @@ namespace Intersect.Client.MonoGame
 
                 //Set the size of the updater screen before applying graphic changes.
                 //We need to do this here instead of in the constructor for the size change to apply to Linux
-                mGraphics.PreferredBackBufferWidth = 800;
-                mGraphics.PreferredBackBufferHeight = 480;
+                GraphicsDeviceManager.PreferredBackBufferWidth = 800;
+                GraphicsDeviceManager.PreferredBackBufferHeight = 480;
             }
 
-            mGraphics.ApplyChanges();
+            GraphicsDeviceManager.ApplyChanges();
         }
 
         private void IntersectInit()
         {
-            (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+            (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket();
@@ -261,10 +262,10 @@ namespace Intersect.Client.MonoGame
                 {
                     if (updaterGraphicsReset == false)
                     {
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init();
-                        (Core.Graphics.Renderer as MonoRenderer)?.Begin();
-                        (Core.Graphics.Renderer as MonoRenderer)?.End();
+                        (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init(GraphicsDevice);
+                        (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init();
+                        (Core.Graphics.GameRenderer as MonoGameRenderer)?.Begin();
+                        (Core.Graphics.GameRenderer as MonoGameRenderer)?.End();
                         updaterGraphicsReset = true;
                     }
                 }

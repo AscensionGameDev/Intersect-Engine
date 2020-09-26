@@ -17,18 +17,18 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         //No Target Needed, Rendering Directly to GUI
         private Color mColor;
 
-        private GameRenderer mRenderer;
+        private IRenderer mGameRenderer;
 
-        private GameRenderTexture mRenderTarget;
+        private IRenderTexture mGameRenderTarget;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UnityGwenRenderer" /> class.
         /// </summary>
         /// <param name="target">Intersect render target.</param>
-        public IntersectRenderer(GameRenderTexture renderTarget, GameRenderer renderer)
+        public IntersectRenderer(IRenderTexture gameRenderTarget, IRenderer gameRenderer)
         {
-            mRenderer = renderer;
-            mRenderTarget = renderTarget;
+            mGameRenderer = gameRenderer;
+            mGameRenderTarget = gameRenderTarget;
         }
 
         /// <summary>
@@ -40,16 +40,16 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             set => mColor = new Color(value.A, value.R, value.G, value.B);
         }
 
-        public override Color PixelColor(GameTexture texture, uint x, uint y, Color defaultColor)
+        public override Color PixelColor(ITexture gameTexture, uint x, uint y, Color defaultColor)
         {
             var x1 = (int) x;
             var y1 = (int) y;
-            if (texture == null)
+            if (gameTexture == null)
             {
                 return defaultColor;
             }
 
-            return texture.GetPixel(x1, y1);
+            return gameTexture.GetPixel(x1, y1);
         }
 
         /*
@@ -72,19 +72,19 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <returns>
         ///     Width and height of the rendered text.
         /// </returns>
-        public override Point MeasureText(GameFont font, string text, float scale = 1f)
+        public override Point MeasureText(IFont font, string text, float scale = 1f)
         {
             if (font == null)
             {
                 return Point.Empty;
             }
 
-            var size = mRenderer.MeasureText(text, font, scale * Scale);
+            var size = mGameRenderer.MeasureText(text, font, scale * Scale);
 
             return new Point((int) size.X, (int) size.Y);
         }
 
-        public override void RenderText(GameFont font, Point pos, string text, float scale = 1f)
+        public override void RenderText(IFont font, Point pos, string text, float scale = 1f)
         {
             pos = Translate(pos);
             var clip = new FloatRect(ClipRegion.X, ClipRegion.Y, ClipRegion.Width, ClipRegion.Height);
@@ -92,7 +92,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             clip.Y = (int) Math.Round(clip.Y * Scale);
             clip.Width = (int) Math.Round(clip.Width * Scale);
             clip.Height = (int) Math.Round(clip.Height * Scale);
-            mRenderer.DrawString(text, font, pos.X, pos.Y, Scale * scale, mColor, false, mRenderTarget, clip);
+            mGameRenderer.DrawString(text, font, pos.X, pos.Y, Scale * scale, mColor, false, mGameRenderTarget, clip);
         }
 
         public override void DrawFilledRect(Rectangle targetRect)
@@ -150,24 +150,24 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 }
             }
 
-            if (mRenderTarget == null)
+            if (mGameRenderTarget == null)
             {
-                mRenderer.DrawTexture(
-                    mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
-                    mRenderTarget, GameBlendModes.None, null, 0f, true
+                mGameRenderer.DrawTexture(
+                    mGameRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
+                    mGameRenderTarget, GameBlendModes.None, null, 0f, true
                 );
             }
             else
             {
-                mRenderer.DrawTexture(
-                    mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
-                    mRenderTarget, GameBlendModes.None, null, 0f, true
+                mGameRenderer.DrawTexture(
+                    mGameRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X, rect.Y, rect.Width, rect.Height, mColor,
+                    mGameRenderTarget, GameBlendModes.None, null, 0f, true
                 );
             }
         }
 
         public override void DrawTexturedRect(
-            GameTexture tex,
+            ITexture tex,
             Rectangle targetRect,
             Color clr,
             float u1 = 0,
@@ -187,10 +187,10 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 return;
             }
 
-            u1 *= tex.GetWidth();
-            v1 *= tex.GetHeight();
-            u2 *= tex.GetWidth();
-            v2 *= tex.GetHeight();
+            u1 *= tex.Width;
+            v1 *= tex.Height;
+            u2 *= tex.Width;
+            v2 *= tex.Height;
 
             if (mClipping)
             {
@@ -251,17 +251,17 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             //v1 /= tex.GetHeight();
             //u2 /= tex.GetWidth();
             //v2 /= tex.GetHeight();
-            if (mRenderTarget == null)
+            if (mGameRenderTarget == null)
             {
-                mRenderer.DrawTexture(
-                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mRenderTarget,
+                mGameRenderer.DrawTexture(
+                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mGameRenderTarget,
                     GameBlendModes.None, null, 0f, true
                 );
             }
             else
             {
-                mRenderer.DrawTexture(
-                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mRenderTarget,
+                mGameRenderer.DrawTexture(
+                    tex, u1, v1, u2 - u1, v2 - v1, rect.X, rect.Y, rect.Width, rect.Height, mColor, mGameRenderTarget,
                     GameBlendModes.None, null, 0f, true
                 );
             }
@@ -305,16 +305,16 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// </summary>
         public override ICacheToTexture Ctt => this;
 
-        private Dictionary<Control.Base, GameRenderTexture> m_RT;
+        private Dictionary<Control.Base, IRenderTexture> m_RT;
 
-        private Stack<GameRenderTexture> m_Stack;
+        private Stack<IRenderTexture> m_Stack;
 
-        private GameRenderTexture m_RealRT;
+        private IRenderTexture m_RealRT;
 
         public void Initialize()
         {
-            m_RT = new Dictionary<Control.Base, GameRenderTexture>();
-            m_Stack = new Stack<GameRenderTexture>();
+            m_RT = new Dictionary<Control.Base, IRenderTexture>();
+            m_Stack = new Stack<IRenderTexture>();
         }
 
         public void ShutDown()
@@ -332,11 +332,11 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void SetupCacheTexture(Control.Base control)
         {
-            m_RealRT = mRenderTarget;
-            m_Stack.Push(mRenderTarget); // save current RT
-            mRenderTarget = m_RT[control]; // make cache current RT
-            mRenderTarget.Begin();
-            mRenderTarget.Clear(Color.Transparent);
+            m_RealRT = mGameRenderTarget;
+            m_Stack.Push(mGameRenderTarget); // save current RT
+            mGameRenderTarget = m_RT[control]; // make cache current RT
+            mGameRenderTarget.BeginFrame();
+            mGameRenderTarget.Clear(Color.Transparent);
         }
 
         /// <summary>
@@ -345,8 +345,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void FinishCacheTexture(Control.Base control)
         {
-            mRenderTarget.End();
-            mRenderTarget = m_Stack.Pop();
+            mGameRenderTarget.EndFrame();
+            mGameRenderTarget = m_Stack.Pop();
         }
 
         /// <summary>
@@ -358,13 +358,13 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             var ri = m_RT[control];
 
             //ri.Display();
-            var rt = mRenderTarget;
-            mRenderTarget = m_RealRT;
+            var rt = mGameRenderTarget;
+            mGameRenderTarget = m_RealRT;
             mColor = Color.White;
             DrawTexturedRect(ri, control.Bounds, Color.White);
 
             //DrawMissingImage(control.Bounds);
-            mRenderTarget = rt;
+            mGameRenderTarget = rt;
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             // initialize cache RT
             if (!m_RT.ContainsKey(control))
             {
-                m_RT[control] = mRenderer.CreateRenderTexture(control.Width, control.Height);
+                m_RT[control] = mGameRenderer.CreateRenderTexture(control.Width, control.Height);
                 m_RT[control].Clear(Color.Transparent);
             }
 
