@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 
 using JetBrains.Annotations;
@@ -85,6 +86,8 @@ namespace Intersect.Client.Framework.Graphics
         public abstract bool DisplayModeChanged();
 
         public abstract IRenderTexture CreateRenderTexture(int width, int height);
+
+        public abstract ITexture LoadTexture(TextureType textureType, string assetName);
 
         public abstract ITexture LoadTexture(string filename, ITexturePackFrame texturePackFrame = null);
 

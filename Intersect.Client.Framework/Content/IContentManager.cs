@@ -35,6 +35,8 @@ namespace Intersect.Client.Framework.Content
 
         ITexture LoadTexture(TextureType textureType, string textureFileName);
 
+        ITexturePackFrame FindTexturePackFrameFor(TextureType textureType, string textureName);
+
         void LoadAudio();
 
         void LoadMusic();
@@ -46,6 +48,10 @@ namespace Intersect.Client.Framework.Content
         void LoadTilesets(IEnumerable<string> tilesetNames);
 
         string[] GetTextureNames(TextureType textureType);
+
+        string GetPathForAssetType(ContentType contentType);
+
+        string GetPathForAsset(ContentType contentType, string assetName);
     }
 
 }

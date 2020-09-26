@@ -111,6 +111,16 @@ namespace Intersect.Client.Framework.Content
             return fileName;
         }
 
+        public string GetPathForAssetType(ContentType contentType) => Path.Combine(
+            "resources", contentType.GetDirectory()
+        ).Replace('\\', '/');
+
+        public string GetPathForAsset(ContentType contentType, string assetName) => Path.Combine(
+            GetPathForAssetType(contentType), assetName
+        ).Replace('\\', '/');
+
+        public abstract ITexturePackFrame FindTexturePackFrameFor(TextureType textureType, string textureName);
+
         public string[] GetTextureNames(TextureType textureType) =>
             AssetLookup.GetAvailableAssetNamesFor(textureType.ToContentType()).ToArray();
 

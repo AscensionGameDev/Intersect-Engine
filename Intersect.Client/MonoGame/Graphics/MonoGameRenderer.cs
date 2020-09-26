@@ -840,6 +840,12 @@ namespace Intersect.Client.MonoGame.Graphics
             name, mContentManager.Load<Effect>(GameContentManager.RemoveExtension(name))
         );
 
+        public override ITexture LoadTexture(TextureType textureType, string assetName)
+        {
+            var texturePackFrame = Globals.GameContext.ContentManager.FindTexturePackFrameFor(textureType, assetName);
+            return LoadTexture(assetName, texturePackFrame);
+        }
+
         public override ITexture LoadTexture(string filename, ITexturePackFrame texturePackFrame = null)
         {
             if (texturePackFrame != null)
