@@ -405,20 +405,23 @@ namespace Intersect.Client.Framework.Gwen.Input
         public static bool OnMouseScroll(Base canvas, int deltaX, int deltaY)
         {
 
-            if (canvas == null)
+            if (canvas == null || 
+                HoveredControl.GetCanvas() != canvas ||
+                !canvas.IsVisible
+            )
+            {
                 return false;
-
-            if (HoveredControl.GetCanvas() != canvas)
-                return false;
-
-            if (!canvas.IsVisible)
-                return false;
+            }
 
             if (deltaY != 0)
+            {
                 HoveredControl.InputMouseWheeled(deltaY);
-
+            }
+                
             if (deltaX != 0)
+            {
                 HoveredControl.InputMouseHWheeled(deltaX);
+            }
 
             return true;
         }
