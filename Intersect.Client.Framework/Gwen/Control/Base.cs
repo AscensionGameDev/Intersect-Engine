@@ -1970,6 +1970,28 @@ namespace Intersect.Client.Framework.Gwen.Control
         }
 
         /// <summary>
+        ///     Handler invoked on mouse wheel event.
+        /// </summary>
+        /// <param name="delta">Scroll delta.</param>
+        protected virtual bool OnMouseHWheeled(int delta)
+        {
+            if (mActualParent != null)
+            {
+                return mActualParent.OnMouseHWheeled(delta);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Invokes mouse wheeled event (used by input system).
+        /// </summary>
+        internal bool InputMouseHWheeled(int delta)
+        {
+            return OnMouseHWheeled(delta);
+        }
+
+        /// <summary>
         ///     Handler invoked on mouse moved event.
         /// </summary>
         /// <param name="x">X coordinate.</param>
