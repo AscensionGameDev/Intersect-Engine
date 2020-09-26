@@ -86,7 +86,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract IRenderTexture CreateRenderTexture(int width, int height);
 
-        public abstract ITexture LoadTexture(string filename);
+        public abstract ITexture LoadTexture(string filename, ITexturePackFrame texturePackFrame = null);
 
         public abstract ITexture LoadTexture(
             [NotNull] string assetName,

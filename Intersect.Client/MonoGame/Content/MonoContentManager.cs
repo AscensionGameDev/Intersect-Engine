@@ -133,16 +133,16 @@ namespace Intersect.Client.MonoGame.Content
                 AssetLookup.Add(contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename)));
             }
 
-            var packItems = GameTexturePacks.GetFolderFrames(directory);
-            if (packItems != null)
+            var texturePackFrames = GameTexturePacks.GetFolderFrames(directory);
+            if (texturePackFrames != null)
             {
-                foreach (var itm in packItems)
+                foreach (var texturePackFrame in texturePackFrames)
                 {
-                    var filename = Path.GetFileName(itm.Name.Replace("\\", "/"));
+                    var filename = Path.GetFileName(texturePackFrame.Name.Replace("\\", "/"));
                     if (!AssetLookup.Contains(contentType, filename))
                     {
                         AssetLookup.Add(
-                            contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename))
+                            contentType, Core.Graphics.GameRenderer.LoadTexture(Path.Combine(dir, filename), texturePackFrame)
                         );
                     }
                 }

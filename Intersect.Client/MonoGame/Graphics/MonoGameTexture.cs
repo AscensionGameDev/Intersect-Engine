@@ -25,9 +25,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private string mName = "";
 
-        private GameTexturePackFrame mPackFrame;
-
-        private readonly string mPath = "";
+        private string mPath = "";
 
         private int mWidth = -1;
 
@@ -48,14 +46,13 @@ namespace Intersect.Client.MonoGame.Graphics
             CreateStream = createStream;
         }
 
-        public MonoGameTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame) : base(Path.GetFileName(filename))
+        public MonoGameTexture(GraphicsDevice graphicsDevice, string filename, ITexturePackFrame texturePackFrame) : base(Path.GetFileName(filename), texturePackFrame)
         {
             mGraphicsDevice = graphicsDevice;
             mPath = filename;
             mName = Path.GetFileName(filename);
-            mPackFrame = packFrame;
-            mWidth = packFrame.SourceBounds.Width;
-            mHeight = packFrame.SourceBounds.Height;
+            mWidth = TexturePackFrame.SourceBounds.Width;
+            mHeight = TexturePackFrame.SourceBounds.Height;
         }
 
         private void Load(Stream stream)
@@ -87,9 +84,9 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
             }
 
-            if (mPackFrame != null)
+            if (TexturePackFrame != null)
             {
-                ((MonoGameTexture) mPackFrame.PackedTexture)?.LoadTexture();
+                (TexturePackFrame.PackedTexture as MonoGameTexture)?.LoadTexture();
 
                 return;
             }
