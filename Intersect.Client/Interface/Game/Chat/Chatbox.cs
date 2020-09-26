@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
@@ -66,9 +67,9 @@ namespace Intersect.Client.Interface.Game.Chat
         /// <summary>
         /// Keep track of what chat channel we were chatting in on certain tabs so we can remember this when switching back to them.
         /// </summary>
-        private Dictionary<ChatboxTab, MenuItem> mLastChatChannel = new Dictionary<ChatboxTab, MenuItem>() {
-            { ChatboxTab.All, null },
-            { ChatboxTab.System, null },
+        private Dictionary<ChatboxTab, int> mLastChatChannel = new Dictionary<ChatboxTab, int>() {
+            { ChatboxTab.All, 0 },
+            { ChatboxTab.System, 0 },
         };
 
         //Init
@@ -153,7 +154,7 @@ namespace Intersect.Client.Interface.Game.Chat
             // If we're on the two generic tabs, remember which channel we're trying to type in so we can switch back to this channel when we decide to swap between tabs.
             if ((mCurrentTab == ChatboxTab.All || mCurrentTab == ChatboxTab.System))
             {
-                mLastChatChannel[mCurrentTab] = (MenuItem)sender;
+                mLastChatChannel[mCurrentTab] = (int)sender.UserData;
             }
         }
 
@@ -194,15 +195,11 @@ namespace Intersect.Client.Interface.Game.Chat
         /// <param name="tab">The tab to use for reference as to which channel we want to speak in.</param>
         private void SetChannelToTab(ChatboxTab tab)
         {
-            MenuItem channel;
             switch (tab)
             {
                 case ChatboxTab.System:
                 case ChatboxTab.All:
-                    if (mLastChatChannel.TryGetValue(tab, out channel))
-                    {
-                        mChannelCombobox.SelectedItem = channel;
-                    }
+                        mChannelCombobox.SelectByUserData(mLastChatChannel[tab]);
                     break;
 
                 case ChatboxTab.Local:
