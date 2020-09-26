@@ -1,40 +1,75 @@
-﻿namespace Intersect.Client.Framework.Graphics
+﻿using System;
+
+namespace Intersect.Client.Framework.Graphics
 {
-
-    public abstract class GameRenderTexture : GameTexture
+    /// <summary>
+    /// Abstract core implementation for render textures.
+    /// </summary>
+    /// <typeparam name="TPlatformTexture">the platform-specific render texture type</typeparam>
+    public abstract class GameRenderTexture<TPlatformTexture, TRenderer> : GameTexture<TPlatformTexture>, IRenderTexture
+        where TPlatformTexture : IDisposable where TRenderer : IRenderer
     {
-
-        public GameRenderTexture(int width, int height)
-        {
-        }
-
+        /// <summary>
+        /// Current number of render textures for <see cref="TPlatformTexture"/>.
+        /// </summary>
         public static int RenderTextureCount { get; set; } = 0;
 
         /// <summary>
-        ///     Called before a frame is drawn, if the renderer must re-created or anything it does it here.
+        /// Most recent render texture ID for <see cref="TPlatformTexture"/>.
         /// </summary>
-        /// <returns></returns>
-        public abstract bool Begin();
+        public static int RenderTextureId { get; set; } = 0;
 
         /// <summary>
-        ///     Called when the frame is done being drawn, generally used to finally display the content to the screen.
+        /// Generate a name for the given render texture.
         /// </summary>
-        public abstract void End();
+        /// <returns></returns>
+        public static string GenerateName() =>
+            $"{nameof(GameRenderTexture<TPlatformTexture, TRenderer>)}<{typeof(TPlatformTexture).Name}, {typeof(TRenderer).Name}>#{++RenderTextureId}";
 
-        public bool SetActive(bool active)
+        protected GameRenderTexture(TRenderer renderer, TPlatformTexture platformTexture) : base(
+            GenerateName(), platformTexture
+        )
         {
-            return true;
+            ++RenderTextureCount;
+            Renderer = renderer;
         }
 
         /// <summary>
-        ///     Clears everything off the render target with a specified color.
+        /// The renderer this render texture belongs to.
         /// </summary>
+        protected IRenderer Renderer { get; }
+
+        /// <inheritdoc />
+        public override ITexturePackFrame TexturePackFrame => null;
+
+        /// <inheritdoc />
+        public bool IsActive { get; private set; }
+
+        /// <inheritdoc />
+        public abstract bool BeginFrame();
+
+        /// <inheritdoc />
+        public abstract void EndFrame();
+
+        /// <inheritdoc />
         public abstract void Clear(Color color);
 
-        public abstract override object GetTexture();
+        /// <inheritdoc />
+        public bool SetActive(bool active = true)
+        {
+            IsActive = active;
+            return true;
+        }
 
-        public abstract void Dispose();
+        /// <inheritdoc />
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
 
+            if (disposing)
+            {
+                --RenderTextureCount;
+            }
+        }
     }
-
 }

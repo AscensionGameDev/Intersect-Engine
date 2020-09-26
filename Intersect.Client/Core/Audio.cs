@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
 using Intersect.Logging;
 
@@ -163,7 +163,7 @@ namespace Intersect.Client.Core
 
         private static void StartMusic(string filename, float fadein = 0f, bool loop = false)
         {
-            var music = Globals.ContentManager.GetMusic(filename);
+            var music = Globals.ContentManager.LoadMusic(filename);
             if (music == null)
             {
                 return;

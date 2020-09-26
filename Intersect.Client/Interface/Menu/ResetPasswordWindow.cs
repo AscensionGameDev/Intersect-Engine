@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
@@ -105,7 +105,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.ResetPass.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         public bool IsHidden => mResetWindow.IsHidden;

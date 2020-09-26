@@ -17,7 +17,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     public struct Bordered
     {
 
-        private GameTexture mTexture;
+        private ITexture mGameTexture;
 
         private readonly SubRect[] mRects;
 
@@ -28,7 +28,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
         private float mHeight;
 
         public Bordered(
-            GameTexture texture,
+            ITexture gameTexture,
             float x,
             float y,
             float w,
@@ -43,26 +43,26 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
                 mRects[i].Uv = new float[4];
             }
 
-            Init(texture, x, y, w, h, inMargin, drawMarginScale);
+            Init(gameTexture, x, y, w, h, inMargin, drawMarginScale);
         }
 
         void DrawRect(Renderer.Base render, int i, int x, int y, int w, int h, Color clr)
         {
             render.DrawTexturedRect(
-                mTexture, new Rectangle(x, y, w, h), clr, mRects[i].Uv[0], mRects[i].Uv[1], mRects[i].Uv[2],
+                mGameTexture, new Rectangle(x, y, w, h), clr, mRects[i].Uv[0], mRects[i].Uv[1], mRects[i].Uv[2],
                 mRects[i].Uv[3]
             );
         }
 
         void SetRect(int num, float x, float y, float w, float h)
         {
-            if (mTexture == null)
+            if (mGameTexture == null)
             {
                 return;
             }
 
-            float texw = mTexture.GetWidth();
-            float texh = mTexture.GetHeight();
+            float texw = mGameTexture.Width;
+            float texh = mGameTexture.Height;
 
             //x -= 1.0f;
             //y -= 1.0f;
@@ -78,7 +78,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
         }
 
         private void Init(
-            GameTexture texture,
+            ITexture gameTexture,
             float x,
             float y,
             float w,
@@ -87,7 +87,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
             float drawMarginScale = 1.0f
         )
         {
-            mTexture = texture;
+            mGameTexture = gameTexture;
 
             mMargin = inMargin;
 
@@ -123,7 +123,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 
         public void Draw(Renderer.Base render, Rectangle r, Color col)
         {
-            if (mTexture == null)
+            if (mGameTexture == null)
             {
                 return;
             }
@@ -133,7 +133,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
             if (r.Width < mWidth && r.Height < mHeight)
             {
                 render.DrawTexturedRect(
-                    mTexture, r, col, mRects[0].Uv[0], mRects[0].Uv[1], mRects[8].Uv[2], mRects[8].Uv[3]
+                    mGameTexture, r, col, mRects[0].Uv[0], mRects[0].Uv[1], mRects[8].Uv[2], mRects[8].Uv[3]
                 );
 
                 return;

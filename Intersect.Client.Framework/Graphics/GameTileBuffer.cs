@@ -8,11 +8,11 @@
 
         public abstract bool Supported { get; }
 
-        public abstract GameTexture Texture { get; protected set; }
+        public abstract ITexture GameTexture { get; protected set; }
 
-        public abstract bool AddTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH);
+        public abstract bool AddTile(ITexture gameTexture, float x, float y, int srcX, int srcY, int srcW, int srcH);
 
-        public abstract bool UpdateTile(GameTexture texture, float x, float y, int srcX, int srcY, int srcW, int srcH);
+        public abstract bool UpdateTile(ITexture gameTexture, float x, float y, int srcX, int srcY, int srcW, int srcH);
 
         public abstract bool SetData();
 

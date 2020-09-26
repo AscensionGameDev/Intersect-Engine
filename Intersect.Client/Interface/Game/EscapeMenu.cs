@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -83,7 +83,7 @@ namespace Intersect.Client.Interface.Game
 
             mClose.Clicked += Close_Clicked;
 
-            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             if (Options.Player.MaxCharacters <= 1)
             {

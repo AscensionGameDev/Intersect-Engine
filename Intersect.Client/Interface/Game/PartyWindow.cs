@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -157,7 +157,7 @@ namespace Intersect.Client.Interface.Game
             mLeaveButton.SetToolTipText(Strings.Parties.leavetip);
             mLeaveButton.Clicked += leave_Clicked;
 
-            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         //Methods
@@ -208,7 +208,7 @@ namespace Intersect.Client.Interface.Game
                             Globals.Me.Party[i].Name, Globals.Me.Party[i].Level
                         );
 
-                        if (mHpBar[i].Texture != null)
+                        if (mHpBar[i].GameTexture != null)
                         {
                             var partyHpWidthRatio = 1f;
                             if (Globals.Me.Party[i].MaxVital[(int)Vitals.Health] > 0)
@@ -221,8 +221,8 @@ namespace Intersect.Client.Interface.Game
 
                             mHpBar[i]
                                 .SetTextureRect(
-                                    0, 0, Convert.ToInt32(mHpBar[i].Texture.GetWidth() * partyHpWidthRatio),
-                                    mHpBar[i].Texture.GetHeight()
+                                    0, 0, Convert.ToInt32(mHpBar[i].GameTexture.Width * partyHpWidthRatio),
+                                    mHpBar[i].GameTexture.Height
                                 );
 
                             mHpBar[i]
@@ -236,7 +236,7 @@ namespace Intersect.Client.Interface.Game
                             Globals.Me.Party[i].MaxVital[(int) Vitals.Health]
                         );
 
-                        if (mMpBar[i].Texture != null)
+                        if (mMpBar[i].GameTexture != null)
                         {
                             var partyMpWidthRatio = 1f;
                             if (Globals.Me.Party[i].MaxVital[(int)Vitals.Mana] > 0)
@@ -249,8 +249,8 @@ namespace Intersect.Client.Interface.Game
 
                             mMpBar[i]
                                 .SetTextureRect(
-                                    0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * partyMpWidthRatio),
-                                    mMpBar[i].Texture.GetHeight()
+                                    0, 0, Convert.ToInt32(mMpBar[i].GameTexture.Width * partyMpWidthRatio),
+                                    mMpBar[i].GameTexture.Height
                                 );
 
                             mMpBar[i]

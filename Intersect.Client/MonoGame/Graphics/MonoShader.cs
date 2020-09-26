@@ -1,64 +1,46 @@
-﻿using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.MonoGame.Extensions;
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+using System;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-
-    public class MonoShader : GameShader
+    public class MonoShader : GameShader<Effect>
     {
-
-        private Effect mShader;
-
-        private bool mValuesChanged = false;
-
-        public MonoShader(string shaderName, ContentManager content) : base(shaderName)
+        public MonoShader(string name, Effect effect) : base(name, effect)
         {
-            mShader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));
         }
 
-        public override void SetFloat(string key, float val)
+        public override void SetFloat(string key, float value)
         {
-            mShader.Parameters[key].SetValue(val);
-            mValuesChanged = true;
+            base.SetFloat(key, value);
+            Shader.Parameters[key].SetValue(value);
         }
 
-        public override void SetInt(string key, int val)
+        public override void SetInt(string key, int value)
         {
-            //throw new NotImplementedException();
+            base.SetInt(key, value);
+            Shader.Parameters[key].SetValue(value);
         }
 
-        public override void SetColor(string key, Color val)
+        public override void SetColor(string key, Color value)
         {
-            var vec = new Vector4(val.R / 255f, val.G / 255f, val.B / 255f, val.A / 255f);
-            mShader.Parameters[key].SetValue(vec);
-            mValuesChanged = true;
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            base.SetColor(key, value);
+            Shader.Parameters[key].SetValue(value.AsVector4());
         }
 
-        public override void SetVector2(string key, Pointf val)
+        public override void SetVector2(string key, Pointf value)
         {
-            //throw new NotImplementedException();
+            base.SetVector2(key, value);
+            Shader.Parameters[key].SetValue(value.AsVector2());
         }
-
-        public override bool ValuesChanged()
-        {
-            return mValuesChanged;
-        }
-
-        public override void ResetChanged()
-        {
-            mValuesChanged = false;
-        }
-
-        public override object GetShader()
-        {
-            return mShader;
-        }
-
     }
-
 }

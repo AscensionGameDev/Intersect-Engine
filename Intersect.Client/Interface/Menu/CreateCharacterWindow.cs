@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -177,7 +177,7 @@ namespace Intersect.Client.Interface.Menu
             mBackButton.SetText(Strings.CharacterCreation.back);
             mBackButton.Clicked += BackButton_Clicked;
 
-            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         public bool IsHidden => mCharCreationPanel.IsHidden;
@@ -222,14 +222,14 @@ namespace Intersect.Client.Interface.Menu
                 {
                     if (mMaleChk.IsChecked)
                     {
-                        mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
+                        mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                            TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
-                        if (mCharacterPortrait.Texture == null)
+                        if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                                GameContentManager.TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
+                            mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                                TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
                             isFace = false;
@@ -237,36 +237,36 @@ namespace Intersect.Client.Interface.Menu
                     }
                     else
                     {
-                        mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
+                        mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                            TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
-                        if (mCharacterPortrait.Texture == null)
+                        if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                                GameContentManager.TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
+                            mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                                TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
                             isFace = false;
                         }
                     }
 
-                    if (mCharacterPortrait.Texture != null)
+                    if (mCharacterPortrait.GameTexture != null)
                     {
                         if (isFace)
                         {
                             mCharacterPortrait.SetTextureRect(
-                                0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight()
+                                0, 0, mCharacterPortrait.GameTexture.Width, mCharacterPortrait.GameTexture.Height
                             );
 
                             var scale = Math.Min(
-                                mCharacterContainer.InnerWidth / (double) mCharacterPortrait.Texture.GetWidth(),
-                                mCharacterContainer.InnerHeight / (double) mCharacterPortrait.Texture.GetHeight()
+                                mCharacterContainer.InnerWidth / (double) mCharacterPortrait.GameTexture.Width,
+                                mCharacterContainer.InnerHeight / (double) mCharacterPortrait.GameTexture.Height
                             );
 
                             mCharacterPortrait.SetSize(
-                                (int) (mCharacterPortrait.Texture.GetWidth() * scale),
-                                (int) (mCharacterPortrait.Texture.GetHeight() * scale)
+                                (int) (mCharacterPortrait.GameTexture.Width * scale),
+                                (int) (mCharacterPortrait.GameTexture.Height * scale)
                             );
 
                             mCharacterPortrait.SetPosition(
@@ -277,12 +277,12 @@ namespace Intersect.Client.Interface.Menu
                         else
                         {
                             mCharacterPortrait.SetTextureRect(
-                                0, 0, mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                0, 0, mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
                             );
 
                             mCharacterPortrait.SetSize(
-                                mCharacterPortrait.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
                             );
 
                             mCharacterPortrait.SetPosition(

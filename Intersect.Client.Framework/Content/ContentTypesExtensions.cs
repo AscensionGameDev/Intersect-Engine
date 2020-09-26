@@ -1,22 +1,17 @@
-﻿using JetBrains.Annotations;
-
-using System;
+﻿using System;
 using System.Linq;
 
 namespace Intersect.Client.Framework.Content
 {
-
     public static class ContentTypesExtensions
     {
-
-        [NotNull]
-        public static Type GetAssetType(this ContentTypes contentType)
+        public static Type GetAssetType(this ContentType contentType)
         {
             var memberName = contentType.ToString();
-            var memberInfo = typeof(ContentTypes).GetMember(memberName).FirstOrDefault();
+            var memberInfo = typeof(ContentType).GetMember(memberName).FirstOrDefault();
             if (memberInfo == null)
             {
-                throw new InvalidOperationException($@"{nameof(ContentTypes)} missing expected member: {memberName}");
+                throw new InvalidOperationException($@"{nameof(ContentType)} missing expected member: {memberName}");
             }
 
             var attribute = memberInfo.GetCustomAttributes(typeof(AssetTypeAttribute), true).FirstOrDefault();
@@ -26,10 +21,113 @@ namespace Intersect.Client.Framework.Content
             }
 
             throw new InvalidOperationException(
-                $@"{nameof(ContentTypes)} missing {nameof(AssetTypeAttribute)} on member: {memberName}"
+                $@"{nameof(ContentType)} missing {nameof(AssetTypeAttribute)} on member: {memberName}"
             );
         }
 
-    }
+        public static ContentType ToContentType(this TextureType textureType)
+        {
+            switch (textureType)
+            {
+                case TextureType.Tileset:
+                    return ContentType.Tileset;
 
+                case TextureType.Item:
+                    return ContentType.Item;
+
+                case TextureType.Entity:
+                    return ContentType.Entity;
+
+                case TextureType.Spell:
+                    return ContentType.Spell;
+
+                case TextureType.Animation:
+                    return ContentType.Animation;
+
+                case TextureType.Face:
+                    return ContentType.Face;
+
+                case TextureType.Image:
+                    return ContentType.Image;
+
+                case TextureType.Fog:
+                    return ContentType.Fog;
+
+                case TextureType.Resource:
+                    return ContentType.Resource;
+
+                case TextureType.Paperdoll:
+                    return ContentType.Paperdoll;
+
+                case TextureType.Interface:
+                    return ContentType.Interface;
+
+                case TextureType.Miscellaneous:
+                    return ContentType.Miscellaneous;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(textureType), textureType, null);
+            }
+        }
+
+        public static string GetDirectory(this ContentType contentType)
+        {
+            switch (contentType)
+            {
+                case ContentType.Animation:
+                    return "animations";
+
+                case ContentType.Entity:
+                    return "entities";
+
+                case ContentType.Face:
+                    return "faces";
+
+                case ContentType.Fog:
+                    return "fogs";
+
+                case ContentType.Font:
+                    return "fonts";
+
+                case ContentType.Image:
+                    return "images";
+
+                case ContentType.Interface:
+                    return "gui";
+
+                case ContentType.Item:
+                    return "items";
+
+                case ContentType.Miscellaneous:
+                    return "misc";
+
+                case ContentType.Music:
+                    return "music";
+
+                case ContentType.Paperdoll:
+                    return "paperdolls";
+
+                case ContentType.Resource:
+                    return "resources";
+
+                case ContentType.Shader:
+                    return "shaders";
+
+                case ContentType.Sound:
+                    return "sounds";
+
+                case ContentType.Spell:
+                    return "spells";
+
+                case ContentType.TexturePack:
+                    return "packs";
+
+                case ContentType.Tileset:
+                    return "tilesets";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
+            }
+        }
+    }
 }

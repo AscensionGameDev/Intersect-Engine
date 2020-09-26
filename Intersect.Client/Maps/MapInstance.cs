@@ -7,7 +7,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -158,8 +158,8 @@ namespace Intersect.Client.Maps
                             var tileset = TilesetBase.Get(Layers[i].Tiles[x, y].TilesetId);
                             if (tileset != null)
                             {
-                                var tilesetTex = Globals.ContentManager.GetTexture(
-                                    GameContentManager.TextureType.Tileset, tileset.Name
+                                var tilesetTex = Globals.ContentManager.LoadTexture(
+                                    TextureType.Tileset, tileset.Name
                                 );
 
                                 Layers[i].Tiles[x, y].TilesetTex = tilesetTex;
@@ -354,19 +354,19 @@ namespace Intersect.Client.Maps
                         continue;
                     }
 
-                    var tilesetTex = (GameTexture) tile.TilesetTex;
+                    var tilesetTex = (ITexture) tile.TilesetTex;
                     if (tile.X < 0 || tile.Y < 0)
                     {
                         continue;
                     }
 
-                    if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                        tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
+                    if (tile.X * Options.TileWidth >= tilesetTex.Width ||
+                        tile.Y * Options.TileHeight >= tilesetTex.Height)
                     {
                         continue;
                     }
 
-                    var platformTex = tilesetTex.GetTexture();
+                    var platformTex = tilesetTex.AsPlatformTexture<object>();
                     if (tileBuffer.ContainsKey(platformTex))
                     {
                         for (var autotileFrame = 0; autotileFrame < 3; autotileFrame++)
@@ -640,7 +640,7 @@ namespace Intersect.Client.Maps
                 {
                     for (var i = 0; i < mTileBuffers[x][Globals.AnimFrame].Length; i++)
                     {
-                        Graphics.Renderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
+                        Graphics.GameRenderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
                     }
                 }
             }
@@ -661,11 +661,11 @@ namespace Intersect.Client.Maps
                 var itemBase = ItemBase.Get(item.Value.ItemId);
                 if (itemBase != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Icon);
+                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
-                            itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
+                            itemTex, new FloatRect(0, 0, itemTex.Width, itemTex.Height),
                             new FloatRect(
                                 GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,
                                 Options.TileWidth, Options.TileHeight
@@ -693,7 +693,7 @@ namespace Intersect.Client.Maps
             int x,
             int y,
             int forceFrame,
-            GameTexture tileset,
+            ITexture tileset,
             GameTileBuffer buffer,
             bool update = false
         )
@@ -764,20 +764,20 @@ namespace Intersect.Client.Maps
                         continue;
                     }
 
-                    var tilesetTex = (GameTexture) tile.TilesetTex;
+                    var tilesetTex = (ITexture) tile.TilesetTex;
 
                     if (tile.X < 0 || tile.Y < 0)
                     {
                         continue;
                     }
 
-                    if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() ||
-                        tile.Y * Options.TileHeight >= tilesetTex.GetHeight())
+                    if (tile.X * Options.TileWidth >= tilesetTex.Width ||
+                        tile.Y * Options.TileHeight >= tilesetTex.Height)
                     {
                         continue;
                     }
 
-                    var platformTex = tilesetTex.GetTexture();
+                    var platformTex = tilesetTex.AsPlatformTexture<object>();
 
                     GameTileBuffer[] buffers = null;
                     if (tileBuffers.ContainsKey(platformTex))
@@ -789,7 +789,7 @@ namespace Intersect.Client.Maps
                         buffers = new GameTileBuffer[3];
                         for (var i = 0; i < 3; i++)
                         {
-                            buffers[i] = Graphics.Renderer.CreateTileBuffer();
+                            buffers[i] = Graphics.GameRenderer.CreateTileBuffer();
                         }
 
                         tileBuffers.Add(platformTex, buffers);
@@ -910,11 +910,11 @@ namespace Intersect.Client.Maps
 
             if (Fog != null && Fog.Length > 0)
             {
-                var fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
+                var fogTex = Globals.ContentManager.LoadTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
-                    var xCount = (int) (Options.MapWidth * Options.TileWidth * 3 / fogTex.GetWidth());
-                    var yCount = (int) (Options.MapHeight * Options.TileHeight * 3 / fogTex.GetHeight());
+                    var xCount = (int) (Options.MapWidth * Options.TileWidth * 3 / fogTex.Width);
+                    var yCount = (int) (Options.MapHeight * Options.TileHeight * 3 / fogTex.Height);
 
                     mFogCurrentX -= ecTime / 1000f * FogXSpeed * -6;
                     mFogCurrentY += ecTime / 1000f * FogYSpeed * 2;
@@ -923,24 +923,24 @@ namespace Intersect.Client.Maps
                     float deltaY = 0;
                     mFogCurrentY -= deltaY;
 
-                    if (mFogCurrentX < fogTex.GetWidth())
+                    if (mFogCurrentX < fogTex.Width)
                     {
-                        mFogCurrentX += fogTex.GetWidth();
+                        mFogCurrentX += fogTex.Width;
                     }
 
-                    if (mFogCurrentX > fogTex.GetWidth())
+                    if (mFogCurrentX > fogTex.Width)
                     {
-                        mFogCurrentX -= fogTex.GetWidth();
+                        mFogCurrentX -= fogTex.Width;
                     }
 
-                    if (mFogCurrentY < fogTex.GetHeight())
+                    if (mFogCurrentY < fogTex.Height)
                     {
-                        mFogCurrentY += fogTex.GetHeight();
+                        mFogCurrentY += fogTex.Height;
                     }
 
-                    if (mFogCurrentY > fogTex.GetHeight())
+                    if (mFogCurrentY > fogTex.Height)
                     {
-                        mFogCurrentY -= fogTex.GetHeight();
+                        mFogCurrentY -= fogTex.Height;
                     }
 
                     var drawX = (float) Math.Round(mFogCurrentX);
@@ -950,8 +950,8 @@ namespace Intersect.Client.Maps
                     {
                         for (var y = -1; y < yCount; y++)
                         {
-                            var fogW = fogTex.GetWidth();
-                            var fogH = fogTex.GetHeight();
+                            var fogW = fogTex.Width;
+                            var fogH = fogTex.Height;
                             Graphics.DrawGameTexture(
                                 fogTex, new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(
@@ -991,7 +991,7 @@ namespace Intersect.Client.Maps
                     var spawnTime = 25 + (int) (475 * (float) (1f - (float) (WeatherIntensity / 100f)));
                     spawnTime = (int) (spawnTime *
                                        (480000f /
-                                        (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
+                                        (Graphics.GameRenderer.ScreenWidth * Graphics.GameRenderer.ScreenHeight)));
 
                     _weatherParticleSpawnTime = Globals.System.GetTimeMs() + spawnTime;
                 }
@@ -1054,7 +1054,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, Panorama);
+            var imageTex = Globals.ContentManager.LoadTexture(TextureType.Image, Panorama);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
@@ -1088,7 +1088,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, OverlayGraphic);
+            var imageTex = Globals.ContentManager.LoadTexture(TextureType.Image, OverlayGraphic);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
@@ -1100,7 +1100,7 @@ namespace Intersect.Client.Maps
             //Check if fogs the same
             if (oldMap.Fog == Fog)
             {
-                var fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
+                var fogTex = Globals.ContentManager.LoadTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     //Copy over fog values
@@ -1111,20 +1111,20 @@ namespace Intersect.Client.Maps
                     mFogCurrentY = oldMap.mFogCurrentY;
                     if (GetX() > oldMap.GetX())
                     {
-                        mFogCurrentX -= Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
+                        mFogCurrentX -= Options.TileWidth * Options.MapWidth % fogTex.Width;
                     }
                     else if (GetX() < oldMap.GetX())
                     {
-                        mFogCurrentX += Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
+                        mFogCurrentX += Options.TileWidth * Options.MapWidth % fogTex.Width;
                     }
 
                     if (GetY() > oldMap.GetY())
                     {
-                        mFogCurrentY -= Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
+                        mFogCurrentY -= Options.TileHeight * Options.MapHeight % fogTex.Height;
                     }
                     else if (GetY() < oldMap.GetY())
                     {
-                        mFogCurrentY += Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
+                        mFogCurrentY += Options.TileHeight * Options.MapHeight % fogTex.Height;
                     }
 
                     oldMap.mCurFogIntensity = 0;
@@ -1160,8 +1160,8 @@ namespace Intersect.Client.Maps
                 );
 
                 var x = (int) Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].XOffset);
-                var textWidth = Graphics.Renderer.MeasureText(ActionMsgs[n].Msg, Graphics.ActionMsgFont, 1).X;
-                Graphics.Renderer.DrawString(
+                var textWidth = Graphics.GameRenderer.MeasureText(ActionMsgs[n].Msg, Graphics.ActionMsgFont, 1).X;
+                Graphics.GameRenderer.DrawString(
                     ActionMsgs[n].Msg, Graphics.ActionMsgFont, (int) x - textWidth / 2f, (int) y, 1, ActionMsgs[n].Clr,
                     true, null, new Color(40, 40, 40)
                 );

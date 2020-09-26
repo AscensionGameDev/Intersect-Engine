@@ -282,7 +282,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             }
         }
 
-        public void SetTextFont(GameFont font)
+        public void SetTextFont(IFont font)
         {
             for (var i = 0; i < mColumnCount; i++)
             {

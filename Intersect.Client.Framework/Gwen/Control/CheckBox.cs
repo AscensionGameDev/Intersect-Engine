@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 
 using Newtonsoft.Json.Linq;
@@ -29,22 +29,22 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private bool mChecked;
 
-        private GameTexture mCheckedDisabledImage;
+        private ITexture mCheckedDisabledImage;
 
         private string mCheckedDisabledImageFilename;
 
-        private GameTexture mCheckedNormalImage;
+        private ITexture mCheckedNormalImage;
 
         private string mCheckedNormalImageFilename;
 
         //Sound Effects
         private string mCheckSound;
 
-        private GameTexture mDisabledImage;
+        private ITexture mDisabledImage;
 
         private string mDisabledImageFilename;
 
-        private GameTexture mNormalImage;
+        private ITexture mNormalImage;
 
         private string mNormalImageFilename;
 
@@ -102,8 +102,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["NormalImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["NormalImage"]
                     ), (string) obj["NormalImage"], ControlState.Normal
                 );
             }
@@ -111,8 +111,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["CheckedImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["CheckedImage"]
                     ), (string) obj["CheckedImage"], ControlState.CheckedNormal
                 );
             }
@@ -120,8 +120,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["DisabledImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["DisabledImage"]
                     ), (string) obj["DisabledImage"], ControlState.Disabled
                 );
             }
@@ -129,8 +129,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedDisabledImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["CheckedDisabledImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["CheckedDisabledImage"]
                     ), (string) obj["CheckedDisabledImage"], ControlState.CheckedDisabled
                 );
             }
@@ -236,28 +236,28 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.OnClicked(x, y);
         }
 
-        public void SetImage(GameTexture texture, string fileName, ControlState state)
+        public void SetImage(ITexture ITexture, string fileName, ControlState state)
         {
             switch (state)
             {
                 case ControlState.Normal:
                     mNormalImageFilename = fileName;
-                    mNormalImage = texture;
+                    mNormalImage = ITexture;
 
                     break;
                 case ControlState.Disabled:
                     mDisabledImageFilename = fileName;
-                    mDisabledImage = texture;
+                    mDisabledImage = ITexture;
 
                     break;
                 case ControlState.CheckedNormal:
                     mCheckedNormalImageFilename = fileName;
-                    mCheckedNormalImage = texture;
+                    mCheckedNormalImage = ITexture;
 
                     break;
                 case ControlState.CheckedDisabled:
                     mCheckedDisabledImageFilename = fileName;
-                    mCheckedDisabledImage = texture;
+                    mCheckedDisabledImage = ITexture;
 
                     break;
                 default:
@@ -265,7 +265,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetImage(ControlState state)
+        public ITexture GetImage(ControlState state)
         {
             switch (state)
             {

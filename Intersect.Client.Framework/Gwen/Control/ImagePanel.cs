@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.File_Management;
+﻿using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -27,7 +27,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected string mRightMouseClickSound;
 
-        private GameTexture mTexture;
+        private ITexture mTexture;
 
         private string mTextureFilename;
 
@@ -50,7 +50,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Assign Existing Texture
         /// </summary>
-        public GameTexture Texture
+        public ITexture GameTexture
         {
             get => mTexture;
             set
@@ -105,8 +105,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.LoadJson(obj);
             if (obj["Texture"] != null)
             {
-                Texture = GameContentManager.Current.GetTexture(
-                    GameContentManager.TextureType.Gui, (string) obj["Texture"]
+                GameTexture = GameContentManager.Current.LoadTexture(
+                    TextureType.Gui, (string) obj["Texture"]
                 );
 
                 TextureFilename = (string) obj["Texture"];
@@ -161,35 +161,35 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (w <= 0)
             {
-                w = mTexture.GetWidth();
+                w = mTexture.Width;
             }
 
             if (h <= 0)
             {
-                h = mTexture.GetHeight();
+                h = mTexture.Height;
             }
 
-            if (x + w > mTexture.GetWidth() || y + h > mTexture.GetHeight())
+            if (x + w > mTexture.Width || y + h > mTexture.Height)
             {
                 return;
             }
 
-            mUv[0] = (float) x / (float) mTexture.GetWidth();
-            mUv[1] = (float) y / (float) mTexture.GetHeight();
-            mUv[2] = (float) (x + w) / (float) mTexture.GetWidth();
-            mUv[3] = (float) (y + h) / (float) mTexture.GetHeight();
+            mUv[0] = (float) x / (float) mTexture.Width;
+            mUv[1] = (float) y / (float) mTexture.Height;
+            mUv[2] = (float) (x + w) / (float) mTexture.Width;
+            mUv[3] = (float) (y + h) / (float) mTexture.Height;
         }
 
-        public virtual Rectangle GetTextureRect()
+        public virtual Rectangle LoadTextureRect()
         {
-            if (Texture == null)
+            if (GameTexture == null)
             {
                 return new Rectangle(0, 0, 0, 0);
             }
 
             return new Rectangle(
-                (int) (mUv[0] * mTexture.GetWidth()), (int) (mUv[1] * mTexture.GetHeight()),
-                (int) ((mUv[2] - mUv[0]) * mTexture.GetWidth()), (int) ((mUv[3] - mUv[1]) * mTexture.GetWidth())
+                (int) (mUv[0] * mTexture.Width), (int) (mUv[1] * mTexture.Height),
+                (int) ((mUv[2] - mUv[0]) * mTexture.Width), (int) ((mUv[3] - mUv[1]) * mTexture.Width)
             );
         }
 
@@ -214,7 +214,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
-            SetSize((int) (mTexture.GetWidth() * (mUv[2] - mUv[0])), (int) (mTexture.GetHeight() * (mUv[3] - mUv[1])));
+            SetSize((int) (mTexture.Width * (mUv[2] - mUv[0])), (int) (mTexture.Height * (mUv[3] - mUv[1])));
         }
 
         /// <summary>

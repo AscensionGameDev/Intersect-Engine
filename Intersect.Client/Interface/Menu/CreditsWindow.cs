@@ -1,7 +1,7 @@
 ﻿using System.IO;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Localization;
@@ -52,7 +52,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Menu
                 {
                     mRichLabel.AddText(
                         line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B), line.GetAlignment(),
-                        GameContentManager.Current.GetFont(line.Font, line.Size)
+                        GameContentManager.Current.LoadFont(line.Font, line.Size)
                     );
 
                     mRichLabel.AddLineBreak();

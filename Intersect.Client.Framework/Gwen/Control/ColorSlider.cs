@@ -17,7 +17,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private int mSelectedDist;
 
-        private GameTexture mTexture;
+        private ITexture mGameTexture;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ColorSlider" /> class.

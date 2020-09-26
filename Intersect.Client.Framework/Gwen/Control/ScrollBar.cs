@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -21,7 +21,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private string mBackgroundTemplateFilename;
 
-        private GameTexture mBackgroundTemplateTex;
+        private ITexture mBackgroundTemplateTex;
 
         protected float mContentSize;
 
@@ -133,8 +133,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundTemplate"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
             }
@@ -155,20 +155,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetTemplate()
+        public ITexture GetTemplate()
         {
             return mBackgroundTemplateTex;
         }
 
-        public void SetBackgroundTemplate(GameTexture texture, string fileName)
+        public void SetBackgroundTemplate(ITexture ITexture, string fileName)
         {
-            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            if (ITexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                ITexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;
-            mBackgroundTemplateTex = texture;
+            mBackgroundTemplateTex = ITexture;
         }
 
         /// <summary>
@@ -261,12 +261,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             return null;
         }
 
-        public void SetScrollBarImage(GameTexture texture, string fileName, Dragger.ControlState state)
+        public void SetScrollBarImage(ITexture ITexture, string fileName, Dragger.ControlState state)
         {
-            mBar.SetImage(texture, fileName, state);
+            mBar.SetImage(ITexture, fileName, state);
         }
 
-        public GameTexture GetScrollBarImage(Dragger.ControlState state)
+        public ITexture GetScrollBarImage(Dragger.ControlState state)
         {
             return mBar.GetImage(state);
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -33,7 +33,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private Color mActiveColor;
 
-        private GameTexture mActiveImage;
+        private ITexture mActiveImage;
 
         private string mActiveImageFilename;
 
@@ -41,7 +41,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private Color mInactiveColor;
 
-        private GameTexture mInactiveImage;
+        private ITexture mInactiveImage;
 
         private string mInactiveImageFilename;
 
@@ -168,8 +168,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["ActiveImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ActiveImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["ActiveImage"]
                     ), (string) obj["ActiveImage"], ControlState.Active
                 );
             }
@@ -177,8 +177,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["InactiveImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["InactiveImage"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["InactiveImage"]
                     ), (string) obj["InactiveImage"], ControlState.Inactive
                 );
             }
@@ -353,9 +353,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             mCloseButton.MaximumSize = new Point(w, h);
         }
 
-        public void SetCloseButtonImage(GameTexture texture, string fileName, Button.ControlState state)
+        public void SetCloseButtonImage(ITexture ITexture, string fileName, Button.ControlState state)
         {
-            mCloseButton.SetImage(texture, fileName, state);
+            mCloseButton.SetImage(ITexture, fileName, state);
         }
 
         public void SetFont(GameFont font)
@@ -402,18 +402,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Sets the button's image.
         /// </summary>
         /// <param name="textureName">Texture name. Null to remove.</param>
-        public void SetImage(GameTexture texture, string fileName, ControlState state)
+        public void SetImage(ITexture ITexture, string fileName, ControlState state)
         {
             switch (state)
             {
                 case ControlState.Active:
                     mActiveImageFilename = fileName;
-                    mActiveImage = texture;
+                    mActiveImage = ITexture;
 
                     break;
                 case ControlState.Inactive:
                     mInactiveImageFilename = fileName;
-                    mInactiveImage = texture;
+                    mInactiveImage = ITexture;
 
                     break;
                 default:
@@ -421,7 +421,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetImage(ControlState state)
+        public ITexture GetImage(ControlState state)
         {
             switch (state)
             {

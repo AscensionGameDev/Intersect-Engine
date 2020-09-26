@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -36,7 +36,7 @@ namespace Intersect.Client.Interface.Menu
                 Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
             };
 
-            mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
             MainMenu.NetworkStatusChanged += HandleNetworkStatusChanged;
         }
 

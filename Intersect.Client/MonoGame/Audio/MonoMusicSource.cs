@@ -16,7 +16,7 @@ namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoMusicSource : GameAudioSource
     {
-        private readonly string mName;
+        private readonly string mAssetPath;
 
         public VorbisReader Reader { get; set; }
 
@@ -28,9 +28,9 @@ namespace Intersect.Client.MonoGame.Audio
 
         private static MonoMusicSource mActiveSource;
 
-        public MonoMusicSource(string name) : base(name, AudioType.Music)
+        public MonoMusicSource(string name, string assetPath) : base(name, AudioType.Music)
         {
-            mName = name;
+            mAssetPath = assetPath;
 
             if (mUnderlyingThread == null)
             {
@@ -50,13 +50,13 @@ namespace Intersect.Client.MonoGame.Audio
         {
             lock (mInstanceLock)
             {
-                if (!string.IsNullOrWhiteSpace(mName))
+                if (!string.IsNullOrWhiteSpace(mAssetPath))
                 {
                     try
                     {
                         if (Reader == null)
                         {
-                            Reader = new VorbisReader(mName);
+                            Reader = new VorbisReader(mAssetPath);
                         }
 
                         if (Instance != null)
@@ -74,7 +74,7 @@ namespace Intersect.Client.MonoGame.Audio
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"Error loading '{mName}'.", exception);
+                        Log.Error($"Error loading '{mAssetPath}'.", exception);
                         ChatboxMsg.AddMessage(
                             new ChatboxMsg(
                                 Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)

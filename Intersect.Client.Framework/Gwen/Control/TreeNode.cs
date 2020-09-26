@@ -426,9 +426,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             IsSelected = !IsSelected;
         }
 
-        public void SetImage(GameTexture texture, string fileName = "")
+        public void SetImage(ITexture gameTexture, string fileName = "")
         {
-            mTitle.SetImage(texture, fileName, Button.ControlState.Normal);
+            mTitle.SetImage(gameTexture, fileName, Button.ControlState.Normal);
         }
 
         protected override void OnChildAdded(Base child)

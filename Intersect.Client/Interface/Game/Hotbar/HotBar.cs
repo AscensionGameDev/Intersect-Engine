@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -27,13 +27,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             HotbarWindow.ShouldCacheToTexture = true;
             InitHotbarItems();
-            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             for (var i = 0; i < Items.Count; i++)
             {
-                if (Items[i].EquipPanel.Texture == null)
+                if (Items[i].EquipPanel.GameTexture == null)
                 {
-                    Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                    Items[i].EquipPanel.GameTexture = Graphics.GameRenderer.GetWhiteTexture();
                 }
             }
         }

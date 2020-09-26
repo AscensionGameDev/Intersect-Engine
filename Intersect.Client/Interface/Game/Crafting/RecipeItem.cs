@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
@@ -60,24 +60,24 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
-                    Pnl.Texture = itemTex;
+                    Pnl.GameTexture = itemTex;
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
+                    if (Pnl.GameTexture != null)
                     {
-                        Pnl.Texture = null;
+                        Pnl.GameTexture = null;
                     }
                 }
             }
             else
             {
-                if (Pnl.Texture != null)
+                if (Pnl.GameTexture != null)
                 {
-                    Pnl.Texture = null;
+                    Pnl.GameTexture = null;
                 }
             }
         }

@@ -433,7 +433,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     public class TexturedBase : Skin.Base
     {
 
-        private readonly GameTexture mTexture;
+        private readonly ITexture mGameTexture;
 
         protected SkinTextures mTextures;
 
@@ -442,9 +442,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
         /// </summary>
         /// <param name="renderer">Renderer to use.</param>
         /// <param name="textureName">Name of the skin texture map.</param>
-        public TexturedBase(Renderer.Base renderer, GameTexture texture) : base(renderer)
+        public TexturedBase(Renderer.Base renderer, ITexture gameTexture) : base(renderer)
         {
-            mTexture = texture;
+            mGameTexture = gameTexture;
 
             InitializeColors();
             InitializeTextures();
@@ -462,194 +462,194 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         private void InitializeColors()
         {
-            Colors.Window.TitleActive = Renderer.PixelColor(mTexture, 4 + 8 * 0, 508, Color.Red);
-            Colors.Window.TitleInactive = Renderer.PixelColor(mTexture, 4 + 8 * 1, 508, Color.Yellow);
+            Colors.Window.TitleActive = Renderer.PixelColor(mGameTexture, 4 + 8 * 0, 508, Color.Red);
+            Colors.Window.TitleInactive = Renderer.PixelColor(mGameTexture, 4 + 8 * 1, 508, Color.Yellow);
 
-            Colors.Button.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 2, 508, Color.Yellow);
-            Colors.Button.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 3, 508, Color.Yellow);
-            Colors.Button.Down = Renderer.PixelColor(mTexture, 4 + 8 * 2, 500, Color.Yellow);
-            Colors.Button.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 3, 500, Color.Yellow);
+            Colors.Button.Normal = Renderer.PixelColor(mGameTexture, 4 + 8 * 2, 508, Color.Yellow);
+            Colors.Button.Hover = Renderer.PixelColor(mGameTexture, 4 + 8 * 3, 508, Color.Yellow);
+            Colors.Button.Down = Renderer.PixelColor(mGameTexture, 4 + 8 * 2, 500, Color.Yellow);
+            Colors.Button.Disabled = Renderer.PixelColor(mGameTexture, 4 + 8 * 3, 500, Color.Yellow);
 
-            Colors.Tab.Active.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 4, 508, Color.Yellow);
-            Colors.Tab.Active.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 5, 508, Color.Yellow);
-            Colors.Tab.Active.Down = Renderer.PixelColor(mTexture, 4 + 8 * 4, 500, Color.Yellow);
-            Colors.Tab.Active.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 5, 500, Color.Yellow);
-            Colors.Tab.Inactive.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 6, 508, Color.Yellow);
-            Colors.Tab.Inactive.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 7, 508, Color.Yellow);
-            Colors.Tab.Inactive.Down = Renderer.PixelColor(mTexture, 4 + 8 * 6, 500, Color.Yellow);
-            Colors.Tab.Inactive.Disabled = Renderer.PixelColor(mTexture, 4 + 8 * 7, 500, Color.Yellow);
+            Colors.Tab.Active.Normal = Renderer.PixelColor(mGameTexture, 4 + 8 * 4, 508, Color.Yellow);
+            Colors.Tab.Active.Hover = Renderer.PixelColor(mGameTexture, 4 + 8 * 5, 508, Color.Yellow);
+            Colors.Tab.Active.Down = Renderer.PixelColor(mGameTexture, 4 + 8 * 4, 500, Color.Yellow);
+            Colors.Tab.Active.Disabled = Renderer.PixelColor(mGameTexture, 4 + 8 * 5, 500, Color.Yellow);
+            Colors.Tab.Inactive.Normal = Renderer.PixelColor(mGameTexture, 4 + 8 * 6, 508, Color.Yellow);
+            Colors.Tab.Inactive.Hover = Renderer.PixelColor(mGameTexture, 4 + 8 * 7, 508, Color.Yellow);
+            Colors.Tab.Inactive.Down = Renderer.PixelColor(mGameTexture, 4 + 8 * 6, 500, Color.Yellow);
+            Colors.Tab.Inactive.Disabled = Renderer.PixelColor(mGameTexture, 4 + 8 * 7, 500, Color.Yellow);
 
-            Colors.Label.Default = Renderer.PixelColor(mTexture, 4 + 8 * 8, 508, Color.Yellow);
-            Colors.Label.Bright = Renderer.PixelColor(mTexture, 4 + 8 * 9, 508, Color.Yellow);
-            Colors.Label.Dark = Renderer.PixelColor(mTexture, 4 + 8 * 8, 500, Color.Yellow);
-            Colors.Label.Highlight = Renderer.PixelColor(mTexture, 4 + 8 * 9, 500, Color.Yellow);
+            Colors.Label.Default = Renderer.PixelColor(mGameTexture, 4 + 8 * 8, 508, Color.Yellow);
+            Colors.Label.Bright = Renderer.PixelColor(mGameTexture, 4 + 8 * 9, 508, Color.Yellow);
+            Colors.Label.Dark = Renderer.PixelColor(mGameTexture, 4 + 8 * 8, 500, Color.Yellow);
+            Colors.Label.Highlight = Renderer.PixelColor(mGameTexture, 4 + 8 * 9, 500, Color.Yellow);
 
-            Colors.Tree.Lines = Renderer.PixelColor(mTexture, 4 + 8 * 10, 508, Color.Yellow);
-            Colors.Tree.Normal = Renderer.PixelColor(mTexture, 4 + 8 * 11, 508, Color.Yellow);
-            Colors.Tree.Hover = Renderer.PixelColor(mTexture, 4 + 8 * 10, 500, Color.Yellow);
-            Colors.Tree.Selected = Renderer.PixelColor(mTexture, 4 + 8 * 11, 500, Color.Yellow);
+            Colors.Tree.Lines = Renderer.PixelColor(mGameTexture, 4 + 8 * 10, 508, Color.Yellow);
+            Colors.Tree.Normal = Renderer.PixelColor(mGameTexture, 4 + 8 * 11, 508, Color.Yellow);
+            Colors.Tree.Hover = Renderer.PixelColor(mGameTexture, 4 + 8 * 10, 500, Color.Yellow);
+            Colors.Tree.Selected = Renderer.PixelColor(mGameTexture, 4 + 8 * 11, 500, Color.Yellow);
 
-            Colors.Properties.LineNormal = Renderer.PixelColor(mTexture, 4 + 8 * 12, 508, Color.Yellow);
-            Colors.Properties.LineSelected = Renderer.PixelColor(mTexture, 4 + 8 * 13, 508, Color.Yellow);
-            Colors.Properties.LineHover = Renderer.PixelColor(mTexture, 4 + 8 * 12, 500, Color.Yellow);
-            Colors.Properties.Title = Renderer.PixelColor(mTexture, 4 + 8 * 13, 500, Color.Yellow);
-            Colors.Properties.ColumnNormal = Renderer.PixelColor(mTexture, 4 + 8 * 14, 508, Color.Yellow);
-            Colors.Properties.ColumnSelected = Renderer.PixelColor(mTexture, 4 + 8 * 15, 508, Color.Yellow);
-            Colors.Properties.ColumnHover = Renderer.PixelColor(mTexture, 4 + 8 * 14, 500, Color.Yellow);
-            Colors.Properties.Border = Renderer.PixelColor(mTexture, 4 + 8 * 15, 500, Color.Yellow);
-            Colors.Properties.LabelNormal = Renderer.PixelColor(mTexture, 4 + 8 * 16, 508, Color.Yellow);
-            Colors.Properties.LabelSelected = Renderer.PixelColor(mTexture, 4 + 8 * 17, 508, Color.Yellow);
-            Colors.Properties.LabelHover = Renderer.PixelColor(mTexture, 4 + 8 * 16, 500, Color.Yellow);
+            Colors.Properties.LineNormal = Renderer.PixelColor(mGameTexture, 4 + 8 * 12, 508, Color.Yellow);
+            Colors.Properties.LineSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 13, 508, Color.Yellow);
+            Colors.Properties.LineHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 12, 500, Color.Yellow);
+            Colors.Properties.Title = Renderer.PixelColor(mGameTexture, 4 + 8 * 13, 500, Color.Yellow);
+            Colors.Properties.ColumnNormal = Renderer.PixelColor(mGameTexture, 4 + 8 * 14, 508, Color.Yellow);
+            Colors.Properties.ColumnSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 15, 508, Color.Yellow);
+            Colors.Properties.ColumnHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 14, 500, Color.Yellow);
+            Colors.Properties.Border = Renderer.PixelColor(mGameTexture, 4 + 8 * 15, 500, Color.Yellow);
+            Colors.Properties.LabelNormal = Renderer.PixelColor(mGameTexture, 4 + 8 * 16, 508, Color.Yellow);
+            Colors.Properties.LabelSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 17, 508, Color.Yellow);
+            Colors.Properties.LabelHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 16, 500, Color.Yellow);
 
-            Colors.ModalBackground = Renderer.PixelColor(mTexture, 4 + 8 * 18, 508, Color.Yellow);
+            Colors.ModalBackground = Renderer.PixelColor(mGameTexture, 4 + 8 * 18, 508, Color.Yellow);
 
-            Colors.TooltipText = Renderer.PixelColor(mTexture, 4 + 8 * 19, 508, Color.Yellow);
+            Colors.TooltipText = Renderer.PixelColor(mGameTexture, 4 + 8 * 19, 508, Color.Yellow);
 
-            Colors.Category.Header = Renderer.PixelColor(mTexture, 4 + 8 * 18, 500, Color.Yellow);
-            Colors.Category.HeaderClosed = Renderer.PixelColor(mTexture, 4 + 8 * 19, 500, Color.Yellow);
-            Colors.Category.Line.Text = Renderer.PixelColor(mTexture, 4 + 8 * 20, 508, Color.Yellow);
-            Colors.Category.Line.TextHover = Renderer.PixelColor(mTexture, 4 + 8 * 21, 508, Color.Yellow);
-            Colors.Category.Line.TextSelected = Renderer.PixelColor(mTexture, 4 + 8 * 20, 500, Color.Yellow);
-            Colors.Category.Line.Button = Renderer.PixelColor(mTexture, 4 + 8 * 21, 500, Color.Yellow);
-            Colors.Category.Line.ButtonHover = Renderer.PixelColor(mTexture, 4 + 8 * 22, 508, Color.Yellow);
-            Colors.Category.Line.ButtonSelected = Renderer.PixelColor(mTexture, 4 + 8 * 23, 508, Color.Yellow);
-            Colors.Category.LineAlt.Text = Renderer.PixelColor(mTexture, 4 + 8 * 22, 500, Color.Yellow);
-            Colors.Category.LineAlt.TextHover = Renderer.PixelColor(mTexture, 4 + 8 * 23, 500, Color.Yellow);
-            Colors.Category.LineAlt.TextSelected = Renderer.PixelColor(mTexture, 4 + 8 * 24, 508, Color.Yellow);
-            Colors.Category.LineAlt.Button = Renderer.PixelColor(mTexture, 4 + 8 * 25, 508, Color.Yellow);
-            Colors.Category.LineAlt.ButtonHover = Renderer.PixelColor(mTexture, 4 + 8 * 24, 500, Color.Yellow);
-            Colors.Category.LineAlt.ButtonSelected = Renderer.PixelColor(mTexture, 4 + 8 * 25, 500, Color.Yellow);
+            Colors.Category.Header = Renderer.PixelColor(mGameTexture, 4 + 8 * 18, 500, Color.Yellow);
+            Colors.Category.HeaderClosed = Renderer.PixelColor(mGameTexture, 4 + 8 * 19, 500, Color.Yellow);
+            Colors.Category.Line.Text = Renderer.PixelColor(mGameTexture, 4 + 8 * 20, 508, Color.Yellow);
+            Colors.Category.Line.TextHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 21, 508, Color.Yellow);
+            Colors.Category.Line.TextSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 20, 500, Color.Yellow);
+            Colors.Category.Line.Button = Renderer.PixelColor(mGameTexture, 4 + 8 * 21, 500, Color.Yellow);
+            Colors.Category.Line.ButtonHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 22, 508, Color.Yellow);
+            Colors.Category.Line.ButtonSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 23, 508, Color.Yellow);
+            Colors.Category.LineAlt.Text = Renderer.PixelColor(mGameTexture, 4 + 8 * 22, 500, Color.Yellow);
+            Colors.Category.LineAlt.TextHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 23, 500, Color.Yellow);
+            Colors.Category.LineAlt.TextSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 24, 508, Color.Yellow);
+            Colors.Category.LineAlt.Button = Renderer.PixelColor(mGameTexture, 4 + 8 * 25, 508, Color.Yellow);
+            Colors.Category.LineAlt.ButtonHover = Renderer.PixelColor(mGameTexture, 4 + 8 * 24, 500, Color.Yellow);
+            Colors.Category.LineAlt.ButtonSelected = Renderer.PixelColor(mGameTexture, 4 + 8 * 25, 500, Color.Yellow);
         }
 
         private void InitializeTextures()
         {
-            mTextures.Shadow = new Bordered(mTexture, 448, 0, 31, 31, Margin.Eight);
-            mTextures.Tooltip = new Bordered(mTexture, 128, 320, 127, 31, Margin.Eight);
-            mTextures.StatusBar = new Bordered(mTexture, 128, 288, 127, 31, Margin.Eight);
-            mTextures.Selection = new Bordered(mTexture, 384, 32, 31, 31, Margin.Four);
+            mTextures.Shadow = new Bordered(mGameTexture, 448, 0, 31, 31, Margin.Eight);
+            mTextures.Tooltip = new Bordered(mGameTexture, 128, 320, 127, 31, Margin.Eight);
+            mTextures.StatusBar = new Bordered(mGameTexture, 128, 288, 127, 31, Margin.Eight);
+            mTextures.Selection = new Bordered(mGameTexture, 384, 32, 31, 31, Margin.Four);
 
-            mTextures.Panel.Normal = new Bordered(mTexture, 256, 0, 63, 63, new Margin(16, 16, 16, 16));
-            mTextures.Panel.Bright = new Bordered(mTexture, 256 + 64, 0, 63, 63, new Margin(16, 16, 16, 16));
-            mTextures.Panel.Dark = new Bordered(mTexture, 256, 64, 63, 63, new Margin(16, 16, 16, 16));
-            mTextures.Panel.Highlight = new Bordered(mTexture, 256 + 64, 64, 63, 63, new Margin(16, 16, 16, 16));
+            mTextures.Panel.Normal = new Bordered(mGameTexture, 256, 0, 63, 63, new Margin(16, 16, 16, 16));
+            mTextures.Panel.Bright = new Bordered(mGameTexture, 256 + 64, 0, 63, 63, new Margin(16, 16, 16, 16));
+            mTextures.Panel.Dark = new Bordered(mGameTexture, 256, 64, 63, 63, new Margin(16, 16, 16, 16));
+            mTextures.Panel.Highlight = new Bordered(mGameTexture, 256 + 64, 64, 63, 63, new Margin(16, 16, 16, 16));
 
-            mTextures.Window.Normal = new Bordered(mTexture, 0, 0, 127, 127, new Margin(8, 32, 8, 8));
-            mTextures.Window.Inactive = new Bordered(mTexture, 128, 0, 127, 127, new Margin(8, 32, 8, 8));
+            mTextures.Window.Normal = new Bordered(mGameTexture, 0, 0, 127, 127, new Margin(8, 32, 8, 8));
+            mTextures.Window.Inactive = new Bordered(mGameTexture, 128, 0, 127, 127, new Margin(8, 32, 8, 8));
 
-            mTextures.CheckBox.Active.Checked = new Single(mTexture, 448, 32, 15, 15);
-            mTextures.CheckBox.Active.Normal = new Single(mTexture, 464, 32, 15, 15);
-            mTextures.CheckBox.Disabled.Normal = new Single(mTexture, 448, 48, 15, 15);
-            mTextures.CheckBox.Disabled.Normal = new Single(mTexture, 464, 48, 15, 15);
+            mTextures.CheckBox.Active.Checked = new Single(mGameTexture, 448, 32, 15, 15);
+            mTextures.CheckBox.Active.Normal = new Single(mGameTexture, 464, 32, 15, 15);
+            mTextures.CheckBox.Disabled.Normal = new Single(mGameTexture, 448, 48, 15, 15);
+            mTextures.CheckBox.Disabled.Normal = new Single(mGameTexture, 464, 48, 15, 15);
 
-            mTextures.RadioButton.Active.Checked = new Single(mTexture, 448, 64, 15, 15);
-            mTextures.RadioButton.Active.Normal = new Single(mTexture, 464, 64, 15, 15);
-            mTextures.RadioButton.Disabled.Normal = new Single(mTexture, 448, 80, 15, 15);
-            mTextures.RadioButton.Disabled.Normal = new Single(mTexture, 464, 80, 15, 15);
+            mTextures.RadioButton.Active.Checked = new Single(mGameTexture, 448, 64, 15, 15);
+            mTextures.RadioButton.Active.Normal = new Single(mGameTexture, 464, 64, 15, 15);
+            mTextures.RadioButton.Disabled.Normal = new Single(mGameTexture, 448, 80, 15, 15);
+            mTextures.RadioButton.Disabled.Normal = new Single(mGameTexture, 464, 80, 15, 15);
 
-            mTextures.TextBox.Normal = new Bordered(mTexture, 0, 150, 127, 21, Margin.Four);
-            mTextures.TextBox.Focus = new Bordered(mTexture, 0, 172, 127, 21, Margin.Four);
-            mTextures.TextBox.Disabled = new Bordered(mTexture, 0, 193, 127, 21, Margin.Four);
+            mTextures.TextBox.Normal = new Bordered(mGameTexture, 0, 150, 127, 21, Margin.Four);
+            mTextures.TextBox.Focus = new Bordered(mGameTexture, 0, 172, 127, 21, Margin.Four);
+            mTextures.TextBox.Disabled = new Bordered(mGameTexture, 0, 193, 127, 21, Margin.Four);
 
-            mTextures.Menu.Strip = new Bordered(mTexture, 0, 128, 127, 21, Margin.One);
-            mTextures.Menu.BackgroundWithMargin = new Bordered(mTexture, 128, 128, 127, 63, new Margin(24, 8, 8, 8));
-            mTextures.Menu.Background = new Bordered(mTexture, 128, 192, 127, 63, Margin.Eight);
-            mTextures.Menu.Hover = new Bordered(mTexture, 128, 256, 127, 31, Margin.Eight);
-            mTextures.Menu.RightArrow = new Single(mTexture, 464, 112, 15, 15);
-            mTextures.Menu.Check = new Single(mTexture, 448, 112, 15, 15);
+            mTextures.Menu.Strip = new Bordered(mGameTexture, 0, 128, 127, 21, Margin.One);
+            mTextures.Menu.BackgroundWithMargin = new Bordered(mGameTexture, 128, 128, 127, 63, new Margin(24, 8, 8, 8));
+            mTextures.Menu.Background = new Bordered(mGameTexture, 128, 192, 127, 63, Margin.Eight);
+            mTextures.Menu.Hover = new Bordered(mGameTexture, 128, 256, 127, 31, Margin.Eight);
+            mTextures.Menu.RightArrow = new Single(mGameTexture, 464, 112, 15, 15);
+            mTextures.Menu.Check = new Single(mGameTexture, 448, 112, 15, 15);
 
-            mTextures.Tab.Control = new Bordered(mTexture, 0, 256, 127, 127, Margin.Eight);
-            mTextures.Tab.Bottom.Active = new Bordered(mTexture, 0, 416, 63, 31, Margin.Eight);
-            mTextures.Tab.Bottom.Inactive = new Bordered(mTexture, 0 + 128, 416, 63, 31, Margin.Eight);
-            mTextures.Tab.Top.Active = new Bordered(mTexture, 0, 384, 63, 31, Margin.Eight);
-            mTextures.Tab.Top.Inactive = new Bordered(mTexture, 0 + 128, 384, 63, 31, Margin.Eight);
-            mTextures.Tab.Left.Active = new Bordered(mTexture, 64, 384, 31, 63, Margin.Eight);
-            mTextures.Tab.Left.Inactive = new Bordered(mTexture, 64 + 128, 384, 31, 63, Margin.Eight);
-            mTextures.Tab.Right.Active = new Bordered(mTexture, 96, 384, 31, 63, Margin.Eight);
-            mTextures.Tab.Right.Inactive = new Bordered(mTexture, 96 + 128, 384, 31, 63, Margin.Eight);
-            mTextures.Tab.HeaderBar = new Bordered(mTexture, 128, 352, 127, 31, Margin.Four);
+            mTextures.Tab.Control = new Bordered(mGameTexture, 0, 256, 127, 127, Margin.Eight);
+            mTextures.Tab.Bottom.Active = new Bordered(mGameTexture, 0, 416, 63, 31, Margin.Eight);
+            mTextures.Tab.Bottom.Inactive = new Bordered(mGameTexture, 0 + 128, 416, 63, 31, Margin.Eight);
+            mTextures.Tab.Top.Active = new Bordered(mGameTexture, 0, 384, 63, 31, Margin.Eight);
+            mTextures.Tab.Top.Inactive = new Bordered(mGameTexture, 0 + 128, 384, 63, 31, Margin.Eight);
+            mTextures.Tab.Left.Active = new Bordered(mGameTexture, 64, 384, 31, 63, Margin.Eight);
+            mTextures.Tab.Left.Inactive = new Bordered(mGameTexture, 64 + 128, 384, 31, 63, Margin.Eight);
+            mTextures.Tab.Right.Active = new Bordered(mGameTexture, 96, 384, 31, 63, Margin.Eight);
+            mTextures.Tab.Right.Inactive = new Bordered(mGameTexture, 96 + 128, 384, 31, 63, Margin.Eight);
+            mTextures.Tab.HeaderBar = new Bordered(mGameTexture, 128, 352, 127, 31, Margin.Four);
 
-            mTextures.Window.Close = new Single(mTexture, 0, 224, 24, 24);
-            mTextures.Window.CloseHover = new Single(mTexture, 32, 224, 24, 24);
-            mTextures.Window.CloseHover = new Single(mTexture, 64, 224, 24, 24);
-            mTextures.Window.CloseHover = new Single(mTexture, 96, 224, 24, 24);
+            mTextures.Window.Close = new Single(mGameTexture, 0, 224, 24, 24);
+            mTextures.Window.CloseHover = new Single(mGameTexture, 32, 224, 24, 24);
+            mTextures.Window.CloseHover = new Single(mGameTexture, 64, 224, 24, 24);
+            mTextures.Window.CloseHover = new Single(mGameTexture, 96, 224, 24, 24);
 
-            mTextures.Scroller.TrackV = new Bordered(mTexture, 384, 208, 15, 127, Margin.Four);
-            mTextures.Scroller.ButtonVNormal = new Bordered(mTexture, 384 + 16, 208, 15, 127, Margin.Four);
-            mTextures.Scroller.ButtonVHover = new Bordered(mTexture, 384 + 32, 208, 15, 127, Margin.Four);
-            mTextures.Scroller.ButtonVDown = new Bordered(mTexture, 384 + 48, 208, 15, 127, Margin.Four);
-            mTextures.Scroller.ButtonVDisabled = new Bordered(mTexture, 384 + 64, 208, 15, 127, Margin.Four);
-            mTextures.Scroller.TrackH = new Bordered(mTexture, 384, 128, 127, 15, Margin.Four);
-            mTextures.Scroller.ButtonHNormal = new Bordered(mTexture, 384, 128 + 16, 127, 15, Margin.Four);
-            mTextures.Scroller.ButtonHHover = new Bordered(mTexture, 384, 128 + 32, 127, 15, Margin.Four);
-            mTextures.Scroller.ButtonHDown = new Bordered(mTexture, 384, 128 + 48, 127, 15, Margin.Four);
-            mTextures.Scroller.ButtonHDisabled = new Bordered(mTexture, 384, 128 + 64, 127, 15, Margin.Four);
+            mTextures.Scroller.TrackV = new Bordered(mGameTexture, 384, 208, 15, 127, Margin.Four);
+            mTextures.Scroller.ButtonVNormal = new Bordered(mGameTexture, 384 + 16, 208, 15, 127, Margin.Four);
+            mTextures.Scroller.ButtonVHover = new Bordered(mGameTexture, 384 + 32, 208, 15, 127, Margin.Four);
+            mTextures.Scroller.ButtonVDown = new Bordered(mGameTexture, 384 + 48, 208, 15, 127, Margin.Four);
+            mTextures.Scroller.ButtonVDisabled = new Bordered(mGameTexture, 384 + 64, 208, 15, 127, Margin.Four);
+            mTextures.Scroller.TrackH = new Bordered(mGameTexture, 384, 128, 127, 15, Margin.Four);
+            mTextures.Scroller.ButtonHNormal = new Bordered(mGameTexture, 384, 128 + 16, 127, 15, Margin.Four);
+            mTextures.Scroller.ButtonHHover = new Bordered(mGameTexture, 384, 128 + 32, 127, 15, Margin.Four);
+            mTextures.Scroller.ButtonHDown = new Bordered(mGameTexture, 384, 128 + 48, 127, 15, Margin.Four);
+            mTextures.Scroller.ButtonHDisabled = new Bordered(mGameTexture, 384, 128 + 64, 127, 15, Margin.Four);
 
             mTextures.Scroller.Button.Normal = new Bordered[4];
             mTextures.Scroller.Button.Disabled = new Bordered[4];
             mTextures.Scroller.Button.Hover = new Bordered[4];
             mTextures.Scroller.Button.Down = new Bordered[4];
 
-            mTextures.Tree.Background = new Bordered(mTexture, 256, 128, 127, 127, new Margin(16, 16, 16, 16));
-            mTextures.Tree.Plus = new Single(mTexture, 448, 96, 15, 15);
-            mTextures.Tree.Minus = new Single(mTexture, 464, 96, 15, 15);
+            mTextures.Tree.Background = new Bordered(mGameTexture, 256, 128, 127, 127, new Margin(16, 16, 16, 16));
+            mTextures.Tree.Plus = new Single(mGameTexture, 448, 96, 15, 15);
+            mTextures.Tree.Minus = new Single(mGameTexture, 464, 96, 15, 15);
 
-            mTextures.Input.Button.Normal = new Bordered(mTexture, 480, 0, 31, 31, Margin.Eight);
-            mTextures.Input.Button.Hovered = new Bordered(mTexture, 480, 32, 31, 31, Margin.Eight);
-            mTextures.Input.Button.Disabled = new Bordered(mTexture, 480, 64, 31, 31, Margin.Eight);
-            mTextures.Input.Button.Pressed = new Bordered(mTexture, 480, 96, 31, 31, Margin.Eight);
+            mTextures.Input.Button.Normal = new Bordered(mGameTexture, 480, 0, 31, 31, Margin.Eight);
+            mTextures.Input.Button.Hovered = new Bordered(mGameTexture, 480, 32, 31, 31, Margin.Eight);
+            mTextures.Input.Button.Disabled = new Bordered(mGameTexture, 480, 64, 31, 31, Margin.Eight);
+            mTextures.Input.Button.Pressed = new Bordered(mGameTexture, 480, 96, 31, 31, Margin.Eight);
 
             for (var i = 0; i < 4; i++)
             {
-                mTextures.Scroller.Button.Normal[i] = new Bordered(mTexture, 464 + 0, 208 + i * 16, 15, 15, Margin.Two);
-                mTextures.Scroller.Button.Hover[i] = new Bordered(mTexture, 480, 208 + i * 16, 15, 15, Margin.Two);
-                mTextures.Scroller.Button.Down[i] = new Bordered(mTexture, 464, 272 + i * 16, 15, 15, Margin.Two);
+                mTextures.Scroller.Button.Normal[i] = new Bordered(mGameTexture, 464 + 0, 208 + i * 16, 15, 15, Margin.Two);
+                mTextures.Scroller.Button.Hover[i] = new Bordered(mGameTexture, 480, 208 + i * 16, 15, 15, Margin.Two);
+                mTextures.Scroller.Button.Down[i] = new Bordered(mGameTexture, 464, 272 + i * 16, 15, 15, Margin.Two);
                 mTextures.Scroller.Button.Disabled[i] = new Bordered(
-                    mTexture, 480 + 48, 272 + i * 16, 15, 15, Margin.Two
+                    mGameTexture, 480 + 48, 272 + i * 16, 15, 15, Margin.Two
                 );
             }
 
-            mTextures.Input.ListBox.Background = new Bordered(mTexture, 256, 256, 63, 127, Margin.Eight);
-            mTextures.Input.ListBox.Hovered = new Bordered(mTexture, 320, 320, 31, 31, Margin.Eight);
-            mTextures.Input.ListBox.EvenLine = new Bordered(mTexture, 352, 256, 31, 31, Margin.Eight);
-            mTextures.Input.ListBox.OddLine = new Bordered(mTexture, 352, 288, 31, 31, Margin.Eight);
-            mTextures.Input.ListBox.EvenLineSelected = new Bordered(mTexture, 320, 270, 31, 31, Margin.Eight);
-            mTextures.Input.ListBox.OddLineSelected = new Bordered(mTexture, 320, 288, 31, 31, Margin.Eight);
+            mTextures.Input.ListBox.Background = new Bordered(mGameTexture, 256, 256, 63, 127, Margin.Eight);
+            mTextures.Input.ListBox.Hovered = new Bordered(mGameTexture, 320, 320, 31, 31, Margin.Eight);
+            mTextures.Input.ListBox.EvenLine = new Bordered(mGameTexture, 352, 256, 31, 31, Margin.Eight);
+            mTextures.Input.ListBox.OddLine = new Bordered(mGameTexture, 352, 288, 31, 31, Margin.Eight);
+            mTextures.Input.ListBox.EvenLineSelected = new Bordered(mGameTexture, 320, 270, 31, 31, Margin.Eight);
+            mTextures.Input.ListBox.OddLineSelected = new Bordered(mGameTexture, 320, 288, 31, 31, Margin.Eight);
 
-            mTextures.Input.ComboBox.Normal = new Bordered(mTexture, 384, 336, 127, 31, new Margin(8, 8, 32, 8));
-            mTextures.Input.ComboBox.Hover = new Bordered(mTexture, 384, 336 + 32, 127, 31, new Margin(8, 8, 32, 8));
-            mTextures.Input.ComboBox.Down = new Bordered(mTexture, 384, 336 + 64, 127, 31, new Margin(8, 8, 32, 8));
-            mTextures.Input.ComboBox.Disabled = new Bordered(mTexture, 384, 336 + 96, 127, 31, new Margin(8, 8, 32, 8));
+            mTextures.Input.ComboBox.Normal = new Bordered(mGameTexture, 384, 336, 127, 31, new Margin(8, 8, 32, 8));
+            mTextures.Input.ComboBox.Hover = new Bordered(mGameTexture, 384, 336 + 32, 127, 31, new Margin(8, 8, 32, 8));
+            mTextures.Input.ComboBox.Down = new Bordered(mGameTexture, 384, 336 + 64, 127, 31, new Margin(8, 8, 32, 8));
+            mTextures.Input.ComboBox.Disabled = new Bordered(mGameTexture, 384, 336 + 96, 127, 31, new Margin(8, 8, 32, 8));
 
-            mTextures.Input.ComboBox.Button.Normal = new Single(mTexture, 496, 272, 15, 15);
-            mTextures.Input.ComboBox.Button.Hover = new Single(mTexture, 496, 272 + 16, 15, 15);
-            mTextures.Input.ComboBox.Button.Down = new Single(mTexture, 496, 272 + 32, 15, 15);
-            mTextures.Input.ComboBox.Button.Disabled = new Single(mTexture, 496, 272 + 48, 15, 15);
+            mTextures.Input.ComboBox.Button.Normal = new Single(mGameTexture, 496, 272, 15, 15);
+            mTextures.Input.ComboBox.Button.Hover = new Single(mGameTexture, 496, 272 + 16, 15, 15);
+            mTextures.Input.ComboBox.Button.Down = new Single(mGameTexture, 496, 272 + 32, 15, 15);
+            mTextures.Input.ComboBox.Button.Disabled = new Single(mGameTexture, 496, 272 + 48, 15, 15);
 
-            mTextures.Input.UpDown.Up.Normal = new Single(mTexture, 384, 112, 7, 7);
-            mTextures.Input.UpDown.Up.Hover = new Single(mTexture, 384 + 8, 112, 7, 7);
-            mTextures.Input.UpDown.Up.Down = new Single(mTexture, 384 + 16, 112, 7, 7);
-            mTextures.Input.UpDown.Up.Disabled = new Single(mTexture, 384 + 24, 112, 7, 7);
-            mTextures.Input.UpDown.Down.Normal = new Single(mTexture, 384, 120, 7, 7);
-            mTextures.Input.UpDown.Down.Hover = new Single(mTexture, 384 + 8, 120, 7, 7);
-            mTextures.Input.UpDown.Down.Down = new Single(mTexture, 384 + 16, 120, 7, 7);
-            mTextures.Input.UpDown.Down.Disabled = new Single(mTexture, 384 + 24, 120, 7, 7);
+            mTextures.Input.UpDown.Up.Normal = new Single(mGameTexture, 384, 112, 7, 7);
+            mTextures.Input.UpDown.Up.Hover = new Single(mGameTexture, 384 + 8, 112, 7, 7);
+            mTextures.Input.UpDown.Up.Down = new Single(mGameTexture, 384 + 16, 112, 7, 7);
+            mTextures.Input.UpDown.Up.Disabled = new Single(mGameTexture, 384 + 24, 112, 7, 7);
+            mTextures.Input.UpDown.Down.Normal = new Single(mGameTexture, 384, 120, 7, 7);
+            mTextures.Input.UpDown.Down.Hover = new Single(mGameTexture, 384 + 8, 120, 7, 7);
+            mTextures.Input.UpDown.Down.Down = new Single(mGameTexture, 384 + 16, 120, 7, 7);
+            mTextures.Input.UpDown.Down.Disabled = new Single(mGameTexture, 384 + 24, 120, 7, 7);
 
-            mTextures.ProgressBar.Back = new Bordered(mTexture, 384, 0, 31, 31, Margin.Eight);
-            mTextures.ProgressBar.Front = new Bordered(mTexture, 384 + 32, 0, 31, 31, Margin.Eight);
+            mTextures.ProgressBar.Back = new Bordered(mGameTexture, 384, 0, 31, 31, Margin.Eight);
+            mTextures.ProgressBar.Front = new Bordered(mGameTexture, 384 + 32, 0, 31, 31, Margin.Eight);
 
-            mTextures.Input.Slider.H.Normal = new Single(mTexture, 416, 32, 15, 15);
-            mTextures.Input.Slider.H.Hover = new Single(mTexture, 416, 32 + 16, 15, 15);
-            mTextures.Input.Slider.H.Down = new Single(mTexture, 416, 32 + 32, 15, 15);
-            mTextures.Input.Slider.H.Disabled = new Single(mTexture, 416, 32 + 48, 15, 15);
+            mTextures.Input.Slider.H.Normal = new Single(mGameTexture, 416, 32, 15, 15);
+            mTextures.Input.Slider.H.Hover = new Single(mGameTexture, 416, 32 + 16, 15, 15);
+            mTextures.Input.Slider.H.Down = new Single(mGameTexture, 416, 32 + 32, 15, 15);
+            mTextures.Input.Slider.H.Disabled = new Single(mGameTexture, 416, 32 + 48, 15, 15);
 
-            mTextures.Input.Slider.V.Normal = new Single(mTexture, 416 + 16, 32, 15, 15);
-            mTextures.Input.Slider.V.Hover = new Single(mTexture, 416 + 16, 32 + 16, 15, 15);
-            mTextures.Input.Slider.V.Down = new Single(mTexture, 416 + 16, 32 + 32, 15, 15);
-            mTextures.Input.Slider.V.Disabled = new Single(mTexture, 416 + 16, 32 + 48, 15, 15);
+            mTextures.Input.Slider.V.Normal = new Single(mGameTexture, 416 + 16, 32, 15, 15);
+            mTextures.Input.Slider.V.Hover = new Single(mGameTexture, 416 + 16, 32 + 16, 15, 15);
+            mTextures.Input.Slider.V.Down = new Single(mGameTexture, 416 + 16, 32 + 32, 15, 15);
+            mTextures.Input.Slider.V.Disabled = new Single(mGameTexture, 416 + 16, 32 + 48, 15, 15);
 
-            mTextures.CategoryList.Outer = new Bordered(mTexture, 256, 384, 63, 63, Margin.Eight);
-            mTextures.CategoryList.Inner = new Bordered(mTexture, 256 + 64, 384, 63, 63, new Margin(8, 21, 8, 8));
-            mTextures.CategoryList.Header = new Bordered(mTexture, 320, 352, 63, 31, Margin.Eight);
+            mTextures.CategoryList.Outer = new Bordered(mGameTexture, 256, 384, 63, 63, Margin.Eight);
+            mTextures.CategoryList.Inner = new Bordered(mGameTexture, 256 + 64, 384, 63, 63, new Margin(8, 21, 8, 8));
+            mTextures.CategoryList.Header = new Bordered(mGameTexture, 320, 352, 63, 31, Margin.Eight);
         }
 
         #endregion
@@ -658,7 +658,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             var textColor = ((Button) control).GetTextColor(Control.Label.ControlState.Normal);
             if (disabled && ((Button) control).GetTextColor(Control.Label.ControlState.Disabled) != null)
             {
@@ -770,7 +770,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                    0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top
@@ -778,15 +778,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 0,
+                    (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                    2f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                    2f / renderImg.Height
                 );
 
                 //Draw Left
@@ -794,8 +794,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -804,9 +804,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -814,15 +814,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    2f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                    2f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -830,16 +830,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                 );
 
                 return;
@@ -893,7 +893,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawCheckBox(Control.Base control, bool selected, bool depressed)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             if (selected &&
                 control.IsDisabled &&
                 ((CheckBox) control).GetImage(Control.CheckBox.ControlState.CheckedDisabled) != null)
@@ -1094,7 +1094,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawWindow(Control.Base control, int topHeight, bool inFocus)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             if (((WindowControl) control).GetImage(Control.WindowControl.ControlState.Active) != null)
             {
                 renderImg = ((WindowControl) control).GetImage(Control.WindowControl.ControlState.Active);
@@ -1145,7 +1145,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                    0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top
@@ -1153,15 +1153,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 0,
+                    (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                    2f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                    2f / renderImg.Height
                 );
 
                 //Draw Left
@@ -1169,8 +1169,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -1179,9 +1179,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -1189,15 +1189,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    2f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                    2f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -1205,16 +1205,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                 );
 
                 return;
@@ -1232,7 +1232,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawScrollBarBar(Control.Base control, bool depressed, bool hovered, bool horizontal)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             if (control.IsDisabled && ((ScrollBarBar) control).GetImage(Dragger.ControlState.Disabled) != null)
             {
                 renderImg = ((ScrollBarBar) control).GetImage(Dragger.ControlState.Disabled);
@@ -1259,7 +1259,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     //Draw Top Left Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2),
-                        control.RenderColor, 0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                        control.RenderColor, 0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                     );
 
                     //Draw Top
@@ -1267,15 +1267,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         renderImg,
                         new Rectangle(
                             control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                        ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                        (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                        ), control.RenderColor, 2f / renderImg.Width, 0,
+                        (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                     );
 
                     //Draw Top Right Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                        control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                        2f / renderImg.GetHeight()
+                        control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                        2f / renderImg.Height
                     );
 
                     //Draw Left
@@ -1283,8 +1283,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         renderImg,
                         new Rectangle(
                             control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                        ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                        ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                        (renderImg.Height - 2f) / renderImg.Height
                     );
 
                     //Draw Middle
@@ -1293,9 +1293,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                             control.RenderBounds.Height - 4
-                        ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                        (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                        ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                        (renderImg.Width - 2f) / renderImg.Width,
+                        (renderImg.Height - 2f) / renderImg.Height
                     );
 
                     //Draw Right
@@ -1304,15 +1304,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2,
                             control.RenderBounds.Height - 4
-                        ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                        2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                        ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                        2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                     );
 
                     // Draw Bottom Left Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                        control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                        2f / renderImg.GetWidth(), 1f
+                        control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                        2f / renderImg.Width, 1f
                     );
 
                     //Draw Bottom
@@ -1321,16 +1321,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4,
                             2
-                        ), control.RenderColor, 2f / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                        (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                        ), control.RenderColor, 2f / renderImg.Width,
+                        (renderImg.Height - 2f) / renderImg.Height,
+                        (renderImg.Width - 2f) / renderImg.Width, 1f
                     );
 
                     //Draw Bottom Right Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                        control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                        control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                        (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                     );
 
                     return;
@@ -1369,7 +1369,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                    0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top
@@ -1377,15 +1377,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 0,
+                    (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                    2f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                    2f / renderImg.Height
                 );
 
                 //Draw Left
@@ -1393,8 +1393,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -1403,9 +1403,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -1413,15 +1413,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    2f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                    2f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -1429,16 +1429,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                 );
 
                 return;
@@ -1696,7 +1696,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     //Draw Top Left Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 8, 8),
-                        control.RenderColor, 0, 0, 8f / renderImg.GetWidth(), 8f / renderImg.GetHeight()
+                        control.RenderColor, 0, 0, 8f / renderImg.Width, 8f / renderImg.Height
                     );
 
                     //Draw Top
@@ -1704,15 +1704,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         renderImg,
                         new Rectangle(
                             control.RenderBounds.X + 8, control.RenderBounds.Y, control.RenderBounds.Width - 16, 8
-                        ), control.RenderColor, 8f / renderImg.GetWidth(), 0,
-                        (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 8f / renderImg.GetHeight()
+                        ), control.RenderColor, 8f / renderImg.Width, 0,
+                        (renderImg.Width - 8f) / renderImg.Width, 8f / renderImg.Height
                     );
 
                     //Draw Top Right Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.Right - 8, control.RenderBounds.Y, 8, 8),
-                        control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 0, 1f,
-                        8f / renderImg.GetHeight()
+                        control.RenderColor, (renderImg.Width - 8f) / renderImg.Width, 0, 1f,
+                        8f / renderImg.Height
                     );
 
                     //Draw Left
@@ -1720,8 +1720,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         renderImg,
                         new Rectangle(
                             control.RenderBounds.X, control.RenderBounds.Y + 8, 8, control.RenderBounds.Height - 16
-                        ), control.RenderColor, 0, 8f / renderImg.GetHeight(), 8f / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                        ), control.RenderColor, 0, 8f / renderImg.Height, 8f / renderImg.Width,
+                        (renderImg.Height - 8f) / renderImg.Height
                     );
 
                     //Draw Middle
@@ -1730,9 +1730,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.X + 8, control.RenderBounds.Y + 8, control.RenderBounds.Width - 16,
                             control.RenderBounds.Height - 16
-                        ), control.RenderColor, 8f / renderImg.GetWidth(), 8f / renderImg.GetHeight(),
-                        (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                        ), control.RenderColor, 8f / renderImg.Width, 8f / renderImg.Height,
+                        (renderImg.Width - 8f) / renderImg.Width,
+                        (renderImg.Height - 8f) / renderImg.Height
                     );
 
                     //Draw Right
@@ -1741,15 +1741,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.Width - 8, control.RenderBounds.Y + 8, 8,
                             control.RenderBounds.Height - 16
-                        ), control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                        8f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 8f) / renderImg.GetHeight()
+                        ), control.RenderColor, (renderImg.Width - 8f) / renderImg.Width,
+                        8f / renderImg.Height, 1, (renderImg.Height - 8f) / renderImg.Height
                     );
 
                     // Draw Bottom Left Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 8, 8, 8),
-                        control.RenderColor, 0, (renderImg.GetHeight() - 8f) / renderImg.GetHeight(),
-                        8f / renderImg.GetWidth(), 1f
+                        control.RenderColor, 0, (renderImg.Height - 8f) / renderImg.Height,
+                        8f / renderImg.Width, 1f
                     );
 
                     //Draw Bottom
@@ -1758,16 +1758,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                         new Rectangle(
                             control.RenderBounds.X + 8, control.RenderBounds.Bottom - 8,
                             control.RenderBounds.Width - 16, 8
-                        ), control.RenderColor, 8f / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 8f) / renderImg.GetHeight(),
-                        (renderImg.GetWidth() - 8f) / renderImg.GetWidth(), 1f
+                        ), control.RenderColor, 8f / renderImg.Width,
+                        (renderImg.Height - 8f) / renderImg.Height,
+                        (renderImg.Width - 8f) / renderImg.Width, 1f
                     );
 
                     //Draw Bottom Right Corner
                     Renderer.DrawTexturedRect(
                         renderImg, new Rectangle(control.RenderBounds.Right - 8, control.RenderBounds.Bottom - 8, 8, 8),
-                        control.RenderColor, (renderImg.GetWidth() - 8f) / renderImg.GetWidth(),
-                        (renderImg.GetHeight() - 8f) / renderImg.GetHeight(), 1f, 1f
+                        control.RenderColor, (renderImg.Width - 8f) / renderImg.Width,
+                        (renderImg.Height - 8f) / renderImg.Height, 1f, 1f
                     );
 
                     return;
@@ -1801,7 +1801,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 i = 3;
             }
 
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
 
             if (disabled && ((Button) control).GetImage(Control.Button.ControlState.Disabled) != null)
             {
@@ -2022,7 +2022,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             if (disabled && ((Button) control).GetImage(Control.Button.ControlState.Disabled) != null)
             {
                 renderImg = ((Button) control).GetImage(Control.Button.ControlState.Disabled);
@@ -2074,7 +2074,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
         {
-            GameTexture renderImg = null;
+            ITexture renderImg = null;
             renderImg = ((Dragger) control).GetImage(Dragger.ControlState.Normal);
             if (control.IsDisabled && ((Dragger) control).GetImage(Dragger.ControlState.Disabled) != null)
             {
@@ -2176,7 +2176,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 //Draw Top Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor,
-                    0, 0, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    0, 0, 2f / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top
@@ -2184,15 +2184,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 0,
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 0,
+                    (renderImg.Width - 2f) / renderImg.Width, 2f / renderImg.Height
                 );
 
                 //Draw Top Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
-                    2f / renderImg.GetHeight()
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width, 0, 1f,
+                    2f / renderImg.Height
                 );
 
                 //Draw Left
@@ -2200,8 +2200,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, 0, 2f / renderImg.GetHeight(), 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 0, 2f / renderImg.Height, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Middle
@@ -2210,9 +2210,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Y + 2, control.RenderBounds.Width - 4,
                         control.RenderBounds.Height - 4
-                    ), control.RenderColor, 2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, 2f / renderImg.Width, 2f / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 //Draw Right
@@ -2220,15 +2220,15 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2, control.RenderBounds.Height - 4
-                    ), control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    2f / renderImg.GetHeight(), 1, (renderImg.GetHeight() - 2f) / renderImg.GetHeight()
+                    ), control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    2f / renderImg.Height, 1, (renderImg.Height - 2f) / renderImg.Height
                 );
 
                 // Draw Bottom Left Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    2f / renderImg.GetWidth(), 1f
+                    control.RenderColor, 0, (renderImg.Height - 2f) / renderImg.Height,
+                    2f / renderImg.Width, 1f
                 );
 
                 //Draw Bottom
@@ -2236,16 +2236,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     renderImg,
                     new Rectangle(
                         control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2, control.RenderBounds.Width - 4, 2
-                    ), control.RenderColor, 2f / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
-                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f
+                    ), control.RenderColor, 2f / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height,
+                    (renderImg.Width - 2f) / renderImg.Width, 1f
                 );
 
                 //Draw Bottom Right Corner
                 Renderer.DrawTexturedRect(
                     renderImg, new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
-                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
-                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f
+                    control.RenderColor, (renderImg.Width - 2f) / renderImg.Width,
+                    (renderImg.Height - 2f) / renderImg.Height, 1f, 1f
                 );
 
                 return;

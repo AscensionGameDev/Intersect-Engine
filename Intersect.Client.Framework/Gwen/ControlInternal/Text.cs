@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     public class Text : Base
     {
 
-        private GameFont mFont;
+        private IFont mFont;
 
         private float mScale = 1f;
 
@@ -44,7 +44,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <remarks>
         ///     The font is not being disposed by this class.
         /// </remarks>
-        public GameFont Font
+        public IFont Font
         {
             get => mFont;
             set

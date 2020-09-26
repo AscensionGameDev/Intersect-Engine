@@ -2,7 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -148,16 +148,16 @@ namespace Intersect.Client.Entities
             if (!upper && mShowLower && mZDimension < 1 || !upper && mShowLower && mZDimension > 0)
             {
                 //Draw Lower
-                var tex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Animation, MyBase.Lower.Sprite
+                var tex = Globals.ContentManager.LoadTexture(
+                    TextureType.Animation, MyBase.Lower.Sprite
                 );
 
                 if (tex != null)
                 {
                     if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
                     {
-                        var frameWidth = tex.GetWidth() / MyBase.Lower.XFrames;
-                        var frameHeight = tex.GetHeight() / MyBase.Lower.YFrames;
+                        var frameWidth = tex.Width / MyBase.Lower.XFrames;
+                        var frameHeight = tex.Height / MyBase.Lower.YFrames;
                         Graphics.DrawGameTexture(
                             tex,
                             new FloatRect(
@@ -188,16 +188,16 @@ namespace Intersect.Client.Entities
             if (upper && mShowUpper && mZDimension != 0 || upper && mShowUpper && mZDimension == 0)
             {
                 //Draw Upper
-                var tex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Animation, MyBase.Upper.Sprite
+                var tex = Globals.ContentManager.LoadTexture(
+                    TextureType.Animation, MyBase.Upper.Sprite
                 );
 
                 if (tex != null)
                 {
                     if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
                     {
-                        var frameWidth = tex.GetWidth() / MyBase.Upper.XFrames;
-                        var frameHeight = tex.GetHeight() / MyBase.Upper.YFrames;
+                        var frameWidth = tex.Width / MyBase.Upper.XFrames;
+                        var frameHeight = tex.Height / MyBase.Upper.YFrames;
 
                         Graphics.DrawGameTexture(
                             tex,
@@ -377,13 +377,13 @@ namespace Intersect.Client.Entities
         {
             var size = new Point(0, 0);
 
-            var tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Lower.Sprite);
+            var tex = Globals.ContentManager.LoadTexture(TextureType.Animation, MyBase.Lower.Sprite);
             if (tex != null)
             {
                 if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
                 {
-                    var frameWidth = tex.GetWidth() / MyBase.Lower.XFrames;
-                    var frameHeight = tex.GetHeight() / MyBase.Lower.YFrames;
+                    var frameWidth = tex.Width / MyBase.Lower.XFrames;
+                    var frameHeight = tex.Height / MyBase.Lower.YFrames;
                     if (frameWidth > size.X)
                     {
                         size.X = frameWidth;
@@ -396,13 +396,13 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Upper.Sprite);
+            tex = Globals.ContentManager.LoadTexture(TextureType.Animation, MyBase.Upper.Sprite);
             if (tex != null)
             {
                 if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
                 {
-                    var frameWidth = tex.GetWidth() / MyBase.Upper.XFrames;
-                    var frameHeight = tex.GetHeight() / MyBase.Upper.YFrames;
+                    var frameWidth = tex.Width / MyBase.Upper.XFrames;
+                    var frameHeight = tex.Height / MyBase.Upper.YFrames;
                     if (frameWidth > size.X)
                     {
                         size.X = frameWidth;

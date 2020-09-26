@@ -119,7 +119,9 @@
     <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
+    <Compile Include="MonoGame\Extensions\TypeConversionExtensions.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
+    <Compile Include="MonoGame\MonoGameContext.cs" />
     <Compile Include="MonoGame\Network\MonoSocket.cs" />
     <Compile Include="Interface\Game\Bag\BagItem.cs" />
     <Compile Include="Interface\Game\Bank\BankItem.cs" />
@@ -149,10 +151,10 @@
     <Compile Include="MonoGame\Database\MonoDatabase.cs" />
     <Compile Include="MonoGame\File Management\MonoContentManager.cs" />
     <Compile Include="MonoGame\Graphics\MonoFont.cs" />
-    <Compile Include="MonoGame\Graphics\MonoRenderer.cs" />
+    <Compile Include="MonoGame\Graphics\MonoGameRenderer.cs" />
     <Compile Include="MonoGame\Graphics\MonoRenderTexture.cs" />
     <Compile Include="MonoGame\Graphics\MonoShader.cs" />
-    <Compile Include="MonoGame\Graphics\MonoTexture.cs" />
+    <Compile Include="MonoGame\Graphics\MonoGameTexture.cs" />
     <Compile Include="MonoGame\Input\MonoInput.cs" />
     <Compile Include="MonoGame\System\MonoSystem.cs" />
     <Compile Include="Networking\Network.cs" />
@@ -310,6 +312,7 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -142,10 +142,10 @@ namespace Intersect.Client.Interface.Game.Spells
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
-                    var spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+                    var spellTex = Globals.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
                     if (spellTex != null)
                     {
-                        Pnl.Texture = spellTex;
+                        Pnl.GameTexture = spellTex;
                         if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) >
                             Globals.System.GetTimeMs())
                         {
@@ -158,9 +158,9 @@ namespace Intersect.Client.Interface.Game.Spells
                     }
                     else
                     {
-                        if (Pnl.Texture != null)
+                        if (Pnl.GameTexture != null)
                         {
-                            Pnl.Texture = null;
+                            Pnl.GameTexture = null;
                         }
                     }
 
@@ -191,9 +191,9 @@ namespace Intersect.Client.Interface.Game.Spells
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
+                    if (Pnl.GameTexture != null)
                     {
-                        Pnl.Texture = null;
+                        Pnl.GameTexture = null;
                     }
 
                     mTexLoaded = "";
@@ -237,7 +237,7 @@ namespace Intersect.Client.Interface.Game.Spells
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.GameTexture
                                     );
 
                                     mTexLoaded = "";

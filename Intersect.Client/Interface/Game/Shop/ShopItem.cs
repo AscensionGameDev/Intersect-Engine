@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -37,7 +37,7 @@ namespace Intersect.Client.Interface.Game.Shop
         private int mMySlot;
 
         //Textures
-        private GameRenderTexture mSfTex;
+        private IRenderTexture mSfTex;
 
         //Drag/Drop References
         private ShopWindow mShopWindow;
@@ -84,10 +84,10 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
-                    Pnl.Texture = itemTex;
+                    Pnl.GameTexture = itemTex;
                 }
             }
         }

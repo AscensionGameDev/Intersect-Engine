@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Framework.Audio;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
 
 namespace Intersect.Client.Core.Sounds
@@ -29,7 +29,7 @@ namespace Intersect.Client.Core.Sounds
 
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mLoop = loop;
-            var sound = Globals.ContentManager.GetSound(mFilename);
+            var sound = Globals.ContentManager.LoadSound(mFilename);
             if (sound != null)
             {
                 mSound = sound.CreateInstance();

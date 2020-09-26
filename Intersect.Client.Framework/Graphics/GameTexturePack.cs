@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using Intersect.Client.Framework.GenericClasses;
-
 namespace Intersect.Client.Framework.Graphics
 {
 
@@ -20,7 +18,7 @@ namespace Intersect.Client.Framework.Graphics
 
             //find the sub folder
             var sep = new char[] {'/', '\\'};
-            var subFolder = frame.Filename.Split(sep)[1].ToLower();
+            var subFolder = frame.Name.Split(sep)[1].ToLower();
             if (!mFrameTypes.ContainsKey(subFolder))
             {
                 mFrameTypes.Add(subFolder, new List<GameTexturePackFrame>());
@@ -45,39 +43,8 @@ namespace Intersect.Client.Framework.Graphics
         public static GameTexturePackFrame GetFrame(string filename)
         {
             filename = filename.Replace("\\", "/");
-            return mFrames.Where(p => p.Filename.ToLower() == filename).FirstOrDefault();
+            return mFrames.Where(p => p.Name.ToLower() == filename).FirstOrDefault();
         }
 
     }
-
-    public class GameTexturePackFrame
-    {
-
-        public GameTexturePackFrame(
-            string filename,
-            Rectangle rect,
-            bool rotated,
-            Rectangle sourceSpriteRect,
-            GameTexture packTexture
-        )
-        {
-            Filename = filename.Replace('\\', '/');
-            Rect = rect;
-            Rotated = rotated;
-            SourceRect = sourceSpriteRect;
-            PackTexture = packTexture;
-        }
-
-        public string Filename { get; set; }
-
-        public Rectangle Rect { get; set; }
-
-        public bool Rotated { get; set; }
-
-        public Rectangle SourceRect { get; set; }
-
-        public GameTexture PackTexture { get; set; }
-
-    }
-
 }

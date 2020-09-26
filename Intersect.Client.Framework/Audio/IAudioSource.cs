@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Audio
 {
     /// <summary>
-    /// Declaration of the audio source API.
+    /// Declares the API for audio assets.
     /// </summary>
     public interface IAudioSource : IAsset
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -18,13 +18,13 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private string mBackgroundTemplateFilename;
 
-        private GameTexture mBackgroundTemplateTex;
+        private ITexture mBackgroundTemplateTex;
 
         private bool mDeleteOnClose;
 
         private bool mDisableIconMargin;
 
-        private GameFont mItemFont;
+        private IFont mItemFont;
 
         //Menu Item Stuff
         private string mItemFontInfo;
@@ -143,16 +143,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public virtual MenuItem AddItem(
             string text,
-            GameTexture iconTexture,
+            ITexture iconGameTexture,
             string textureFilename = "",
             string accelerator = "",
-            GameFont font = null
+            IFont font = null
         )
         {
             var item = new MenuItem(this);
             item.Padding = Padding.Four;
             item.SetText(text);
-            item.SetImage(iconTexture, textureFilename, Button.ControlState.Normal);
+            item.SetImage(iconGameTexture, textureFilename, Button.ControlState.Normal);
             item.SetAccelerator(accelerator);
             if (font != null)
             {
@@ -324,8 +324,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundTemplate"]
+                    GameContentManager.Current.LoadTexture(
+                        TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
             }
@@ -344,7 +344,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["ItemFont"]).Split(',');
                 mItemFontInfo = (string) obj["ItemFont"];
-                mItemFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+                mItemFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             UpdateItemStyles();
@@ -366,20 +366,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetTemplate()
+        public ITexture GetTemplate()
         {
             return mBackgroundTemplateTex;
         }
 
-        public void SetBackgroundTemplate(GameTexture texture, string fileName)
+        public void SetBackgroundTemplate(ITexture gameTexture, string fileName)
         {
-            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            if (gameTexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;
-            mBackgroundTemplateTex = texture;
+            mBackgroundTemplateTex = gameTexture;
         }
 
     }

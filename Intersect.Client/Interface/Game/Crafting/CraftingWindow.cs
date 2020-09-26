@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -91,7 +91,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCraft.SetText(Strings.Crafting.craft);
             mCraft.Clicked += craft_Clicked;
 
-            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             Interface.InputBlockingElements.Add(mCraftWindow);
 
@@ -142,7 +142,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCombinedItem.Setup("CraftedItemIcon");
             mCombinedValue = new Label(mCombinedItem.Container, "CraftedItemQuantity");
 
-            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             mCombinedItem.LoadItem();
             mCombinedValue.Show();
@@ -203,7 +203,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
 
-                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
                 mItems[i].LoadItem();
 
@@ -423,7 +423,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             }
 
             mBar.SetTextureRect(
-                0, 0, Convert.ToInt32(ratio * mBar.Texture?.GetWidth() ?? 0), mBar.Texture?.GetHeight() ?? 0
+                0, 0, Convert.ToInt32(ratio * mBar.GameTexture.Width), mBar.GameTexture.Height
             );
 
             mBar.Width = Convert.ToInt32(width);

@@ -117,7 +117,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
         }
 
-        public virtual GameTexture GetWhiteTexture()
+        public virtual ITexture GetWhiteTexture()
         {
             return null;
         }
@@ -159,7 +159,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         ///     Loads the specified texture.
         /// </summary>
         /// <param name="t"></param>
-        public virtual void LoadTexture(GameTexture t)
+        public virtual void LoadTexture(ITexture t)
         {
         }
 
@@ -167,7 +167,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         ///     Frees the specified texture.
         /// </summary>
         /// <param name="t">Texture to free.</param>
-        public virtual void FreeTexture(GameTexture t)
+        public virtual void FreeTexture(ITexture t)
         {
         }
 
@@ -181,7 +181,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="u2">Texture coordinate u2.</param>
         /// <param name="v2">Texture coordinate v2.</param>
         public virtual void DrawTexturedRect(
-            GameTexture t,
+            ITexture t,
             Rectangle targetRect,
             Color clr,
             float u1 = 0,
@@ -227,7 +227,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="font">Font to use.</param>
         /// <param name="text">Text to measure.</param>
         /// <returns>Width and height of the rendered text.</returns>
-        public virtual Point MeasureText(GameFont font, string text, float scale = 1f)
+        public virtual Point MeasureText(IFont font, string text, float scale = 1f)
         {
             return Point.Empty;
         }
@@ -238,7 +238,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="font">Font to use.</param>
         /// <param name="position">Top-left corner of the text.</param>
         /// <param name="text">Text to render.</param>
-        public virtual void RenderText(GameFont font, Point position, string text, float scale = 1f)
+        public virtual void RenderText(IFont font, Point position, string text, float scale = 1f)
         {
         }
 
@@ -274,24 +274,24 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <summary>
         ///     Gets pixel color of a specified texture. Slow.
         /// </summary>
-        /// <param name="texture">Texture.</param>
+        /// <param name="gameTexture">Texture.</param>
         /// <param name="x">X.</param>
         /// <param name="y">Y.</param>
         /// <returns>Pixel color.</returns>
-        public virtual Color PixelColor(GameTexture texture, uint x, uint y)
+        public virtual Color PixelColor(ITexture gameTexture, uint x, uint y)
         {
-            return PixelColor(texture, x, y, Color.White);
+            return PixelColor(gameTexture, x, y, Color.White);
         }
 
         /// <summary>
         ///     Gets pixel color of a specified texture, returning default if otherwise failed. Slow.
         /// </summary>
-        /// <param name="texture">Texture.</param>
+        /// <param name="gameTexture">Texture.</param>
         /// <param name="x">X.</param>
         /// <param name="y">Y.</param>
         /// <param name="defaultColor">Color to return on failure.</param>
         /// <returns>Pixel color.</returns>
-        public virtual Color PixelColor(GameTexture texture, uint x, uint y, Color defaultColor)
+        public virtual Color PixelColor(ITexture gameTexture, uint x, uint y, Color defaultColor)
         {
             return defaultColor;
         }

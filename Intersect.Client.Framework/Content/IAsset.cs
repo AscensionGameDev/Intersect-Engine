@@ -1,9 +1,13 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.Client.Framework.Content
+﻿namespace Intersect.Client.Framework.Content
 {
+    /// <summary>
+    /// Declares the API for assets.
+    /// </summary>
     public interface IAsset
     {
-        [NotNull] string Name { get; }
+        /// <summary>
+        /// The name of the asset.
+        /// </summary>
+        string Name { get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -112,11 +112,11 @@ namespace Intersect.Client.Interface.Game.Character
                 var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         ContentPanel.Show();
-                        ContentPanel.Texture = itemTex;
+                        ContentPanel.GameTexture = itemTex;
                     }
                     else
                     {

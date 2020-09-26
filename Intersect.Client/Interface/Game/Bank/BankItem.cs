@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -143,24 +143,24 @@ namespace Intersect.Client.Interface.Game.Bank
                 var item = ItemBase.Get(Globals.Bank[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
-                        Pnl.Texture = itemTex;
+                        Pnl.GameTexture = itemTex;
                     }
                     else
                     {
-                        if (Pnl.Texture != null)
+                        if (Pnl.GameTexture != null)
                         {
-                            Pnl.Texture = null;
+                            Pnl.GameTexture = null;
                         }
                     }
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
+                    if (Pnl.GameTexture != null)
                     {
-                        Pnl.Texture = null;
+                        Pnl.GameTexture = null;
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace Intersect.Client.Interface.Game.Bank
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.GameTexture
                                     );
                                 }
                             }

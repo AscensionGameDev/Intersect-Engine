@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     public struct Single
     {
 
-        private readonly GameTexture mTexture;
+        private readonly ITexture mGameTexture;
 
         private readonly float[] mUv;
 
@@ -18,15 +18,15 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 
         private readonly int mHeight;
 
-        public Single(GameTexture texture, float x, float y, float w, float h)
+        public Single(ITexture gameTexture, float x, float y, float w, float h)
         {
-            mTexture = texture;
+            mGameTexture = gameTexture;
             float texw = 1;
             float texh = 1;
-            if (mTexture != null)
+            if (mGameTexture != null)
             {
-                texw = mTexture.GetWidth();
-                texh = mTexture.GetHeight();
+                texw = mGameTexture.Width;
+                texh = mGameTexture.Height;
             }
 
             mUv = new float[4];
@@ -47,18 +47,18 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 
         public void Draw(Renderer.Base render, Rectangle r, Color col)
         {
-            if (mTexture == null)
+            if (mGameTexture == null)
             {
                 return;
             }
 
             render.DrawColor = col;
-            render.DrawTexturedRect(mTexture, r, col, mUv[0], mUv[1], mUv[2], mUv[3]);
+            render.DrawTexturedRect(mGameTexture, r, col, mUv[0], mUv[1], mUv[2], mUv[3]);
         }
 
         public void DrawCenter(Renderer.Base render, Rectangle r)
         {
-            if (mTexture == null)
+            if (mGameTexture == null)
             {
                 return;
             }
