@@ -3,10 +3,8 @@ using System.Linq;
 
 namespace Intersect.Client.Framework.Graphics
 {
-
-    public class GameTexturePacks
+    public static class GameTexturePacks
     {
-
         private static List<GameTexturePackFrame> mFrames = new List<GameTexturePackFrame>();
 
         private static Dictionary<string, List<GameTexturePackFrame>> mFrameTypes =
@@ -45,6 +43,5 @@ namespace Intersect.Client.Framework.Graphics
             filename = filename.Replace("\\", "/");
             return mFrames.Where(p => p.Name.ToLower() == filename).FirstOrDefault();
         }
-
     }
 }

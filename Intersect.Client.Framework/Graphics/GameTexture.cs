@@ -27,6 +27,11 @@ namespace Intersect.Client.Framework.Graphics
             PlatformTexture = platformTexture;
         }
 
+        protected GameTexture(string name, ITexturePackFrame texturePackFrame) : this(name)
+        {
+            TexturePackFrame = texturePackFrame ?? throw new ArgumentNullException(nameof(texturePackFrame));
+        }
+
         /// <summary>
         /// The platform-specific texture data container.
         /// </summary>
