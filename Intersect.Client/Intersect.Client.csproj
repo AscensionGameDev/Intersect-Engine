@@ -150,7 +150,7 @@
     <Compile Include="MonoGame\Audio\MonoSoundInstance.cs" />
     <Compile Include="MonoGame\Audio\MonoSoundSource.cs" />
     <Compile Include="MonoGame\Database\MonoDatabase.cs" />
-    <Compile Include="MonoGame\File Management\MonoContentManager.cs" />
+    <Compile Include="MonoGame\Content\MonoContentManager.cs" />
     <Compile Include="MonoGame\Graphics\MonoFont.cs" />
     <Compile Include="MonoGame\Graphics\MonoGameRenderer.cs" />
     <Compile Include="MonoGame\Graphics\MonoRenderTexture.cs" />

@@ -1,10 +1,4 @@
 using Intersect.Client.Framework.Content;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
@@ -12,17 +6,21 @@ using Intersect.Client.MonoGame.Audio;
 using Intersect.Client.MonoGame.Graphics;
 using Intersect.Logging;
 
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
 using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Intersect.Client.General;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Client.MonoGame.File_Management
+namespace Intersect.Client.MonoGame.Content
 {
     public class MonoContentManager : GameContentManager
     {
