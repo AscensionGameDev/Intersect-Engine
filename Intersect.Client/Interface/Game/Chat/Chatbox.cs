@@ -11,6 +11,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
+using Intersect.Localization;
 
 namespace Intersect.Client.Interface.Game.Chat
 {
@@ -62,6 +63,14 @@ namespace Intersect.Client.Interface.Game.Chat
         /// </summary>
         private ChatboxTab mLastTab = ChatboxTab.All;
 
+        /// <summary>
+        /// Keep track of what chat channel we were chatting in on certain tabs so we can remember this when switching back to them.
+        /// </summary>
+        private Dictionary<ChatboxTab, MenuItem> mLastChatChannel = new Dictionary<ChatboxTab, MenuItem>() {
+            { ChatboxTab.All, null },
+            { ChatboxTab.System, null },
+        };
+
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
         {
@@ -81,8 +90,11 @@ namespace Intersect.Client.Interface.Game.Chat
             for (var btn = 0; btn < (int)ChatboxTab.Count; btn++)
             {
                 mTabButtons.Add((ChatboxTab)btn, new Button(mChatboxWindow, $"{(ChatboxTab)btn}TabButton"));
-                mTabButtons[(ChatboxTab)btn].Text = Strings.Chatbox.ChatTabButtons[(ChatboxTab)btn];
+                // Do we have a localized string for this chat tab? If not assign none as the text.
+                LocalizedString name;
+                mTabButtons[(ChatboxTab)btn].Text = Strings.Chatbox.ChatTabButtons.TryGetValue((ChatboxTab)btn, out name) ? name : Strings.General.none;
                 mTabButtons[(ChatboxTab)btn].Clicked += TabButtonClicked;
+                // We'll be using the user data to determine which tab we've clicked later.
                 mTabButtons[(ChatboxTab)btn].UserData = (ChatboxTab)btn;
             }
 
@@ -106,6 +118,7 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
                 menuItem.UserData = i;
+                menuItem.Selected += MenuItem_Selected;
             }
 
             //Add admin channel only if power > 0.
@@ -113,6 +126,7 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channeladmin);
                 menuItem.UserData = 3;
+                menuItem.Selected += MenuItem_Selected;
             }
 
             mChatboxText = new Label(mChatboxWindow);
@@ -129,6 +143,18 @@ namespace Intersect.Client.Interface.Game.Chat
 
             // Disable this to start, since this is the default tab we open the client on.
             mTabButtons[ChatboxTab.All].Disable();
+        }
+
+        /// <summary>
+        /// Handle logic after a chat channel menu item is selected.
+        /// </summary>
+        private void MenuItem_Selected(Base sender, ItemSelectedEventArgs arguments)
+        {
+            // If we're on the two generic tabs, remember which channel we're trying to type in so we can switch back to this channel when we decide to swap between tabs.
+            if ((mCurrentTab == ChatboxTab.All || mCurrentTab == ChatboxTab.System))
+            {
+                mLastChatChannel[mCurrentTab] = (MenuItem)sender;
+            }
         }
 
         /// <summary>
@@ -155,7 +181,46 @@ namespace Intersect.Client.Interface.Game.Chat
 
             // Disable the clicked button to fake our tab being selected and set our selected chat tab.
             sender.Disable();
-            mCurrentTab = (ChatboxTab)sender.UserData;
+            var tab = (ChatboxTab)sender.UserData;
+            mCurrentTab = tab;
+
+            // Change the default channel we're trying to chat in based on the tab we've just selected.
+            SetChannelToTab(tab);
+        }
+
+        /// <summary>
+        /// Sets the selected chat channel to type in by default to the channel corresponding to the provided tab.
+        /// </summary>
+        /// <param name="tab">The tab to use for reference as to which channel we want to speak in.</param>
+        private void SetChannelToTab(ChatboxTab tab)
+        {
+            MenuItem channel;
+            switch (tab)
+            {
+                case ChatboxTab.System:
+                case ChatboxTab.All:
+                    if (mLastChatChannel.TryGetValue(tab, out channel))
+                    {
+                        mChannelCombobox.SelectedItem = channel;
+                    }
+                    break;
+
+                case ChatboxTab.Local:
+                    mChannelCombobox.SelectByUserData(0);
+                    break;
+
+                case ChatboxTab.Global:
+                    mChannelCombobox.SelectByUserData(1);
+                    break;
+
+                case ChatboxTab.Party:
+                    mChannelCombobox.SelectByUserData(2);
+                    break;
+
+                default:
+                    // remain unchanged.
+                    break;
+            }
         }
 
         //Update
