@@ -1809,14 +1809,12 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
-
+            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
+                if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
-                    if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                    if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
                     {
                         var mapId = map.Id;
 
@@ -1829,7 +1827,7 @@ namespace Intersect.Client.Entities
 
                             if (en.Value.CurrentMap == mapId &&
                                 !en.Value.IsStealthed() &&
-                                en.Value.WorldPos.Contains(x, y))
+                                en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                             {
                                 if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                 {
@@ -1853,7 +1851,7 @@ namespace Intersect.Client.Entities
                                 if (en.Value.CurrentMap == mapId &&
                                     !((Event) en.Value).DisablePreview &&
                                     !en.Value.IsStealthed() &&
-                                    en.Value.WorldPos.Contains(x, y))
+                                    en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                                 {
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
