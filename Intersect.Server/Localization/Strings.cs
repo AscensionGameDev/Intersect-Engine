@@ -950,6 +950,10 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString disconnected = @"Client disconnected.";
 
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString ServerFull = @"The server is currently full, please try again later.";
+
         }
 
         public sealed class NotificationsNamespace : LocaleNamespace

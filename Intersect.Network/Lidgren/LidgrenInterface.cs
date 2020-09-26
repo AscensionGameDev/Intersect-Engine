@@ -720,6 +720,14 @@ namespace Intersect.Network.Lidgren
                             break;
                         }
 
+                        // Check if we've got more connections than we're allowed to handle!
+                        if (mNetwork.ConnectionCount >= Options.MaxConnections)
+                        {
+                            Log.Info($"Connection limit reached, denying connection [{lidgrenIdHex}].");
+                                connection?.Deny(NetworkStatus.ServerFull.ToString());
+                            break;
+                        }
+
                         if (OnConnectionApproved == null)
                         {
                             Log.Error($"No handlers for OnConnectionApproved, denying connection [{lidgrenIdHex}].");
