@@ -257,10 +257,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (CanScrollH && mHorizontalScrollBar.IsVisible)
             {
-                if (mHorizontalScrollBar.SetScrollAmount(
-                    mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f), 
-                    true
-                ))
+                var scrollValue = mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f);
+                if (mHorizontalScrollBar.SetScrollAmount(scrollValue, true))
                 {
                     return true;
                 }
