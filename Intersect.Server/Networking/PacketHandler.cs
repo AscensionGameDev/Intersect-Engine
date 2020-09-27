@@ -266,6 +266,15 @@ namespace Intersect.Server.Networking
 
             client.ResetTimeout();
 
+
+            // Are we at capacity yet, or can this user still log in?
+            if (Globals.OnlineList.Count >= Options.MaxLoggedinUsers)
+            {
+                PacketSender.SendError(client, Strings.Networking.ServerFull);
+
+                return;
+            }
+
             if (!DbInterface.CheckPassword(packet.Username, packet.Password))
             {
                 client.FailedAttempt();
