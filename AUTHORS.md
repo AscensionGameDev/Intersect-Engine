@@ -9,8 +9,8 @@
 
 # Intersect Contributors
 
-[Dog from the Kash Shop](#)
-
 [A. I. Robin](https://github.com/alloin)
+
+[Dog from the Kash Shop](#)
 
 [Jocelyn Cobb](https://github.com/Azurebeats)
