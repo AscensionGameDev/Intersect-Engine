@@ -486,6 +486,7 @@
     <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\MapItemInstance.cs" />
     <Compile Include="Maps\MapItemSpawn.cs" />
+    <Compile Include="Maps\MapLayers.cs" />
     <Compile Include="Maps\MapNpcSpawn.cs" />
     <Compile Include="Maps\MapResourceSpawn.cs" />
     <Compile Include="Maps\MapTrapInstance.cs" />
@@ -653,6 +654,10 @@
     <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs" />
     <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.designer.cs">
       <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
+    </Compile>
+	<Compile Include="Migrations\Game\20200605015121_AdditionalMapLayers.cs" />
+    <Compile Include="Migrations\Game\20200605015121_AdditionalMapLayers.designer.cs">
+      <DependentUpon>20200605015121_AdditionalMapLayers.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Plugins\Helpers\IServerLifecycleHelper.cs" />

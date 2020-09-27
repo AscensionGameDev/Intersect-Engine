@@ -108,11 +108,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.btnNpcsHeader = new DarkUI.Controls.DarkButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pnlTiles = new System.Windows.Forms.Panel();
-            this.picFringe2 = new System.Windows.Forms.PictureBox();
-            this.picFringe = new System.Windows.Forms.PictureBox();
-            this.picMask2 = new System.Windows.Forms.PictureBox();
-            this.picMask = new System.Windows.Forms.PictureBox();
-            this.picGround = new System.Windows.Forms.PictureBox();
             this.pnlTilesetContainer = new Intersect.Editor.Forms.Controls.AutoDragPanel();
             this.picTileset = new System.Windows.Forms.PictureBox();
             this.pnlEvents = new System.Windows.Forms.Panel();
@@ -120,6 +115,9 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lightEditor = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.pnlNpcs = new System.Windows.Forms.Panel();
+            this.cmbLayer = new DarkUI.Controls.DarkComboBox();
+            this.lblLayerVisible = new System.Windows.Forms.Label();
+            this.chkLayerVisible = new DarkUI.Controls.DarkCheckBox();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -138,11 +136,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpSpawnLoc.SuspendLayout();
             this.panel1.SuspendLayout();
             this.pnlTiles.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFringe2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picFringe)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMask2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMask)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picGround)).BeginInit();
             this.pnlTilesetContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
@@ -460,7 +453,11 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudItemQuantity.ValueChanged += new System.EventHandler(this.NudItemQuantity_ValueChanged);
             this.nudItemQuantity.Size = new System.Drawing.Size(219, 20);
             this.nudItemQuantity.TabIndex = 10;
-            this.nudItemQuantity.Value = 1;
+            this.nudItemQuantity.Value = new decimal(new int[] {
+             1,
+             0,
+             0,
+             0});
             
             // 
             // cmbItemAttribute
@@ -1148,11 +1145,9 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             // pnlTiles
             // 
-            this.pnlTiles.Controls.Add(this.picFringe2);
-            this.pnlTiles.Controls.Add(this.picFringe);
-            this.pnlTiles.Controls.Add(this.picMask2);
-            this.pnlTiles.Controls.Add(this.picMask);
-            this.pnlTiles.Controls.Add(this.picGround);
+            this.pnlTiles.Controls.Add(this.lblLayerVisible);
+            this.pnlTiles.Controls.Add(this.chkLayerVisible);
+            this.pnlTiles.Controls.Add(this.cmbLayer);
             this.pnlTiles.Controls.Add(this.lblLayer);
             this.pnlTiles.Controls.Add(this.cmbTilesets);
             this.pnlTiles.Controls.Add(this.lblTileType);
@@ -1164,56 +1159,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlTiles.Name = "pnlTiles";
             this.pnlTiles.Size = new System.Drawing.Size(276, 422);
             this.pnlTiles.TabIndex = 0;
-            // 
-            // picFringe2
-            // 
-            this.picFringe2.Location = new System.Drawing.Point(232, 2);
-            this.picFringe2.Name = "picFringe2";
-            this.picFringe2.Size = new System.Drawing.Size(30, 32);
-            this.picFringe2.TabIndex = 28;
-            this.picFringe2.TabStop = false;
-            this.picFringe2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
-            this.picFringe2.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
-            // 
-            // picFringe
-            // 
-            this.picFringe.Location = new System.Drawing.Point(195, 2);
-            this.picFringe.Name = "picFringe";
-            this.picFringe.Size = new System.Drawing.Size(30, 32);
-            this.picFringe.TabIndex = 27;
-            this.picFringe.TabStop = false;
-            this.picFringe.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
-            this.picFringe.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
-            // 
-            // picMask2
-            // 
-            this.picMask2.Location = new System.Drawing.Point(158, 2);
-            this.picMask2.Name = "picMask2";
-            this.picMask2.Size = new System.Drawing.Size(30, 32);
-            this.picMask2.TabIndex = 26;
-            this.picMask2.TabStop = false;
-            this.picMask2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
-            this.picMask2.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
-            // 
-            // picMask
-            // 
-            this.picMask.Location = new System.Drawing.Point(121, 2);
-            this.picMask.Name = "picMask";
-            this.picMask.Size = new System.Drawing.Size(30, 32);
-            this.picMask.TabIndex = 25;
-            this.picMask.TabStop = false;
-            this.picMask.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
-            this.picMask.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
-            // 
-            // picGround
-            // 
-            this.picGround.Location = new System.Drawing.Point(84, 2);
-            this.picGround.Name = "picGround";
-            this.picGround.Size = new System.Drawing.Size(30, 32);
-            this.picGround.TabIndex = 24;
-            this.picGround.TabStop = false;
-            this.picGround.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMapLayer_MouseClick);
-            this.picGround.MouseHover += new System.EventHandler(this.picMapLayer_MouseHover);
             // 
             // pnlTilesetContainer
             // 
@@ -1304,6 +1249,47 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlNpcs.Size = new System.Drawing.Size(276, 422);
             this.pnlNpcs.TabIndex = 1;
             // 
+            // cmbLayer
+            // 
+            this.cmbLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbLayer.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbLayer.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLayer.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLayer.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLayer.ButtonIcon")));
+            this.cmbLayer.DrawDropdownHoverOutline = false;
+            this.cmbLayer.DrawFocusRectangle = false;
+            this.cmbLayer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLayer.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbLayer.FormattingEnabled = true;
+            this.cmbLayer.Location = new System.Drawing.Point(84, 8);
+            this.cmbLayer.Name = "cmbLayer";
+            this.cmbLayer.Size = new System.Drawing.Size(122, 21);
+            this.cmbLayer.TabIndex = 24;
+            this.cmbLayer.Text = null;
+            this.cmbLayer.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbLayer.SelectedIndexChanged += new System.EventHandler(this.cmbLayer_SelectedIndexChanged);
+            // 
+            // lblLayerVisible
+            // 
+            this.lblLayerVisible.AutoSize = true;
+            this.lblLayerVisible.ForeColor = System.Drawing.Color.White;
+            this.lblLayerVisible.Location = new System.Drawing.Point(229, 12);
+            this.lblLayerVisible.Name = "lblLayerVisible";
+            this.lblLayerVisible.Size = new System.Drawing.Size(37, 13);
+            this.lblLayerVisible.TabIndex = 70;
+            this.lblLayerVisible.Text = "Visible";
+            // 
+            // chkLayerVisible
+            // 
+            this.chkLayerVisible.AutoSize = true;
+            this.chkLayerVisible.Location = new System.Drawing.Point(212, 11);
+            this.chkLayerVisible.Name = "chkLayerVisible";
+            this.chkLayerVisible.Size = new System.Drawing.Size(15, 14);
+            this.chkLayerVisible.TabIndex = 69;
+            this.chkLayerVisible.CheckedChanged += new System.EventHandler(this.chkLayerVisible_CheckedChanged);
+            // 
             // FrmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1358,11 +1344,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.panel1.ResumeLayout(false);
             this.pnlTiles.ResumeLayout(false);
             this.pnlTiles.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFringe2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picFringe)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMask2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMask)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picGround)).EndInit();
             this.pnlTilesetContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.pnlEvents.ResumeLayout(false);
@@ -1454,14 +1435,12 @@ namespace Intersect.Editor.Forms.DockingElements
         private System.Windows.Forms.Panel pnlNpcs;
         private System.Windows.Forms.Panel pnlAttributes;
         private System.Windows.Forms.Panel pnlTiles;
-        private PictureBox picFringe2;
-        private PictureBox picFringe;
-        private PictureBox picMask2;
-        private PictureBox picMask;
-        private PictureBox picGround;
         private DarkNumericUpDown nudWarpY;
         private DarkNumericUpDown nudWarpX;
         private DarkNumericUpDown nudItemQuantity;
         private DarkNumericUpDown nudSoundDistance;
+        public DarkComboBox cmbLayer;
+        private Label lblLayerVisible;
+        private DarkCheckBox chkLayerVisible;
     }
 }

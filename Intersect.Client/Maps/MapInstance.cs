@@ -92,15 +92,15 @@ namespace Intersect.Client.Maps
         private bool mTexturesFound = false;
 
         private Dictionary<object, GameTileBuffer[]>[] mTileBufferDict =
-            new Dictionary<object, GameTileBuffer[]>[Options.LayerCount];
+            new Dictionary<object, GameTileBuffer[]>[MapLayers.Layers.Count];
 
         private GameTileBuffer[][][] mTileBuffers; //Array is layer, autotile frame, buffer index
 
         //Initialization
         public MapInstance(Guid id) : base(id)
         {
-            mTileBuffers = new GameTileBuffer[Options.LayerCount][][];
-            for (var i = 0; i < Options.LayerCount; i++)
+            mTileBuffers = new GameTileBuffer[MapLayers.Layers.Count][][];
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 mTileBuffers[i] = new GameTileBuffer[3][]; //3 autotile frames
             }
@@ -149,7 +149,7 @@ namespace Intersect.Client.Maps
         {
             if (mTexturesFound == false && GameContentManager.Current.TilesetsLoaded)
             {
-                for (var i = 0; i < Options.LayerCount; i++)
+                for (var i = 0; i < MapLayers.Layers.Count; i++)
                 {
                     for (var x = 0; x < Options.MapWidth; x++)
                     {
@@ -322,7 +322,7 @@ namespace Intersect.Client.Maps
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        for (var i = 0; i < Options.LayerCount; i++)
+                        for (var i = 0; i < MapLayers.Layers.Count; i++)
                         {
                             if (Layers[i].Tiles[x, y].Autotile == MapAutotiles.AUTOTILE_CLIFF)
                             {
@@ -567,7 +567,7 @@ namespace Intersect.Client.Maps
 
         public void BuildVBOs()
         {
-            for (var i = 0; i < Options.LayerCount; i++)
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 mTileBuffers[i] = DrawMapLayer(i, GetX(), GetY());
                 for (var y = 0; y < 3; y++)
@@ -582,7 +582,7 @@ namespace Intersect.Client.Maps
 
         public void DestroyVBOs()
         {
-            for (var i = 0; i < Options.LayerCount; i++)
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 for (var y = 0; y < 3; y++)
                 {
@@ -619,31 +619,45 @@ namespace Intersect.Client.Maps
                 BuildVBOs();
             }
 
-            var drawLayerStart = 0;
-            var drawLayerEnd = 2;
-
-            if (layer == 1)
+            for (var x = 0; x < MapLayers.Layers.Count; x++)
             {
-                drawLayerStart = 3;
-                drawLayerEnd = 3;
-            }
-
-            if (layer == 2)
-            {
-                drawLayerStart = 4;
-                drawLayerEnd = 4;
-            }
-
-            for (var x = drawLayerStart; x <= drawLayerEnd; x++)
-            {
-                if (mTileBuffers[x][Globals.AnimFrame] != null)
+                if ((int)MapLayers.Layers[x].Region == layer)
                 {
-                    for (var i = 0; i < mTileBuffers[x][Globals.AnimFrame].Length; i++)
+                    if (mTileBuffers[x][Globals.AnimFrame] != null)
                     {
-                        Graphics.Renderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
+                        for (var i = 0; i < mTileBuffers[x][Globals.AnimFrame].Length; i++)
+                        {
+                            Graphics.Renderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
+                        }
                     }
                 }
             }
+
+            //var drawLayerStart = 0;
+            //var drawLayerEnd = 2;
+
+            //if (layer == 1)
+            //{
+            //    drawLayerStart = 3;
+            //    drawLayerEnd = 3;
+            //}
+
+            //if (layer == 2)
+            //{
+            //    drawLayerStart = 4;
+            //    drawLayerEnd = 4;
+            //}
+
+            //for (var x = drawLayerStart; x <= drawLayerEnd; x++)
+            //{
+            //    if (mTileBuffers[x][Globals.AnimFrame] != null)
+            //    {
+            //        for (var i = 0; i < mTileBuffers[x][Globals.AnimFrame].Length; i++)
+            //        {
+            //            Graphics.Renderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
+            //        }
+            //    }
+            //}
         }
 
         public void DrawItemsAndLights()

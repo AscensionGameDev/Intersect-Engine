@@ -381,7 +381,7 @@ namespace Intersect.GameObjects.Maps
                 for (var y = 0; y < Options.MapHeight; y++)
                 {
                     Autotile[x, y] = new AutoTileCls();
-                    for (var i = 0; i < Options.LayerCount; i++)
+                    for (var i = 0; i < MapLayers.Layers.Count; i++)
                     {
                         Autotile[x, y].Layer[i] = new QuarterTileCls()
                         {
@@ -401,7 +401,7 @@ namespace Intersect.GameObjects.Maps
                     CreateFields();
                 }
 
-                for (var i = 0; i < Options.LayerCount; i++)
+                for (var i = 0; i < MapLayers.Layers.Count; i++)
                 {
                     for (var x = 0; x < Options.MapWidth; x++)
                     {
@@ -438,7 +438,7 @@ namespace Intersect.GameObjects.Maps
                         }
 
                         var oldautotile = Autotile[x1, y1].Copy();
-                        for (var i = 0; i < Options.LayerCount; i++)
+                        for (var i = 0; i < MapLayers.Layers.Count; i++)
                         {
                             // calculate the subtile positions and place them
                             CalculateAutotile(x1, y1, i, surroundingMaps);
@@ -488,7 +488,7 @@ namespace Intersect.GameObjects.Maps
 
         public void UpdateCliffAutotiles(MapBase curMap, int layer)
         {
-            if (layer >= Options.LayerCount)
+            if (layer >= MapLayers.Layers.Count)
             {
                 return;
             }
@@ -2638,12 +2638,12 @@ namespace Intersect.GameObjects.Maps
     public class AutoTileCls
     {
 
-        public QuarterTileCls[] Layer = new QuarterTileCls[Options.LayerCount + 1];
+        public QuarterTileCls[] Layer = new QuarterTileCls[MapLayers.Layers.Count + 1];
 
         public AutoTileCls Copy()
         {
             var autotile = new AutoTileCls();
-            for (var i = 0; i < Options.LayerCount; i++)
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 autotile.Layer[i] = new QuarterTileCls()
                 {
@@ -2665,7 +2665,7 @@ namespace Intersect.GameObjects.Maps
 
         public bool Equals(AutoTileCls autotile)
         {
-            for (var i = 0; i < Options.LayerCount; i++)
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 if (autotile.Layer[i].RenderState != Layer[i].RenderState)
                 {

@@ -28,7 +28,7 @@ namespace Intersect.GameObjects.Maps
         [NotMapped] public List<Guid> EventIds = new List<Guid>();
 
         //Core Data
-        [JsonIgnore] [NotMapped] public TileArray[] Layers = new TileArray[Options.LayerCount];
+        [JsonIgnore] [NotMapped] public TileArray[] Layers = new TileArray[MapLayers.Layers.Count];
 
         //Map Attributes
         private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
@@ -47,8 +47,8 @@ namespace Intersect.GameObjects.Maps
             //Create empty tile array and then compress it down
             if (Layers == null || Layers[0].Tiles == null)
             {
-                Layers = new TileArray[Options.LayerCount];
-                for (var i = 0; i < Options.LayerCount; i++)
+                Layers = new TileArray[MapLayers.Layers.Count];
+                for (var i = 0; i < MapLayers.Layers.Count; i++)
                 {
                     Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
                     for (var x = 0; x < Options.MapWidth; x++)
@@ -93,12 +93,12 @@ namespace Intersect.GameObjects.Maps
                     IsIndoors = mapBase.IsIndoors;
                     if (Layers != null && mapBase.Layers != null)
                     {
-                        if (Layers.Length < Options.LayerCount)
+                        if (Layers.Length < MapLayers.Layers.Count)
                         {
-                            Layers = new TileArray[Options.LayerCount];
+                            Layers = new TileArray[MapLayers.Layers.Count];
                         }
 
-                        for (var i = 0; i < Options.LayerCount; i++)
+                        for (var i = 0; i < MapLayers.Layers.Count; i++)
                         {
                             Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
                             for (var x = 0; x < Options.MapWidth; x++)

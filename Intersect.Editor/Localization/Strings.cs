@@ -4307,7 +4307,7 @@ Tick timer saved in server config.json.";
                 {1, @"Mask"},
                 {2, @"Mask 2"},
                 {3, @"Fringe"},
-                {4, @"Fringe 2"},
+                {4, @"Fringe 2"}
             };
 
             public static LocalizedString normal = @"Normal";

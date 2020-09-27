@@ -22,6 +22,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.Network;
 using Intersect.Updater;
 
@@ -501,7 +502,7 @@ namespace Intersect.Editor.Forms
             }
 
             //Process the Fill/Erase Buttons
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Globals.CurrentLayer <= MapLayers.Layers.Count)
             {
                 toolStripBtnFill.Enabled = true;
                 fillToolStripMenuItem.Enabled = true;
@@ -521,20 +522,20 @@ namespace Intersect.Editor.Forms
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
             toolStripBtnEyeDrop.Enabled = false;
-            if (Globals.CurrentLayer == Options.LayerCount) //Attributes
+            if (Globals.CurrentLayer == MapLayers.Layers.Count) //Attributes
             {
                 toolStripBtnPen.Enabled = true;
                 toolStripBtnRect.Enabled = true;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
+            else if (Globals.CurrentLayer == MapLayers.Layers.Count + 1) //Lights
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
+            else if (Globals.CurrentLayer == MapLayers.Layers.Count + 2) //Events
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS
+            else if (Globals.CurrentLayer == MapLayers.Layers.Count + 3) //NPCS
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
@@ -1039,7 +1040,7 @@ namespace Intersect.Editor.Forms
         //Edit
         private void fillToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Globals.CurrentLayer <= MapLayers.Layers.Count)
             {
                 Globals.MapEditorWindow.FillLayer();
             }
@@ -1047,7 +1048,7 @@ namespace Intersect.Editor.Forms
 
         private void eraseLayerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Globals.CurrentLayer <= MapLayers.Layers.Count)
             {
                 Globals.MapEditorWindow.EraseLayer();
             }

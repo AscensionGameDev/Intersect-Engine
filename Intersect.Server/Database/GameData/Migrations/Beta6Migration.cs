@@ -668,8 +668,8 @@ namespace Intersect.Server.Database.GameData.Migrations
         {
             var data = Decompress(tileData);
             var readPos = 0;
-            var Layers = new TileArray[Options.LayerCount];
-            for (var i = 0; i < Options.LayerCount; i++)
+            var Layers = new TileArray[MapLayers.Layers.Count];
+            for (var i = 0; i < MapLayers.Layers.Count; i++)
             {
                 Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
                 for (var x = 0; x < Options.MapWidth; x++)

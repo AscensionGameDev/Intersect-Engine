@@ -54,19 +54,28 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private bool mTMouseDown;
 
+        private bool ignoreCheckChanged;
+
         public FrmMapLayers()
         {
             InitializeComponent();
-            mMapLayers.Add(picGround);
-            LayerVisibility.Add(true);
-            mMapLayers.Add(picMask);
-            LayerVisibility.Add(true);
-            mMapLayers.Add(picMask2);
-            LayerVisibility.Add(true);
-            mMapLayers.Add(picFringe);
-            LayerVisibility.Add(true);
-            mMapLayers.Add(picFringe2);
-            LayerVisibility.Add(true);
+
+            for (var x = 0; x < MapLayers.Layers.Count; x++)
+            {
+                if (Strings.Tiles.layers.ContainsKey(x))
+                    cmbLayer.Items.Add(Strings.Tiles.layers[x]);
+                else
+                    cmbLayer.Items.Add("Unknown");
+
+                LayerVisibility.Add(true);
+            }
+
+            if (cmbLayer.Items.Count > 0)
+            {
+                cmbLayer.SelectedIndex = 0;
+                LayerChanged();
+            }
+
         }
 
         public void Init()
@@ -306,7 +315,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public void SetLayer(int index)
         {
             Globals.CurrentLayer = index;
-            if (index < Options.LayerCount)
+            if (index < MapLayers.Layers.Count)
             {
                 for (var i = 0; i < mMapLayers.Count; i++)
                 {
@@ -1056,7 +1065,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
-            Globals.CurrentLayer = Options.LayerCount;
+            Globals.CurrentLayer = MapLayers.Layers.Count;
             Core.Graphics.TilePreviewUpdated = true;
             btnAttributeHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Attributes;
@@ -1065,13 +1074,13 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void btnLightsHeader_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            if (Globals.CurrentLayer < MapLayers.Layers.Count + 1)
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
 
             ChangeTab();
-            Globals.CurrentLayer = Options.LayerCount + 1;
+            Globals.CurrentLayer = MapLayers.Layers.Count + 1;
             Core.Graphics.TilePreviewUpdated = true;
             btnLightsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Lights;
@@ -1080,13 +1089,13 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void btnEventsHeader_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            if (Globals.CurrentLayer < MapLayers.Layers.Count + 1)
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
 
             ChangeTab();
-            Globals.CurrentLayer = Options.LayerCount + 2;
+            Globals.CurrentLayer = MapLayers.Layers.Count + 2;
             Core.Graphics.TilePreviewUpdated = true;
             btnEventsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Events;
@@ -1095,13 +1104,13 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void btnNpcsHeader_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer < Options.LayerCount + 1)
+            if (Globals.CurrentLayer < MapLayers.Layers.Count + 1)
             {
                 Globals.SavedTool = Globals.CurrentTool;
             }
 
             ChangeTab();
-            Globals.CurrentLayer = Options.LayerCount + 3;
+            Globals.CurrentLayer = MapLayers.Layers.Count + 3;
             Core.Graphics.TilePreviewUpdated = true;
             RefreshNpcList();
             btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
@@ -1144,6 +1153,38 @@ namespace Intersect.Editor.Forms.DockingElements
         private void NudItemQuantity_ValueChanged(object sender, System.EventArgs e)
         {
             nudItemQuantity.Value = Math.Max(1, nudItemQuantity.Value);
+        }
+
+        private void cmbLayer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LayerChanged();
+        }
+
+        private void LayerChanged()
+        {
+            if (cmbLayer.SelectedIndex >= 0 && cmbLayer.SelectedIndex<MapLayers.Layers.Count)
+            {
+                SetLayer(cmbLayer.SelectedIndex);
+
+                if (chkLayerVisible.Checked != LayerVisibility[cmbLayer.SelectedIndex])
+                    ignoreCheckChanged = true;
+
+                chkLayerVisible.Checked = LayerVisibility[cmbLayer.SelectedIndex];
+            }
+        }
+
+        private void chkLayerVisible_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (ignoreCheckChanged)
+            {
+                ignoreCheckChanged = false;
+                return;
+            }
+
+            if (cmbLayer.SelectedIndex >= 0 && cmbLayer.SelectedIndex<MapLayers.Layers.Count)
+                ToggleLayerVisibility(cmbLayer.SelectedIndex);
+
         }
 
     }

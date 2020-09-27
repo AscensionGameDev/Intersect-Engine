@@ -533,6 +533,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString invalidLayers = @"Unable to initialize maps. Layers not formatted correctly.";
+
         }
 
         public sealed class ErrorsNamespace : LocaleNamespace

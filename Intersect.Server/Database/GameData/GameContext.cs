@@ -7,6 +7,7 @@ using Intersect.Config;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Maps;
@@ -65,6 +66,8 @@ namespace Intersect.Server.Database.GameData
         public DbSet<MapInstance> Maps { get; set; }
 
         public DbSet<MapList> MapFolders { get; set; }
+
+        public DbSet<MapLayerBase> MapLayers { get; set; }
 
         //NPCs
         public DbSet<NpcBase> Npcs { get; set; }

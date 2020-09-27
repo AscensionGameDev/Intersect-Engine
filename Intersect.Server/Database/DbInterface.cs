@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
@@ -24,6 +24,7 @@ using Intersect.Logging.Output;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
@@ -1132,20 +1133,123 @@ namespace Intersect.Server.Database
         //Post Loading Functions
         private static void OnMapsLoaded()
         {
+            bool layersChanged = false;
+            bool layersUpdated = false;
+            bool errorOccured = false;
+            bool noMaps = false;
+
             if (MapBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Database.nomaps);
                 AddGameObject(GameObjectType.Map);
+                noMaps = true;
             }
 
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
 
-            foreach (var map in MapInstance.Lookup)
+            if (MapLayers.isValid())
             {
-                ((MapInstance) map.Value).Initialize();
+
+                if (!noMaps)
+                    layersChanged = MapLayer.LayersHaveChanged();
+
+                if (layersChanged)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Layer definitions have been changed. Map layers will be adjusted for all maps. This process may take a few minutes.");
+                    Console.WriteLine("Are you sure you wish to continue? Type 'y' to continue");
+
+                    var input = Console.ReadLine();
+
+                    if (input != "y")
+                        Environment.Exit(0);
+
+                    Console.WriteLine("Did you create a backup? Type 'y' to continue");
+
+                    var input2 = Console.ReadLine();
+
+                    if (input2 != "y")
+                        Environment.Exit(0);
+
+                    Console.WriteLine();
+                    Console.WriteLine("Starting to update map layers... please wait");
+                }
+
+                foreach (var map in MapInstance.Lookup)
+                {
+                    ((MapInstance)map.Value).Initialize();
+
+                    if (layersChanged && !errorOccured)
+                    {
+                        byte[] tileData = (byte[])((MapInstance)map.Value).TileData.Clone();
+
+                        if (MapLayer.AdjustLayers(ref tileData))
+                        {
+                            ((MapInstance)map.Value).tmpTileData = tileData;
+                            layersUpdated = true;
+                        }
+                        else
+                        {
+                            errorOccured = true;
+                            Console.WriteLine(Strings.Database.invalidLayers);
+                            Environment.Exit(0);
+                            break;
+                        }
+                    }
+
+                }
+
+                if (layersChanged && !errorOccured)
+                {
+
+                    if (layersUpdated)
+                    {
+                        try
+                        {
+                            foreach (var map in MapInstance.Lookup)
+                            {
+                                ((MapInstance)map.Value).ApplyLayerChange();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error applying layer changes. " + ex.Message);
+                            Environment.Exit(0);
+                        }
+                    }
+
+                    if (!MapLayer.UpdateDBLayers())
+                        Environment.Exit(0);
+                }
+
+                if (layersChanged)
+                {
+                    if (layersUpdated)
+                    {
+                        try
+                        {
+                            foreach (var map in MapInstance.Lookup)
+                            {
+                                ((MapInstance)map.Value).ClearLayerChangeData();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error clearing layer change data. " + ex.Message);
+                        }
+                    }
+                    Console.WriteLine("Finished updating map layers.");
+                }
+
             }
+            else
+            {
+                Console.WriteLine(Strings.Database.invalidLayers);
+                Environment.Exit(0);
+            }
+
         }
 
         private static void OnClassesLoaded()

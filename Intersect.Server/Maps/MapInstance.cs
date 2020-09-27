@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using Intersect.Enums;
@@ -73,6 +74,8 @@ namespace Intersect.Server.Maps
         [JsonIgnore] [NotMapped] public long TileAccessTime;
 
         [JsonIgnore] [NotMapped] public long UpdateDelay = 75;
+
+        [JsonIgnore] [NotMapped] public byte[] tmpTileData { get; set; }
 
         //EF
         public MapInstance() : base()
@@ -1170,6 +1173,16 @@ namespace Intersect.Server.Maps
         public override void Delete()
         {
             Lookup?.Delete(this);
+        }
+
+        public void ApplyLayerChange()
+        {
+            TileData = (byte[])tmpTileData.Clone();
+        }
+
+        public void ClearLayerChangeData()
+        {
+            tmpTileData = null;
         }
 
     }
