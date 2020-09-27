@@ -111,6 +111,12 @@ namespace Intersect.Client.MonoGame
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.AllowAltF4 = false;
 
+            // If we're going to be rendering a custom mouse cursor, hide the default one!
+            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
+            {
+                IsMouseVisible = false;
+            }
+            
             if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.UpdateUrl))
             {
                 mUpdater = new Updater.Updater(

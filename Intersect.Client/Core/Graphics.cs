@@ -8,6 +8,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
+using Intersect.Client.MonoGame.Input;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -488,6 +489,15 @@ namespace Intersect.Client.Core
                 new Color((int) Fade.GetFade(), 0, 0, 0), null, GameBlendModes.None
             );
 
+            // Draw our mousecursor at the very end, but not when taking screenshots.
+            if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
+            {
+                var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+                DrawGameTexture(
+                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+               );
+            }
+            
             Renderer.End();
 
             if (takingScreenshot)
@@ -1118,6 +1128,15 @@ namespace Intersect.Client.Core
         }
 
         //Helper Functions
+        /// <summary>
+        /// Convert a position on the screen to a position on the actual map for rendering.
+        /// </summary>
+        /// <param name="windowPoint">The point to convert.</param>
+        /// <returns>The converted point.</returns>
+        public static Pointf ConvertToWorldPoint(Pointf windowPoint)
+        {
+            return new Pointf((int)Math.Floor(windowPoint.X + CurrentView.Left), (int)Math.Floor(windowPoint.Y + CurrentView.Top));
+        }
 
         //Rendering Functions
 
