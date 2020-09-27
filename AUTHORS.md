@@ -11,4 +11,6 @@
 
 [Dog from the Kash Shop](#)
 
+[A. I. Robin](https://github.com/alloin)
+
 [Jocelyn Cobb](https://github.com/Azurebeats)
