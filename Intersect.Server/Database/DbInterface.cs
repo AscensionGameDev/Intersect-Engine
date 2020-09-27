@@ -1153,7 +1153,9 @@ namespace Intersect.Server.Database
             {
 
                 if (!noMaps)
+                {
                     layersChanged = MapLayer.LayersHaveChanged();
+                }
 
                 if (layersChanged)
                 {
@@ -1203,7 +1205,6 @@ namespace Intersect.Server.Database
 
                 if (layersChanged && !errorOccured)
                 {
-
                     if (layersUpdated)
                     {
                         try
@@ -1221,7 +1222,9 @@ namespace Intersect.Server.Database
                     }
 
                     if (!MapLayer.UpdateDBLayers())
+                    {
                         Environment.Exit(0);
+                    }  
                 }
 
                 if (layersChanged)

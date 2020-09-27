@@ -26,8 +26,10 @@ namespace Intersect.Server.Maps
                     var dbLayers = GameContext.Current.MapLayers.OrderBy(l => l.ID).ToList();
 
                     if (dbLayers.Count != MapLayers.Layers.Count())
+                    {
                         changed = true;
-
+                    }
+                        
                     if (!changed)
                     {
                         for (int x = 0; x < MapLayers.Layers.Count; x++)
@@ -71,13 +73,16 @@ namespace Intersect.Server.Maps
 
                 for (int x = 0; x < MapLayers.Layers.Count; x++)
                 {
-
                     if (MapLayers.Layers[x].OldLayerID != -1)
                     {
                         if (OldLayers.Count() >= MapLayers.Layers[x].OldLayerID)
+                        {
                             NewLayers[x] = OldLayers[MapLayers.Layers[x].OldLayerID];
+                        }   
                         else
+                        {
                             return false;
+                        }  
                     }
                     else
                     {
@@ -113,10 +118,8 @@ namespace Intersect.Server.Maps
 
             lock (GameContext.Current)
             {
-
                 try
                 {
-
                     for (int x = 0; x < MapLayers.Layers.Count; x++)
                     {
 
@@ -136,10 +139,13 @@ namespace Intersect.Server.Maps
                         tmpLayer.OldLayerID = MapLayers.Layers[x].OldLayerID;
 
                         if (layer != null)
+                        {
                             GameContext.Current.MapLayers.Update(tmpLayer);
+                        }
                         else
+                        {
                             GameContext.Current.MapLayers.Add(tmpLayer);
-
+                        }
                     }
 
                     // Check for more layers in db than current list

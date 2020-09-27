@@ -1183,8 +1183,9 @@ namespace Intersect.Editor.Forms.DockingElements
             }
 
             if (cmbLayer.SelectedIndex >= 0 && cmbLayer.SelectedIndex<MapLayers.Layers.Count)
+            {
                 ToggleLayerVisibility(cmbLayer.SelectedIndex);
-
+            }
         }
 
     }

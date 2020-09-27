@@ -632,32 +632,6 @@ namespace Intersect.Client.Maps
                     }
                 }
             }
-
-            //var drawLayerStart = 0;
-            //var drawLayerEnd = 2;
-
-            //if (layer == 1)
-            //{
-            //    drawLayerStart = 3;
-            //    drawLayerEnd = 3;
-            //}
-
-            //if (layer == 2)
-            //{
-            //    drawLayerStart = 4;
-            //    drawLayerEnd = 4;
-            //}
-
-            //for (var x = drawLayerStart; x <= drawLayerEnd; x++)
-            //{
-            //    if (mTileBuffers[x][Globals.AnimFrame] != null)
-            //    {
-            //        for (var i = 0; i < mTileBuffers[x][Globals.AnimFrame].Length; i++)
-            //        {
-            //            Graphics.Renderer.DrawTileBuffer(mTileBuffers[x][Globals.AnimFrame][i]);
-            //        }
-            //    }
-            //}
         }
 
         public void DrawItemsAndLights()

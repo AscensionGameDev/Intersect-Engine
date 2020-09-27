@@ -47,16 +47,24 @@ namespace Intersect.GameObjects.Maps
                     var tmpIntersectLayer = (int)Layers[x].IntersectLayer;
 
                     if ((int)tmpID > (int)tmpLayerRegion)
+                    {
                         return false;
+                    }
 
-                    if ((int)tmpIntersectLayer >= (int)MapLayerIntersect.Ground)
-                        if ((int)tmpIntersectID > (int)tmpIntersectLayer)
-                            return false;
+                    if ((int)tmpIntersectLayer >= (int)MapLayerIntersect.Ground || 
+                        (int)tmpIntersectID > (int)tmpIntersectLayer
+                    )
+                    {
+                        return false;
+                    }
 
                     tmpID = (int)Layers[x].Region;
 
                     if ((int)tmpIntersectLayer >= (int)MapLayerIntersect.Ground)
+                    {
                         tmpIntersectID = (int)tmpIntersectLayer;
+                    }
+                        
                 }
 
                 // Make sure all intersect layers are found and only 1 of each
@@ -67,8 +75,10 @@ namespace Intersect.GameObjects.Maps
                     for (int y = 0; y < Layers.Count; y++)
                     {
                         if ((int)Layers[y].IntersectLayer == (int)MapLayerIntersect.None)
+                        {
                             continue;
-
+                        }
+                            
                         if ((int)Layers[y].IntersectLayer == x)
                         {
                             blnFound = true;
@@ -76,7 +86,9 @@ namespace Intersect.GameObjects.Maps
                             for (int z = 0; z < Layers.Count; z++)
                             {
                                 if ((int)Layers[z].IntersectLayer == x && z != y)
+                                {
                                     return false;
+                                }  
                             }
 
                         }
@@ -84,7 +96,9 @@ namespace Intersect.GameObjects.Maps
                     }
 
                     if (!blnFound)
+                    {
                         return false;
+                    } 
 
                 }
 
@@ -92,12 +106,17 @@ namespace Intersect.GameObjects.Maps
                 for (int x = 0; x < Layers.Count; x++)
                 {
                     if (Layers[x].OldLayerID == -1)
+                    {
                         continue;
+                    } 
 
                     for (int y = 0; y < Layers.Count; y++)
                     {
                         if (Layers[x].OldLayerID == Layers[y].OldLayerID && x != y)
+                        {
                             return false;
+                        }
+                            
                     }
                 }
             }
