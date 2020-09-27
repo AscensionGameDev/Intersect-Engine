@@ -9,4 +9,6 @@
 
 # Intersect Contributors
 
+[Dog from the Kash Shop](#)
+
 [Jocelyn Cobb](https://github.com/Azurebeats)
