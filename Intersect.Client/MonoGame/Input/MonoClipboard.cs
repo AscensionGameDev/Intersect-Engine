@@ -123,7 +123,7 @@ namespace Intersect.Client.MonoGame.Input
         /// Checks whether or not the current Linux shell is configured to use the Wayland render server.
         /// </summary>
         /// <returns>Returns whether or not the current render server is Wayland.</returns>
-        private static bool ShellUsesWayland()
+        private bool ShellUsesWayland()
         {
             return GetShellOutput(UnixPlatforms.Linux, "ps aux | grep wayland").Replace("grep wayland", "").Contains("wayland");
         }
@@ -134,7 +134,7 @@ namespace Intersect.Client.MonoGame.Input
         /// <param name="platform">The Platform to run this shell command on.</param>
         /// <param name="command">The command to run.</param>
         /// <param name="waitForExit">Should this application wait for the command to exit?</param>
-        private static void RunShell(UnixPlatforms platform, string command, bool waitForExit = false)
+        private void RunShell(UnixPlatforms platform, string command, bool waitForExit = false)
         {
             // Set up our process to execute.
             var process = GetShellProcess(platform, $"-c \"{command}\"", false);
@@ -149,7 +149,7 @@ namespace Intersect.Client.MonoGame.Input
         /// <param name="platform">The platform to run this shell command on.</param>
         /// <param name="command">The command to run.</param>
         /// <returns>Returns a string containing the output of the command.</returns>
-        private static string GetShellOutput(UnixPlatforms platform, string command)
+        private string GetShellOutput(UnixPlatforms platform, string command)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace Intersect.Client.MonoGame.Input
         /// <param name="command">The command to run.</param>
         /// <param name="readable">Should the output of the command be readable?</param>
         /// <returns>Returns a process containing the shell command provided for execution.</returns>
-        private static Process GetShellProcess(UnixPlatforms platform, string command, bool readable)
+        private Process GetShellProcess(UnixPlatforms platform, string command, bool readable)
         {
             var execFile = string.Empty;
             switch (platform)
