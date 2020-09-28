@@ -101,6 +101,12 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
+
+            // Platform check, are we capable of copy/pasting on this machine?
+            if (!Clipboard.CanCopyPaste())
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.UnableToCopy, CustomColors.Alerts.Error));
+            }
         }
 
         //Update
