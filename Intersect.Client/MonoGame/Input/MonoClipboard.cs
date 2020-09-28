@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Input;
+using Intersect.Client.Framework.Input;
 using System;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -14,6 +14,7 @@ namespace Intersect.Client.MonoGame.Input
         public override void SetText(string data)
         {
             var platform = GetPlatform();
+            data = data.Trim();
             switch (platform)
             {
                 case PlatformID.Win32NT:
@@ -46,19 +47,19 @@ namespace Intersect.Client.MonoGame.Input
             switch (platform)
             {
                 case PlatformID.Win32NT:
-                    return Clipboard.GetText();
+                    return Clipboard.GetText().Trim();
                 case PlatformID.Unix:
                     // Are we running a Wayland shell?
                     if (ShellUsesWayland())
                     {
-                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste");
+                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste").Trim();
                     }
                     else
                     {
-                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o");
+                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o").Trim();
                     }
                 case PlatformID.MacOSX:
-                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste");
+                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste").Trim();
                 default:
                     // Send help!
                     throw new NotImplementedException();
