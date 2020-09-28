@@ -1,22 +1,24 @@
-﻿using System;
-using System.Diagnostics;
+using Intersect.Client.Framework.Input;
+using System;
 using System.Windows.Forms;
+using System.Diagnostics;
 
-namespace Intersect.Client.Framework.GenericClasses
+namespace Intersect.Client.MonoGame.Input
 {
-    public static class Clipboard
+    public class MonoClipboard : GameClipboard
     {
-        /// <summary>
-        /// Set the contents of the clipboard.
-        /// </summary>
-        /// <param name="data">The data to place on the clipboard.</param>
-        public static void SetText(string data)
+
+        private PlatformID? mPlatform = null;
+
+        /// <inheritdoc />
+        public override void SetText(string data)
         {
             var platform = GetPlatform();
+            data = data.Trim();
             switch (platform)
             {
                 case PlatformID.Win32NT:
-                    System.Windows.Forms.Clipboard.SetText(data);
+                    Clipboard.SetText(data);
                     break;
                 case PlatformID.Unix:
                     // Are we running a Wayland shell?
@@ -38,49 +40,40 @@ namespace Intersect.Client.Framework.GenericClasses
             }
         }
 
-        /// <summary>
-        /// Get the current content of the clipboard.
-        /// </summary>
-        /// <returns>Returns a string with the current contents of the clipboard.</returns>
-        public static string GetText()
+        /// <inheritdoc />
+        public override string GetText()
         {
             var platform = GetPlatform();
             switch (platform)
             {
                 case PlatformID.Win32NT:
-                    return System.Windows.Forms.Clipboard.GetText();
+                    return Clipboard.GetText().Trim();
                 case PlatformID.Unix:
                     // Are we running a Wayland shell?
                     if (ShellUsesWayland())
                     {
-                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste");
+                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste").Trim();
                     }
                     else
                     {
-                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o");
+                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o").Trim();
                     }
                 case PlatformID.MacOSX:
-                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste");
+                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste").Trim();
                 default:
                     // Send help!
                     throw new NotImplementedException();
             }
         }
 
-        /// <summary>
-        /// Checks whether the system clipboard contains any text at all.
-        /// </summary>
-        /// <returns></returns>
-        public static bool ContainsText()
+        /// <inheritdoc />
+        public override bool ContainsText()
         {
             return !string.IsNullOrWhiteSpace(GetText());
         }
 
-        /// <summary>
-        /// Checks whether or not the underlying operating system has the capability to copy/paste and the required libraries installed.
-        /// </summary>
-        /// <returns>Returns whether or not we can copy/paste data to the clipboard.</returns>
-        public static bool CanCopyPaste()
+        /// <inheritdoc />
+        public override bool CanCopyPaste()
         {
             var platform = GetPlatform();
             switch (platform)
@@ -107,18 +100,23 @@ namespace Intersect.Client.Framework.GenericClasses
         /// Get the platform we are currently running on.
         /// </summary>
         /// <returns>Returns the <see cref="PlatformID"/> of the platform we are running on.</returns>
-        private static PlatformID GetPlatform()
+        private PlatformID GetPlatform()
         {
-            var platform = Environment.OSVersion.Platform;
-            // If Unix, are we on Mac or Linux?
-            if (platform == PlatformID.Unix)
+            if (mPlatform == null)
             {
-                if (GetShellOutput(UnixPlatforms.MacOSX, "uname").Contains("Darwin"))
+                var platform = Environment.OSVersion.Platform;
+                // If Unix, are we on Mac or Linux?
+                if (platform == PlatformID.Unix)
                 {
-                    platform = PlatformID.MacOSX;
+                    if (GetShellOutput(UnixPlatforms.MacOSX, "uname").Contains("Darwin"))
+                    {
+                        platform = PlatformID.MacOSX;
+                    }
                 }
+                mPlatform = platform;
             }
-            return platform;
+
+            return (PlatformID)mPlatform;
         }
 
         #region Linux/Mac Support
@@ -126,7 +124,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// Checks whether or not the current Linux shell is configured to use the Wayland render server.
         /// </summary>
         /// <returns>Returns whether or not the current render server is Wayland.</returns>
-        private static bool ShellUsesWayland()
+        private bool ShellUsesWayland()
         {
             return GetShellOutput(UnixPlatforms.Linux, "ps aux | grep wayland").Replace("grep wayland", "").Contains("wayland");
         }
@@ -137,7 +135,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// <param name="platform">The Platform to run this shell command on.</param>
         /// <param name="command">The command to run.</param>
         /// <param name="waitForExit">Should this application wait for the command to exit?</param>
-        private static void RunShell(UnixPlatforms platform, string command, bool waitForExit = false)
+        private void RunShell(UnixPlatforms platform, string command, bool waitForExit = false)
         {
             // Set up our process to execute.
             var process = GetShellProcess(platform, $"-c \"{command}\"", false);
@@ -152,7 +150,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// <param name="platform">The platform to run this shell command on.</param>
         /// <param name="command">The command to run.</param>
         /// <returns>Returns a string containing the output of the command.</returns>
-        private static string GetShellOutput(UnixPlatforms platform, string command)
+        private string GetShellOutput(UnixPlatforms platform, string command)
         {
             try
             {
@@ -189,7 +187,7 @@ namespace Intersect.Client.Framework.GenericClasses
         /// <param name="command">The command to run.</param>
         /// <param name="readable">Should the output of the command be readable?</param>
         /// <returns>Returns a process containing the shell command provided for execution.</returns>
-        private static Process GetShellProcess(UnixPlatforms platform, string command, bool readable)
+        private Process GetShellProcess(UnixPlatforms platform, string command, bool readable)
         {
             var execFile = string.Empty;
             switch (platform)
@@ -204,8 +202,10 @@ namespace Intersect.Client.Framework.GenericClasses
                     throw new NotImplementedException();
             }
 
-            return new Process() {
-                StartInfo = new ProcessStartInfo() {
+            return new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
                     FileName = execFile,
                     Arguments = command,
                     RedirectStandardOutput = readable,

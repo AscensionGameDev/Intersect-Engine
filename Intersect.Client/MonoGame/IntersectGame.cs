@@ -8,6 +8,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Localization;
@@ -77,6 +78,7 @@ namespace Intersect.Client.MonoGame
             Globals.Database.LoadPreferences();
 
             Globals.InputManager = new MonoInput(this);
+            GameClipboard.Instance = new MonoClipboard();
 
             var renderer = new MonoRenderer(mGraphics, Content, this);
             Core.Graphics.Renderer = renderer;
