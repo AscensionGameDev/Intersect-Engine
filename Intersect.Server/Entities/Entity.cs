@@ -2112,7 +2112,7 @@ namespace Intersect.Server.Entities
                 }
 
                 SpellCooldowns[Spells[spellSlot].SpellId] =
-                    Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
+                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration * cooldownReduction);
 
                 if (thisPlayer != null)
                 {
