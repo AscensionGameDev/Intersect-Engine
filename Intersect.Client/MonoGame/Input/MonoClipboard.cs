@@ -1,86 +1,15 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Intersect.Client.Framework.Input;
+using System;
 using System.Windows.Forms;
+using System.Diagnostics;
 
-namespace Intersect.Client.Framework.GenericClasses
+namespace Intersect.Client.MonoGame.Input
 {
-    public static class Clipboard
+    public class MonoClipboard : GameClipboard
     {
-        /// <summary>
-        /// Set the contents of the clipboard.
-        /// </summary>
-        /// <param name="data">The data to place on the clipboard.</param>
-        public static void SetText(string data)
-        {
-            var platform = GetPlatform();
-            switch (platform)
-            {
-                case PlatformID.Win32NT:
-                    System.Windows.Forms.Clipboard.SetText(data);
-                    break;
-                case PlatformID.Unix:
-                    // Are we running a Wayland shell?
-                    if (ShellUsesWayland())
-                    {
-                        RunShell(UnixPlatforms.Linux, $"wl-copy {data}");
-                    }
-                    else
-                    {
-                        RunShell(UnixPlatforms.Linux, $"echo {data} | xclip -i");
-                    }
-                    break;
-                case PlatformID.MacOSX:
-                    RunShell(UnixPlatforms.MacOSX, $"echo {data} | pbcopy");
-                    break;
-                default:
-                    // Send help!
-                    throw new NotImplementedException();
-            }
-        }
 
-        /// <summary>
-        /// Get the current content of the clipboard.
-        /// </summary>
-        /// <returns>Returns a string with the current contents of the clipboard.</returns>
-        public static string GetText()
-        {
-            var platform = GetPlatform();
-            switch (platform)
-            {
-                case PlatformID.Win32NT:
-                    return System.Windows.Forms.Clipboard.GetText();
-                case PlatformID.Unix:
-                    // Are we running a Wayland shell?
-                    if (ShellUsesWayland())
-                    {
-                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste");
-                    }
-                    else
-                    {
-                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o");
-                    }
-                case PlatformID.MacOSX:
-                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste");
-                default:
-                    // Send help!
-                    throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// Checks whether the system clipboard contains any text at all.
-        /// </summary>
-        /// <returns></returns>
-        public static bool ContainsText()
-        {
-            return !string.IsNullOrWhiteSpace(GetText());
-        }
-
-        /// <summary>
-        /// Checks whether or not the underlying operating system has the capability to copy/paste and the required libraries installed.
-        /// </summary>
-        /// <returns>Returns whether or not we can copy/paste data to the clipboard.</returns>
-        public static bool CanCopyPaste()
+        /// <inheritdoc />
+        public override bool CanCopyPaste()
         {
             var platform = GetPlatform();
             switch (platform)
@@ -100,6 +29,67 @@ namespace Intersect.Client.Framework.GenericClasses
                     }
                 default:
                     return false;
+            }
+        }
+
+        /// <inheritdoc />
+        public override bool ContainsText()
+        {
+            return !string.IsNullOrWhiteSpace(GetText());
+        }
+
+        /// <inheritdoc />
+        public override string GetText()
+        {
+            var platform = GetPlatform();
+            switch (platform)
+            {
+                case PlatformID.Win32NT:
+                    return Clipboard.GetText();
+                case PlatformID.Unix:
+                    // Are we running a Wayland shell?
+                    if (ShellUsesWayland())
+                    {
+                        return GetShellOutput(UnixPlatforms.Linux, "wl-paste");
+                    }
+                    else
+                    {
+                        return GetShellOutput(UnixPlatforms.Linux, "xclip -o");
+                    }
+                case PlatformID.MacOSX:
+                    return GetShellOutput(UnixPlatforms.MacOSX, "pbpaste");
+                default:
+                    // Send help!
+                    throw new NotImplementedException();
+            }
+        }
+
+        /// <inheritdoc />
+        public override void SetText(string data)
+        {
+            var platform = GetPlatform();
+            switch (platform)
+            {
+                case PlatformID.Win32NT:
+                    Clipboard.SetText(data);
+                    break;
+                case PlatformID.Unix:
+                    // Are we running a Wayland shell?
+                    if (ShellUsesWayland())
+                    {
+                        RunShell(UnixPlatforms.Linux, $"wl-copy {data}");
+                    }
+                    else
+                    {
+                        RunShell(UnixPlatforms.Linux, $"echo {data} | xclip -i");
+                    }
+                    break;
+                case PlatformID.MacOSX:
+                    RunShell(UnixPlatforms.MacOSX, $"echo {data} | pbcopy");
+                    break;
+                default:
+                    // Send help!
+                    throw new NotImplementedException();
             }
         }
 
@@ -204,8 +194,10 @@ namespace Intersect.Client.Framework.GenericClasses
                     throw new NotImplementedException();
             }
 
-            return new Process() {
-                StartInfo = new ProcessStartInfo() {
+            return new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
                     FileName = execFile,
                     Arguments = command,
                     RedirectStandardOutput = readable,
