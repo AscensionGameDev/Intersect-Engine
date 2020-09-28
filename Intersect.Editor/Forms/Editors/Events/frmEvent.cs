@@ -206,14 +206,14 @@ namespace Intersect.Editor.Forms.Editors.Events
                     graphics.DrawImage(
                         sourceBitmap,
                         new Rectangle(
-                            pnlPreview.Width / 2 - sourceBitmap.Width / 4 / 2,
-                            pnlPreview.Height / 2 - sourceBitmap.Height / 4 / 2, sourceBitmap.Width / 4,
-                            sourceBitmap.Height / 4
+                            pnlPreview.Width / 2 - sourceBitmap.Width / Options.Instance.Sprites.NormalFrames / 2,
+                            pnlPreview.Height / 2 - sourceBitmap.Height / Options.Instance.Sprites .Directions / 2, sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            sourceBitmap.Height / Options.Instance.Sprites.Directions
                         ),
                         new Rectangle(
-                            CurrentPage.Graphic.X * sourceBitmap.Width / 4,
-                            CurrentPage.Graphic.Y * sourceBitmap.Height / 4, sourceBitmap.Width / 4,
-                            sourceBitmap.Height / 4
+                            CurrentPage.Graphic.X * sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            CurrentPage.Graphic.Y * sourceBitmap.Height / Options.Instance.Sprites.Directions, sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            sourceBitmap.Height / Options.Instance.Sprites.Directions
                         ), GraphicsUnit.Pixel
                     );
                 }

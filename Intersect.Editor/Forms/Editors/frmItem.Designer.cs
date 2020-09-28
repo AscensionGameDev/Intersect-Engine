@@ -151,6 +151,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblProjectile = new System.Windows.Forms.Label();
             this.lblDamage = new System.Windows.Forms.Label();
             this.grpEvent = new DarkUI.Controls.DarkGroupBox();
+            this.chkSingleUseEvent = new DarkUI.Controls.DarkCheckBox();
             this.cmbEvent = new DarkUI.Controls.DarkComboBox();
             this.grpConsumable = new DarkUI.Controls.DarkGroupBox();
             this.lblPercentage3 = new System.Windows.Forms.Label();
@@ -161,7 +162,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbConsume = new DarkUI.Controls.DarkComboBox();
             this.lblInterval = new System.Windows.Forms.Label();
             this.grpSpell = new DarkUI.Controls.DarkGroupBox();
-            this.chkDestroy = new DarkUI.Controls.DarkCheckBox();
+            this.chkSingleUseSpell = new DarkUI.Controls.DarkCheckBox();
             this.chkQuickCast = new DarkUI.Controls.DarkCheckBox();
             this.cmbTeachSpell = new DarkUI.Controls.DarkComboBox();
             this.lblSpell = new System.Windows.Forms.Label();
@@ -1961,15 +1962,28 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEvent.Controls.Add(this.chkSingleUseEvent);
             this.grpEvent.Controls.Add(this.cmbEvent);
             this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEvent.Location = new System.Drawing.Point(0, 265);
             this.grpEvent.Name = "grpEvent";
-            this.grpEvent.Size = new System.Drawing.Size(203, 57);
+            this.grpEvent.Size = new System.Drawing.Size(200, 65);
             this.grpEvent.TabIndex = 42;
             this.grpEvent.TabStop = false;
             this.grpEvent.Text = "Event";
             this.grpEvent.Visible = false;
+            // 
+            // chkSingleUseEvent
+            // 
+            this.chkSingleUseEvent.AutoSize = true;
+            this.chkSingleUseEvent.Checked = true;
+            this.chkSingleUseEvent.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSingleUseEvent.Location = new System.Drawing.Point(9, 42);
+            this.chkSingleUseEvent.Name = "chkSingleUseEvent";
+            this.chkSingleUseEvent.Size = new System.Drawing.Size(107, 17);
+            this.chkSingleUseEvent.TabIndex = 29;
+            this.chkSingleUseEvent.Text = "Destroy On Use?";
+            this.chkSingleUseEvent.CheckedChanged += new System.EventHandler(this.chkSingleUse_CheckedChanged);
             // 
             // cmbEvent
             // 
@@ -1985,9 +1999,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEvent.FormattingEnabled = true;
-            this.cmbEvent.Location = new System.Drawing.Point(11, 24);
+            this.cmbEvent.Location = new System.Drawing.Point(9, 15);
             this.cmbEvent.Name = "cmbEvent";
-            this.cmbEvent.Size = new System.Drawing.Size(182, 21);
+            this.cmbEvent.Size = new System.Drawing.Size(185, 21);
             this.cmbEvent.TabIndex = 17;
             this.cmbEvent.Text = null;
             this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
@@ -2121,7 +2135,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpSpell.Controls.Add(this.chkDestroy);
+            this.grpSpell.Controls.Add(this.chkSingleUseSpell);
             this.grpSpell.Controls.Add(this.chkQuickCast);
             this.grpSpell.Controls.Add(this.cmbTeachSpell);
             this.grpSpell.Controls.Add(this.lblSpell);
@@ -2134,17 +2148,17 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpell.Text = "Spell";
             this.grpSpell.Visible = false;
             // 
-            // chkDestroy
+            // chkSingleUseSpell
             // 
-            this.chkDestroy.AutoSize = true;
-            this.chkDestroy.Checked = true;
-            this.chkDestroy.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDestroy.Location = new System.Drawing.Point(15, 95);
-            this.chkDestroy.Name = "chkDestroy";
-            this.chkDestroy.Size = new System.Drawing.Size(107, 17);
-            this.chkDestroy.TabIndex = 29;
-            this.chkDestroy.Text = "Destroy On Use?";
-            this.chkDestroy.CheckedChanged += new System.EventHandler(this.chkDestroy_CheckedChanged);
+            this.chkSingleUseSpell.AutoSize = true;
+            this.chkSingleUseSpell.Checked = true;
+            this.chkSingleUseSpell.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSingleUseSpell.Location = new System.Drawing.Point(15, 95);
+            this.chkSingleUseSpell.Name = "chkSingleUseSpell";
+            this.chkSingleUseSpell.Size = new System.Drawing.Size(107, 17);
+            this.chkSingleUseSpell.TabIndex = 29;
+            this.chkSingleUseSpell.Text = "Destroy On Use?";
+            this.chkSingleUseSpell.CheckedChanged += new System.EventHandler(this.chkSingleUse_CheckedChanged);
             // 
             // chkQuickCast
             // 
@@ -2190,9 +2204,9 @@ namespace Intersect.Editor.Forms.Editors
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpGeneral);
             this.pnlContainer.Controls.Add(this.grpEquipment);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpSpell);
             this.pnlContainer.Controls.Add(this.grpBags);
             this.pnlContainer.Controls.Add(this.grpConsumable);
@@ -2439,6 +2453,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudCritChance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDamage)).EndInit();
             this.grpEvent.ResumeLayout(false);
+            this.grpEvent.PerformLayout();
             this.grpConsumable.ResumeLayout(false);
             this.grpConsumable.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntervalPercentage)).EndInit();
@@ -2559,7 +2574,8 @@ namespace Intersect.Editor.Forms.Editors
         private Label lblCritMultiplier;
         private DarkNumericUpDown nudCooldown;
         private Label lblCooldown;
-        private DarkCheckBox chkDestroy;
+        private DarkCheckBox chkSingleUseSpell;
+        private DarkCheckBox chkSingleUseEvent;
         private DarkCheckBox chkQuickCast;
         private DarkComboBox cmbRarity;
         private Label lblRarity;

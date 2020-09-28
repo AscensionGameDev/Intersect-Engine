@@ -195,9 +195,11 @@
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
     <Compile Include="Config\LootOptions.cs" />
+    <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
+    <Compile Include="Config\SpriteOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />

@@ -1375,7 +1375,7 @@ namespace Intersect.Editor.Forms
 
         private void toolStripButtonBug_Click(object sender, EventArgs e)
         {
-            Process.Start("https://www.ascensiongamedev.com/community/bug_tracker/intersect/");
+            Process.Start("https://github.com/AscensionGameDev/Intersect-Engine/issues/new/choose");
         }
 
         private void UpdateTimeSimulationList()
@@ -1819,7 +1819,7 @@ namespace Intersect.Editor.Forms
 
                 //Intersect excluded files
                 var excludeFiles = new string[] {"resources/mapcache.db", "update.json", "version.json"};
-                var clientExcludeFiles = new List<string>(){"Intersect Editor.exe", "Intersect Editor.pdb"};
+                var clientExcludeFiles = new List<string>(){"intersect editor.exe", "intersect editor.pdb"};
                 var excludeExtensions = new string[] {".dll", ".xml", ".config", ".php"};
                 var excludeDirectories = new string[] {"logs", "screenshots"};
 
@@ -1869,7 +1869,7 @@ namespace Intersect.Editor.Forms
 
                     var updateFile = new UpdateFile(relativePath, md5Hash, file.Length);
 
-                    if (clientExcludeFiles.Contains(relativePath))
+                    if (clientExcludeFiles.Contains(relativePath.ToLower()))
                     {
                         updateFile.ClientIgnore = true;
                     }
