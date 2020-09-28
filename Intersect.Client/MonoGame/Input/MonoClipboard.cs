@@ -11,33 +11,32 @@ namespace Intersect.Client.MonoGame.Input
         private PlatformID? mPlatform = null;
 
         /// <inheritdoc />
-        public override bool CanCopyPaste()
+        public override void SetText(string data)
         {
             var platform = GetPlatform();
             switch (platform)
             {
                 case PlatformID.Win32NT:
-                case PlatformID.MacOSX:
-                    return true;
+                    Clipboard.SetText(data);
+                    break;
                 case PlatformID.Unix:
                     // Are we running a Wayland shell?
                     if (ShellUsesWayland())
                     {
-                        return !GetShellOutput(UnixPlatforms.Linux, "wl-paste").Contains("command not found");
+                        RunShell(UnixPlatforms.Linux, $"wl-copy {data}");
                     }
                     else
                     {
-                        return !GetShellOutput(UnixPlatforms.Linux, "xclip -o").Contains("command not found");
+                        RunShell(UnixPlatforms.Linux, $"echo {data} | xclip -i");
                     }
+                    break;
+                case PlatformID.MacOSX:
+                    RunShell(UnixPlatforms.MacOSX, $"echo {data} | pbcopy");
+                    break;
                 default:
-                    return false;
+                    // Send help!
+                    throw new NotImplementedException();
             }
-        }
-
-        /// <inheritdoc />
-        public override bool ContainsText()
-        {
-            return !string.IsNullOrWhiteSpace(GetText());
         }
 
         /// <inheritdoc />
@@ -67,31 +66,32 @@ namespace Intersect.Client.MonoGame.Input
         }
 
         /// <inheritdoc />
-        public override void SetText(string data)
+        public override bool ContainsText()
+        {
+            return !string.IsNullOrWhiteSpace(GetText());
+        }
+
+        /// <inheritdoc />
+        public override bool CanCopyPaste()
         {
             var platform = GetPlatform();
             switch (platform)
             {
                 case PlatformID.Win32NT:
-                    Clipboard.SetText(data);
-                    break;
+                case PlatformID.MacOSX:
+                    return true;
                 case PlatformID.Unix:
                     // Are we running a Wayland shell?
                     if (ShellUsesWayland())
                     {
-                        RunShell(UnixPlatforms.Linux, $"wl-copy {data}");
+                        return !GetShellOutput(UnixPlatforms.Linux, "wl-paste").Contains("command not found");
                     }
                     else
                     {
-                        RunShell(UnixPlatforms.Linux, $"echo {data} | xclip -i");
+                        return !GetShellOutput(UnixPlatforms.Linux, "xclip -o").Contains("command not found");
                     }
-                    break;
-                case PlatformID.MacOSX:
-                    RunShell(UnixPlatforms.MacOSX, $"echo {data} | pbcopy");
-                    break;
                 default:
-                    // Send help!
-                    throw new NotImplementedException();
+                    return false;
             }
         }
 
