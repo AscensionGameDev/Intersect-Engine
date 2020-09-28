@@ -8,6 +8,8 @@ namespace Intersect.Client.MonoGame.Input
     public class MonoClipboard : GameClipboard
     {
 
+        private PlatformID? mPlatform = null;
+
         /// <inheritdoc />
         public override bool CanCopyPaste()
         {
@@ -97,18 +99,23 @@ namespace Intersect.Client.MonoGame.Input
         /// Get the platform we are currently running on.
         /// </summary>
         /// <returns>Returns the <see cref="PlatformID"/> of the platform we are running on.</returns>
-        private static PlatformID GetPlatform()
+        private PlatformID GetPlatform()
         {
-            var platform = Environment.OSVersion.Platform;
-            // If Unix, are we on Mac or Linux?
-            if (platform == PlatformID.Unix)
+            if (mPlatform == null)
             {
-                if (GetShellOutput(UnixPlatforms.MacOSX, "uname").Contains("Darwin"))
+                var platform = Environment.OSVersion.Platform;
+                // If Unix, are we on Mac or Linux?
+                if (platform == PlatformID.Unix)
                 {
-                    platform = PlatformID.MacOSX;
+                    if (GetShellOutput(UnixPlatforms.MacOSX, "uname").Contains("Darwin"))
+                    {
+                        platform = PlatformID.MacOSX;
+                    }
                 }
+                mPlatform = platform;
             }
-            return platform;
+
+            return (PlatformID)mPlatform;
         }
 
         #region Linux/Mac Support
