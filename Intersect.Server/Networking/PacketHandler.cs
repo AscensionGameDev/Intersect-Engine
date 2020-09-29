@@ -59,6 +59,11 @@ namespace Intersect.Server.Networking
             {
                 //Logged In
                 thresholds = packetOptions?.PlayerThreshholds;
+
+                if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
+                {
+                    thresholds = packetOptions?.ModAdminThreshholds;
+                }
             }
 
             if (pSize > thresholds.MaxPacketSize)
@@ -232,12 +237,12 @@ namespace Intersect.Server.Networking
                 var deltaAdjusted = localAdjustedMs - remoteAdjustedMs;
                 var deltaWithPing = deltaAdjusted - ping;
 
-                var configurableMininumPing = 10;
-                var configurableErrorMarginFactor = 0.25f;
-                var configurableNaturalLowerMargin = 0;
-                var configurableNaturalUpperMargin = 500;
-                var configurableAllowedSpikePackets = 5;
-                var configurableDesyncForgiveness = 2.0f;
+                var configurableMininumPing = Options.Instance.SecurityOpts.PacketOpts.MinimumPing;
+                var configurableErrorMarginFactor = Options.Instance.SecurityOpts.PacketOpts.ErrorMarginFactor;
+                var configurableNaturalLowerMargin = Options.Instance.SecurityOpts.PacketOpts.NaturalLowerMargin;
+                var configurableNaturalUpperMargin = Options.Instance.SecurityOpts.PacketOpts.NaturalUpperMargin;
+                var configurableAllowedSpikePackets = Options.Instance.SecurityOpts.PacketOpts.AllowedSpikePackets;
+                var configurableDesyncForgiveness = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessFactor;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
                 var errorRangeMinimum = ping - errorMargin;
