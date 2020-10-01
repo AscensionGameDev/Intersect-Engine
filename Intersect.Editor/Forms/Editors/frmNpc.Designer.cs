@@ -336,6 +336,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudLevel.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLevel.Location = new System.Drawing.Point(60, 75);
+            this.nudLevel.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
             this.nudLevel.Minimum = new decimal(new int[] {
             1,
             0,
