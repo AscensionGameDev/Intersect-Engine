@@ -59,7 +59,7 @@ namespace Intersect.Server.Entities.Combat
             var changed = false;
             foreach (var buff in mBuff)
             {
-                if (buff.Value.Duration <= Globals.Timing.TimeMs)
+                if (buff.Value.Duration <= Globals.Timing.Milliseconds)
                 {
                     changed |= mBuff.TryRemove(buff.Key, out Buff result);
                 }

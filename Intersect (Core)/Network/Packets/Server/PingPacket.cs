@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Network.Packets.Server
 {
 
-    public class PingPacket : CerasPacket
+    public class PingPacket : AbstractTimedPacket
     {
 
         public PingPacket(bool requestingReply)
