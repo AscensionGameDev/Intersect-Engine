@@ -37,7 +37,7 @@ namespace Intersect.Client.Networking
         {
             if (packet is AbstractTimedPacket timedPacket)
             {
-                Timing.Global.Synchronize(timedPacket.Offset);
+                Timing.Global.Synchronize(timedPacket.UTC, timedPacket.Offset);
             }
 
             if (packet is CerasPacket)

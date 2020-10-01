@@ -121,7 +121,7 @@ namespace Intersect.Network.Lidgren
 
             CreateAes();
 
-            Timing.Global.Synchronize(approval.Offset);
+            Timing.Global.Synchronize(approval.UTC, approval.Offset);
             Log.Debug($"approval Time={approval.Adjusted / TimeSpan.TicksPerMillisecond} Offset={approval.Offset / TimeSpan.TicksPerMillisecond} Real={approval.UTC / TimeSpan.TicksPerMillisecond}");
             Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
             Log.Debug($"real delta={(Timing.Global.TicksUTC - approval.UTC) / TimeSpan.TicksPerMillisecond}");

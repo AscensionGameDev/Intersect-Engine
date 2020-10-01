@@ -242,7 +242,8 @@ namespace Intersect.Server.Networking
                 var configurableNaturalLowerMargin = Options.Instance.SecurityOpts.PacketOpts.NaturalLowerMargin;
                 var configurableNaturalUpperMargin = Options.Instance.SecurityOpts.PacketOpts.NaturalUpperMargin;
                 var configurableAllowedSpikePackets = Options.Instance.SecurityOpts.PacketOpts.AllowedSpikePackets;
-                var configurableDesyncForgiveness = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessFactor;
+                var configurableBaseDesyncForgiveness = Options.Instance.SecurityOpts.PacketOpts.BaseDesyncForegiveness;
+                var configurablePingDesyncForgivenessFactor = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessFactor;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
                 var errorRangeMinimum = ping - errorMargin;
@@ -265,7 +266,7 @@ namespace Intersect.Server.Networking
 
 
                 var adjustedDesync = Math.Abs(deltaAdjusted);
-                var timeDesync = adjustedDesync > errorRangeMaximum * configurableDesyncForgiveness;
+                var timeDesync = adjustedDesync > configurableBaseDesyncForgiveness + errorRangeMaximum * configurablePingDesyncForgivenessFactor;
 
                 if (Debugger.IsAttached)
                 {
@@ -282,19 +283,24 @@ namespace Intersect.Server.Networking
 
                 var naturalWithError = naturalWithErrorMinimum || naturalWithErrorMaximum;
 
-                if (!(natural || naturalWithError || naturalWithPing))
+                if (!(natural || naturalWithError || naturalWithPing) || timeDesync)
                 {
+                    //No matter what, let's send the ping to resync time.
+                    PacketSender.SendPing(client, false);
+
                     if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
                         Log.Error(
-                        "Dropping Packet. Client Speedhacking?\n\t" +
-                        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                        $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                        $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                        $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                        $"Time Desync[{timeDesync}]\n\t" +
-                        $"Packet[{packet.ToString()}]"
-                    );
+                            "Dropping Packet. Client Speedhacking?\n\t" +
+                            $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                            $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                            $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
+                            $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                            $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                            $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                            $"Time Desync[{timeDesync}]\n\t" +
+                            $"Packet[{packet.ToString()}]"
+                        );
 
                         try
                         {
@@ -310,8 +316,6 @@ namespace Intersect.Server.Networking
 
                         return false;
                     }
-
-                    PacketSender.SendPing(client);
                 }
                 else if (natural && naturalWithPing && naturalWithError)
                 {
