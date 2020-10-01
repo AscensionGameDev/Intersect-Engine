@@ -49,7 +49,8 @@ namespace Intersect.Client.Entities
         public long AnimationTimer;
 
         //Combat
-        public long AttackTimer = 0;
+        public long AttackTimer { get; set; } = 0;
+        public int AttackTime { get; set; } = -1;
 
         public bool Blocking = false;
 
@@ -749,6 +750,13 @@ namespace Intersect.Client.Entities
 
         public virtual int CalculateAttackTime()
         {
+            //If this is an npc we don't know it's attack time. Luckily the server provided it!
+            if (this != Globals.Me && AttackTime > -1)
+            {
+                return AttackTime;
+            }
+
+            //Otherwise return the legacy attack speed calculation
             return (int) (Options.MaxAttackRate +
                           (float) ((Options.MinAttackRate - Options.MaxAttackRate) *
                                    (((float) Options.MaxStatValue - Stat[(int) Stats.Speed]) /
