@@ -30,9 +30,9 @@ namespace Intersect.Utilities
         /// Sets <see cref="TicksOffset"/>.
         /// </summary>
         /// <param name="remoteOffset">a point in time to synchronize to in ticks</param>
-        public void Synchronize(long remoteOffset)
+        public void Synchronize(long remoteUtc, long remoteOffset)
         {
-            TicksOffset = remoteOffset;
+            TicksOffset = remoteOffset + (TicksUTC - remoteUtc);
         }
 
         /// <summary>

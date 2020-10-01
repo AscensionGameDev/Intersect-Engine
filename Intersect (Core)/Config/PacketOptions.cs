@@ -35,6 +35,11 @@ namespace Intersect.Config
         public int AllowedSpikePackets { get; set; } = 5;
 
         /// <summary>
+        /// The base amount of time in ms that we will forgive the client for being desyned
+        /// </summary>
+        public int BaseDesyncForegiveness { get; set; } = 400;
+
+        /// <summary>
         /// A factor in whch we will allow the client time to shift from the servers before dropping packets with configured error margins taken into account.
         /// </summary>
         public float DesyncForgivenessFactor { get; set; } = 2.0f;

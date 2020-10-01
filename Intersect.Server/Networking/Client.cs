@@ -45,6 +45,7 @@ namespace Intersect.Server.Networking
             mConnectTime = Globals.Timing.Milliseconds;
             mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
             PacketSender.SendServerConfig(this);
+            PacketSender.SendPing(this);
         }
 
         //Game Incorperation Variables
