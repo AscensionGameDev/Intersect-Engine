@@ -723,6 +723,7 @@ namespace Intersect.Client.Networking
             if (attackTimer > -1 && en != Globals.Me)
             {
                 en.AttackTimer = Globals.System.GetTimeMs() + attackTimer;
+                en.AttackTime = attackTimer;
             }
         }
 
