@@ -111,7 +111,6 @@ namespace Intersect.Client.Interface.Menu
 
             mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
-            //Hide Forgot Password Button if not supported by server
         }
 
         public bool IsHidden => mLoginWindow.IsHidden;
@@ -152,6 +151,16 @@ namespace Intersect.Client.Interface.Menu
             if (!mForgotPassswordButton.IsHidden)
             {
                 mForgotPassswordButton.IsHidden = !Options.Instance.SmtpValid;
+            }
+
+            // Set focus to the appropriate elements.
+            if (!string.IsNullOrWhiteSpace(mUsernameTextbox.Text))
+            {
+                mPasswordTextbox.Focus();
+            }
+            else
+            {
+                mUsernameTextbox.Focus();
             }
         }
 
