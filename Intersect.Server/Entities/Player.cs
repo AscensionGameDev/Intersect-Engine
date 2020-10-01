@@ -1969,6 +1969,11 @@ namespace Intersect.Server.Entities
                             }
 
                             var tempDesc = ItemBase.Get(invItem.ItemId);
+                            if (tempDesc.CooldownGroup != itemBase.CooldownGroup)
+                            {
+                                continue;
+                            }
+
                             if (ItemCooldowns.ContainsKey(tempDesc.Id))
                             {
                                 ItemCooldowns[tempDesc.Id] =
@@ -1981,7 +1986,7 @@ namespace Intersect.Server.Entities
                                 );
                             }
 
-                            PacketSender.SendItemCooldown(this, invItem.Id);
+                            PacketSender.SendItemCooldown(this, invItem.ItemId);
                         }
                     }
                     else
