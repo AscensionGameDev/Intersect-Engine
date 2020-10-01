@@ -304,14 +304,12 @@ namespace Intersect.Client.Core
                 }
             }
 
-            if (!Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, key))
             {
-                return;
-            }
-
-            if (Globals.Me.TryBlock())
-            {
-                return;
+                if (Globals.Me.TryBlock())
+                {
+                    return;
+                }
             }
 
             if (key != Keys.None)
