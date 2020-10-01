@@ -494,6 +494,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201001163344_AddingCooldownGroupToItems.cs" />
+    <Compile Include="Migrations\Game\20201001163344_AddingCooldownGroupToItems.designer.cs">
+      <DependentUpon>20201001163344_AddingCooldownGroupToItems.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

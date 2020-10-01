@@ -126,6 +126,13 @@ namespace Intersect.Editor.Forms.Editors
                 cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
             }
 
+            cmbCooldownGroup.Items.Clear();
+            cmbCooldownGroup.Items.Add(Strings.General.none);
+            foreach(var group in Options.Instance.Item.CooldownGroups)
+            {
+                cmbCooldownGroup.Items.Add(group);
+            }
+
             nudStr.Maximum = Options.MaxStatValue;
             nudMag.Maximum = Options.MaxStatValue;
             nudDef.Maximum = Options.MaxStatValue;
@@ -212,6 +219,7 @@ namespace Intersect.Editor.Forms.Editors
             lblToolType.Text = Strings.ItemEditor.tooltype;
 
             lblCooldown.Text = Strings.ItemEditor.cooldown;
+            lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -362,6 +370,16 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
 
                 nudCooldown.Value = mEditorItem.Cooldown;
+
+                if (mEditorItem.CooldownGroup >= 0 && mEditorItem.CooldownGroup < Options.Instance.Item.CooldownGroups.Count)
+                {
+                    cmbCooldownGroup.SelectedIndex = mEditorItem.CooldownGroup + 1;
+                }
+                else
+                {
+                    cmbCooldownGroup.SelectedIndex = 0;
+                }
+                
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -896,6 +914,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbRarity_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Rarity = cmbRarity.SelectedIndex;
+        }
+
+        private void cmbCooldownGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CooldownGroup = cmbCooldownGroup.SelectedIndex - 1;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

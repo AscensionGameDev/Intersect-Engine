@@ -1957,19 +1957,49 @@ namespace Intersect.Server.Entities
                 if (itemBase.Cooldown > 0)
                 {
                     var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-                    if (ItemCooldowns.ContainsKey(itemBase.Id))
+                    // Are we dealing with a cooldown group, or an individual item?
+                    if (itemBase.CooldownGroup >= 0)
                     {
-                        ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction);
+                        // Set the cooldown for all items matching this cooldown group.
+                        foreach (var invItem in Items)
+                        {
+                            if (invItem == null || invItem.ItemId == Guid.Empty)
+                            {
+                                continue;
+                            }
+
+                            var tempDesc = ItemBase.Get(invItem.ItemId);
+                            if (ItemCooldowns.ContainsKey(tempDesc.Id))
+                            {
+                                ItemCooldowns[tempDesc.Id] =
+                                    Globals.Timing.RealTimeMs + (long)(tempDesc.Cooldown * cooldownReduction);
+                            }
+                            else
+                            {
+                                ItemCooldowns.Add(
+                                    tempDesc.Id, Globals.Timing.RealTimeMs + (long)(tempDesc.Cooldown * cooldownReduction)
+                                );
+                            }
+
+                            PacketSender.SendItemCooldown(this, invItem.Id);
+                        }
                     }
                     else
                     {
-                        ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction)
-                        );
-                    }
+                        if (ItemCooldowns.ContainsKey(itemBase.Id))
+                        {
+                            ItemCooldowns[itemBase.Id] =
+                                Globals.Timing.RealTimeMs + (long)(itemBase.Cooldown * cooldownReduction);
+                        }
+                        else
+                        {
+                            ItemCooldowns.Add(
+                                itemBase.Id, Globals.Timing.RealTimeMs + (long)(itemBase.Cooldown * cooldownReduction)
+                            );
+                        }
 
-                    PacketSender.SendItemCooldown(this, itemBase.Id);
+                        PacketSender.SendItemCooldown(this, itemBase.Id);
+                    }
                 }
             }
         }
