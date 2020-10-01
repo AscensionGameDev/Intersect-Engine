@@ -5483,9 +5483,9 @@ namespace Intersect.Server.Entities
         {
             foreach (var evt in EventLookup)
             {
-                if (evt.Value.MapId == MapId)
+                if (evt.Value.MapId == mapId)
                 {
-                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == MapId && evt.Value.BaseEvent.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == mapId && evt.Value.BaseEvent.Id == eventId)
                     {
                         var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
                         var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;
