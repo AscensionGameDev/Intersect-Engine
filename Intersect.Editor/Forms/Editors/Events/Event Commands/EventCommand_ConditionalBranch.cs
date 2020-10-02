@@ -62,6 +62,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudVariableValue.Minimum = long.MinValue;
             nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
+            chkHasElse.Checked = refCommand.ElseEnabled;
             SetupFormValues((dynamic) refCommand);
             mLoading = false;
         }
@@ -78,6 +79,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
 
             chkNegated.Text = Strings.EventConditional.negated;
+            chkHasElse.Text = Strings.EventConditional.HasElse;
 
             //Variable Is
             grpVariable.Text = Strings.EventConditional.variable;
@@ -472,6 +474,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             SaveFormValues((dynamic) Condition);
             Condition.Negated = chkNegated.Checked;
+            Condition.ElseEnabled = chkHasElse.Checked;
 
             if (mEventCommand != null)
             {
@@ -1129,7 +1132,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.Quantity = (int) nudFreeInventorySlots.Value;
         }
         #endregion
-
     }
 
 }

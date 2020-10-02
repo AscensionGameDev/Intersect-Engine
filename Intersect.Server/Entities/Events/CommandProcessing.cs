@@ -188,18 +188,20 @@ namespace Intersect.Server.Entities.Events
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
             }
 
-            if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
+            if (!success && command.Condition.ElseEnabled && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
             {
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];
             }
 
-            var tmpStack = new CommandInstance(stackInfo.Page)
+            if (newCommandList != null)
             {
-                CommandList = newCommandList,
-                CommandIndex = 0,
-            };
+                var tmpStack = new CommandInstance(stackInfo.Page) {
+                    CommandList = newCommandList,
+                    CommandIndex = 0,
+                };
 
-            callStack.Push(tmpStack);
+                callStack.Push(tmpStack);
+            }
         }
 
         //Exit Event Process Command

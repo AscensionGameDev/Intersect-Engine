@@ -49,6 +49,11 @@ namespace Intersect.GameObjects.Events
 
         public bool Negated { get; set; }
 
+        /// <summary>
+        /// Configures whether or not this condition does or does not have an else branch.
+        /// </summary>
+        public bool ElseEnabled { get; set; } = true;
+
     }
 
     public class VariableIsCondition : Condition
