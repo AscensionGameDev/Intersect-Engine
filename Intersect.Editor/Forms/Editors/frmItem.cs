@@ -126,13 +126,6 @@ namespace Intersect.Editor.Forms.Editors
                 cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
             }
 
-            cmbCooldownGroup.Items.Clear();
-            cmbCooldownGroup.Items.Add(Strings.General.none);
-            foreach(var group in Options.Instance.Item.CooldownGroups)
-            {
-                cmbCooldownGroup.Items.Add(group);
-            }
-
             nudStr.Maximum = Options.MaxStatValue;
             nudMag.Maximum = Options.MaxStatValue;
             nudDef.Maximum = Options.MaxStatValue;
@@ -220,6 +213,19 @@ namespace Intersect.Editor.Forms.Editors
 
             lblCooldown.Text = Strings.ItemEditor.cooldown;
             lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
+            cmbCooldownGroup.Items.Clear();
+            cmbCooldownGroup.Items.Add(Strings.General.none);
+            for (var g = 0; g < Options.Instance.Item.CooldownGroups; g++)
+            {
+                if (Strings.ItemEditor.CooldownGroups.ContainsKey(g))
+                {
+                    cmbCooldownGroup.Items.Add(Strings.ItemEditor.CooldownGroups[g]);
+                }
+                else
+                {
+                    cmbCooldownGroup.Items.Add(Strings.General.Missing);
+                }
+            }
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -371,7 +377,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudCooldown.Value = mEditorItem.Cooldown;
 
-                if (mEditorItem.CooldownGroup >= 0 && mEditorItem.CooldownGroup < Options.Instance.Item.CooldownGroups.Count)
+                if (mEditorItem.CooldownGroup >= 0 && mEditorItem.CooldownGroup < Options.Instance.Item.CooldownGroups)
                 {
                     cmbCooldownGroup.SelectedIndex = mEditorItem.CooldownGroup + 1;
                 }

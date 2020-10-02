@@ -11,24 +11,9 @@ namespace Intersect.Config
     {
 
         /// <summary>
-        /// Defines the list of cooldown groups available for use within the engine and editor, any item assigned to this group will trigger other items the player has on them from within the same group to go on cooldown.
+        /// Defines the number of cooldown groups available for use within the engine and editor, any item assigned to a group will trigger other items the player has on them from within the same group to go on cooldown.
         /// </summary>
-        public List<string> CooldownGroups { get; set; } = new List<string>() {
-            "Potions",
-            "Food",
-            "Special"
-        };
+        public int CooldownGroups { get; set; } = 5;
 
-        [OnDeserializing]
-        internal void OnDeserializingMethod(StreamingContext context)
-        {
-            CooldownGroups.Clear();
-        }
-
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            CooldownGroups = new List<string>(CooldownGroups.Distinct());
-        }
     }
 }

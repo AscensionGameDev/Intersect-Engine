@@ -2732,6 +2732,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString none = @"None";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Missing = @"Missing Translation";
+
         }
 
         public struct ItemEditor
@@ -2794,6 +2797,15 @@ Tick timer saved in server config.json.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CooldownGroup = @"Cooldown Group:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> CooldownGroups = new Dictionary<int, LocalizedString> {
+                { 0, @"Health Potions" },
+                { 1, @"Mana Potions" },
+                { 2, @"Food" },
+                { 3, @"Spells" },
+                { 4, @"Misc" }
+            };
 
             public static LocalizedString copy = @"Copy Item";
 
