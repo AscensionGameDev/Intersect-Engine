@@ -2799,13 +2799,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString CooldownGroup = @"Cooldown Group:";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> CooldownGroups = new Dictionary<int, LocalizedString> {
-                { 0, @"Health Potions" },
-                { 1, @"Mana Potions" },
-                { 2, @"Food" },
-                { 3, @"Spells" },
-                { 4, @"Misc" }
-            };
+            public static LocalizedString CooldownGroupTitle = @"Add Cooldown Group";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CooldownGroupPrompt = @"Enter a name for the cooldown group you'd like to add:";
 
             public static LocalizedString copy = @"Copy Item";
 

@@ -29,6 +29,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private List<string> mKnownFolders = new List<string>();
 
+        private List<string> mKnownCooldownGroups = new List<string>();
+
         public FrmItem()
         {
             ApplyHooks();
@@ -213,19 +215,6 @@ namespace Intersect.Editor.Forms.Editors
 
             lblCooldown.Text = Strings.ItemEditor.cooldown;
             lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
-            cmbCooldownGroup.Items.Clear();
-            cmbCooldownGroup.Items.Add(Strings.General.none);
-            for (var g = 0; g < Options.Instance.Item.CooldownGroups; g++)
-            {
-                if (Strings.ItemEditor.CooldownGroups.ContainsKey(g))
-                {
-                    cmbCooldownGroup.Items.Add(Strings.ItemEditor.CooldownGroups[g]);
-                }
-                else
-                {
-                    cmbCooldownGroup.Items.Add(Strings.General.Missing);
-                }
-            }
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -287,6 +276,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
+                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
@@ -376,16 +366,6 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
 
                 nudCooldown.Value = mEditorItem.Cooldown;
-
-                if (mEditorItem.CooldownGroup >= 0 && mEditorItem.CooldownGroup < Options.Instance.Item.CooldownGroups)
-                {
-                    cmbCooldownGroup.SelectedIndex = mEditorItem.CooldownGroup + 1;
-                }
-                else
-                {
-                    cmbCooldownGroup.SelectedIndex = 0;
-                }
-                
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -924,7 +904,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbCooldownGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.CooldownGroup = cmbCooldownGroup.SelectedIndex - 1;
+            mEditorItem.CooldownGroup = cmbCooldownGroup.Text;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
@@ -955,7 +935,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbProjectile.Items.Add(Strings.General.none);
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
 
-            //Collect folders
+            //Collect folders and colldown groups
             var mFolders = new List<string>();
             foreach (var itm in ItemBase.Lookup)
             {
@@ -968,7 +948,18 @@ namespace Intersect.Editor.Forms.Editors
                         mKnownFolders.Add(((ItemBase) itm.Value).Folder);
                     }
                 }
+
+                if (!string.IsNullOrEmpty(((ItemBase)itm.Value).CooldownGroup) && 
+                    !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
+                {
+                    mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);    
+                }
             }
+
+            mKnownCooldownGroups.Sort();
+            cmbCooldownGroup.Items.Clear();
+            cmbCooldownGroup.Items.Add("");
+            cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
             mFolders.Sort();
             mKnownFolders.Sort();
@@ -1173,8 +1164,28 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
+
         #endregion
 
+        private void btnAddCooldownGroup_Click(object sender, EventArgs e)
+        {
+            var cdGroupName = "";
+            var result = DarkInputBox.ShowInformation(
+                Strings.ItemEditor.CooldownGroupPrompt, Strings.ItemEditor.CooldownGroupTitle, ref cdGroupName,
+                DarkDialogButton.OkCancel
+            );
+
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(cdGroupName))
+            {
+                if (!cmbCooldownGroup.Items.Contains(cdGroupName))
+                {
+                    mEditorItem.CooldownGroup = cdGroupName;
+                    mKnownCooldownGroups.Add(cdGroupName);
+                    InitEditor();
+                    cmbCooldownGroup.Text = cdGroupName;
+                }
+            }
+        }
     }
 
 }

@@ -1958,7 +1958,7 @@ namespace Intersect.Server.Entities
                 {
                     var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
                     // Are we dealing with a cooldown group, or an individual item?
-                    if (itemBase.CooldownGroup >= 0)
+                    if (itemBase.CooldownGroup.Trim().Length > 0)
                     {
                         // Set the cooldown for all items matching this cooldown group.
                         foreach (var invItem in Items)
@@ -1986,7 +1986,7 @@ namespace Intersect.Server.Entities
                                 );
                             }
 
-                            PacketSender.SendItemCooldown(this, invItem.ItemId);
+                            PacketSender.SendItemCooldown(this, tempDesc.Id);
                         }
                     }
                     else

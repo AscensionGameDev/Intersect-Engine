@@ -207,7 +207,6 @@
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
-    <Compile Include="Config\ItemOptions.cs" />
     <Compile Include="Config\LootOptions.cs" />
     <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />

@@ -211,7 +211,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("Cooldown");
 
-                    b.Property<int>("CooldownGroup");
+                    b.Property<string>("CooldownGroup");
 
                     b.Property<int>("CritChance");
 

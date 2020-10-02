@@ -6,11 +6,11 @@ namespace Intersect.Server.Migrations.Game
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.AddColumn<string>(
                 name: "CooldownGroup",
                 table: "Items",
                 nullable: false,
-                defaultValue: -1);
+                defaultValue: string.Empty);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

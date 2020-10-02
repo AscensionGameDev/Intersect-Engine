@@ -42,6 +42,9 @@ namespace Intersect.Editor.Forms.Editors
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.btnAddCooldownGroup = new DarkUI.Controls.DarkButton();
+            this.cmbCooldownGroup = new DarkUI.Controls.DarkComboBox();
+            this.lblCooldownGroup = new System.Windows.Forms.Label();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
@@ -181,8 +184,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.cmbCooldownGroup = new DarkUI.Controls.DarkComboBox();
-            this.lblCooldownGroup = new System.Windows.Forms.Label();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
@@ -320,6 +321,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.btnAddCooldownGroup);
             this.grpGeneral.Controls.Add(this.cmbCooldownGroup);
             this.grpGeneral.Controls.Add(this.lblCooldownGroup);
             this.grpGeneral.Controls.Add(this.btnAddFolder);
@@ -352,6 +354,46 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // btnAddCooldownGroup
+            // 
+            this.btnAddCooldownGroup.Location = new System.Drawing.Point(415, 206);
+            this.btnAddCooldownGroup.Name = "btnAddCooldownGroup";
+            this.btnAddCooldownGroup.Padding = new System.Windows.Forms.Padding(5);
+            this.btnAddCooldownGroup.Size = new System.Drawing.Size(18, 21);
+            this.btnAddCooldownGroup.TabIndex = 52;
+            this.btnAddCooldownGroup.Text = "+";
+            this.btnAddCooldownGroup.Click += new System.EventHandler(this.btnAddCooldownGroup_Click);
+            // 
+            // cmbCooldownGroup
+            // 
+            this.cmbCooldownGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCooldownGroup.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCooldownGroup.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCooldownGroup.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCooldownGroup.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCooldownGroup.ButtonIcon")));
+            this.cmbCooldownGroup.DrawDropdownHoverOutline = false;
+            this.cmbCooldownGroup.DrawFocusRectangle = false;
+            this.cmbCooldownGroup.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCooldownGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCooldownGroup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCooldownGroup.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCooldownGroup.FormattingEnabled = true;
+            this.cmbCooldownGroup.Location = new System.Drawing.Point(262, 206);
+            this.cmbCooldownGroup.Name = "cmbCooldownGroup";
+            this.cmbCooldownGroup.Size = new System.Drawing.Size(147, 21);
+            this.cmbCooldownGroup.TabIndex = 51;
+            this.cmbCooldownGroup.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbCooldownGroup.SelectedIndexChanged += new System.EventHandler(this.cmbCooldownGroup_SelectedIndexChanged);
+            // 
+            // lblCooldownGroup
+            // 
+            this.lblCooldownGroup.AutoSize = true;
+            this.lblCooldownGroup.Location = new System.Drawing.Point(259, 189);
+            this.lblCooldownGroup.Name = "lblCooldownGroup";
+            this.lblCooldownGroup.Size = new System.Drawing.Size(89, 13);
+            this.lblCooldownGroup.TabIndex = 50;
+            this.lblCooldownGroup.Text = "Cooldown Group:";
             // 
             // btnAddFolder
             // 
@@ -2390,44 +2432,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // cmbCooldownGroup
-            // 
-            this.cmbCooldownGroup.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbCooldownGroup.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbCooldownGroup.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbCooldownGroup.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCooldownGroup.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCooldownGroup.ButtonIcon")));
-            this.cmbCooldownGroup.DrawDropdownHoverOutline = false;
-            this.cmbCooldownGroup.DrawFocusRectangle = false;
-            this.cmbCooldownGroup.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbCooldownGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCooldownGroup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbCooldownGroup.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbCooldownGroup.FormattingEnabled = true;
-            this.cmbCooldownGroup.Items.AddRange(new object[] {
-            "None",
-            "Common",
-            "Uncommon",
-            "Rare",
-            "Epic",
-            "Legendary"});
-            this.cmbCooldownGroup.Location = new System.Drawing.Point(262, 206);
-            this.cmbCooldownGroup.Name = "cmbCooldownGroup";
-            this.cmbCooldownGroup.Size = new System.Drawing.Size(171, 21);
-            this.cmbCooldownGroup.TabIndex = 51;
-            this.cmbCooldownGroup.Text = "None";
-            this.cmbCooldownGroup.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbCooldownGroup.SelectedIndexChanged += new System.EventHandler(this.cmbCooldownGroup_SelectedIndexChanged);
-            // 
-            // lblCooldownGroup
-            // 
-            this.lblCooldownGroup.AutoSize = true;
-            this.lblCooldownGroup.Location = new System.Drawing.Point(259, 189);
-            this.lblCooldownGroup.Name = "lblCooldownGroup";
-            this.lblCooldownGroup.Size = new System.Drawing.Size(89, 13);
-            this.lblCooldownGroup.TabIndex = 50;
-            this.lblCooldownGroup.Text = "Cooldown Group:";
-            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2662,5 +2666,6 @@ namespace Intersect.Editor.Forms.Editors
     private Label lblRegenHint;
         private DarkComboBox cmbCooldownGroup;
         private Label lblCooldownGroup;
+        private DarkButton btnAddCooldownGroup;
     }
 }

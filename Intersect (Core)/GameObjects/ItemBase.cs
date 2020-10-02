@@ -75,7 +75,7 @@ namespace Intersect.GameObjects
         /// <summary>
         /// Defines which cooldown group this item belongs to.
         /// </summary>
-        public int CooldownGroup { get; set; } = -1;
+        public string CooldownGroup { get; set; } = string.Empty;
 
         public int Damage { get; set; }
 
