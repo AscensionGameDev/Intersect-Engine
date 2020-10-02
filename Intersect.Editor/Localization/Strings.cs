@@ -1852,6 +1852,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString negated = @"Negated";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString HasElse = @"Has Else";
+
             public static LocalizedString numericvariable = @"Numeric Variable:";
 
             public static LocalizedString okay = @"Ok";
