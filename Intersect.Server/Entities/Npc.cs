@@ -169,16 +169,20 @@ namespace Intersect.Server.Entities
         //Targeting
         public void AssignTarget(Entity en)
         {
-            //Can't assign a new target if taunted
-            var statuses = Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            //Can't assign a new target if taunted, unless we're resetting their target somehow.
+            var pathTarget = mPathFinder.GetTarget();
+            if (en != null || (pathTarget != null && (pathTarget.TargetMapId != AggroCenterMap.Id ||  pathTarget.TargetX != AggroCenterX || pathTarget.TargetY != AggroCenterY)))
             {
-                if (status.Type == StatusTypes.Taunt)
+                var statuses = Statuses.Values.ToArray();
+                foreach (var status in statuses)
                 {
-                    return;
+                    if (status.Type == StatusTypes.Taunt)
+                    {
+                        return;
+                    }
                 }
             }
-
+            
             if (en.GetType() == typeof(Projectile))
             {
                 if (((Projectile) en).Owner != this)
@@ -1027,6 +1031,7 @@ namespace Intersect.Server.Entities
                 if (Options.Npc.ResetVitalsAndStatusses)
                 {
                     Statuses.Clear();
+                    DoT.Clear();
                     for (var v = 0; v < (int)Vitals.VitalCount; v++)
                     {
                         RestoreVital((Vitals)v);
