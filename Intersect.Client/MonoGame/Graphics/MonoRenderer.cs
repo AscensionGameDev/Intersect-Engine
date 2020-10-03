@@ -854,7 +854,7 @@ namespace Intersect.Client.MonoGame.Graphics
             return new MonoShader(shaderName, mContentManager);
         }
 
-        public override GameTexture LoadTexture(string filename)
+        public override GameTexture LoadTexture(string filename, string realFilename)
         {
             var packFrame = GameTexturePacks.GetFrame(filename);
             if (packFrame != null)
@@ -865,7 +865,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 return tx;
             }
 
-            var tex = new MonoTexture(mGraphicsDevice, filename);
+            var tex = new MonoTexture(mGraphicsDevice, filename, realFilename);
             mAllTextures.Add(tex);
 
             return tex;
