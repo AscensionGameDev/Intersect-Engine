@@ -1593,7 +1593,7 @@ namespace Intersect.Editor.Core
 
                     if (height > Options.TileHeight)
                     {
-                        destinationY -= Options.TileHeight;
+                        destinationY -= (height - Options.TileHeight);
                     }
 
                     if (width > Options.TileWidth)
