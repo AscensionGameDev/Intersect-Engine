@@ -1571,6 +1571,10 @@ namespace Intersect.Editor.Core
                             eventTex = GameContentManager.GetTexture(
                                 GameContentManager.TextureType.Entity, tmpGraphic.Filename
                             );
+                            if (eventTex == null)
+                            {
+                                continue;
+                            }
 
                             sourceX = (int)tmpGraphic.X * (eventTex.Width / Options.Instance.Sprites.NormalFrames);
                             sourceY = (int)tmpGraphic.Y * (eventTex.Height / Options.Instance.Sprites.Directions);
@@ -1582,6 +1586,10 @@ namespace Intersect.Editor.Core
                             eventTex = GameContentManager.GetTexture(
                                 GameContentManager.TextureType.Tileset, tmpGraphic.Filename
                             );
+                            if (eventTex == null)
+                            {
+                                continue;
+                            }
 
                             sourceX = (int)tmpGraphic.X * Options.TileWidth;
                             sourceY = (int)tmpGraphic.Y * Options.TileHeight;
