@@ -58,8 +58,6 @@ namespace Intersect.Client.MonoGame
             Strings.Load();
 
             mGraphics = new GraphicsDeviceManager(this);
-            mGraphics.PreferredBackBufferWidth = 800;
-            mGraphics.PreferredBackBufferHeight = 480;
             mGraphics.PreferHalfPixelOffset = true;
             mGraphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
             {
@@ -122,6 +120,11 @@ namespace Intersect.Client.MonoGame
             if (mUpdater != null)
             {
                 LoadUpdaterContent();
+
+                //Set the size of the updater screen before applying graphic changes.
+                //We need to do this here instead of in the constructor for the size change to apply to Linux
+                mGraphics.PreferredBackBufferWidth = 800;
+                mGraphics.PreferredBackBufferHeight = 480;
             }
 
             mGraphics.ApplyChanges();
