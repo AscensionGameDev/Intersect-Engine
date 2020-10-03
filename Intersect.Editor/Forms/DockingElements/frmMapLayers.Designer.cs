@@ -120,6 +120,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lightEditor = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.pnlNpcs = new System.Windows.Forms.Panel();
+            this.chkAnimationBlock = new DarkUI.Controls.DarkCheckBox();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -875,12 +876,13 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.grpAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpAnimation.Controls.Add(this.chkAnimationBlock);
             this.grpAnimation.Controls.Add(this.cmbAnimationAttribute);
             this.grpAnimation.Controls.Add(this.lblAnimation);
             this.grpAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpAnimation.Location = new System.Drawing.Point(6, 179);
             this.grpAnimation.Name = "grpAnimation";
-            this.grpAnimation.Size = new System.Drawing.Size(256, 69);
+            this.grpAnimation.Size = new System.Drawing.Size(256, 96);
             this.grpAnimation.TabIndex = 33;
             this.grpAnimation.TabStop = false;
             this.grpAnimation.Text = "Animaton";
@@ -1304,6 +1306,15 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlNpcs.Size = new System.Drawing.Size(276, 422);
             this.pnlNpcs.TabIndex = 1;
             // 
+            // chkAnimationBlock
+            // 
+            this.chkAnimationBlock.AutoSize = true;
+            this.chkAnimationBlock.Location = new System.Drawing.Point(16, 66);
+            this.chkAnimationBlock.Name = "chkAnimationBlock";
+            this.chkAnimationBlock.Size = new System.Drawing.Size(73, 17);
+            this.chkAnimationBlock.TabIndex = 27;
+            this.chkAnimationBlock.Text = "Block Tile";
+            // 
             // FrmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1463,5 +1474,6 @@ namespace Intersect.Editor.Forms.DockingElements
         private DarkNumericUpDown nudWarpX;
         private DarkNumericUpDown nudItemQuantity;
         private DarkNumericUpDown nudSoundDistance;
+        private DarkCheckBox chkAnimationBlock;
     }
 }
