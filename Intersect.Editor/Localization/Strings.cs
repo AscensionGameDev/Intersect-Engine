@@ -3088,6 +3088,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString resources = @"Resources";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Events = @"Events";
+
             public static LocalizedString revision = @"Revision: {00}";
 
             public static LocalizedString run = @"Run Client";
