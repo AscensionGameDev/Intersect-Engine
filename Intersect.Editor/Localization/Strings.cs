@@ -630,8 +630,6 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString mapanimation = @"Animation";
 
-            public static LocalizedString mapanimationblock = @"Block Tile";
-
             public static LocalizedString mapsound = @"Map Sound";
 
             public static LocalizedString npcavoid = @"NPC Avoid";

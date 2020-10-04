@@ -328,7 +328,7 @@ namespace Intersect.Server.Entities
                 var tileAttribute = MapInstance.Get(tile.GetMapId()).Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
-                    if (tileAttribute.Type == MapAttributes.Blocked || (tileAttribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
+                    if (tileAttribute.Type == MapAttributes.Blocked)
                     {
                         return -2;
                     }

@@ -181,13 +181,10 @@ namespace Intersect.GameObjects.Maps
 
         public Guid AnimationId { get; set; }
 
-        public bool IsBlock { get; set; }
-
         public override MapAttribute Clone()
         {
             var att = (MapAnimationAttribute) base.Clone();
             att.AnimationId = AnimationId;
-            att.IsBlock = IsBlock;
 
             return att;
         }
