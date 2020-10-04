@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
@@ -232,6 +233,24 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
+
+        /// <summary>
+        /// Gets an array of all items sharing the provided cooldown group.
+        /// </summary>
+        /// <param name="cooldownGroup">The cooldown group to search for.</param>
+        /// <returns>Returns an array of <see cref="ItemBase"/> containing all items with the supplied cooldown group.</returns>
+        public static ItemBase[] GetCooldownGroup(string cooldownGroup)
+        {
+            cooldownGroup = cooldownGroup.Trim();
+
+            // No point looking for nothing.
+            if (string.IsNullOrWhiteSpace(cooldownGroup))
+            {
+                return Array.Empty<ItemBase>();
+            }
+
+            return Lookup.Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (ItemBase)i.Value).ToArray();
+        }
 
         private void Initialize()
         {

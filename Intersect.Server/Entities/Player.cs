@@ -1960,33 +1960,35 @@ namespace Intersect.Server.Entities
                     // Are we dealing with a cooldown group, or an individual item?
                     if (itemBase.CooldownGroup.Trim().Length > 0)
                     {
-                        // Set the cooldown for all items matching this cooldown group.
-                        foreach (var invItem in Items)
+                        // Retrieve all items matching this cooldown group, and the matched cooldown time should we need to use this.
+                        var matchingItems = ItemBase.GetCooldownGroup(itemBase.CooldownGroup);
+                        var matchedCooldowntime = itemBase.Cooldown;
+                        if (Options.Combat.MatchGroupCooldownHighest)
                         {
-                            if (invItem == null || invItem.ItemId == Guid.Empty)
-                            {
-                                continue;
-                            }
+                            matchedCooldowntime =  matchingItems.Max(i => i.Cooldown);
+                        }
 
-                            var tempDesc = ItemBase.Get(invItem.ItemId);
-                            if (tempDesc.CooldownGroup != itemBase.CooldownGroup)
-                            {
-                                continue;
-                            }
+                        // Set the cooldown for all items matching this cooldown group.
+                        foreach (var item in matchingItems)
+                        {
+                            // Do we have to match our cooldown times, or do we use each individual item cooldown?
+                            var cooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
 
-                            if (ItemCooldowns.ContainsKey(tempDesc.Id))
+                            // Do we already have a cooldown entry for this item?
+                            if (ItemCooldowns.ContainsKey(item.Id))
                             {
-                                ItemCooldowns[tempDesc.Id] =
-                                    Globals.Timing.RealTimeMs + (long)(tempDesc.Cooldown * cooldownReduction);
+                                ItemCooldowns[item.Id] =
+                                    Globals.Timing.RealTimeMs + (long)(cooldown * cooldownReduction);
                             }
                             else
                             {
                                 ItemCooldowns.Add(
-                                    tempDesc.Id, Globals.Timing.RealTimeMs + (long)(tempDesc.Cooldown * cooldownReduction)
+                                    item.Id, Globals.Timing.RealTimeMs + (long)(cooldown * cooldownReduction)
                                 );
                             }
 
-                            PacketSender.SendItemCooldown(this, tempDesc.Id);
+                            // Notify the user UI of the cooldown change!
+                            PacketSender.SendItemCooldown(this, item.Id);
                         }
                     }
                     else

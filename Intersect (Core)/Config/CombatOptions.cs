@@ -17,6 +17,19 @@
         //Combat
         public int RegenTime = 3000; //3 seconds
 
+        // Cooldowns
+
+        /// <summary>
+        /// Configures whether cooldowns within cooldown groups should match.
+        /// </summary>
+        public bool MatchGroupCooldowns = true;
+
+        /// <summary>
+        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+        /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item being used when false.
+        /// </summary>
+        public bool MatchGroupCooldownHighest = true;
+
     }
 
 }
