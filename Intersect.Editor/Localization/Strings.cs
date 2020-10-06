@@ -1226,6 +1226,21 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString amount = @"Amount:";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AmountType = @"Amount Type";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Variable = @"Variable";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Manual = @"Manual";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayerVariable = @"Player Variable";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ServerVariable = @"Global Variable";
+
             public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString item = @"Item:";
