@@ -350,7 +350,22 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            player.GiveExperience(command.Exp);
+            var quantity = command.Exp;
+            if (command.UseVariable)
+            {
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+                        break;
+                }
+            }
+
+            player.GiveExperience(quantity);
         }
 
         //Change Level Command
