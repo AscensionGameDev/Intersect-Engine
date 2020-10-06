@@ -438,6 +438,7 @@
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\GameData\Migrations\CerasVersionToleranceMigration.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
     <Compile Include="Database\Logging\RequestLog.cs" />
@@ -494,6 +495,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
+    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.designer.cs">
+      <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

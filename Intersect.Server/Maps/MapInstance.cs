@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
+using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -1107,7 +1107,7 @@ namespace Intersect.Server.Maps
         public bool TileBlocked(int x, int y)
         {
             //Check if tile is a blocked attribute
-            if (Attributes[x, y] != null && Attributes[x, y].Type == MapAttributes.Blocked)
+            if (Attributes[x, y] != null && (Attributes[x, y].Type == MapAttributes.Blocked))
             {
                 return true;
             }
@@ -1165,6 +1165,24 @@ namespace Intersect.Server.Maps
         public static MapInstance Get(Guid id)
         {
             return MapInstance.Lookup.Get<MapInstance>(id);
+        }
+
+        public void DestroyOrphanedLayers()
+        {
+            if (Layers == null && TileData != null)
+            {
+                Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(TileData), mJsonSerializerSettings);
+                foreach (var key in Layers.Keys.ToArray())
+                {
+                    if (!Options.Instance.MapOpts.Layers.All.Contains(key))
+                    {
+                        Layers.Remove(key);
+                    }
+                }
+                TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
+                Layers = null;
+                
+            }
         }
 
         public override void Delete()

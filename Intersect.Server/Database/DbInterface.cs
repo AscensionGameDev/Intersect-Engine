@@ -766,6 +766,10 @@ namespace Intersect.Server.Database
                         foreach (var map in maps)
                         {
                             MapInstance.Lookup.Set(map.Id, map);
+                            if (Options.Instance.MapOpts.Layers.DestroyOrphanedLayers)
+                            {
+                                map.DestroyOrphanedLayers();
+                            }
                         }
 
                         break;

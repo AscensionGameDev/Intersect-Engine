@@ -203,10 +203,12 @@
     <Compile Include="Collections\Sanitizer.cs" />
     <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
+    <Compile Include="Compression\LZ4.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Config\ChatOptions.cs" />
+    <Compile Include="Config\LayerOptions.cs" />
     <Compile Include="Config\LootOptions.cs" />
     <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
@@ -592,7 +594,6 @@
     <Compile Include="GameObjects\Maps\MapResourceSpawn.cs" />
     <Compile Include="GameObjects\Maps\MapBase.cs" />
     <Compile Include="GameObjects\Maps\MapTile.cs" />
-    <Compile Include="GameObjects\Maps\MapTileArray.cs" />
     <Compile Include="GameObjects\NpcBase.cs" />
     <Compile Include="GameObjects\Switches and Variables\PlayerVariableBase.cs" />
     <Compile Include="GameObjects\ProjectileBase.cs" />
