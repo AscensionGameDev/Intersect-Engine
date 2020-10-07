@@ -935,7 +935,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbProjectile.Items.Add(Strings.General.none);
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
 
-            //Collect folders and colldown groups
+            //Collect folders and cooldown groups
             var mFolders = new List<string>();
             foreach (var itm in ItemBase.Lookup)
             {
@@ -949,7 +949,7 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
-                if (!string.IsNullOrEmpty(((ItemBase)itm.Value).CooldownGroup) && 
+                if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) && 
                     !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
                 {
                     mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);    
@@ -958,7 +958,7 @@ namespace Intersect.Editor.Forms.Editors
 
             mKnownCooldownGroups.Sort();
             cmbCooldownGroup.Items.Clear();
-            cmbCooldownGroup.Items.Add("");
+            cmbCooldownGroup.Items.Add(string.Empty);
             cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
             mFolders.Sort();

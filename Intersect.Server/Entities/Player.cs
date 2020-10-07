@@ -1958,7 +1958,7 @@ namespace Intersect.Server.Entities
                 {
                     var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
                     // Are we dealing with a cooldown group, or an individual item?
-                    if (itemBase.CooldownGroup.Trim().Length > 0)
+                    if (!string.IsNullOrWhiteSpace(itemBase.CooldownGroup))
                     {
                         // Retrieve all items matching this cooldown group, and the matched cooldown time should we need to use this.
                         var matchingItems = ItemBase.GetCooldownGroup(itemBase.CooldownGroup);
