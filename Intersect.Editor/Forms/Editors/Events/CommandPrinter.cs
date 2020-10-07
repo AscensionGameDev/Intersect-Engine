@@ -606,10 +606,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                 switch (command.VariableType)
                 {
                     case VariableTypes.PlayerVariable:
-                        exp = string.Format(@"{0}: {1}", Strings.EventGiveExperience.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
+                        exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
                         break;
                     case VariableTypes.ServerVariable:
-                        exp = string.Format(@"{0}: {1}", Strings.EventGiveExperience.ServerVariable, ServerVariableBase.GetName(command.VariableId));
+                        exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.ServerVariable, ServerVariableBase.GetName(command.VariableId));
                         break;
                 }
 

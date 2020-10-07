@@ -114,7 +114,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbVariable.FormattingEnabled = true;
             this.cmbVariable.Location = new System.Drawing.Point(67, 44);
             this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(115, 21);
+            this.cmbVariable.Size = new System.Drawing.Size(219, 21);
             this.cmbVariable.TabIndex = 39;
             this.cmbVariable.Text = null;
             this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
