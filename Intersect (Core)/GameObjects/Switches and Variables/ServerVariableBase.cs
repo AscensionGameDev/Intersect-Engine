@@ -66,7 +66,7 @@ namespace Intersect.GameObjects
         /// <returns>Returns an array of names.</returns>
         public static string[] GetNamesByType(VariableDataTypes dataType)
         {
-            return Lookup.Where(x => ((ServerVariableBase)x.Value).Type == dataType).Select(x => ((ServerVariableBase)x.Value).Name).OrderBy(x => x).ToArray();
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Name).ToArray();
         }
 
         /// <summary>
