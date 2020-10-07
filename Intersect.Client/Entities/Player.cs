@@ -1344,6 +1344,11 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            if (AttackTimer > Globals.System.GetTimeMs())
+            {
+                return;
+            }
+
             var tmpX = (sbyte) X;
             var tmpY = (sbyte) Y;
             Entity blockedBy = null;
