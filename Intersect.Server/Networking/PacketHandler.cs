@@ -244,11 +244,12 @@ namespace Intersect.Server.Networking
                 var configurableAllowedSpikePackets = Options.Instance.SecurityOpts.PacketOpts.AllowedSpikePackets;
                 var configurableBaseDesyncForgiveness = Options.Instance.SecurityOpts.PacketOpts.BaseDesyncForegiveness;
                 var configurablePingDesyncForgivenessFactor = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessFactor;
+                var configurablePacketDesyncForgivenessInternal = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessInterval;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
                 var errorRangeMinimum = ping - errorMargin;
                 var errorRangeMaximum = ping + errorMargin;
-                
+
                 var deltaWithErrorMinimum = deltaAdjusted - errorRangeMinimum;
                 var deltaWithErrorMaximum = deltaAdjusted - errorRangeMaximum;
 
@@ -267,6 +268,14 @@ namespace Intersect.Server.Networking
 
                 var adjustedDesync = Math.Abs(deltaAdjusted);
                 var timeDesync = adjustedDesync > configurableBaseDesyncForgiveness + errorRangeMaximum * configurablePingDesyncForgivenessFactor;
+
+                if (timeDesync && Globals.Timing.MillisecondsUTC > client.LastPacketDesyncForgiven)
+                {
+                    client.LastPacketDesyncForgiven = Globals.Timing.MillisecondsUTC + configurablePacketDesyncForgivenessInternal;
+                    PacketSender.SendPing(client, false);
+                    timeDesync = false;
+                }
+
 
                 if (Debugger.IsAttached)
                 {
