@@ -685,6 +685,71 @@ namespace Intersect.Client.Maps
             }
         }
 
+        /// <summary>
+        /// Draws all item names for the items present on this map.
+        /// </summary>
+        public void DrawItemNames()
+        {
+            var mapItems = new Dictionary<Point, List<Tuple<string, LabelColor>>>();
+            foreach (var item in MapItems)
+            {
+                // Are we allowed to see and pick this item up?
+                if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
+                {
+                    // This item does not apply to us!
+                    continue;
+                }
+
+                // Gather up all our map items and collect their relevant information based on location.
+                var itemBase = ItemBase.Get(item.Value.ItemId);
+                if (itemBase != null)
+                {
+                    var location = new Point(item.Value.X, item.Value.Y);
+                    if (!mapItems.ContainsKey(location))
+                    {
+                        mapItems.Add(location, new List<Tuple<string, LabelColor>>());
+                    }
+
+                    var name = itemBase.Name;
+                    if (itemBase.Stackable)
+                    {
+                        name = Localization.Strings.General.MapItemStackable.ToString(itemBase.Name, item.Value.Quantity);
+                    }
+                    mapItems[location].Add(new Tuple<string, LabelColor>(name, CustomColors.Items.MapRarities[itemBase.Rarity]));
+                }
+            }
+
+            // Draw map item names, where items sharing a location have their names rendered above eachother.
+            foreach(var itemCollection in mapItems)
+            {
+                var location = itemCollection.Key;
+                var items = itemCollection.Value;
+                // Reverse the list so they are listed in the order we pick them up.
+                items.Reverse();
+
+                for (var index = 0; index < items.Count; index++)
+                {
+                    var name = items[index].Item1;
+                    var color = items[index].Item2;
+                    var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                    var offsetY = (index * textSize.Y);
+                    var x = (int)Math.Ceiling(((location.X * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
+                    var y = (int)Math.Ceiling(((location.Y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+
+                    if (color.Background != Color.Transparent)
+                    {
+                        Graphics.DrawGameTexture(
+                            Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                            new FloatRect(x - 4, y, textSize.X + 8, textSize.Y), color.Background
+                        );
+                    }
+
+                    Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, x, y, 1, color.Name, true, null, color.Outline);
+                }
+            }
+
+        }
+
         private void DrawAutoTile(
             int layerNum,
             float destX,

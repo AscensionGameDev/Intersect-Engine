@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 
 using Intersect.Localization;
-
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -779,6 +779,9 @@ namespace Intersect.Client.Localization
         {
 
             public static LocalizedString none = @"None";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapItemStackable = @"{00} x{01}";
 
         }
 
