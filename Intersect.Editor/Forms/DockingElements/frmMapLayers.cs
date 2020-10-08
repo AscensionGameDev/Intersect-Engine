@@ -343,34 +343,85 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 for (var i = 0; i < mMapLayers.Count; i++)
                 {
-                    if (i == index)
+                    if (mMapLayers[i].BackgroundImage != null)
                     {
-                        if (!LayerVisibility[Options.Instance.MapOpts.Layers.All[i]])
-                        {
-                            mMapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A_Hide");
-                        }
-                        else
-                        {
-                            mMapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A");
-                        }
+                        mMapLayers[i].BackgroundImage.Dispose();
+                        mMapLayers[i].BackgroundImage = null;
                     }
-                    else
-                    {
-                        if (!LayerVisibility[Options.Instance.MapOpts.Layers.All[i]])
-                        {
-                            mMapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B_Hide");
-                        }
-                        else
-                        {
-                            mMapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B");
-                        }
-                    }
+                    mMapLayers[i].BackgroundImage = DrawLayerImage(i, i == index, !LayerVisibility[Options.Instance.MapOpts.Layers.All[i]]);
                 }
             }
 
             mLastTileLayer = name;
 
             Core.Graphics.TilePreviewUpdated = true;
+        }
+
+        private Bitmap DrawLayerImage(int layerIndex, bool selected, bool hidden)
+        {
+            var img = new Bitmap(32, 32);
+            img.MakeTransparent(img.GetPixel(0, 0));
+
+            var g = Graphics.FromImage(img);
+
+            var layer = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer");
+            var layerSel = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer_sel");
+            var face = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer_face");
+            var faceSel = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer_face_sel");
+            var hiddenIcon = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer_hidden");
+            var drawFace = selected ? faceSel : face;
+
+            var drawIndex = 0;
+
+            //Draw Lower & Middle Layers
+            foreach (var l in Options.Instance.MapOpts.Layers.LowerLayers)
+            {
+                var drawImg = layer;
+                if (drawIndex == layerIndex)
+                {
+                    drawImg = layerSel;
+                }
+                g.DrawImage(drawImg, new PointF(3, 23 - ((drawIndex) * (layer.Height - 4))));
+                drawIndex++;
+            }
+
+
+            //If this image for is an upper layer, render the face below the next layers
+            if (!Options.Instance.MapOpts.Layers.LowerLayers.Contains(Options.Instance.MapOpts.Layers.All[layerIndex]))
+            {
+                g.DrawImage(drawFace, new PointF(13, 13));
+            }
+
+
+            //Draw Upper Layers
+            var middleUpperLayers = Options.Instance.MapOpts.Layers.LowerLayers.ToList();
+            middleUpperLayers.AddRange(Options.Instance.MapOpts.Layers.MiddleLayers);
+            foreach (var l in middleUpperLayers)
+            {
+                var drawImg = layer;
+                if (drawIndex == layerIndex)
+                {
+                    drawImg = layerSel;
+                }
+                g.DrawImage(drawImg, new PointF(3, 23 - ((drawIndex) * (layer.Height - 4))));
+                drawIndex++;
+            }
+
+            //If this image for is a lower layer, render the face above everything
+            if (Options.Instance.MapOpts.Layers.LowerLayers.Contains(Options.Instance.MapOpts.Layers.All[layerIndex]))
+            {
+                g.DrawImage(drawFace, new PointF(13, 13));
+            }
+
+
+            //Draw Hidden Icon
+            if (hidden)
+            {
+                g.DrawImage(hiddenIcon, new PointF(32 - hiddenIcon.Width, 0));
+            }
+
+            g.Dispose();
+            return img;
         }
 
         //Mapping Attribute Functions

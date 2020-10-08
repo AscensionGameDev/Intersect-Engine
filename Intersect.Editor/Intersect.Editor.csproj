@@ -855,6 +855,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\layer_sel.png" />
+    <None Include="Resources\layer_face.png" />
+    <None Include="Resources\layer_face_sel.png" />
+    <None Include="Resources\layer_hidden.png" />
+    <None Include="Resources\layer.png" />
     <None Include="FodyWeavers.xml" />
     <Content Include="Icon.ico" />
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
