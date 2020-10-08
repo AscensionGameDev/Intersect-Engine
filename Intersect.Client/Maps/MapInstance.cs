@@ -690,57 +690,54 @@ namespace Intersect.Client.Maps
         }
 
         /// <summary>
-        /// Draws all item names for the items present on this map.
+        /// Draws all names of the items on the tile the user is hovering over.
         /// </summary>
         public void DrawItemNames()
         {
-            // Draw map item names, where items sharing a location have their names rendered above eachother.
-            foreach(var itemCollection in mMapItemsSorted)
-            {
-                var location = itemCollection.Key;
-                var items = itemCollection.Value;
-
-                // Are we hoving over this tile with our mouse? If not, move on!
-                var mousePos = Graphics.ConvertToWorldPoint(
+            // Get where our mouse is located and convert it to a tile based location.
+            var mousePos = Graphics.ConvertToWorldPoint(
                     Globals.InputManager.GetMousePosition()
-                );
-                var targetRect = new Rectangle(
-                    (int)GetX() + location.X * Options.TileWidth,
-                    (int)GetY() + location.Y * Options.TileHeight,
-                    Options.TileWidth,
-                    Options.TileHeight);
+            );
+            var x = (int)(mousePos.X - (int)GetX()) / Options.TileWidth;
+            var y = (int)(mousePos.Y - (int)GetY()) / Options.TileHeight;
+            var mapId = Id;
 
-                if (!targetRect.Contains((int)mousePos.X, (int)mousePos.Y))
+            // Is this an actual location on this map?
+            if (Globals.Me.GetRealLocation(ref x, ref y, ref mapId))
+            {
+                // Apparently it is! Do we have any items to render here?
+                var tileItems = new List<Tuple<ItemBase, int>>();
+                if (mMapItemsSorted.TryGetValue(new Point(x, y), out tileItems))
                 {
-                    continue;
-                }
-
-                // Go through the list of items and draw their names!
-                for (var index = 0; index < items.Count; index++)
-                {
-                    var name = items[index].Item1.Name;
-                    if (items[index].Item2 > 1)
+                    // Go through the list of items and draw their names!
+                    for (var index = 0; index < tileItems.Count; index++)
                     {
-                        name = Localization.Strings.General.MapItemStackable.ToString(name, items[index].Item2);
-                    }
-                    var color = CustomColors.Items.MapRarities[items[index].Item1.Rarity];
-                    var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
-                    var offsetY = (index * textSize.Y);
-                    var x = GetX() + (int)Math.Ceiling(((location.X * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
-                    var y = GetY() + (int)Math.Ceiling(((location.Y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+                        // Set up all information we need to draw this name.
+                        var name = tileItems[index].Item1.Name;
+                        if (tileItems[index].Item2 > 1)
+                        {
+                            name = Localization.Strings.General.MapItemStackable.ToString(name, tileItems[index].Item2);
+                        }
+                        var color = CustomColors.Items.MapRarities[tileItems[index].Item1.Rarity];
+                        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                        var offsetY = (index * textSize.Y);
+                        var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
+                        var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
 
-                    if (color.Background != Color.Transparent)
-                    {
-                        Graphics.DrawGameTexture(
-                            Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                            new FloatRect(x - 4, y, textSize.X + 8, textSize.Y), color.Background
-                        );
-                    }
+                        // Do we need to draw a background?
+                        if (color.Background != Color.Transparent)
+                        {
+                            Graphics.DrawGameTexture(
+                                Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                                new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y), color.Background
+                            );
+                        }
 
-                    Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, x, y, 1, color.Name, true, null, color.Outline);
+                        // Finaly, draw the actual name!
+                        Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
+                    }
                 }
             }
-
         }
 
         /// <summary>
