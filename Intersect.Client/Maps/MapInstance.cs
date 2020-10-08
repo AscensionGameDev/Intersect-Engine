@@ -700,6 +700,21 @@ namespace Intersect.Client.Maps
                 var location = itemCollection.Key;
                 var items = itemCollection.Value;
 
+                var mousePos = Graphics.ConvertToWorldPoint(
+                    Globals.InputManager.GetMousePosition()
+                );
+                var targetRect = new Rectangle(
+                    location.X * Options.TileWidth,
+                    location.Y * Options.TileHeight,
+                    Options.TileWidth,
+                    Options.TileHeight);
+
+                if (!targetRect.Contains((int)mousePos.X, (int)mousePos.Y))
+                {
+                    continue;
+                }
+
+                // Go through the list of items and draw their names!
                 for (var index = 0; index < items.Count; index++)
                 {
                     var name = items[index].Item1.Name;
