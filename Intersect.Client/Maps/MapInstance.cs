@@ -700,6 +700,7 @@ namespace Intersect.Client.Maps
                 var location = itemCollection.Key;
                 var items = itemCollection.Value;
 
+                // Are we hoving over this tile with our mouse? If not, move on!
                 var mousePos = Graphics.ConvertToWorldPoint(
                     Globals.InputManager.GetMousePosition()
                 );
