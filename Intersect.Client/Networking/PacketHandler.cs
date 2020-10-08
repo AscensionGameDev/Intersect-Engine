@@ -826,6 +826,9 @@ namespace Intersect.Client.Networking
                     map.MapItems.Add(i, new MapItemInstance(packet.Items[i]));
                 }
             }
+
+            // Update our sorted map items for rendering purposes.
+            map.UpdateSortedMapItems();
         }
 
         //MapItemUpdatePacket
@@ -849,6 +852,9 @@ namespace Intersect.Client.Networking
                         map.MapItems[packet.ItemIndex] = new MapItemInstance(packet.ItemData);
                     }
                 }
+
+                // Update our sorted map items for rendering purposes.
+                map.UpdateSortedMapItems();
             }
         }
 

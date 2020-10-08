@@ -61,6 +61,12 @@ namespace Intersect.Client.Maps
         //Map Items
         public Dictionary<int, MapItemInstance> MapItems = new Dictionary<int, MapItemInstance>();
 
+        /// <summary>
+        /// A sorted dictionary of our map items based on location.
+        /// Each point location has a list of item bases to retrieve icons and colours from as well as a count of said item.
+        /// </summary>
+        private Dictionary<Point, List<Tuple<ItemBase, int>>> mMapItemsSorted = new Dictionary<Point, List<Tuple<ItemBase, int>>>();
+
         //Map Attributes
         private Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation> mAttributeAnimInstances =
             new Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation>();
@@ -648,26 +654,24 @@ namespace Intersect.Client.Maps
 
         public void DrawItemsAndLights()
         {
-            //Draw Map Items
-            foreach (var item in MapItems)
+            // Draw map item icons.
+            foreach (var itemCollection in mMapItemsSorted)
             {
-                // Are we allowed to see and pick this item up?
-                if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
-                {
-                    // This item does not apply to us!
-                    continue;
-                }
+                var location = itemCollection.Key;
+                var items = itemCollection.Value;
 
-                var itemBase = ItemBase.Get(item.Value.ItemId);
-                if (itemBase != null)
+                for (var index = 0; index < items.Count; index++)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Icon);
+                    var x = location.X * Options.TileWidth;
+                    var y = location.Y * Options.TileHeight;
+
+                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, items[index].Item1.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
                             itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
                             new FloatRect(
-                                GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,
+                                x, y,
                                 Options.TileWidth, Options.TileHeight
                             ), Color.White
                         );
@@ -690,7 +694,46 @@ namespace Intersect.Client.Maps
         /// </summary>
         public void DrawItemNames()
         {
-            var mapItems = new Dictionary<Point, List<Tuple<string, LabelColor>>>();
+            // Draw map item names, where items sharing a location have their names rendered above eachother.
+            foreach(var itemCollection in mMapItemsSorted)
+            {
+                var location = itemCollection.Key;
+                var items = itemCollection.Value;
+
+                for (var index = 0; index < items.Count; index++)
+                {
+                    var name = items[index].Item1.Name;
+                    if (items[index].Item2 > 1)
+                    {
+                        name = Localization.Strings.General.MapItemStackable.ToString(name, items[index].Item2);
+                    }
+                    var color = CustomColors.Items.MapRarities[items[index].Item1.Rarity];
+                    var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                    var offsetY = (index * textSize.Y);
+                    var x = GetX() + (int)Math.Ceiling(((location.X * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
+                    var y = GetY() + (int)Math.Ceiling(((location.Y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+
+                    if (color.Background != Color.Transparent)
+                    {
+                        Graphics.DrawGameTexture(
+                            Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                            new FloatRect(x - 4, y, textSize.X + 8, textSize.Y), color.Background
+                        );
+                    }
+
+                    Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, x, y, 1, color.Name, true, null, color.Outline);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Updates the internal sorted map item dictionary used for rendering map items and item names in the correct order.
+        /// </summary>
+        public void UpdateSortedMapItems()
+        {
+            // Clear out our sorted map items we use for rendering and fill it up again!
+            mMapItemsSorted.Clear();
             foreach (var item in MapItems)
             {
                 // Are we allowed to see and pick this item up?
@@ -705,47 +748,19 @@ namespace Intersect.Client.Maps
                 if (itemBase != null)
                 {
                     var location = new Point(item.Value.X, item.Value.Y);
-                    if (!mapItems.ContainsKey(location))
+                    if (!mMapItemsSorted.ContainsKey(location))
                     {
-                        mapItems.Add(location, new List<Tuple<string, LabelColor>>());
+                        mMapItemsSorted.Add(location, new List<Tuple<ItemBase, int>>());
                     }
 
-                    var name = itemBase.Name;
-                    if (itemBase.Stackable)
-                    {
-                        name = Localization.Strings.General.MapItemStackable.ToString(itemBase.Name, item.Value.Quantity);
-                    }
-                    mapItems[location].Add(new Tuple<string, LabelColor>(name, CustomColors.Items.MapRarities[itemBase.Rarity]));
+                    mMapItemsSorted[location].Add(new Tuple<ItemBase, int>(itemBase, item.Value.Quantity));
                 }
             }
 
-            // Draw map item names, where items sharing a location have their names rendered above eachother.
-            foreach(var itemCollection in mapItems)
+            // Reverse all of our lists for our rendering to match the server pick-up mechanism.
+            foreach(var items in mMapItemsSorted)
             {
-                var location = itemCollection.Key;
-                var items = itemCollection.Value;
-                // Reverse the list so they are listed in the order we pick them up.
-                items.Reverse();
-
-                for (var index = 0; index < items.Count; index++)
-                {
-                    var name = items[index].Item1;
-                    var color = items[index].Item2;
-                    var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
-                    var offsetY = (index * textSize.Y);
-                    var x = (int)Math.Ceiling(((location.X * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
-                    var y = (int)Math.Ceiling(((location.Y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
-
-                    if (color.Background != Color.Transparent)
-                    {
-                        Graphics.DrawGameTexture(
-                            Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                            new FloatRect(x - 4, y, textSize.X + 8, textSize.Y), color.Background
-                        );
-                    }
-
-                    Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, x, y, 1, color.Name, true, null, color.Outline);
-                }
+                items.Value.Reverse();
             }
 
         }
