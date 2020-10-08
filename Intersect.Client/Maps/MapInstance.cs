@@ -662,8 +662,8 @@ namespace Intersect.Client.Maps
 
                 for (var index = 0; index < items.Count; index++)
                 {
-                    var x = location.X * Options.TileWidth;
-                    var y = location.Y * Options.TileHeight;
+                    var x = GetX() + location.X * Options.TileWidth;
+                    var y = GetY() + location.Y * Options.TileHeight;
 
                     var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, items[index].Item1.Icon);
                     if (itemTex != null)
@@ -705,8 +705,8 @@ namespace Intersect.Client.Maps
                     Globals.InputManager.GetMousePosition()
                 );
                 var targetRect = new Rectangle(
-                    location.X * Options.TileWidth,
-                    location.Y * Options.TileHeight,
+                    (int)GetX() + location.X * Options.TileWidth,
+                    (int)GetY() + location.Y * Options.TileHeight,
                     Options.TileWidth,
                     Options.TileHeight);
 
