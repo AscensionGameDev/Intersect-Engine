@@ -826,9 +826,6 @@ namespace Intersect.Client.Networking
                 {
                     map.MapItems[location.Key].Add(new MapItemInstance(item));
                 }
-
-                // Reverse the items in this location to match the render order to the server's pick-up order.
-                // map.MapItems[location.Key].Reverse();
             }
         }
 
