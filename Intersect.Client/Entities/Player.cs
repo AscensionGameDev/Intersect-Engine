@@ -1252,21 +1252,24 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
-            foreach (var item in map.MapItems)
+            var location = new Point(X, Y);
+            if (!map.MapItems.ContainsKey(location) && map.MapItems[location].Count < 1)
             {
-                if (item.Value.X == X && item.Value.Y == Y)
+                return false;
+            }
+
+            foreach(var item in map.MapItems[location])
+            {
+                // Are we allowed to see and pick this item up?
+                if (!item.VisibleToAll && item.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Owner))
                 {
-                    // Are we allowed to see and pick this item up?
-                    if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
-                    {
-                        // This item does not apply to us!
-                        return false;
-                    }
-
-                    PacketSender.SendPickupItem(item.Key);
-
-                    return true;
+                    // This item does not apply to us!
+                    return false;
                 }
+
+                PacketSender.SendPickupItem(item.UniqueId);
+
+                return true;
             }
 
             return false;

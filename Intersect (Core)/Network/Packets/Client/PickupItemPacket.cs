@@ -1,15 +1,17 @@
-﻿namespace Intersect.Network.Packets.Client
+﻿using System;
+
+namespace Intersect.Network.Packets.Client
 {
 
     public class PickupItemPacket : CerasPacket
     {
 
-        public PickupItemPacket(int index)
+        public PickupItemPacket(Guid uniqueId)
         {
-            MapItemIndex = index;
+            UniqueId = uniqueId;
         }
 
-        public int MapItemIndex { get; set; }
+        public Guid UniqueId { get; set; }
 
     }
 

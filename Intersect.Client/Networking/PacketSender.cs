@@ -111,9 +111,10 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CreateCharacterPacket(name, classId, sprite));
         }
 
-        public static void SendPickupItem(int index)
+        public static void SendPickupItem(Guid uniqueId)
         {
-            Network.SendPacket(new PickupItemPacket(index));
+            Network.SendPacket(new PickupItemPacket(uniqueId));
+            System.Diagnostics.Debug.WriteLine($"Picking up {uniqueId}");
         }
 
         public static void SendSwapInvItems(int item1, int item2)

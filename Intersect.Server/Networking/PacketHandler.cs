@@ -1162,46 +1162,55 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (packet.MapItemIndex < MapInstance.Get(player.MapId).MapItems.Count &&
-                MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex] != null)
+            var map = MapInstance.Get(player.MapId);
+            if (map == null)
             {
-                var mapItem = MapInstance.Get(player.MapId).MapItems[packet.MapItemIndex];
-                if (mapItem.X == player.X &&
-                    mapItem.Y == player.Y)
-                {
-                    var canTake = false;
-                    // Can we actually take this item?
-                    if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
-                    {
-                        // The ownership time has run out, or there's no owner!
-                        canTake = true;
-                    }
-                    else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
-                    {
-                        // The current player is the owner, or one of their party members is.
-                        canTake = true;
-                    } 
+                return;
+            }
 
-                    if (canTake)
+            Debug.WriteLine($"Player {player.Id} attempting to pick up Map Item {packet.UniqueId}");
+
+            var itemLocation = map.FindItemLocation(packet.UniqueId);
+            var mapItem = map.FindItem(packet.UniqueId);
+
+            if (mapItem == null)
+            {
+                return;
+            }
+
+            if (itemLocation.X == player.X && itemLocation.Y == player.Y)
+            {
+                var canTake = false;
+                // Can we actually take this item?
+                if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
+                {
+                    // The ownership time has run out, or there's no owner!
+                    canTake = true;
+                }
+                else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
+                {
+                    // The current player is the owner, or one of their party members is.
+                    canTake = true;
+                }
+
+                if (canTake)
+                {
+                    // Try to give the item to our player.
+                    if (player.TryGiveItem(mapItem))
                     {
-                        // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem))
-                        {
-                            // Remove Item From Map
-                            MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
-                        } 
-                        else 
-                        {
-                            // We couldn't give the player their item, notify them.
-                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
-                        }
-                    } 
+                        // Remove Item From Map
+                        map.RemoveItem(packet.UniqueId);
+                    }
                     else
                     {
-                        // Item does not belong to them.
-                        PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
+                        // We couldn't give the player their item, notify them.
+                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
                     }
-                    
+                }
+                else
+                {
+                    // Item does not belong to them.
+                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
                 }
             }
         }
