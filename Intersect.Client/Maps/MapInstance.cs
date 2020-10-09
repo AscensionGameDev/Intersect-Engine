@@ -12,6 +12,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Items;
+using Intersect.Client.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -718,7 +719,7 @@ namespace Intersect.Client.Maps
                         var rarity = itemBase.Rarity;
                         if (tileItems[index].Quantity > 1)
                         {
-                            name = Localization.Strings.General.MapItemStackable.ToString(name, quantity);
+                            name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                         }
                         var color = CustomColors.Items.MapRarities[rarity];
                         var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);

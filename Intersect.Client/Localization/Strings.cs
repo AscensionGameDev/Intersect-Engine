@@ -781,7 +781,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString none = @"None";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString MapItemStackable = @"{00} x{01}";
+            public static LocalizedString MapItemStackable = @"{01} {00}";
 
         }
 
