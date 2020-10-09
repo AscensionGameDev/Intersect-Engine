@@ -136,41 +136,6 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
         }
 
-        public void Show()
-        {
-            mMapItemWindow.IsHidden = false;
-        }
-
-        public bool IsVisible()
-        {
-            return !mMapItemWindow.IsHidden;
-        }
-
-        public bool Hide()
-        {
-            if (!Globals.CanCloseInventory)
-            {
-                return false;
-            }
-
-            mMapItemWindow.IsHidden = true;
-            return true;
-        }
-
-        public FloatRect RenderBounds()
-        {
-            var rect = new FloatRect() {
-                X = mMapItemWindow.LocalPosToCanvas(new Point(0, 0)).X -
-                    (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-                Y = mMapItemWindow.LocalPosToCanvas(new Point(0, 0)).Y -
-                    (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
-                Width = mMapItemWindow.Width + Items[0].Container.Padding.Left + Items[0].Container.Padding.Right,
-                Height = mMapItemWindow.Height + Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom
-            };
-
-            return rect;
-        }
-
         private void MBtnLootAll_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var location = new Point(Globals.Me.X, Globals.Me.Y);
