@@ -798,6 +798,16 @@ namespace Intersect.Client.Localization
 
         }
 
+        public struct MapItemWindow
+        {
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Loot";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LootButton = @"Loot All";
+
+        }
+
         public struct Inventory
         {
 

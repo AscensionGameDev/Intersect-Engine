@@ -1244,7 +1244,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public bool TryPickupItem()
+        public bool TryPickupItem(Guid uniqueId = new Guid())
         {
             var map = MapInstance.Get(CurrentMap);
             if (map == null)
@@ -1264,7 +1264,13 @@ namespace Intersect.Client.Entities
                 if (!item.VisibleToAll && item.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Owner))
                 {
                     // This item does not apply to us!
-                    return false;
+                    continue;
+                }
+
+                // Check if we are trying to pick up a specific item, and if this is the one.
+                if (uniqueId != Guid.Empty && item.UniqueId != uniqueId)
+                {
+                    continue;
                 }
 
                 PacketSender.SendPickupItem(item.UniqueId);

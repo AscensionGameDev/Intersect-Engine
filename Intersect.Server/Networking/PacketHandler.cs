@@ -1168,8 +1168,6 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            Debug.WriteLine($"Player {player.Id} attempting to pick up Map Item {packet.UniqueId}");
-
             var itemLocation = map.FindItemLocation(packet.UniqueId);
             var mapItem = map.FindItem(packet.UniqueId);
 

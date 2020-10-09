@@ -109,6 +109,8 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
     <Compile Include="Interface\MutableInterface.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
