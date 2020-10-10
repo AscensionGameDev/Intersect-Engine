@@ -126,7 +126,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.PickUp:
-                                        Globals.Me?.TryPickupItem();
+                                        Globals.Me?.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true);
 
                                         break;
 
@@ -293,7 +293,7 @@ namespace Intersect.Client.Core
 
             if (Controls.Controls.ControlHasKey(Control.PickUp, key))
             {
-                if (Globals.Me.TryPickupItem())
+                if (Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true))
                 {
                     return;
                 }

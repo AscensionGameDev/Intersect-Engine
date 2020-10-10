@@ -46,7 +46,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 return;
             }
 
-            Globals.Me.TryPickupItem(MyItem.UniqueId);
+            Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y, MyItem.UniqueId);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

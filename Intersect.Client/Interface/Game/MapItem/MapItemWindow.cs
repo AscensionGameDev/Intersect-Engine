@@ -21,7 +21,9 @@ namespace Intersect.Client.Interface.Game.Inventory
         private List<Label> mValues = new List<Label>();
 
         //Controls
-        private WindowControl mMapItemWindow;
+        private ImagePanel mMapItemWindow;
+
+        private Label mMenuHeader;
 
         private ScrollControl mItemContainer;
 
@@ -30,8 +32,9 @@ namespace Intersect.Client.Interface.Game.Inventory
         //Init
         public MapItemWindow(Canvas gameCanvas)
         {
-            mMapItemWindow = new WindowControl(gameCanvas, Strings.MapItemWindow.Title, false, "MapItemWindow");
-            mMapItemWindow.DisableResizing();
+            mMapItemWindow = new ImagePanel(gameCanvas, "MapItemWindow");
+            mMenuHeader = new Label(mMapItemWindow, "Title");
+            mMenuHeader.SetText(Strings.MapItemWindow.Title);
 
             mItemContainer = new ScrollControl(mMapItemWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
@@ -41,7 +44,6 @@ namespace Intersect.Client.Interface.Game.Inventory
             mBtnLootAll.Clicked += MBtnLootAll_Clicked;
 
             mMapItemWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            mMapItemWindow.IsClosable = false;
 
             CreateItemContainer();
         }
@@ -70,40 +72,52 @@ namespace Intersect.Client.Interface.Game.Inventory
                 return;
             }
 
-            for (var i = 0; i < MAX_LOOT_ITEMS; i++)
+            var itemSlot = 0;
+            foreach(var mapItem in mapItems[location])
             {
-                if (i < mapItems[location].Count)
+                // Are we allowed to see and pick this item up?
+                if (!mapItem.VisibleToAll && mapItem.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(mapItem.Owner))
                 {
-                    var item = ItemBase.Get(mapItems[location][i].ItemId);
-                    if (item != null)
+                    // This item does not apply to us!
+                    continue;
+                }
+
+                var itemBase = ItemBase.Get(mapItem.ItemId);
+                if (itemBase != null)
+                {
+                    Items[itemSlot].MyItem = mapItem;
+                    Items[itemSlot].Pnl.IsHidden = false;
+                    if (itemBase.IsStackable)
                     {
-                        Items[i].MyItem = mapItems[location][i];
-                        Items[i].Pnl.IsHidden = false;
-                        if (item.IsStackable)
-                        {
-                            mValues[i].IsHidden = false;
-                            mValues[i].Text = Strings.FormatQuantityAbbreviated(mapItems[location][i].Quantity);
-                        }
-                        else
-                        {
-                            mValues[i].IsHidden = true;
-                        }
+                        mValues[itemSlot].IsHidden = false;
+                        mValues[itemSlot].Text = Strings.FormatQuantityAbbreviated(mapItem.Quantity);
                     }
                     else
                     {
-                        Items[i].MyItem = null;
-                        Items[i].Pnl.IsHidden = true;
-                        mValues[i].IsHidden = true;
+                        mValues[itemSlot].IsHidden = true;
                     }
+
+                    itemSlot++;
                 }
                 else
                 {
-                    Items[i].MyItem = null;
-                    Items[i].Pnl.IsHidden = true;
-                    mValues[i].IsHidden = true;
+                    Items[itemSlot].MyItem = null;
+                    Items[itemSlot].Pnl.IsHidden = true;
+                    mValues[itemSlot].IsHidden = true;
+                } 
+            }
+
+            // Update our UI and hide our unused icons.
+            for (var slot = 0; slot < MAX_LOOT_ITEMS; slot++)
+            {
+                if (slot > itemSlot - 1)
+                {
+                    Items[slot].MyItem = null;
+                    Items[slot].Pnl.IsHidden = true;
+                    mValues[slot].IsHidden = true;
                 }
                 
-                Items[i].Update();
+                Items[slot].Update();
             }
         }
 
@@ -138,14 +152,8 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private void MBtnLootAll_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var location = new Point(Globals.Me.X, Globals.Me.Y);
-            if (Globals.Me.MapInstance.MapItems.ContainsKey(location))
-            {
-                foreach (var item in Globals.Me.MapInstance.MapItems[location])
-                {
-                    Globals.Me.TryPickupItem(item.UniqueId);
-                }
-            }
+            // Try and pick up everything on our location.
+            Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y);
             
         }
 

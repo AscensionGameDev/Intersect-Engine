@@ -1168,16 +1168,41 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var itemLocation = map.FindItemLocation(packet.UniqueId);
-            var mapItem = map.FindItem(packet.UniqueId);
-
-            if (mapItem == null)
+            // Is our user on the location they're trying to pick stuff up on?
+            var itemLocation = packet.Location;
+            if (itemLocation.X != player.X && itemLocation.Y != player.Y)
             {
                 return;
             }
 
-            if (itemLocation.X == player.X && itemLocation.Y == player.Y)
+            // Are we tracking any items for this location?
+            if (!map.MapItems.ContainsKey(itemLocation))
             {
+                return;
+            }
+
+            var giveItems = new List<MapItem>();
+            // Are we trying to pick up everything on this location or one specific item?
+            if (packet.UniqueId == Guid.Empty)
+            {
+                // Everything.
+                giveItems = map.MapItems[itemLocation];
+            }
+            else
+            {
+                // One specific item.
+                giveItems.Add(map.FindItem(packet.UniqueId));
+            }
+
+            // Go through each item we're trying to give our player and see if we can do so.
+            var toRemove = new List<Guid>();
+            foreach(var mapItem in giveItems)
+            {
+                if (mapItem == null)
+                {
+                    continue;
+                }
+
                 var canTake = false;
                 // Can we actually take this item?
                 if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
@@ -1196,8 +1221,9 @@ namespace Intersect.Server.Networking
                     // Try to give the item to our player.
                     if (player.TryGiveItem(mapItem))
                     {
-                        // Remove Item From Map
-                        map.RemoveItem(packet.UniqueId);
+                        // Mark this item for map removal.
+                        // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
+                        toRemove.Add(mapItem.UniqueId);
                     }
                     else
                     {
@@ -1210,6 +1236,13 @@ namespace Intersect.Server.Networking
                     // Item does not belong to them.
                     PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
                 }
+            }
+
+
+            // Remove all items that were picked up.
+            foreach(var id in toRemove)
+            {
+                map.RemoveItem(id);
             }
         }
 
