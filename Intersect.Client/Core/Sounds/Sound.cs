@@ -1,8 +1,9 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
+
+using System;
 
 namespace Intersect.Client.Core.Sounds
 {
@@ -20,7 +21,9 @@ namespace Intersect.Client.Core.Sounds
 
         protected float mVolume;
 
-        public Sound(string filename, bool loop)
+        private static IGameContext GameContext { get; set; }
+
+        public Sound(IGameContext gameContext, string filename, bool loop)
         {
             if (String.IsNullOrEmpty(filename))
             {
@@ -29,12 +32,12 @@ namespace Intersect.Client.Core.Sounds
 
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mLoop = loop;
-            var sound = Globals.ContentManager.LoadSound(mFilename);
+            var sound = GameContext.ContentManager.LoadSound(mFilename);
             if (sound != null)
             {
                 mSound = sound.CreateInstance();
                 mSound.IsLooping = mLoop;
-                mSound.Volume = Globals.Database.SoundVolume;
+                mSound.Volume = GameContext.Storage.Preferences.SoundVolume;
                 mSound.Play();
                 Loaded = true;
             }

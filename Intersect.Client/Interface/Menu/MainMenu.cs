@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -69,7 +70,7 @@ namespace Intersect.Client.Interface.Menu
         private bool mShouldOpenCharacterSelection;
 
         //Init
-        public MainMenu(Canvas menuCanvas) : base(menuCanvas)
+        public MainMenu(IGameContext gameContext, Canvas menuCanvas) : base(menuCanvas)
         {
             mMenuCanvas = menuCanvas;
 
@@ -129,10 +130,10 @@ namespace Intersect.Client.Interface.Menu
             mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
 
             //Options Controls
-            mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);
+            mOptionsWindow = new OptionsWindow(gameContext, menuCanvas, this, mMenuWindow);
 
             //Login Controls
-            mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
+            mLoginWindow = new LoginWindow(gameContext, menuCanvas, this, mMenuWindow);
 
             //Register Controls
             mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
@@ -144,10 +145,10 @@ namespace Intersect.Client.Interface.Menu
             mResetPasswordWindow = new ResetPasswordWindow(menuCanvas, this, mMenuWindow);
 
             //Character Selection Controls
-            mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            mSelectCharacterWindow = new SelectCharacterWindow(gameContext, mMenuCanvas, this, mMenuWindow);
 
             //Character Creation Controls
-            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow, mSelectCharacterWindow);
+            mCreateCharacterWindow = new CreateCharacterWindow(gameContext, mMenuCanvas, this, mMenuWindow, mSelectCharacterWindow);
 
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);

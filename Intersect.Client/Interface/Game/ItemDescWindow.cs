@@ -1,8 +1,8 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -11,13 +11,12 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
-
-    public class ItemDescWindow
+    public class ItemDescWindow : HasGameContext
     {
-
         ImagePanel mDescWindow;
 
         public ItemDescWindow(
+            IGameContext gameContext,
             [NotNull] ItemBase item,
             int amount,
             int x,
@@ -26,7 +25,7 @@ namespace Intersect.Client.Interface.Game
             string titleOverride = "",
             string valueLabel = "",
             bool centerHorizontally = false
-        )
+        ) : base(gameContext)
         {
             var title = titleOverride;
             if (string.IsNullOrWhiteSpace(title))
@@ -208,7 +207,7 @@ namespace Intersect.Client.Interface.Game
 
                 //Load Again for positioning purposes.
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
-                var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     icon.GameTexture = itemTex;
@@ -234,7 +233,5 @@ namespace Intersect.Client.Interface.Game
             Interface.GameUi?.GameCanvas?.RemoveChild(mDescWindow, false);
             mDescWindow.Dispose();
         }
-
     }
-
 }

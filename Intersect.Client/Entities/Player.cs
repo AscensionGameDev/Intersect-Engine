@@ -6,6 +6,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.EntityPanel;
@@ -61,7 +62,7 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+        public Player(IGameContext gameContext, Guid id, PlayerEntityPacket packet) : base(gameContext, id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
             {
@@ -850,7 +851,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            //Something is null.. return a value that is out of range :) 
+            //Something is null.. return a value that is out of range :)
             return 9999;
         }
 
@@ -905,11 +906,11 @@ namespace Intersect.Client.Entities
             {
                 if (closestEntity.GetType() == typeof(Player))
                 {
-                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
+                    TargetBox = new EntityBox(GameContext, Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
                 }
                 else
                 {
-                    TargetBox = new EntityBox(
+                    TargetBox = new EntityBox(GameContext,
                         Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity
                     );
                 }
@@ -1171,18 +1172,21 @@ namespace Intersect.Client.Entities
                                     if (bestMatch is Player)
                                     {
                                         TargetBox = new EntityBox(
+                                            GameContext,
                                             Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, bestMatch
                                         );
                                     }
                                     else if (bestMatch is Event)
                                     {
                                         TargetBox = new EntityBox(
+                                            GameContext,
                                             Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, bestMatch
                                         );
                                     }
                                     else
                                     {
                                         TargetBox = new EntityBox(
+                                            GameContext,
                                             Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
                                             bestMatch
                                         );

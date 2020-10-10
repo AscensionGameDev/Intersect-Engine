@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -12,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Bank
 {
 
-    public class BankWindow
+    public class BankWindow : HasGameContext
     {
 
         private static int sItemXPadding = 4;
@@ -34,7 +35,7 @@ namespace Intersect.Client.Interface.Game.Bank
         public int Y;
 
         //Init
-        public BankWindow(Canvas gameCanvas)
+        public BankWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mBankWindow = new WindowControl(gameCanvas, Strings.Bank.title, false, "BankWindow");
             mBankWindow.DisableResizing();

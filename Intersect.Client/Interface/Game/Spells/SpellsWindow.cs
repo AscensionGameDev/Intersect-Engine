@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 
+using System;
+using System.Collections.Generic;
+
 namespace Intersect.Client.Interface.Game.Spells
 {
-
-    public class SpellsWindow
+    public class SpellsWindow : HasGameContext
     {
-
         //Spell List
         public List<SpellItem> Items = new List<SpellItem>();
 
@@ -32,7 +31,7 @@ namespace Intersect.Client.Interface.Game.Spells
         public int Y;
 
         //Init
-        public SpellsWindow(Canvas gameCanvas)
+        public SpellsWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.title, false, "SpellsWindow");
             mSpellWindow.DisableResizing();
@@ -80,11 +79,14 @@ namespace Intersect.Client.Interface.Game.Spells
         {
             for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
-                Items.Add(new SpellItem(this, i));
+                Items.Add(new SpellItem(GameContext, this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
+                Items[i]
+                    .Container.LoadJsonUi(
+                        GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString()
+                    );
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
@@ -131,7 +133,5 @@ namespace Intersect.Client.Interface.Game.Spells
 
             return rect;
         }
-
     }
-
 }

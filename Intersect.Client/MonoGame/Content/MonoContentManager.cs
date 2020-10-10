@@ -22,14 +22,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Content
 {
-    public class MonoContentManager : GameContentManager
+    internal class MonoContentManager : GameContentManager
     {
-        protected ContentManager ContentManager { get; }
+        protected ContentManager ContentManager => GameContext.Game.Content;
 
-        public MonoContentManager(ContentManager contentManager)
+        protected new MonoGameContext GameContext => base.GameContext as MonoGameContext;
+
+        public MonoContentManager(MonoGameContext gameContext) : base(gameContext)
         {
-            ContentManager = contentManager;
-
             Init(this);
             if (!Directory.Exists("resources"))
             {
@@ -275,7 +275,7 @@ namespace Intersect.Client.MonoGame.Content
             var filePaths = Directory.GetFiles(directory, "*.wav");
             AssetLookup.Add(
                 ContentType.Sound,
-                filePaths.Select(filePath => new MonoSoundSource(RemoveExtension(Path.GetFileName(filePath)), filePath))
+                filePaths.Select(filePath => new MonoSoundSource(GameContext, RemoveExtension(Path.GetFileName(filePath)), filePath))
             );
         }
 
@@ -291,7 +291,7 @@ namespace Intersect.Client.MonoGame.Content
             var filePaths = Directory.GetFiles(directory, "*.ogg");
             AssetLookup.Add(
                 ContentType.Music,
-                filePaths.Select(filePath => new MonoMusicSource(RemoveExtension(Path.GetFileName(filePath)), filePath))
+                filePaths.Select(filePath => new MonoMusicSource(GameContext, RemoveExtension(Path.GetFileName(filePath)), filePath))
             );
         }
 
@@ -336,10 +336,10 @@ namespace Intersect.Client.MonoGame.Content
                     return Core.Graphics.GameRenderer.LoadShader(assetPath) as TAsset;
 
                 case ContentType.Music:
-                    return new MonoMusicSource(assetName, $"{assetPath}.ogg") as TAsset;
+                    return new MonoMusicSource(GameContext, assetName, $"{assetPath}.ogg") as TAsset;
 
                 case ContentType.Sound:
-                    return new MonoSoundSource(assetName, $"{assetPath}.wav") as TAsset;
+                    return new MonoSoundSource(GameContext, assetName, $"{assetPath}.wav") as TAsset;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);

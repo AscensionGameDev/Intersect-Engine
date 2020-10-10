@@ -7,12 +7,11 @@ using JetBrains.Annotations;
 
 namespace Intersect.Configuration
 {
-
     /// <inheritdoc />
     /// <summary>
     /// Client configuration options
     /// </summary>
-    public sealed class ClientConfiguration : IConfiguration<ClientConfiguration>
+    public sealed class ClientConfiguration : IClientConfiguration
     {
 
         public const string DefaultPath = @"resources/config.json";

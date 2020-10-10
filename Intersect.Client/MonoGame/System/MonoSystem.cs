@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 using Intersect.Client.Framework.Sys;
 
-namespace Intersect.Client.MonoGame.System
+namespace Intersect.Client.MonoGame.Sys
 {
 
     public class MonoSystem : GameSystem

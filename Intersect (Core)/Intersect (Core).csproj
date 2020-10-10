@@ -203,6 +203,7 @@
     <Compile Include="Collections\Sanitizer.cs" />
     <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
+    <Compile Include="Configuration\IClientConfiguration.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />

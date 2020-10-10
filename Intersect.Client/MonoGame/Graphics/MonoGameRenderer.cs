@@ -27,6 +27,14 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private BasicEffect mBasicEffect;
 
+        private BasicEffect BasicEffect =>
+            mBasicEffect ??
+            (mBasicEffect = new BasicEffect(GraphicsDevice)
+            {
+                LightingEnabled = false,
+                TextureEnabled = true
+            });
+
         private ContentManager mContentManager;
 
         private GameBlendModes mCurrentBlendmode = GameBlendModes.None;
@@ -53,20 +61,6 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private long mFsChangedTimer = -1;
 
-        private IntersectGame mGame;
-
-        [NotNull] private GameWindow mGameWindow;
-
-        private GraphicsDeviceManager mGraphics;
-
-        private GraphicsDevice mGraphicsDevice;
-
-        public GraphicsDevice GraphicsDevice
-        {
-            get => mGraphicsDevice;
-            private set => mGraphicsDevice = value;
-        }
-
         private bool mInitialized;
 
         private bool mInitializing;
@@ -87,18 +81,30 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private SpriteBatch mSpriteBatch;
 
+        private SpriteBatch SpriteBatch =>
+            mSpriteBatch ??
+            (mSpriteBatch = new SpriteBatch(GraphicsDevice));
+
         private bool mSpriteBatchBegan;
 
         private List<string> mValidVideoModes;
 
         private IRenderTexture mWhiteTexture;
 
-        public MonoGameRenderer(IntersectGame intersectGame)
-        {
-            mGame = intersectGame;
-            mGraphics = intersectGame.GraphicsDeviceManager;
-            mContentManager = intersectGame.Content;
+        protected new MonoGameContext GameContext => base.GameContext as MonoGameContext;
 
+        public IntersectGame Game => GameContext.Game;
+
+        public ContentManager Content => Game.Content;
+
+        public GraphicsDevice GraphicsDevice => Game.GraphicsDevice;
+
+        public GraphicsDeviceManager GraphicsDeviceManager => Game.GraphicsDeviceManager;
+
+        public GameWindow Window => Game.Window;
+
+        public MonoGameRenderer(MonoGameContext gameContext) : base(gameContext)
+        {
             mNormalState = new BlendState()
             {
                 ColorSourceBlend = Blend.SourceAlpha,
@@ -123,20 +129,18 @@ namespace Intersect.Client.MonoGame.Graphics
                 AlphaSourceBlend = Blend.Zero,
                 AlphaDestinationBlend = Blend.InverseSourceAlpha
             };
-
-            mGameWindow = intersectGame.Window;
         }
 
         public IList<string> ValidVideoModes => GetValidVideoModes();
 
         public void UpdateGraphicsState(int width, int height, bool initial = false)
         {
-            var currentDisplayMode = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode;
+            var currentDisplayMode = GraphicsDevice.Adapter.CurrentDisplayMode;
 
-            if (Globals.Database.FullScreen)
+            if (GameContext.Storage.Preferences.Fullscreen)
             {
                 var supported = false;
-                foreach (var mode in mGraphics.GraphicsDevice.Adapter.SupportedDisplayModes)
+                foreach (var mode in GraphicsDevice.Adapter.SupportedDisplayModes)
                 {
                     if (mode.Width == width && mode.Height == height)
                     {
@@ -146,8 +150,8 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 if (!supported)
                 {
-                    Globals.Database.FullScreen = false;
-                    Globals.Database.SavePreferences();
+                    GameContext.Storage.Preferences.Fullscreen = false;
+                    GameContext.Storage.Preferences.Save();
                     Interface.Interface.MsgboxErrors.Add(
                         new KeyValuePair<string, string>(
                             Strings.Errors.displaynotsupported,
@@ -157,46 +161,46 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
             }
 
-            var fsChanged = mGraphics.IsFullScreen != Globals.Database.FullScreen && !Globals.Database.FullScreen;
+            var fsChanged = GraphicsDeviceManager.IsFullScreen != GameContext.Storage.Preferences.Fullscreen && !GameContext.Storage.Preferences.Fullscreen;
 
-            mGraphics.IsFullScreen = Globals.Database.FullScreen;
+            GraphicsDeviceManager.IsFullScreen = GameContext.Storage.Preferences.Fullscreen;
             if (fsChanged)
             {
-                mGraphics.ApplyChanges();
+                GraphicsDeviceManager.ApplyChanges();
             }
 
             mScreenWidth = width;
             mScreenHeight = height;
-            mGraphics.PreferredBackBufferWidth = width;
-            mGraphics.PreferredBackBufferHeight = height;
-            mGraphics.SynchronizeWithVerticalRetrace = Globals.Database.TargetFps == 0;
+            GraphicsDeviceManager.PreferredBackBufferWidth = width;
+            GraphicsDeviceManager.PreferredBackBufferHeight = height;
+            GraphicsDeviceManager.SynchronizeWithVerticalRetrace = GameContext.Storage.Preferences.Fps == 0;
 
-            if (Globals.Database.TargetFps == 1)
+            if (GameContext.Storage.Preferences.Fps == 1)
             {
-                mGame.TargetElapsedTime = new TimeSpan(333333);
+                Game.TargetElapsedTime = new TimeSpan(333333);
             }
-            else if (Globals.Database.TargetFps == 2)
+            else if (GameContext.Storage.Preferences.Fps == 2)
             {
-                mGame.TargetElapsedTime = new TimeSpan(333333 / 2);
+                Game.TargetElapsedTime = new TimeSpan(333333 / 2);
             }
-            else if (Globals.Database.TargetFps == 3)
+            else if (GameContext.Storage.Preferences.Fps == 3)
             {
-                mGame.TargetElapsedTime = new TimeSpan(333333 / 3);
+                Game.TargetElapsedTime = new TimeSpan(333333 / 3);
             }
-            else if (Globals.Database.TargetFps == 4)
+            else if (GameContext.Storage.Preferences.Fps == 4)
             {
-                mGame.TargetElapsedTime = new TimeSpan(333333 / 4);
+                Game.TargetElapsedTime = new TimeSpan(333333 / 4);
             }
 
-            mGame.IsFixedTimeStep = Globals.Database.TargetFps > 0;
+            Game.IsFixedTimeStep = GameContext.Storage.Preferences.Fps > 0;
 
-            mGraphics.ApplyChanges();
+            GraphicsDeviceManager.ApplyChanges();
 
-            mDisplayWidth = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
-            mDisplayHeight = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+            mDisplayWidth = GraphicsDeviceManager.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+            mDisplayHeight = GraphicsDeviceManager.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
             if (fsChanged || initial)
             {
-                mGameWindow.Position = new Microsoft.Xna.Framework.Point(
+                Window.Position = new Microsoft.Xna.Framework.Point(
                     (mDisplayWidth - mScreenWidth) / 2, (mDisplayHeight - mScreenHeight) / 2
                 );
             }
@@ -223,22 +227,22 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override bool Begin()
         {
-            //mGraphicsDevice.SetRenderTarget(null);
+            //GraphicsDeviceManagerDevice.SetRenderTarget(null);
             if (mFsChangedTimer > -1 && mFsChangedTimer < Globals.System.GetTimeMs())
             {
-                mGraphics.PreferredBackBufferWidth--;
-                mGraphics.ApplyChanges();
-                mGraphics.PreferredBackBufferWidth++;
-                mGraphics.ApplyChanges();
+                GraphicsDeviceManager.PreferredBackBufferWidth--;
+                GraphicsDeviceManager.ApplyChanges();
+                GraphicsDeviceManager.PreferredBackBufferWidth++;
+                GraphicsDeviceManager.ApplyChanges();
                 mFsChangedTimer = -1;
             }
 
-            if (mGameWindow.ClientBounds.Width != 0 &&
-                mGameWindow.ClientBounds.Height != 0 &&
-                (mGameWindow.ClientBounds.Width != mScreenWidth || mGameWindow.ClientBounds.Height != mScreenHeight) &&
-                !mGraphics.IsFullScreen)
+            if (Window.ClientBounds.Width != 0 &&
+                Window.ClientBounds.Height != 0 &&
+                (Window.ClientBounds.Width != mScreenWidth || Window.ClientBounds.Height != mScreenHeight) &&
+                !GraphicsDeviceManager.IsFullScreen)
             {
-                if (mOldDisplayMode != mGraphics.GraphicsDevice.DisplayMode)
+                if (mOldDisplayMode != GraphicsDeviceManager.GraphicsDevice.DisplayMode)
                 {
                     mDisplayModeChanged = true;
                 }
@@ -254,8 +258,8 @@ namespace Intersect.Client.MonoGame.Graphics
         public Pointf GetMouseOffset()
         {
             return new Pointf(
-                mGraphics.PreferredBackBufferWidth / (float) mGameWindow.ClientBounds.Width,
-                mGraphics.PreferredBackBufferHeight / (float) mGameWindow.ClientBounds.Height
+                GraphicsDeviceManager.PreferredBackBufferWidth / (float) Window.ClientBounds.Width,
+                GraphicsDeviceManager.PreferredBackBufferHeight / (float) Window.ClientBounds.Height
             );
         }
 
@@ -285,7 +289,7 @@ namespace Intersect.Client.MonoGame.Graphics
             {
                 if (mSpriteBatchBegan)
                 {
-                    mSpriteBatch.End();
+                    SpriteBatch.End();
                 }
 
                 if (target != null)
@@ -294,7 +298,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
                 else
                 {
-                    mGraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
+                    GraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
                 }
 
                 var blend = mNormalState;
@@ -339,7 +343,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     shader.MarkClean();
                 }
 
-                mSpriteBatch.Begin(
+                SpriteBatch.Begin(
                     drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend, SamplerState.PointClamp,
                     null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) *
@@ -367,7 +371,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             if (mSpriteBatchBegan)
             {
-                mSpriteBatch.End();
+                SpriteBatch.End();
             }
 
             mSpriteBatchBegan = false;
@@ -380,19 +384,19 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void Clear(Color color)
         {
-            mGraphicsDevice.Clear(ConvertColor(color));
+            GraphicsDevice.Clear(ConvertColor(color));
         }
 
         public override void DrawTileBuffer(GameTileBuffer buffer)
         {
             EndSpriteBatch();
-            mGraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
-            mGraphicsDevice.BlendState = mNormalState;
-            mGraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            mGraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
-            mGraphicsDevice.DepthStencilState = DepthStencilState.None;
+            GraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
+            GraphicsDevice.BlendState = mNormalState;
+            GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
-            ((MonoTileBuffer) buffer).Draw(mBasicEffect, mCurrentView);
+            ((MonoTileBuffer) buffer).Draw(BasicEffect, mCurrentView);
         }
 
         public override void Close()
@@ -457,28 +461,28 @@ namespace Intersect.Client.MonoGame.Graphics
 
             if (borderColor != null && borderColor != Color.Transparent)
             {
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
             }
 
-            mSpriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
+            SpriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
         }
 
         public override void DrawString(
@@ -513,11 +517,11 @@ namespace Intersect.Client.MonoGame.Graphics
             var clr = ConvertColor(fontColor);
 
             //Copy the current scissor rect so we can restore it after
-            var currentRect = mSpriteBatch.GraphicsDevice.ScissorRectangle;
+            var currentRect = SpriteBatch.GraphicsDevice.ScissorRectangle;
             StartSpritebatch(mCurrentView, GameBlendModes.None, null, gameRenderTexture, false, mRasterizerState, true);
 
             //Set the current scissor rectangle
-            mSpriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle(
+            SpriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle(
                 (int) clipRect.X, (int) clipRect.Y, (int) clipRect.Width, (int) clipRect.Height
             );
 
@@ -531,28 +535,28 @@ namespace Intersect.Client.MonoGame.Graphics
 
             if (borderColor != null && borderColor != Color.Transparent)
             {
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x - 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x + 1, y), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
 
-                mSpriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     font, text, new Vector2(x, y + 1), ConvertColor(borderColor), 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0
                 );
             }
 
-            mSpriteBatch.DrawString(
+            SpriteBatch.DrawString(
                 font, text, new Vector2(x, y), clr, 0f, Vector2.Zero, new Vector2(fontScale, fontScale),
                 SpriteEffects.None, 0
             );
@@ -560,12 +564,12 @@ namespace Intersect.Client.MonoGame.Graphics
             EndSpriteBatch();
 
             //Reset scissor rectangle to the saved value
-            mSpriteBatch.GraphicsDevice.ScissorRectangle = currentRect;
+            SpriteBatch.GraphicsDevice.ScissorRectangle = currentRect;
         }
 
         public override GameTileBuffer CreateTileBuffer()
         {
-            return new MonoTileBuffer(mGraphicsDevice);
+            return new MonoTileBuffer(GraphicsDevice);
         }
 
         public override void DrawTexture(
@@ -661,7 +665,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 StartSpritebatch(mCurrentView, blendMode, shader, null, false, null, drawImmediate);
 
-                mSpriteBatch.Draw(
+                SpriteBatch.Draw(
                     (Texture2D) texture, new Vector2(tx, ty), new XNARectangle((int) sx, (int) sy, (int) sw, (int) sh),
                     ConvertColor(renderColor), rotationDegrees, origin, new Vector2(tw / sw, th / sh),
                     SpriteEffects.None, 0
@@ -674,7 +678,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     gameRenderTarget, false, null, drawImmediate
                 );
 
-                mSpriteBatch.Draw(
+                SpriteBatch.Draw(
                     (Texture2D) texture, new Vector2(tx, ty), new XNARectangle((int) sx, (int) sy, (int) sw, (int) sh),
                     ConvertColor(renderColor), rotationDegrees, origin, new Vector2(tw / sw, th / sh),
                     SpriteEffects.None, 0
@@ -733,8 +737,8 @@ namespace Intersect.Client.MonoGame.Graphics
                 new Resolution(1920, 1080)
             };
 
-            var displayWidth = mGraphicsDevice?.DisplayMode?.Width;
-            var displayHeight = mGraphicsDevice?.DisplayMode?.Height;
+            var displayWidth = GraphicsDevice?.DisplayMode?.Width;
+            var displayHeight = GraphicsDevice?.DisplayMode?.Height;
 
             foreach (var resolution in allowedResolutions)
             {
@@ -768,15 +772,15 @@ namespace Intersect.Client.MonoGame.Graphics
 
             mInitializing = true;
 
-            var database = Globals.Database;
+            var preferences = GameContext.Storage.Preferences;
             var validVideoModes = GetValidVideoModes();
-            var targetResolution = database.TargetResolution;
+            var targetResolution = preferences.PreferredResolution;
 
             if (targetResolution < 0 || validVideoModes?.Count <= targetResolution)
             {
-                Debug.Assert(database != null, "database != null");
-                database.TargetResolution = 0;
-                database.SavePreference("Resolution", database.TargetResolution.ToString());
+                Debug.Assert(preferences != null, "preferences != null");
+                preferences.PreferredResolution = 0;
+                preferences.Save();
             }
 
             var targetVideoMode = validVideoModes?[targetResolution];
@@ -785,8 +789,8 @@ namespace Intersect.Client.MonoGame.Graphics
                 PreferredResolution = resolution;
             }
 
-            mGraphics.PreferredBackBufferWidth = PreferredResolution.X;
-            mGraphics.PreferredBackBufferHeight = PreferredResolution.Y;
+            GraphicsDeviceManager.PreferredBackBufferWidth = PreferredResolution.X;
+            GraphicsDeviceManager.PreferredBackBufferHeight = PreferredResolution.Y;
 
             UpdateGraphicsState(ActiveResolution.X, ActiveResolution.Y, true);
 
@@ -796,15 +800,6 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             mInitializing = false;
-        }
-
-        public void Init(GraphicsDevice graphicsDevice)
-        {
-            mGraphicsDevice = graphicsDevice;
-            mBasicEffect = new BasicEffect(mGraphicsDevice);
-            mBasicEffect.LightingEnabled = false;
-            mBasicEffect.TextureEnabled = true;
-            mSpriteBatch = new SpriteBatch(mGraphicsDevice);
         }
 
         public override IFont LoadFont(string filename)
@@ -842,7 +837,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override ITexture LoadTexture(TextureType textureType, string assetName)
         {
-            var texturePackFrame = Globals.GameContext.ContentManager.FindTexturePackFrameFor(textureType, assetName);
+            var texturePackFrame = GameContext.ContentManager.FindTexturePackFrameFor(textureType, assetName);
             return LoadTexture(assetName, texturePackFrame);
         }
 
@@ -850,13 +845,13 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             if (texturePackFrame != null)
             {
-                var tx = new MonoGameTexture(mGraphicsDevice, filename, texturePackFrame);
+                var tx = new MonoGameTexture(GraphicsDevice, filename, texturePackFrame);
                 mAllTextures.Add(tx);
 
                 return tx;
             }
 
-            var tex = new MonoGameTexture(mGraphicsDevice, filename);
+            var tex = new MonoGameTexture(GraphicsDevice, filename);
             mAllTextures.Add(tex);
 
             return tex;
@@ -864,7 +859,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         /// <inheritdoc />
         public override ITexture LoadTexture(string assetName, Func<Stream> createStream) =>
-            new MonoGameTexture(mGraphicsDevice, assetName, createStream);
+            new MonoGameTexture(GraphicsDevice, assetName, createStream);
 
         public override Pointf MeasureText(string text, IFont gameFont, float fontScale)
         {
@@ -900,8 +895,8 @@ namespace Intersect.Client.MonoGame.Graphics
             Matrix.CreateOrthographicOffCenter(0, view.Width, view.Height, 0, 0f, -1, out projection);
             projection.M41 += -0.5f * projection.M11;
             projection.M42 += -0.5f * projection.M22;
-            mBasicEffect.Projection = projection;
-            mBasicEffect.View = Matrix.CreateRotationZ(0f) *
+            BasicEffect.Projection = projection;
+            BasicEffect.View = Matrix.CreateRotationZ(0f) *
                                 Matrix.CreateScale(new Vector3(1, 1, 1)) *
                                 Matrix.CreateTranslation(-view.X, -view.Y, 0);
 
@@ -910,16 +905,16 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override bool BeginScreenshot()
         {
-            if (mGraphicsDevice == null)
+            if (GraphicsDevice == null)
             {
                 return false;
             }
 
             mScreenshotRenderTarget = new RenderTarget2D(
-                mGraphicsDevice, mScreenWidth, mScreenHeight, false,
-                mGraphicsDevice.PresentationParameters.BackBufferFormat,
-                mGraphicsDevice.PresentationParameters.DepthStencilFormat,
-                mGraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
+                GraphicsDevice, mScreenWidth, mScreenHeight, false,
+                GraphicsDevice.PresentationParameters.BackBufferFormat,
+                GraphicsDevice.PresentationParameters.DepthStencilFormat,
+                GraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
             );
 
             return true;
@@ -937,7 +932,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     Fps = mFpsCount;
                     mFpsCount = 0;
                     mFpsTimer = Globals.System.GetTimeMs() + 1000;
-                    mGameWindow.Title = Strings.Main.gamename;
+                    Window.Title = Strings.Main.gamename;
                 }
 
                 foreach (var texture in mAllTextures)
@@ -972,21 +967,21 @@ namespace Intersect.Client.MonoGame.Graphics
 
             ScreenshotRequests.Clear();
 
-            if (mGraphicsDevice == null)
+            if (GraphicsDevice == null)
             {
                 return;
             }
 
             var skippedFrame = mScreenshotRenderTarget;
             mScreenshotRenderTarget = null;
-            mGraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.SetRenderTarget(null);
 
             if (!Begin())
             {
                 return;
             }
 
-            mSpriteBatch?.Draw(skippedFrame, new XNARectangle(), XNAColor.White);
+            SpriteBatch?.Draw(skippedFrame, new XNARectangle(), XNAColor.White);
             End();
         }
     }

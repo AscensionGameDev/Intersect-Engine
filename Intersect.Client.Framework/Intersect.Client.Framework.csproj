@@ -72,7 +72,9 @@
     <Compile Include="Content\IAsset.cs" />
     <Compile Include="Content\IContentManager.cs" />
     <Compile Include="Content\TextureType.cs" />
-    <Compile Include="Database\GameDatabase.cs" />
+    <Compile Include="HasGameContext.cs" />
+    <Compile Include="IHasGameContext.cs" />
+    <Compile Include="Storage\GamePreferences.cs" />
     <Compile Include="Content\GameContentManager.cs" />
     <Compile Include="General\GameStates.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
@@ -99,6 +101,12 @@
     <Compile Include="Plugins\ClientPluginEntry.cs" />
     <Compile Include="Plugins\IClientPluginContext.cs" />
     <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
+    <Compile Include="Storage\GameStorage.cs" />
+    <Compile Include="Storage\IPreferences.cs" />
+    <Compile Include="Storage\IPreferencesSerializer.cs" />
+    <Compile Include="Storage\IStorage.cs" />
+    <Compile Include="Storage\JsonPreferencesSerializer.cs" />
+    <Compile Include="Storage\PreferencesSerializer.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />

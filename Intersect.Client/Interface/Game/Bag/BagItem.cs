@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -116,6 +117,7 @@ namespace Intersect.Client.Interface.Game.Bag
             if (Globals.Bag[mMySlot]?.Base != null)
             {
                 mDescWindow = new ItemDescWindow(
+                    mBagWindow.GameContext,
                     Globals.Bag[mMySlot].Base, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
                     Globals.Bag[mMySlot].StatBuffs
                 );
@@ -143,7 +145,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 var item = ItemBase.Get(Globals.Bag[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = mBagWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;

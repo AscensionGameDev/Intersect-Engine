@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -8,7 +9,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Interface.Game.Shop
 {
 
-    public class ShopWindow
+    public class ShopWindow : HasGameContext
     {
 
         private static int sItemXPadding = 4;
@@ -23,7 +24,7 @@ namespace Intersect.Client.Interface.Game.Shop
         private WindowControl mShopWindow;
 
         //Init
-        public ShopWindow(Canvas gameCanvas)
+        public ShopWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mShopWindow = new WindowControl(gameCanvas, Globals.GameShop.Name, false, "ShopWindow");
             mShopWindow.DisableResizing();

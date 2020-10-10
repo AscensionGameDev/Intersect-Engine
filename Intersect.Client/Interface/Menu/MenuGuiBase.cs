@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
@@ -26,10 +27,10 @@ namespace Intersect.Client.Interface.Menu
 
         private bool mShouldReset;
 
-        public MenuGuiBase(Canvas myCanvas)
+        public MenuGuiBase(IGameContext gameContext, Canvas myCanvas)
         {
             mMenuCanvas = myCanvas;
-            MainMenu = new MainMenu(mMenuCanvas);
+            MainMenu = new MainMenu(gameContext, mMenuCanvas);
             mServerStatusArea = new ImagePanel(mMenuCanvas, "ServerStatusArea");
             mServerStatusLabel = new Label(mServerStatusArea, "ServerStatusLabel")
             {

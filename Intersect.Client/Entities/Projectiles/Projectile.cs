@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Framework;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
@@ -41,9 +42,9 @@ namespace Intersect.Client.Entities.Projectiles
         public Guid TargetId;
 
         /// <summary>
-        ///     The constructor for the inherated projectile class
+        ///     The constructor for the inherited projectile class
         /// </summary>
-        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet)
+        public Projectile(IGameContext gameContext, Guid id, ProjectileEntityPacket packet) : base(gameContext, id, packet)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
@@ -160,6 +161,7 @@ namespace Intersect.Client.Entities.Projectiles
                         if (mMyBase.SpawnLocations[x, y].Directions[d] == true)
                         {
                             var s = new ProjectileSpawns(
+                                GameContext,
                                 FindProjectileRotationDir(Dir, d), X + FindProjectileRotationX(Dir, x - 2, y - 2),
                                 Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, CurrentMap, animBase,
                                 mMyBase.Animations[spawn].AutoRotate, mMyBase, this

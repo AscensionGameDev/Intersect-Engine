@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -14,7 +15,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Trades
 {
 
-    public class TradingWindow
+    public class TradingWindow : HasGameContext
     {
 
         private static int sItemXPadding = 4;
@@ -34,7 +35,7 @@ namespace Intersect.Client.Interface.Game.Trades
         public List<TradeSegment> TradeSegment = new List<TradeSegment>();
 
         //Init
-        public TradingWindow(Canvas gameCanvas, string traderName)
+        public TradingWindow(IGameContext gameContext, Canvas gameCanvas, string traderName) : base(gameContext)
         {
             mTradeWindow = new WindowControl(
                 gameCanvas, Strings.Trading.title.ToString(traderName), false, "TradeWindow"

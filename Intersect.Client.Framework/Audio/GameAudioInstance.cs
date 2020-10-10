@@ -11,8 +11,11 @@ namespace Intersect.Client.Framework.Audio
 
         private int mVolume;
 
-        protected GameAudioInstance(IAudioSource audioSource)
+        protected IGameContext GameContext { get; }
+
+        protected GameAudioInstance(IGameContext gameContext, IAudioSource audioSource)
         {
+            GameContext = gameContext ?? throw new ArgumentNullException(nameof(gameContext));
             AudioSource = audioSource ?? throw new ArgumentNullException(nameof(audioSource));
         }
 

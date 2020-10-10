@@ -11,9 +11,11 @@ namespace Intersect.Client.Framework.Graphics
 {
     public abstract class GameRenderer : IRenderer
     {
+        protected IGameContext GameContext { get; }
 
-        public GameRenderer()
+        public GameRenderer(IGameContext gameContext)
         {
+            GameContext = gameContext;
             ScreenshotRequests = new List<Stream>();
         }
 

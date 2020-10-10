@@ -2,6 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -11,7 +12,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Entities
 {
 
-    public class Animation
+    public class Animation : HasGameContext
     {
 
         public bool AutoRotate;
@@ -57,12 +58,13 @@ namespace Intersect.Client.Entities
         private int mZDimension = -1;
 
         public Animation(
+            IGameContext gameContext,
             AnimationBase animBase,
             bool loopForever,
             bool autoRotate = false,
             int zDimension = -1,
             Entity parent = null
-        )
+        ) : base(gameContext)
         {
             MyBase = animBase;
             mParent = parent;
@@ -148,7 +150,7 @@ namespace Intersect.Client.Entities
             if (!upper && mShowLower && mZDimension < 1 || !upper && mShowLower && mZDimension > 0)
             {
                 //Draw Lower
-                var tex = Globals.ContentManager.LoadTexture(
+                var tex = GameContext.ContentManager.LoadTexture(
                     TextureType.Animation, MyBase.Lower.Sprite
                 );
 
@@ -188,7 +190,7 @@ namespace Intersect.Client.Entities
             if (upper && mShowUpper && mZDimension != 0 || upper && mShowUpper && mZDimension == 0)
             {
                 //Draw Upper
-                var tex = Globals.ContentManager.LoadTexture(
+                var tex = GameContext.ContentManager.LoadTexture(
                     TextureType.Animation, MyBase.Upper.Sprite
                 );
 
@@ -377,7 +379,7 @@ namespace Intersect.Client.Entities
         {
             var size = new Point(0, 0);
 
-            var tex = Globals.ContentManager.LoadTexture(TextureType.Animation, MyBase.Lower.Sprite);
+            var tex = GameContext.ContentManager.LoadTexture(TextureType.Animation, MyBase.Lower.Sprite);
             if (tex != null)
             {
                 if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
@@ -396,7 +398,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            tex = Globals.ContentManager.LoadTexture(TextureType.Animation, MyBase.Upper.Sprite);
+            tex = GameContext.ContentManager.LoadTexture(TextureType.Animation, MyBase.Upper.Sprite);
             if (tex != null)
             {
                 if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)

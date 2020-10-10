@@ -1,12 +1,9 @@
-﻿using System;
-
+﻿using Intersect.Extensions;
 using Intersect.Factories;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
-using Intersect.Plugins.Interfaces;
+using Intersect.Server.Core;
 using Intersect.Server.Plugins.Helpers;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Server.Plugins
 {
@@ -24,23 +21,17 @@ namespace Intersect.Server.Plugins
             /// <inheritdoc />
             public IPluginContext Create(params object[] args)
             {
-                if (args.Length < 1)
-                {
-                    throw new ArgumentException($@"Need to provide an instance of {nameof(IManifestHelper)}.");
-                }
-
-                if (!(args[0] is Plugin plugin))
-                {
-                    throw new ArgumentException($@"First argument needs to be non-null and of type {nameof(Plugin)}.");
-                }
-
-                return new ServerPluginContext(plugin);
+                args.ValidateTypes(typeof(IServerContext), typeof(Plugin));
+                return new ServerPluginContext(args[0] as IServerContext, args[1] as Plugin);
             }
         }
 
+        private IServerContext ServerContext { get; }
+
         /// <inheritdoc />
-        public ServerPluginContext([NotNull] Plugin plugin) : base(plugin)
+        public ServerPluginContext(IServerContext serverContext, Plugin plugin) : base(plugin)
         {
+            ServerContext = serverContext;
             Lifecycle = new ServerLifecycleHelper(this);
         }
 

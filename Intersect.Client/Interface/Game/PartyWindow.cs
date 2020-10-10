@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -13,7 +14,7 @@ using Intersect.Enums;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class PartyWindow
+    public class PartyWindow : HasGameContext
     {
 
         private List<ImagePanel> mHpBar = new List<ImagePanel>();
@@ -46,7 +47,7 @@ namespace Intersect.Client.Interface.Game
         private WindowControl mPartyWindow;
 
         //Init
-        public PartyWindow(Canvas gameCanvas)
+        public PartyWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mPartyWindow = new WindowControl(gameCanvas, Strings.Parties.title, false, "PartyWindow");
             mPartyWindow.DisableResizing();

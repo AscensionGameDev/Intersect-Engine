@@ -142,6 +142,8 @@
     <Compile Include="Interface\Menu\CreditsWindow.cs" />
     <Compile Include="Interface\Menu\ResetPasswordWindow.cs" />
     <Compile Include="Interface\Menu\ForgotPasswordWindow.cs" />
+    <Compile Include="MonoGame\Storage\MonoStorage.cs" />
+    <Compile Include="MonoGame\Storage\RegistryPreferencesSerializer.cs" />
     <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
     <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
@@ -149,7 +151,7 @@
     <Compile Include="MonoGame\Audio\MonoMusicSource.cs" />
     <Compile Include="MonoGame\Audio\MonoSoundInstance.cs" />
     <Compile Include="MonoGame\Audio\MonoSoundSource.cs" />
-    <Compile Include="MonoGame\Database\MonoDatabase.cs" />
+    <Compile Include="MonoGame\Storage\MonoPreferences.cs" />
     <Compile Include="MonoGame\Content\MonoContentManager.cs" />
     <Compile Include="MonoGame\Graphics\MonoFont.cs" />
     <Compile Include="MonoGame\Graphics\MonoGameRenderer.cs" />

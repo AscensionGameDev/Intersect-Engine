@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
@@ -28,7 +29,9 @@ namespace Intersect.Client.MonoGame.Audio
 
         private static MonoMusicSource mActiveSource;
 
-        public MonoMusicSource(string name, string assetPath) : base(name, AudioType.Music)
+        public MonoMusicSource(IGameContext gameContext, string name, string assetPath) : base(
+            gameContext, name, AudioType.Music
+        )
         {
             mAssetPath = assetPath;
 
@@ -44,7 +47,7 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public override IAudioInstance CreateInstance() => new MonoMusicInstance(this);
+        public override IAudioInstance CreateInstance() => new MonoMusicInstance(GameContext, this);
 
         public DynamicSoundEffectInstance LoadSong()
         {

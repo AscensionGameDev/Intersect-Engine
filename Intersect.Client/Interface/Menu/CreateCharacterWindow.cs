@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -14,10 +15,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
 {
-
-    public class CreateCharacterWindow
+    public class CreateCharacterWindow : HasGameContext
     {
-
         private Button mBackButton;
 
         private ImagePanel mCharacterContainer;
@@ -76,11 +75,12 @@ namespace Intersect.Client.Interface.Menu
 
         //Init
         public CreateCharacterWindow(
+            IGameContext gameContext,
             Canvas parent,
             MainMenu mainMenu,
             ImagePanel parentPanel,
             SelectCharacterWindow selectCharacterWindow
-        )
+        ) : base(gameContext)
         {
             //Assign References
             mMainMenu = mainMenu;
@@ -177,7 +177,9 @@ namespace Intersect.Client.Interface.Menu
             mBackButton.SetText(Strings.CharacterCreation.back);
             mBackButton.Clicked += BackButton_Clicked;
 
-            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString());
+            mCharCreationPanel.LoadJsonUi(
+                GameContentManager.UI.Menu, Graphics.GameRenderer.ActiveResolution.ToString()
+            );
         }
 
         public bool IsHidden => mCharCreationPanel.IsHidden;
@@ -222,13 +224,13 @@ namespace Intersect.Client.Interface.Menu
                 {
                     if (mMaleChk.IsChecked)
                     {
-                        mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                        mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                             TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                            mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                                 TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
@@ -237,13 +239,13 @@ namespace Intersect.Client.Interface.Menu
                     }
                     else
                     {
-                        mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                        mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                             TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                            mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                                 TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
@@ -282,7 +284,8 @@ namespace Intersect.Client.Interface.Menu
                             );
 
                             mCharacterPortrait.SetSize(
-                                mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames, mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
+                                mCharacterPortrait.GameTexture.Width / Options.Instance.Sprites.NormalFrames,
+                                mCharacterPortrait.GameTexture.Height / Options.Instance.Sprites.Directions
                             );
 
                             mCharacterPortrait.SetPosition(
@@ -551,7 +554,5 @@ namespace Intersect.Client.Interface.Menu
                 mSelectCharacterWindow.Show();
             }
         }
-
     }
-
 }

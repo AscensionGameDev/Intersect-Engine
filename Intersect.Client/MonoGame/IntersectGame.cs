@@ -11,7 +11,7 @@ using Intersect.Client.MonoGame.Content;
 using Intersect.Client.MonoGame.Graphics;
 using Intersect.Client.MonoGame.Input;
 using Intersect.Client.MonoGame.Network;
-using Intersect.Client.MonoGame.System;
+using Intersect.Client.MonoGame.Sys;
 using Intersect.Configuration;
 using Intersect.Updater;
 
@@ -59,11 +59,11 @@ namespace Intersect.Client.MonoGame
 
         #endregion
 
-        [NotNull] private IClientContext Context { get; }
+        [NotNull] internal IClientContext Context { get; }
 
         [NotNull] private Action PostStartupAction { get; }
 
-        private MonoGameContext GameContext { get; }
+        private MonoGameContext GameContext => Context.GameContext as MonoGameContext;
 
         private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
@@ -88,16 +88,11 @@ namespace Intersect.Client.MonoGame
             Content.RootDirectory = "";
             IsMouseVisible = true;
 
-            GameContext = new MonoGameContext(this);
+            Context.GameContext = new MonoGameContext(this);
 
-            Globals.GameContext = GameContext;
-
-            Globals.Database = new MonoDatabase();
-
-            /* Load configuration */
-            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
-
-            Globals.Database.LoadPreferences();
+            // Load configuration and preferences
+            ConfigurationHelper.LoadSafely(GameContext.Storage.Configuration, ClientConfiguration.DefaultPath);
+            GameContext.Storage.Preferences.Load();
 
             Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
 
@@ -107,9 +102,9 @@ namespace Intersect.Client.MonoGame
             GameClipboard.Instance = new MonoClipboard();
 
             Globals.System = new MonoSystem();
-            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.GameRenderer);
+            Interface.Interface.GwenRenderer = new IntersectRenderer(null, GameContext.Renderer);
             Interface.Interface.GwenInput = new IntersectInput();
-            Controls.Init();
+            Controls.Init(GameContext);
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.AllowAltF4 = false;
@@ -153,8 +148,6 @@ namespace Intersect.Client.MonoGame
 
         private void IntersectInit()
         {
-            (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init(GraphicsDevice);
-
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket();
             Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
@@ -166,7 +159,7 @@ namespace Intersect.Client.MonoGame
             Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
-            Main.Start();
+            Main.Start(GameContext);
 
             mInitialized = true;
 
@@ -262,7 +255,6 @@ namespace Intersect.Client.MonoGame
                 {
                     if (updaterGraphicsReset == false)
                     {
-                        (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init(GraphicsDevice);
                         (Core.Graphics.GameRenderer as MonoGameRenderer)?.Init();
                         (Core.Graphics.GameRenderer as MonoGameRenderer)?.Begin();
                         (Core.Graphics.GameRenderer as MonoGameRenderer)?.End();

@@ -2,6 +2,7 @@
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -14,7 +15,7 @@ using Intersect.GameObjects.Maps.MapList;
 namespace Intersect.Client.Interface.Game
 {
 
-    class AdminWindow
+    internal class AdminWindow : HasGameContext
     {
 
         //Graphics
@@ -80,7 +81,7 @@ namespace Intersect.Client.Interface.Game
         public ImagePanel SpritePanel;
 
         //Init
-        public AdminWindow(Canvas gameCanvas)
+        public AdminWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title);
             mAdminWindow.SetSize(200, 540);
@@ -173,7 +174,7 @@ namespace Intersect.Client.Interface.Game
             mSpriteDropdown = new ComboBox(mAdminWindow);
             mSpriteDropdown.SetBounds(6, 128, 80, 18);
             mSpriteDropdown.AddItem(Strings.Admin.none);
-            var sprites = Globals.ContentManager.GetTextureNames(TextureType.Entity);
+            var sprites = GameContext.ContentManager.GetTextureNames(TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
             {
@@ -202,7 +203,7 @@ namespace Intersect.Client.Interface.Game
             mFaceDropdown = new ComboBox(mAdminWindow);
             mFaceDropdown.SetBounds(6, 188, 80, 18);
             mFaceDropdown.AddItem(Strings.Admin.none);
-            var faces = Globals.ContentManager.GetTextureNames(TextureType.Face);
+            var faces = GameContext.ContentManager.GetTextureNames(TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
             {
@@ -266,7 +267,7 @@ namespace Intersect.Client.Interface.Game
 
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            SpritePanel.GameTexture = Globals.ContentManager.LoadTexture(
+            SpritePanel.GameTexture = GameContext.ContentManager.LoadTexture(
                 TextureType.Entity, mSpriteDropdown.Text
             );
 
@@ -281,7 +282,7 @@ namespace Intersect.Client.Interface.Game
 
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            FacePanel.GameTexture = Globals.ContentManager.LoadTexture(
+            FacePanel.GameTexture = GameContext.ContentManager.LoadTexture(
                 TextureType.Face, mFaceDropdown.Text
             );
         }

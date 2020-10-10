@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -30,7 +31,7 @@ namespace Intersect.Client.Entities
 
         private Rectangle mTextureBounds;
 
-        public ChatBubble(Entity owner, string text)
+        public ChatBubble(IGameContext gameContext, Entity owner, string text)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -40,7 +41,7 @@ namespace Intersect.Client.Entities
             mOwner = owner;
             mSourceText = text;
             mRenderTimer = Globals.System.GetTimeMs() + 5000;
-            mBubbleTex = Globals.ContentManager.LoadTexture(TextureType.Miscellaneous, "chatbubble.png");
+            mBubbleTex = gameContext.ContentManager.LoadTexture(TextureType.Miscellaneous, "chatbubble.png");
         }
 
         public bool Update()

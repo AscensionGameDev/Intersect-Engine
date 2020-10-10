@@ -11,6 +11,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Intersect.Client.Framework;
+
 namespace Intersect.Client.Core
 {
     /// <summary>
@@ -35,6 +37,9 @@ namespace Intersect.Client.Core
             get => mPlatformRunner ?? throw new ArgumentNullException(nameof(PlatformRunner));
             private set => mPlatformRunner = value;
         }
+
+        /// <inheritdoc />
+        public IGameContext GameContext { get; set; }
 
         /// <inheritdoc />
         protected override void InternalStart()

@@ -1,19 +1,17 @@
-﻿using System;
-
-using Intersect.Client.Entities;
+﻿using Intersect.Client.Entities;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
-
-    public class SpellStatus
+    public class SpellStatus : HasGameContext
     {
-
         public ImagePanel Container;
 
         private Guid mCurrentSpellId;
@@ -33,7 +31,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public Framework.Gwen.Control.Label TimeLabel;
 
-        public SpellStatus(EntityBox entityBox, Status status)
+        public SpellStatus(IGameContext gameContext, EntityBox entityBox, Status status) : base(gameContext)
         {
             mEntityBox = entityBox;
             mStatus = status;
@@ -65,7 +63,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
 
             mDescWindow = new SpellDescWindow(
-                mStatus.SpellId, mEntityBox.EntityWindow.X + Pnl.X + 16,
+                GameContext, mStatus.SpellId, mEntityBox.EntityWindow.X + Pnl.X + 16,
                 mEntityBox.EntityWindow.Y + Container.Parent.Y + Container.Bottom + 2, true
             );
         }
@@ -115,9 +113,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     Container.Show();
                     if (spell != null)
                     {
-                        var spellTex = Globals.ContentManager.LoadTexture(
-                            TextureType.Spell, spell.Icon
-                        );
+                        var spellTex = GameContext.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
 
                         if (spellTex != null)
                         {
@@ -157,7 +153,5 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
         }
-
     }
-
 }

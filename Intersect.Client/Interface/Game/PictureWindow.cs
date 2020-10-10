@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Content;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -7,7 +8,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Interface.Game
 {
 
-    class PictureWindow
+    internal class PictureWindow : HasGameContext
     {
 
         //Controls
@@ -15,7 +16,7 @@ namespace Intersect.Client.Interface.Game
 
         private ImagePanel mPicture;
 
-        public PictureWindow(Canvas gameCanvas)
+        public PictureWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mGameCanvas = gameCanvas;
             mPicture = new ImagePanel(gameCanvas);
@@ -34,7 +35,7 @@ namespace Intersect.Client.Interface.Game
             Size = size;
             Clickable = clickable;
 
-            mPicture.GameTexture = Globals.ContentManager.LoadTexture(TextureType.Image, picture);
+            mPicture.GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Image, picture);
             if (mPicture.GameTexture != null)
             {
                 mPicture.SetSize(mPicture.GameTexture.Width, mPicture.GameTexture.Height);

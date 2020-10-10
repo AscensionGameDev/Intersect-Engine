@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
@@ -9,12 +8,12 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Crafting
 {
-
     public class RecipeItem
     {
-
         public ImagePanel Container;
 
         public ItemDescWindow DescWindow;
@@ -60,7 +59,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = mCraftingWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.GameTexture = itemTex;
@@ -119,12 +118,10 @@ namespace Intersect.Client.Interface.Game.Crafting
             if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
             {
                 DescWindow = new ItemDescWindow(
-                    ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
-                    new int[(int) Stats.StatCount]
+                    mCraftingWindow.GameContext, ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X,
+                    mCraftingWindow.Y, new int[(int) Stats.StatCount]
                 );
             }
         }
-
     }
-
 }

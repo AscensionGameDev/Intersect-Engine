@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -15,7 +16,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class QuestsWindow
+    public class QuestsWindow : HasGameContext
     {
 
         private Button mBackButton;
@@ -40,7 +41,7 @@ namespace Intersect.Client.Interface.Game
         private QuestBase mSelectedQuest;
 
         //Init
-        public QuestsWindow(Canvas gameCanvas)
+        public QuestsWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mQuestsWindow = new WindowControl(gameCanvas, Strings.QuestLog.title, false, "QuestsWindow");
             mQuestsWindow.DisableResizing();

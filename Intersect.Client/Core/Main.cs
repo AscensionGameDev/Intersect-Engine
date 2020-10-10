@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -27,14 +28,20 @@ namespace Intersect.Client.Core
 
         private static bool _loadedTilesets;
 
-        public static void Start()
+        private static IGameContext GameContext { get; set; }
+
+        public static void Start(IGameContext gameContext)
         {
+            GameContext = gameContext;
+
             //Load Graphics
-            Graphics.InitGraphics();
+            Graphics.InitGraphics(GameContext);
 
             //Load Sounds
-            Audio.Init();
+            Audio.Init(GameContext);
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
+
+            PacketHandler.GameContext = GameContext;
 
             //Init Network
             Networking.Network.InitNetwork();
@@ -113,7 +120,7 @@ namespace Intersect.Client.Core
         {
             if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
-                ITexture imageTex = Globals.ContentManager.LoadTexture(
+                ITexture imageTex = GameContext.ContentManager.LoadTexture(
                     TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
                 );
 
@@ -180,7 +187,7 @@ namespace Intersect.Client.Core
 
             if (!_loadedTilesets && Globals.HasGameData)
             {
-                Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
             }
 
@@ -391,7 +398,7 @@ namespace Intersect.Client.Core
             Globals.EventHolds.Clear();
             Globals.PendingEvents.Clear();
 
-            Interface.Interface.InitGwen();
+            Interface.Interface.InitGwen(GameContext);
             Fade.FadeIn();
         }
 

@@ -1,6 +1,5 @@
-﻿using System;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -12,12 +11,12 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Inventory
 {
-
-    public class InventoryItem
+    public class InventoryItem : HasGameContext
     {
-
         public ImagePanel Container;
 
         public Label EquipLabel;
@@ -62,7 +61,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         public ImagePanel Pnl;
 
-        public InventoryItem(InventoryWindow inventoryWindow, int index)
+        public InventoryItem(IGameContext gameContext, InventoryWindow inventoryWindow, int index) : base(gameContext)
         {
             mInventoryWindow = inventoryWindow;
             mMySlot = index;
@@ -154,8 +153,8 @@ namespace Intersect.Client.Interface.Game.Inventory
                 if (Globals.Me.Inventory[mMySlot]?.Base != null)
                 {
                     mDescWindow = new ItemDescWindow(
-                        Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
-                        mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs
+                        GameContext, Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
+                        mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs
                     );
                 }
             }
@@ -181,6 +180,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
+                            GameContext,
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
@@ -194,6 +194,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
+                            GameContext,
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(hoveredItem.Price, costItem.Name)
@@ -205,8 +206,9 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (invItem?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
+                            GameContext,
                             invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
-                            "", Strings.Shop.wontbuy
+                            string.Empty, Strings.Shop.wontbuy
                         );
                     }
                 }
@@ -256,7 +258,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;
@@ -440,7 +442,5 @@ namespace Intersect.Client.Interface.Game.Inventory
                 }
             }
         }
-
     }
-
 }

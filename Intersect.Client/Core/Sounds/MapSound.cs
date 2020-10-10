@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Entities;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
@@ -22,6 +23,7 @@ namespace Intersect.Client.Core.Sounds
         private int mY;
 
         public MapSound(
+            IGameContext gameContext,
             string filename,
             int x,
             int y,
@@ -29,7 +31,7 @@ namespace Intersect.Client.Core.Sounds
             bool loop,
             int distance,
             Entity parent = null
-        ) : base(filename, loop)
+        ) : base(gameContext, filename, loop)
         {
             if (string.IsNullOrEmpty(filename) || mSound == null)
             {

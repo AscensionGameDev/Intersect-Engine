@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -15,7 +16,7 @@ using Intersect.GameObjects.Crafting;
 namespace Intersect.Client.Interface.Game.Crafting
 {
 
-    public class CraftingWindow
+    public class CraftingWindow : HasGameContext
     {
 
         private static int sItemXPadding = 4;
@@ -62,7 +63,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         private List<Label> mValues = new List<Label>();
 
-        public CraftingWindow(Canvas gameCanvas)
+        public CraftingWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mCraftWindow = new WindowControl(gameCanvas, Globals.ActiveCraftingTable.Name, false, "CraftingWindow");
             mCraftWindow.DisableResizing();

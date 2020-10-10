@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -17,7 +18,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class LoginWindow
+    public class LoginWindow : HasGameContext
     {
 
         private Button mBackBtn;
@@ -54,7 +55,7 @@ namespace Intersect.Client.Interface.Menu
         private bool mUseSavedPass;
 
         //Init
-        public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public LoginWindow(IGameContext gameContext, Canvas parent, MainMenu mainMenu, ImagePanel parentPanel) : base(gameContext)
         {
             //Assign References
             mMainMenu = mainMenu;
@@ -236,14 +237,14 @@ namespace Intersect.Client.Interface.Menu
 
         private void LoadCredentials()
         {
-            var name = Globals.Database.LoadPreference("Username");
+            var name = GameContext.Storage.Preferences.GetPreference<string>("Username");
             if (string.IsNullOrEmpty(name))
             {
                 return;
             }
 
             mUsernameTextbox.Text = name;
-            var pass = Globals.Database.LoadPreference("Password");
+            var pass = GameContext.Storage.Preferences.GetPreference<string>("Password");
             if (string.IsNullOrEmpty(pass))
             {
                 return;
@@ -274,8 +275,8 @@ namespace Intersect.Client.Interface.Menu
                 password = mUseSavedPass ? mSavedPass : ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
             }
 
-            Globals.Database.SavePreference("Username", username);
-            Globals.Database.SavePreference("Password", password);
+            GameContext.Storage.Preferences.SetPreference("Username", username, true);
+            GameContext.Storage.Preferences.SetPreference("Password", password, true);
         }
 
     }

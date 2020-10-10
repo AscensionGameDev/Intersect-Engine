@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
@@ -28,7 +29,7 @@ namespace Intersect.Client.Entities
 
         FloatRect mSrcRectangle = FloatRect.Empty;
 
-        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet)
+        public Resource(IGameContext gameContext, Guid id, ResourceEntityPacket packet) : base(gameContext, id, packet)
         {
             mRenderPriority = 0;
         }
@@ -49,7 +50,7 @@ namespace Intersect.Client.Entities
                 {
                     if (GameContentManager.Current.TilesetsLoaded)
                     {
-                        GameTexture = Globals.ContentManager.LoadTexture(TextureType.Tileset, mMySprite);
+                        GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Tileset, mMySprite);
                     }
                     else
                     {
@@ -58,7 +59,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    GameTexture = Globals.ContentManager.LoadTexture(TextureType.Resource, mMySprite);
+                    GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Resource, mMySprite);
                 }
 
                 mHasRenderBounds = false;

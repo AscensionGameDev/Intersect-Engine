@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
@@ -23,11 +20,15 @@ using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Intersect.Client.Networking
 {
-
     public static class PacketHandler
     {
+        internal static IGameContext GameContext { get; set; }
 
         public static long Ping = 0;
 
@@ -103,7 +104,7 @@ namespace Intersect.Client.Networking
                 }
             }
 
-            map = new MapInstance(mapId);
+            map = new MapInstance(GameContext, mapId);
             MapInstance.Lookup.Set(mapId, map);
             lock (map.MapLock)
             {
@@ -170,7 +171,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Player(packet.EntityId, packet));
+                Globals.Entities.Add(packet.EntityId, new Player(GameContext, packet.EntityId, packet));
                 if (packet.IsSelf)
                 {
                     Globals.Me = (Player) Globals.Entities[packet.EntityId];
@@ -189,7 +190,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Entity(packet.EntityId, packet));
+                Globals.Entities.Add(packet.EntityId, new Entity(GameContext, packet.EntityId, packet));
                 Globals.Entities[packet.EntityId].Type = packet.Aggression;
             }
         }
@@ -204,7 +205,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Resource(packet.EntityId, packet));
+                Globals.Entities.Add(packet.EntityId, new Resource(GameContext, packet.EntityId, packet));
             }
         }
 
@@ -218,7 +219,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Projectile(packet.EntityId, packet));
+                Globals.Entities.Add(packet.EntityId, new Projectile(GameContext, packet.EntityId, packet));
             }
         }
 
@@ -492,16 +493,19 @@ namespace Intersect.Client.Networking
                         en.OffsetX = 0;
 
                         break;
+
                     case 1:
                         en.OffsetY = -Options.TileWidth;
                         en.OffsetX = 0;
 
                         break;
+
                     case 2:
                         en.OffsetY = 0;
                         en.OffsetX = Options.TileWidth;
 
                         break;
+
                     case 3:
                         en.OffsetY = 0;
                         en.OffsetX = -Options.TileWidth;
@@ -796,11 +800,13 @@ namespace Intersect.Client.Networking
                     type = InputBox.InputType.TextInput;
 
                     break;
+
                 case VariableDataTypes.Integer:
                 case VariableDataTypes.Number:
                     type = InputBox.InputType.NumericInput;
 
                     break;
+
                 case VariableDataTypes.Boolean:
                     type = InputBox.InputType.YesNo;
 
@@ -1063,7 +1069,8 @@ namespace Intersect.Client.Networking
                         if (animBase != null)
                         {
                             var animInstance = new Animation(
-                                animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]
+                                GameContext, animBase, false, packet.Direction == -1 ? false : true, -1,
+                                Globals.Entities[entityId]
                             );
 
                             if (packet.Direction > -1)
@@ -1089,7 +1096,7 @@ namespace Intersect.Client.Networking
                             if (animBase != null)
                             {
                                 var animInstance = new Animation(
-                                    animBase, false, packet.Direction == -1 ? true : false, -1,
+                                    GameContext, animBase, false, packet.Direction == -1 ? true : false, -1,
                                     map.LocalEntities[entityId]
                                 );
 
@@ -1252,19 +1259,22 @@ namespace Intersect.Client.Networking
                 case GameObjectType.Map:
                     //Handled in a different packet
                     break;
+
                 case GameObjectType.Tileset:
                     var obj = new TilesetBase(id);
                     obj.Load(json);
                     TilesetBase.Lookup.Set(id, obj);
                     if (Globals.HasGameData && !another)
                     {
-                        Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                        GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                     }
 
                     break;
+
                 case GameObjectType.Event:
                     //Clients don't store event data, im an idiot.
                     break;
+
                 default:
                     var lookup = type.GetLookup();
                     if (deleted)
@@ -1689,7 +1699,5 @@ namespace Intersect.Client.Networking
             //Fade out, we're finally loading the game world!
             Fade.FadeOut();
         }
-
     }
-
 }

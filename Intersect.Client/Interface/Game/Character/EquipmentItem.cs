@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -13,7 +14,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Character
 {
 
-    public class EquipmentItem
+    public class EquipmentItem : HasGameContext
     {
 
         public ImagePanel ContentPanel;
@@ -32,7 +33,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         public ImagePanel Pnl;
 
-        public EquipmentItem(int index, WindowControl characterWindow)
+        public EquipmentItem(IGameContext gameContext, int index, WindowControl characterWindow) : base(gameContext)
         {
             mYindex = index;
             mCharacterWindow = characterWindow;
@@ -87,7 +88,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
+            mDescWindow = new ItemDescWindow(GameContext, item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()
@@ -112,7 +113,7 @@ namespace Intersect.Client.Interface.Game.Character
                 var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         ContentPanel.Show();
