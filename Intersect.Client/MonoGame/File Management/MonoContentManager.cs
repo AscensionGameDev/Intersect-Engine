@@ -33,11 +33,18 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadTilesets(string[] tilesetnames)
         {
             mTilesetDict.Clear();
-            var tilesetFiles = Directory.GetFiles(Path.Combine("resources", "tilesets")).Select(f => Path.GetFileName(f));
+
+            var dir = Path.Combine("resources", "tilesets");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            var tilesetFiles = Directory.GetFiles(dir).Select(f => Path.GetFileName(f));
             foreach (var t in tilesetnames)
             {
-                var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase));
-                if (t != "" &&
+                var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(t) &&
                     (!string.IsNullOrWhiteSpace(realFilename) ||
                      GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) &&
                     !mTilesetDict.ContainsKey(t.ToLower()))
