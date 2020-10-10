@@ -1,7 +1,6 @@
-﻿using Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Audio;
 using Intersect.Client.General;
-
-using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework.Audio;
 
@@ -16,7 +15,7 @@ namespace Intersect.Client.MonoGame.Audio
         private readonly DynamicSoundEffectInstance mSong;
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        public MonoMusicInstance([NotNull] MonoMusicSource source) : base(source)
+        public MonoMusicInstance(IGameContext gameContext, MonoMusicSource source) : base(gameContext, source)
         {
             //Only allow one music player at a time
             if (Instance != null)
@@ -94,7 +93,7 @@ namespace Intersect.Client.MonoGame.Audio
             {
                 try
                 {
-                    mSong.Volume = Volume * Globals.Database.MusicVolume / 10000f;
+                    mSong.Volume = Volume * GameContext.Storage.Preferences.MusicVolume / 10000f;
                 }
                 catch (NullReferenceException)
                 {

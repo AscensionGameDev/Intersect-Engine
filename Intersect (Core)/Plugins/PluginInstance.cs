@@ -1,4 +1,4 @@
-﻿
+﻿using Intersect.Core;
 using Intersect.Factories;
 
 using JetBrains.Annotations;
@@ -15,13 +15,17 @@ namespace Intersect.Plugins
         /// <summary>
         /// Create a <see cref="PluginInstance"/> for the given <see cref="Plugin"/>.
         /// </summary>
+        /// <param name="applicationContext">the application context in which this instance is running</param>
         /// <param name="plugin">The plugin descriptor to create an instance for.</param>
         /// <returns>A <see cref="PluginInstance"/> for <paramref name="plugin"/>.</returns>
         [NotNull]
-        public static PluginInstance Create([NotNull, ValidatedNotNull] Plugin plugin)
+        public static PluginInstance Create(
+            [NotNull, ValidatedNotNull] IApplicationContext applicationContext,
+            [NotNull, ValidatedNotNull] Plugin plugin
+        )
         {
             var bootstrapContext = FactoryRegistry<IPluginBootstrapContext>.Create(plugin);
-            var context = FactoryRegistry<IPluginContext>.Create(plugin);
+            var context = FactoryRegistry<IPluginContext>.Create(applicationContext, plugin);
             var entry = plugin.Reference.CreateInstance();
             return new PluginInstance(entry, bootstrapContext, context);
         }
@@ -29,17 +33,20 @@ namespace Intersect.Plugins
         /// <summary>
         /// The entry point instance.
         /// </summary>
-        [NotNull] public IPluginEntry Entry { get; }
+        [NotNull]
+        public IPluginEntry Entry { get; }
 
         /// <summary>
         /// The context used for bootstrap lifecycle actions.
         /// </summary>
-        [NotNull] public IPluginBootstrapContext BootstrapContext { get; }
+        [NotNull]
+        public IPluginBootstrapContext BootstrapContext { get; }
 
         /// <summary>
         /// The context used for non-bootstrap lifecycle actions.
         /// </summary>
-        [NotNull] public IPluginContext Context { get; }
+        [NotNull]
+        public IPluginContext Context { get; }
 
         private PluginInstance(
             [NotNull] IPluginEntry entry,
@@ -51,7 +58,5 @@ namespace Intersect.Plugins
             BootstrapContext = bootstrapContext;
             Context = context;
         }
-
     }
-
 }

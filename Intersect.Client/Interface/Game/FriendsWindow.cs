@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -11,7 +12,7 @@ using Intersect.Client.Networking;
 namespace Intersect.Client.Interface.Game
 {
 
-    class FriendsWindow
+    internal class FriendsWindow : HasGameContext
     {
 
         private Button mAddButton;
@@ -31,7 +32,7 @@ namespace Intersect.Client.Interface.Game
         private ImagePanel mTextboxContainer;
 
         //Init
-        public FriendsWindow(Canvas gameCanvas)
+        public FriendsWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mFriendsWindow = new WindowControl(gameCanvas, Strings.Friends.title, false, "FriendsWindow");
             mFriendsWindow.DisableResizing();

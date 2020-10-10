@@ -1,8 +1,8 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
-using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Character;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Spells;
@@ -13,10 +13,8 @@ using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Game
 {
-
-    public class Menu
+    public class Menu : HasGameContext
     {
-
         [NotNull] private readonly ImagePanel mCharacterBackground;
 
         [NotNull] private readonly Button mCharacterButton;
@@ -74,7 +72,7 @@ namespace Intersect.Client.Interface.Game
         private Canvas mGameCanvas;
 
         //Init
-        public Menu(Canvas gameCanvas)
+        public Menu(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mGameCanvas = gameCanvas;
 
@@ -119,12 +117,12 @@ namespace Intersect.Client.Interface.Game
             mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
 
             //Assign Window References
-            mPartyWindow = new PartyWindow(gameCanvas);
-            mFriendsWindow = new FriendsWindow(gameCanvas);
-            mInventoryWindow = new InventoryWindow(gameCanvas);
-            mSpellsWindow = new SpellsWindow(gameCanvas);
-            mCharacterWindow = new CharacterWindow(gameCanvas);
-            mQuestsWindow = new QuestsWindow(gameCanvas);
+            mPartyWindow = new PartyWindow(GameContext, gameCanvas);
+            mFriendsWindow = new FriendsWindow(GameContext, gameCanvas);
+            mInventoryWindow = new InventoryWindow(GameContext, gameCanvas);
+            mSpellsWindow = new SpellsWindow(GameContext, gameCanvas);
+            mCharacterWindow = new CharacterWindow(GameContext, gameCanvas);
+            mQuestsWindow = new QuestsWindow(GameContext, gameCanvas);
         }
 
         //Methods
@@ -145,7 +143,7 @@ namespace Intersect.Client.Interface.Game
 
         public void HideWindows()
         {
-            if (!Globals.Database.HideOthersOnWindowOpen)
+            if (!GameContext.Storage.Preferences.HideOthersOnWindowOpen)
             {
                 return;
             }
@@ -280,7 +278,5 @@ namespace Intersect.Client.Interface.Game
         {
             ToggleCharacterWindow();
         }
-
     }
-
 }

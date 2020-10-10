@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
@@ -77,10 +78,13 @@ namespace Intersect.Client.Interface.Game
 
         public EntityBox PlayerBox;
 
-        public GameInterface([NotNull] Canvas canvas) : base(canvas)
+        private IGameContext GameContext { get; }
+
+        public GameInterface(IGameContext gameContext, Canvas canvas) : base(canvas)
         {
+            GameContext = gameContext;
             GameCanvas = canvas;
-            EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+            EscapeMenu = new EscapeMenu(gameContext, GameCanvas) {IsHidden = true};
 
             InitGameGui();
         }
@@ -96,15 +100,15 @@ namespace Intersect.Client.Interface.Game
         public void InitGameGui()
         {
             mChatBox = new Chatbox(GameCanvas, this);
-            GameMenu = new Menu(GameCanvas);
-            Hotbar = new HotBarWindow(GameCanvas);
-            PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            GameMenu = new Menu(GameContext, GameCanvas);
+            Hotbar = new HotBarWindow(GameContext, GameCanvas);
+            PlayerBox = new EntityBox(GameContext, GameCanvas, EntityTypes.Player, Globals.Me, true);
             if (mPictureWindow == null)
             {
-                mPictureWindow = new PictureWindow(GameCanvas);
+                mPictureWindow = new PictureWindow(GameContext, GameCanvas);
             }
 
-            mEventWindow = new EventWindow(GameCanvas);
+            mEventWindow = new EventWindow(GameContext, GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
         }
@@ -131,7 +135,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (mAdminWindow == null)
             {
-                mAdminWindow = new AdminWindow(GameCanvas);
+                mAdminWindow = new AdminWindow(GameContext, GameCanvas);
             }
             else
             {
@@ -163,7 +167,7 @@ namespace Intersect.Client.Interface.Game
         {
             mShopWindow?.Close();
 
-            mShopWindow = new ShopWindow(GameCanvas);
+            mShopWindow = new ShopWindow(GameContext, GameCanvas);
             mShouldOpenShop = false;
         }
 
@@ -182,7 +186,7 @@ namespace Intersect.Client.Interface.Game
         {
             mBankWindow?.Close();
 
-            mBankWindow = new BankWindow(GameCanvas);
+            mBankWindow = new BankWindow(GameContext, GameCanvas);
             mShouldOpenBank = false;
             Globals.InBank = true;
         }
@@ -202,7 +206,7 @@ namespace Intersect.Client.Interface.Game
         {
             mBagWindow?.Close();
 
-            mBagWindow = new BagWindow(GameCanvas);
+            mBagWindow = new BagWindow(GameContext, GameCanvas);
             mShouldOpenBag = false;
             Globals.InBag = true;
         }
@@ -225,7 +229,7 @@ namespace Intersect.Client.Interface.Game
                 mCraftingWindow.Close();
             }
 
-            mCraftingWindow = new CraftingWindow(GameCanvas);
+            mCraftingWindow = new CraftingWindow(GameContext, GameCanvas);
             mShouldOpenCraftingTable = false;
             Globals.InCraft = true;
         }
@@ -255,7 +259,7 @@ namespace Intersect.Client.Interface.Game
                 mTradingWindow.Close();
             }
 
-            mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
+            mTradingWindow = new TradingWindow(GameContext, GameCanvas, mTradingTarget);
             mShouldOpenTrading = false;
             Globals.InTrade = true;
         }
@@ -276,7 +280,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (mAdminWindow == null)
             {
-                mAdminWindow = new AdminWindow(GameCanvas);
+                mAdminWindow = new AdminWindow(GameContext, GameCanvas);
             }
 
             mAdminWindow.Show();

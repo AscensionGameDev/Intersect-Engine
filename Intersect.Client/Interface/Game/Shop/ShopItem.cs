@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -12,12 +11,12 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Shop
 {
-
     public class ShopItem
     {
-
         public ImagePanel Container;
 
         private int mCurrentItem = -2;
@@ -84,7 +83,7 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = mShopWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.GameTexture = itemTex;
@@ -135,7 +134,8 @@ namespace Intersect.Client.Interface.Game.Shop
             if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
             {
                 mDescWindow = new ItemDescWindow(
-                    Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "",
+                    mShopWindow.GameContext, Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y,
+                    item.StatsGiven, string.Empty,
                     Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
                 );
             }
@@ -157,7 +157,5 @@ namespace Intersect.Client.Interface.Game.Shop
         public void Update()
         {
         }
-
     }
-
 }

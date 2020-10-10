@@ -6,6 +6,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.EntityPanel;
@@ -59,7 +60,7 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+        public Player(IGameContext gameContext, Guid id, PlayerEntityPacket packet) : base(gameContext, id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
             {
@@ -903,11 +904,11 @@ namespace Intersect.Client.Entities
             {
                 if (closestEntity.GetType() == typeof(Player))
                 {
-                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
+                    TargetBox = new EntityBox(GameContext, Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
                 }
                 else
                 {
-                    TargetBox = new EntityBox(
+                    TargetBox = new EntityBox(GameContext,
                         Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity
                     );
                 }
@@ -1141,13 +1142,13 @@ namespace Intersect.Client.Entities
                                         {
                                             if (en.Value.GetType() == typeof(Player))
                                             {
-                                                TargetBox = new EntityBox(
+                                                TargetBox = new EntityBox(GameContext,
                                                     Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, en.Value
                                                 );
                                             }
                                             else
                                             {
-                                                TargetBox = new EntityBox(
+                                                TargetBox = new EntityBox(GameContext,
                                                     Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
                                                     en.Value
                                                 );
@@ -1199,7 +1200,7 @@ namespace Intersect.Client.Entities
                                             TargetBox = null;
                                         }
 
-                                        TargetBox = new EntityBox(
+                                        TargetBox = new EntityBox(GameContext,
                                             Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, en.Value
                                         );
 

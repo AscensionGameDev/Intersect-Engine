@@ -7,6 +7,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -25,7 +26,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Maps
 {
 
-    public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
+    public class MapInstance : MapBase, IGameObject<Guid, MapInstance>, IHasGameContext
     {
 
         //Client Only Values
@@ -96,9 +97,13 @@ namespace Intersect.Client.Maps
 
         private GameTileBuffer[][][] mTileBuffers; //Array is layer, autotile frame, buffer index
 
+        public IGameContext GameContext { get; }
+
         //Initialization
-        public MapInstance(Guid id) : base(id)
+        public MapInstance(IGameContext gameContext, Guid id) : base(id)
         {
+            GameContext = gameContext;
+
             mTileBuffers = new GameTileBuffer[Options.LayerCount][][];
             for (var i = 0; i < Options.LayerCount; i++)
             {
@@ -158,7 +163,7 @@ namespace Intersect.Client.Maps
                             var tileset = TilesetBase.Get(Layers[i].Tiles[x, y].TilesetId);
                             if (tileset != null)
                             {
-                                var tilesetTex = Globals.ContentManager.LoadTexture(
+                                var tilesetTex = GameContext.ContentManager.LoadTexture(
                                     TextureType.Tileset, tileset.Name
                                 );
 
@@ -482,7 +487,7 @@ namespace Intersect.Client.Maps
 
                     if (!mAttributeAnimInstances.ContainsKey(att))
                     {
-                        var animInstance = new Animation(anim, true);
+                        var animInstance = new Animation(GameContext, anim, true);
                         animInstance.SetPosition(
                             GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                             GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0
@@ -549,7 +554,7 @@ namespace Intersect.Client.Maps
                 return;
             }
 
-            var anim = new MapAnimation(animBase, tileX, tileY, dir);
+            var anim = new MapAnimation(GameContext, animBase, tileX, tileY, dir);
             LocalAnimations.Add(anim);
             anim.SetPosition(
                 GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
@@ -661,7 +666,7 @@ namespace Intersect.Client.Maps
                 var itemBase = ItemBase.Get(item.Value.ItemId);
                 if (itemBase != null)
                 {
-                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, itemBase.Icon);
+                    var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
@@ -910,7 +915,7 @@ namespace Intersect.Client.Maps
 
             if (Fog != null && Fog.Length > 0)
             {
-                var fogTex = Globals.ContentManager.LoadTexture(TextureType.Fog, Fog);
+                var fogTex = GameContext.ContentManager.LoadTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     var xCount = (int) (Options.MapWidth * Options.TileWidth * 3 / fogTex.Width);
@@ -987,7 +992,7 @@ namespace Intersect.Client.Maps
             {
                 if (Globals.System.GetTimeMs() > _weatherParticleSpawnTime)
                 {
-                    _weatherParticles.Add(new WeatherParticle(_removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
+                    _weatherParticles.Add(new WeatherParticle(GameContext, _removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
                     var spawnTime = 25 + (int) (475 * (float) (1f - (float) (WeatherIntensity / 100f)));
                     spawnTime = (int) (spawnTime *
                                        (480000f /
@@ -1054,7 +1059,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.LoadTexture(TextureType.Image, Panorama);
+            var imageTex = GameContext.ContentManager.LoadTexture(TextureType.Image, Panorama);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
@@ -1088,7 +1093,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.LoadTexture(TextureType.Image, OverlayGraphic);
+            var imageTex = GameContext.ContentManager.LoadTexture(TextureType.Image, OverlayGraphic);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
@@ -1100,7 +1105,7 @@ namespace Intersect.Client.Maps
             //Check if fogs the same
             if (oldMap.Fog == Fog)
             {
-                var fogTex = Globals.ContentManager.LoadTexture(TextureType.Fog, Fog);
+                var fogTex = GameContext.ContentManager.LoadTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     //Copy over fog values
@@ -1182,7 +1187,7 @@ namespace Intersect.Client.Maps
                 }
                 else
                 {
-                    var evt = new Event(evtId, packet);
+                    var evt = new Event(GameContext, evtId, packet);
                     LocalEntities.Add(evtId, evt);
                     mEvents.Add(evt);
                 }

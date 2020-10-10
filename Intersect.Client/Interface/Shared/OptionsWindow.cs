@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -13,12 +11,13 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 
+using System;
+using System.Collections.Generic;
+
 namespace Intersect.Client.Interface.Shared
 {
-
-    public class OptionsWindow
+    public class OptionsWindow : HasGameContext
     {
-
         private Button mApplyBtn;
 
         private Button mApplyKeybindingsButton;
@@ -91,7 +90,9 @@ namespace Intersect.Client.Interface.Shared
         private MenuItem mCustomResolutionMenuItem;
 
         //Init
-        public OptionsWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public OptionsWindow(IGameContext gameContext, Canvas parent, MainMenu mainMenu, ImagePanel parentPanel) : base(
+            gameContext
+        )
         {
             //Assign References
             mMainMenu = mainMenu;
@@ -315,7 +316,7 @@ namespace Intersect.Client.Interface.Shared
 
         private void CancelKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mEdittingControls = new Controls(Controls.ActiveControls);
+            mEdittingControls = new Controls(GameContext, Controls.ActiveControls);
             CloseKeybindings();
         }
 
@@ -386,9 +387,9 @@ namespace Intersect.Client.Interface.Shared
                 mOptionsPanel.MakeModal(true);
             }
 
-            mPreviousMusicVolume = Globals.Database.MusicVolume;
-            mPreviousSoundVolume = Globals.Database.SoundVolume;
-            mEdittingControls = new Controls(Controls.ActiveControls);
+            mPreviousMusicVolume = GameContext.Storage.Preferences.MusicVolume;
+            mPreviousSoundVolume = GameContext.Storage.Preferences.SoundVolume;
+            mEdittingControls = new Controls(GameContext, Controls.ActiveControls);
             if (Graphics.GameRenderer.GetValidVideoModes().Count > 0)
             {
                 string resolutionLabel;
@@ -405,48 +406,55 @@ namespace Intersect.Client.Interface.Shared
                 }
                 else
                 {
-                    resolutionLabel = Graphics.GameRenderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                    resolutionLabel =
+                        Graphics.GameRenderer.GetValidVideoModes()[GameContext.Storage.Preferences.PreferredResolution];
                 }
 
                 mResolutionList.SelectByText(resolutionLabel);
             }
 
-            switch (Globals.Database.TargetFps)
+            switch (GameContext.Storage.Preferences.Fps)
             {
                 case -1: //Unlimited
                     mFpsList.SelectByText(Strings.Options.unlimitedfps);
 
                     break;
+
                 case 0: //VSYNC
                     mFpsList.SelectByText(Strings.Options.vsync);
 
                     break;
+
                 case 1:
                     mFpsList.SelectByText(Strings.Options.fps30);
 
                     break;
+
                 case 2:
                     mFpsList.SelectByText(Strings.Options.fps60);
 
                     break;
+
                 case 3:
                     mFpsList.SelectByText(Strings.Options.fps90);
 
                     break;
+
                 case 4:
                     mFpsList.SelectByText(Strings.Options.fps120);
 
                     break;
+
                 default:
                     mFpsList.SelectByText(Strings.Options.vsync);
 
                     break;
             }
 
-            mAutocloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
-            mFullscreen.IsChecked = Globals.Database.FullScreen;
-            mMusicSlider.Value = Globals.Database.MusicVolume;
-            mSoundSlider.Value = Globals.Database.SoundVolume;
+            mAutocloseWindowsCheckbox.IsChecked = GameContext.Storage.Preferences.HideOthersOnWindowOpen;
+            mFullscreen.IsChecked = GameContext.Storage.Preferences.Fullscreen;
+            mMusicSlider.Value = GameContext.Storage.Preferences.MusicVolume;
+            mSoundSlider.Value = GameContext.Storage.Preferences.SoundVolume;
             mMusicLabel.Text = Strings.Options.musicvolume.ToString((int) mMusicSlider.Value);
             mSoundLabel.Text = Strings.Options.soundvolume.ToString((int) mSoundSlider.Value);
             mOptionsPanel.IsHidden = false;
@@ -470,8 +478,8 @@ namespace Intersect.Client.Interface.Shared
         //Input Handlers
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Database.MusicVolume = mPreviousMusicVolume;
-            Globals.Database.SoundVolume = mPreviousSoundVolume;
+            GameContext.Storage.Preferences.MusicVolume = mPreviousMusicVolume;
+            GameContext.Storage.Preferences.SoundVolume = mPreviousSoundVolume;
             Audio.UpdateGlobalVolume();
             if (Globals.GameState == GameStates.Menu)
             {
@@ -487,14 +495,14 @@ namespace Intersect.Client.Interface.Shared
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
             mMusicLabel.Text = Strings.Options.musicvolume.ToString((int) mMusicSlider.Value);
-            Globals.Database.MusicVolume = (int) mMusicSlider.Value;
+            GameContext.Storage.Preferences.MusicVolume = (int) mMusicSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
             mSoundLabel.Text = Strings.Options.soundvolume.ToString((int) mSoundSlider.Value);
-            Globals.Database.SoundVolume = (int) mSoundSlider.Value;
+            GameContext.Storage.Preferences.SoundVolume = (int) mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
@@ -503,17 +511,23 @@ namespace Intersect.Client.Interface.Shared
             var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
             var validVideoModes = Graphics.GameRenderer.GetValidVideoModes();
-            var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
+            var targetResolution = validVideoModes?.FindIndex(
+                                       videoMode => string.Equals(videoMode, resolution.Text, StringComparison.Ordinal)
+                                   ) ??
+                                   -1;
+
             if (targetResolution > -1)
             {
-                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.GameRenderer.HasOverrideResolution;
-                Globals.Database.TargetResolution = targetResolution;
+                shouldReset = GameContext.Storage.Preferences.PreferredResolution != targetResolution ||
+                              Graphics.GameRenderer.HasOverrideResolution;
+
+                GameContext.Storage.Preferences.PreferredResolution = targetResolution;
             }
 
-            Globals.Database.HideOthersOnWindowOpen = mAutocloseWindowsCheckbox.IsChecked;
-            if (Globals.Database.FullScreen != mFullscreen.IsChecked)
+            GameContext.Storage.Preferences.HideOthersOnWindowOpen = mAutocloseWindowsCheckbox.IsChecked;
+            if (GameContext.Storage.Preferences.Fullscreen != mFullscreen.IsChecked)
             {
-                Globals.Database.FullScreen = mFullscreen.IsChecked;
+                GameContext.Storage.Preferences.Fullscreen = mFullscreen.IsChecked;
                 shouldReset = true;
             }
 
@@ -539,16 +553,16 @@ namespace Intersect.Client.Interface.Shared
                 newFps = 4;
             }
 
-            if (newFps != Globals.Database.TargetFps)
+            if (newFps != GameContext.Storage.Preferences.Fps)
             {
                 shouldReset = true;
-                Globals.Database.TargetFps = newFps;
+                GameContext.Storage.Preferences.Fps = newFps;
             }
 
-            Globals.Database.MusicVolume = (int) mMusicSlider.Value;
-            Globals.Database.SoundVolume = (int) mSoundSlider.Value;
+            GameContext.Storage.Preferences.MusicVolume = (int) mMusicSlider.Value;
+            GameContext.Storage.Preferences.SoundVolume = (int) mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
-            Globals.Database.SavePreferences();
+            GameContext.Storage.Preferences.Save();
             if (shouldReset)
             {
                 mCustomResolutionMenuItem?.Hide();
@@ -566,7 +580,5 @@ namespace Intersect.Client.Interface.Shared
                 mMainMenu.Show();
             }
         }
-
     }
-
 }

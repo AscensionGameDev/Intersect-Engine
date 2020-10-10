@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -32,7 +33,7 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull] private readonly Label mTitle;
 
-        public EscapeMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
+        public EscapeMenu(IGameContext gameContext, Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
         {
             Interface.InputBlockingElements?.Add(this);
 
@@ -46,7 +47,7 @@ namespace Intersect.Client.Interface.Game
                 Text = Strings.EscapeMenu.Title,
             };
 
-            mOptionsWindow = new OptionsWindow(gameCanvas, null, null);
+            mOptionsWindow = new OptionsWindow(gameContext, gameCanvas, null, null);
 
             mOptions = new Button(mContainer, "OptionsButton")
             {

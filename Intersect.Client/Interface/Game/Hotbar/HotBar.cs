@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -12,7 +13,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Game.Hotbar
 {
 
-    public class HotBarWindow
+    public class HotBarWindow : HasGameContext
     {
 
         //Controls
@@ -22,7 +23,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         public List<HotbarItem> Items = new List<HotbarItem>();
 
         //Init
-        public HotBarWindow(Canvas gameCanvas)
+        public HotBarWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             HotbarWindow.ShouldCacheToTexture = true;
@@ -43,7 +44,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             var x = 12;
             for (var i = 0; i < Options.MaxHotbar; i++)
             {
-                Items.Add(new HotbarItem((byte) i, HotbarWindow));
+                Items.Add(new HotbarItem((byte) i, this));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
                 Items[i].Setup();
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);

@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -8,12 +7,12 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.GameObjects;
 
+using System.Collections.Generic;
+
 namespace Intersect.Client.Interface.Game.Inventory
 {
-
-    public class InventoryWindow
+    public class InventoryWindow : HasGameContext
     {
-
         //Item List
         public List<InventoryItem> Items = new List<InventoryItem>();
 
@@ -28,14 +27,16 @@ namespace Intersect.Client.Interface.Game.Inventory
         private List<Label> mValues = new List<Label>();
 
         //Init
-        public InventoryWindow(Canvas gameCanvas)
+        public InventoryWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.title, false, "InventoryWindow");
             mInventoryWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
-            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
+            mInventoryWindow.LoadJsonUi(
+                GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString()
+            );
         }
 
         //Location
@@ -96,14 +97,17 @@ namespace Intersect.Client.Interface.Game.Inventory
         {
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                Items.Add(new InventoryItem(this, i));
+                Items.Add(new InventoryItem(GameContext, this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "InventoryItem");
                 Items[i].Setup();
 
                 mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
+                Items[i]
+                    .Container.LoadJsonUi(
+                        GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString()
+                    );
 
                 if (Items[i].EquipPanel.GameTexture == null)
                 {
@@ -161,7 +165,5 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             return rect;
         }
-
     }
-
 }

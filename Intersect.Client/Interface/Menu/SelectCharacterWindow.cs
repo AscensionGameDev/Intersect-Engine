@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
-using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 
+using System;
+using System.Collections.Generic;
+
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class SelectCharacterWindow
+    public class SelectCharacterWindow : HasGameContext
     {
 
         public List<Character> Characters = new List<Character>();
@@ -56,7 +56,7 @@ namespace Intersect.Client.Interface.Menu
         private int mSelectedChar = 0;
 
         //Init
-        public SelectCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public SelectCharacterWindow(IGameContext gameContext, Canvas parent, MainMenu mainMenu, ImagePanel parentPanel) : base(gameContext)
         {
             //Assign References
             mMainMenu = mainMenu;
@@ -187,13 +187,13 @@ namespace Intersect.Client.Interface.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                     TextureType.Face, Characters[mSelectedChar].Face
                 );
 
                 if (mCharacterPortrait.GameTexture == null)
                 {
-                    mCharacterPortrait.GameTexture = Globals.ContentManager.LoadTexture(
+                    mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
                         TextureType.Entity, Characters[mSelectedChar].Sprite
                     );
 
@@ -244,7 +244,7 @@ namespace Intersect.Client.Interface.Menu
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                mPaperdollPortraits[i].GameTexture = Globals.ContentManager.LoadTexture(
+                                mPaperdollPortraits[i].GameTexture = GameContext.ContentManager.LoadTexture(
                                     TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
                                 );
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -15,7 +16,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Character
 {
 
-    public class CharacterWindow
+    public class CharacterWindow : HasGameContext
     {
 
         //Equipment List
@@ -71,7 +72,7 @@ namespace Intersect.Client.Interface.Game.Character
         public int Y;
 
         //Init
-        public CharacterWindow(Canvas gameCanvas)
+        public CharacterWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mCharacterWindow = new WindowControl(gameCanvas, Strings.Character.title, false, "CharacterWindow");
             mCharacterWindow.DisableResizing();
@@ -126,7 +127,7 @@ namespace Intersect.Client.Interface.Game.Character
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                Items.Add(new EquipmentItem(i, mCharacterWindow));
+                Items.Add(new EquipmentItem(GameContext, i, mCharacterWindow));
                 Items[i].Pnl = new ImagePanel(mCharacterWindow, "EquipmentItem" + i);
                 Items[i].Setup();
             }
@@ -175,7 +176,7 @@ namespace Intersect.Client.Interface.Game.Character
 
             //Load Portrait
             //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
-            var entityTex = Globals.ContentManager.LoadTexture(
+            var entityTex = GameContext.ContentManager.LoadTexture(
                 TextureType.Entity, Globals.Me.MySprite
             );
 
@@ -239,7 +240,7 @@ namespace Intersect.Client.Interface.Game.Character
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
-                        var paperdollTex = Globals.ContentManager.LoadTexture(
+                        var paperdollTex = GameContext.ContentManager.LoadTexture(
                             TextureType.Paperdoll, paperdoll
                         );
 

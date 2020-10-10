@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -10,7 +11,7 @@ using Intersect.Client.Networking;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class EventWindow
+    public class EventWindow : HasGameContext
     {
 
         private ScrollControl mEventDialogArea;
@@ -39,7 +40,7 @@ namespace Intersect.Client.Interface.Game
         private Button mEventResponse4;
 
         //Init
-        public EventWindow(Canvas gameCanvas)
+        public EventWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             //Event Dialog Window
             mEventDialogWindow = new ImagePanel(gameCanvas, "EventDialogueWindow");
@@ -80,7 +81,7 @@ namespace Intersect.Client.Interface.Game
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();
                     mEventDialogWindow.BringToFront();
-                    var faceTex = Globals.ContentManager.LoadTexture(
+                    var faceTex = GameContext.ContentManager.LoadTexture(
                         TextureType.Face, Globals.EventDialogs[0].Face
                     );
 

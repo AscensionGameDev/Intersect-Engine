@@ -1,19 +1,28 @@
-﻿using System.Linq;
-
-using JetBrains.Annotations;
+﻿using System;
+using System.Linq;
 
 namespace Intersect.Extensions
 {
-
     public static class ArrayExtensions
     {
+        public static TType[] Prepend<TType>(this TType[] values, params TType[] prependedValues) =>
+            Array.Empty<TType>().Concat(prependedValues).Concat(values).ToArray();
 
-        [NotNull]
-        public static TType[] Prepend<TType>([NotNull] this TType[] values, [NotNull] params TType[] prependedValues)
+        public static void ValidateTypes(this object[] values, params Type[] types)
         {
-            return new TType[] { }.Concat(prependedValues).Concat(values).ToArray();
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
+            if (values.Length != types.Length)
+            {
+                var expectedTypes = string.Join(", ", types.Select(type => type.Name));
+                var receivedTypes = string.Join(", ", values.Select(value => value?.GetType()?.Name ?? "null"));
+                throw new ArgumentException(
+                    $"Expected {types.Length} values, received {values.Length} (expected types: {expectedTypes}, received types: {receivedTypes})"
+                );
+            }
         }
-
     }
-
 }

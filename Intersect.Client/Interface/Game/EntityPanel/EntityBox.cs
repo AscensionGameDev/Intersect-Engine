@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -18,10 +15,14 @@ using Intersect.Logging;
 
 using JetBrains.Annotations;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
-    public class EntityBox
+    public class EntityBox : HasGameContext
     {
 
         private static int sStatusXPadding = 2;
@@ -110,7 +111,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public bool UpdateStatuses;
 
         //Init
-        public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
+        public EntityBox(IGameContext gameContext, Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false) : base(gameContext)
         {
             MyEntity = myEntity;
             EntityType = entityType;
@@ -401,7 +402,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 SpellStatus itm = null;
                 if (!mActiveStatuses.ContainsKey(id))
                 {
-                    itm = new SpellStatus(this, MyEntity.Status[i]);
+                    itm = new SpellStatus(GameContext, this, MyEntity.Status[i]);
                     if (PlayerBox)
                     {
                         itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
@@ -686,8 +687,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateImage()
         {
-            var faceTex = Globals.ContentManager.LoadTexture(TextureType.Face, MyEntity.Face);
-            var entityTex = Globals.ContentManager.LoadTexture(TextureType.Entity, MyEntity.MySprite);
+            var faceTex = GameContext.ContentManager.LoadTexture(TextureType.Face, MyEntity.Face);
+            var entityTex = GameContext.ContentManager.LoadTexture(TextureType.Entity, MyEntity.MySprite);
             if (faceTex != null && faceTex != EntityFace.GameTexture)
             {
                 EntityFace.GameTexture = faceTex;
@@ -782,7 +783,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
-                        var paperdollTex = Globals.ContentManager.LoadTexture(
+                        var paperdollTex = GameContext.ContentManager.LoadTexture(
                             TextureType.Paperdoll, paperdoll
                         );
 

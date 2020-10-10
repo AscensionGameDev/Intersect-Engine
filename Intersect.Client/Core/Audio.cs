@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
@@ -36,15 +37,19 @@ namespace Intersect.Client.Core
 
         private static IAudioInstance sMyMusic { get; set; }
 
+        private static IGameContext GameContext { get; set; }
+
         //Init
-        public static void Init()
+        public static void Init(IGameContext gameContext)
         {
             if (sIsInitialized == true)
             {
                 return;
             }
 
-            Globals.ContentManager.LoadAudio();
+            GameContext = gameContext;
+
+            GameContext.ContentManager.LoadAudio();
             sIsInitialized = true;
         }
 
@@ -163,7 +168,7 @@ namespace Intersect.Client.Core
 
         private static void StartMusic(string filename, float fadein = 0f, bool loop = false)
         {
-            var music = Globals.ContentManager.LoadMusic(filename);
+            var music = GameContext.ContentManager.LoadMusic(filename);
             if (music == null)
             {
                 return;
@@ -227,7 +232,7 @@ namespace Intersect.Client.Core
                 return null;
             }
 
-            var sound = new MapSound(filename, x, y, mapId, loop, distance, parent);
+            var sound = new MapSound(GameContext, filename, x, y, mapId, loop, distance, parent);
             sGameSounds?.Add(sound);
 
             return sound;
@@ -240,7 +245,7 @@ namespace Intersect.Client.Core
                 return null;
             }
 
-            var sound = new Sound(filename, loop);
+            var sound = new Sound(GameContext, filename, loop);
             sGameSounds?.Add(sound);
 
             return sound;

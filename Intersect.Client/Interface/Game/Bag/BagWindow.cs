@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -12,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Bag
 {
 
-    public class BagWindow
+    public class BagWindow : HasGameContext
     {
 
         private static int sItemXPadding = 4;
@@ -29,7 +30,7 @@ namespace Intersect.Client.Interface.Game.Bag
         private List<Label> mValues = new List<Label>();
 
         //Init
-        public BagWindow(Canvas gameCanvas)
+        public BagWindow(IGameContext gameContext, Canvas gameCanvas) : base(gameContext)
         {
             mBagWindow = new WindowControl(gameCanvas, Strings.Bags.title, false, "BagWindow");
             mBagWindow.DisableResizing();

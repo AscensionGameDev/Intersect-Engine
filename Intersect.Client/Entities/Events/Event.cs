@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -43,7 +44,7 @@ namespace Intersect.Client.Entities.Events
 
         public bool WalkingAnim = true;
 
-        public Event(Guid id, EventEntityPacket packet) : base(id, packet, true)
+        public Event(IGameContext gameContext, Guid id, EventEntityPacket packet) : base(gameContext, id, packet, true)
         {
             mRenderPriority = 1;
         }
@@ -100,7 +101,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.LoadTexture(
+                    var entityTex = GameContext.ContentManager.LoadTexture(
                         TextureType.Entity, Graphic.Filename
                     );
 
@@ -160,7 +161,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.LoadTexture(
+                        mCachedTileset = GameContext.ContentManager.LoadTexture(
                             TextureType.Tileset, Graphic.Filename
                         );
                     }
@@ -307,7 +308,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.LoadTexture(
+                    var entityTex = GameContext.ContentManager.LoadTexture(
                         TextureType.Entity, Graphic.Filename
                     );
 
@@ -321,7 +322,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.LoadTexture(
+                        mCachedTileset = GameContext.ContentManager.LoadTexture(
                             TextureType.Tileset, Graphic.Filename
                         );
                     }
@@ -378,7 +379,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.LoadTexture(TextureType.Entity, MySprite);
+                    var entityTex = GameContext.ContentManager.LoadTexture(TextureType.Entity, MySprite);
                     if (entityTex != null)
                     {
                         pos.Y += Options.TileHeight / 2;
@@ -390,7 +391,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.LoadTexture(
+                        mCachedTileset = GameContext.ContentManager.LoadTexture(
                             TextureType.Tileset, Graphic.Filename
                         );
                     }

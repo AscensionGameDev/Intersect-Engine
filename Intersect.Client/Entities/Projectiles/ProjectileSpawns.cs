@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Framework;
 using Intersect.Client.General;
 using Intersect.GameObjects;
 
@@ -43,6 +44,7 @@ namespace Intersect.Client.Entities.Projectiles
         public int Z;
 
         public ProjectileSpawns(
+            IGameContext gameContext,
             int dir,
             int x,
             int y,
@@ -62,7 +64,7 @@ namespace Intersect.Client.Entities.Projectiles
             MapId = mapId;
             SpawnMapId = MapId;
             Dir = dir;
-            Anim = new Animation(animBase, true, autoRotate, Z, parent);
+            Anim = new Animation(gameContext, animBase, true, autoRotate, Z, parent);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
             TransmittionTimer = Globals.System.GetTimeMs() +

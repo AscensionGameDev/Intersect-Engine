@@ -57,13 +57,12 @@ namespace Intersect.Client.Core
 
         public static ColorF PlayerLightColor = ColorF.White;
 
-        //Game Renderer
-        public static IRenderer GameRenderer => Globals.GameContext.Renderer;
-
         //Cache the Y based rendering
         public static HashSet<Entity>[,] RenderingEntities;
 
         private static IGameContext GameContext { get; set; }
+
+        public static IRenderer GameRenderer => GameContext?.Renderer;
 
         private static IRenderTexture sDarknessTexture;
 
@@ -90,10 +89,10 @@ namespace Intersect.Client.Core
         public static IFont UIFont;
 
         //Init Functions
-        public static void InitGraphics()
+        public static void InitGraphics(IGameContext gameContext)
         {
+            GameContext = gameContext;
             GameRenderer.Init();
-            GameContext = Globals.GameContext;
             GameContext.ContentManager.LoadAll();
             GameFont = FindFont(ClientConfiguration.Instance.GameFont);
             UIFont = FindFont(ClientConfiguration.Instance.UIFont);
@@ -445,7 +444,7 @@ namespace Intersect.Client.Core
             {
                 sDarknessTexture = null;
                 Interface.Interface.DestroyGwen();
-                Interface.Interface.InitGwen();
+                Interface.Interface.InitGwen(GameContext);
                 sOldWidth = GameRenderer.ScreenWidth;
                 sOldHeight = GameRenderer.ScreenHeight;
             }
@@ -485,7 +484,7 @@ namespace Intersect.Client.Core
                     throw new ArgumentOutOfRangeException();
             }
 
-            Interface.Interface.DrawGui();
+            Interface.Interface.DrawGui(GameContext);
 
             DrawGameTexture(
                 GameRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
@@ -896,7 +895,7 @@ namespace Intersect.Client.Core
 
         public static void DrawDarkness()
         {
-            var radialShader = Globals.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
+            var radialShader = GameContext.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 DrawGameTexture(sDarknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
@@ -911,7 +910,7 @@ namespace Intersect.Client.Core
 
         private static void DrawLights()
         {
-            var radialShader = Globals.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
+            var radialShader = GameContext.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 foreach (var l in sLightQueue)

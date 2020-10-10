@@ -1,22 +1,18 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
 
-using JetBrains.Annotations;
+using System;
 
 namespace Intersect.Client.MonoGame.Audio
 {
-
     public abstract class MonoAudioInstance<TAudioSource> : GameAudioInstance where TAudioSource : GameAudioSource
     {
-
         /// <inheritdoc />
-        protected MonoAudioInstance([NotNull] GameAudioSource source) : base(source)
+        protected MonoAudioInstance(IGameContext gameContext, GameAudioSource source) : base(gameContext, source)
         {
         }
 
-        [NotNull]
-        public new TAudioSource AudioSource => base.AudioSource as TAudioSource ?? throw new InvalidOperationException();
+        public new TAudioSource AudioSource =>
+            base.AudioSource as TAudioSource ?? throw new InvalidOperationException();
     }
-
 }

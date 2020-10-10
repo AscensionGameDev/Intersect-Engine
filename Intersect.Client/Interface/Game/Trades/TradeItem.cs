@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -9,12 +8,12 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Trades
 {
-
     public class TradeItem
     {
-
         private static int sItemXPadding = 4;
 
         private static int sItemYPadding = 4;
@@ -118,8 +117,8 @@ namespace Intersect.Client.Interface.Game.Trades
             if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
                 mDescWindow = new ItemDescWindow(
-                    Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
-                    mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs
+                    mTradeWindow.GameContext, Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity,
+                    mTradeWindow.X, mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs
                 );
             }
         }
@@ -146,7 +145,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 var item = ItemBase.Get(Globals.Trade[n, mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = mTradeWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;
@@ -274,7 +273,5 @@ namespace Intersect.Client.Interface.Game.Trades
                 }
             }
         }
-
     }
-
 }

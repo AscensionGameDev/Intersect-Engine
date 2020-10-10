@@ -1,7 +1,6 @@
-﻿using System;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -14,12 +13,12 @@ using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Hotbar
 {
-
     public class HotbarItem
     {
-
         private static int sItemXPadding = 4;
 
         private static int sItemYPadding = 4;
@@ -52,7 +51,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         private Draggable mDragIcon;
 
         //Textures
-        private Base mHotbarWindow;
+        private HotBarWindow mHotbarWindow;
 
         private Keys mHotKey;
 
@@ -83,7 +82,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         public ImagePanel Pnl;
 
-        public HotbarItem(byte index, Base hotbarWindow)
+        public HotbarItem(byte index, HotBarWindow hotbarWindow)
         {
             mYindex = index;
             mHotbarWindow = hotbarWindow;
@@ -181,8 +180,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 mItemDescWindow = new ItemDescWindow(
-                    mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2,
-                    mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
+                    mHotbarWindow.GameContext, mCurrentItem, 1, mHotbarWindow.HotbarWindow.X + Pnl.X + 16,
+                    mHotbarWindow.HotbarWindow.Y + mHotbarWindow.HotbarWindow.Height + 2, mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
                 );
             }
             else if (mCurrentSpell != null)
@@ -194,7 +193,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 mSpellDescWindow = new SpellDescWindow(
-                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, true
+                    mHotbarWindow.GameContext, mCurrentSpell.Id, mHotbarWindow.HotbarWindow.X + Pnl.X + 16,
+                    mHotbarWindow.HotbarWindow.Y + mHotbarWindow.HotbarWindow.Height + 2, true
                 );
             }
         }
@@ -336,7 +336,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
-                    mContentPanel.GameTexture = Globals.ContentManager.LoadTexture(
+                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.LoadTexture(
                         TextureType.Item, mCurrentItem.Icon
                     );
 
@@ -377,7 +377,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 else if (mCurrentSpell != null)
                 {
                     mContentPanel.Show();
-                    mContentPanel.GameTexture = Globals.ContentManager.LoadTexture(
+                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.LoadTexture(
                         TextureType.Spell, mCurrentSpell.Icon
                     );
 
@@ -544,7 +544,5 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
             }
         }
-
     }
-
 }

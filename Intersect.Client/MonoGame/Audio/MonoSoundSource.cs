@@ -1,13 +1,13 @@
-﻿using System;
-using System.IO;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
+
+using System;
+using System.IO;
 
 namespace Intersect.Client.MonoGame.Audio
 {
@@ -19,7 +19,9 @@ namespace Intersect.Client.MonoGame.Audio
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(string name, string assetPath) : base(name, AudioType.SoundEffect)
+        public MonoSoundSource(IGameContext gameContext, string name, string assetPath) : base(
+            gameContext, name, AudioType.SoundEffect
+        )
         {
             mAssetPath = assetPath;
         }
@@ -41,7 +43,7 @@ namespace Intersect.Client.MonoGame.Audio
         {
             mInstanceCount++;
 
-            return new MonoSoundInstance(this);
+            return new MonoSoundInstance(GameContext, this);
         }
 
         public void ReleaseEffect()

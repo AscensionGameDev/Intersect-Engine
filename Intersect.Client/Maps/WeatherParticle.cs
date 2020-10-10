@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.GameObjects;
@@ -39,7 +40,7 @@ namespace Intersect.Client.Maps
 
         private int yVelocity;
 
-        public WeatherParticle(List<WeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
+        public WeatherParticle(IGameContext gameContext, List<WeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
         {
             TransmittionTimer = Globals.System.GetTimeMs();
             bounds = new Rectangle(0, 0, Graphics.GameRenderer.ScreenWidth, Graphics.GameRenderer.ScreenHeight);
@@ -47,7 +48,7 @@ namespace Intersect.Client.Maps
             xVelocity = xvelocity;
             yVelocity = yvelocity;
 
-            animInstance = new Animation(anim, true, false);
+            animInstance = new Animation(gameContext, anim, true, false);
             var animSize = animInstance.AnimationSize();
             partSize = animSize;
 

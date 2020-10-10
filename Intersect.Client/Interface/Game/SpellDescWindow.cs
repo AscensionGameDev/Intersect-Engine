@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -12,12 +13,12 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class SpellDescWindow
+    public class SpellDescWindow : HasGameContext
     {
 
         ImagePanel mDescWindow;
 
-        public SpellDescWindow(Guid spellId, int x, int y, bool centerHorizontally = false)
+        public SpellDescWindow(IGameContext gameContext, Guid spellId, int x, int y, bool centerHorizontally = false) : base(gameContext)
         {
             var spell = SpellBase.Get(spellId);
             if (spell == null)
@@ -252,7 +253,7 @@ namespace Intersect.Client.Interface.Game
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
             spellDescText.IsHidden = true;
             spellStatsText.IsHidden = true;
-            icon.GameTexture = Globals.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
+            icon.GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
             spellStats.SizeToChildren(false, true);
             if (centerHorizontally)
             {

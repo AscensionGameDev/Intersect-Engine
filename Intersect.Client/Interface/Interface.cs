@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -58,14 +59,14 @@ namespace Intersect.Client.Interface
         #region "Gwen Setup and Input"
 
         //Gwen Low Level Functions
-        public static void InitGwen()
+        public static void InitGwen(IGameContext gameContext)
         {
             //TODO: Make it easier to modify skin.
             if (Skin == null)
             {
                 Skin = new TexturedBase(
                     GwenRenderer,
-                    Globals.ContentManager.LoadTexture(TextureType.Interface, "defaultskin.png")
+                    gameContext.ContentManager.LoadTexture(TextureType.Interface, "defaultskin.png")
                 )
                 {
                     DefaultFont = Graphics.UIFont
@@ -120,12 +121,12 @@ namespace Intersect.Client.Interface
 
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
-                MenuUi = new MenuGuiBase(sMenuCanvas);
+                MenuUi = new MenuGuiBase(gameContext, sMenuCanvas);
                 GameUi = null;
             }
             else
             {
-                GameUi = new GameInterface(sGameCanvas);
+                GameUi = new GameInterface(gameContext, sGameCanvas);
                 MenuUi = null;
             }
 
@@ -158,11 +159,11 @@ namespace Intersect.Client.Interface
         #region "GUI Functions"
 
         //Actual Drawing Function
-        public static void DrawGui()
+        public static void DrawGui(IGameContext gameContext)
         {
             if (!GwenInitialized)
             {
-                InitGwen();
+                InitGwen(gameContext);
             }
 
             ErrorMsgHandler.Update();

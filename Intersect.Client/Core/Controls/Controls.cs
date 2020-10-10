@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Intersect.Client.Framework;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 
@@ -15,8 +16,12 @@ namespace Intersect.Client.Core.Controls
 
         [NotNull] public readonly IDictionary<Control, ControlMap> ControlMapping;
 
-        public Controls(Controls gameControls = null)
+        private static IGameContext GameContext { get; set; }
+
+        public Controls(IGameContext gameContext, Controls gameControls = null)
         {
+            GameContext = gameContext;
+
             ControlMapping = new Dictionary<Control, ControlMap>();
 
             if (gameControls != null)
@@ -32,16 +37,16 @@ namespace Intersect.Client.Core.Controls
                 foreach (Control control in Enum.GetValues(typeof(Control)))
                 {
                     var name = Enum.GetName(typeof(Control), control);
-                    var key1 = Globals.Database.LoadPreference(name + "_key1");
-                    var key2 = Globals.Database.LoadPreference(name + "_key2");
+                    var key1 = GameContext.Storage.Preferences.GetPreference<string>($"{name}_key1");
+                    var key2 = GameContext.Storage.Preferences.GetPreference<string>($"{name}_key2");
                     if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
                     {
-                        Globals.Database.SavePreference(
-                            name + "_key1", ((int) ControlMapping[control].Key1).ToString()
+                        GameContext.Storage.Preferences.SetPreference(
+                            $"{name}_key1", ((int) ControlMapping[control].Key1).ToString(), false
                         );
 
-                        Globals.Database.SavePreference(
-                            name + "_key2", ((int) ControlMapping[control].Key2).ToString()
+                        GameContext.Storage.Preferences.SetPreference(
+                            $"{name}_key2", ((int) ControlMapping[control].Key2).ToString(), false
                         );
                     }
                     else
@@ -49,6 +54,8 @@ namespace Intersect.Client.Core.Controls
                         CreateControlMap(control, (Keys) Convert.ToInt32(key1), (Keys) Convert.ToInt32(key2));
                     }
                 }
+
+                GameContext.Storage.Preferences.Save();
             }
         }
 
@@ -94,14 +101,16 @@ namespace Intersect.Client.Core.Controls
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
                 var name = Enum.GetName(typeof(Control), control);
-                Globals.Database.SavePreference(name + "_key1", ((int) ControlMapping[control].Key1).ToString());
-                Globals.Database.SavePreference(name + "_key2", ((int) ControlMapping[control].Key2).ToString());
+                GameContext.Storage.Preferences.SetPreference($"{name}_key1", ((int) ControlMapping[control].Key1).ToString(), false);
+                GameContext.Storage.Preferences.SetPreference($"{name}_key2", ((int) ControlMapping[control].Key2).ToString(), false);
             }
+
+            GameContext.Storage.Preferences.Save();
         }
 
-        public static void Init()
+        public static void Init(IGameContext gameContext)
         {
-            ActiveControls = new Controls();
+            ActiveControls = new Controls(gameContext);
         }
 
         public static bool KeyDown(Control control)

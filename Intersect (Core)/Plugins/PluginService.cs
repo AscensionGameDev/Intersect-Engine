@@ -89,7 +89,7 @@ namespace Intersect.Plugins
                 RegisterPlugins(discoveredPlugins);
 
                 // Create plugin instances
-                CreateInstances();
+                CreateInstances(applicationContext);
 
                 // Run bootstrap plugin
                 RunOnAllInstances(applicationContext, OnBootstrap);
@@ -162,14 +162,14 @@ namespace Intersect.Plugins
             }
         }
 
-        private void CreateInstances()
+        private void CreateInstances(IApplicationContext applicationContext)
         {
             foreach (var pluginEntry in Plugins)
             {
                 var plugin = pluginEntry.Value;
                 Debug.Assert(plugin != null, nameof(plugin) + " != null");
 
-                var instance = PluginInstance.Create(plugin);
+                var instance = PluginInstance.Create(applicationContext, plugin);
                 if (!Instances.TryAdd(plugin, instance))
                 {
                     throw new Exception($@"Failed to add plugin instance: {plugin.Key}");

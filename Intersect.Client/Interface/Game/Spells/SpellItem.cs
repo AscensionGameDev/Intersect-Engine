@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -11,12 +10,12 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
+using System;
+
 namespace Intersect.Client.Interface.Game.Spells
 {
-
-    public class SpellItem
+    public class SpellItem : HasGameContext
     {
-
         public ImagePanel Container;
 
         public bool IsDragging;
@@ -50,7 +49,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public ImagePanel Pnl;
 
-        public SpellItem(SpellsWindow spellWindow, int index)
+        public SpellItem(IGameContext gameContext, SpellsWindow spellWindow, int index) : base(gameContext)
         {
             mSpellWindow = spellWindow;
             mYindex = index;
@@ -112,7 +111,9 @@ namespace Intersect.Client.Interface.Game.Spells
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X, mSpellWindow.Y);
+            mDescWindow = new SpellDescWindow(
+                GameContext, Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X, mSpellWindow.Y
+            );
         }
 
         public FloatRect RenderBounds()
@@ -142,7 +143,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
-                    var spellTex = Globals.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
+                    var spellTex = GameContext.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
                     if (spellTex != null)
                     {
                         Pnl.GameTexture = spellTex;
@@ -330,7 +331,5 @@ namespace Intersect.Client.Interface.Game.Spells
                 }
             }
         }
-
     }
-
 }

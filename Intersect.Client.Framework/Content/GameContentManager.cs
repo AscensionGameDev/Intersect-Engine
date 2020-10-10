@@ -15,6 +15,8 @@ namespace Intersect.Client.Framework.Content
 {
     public abstract class GameContentManager : IContentManager
     {
+        protected IGameContext GameContext { get; }
+
         public enum UI
         {
             Menu,
@@ -28,8 +30,9 @@ namespace Intersect.Client.Framework.Content
 
         public bool TilesetsLoaded = false;
 
-        protected GameContentManager()
+        protected GameContentManager(IGameContext gameContext)
         {
+            GameContext = gameContext;
             AssetLookup = new AssetLookup();
         }
 

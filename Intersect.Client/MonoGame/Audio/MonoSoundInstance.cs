@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Audio;
 
 using System;
 
+using Intersect.Client.Framework;
+
 namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoSoundInstance : MonoAudioInstance<MonoSoundSource>
@@ -12,7 +14,7 @@ namespace Intersect.Client.MonoGame.Audio
         private readonly SoundEffectInstance mInstance;
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        public MonoSoundInstance(MonoSoundSource source) : base(source)
+        public MonoSoundInstance(IGameContext gameContext, MonoSoundSource source) : base(gameContext, source)
         {
             mInstance = AudioSource.Effect?.CreateInstance();
         }
@@ -72,7 +74,7 @@ namespace Intersect.Client.MonoGame.Audio
         {
             if (mInstance != null)
             {
-                mInstance.Volume = Volume * Globals.Database.SoundVolume / 10000f;
+                mInstance.Volume = Volume * GameContext.Storage.Preferences.SoundVolume / 10000f;
             }
         }
 
