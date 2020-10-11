@@ -36,6 +36,17 @@
         /// </summary>
         public bool LinkSpellAndItemCooldowns = true;
 
+        /// <summary>
+        /// Configured whether or not using a spell or item should trigger a global cooldown.
+        /// </summary>
+        public bool EnableGlobalCooldowns = true;
+
+        /// <summary>
+        /// Configures the duration (in milliseconds) which the global cooldown lasts after each ability.
+        /// Only used when <seealso cref="EnableGlobalCooldowns"/> is enabled!
+        /// </summary>
+        public int GlobalCooldownDuration = 1500;
+
     }
 
 }

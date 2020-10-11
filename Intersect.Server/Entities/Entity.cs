@@ -2106,6 +2106,7 @@ namespace Intersect.Server.Entities
                 if (this is Player player)
                 {
                     player.UpdateCooldown(spellBase);
+                    player.UpdateGlobalCooldown();
                 }
                 else
                 {

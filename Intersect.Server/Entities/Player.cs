@@ -1954,10 +1954,14 @@ namespace Intersect.Server.Entities
                     ); //Target Type 1 will be global entity
                 }
 
+                // Does this item have a cooldown to process of its own?
                 if (itemBase.Cooldown > 0)
                 {
-                    this.UpdateCooldown(itemBase);
+                    UpdateCooldown(itemBase);
                 }
+
+                // Update the global cooldown.
+                UpdateGlobalCooldown();
             }
         }
 
@@ -5547,19 +5551,9 @@ namespace Intersect.Server.Entities
             else
             {
                 // No, handle singular cooldown as normal.
+                
                 var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-                if (ItemCooldowns.ContainsKey(item.Id))
-                {
-                    ItemCooldowns[item.Id] =
-                        Globals.Timing.RealTimeMs + (long)(item.Cooldown * cooldownReduction);
-                }
-                else
-                {
-                    ItemCooldowns.Add(
-                        item.Id, Globals.Timing.RealTimeMs + (long)(item.Cooldown * cooldownReduction)
-                    );
-                }
-
+                AssignItemCooldown(item.Id, Globals.Timing.RealTimeMs + (long)(item.Cooldown * cooldownReduction));
                 PacketSender.SendItemCooldown(this, item.Id);
             }
         }
@@ -5581,20 +5575,44 @@ namespace Intersect.Server.Entities
             {
                 // No, handle singular cooldown as normal.
                 var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-                if (SpellCooldowns.ContainsKey(spell.Id))
-                {
-                    SpellCooldowns[spell.Id] =
-                        Globals.Timing.RealTimeMs + (long)(spell.CooldownDuration * cooldownReduction);
-                }
-                else
-                {
-                    SpellCooldowns.Add(
-                        spell.Id, Globals.Timing.RealTimeMs + (long)(spell.CooldownDuration * cooldownReduction)
-                    );
-                }
-
+                AssignSpellCooldown(spell.Id, Globals.Timing.RealTimeMs + (long)(spell.CooldownDuration * cooldownReduction));
                 PacketSender.SendSpellCooldown(this, spell.Id);
             }
+        }
+
+        public void UpdateGlobalCooldown()
+        {
+            // Are we allowed to execute this code?
+            if (!Options.Combat.EnableGlobalCooldowns)
+            {
+                return;
+            }
+
+            // Calculate our global cooldown.
+            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+            var cooldown = Globals.Timing.RealTimeMs + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+
+            // Go through each item and spell to assign this cooldown.
+            // Do not allow this to overwrite things that are still on a cooldown above our new cooldown though, don't want us to lower cooldowns!
+            // We do however want to overwrite lower cooldowns than our new one, it is a GLOBAL cooldown after all!
+            foreach(var item in ItemBase.Lookup)
+            {
+                if (!ItemCooldowns.ContainsKey(item.Key) || ItemCooldowns[item.Key] < cooldown)
+                {
+                    AssignItemCooldown(item.Key, cooldown);
+                }
+            }
+            foreach (var spell in SpellBase.Lookup)
+            {
+                if (!SpellCooldowns.ContainsKey(spell.Key) || SpellCooldowns[spell.Key] < cooldown)
+                {
+                    AssignSpellCooldown(spell.Key, cooldown);
+                }
+            }
+
+            // Send these cooldowns to the user!
+            PacketSender.SendItemCooldowns(this);
+            PacketSender.SendSpellCooldowns(this);
         }
 
         private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown)
@@ -5633,6 +5651,7 @@ namespace Intersect.Server.Entities
             }
 
             // Set the cooldown for all items matching this cooldown group.
+            var baseTime = Globals.Timing.RealTimeMs;
             if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
             {
                 foreach (var item in matchingItems)
@@ -5640,20 +5659,13 @@ namespace Intersect.Server.Entities
                     // Do we have to match our cooldown times, or do we use each individual item cooldown?
                     var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
 
-                    // Do we already have a cooldown entry for this item?
-                    if (ItemCooldowns.ContainsKey(item.Id))
+                    // Asign it! Assuming our cooldown isn't already going..
+                    if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Globals.Timing.RealTimeMs)
                     {
-                        ItemCooldowns[item.Id] =
-                            Globals.Timing.RealTimeMs + (long)(tempCooldown * cooldownReduction);
-                    }
-                    else
-                    {
-                        ItemCooldowns.Add(
-                            item.Id, Globals.Timing.RealTimeMs + (long)(tempCooldown * cooldownReduction)
-                        );
+                        AssignItemCooldown(item.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        itemsUpdated = true;
                     }
                 }
-                itemsUpdated = true;
             }
 
             // Set the cooldown for all Spells matching this cooldown group.
@@ -5664,20 +5676,13 @@ namespace Intersect.Server.Entities
                     // Do we have to match our cooldown times, or do we use each individual item cooldown?
                     var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
 
-                    // Do we already have a cooldown entry for this item?
-                    if (SpellCooldowns.ContainsKey(spell.Id))
+                    // Asign it! Assuming our cooldown isn't already going...
+                    if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Globals.Timing.RealTimeMs)
                     {
-                        SpellCooldowns[spell.Id] =
-                            Globals.Timing.RealTimeMs + (long)(tempCooldown * cooldownReduction);
-                    }
-                    else
-                    {
-                        SpellCooldowns.Add(
-                            spell.Id, Globals.Timing.RealTimeMs + (long)(tempCooldown * cooldownReduction)
-                        );
+                        AssignSpellCooldown(spell.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        spellsUpdated = true;
                     }
                 }
-                spellsUpdated = true;
             }
 
             // Send all of our updated cooldowns.
@@ -5688,6 +5693,32 @@ namespace Intersect.Server.Entities
             if (spellsUpdated)
             {
                 PacketSender.SendSpellCooldowns(this);
+            }
+        }
+
+        private void AssignItemCooldown(Guid itemId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (ItemCooldowns.ContainsKey(itemId))
+            {
+                ItemCooldowns[itemId] = cooldownTime;
+            }
+            else
+            {
+                ItemCooldowns.Add(itemId, cooldownTime);
+            }
+        }
+
+        private void AssignSpellCooldown(Guid spellId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (SpellCooldowns.ContainsKey(spellId))
+            {
+                SpellCooldowns[spellId] = cooldownTime;
+            }
+            else
+            {
+                SpellCooldowns.Add(spellId, cooldownTime);
             }
         }
 
