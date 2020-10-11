@@ -374,6 +374,10 @@ namespace Intersect.Core
             [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent
         )
         {
+#if DEBUG
+            Debugger.Break();
+#endif
+
             if (!(unhandledExceptionEvent.ExceptionObject is Exception unhandledException))
             {
                 throw new ArgumentNullException(nameof(unhandledExceptionEvent.ExceptionObject));
