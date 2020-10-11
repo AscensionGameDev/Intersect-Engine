@@ -1960,8 +1960,11 @@ namespace Intersect.Server.Entities
                     UpdateCooldown(itemBase);
                 }
 
-                // Update the global cooldown.
-                UpdateGlobalCooldown();
+                // Update the global cooldown, if we can trigger it here.
+                if (!itemBase.IgnoreGlobalCooldown)
+                {
+                    UpdateGlobalCooldown();
+                }
             }
         }
 
@@ -5609,6 +5612,12 @@ namespace Intersect.Server.Entities
             // We do however want to overwrite lower cooldowns than our new one, it is a GLOBAL cooldown after all!
             foreach(var item in ItemBase.Lookup)
             {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((ItemBase)item.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
                 if (!ItemCooldowns.ContainsKey(item.Key) || ItemCooldowns[item.Key] < cooldown)
                 {
                     AssignItemCooldown(item.Key, cooldown);
@@ -5616,6 +5625,12 @@ namespace Intersect.Server.Entities
             }
             foreach (var spell in SpellBase.Lookup)
             {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((SpellBase)spell.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
                 if (!SpellCooldowns.ContainsKey(spell.Key) || SpellCooldowns[spell.Key] < cooldown)
                 {
                     AssignSpellCooldown(spell.Key, cooldown);

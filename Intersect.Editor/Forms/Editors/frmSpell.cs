@@ -167,6 +167,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCastDuration.Text = Strings.SpellEditor.casttime;
             lblCooldownDuration.Text = Strings.SpellEditor.cooldown;
             lblCooldownGroup.Text = Strings.SpellEditor.CooldownGroup;
+            chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
 
             grpTargetInfo.Text = Strings.SpellEditor.targetting;
             lblTargetType.Text = Strings.SpellEditor.targettype;
@@ -267,6 +268,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
                 cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
+                chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
@@ -946,6 +948,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbCooldownGroup_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.CooldownGroup = cmbCooldownGroup.Text;
+        }
+
+        private void chkIgnoreGlobalCooldown_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

@@ -215,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors
 
             lblCooldown.Text = Strings.ItemEditor.cooldown;
             lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
+            chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -276,7 +277,6 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
-                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
@@ -366,6 +366,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
 
                 nudCooldown.Value = mEditorItem.Cooldown;
+                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
+                chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -925,6 +927,11 @@ namespace Intersect.Editor.Forms.Editors
                     cmbCooldownGroup.Text = cdGroupName;
                 }
             }
+        }
+
+        private void chkIgnoreGlobalCooldown_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

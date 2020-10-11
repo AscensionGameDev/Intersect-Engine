@@ -494,9 +494,9 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Migrations\Game\20201001163344_AddingCooldownGroupToItems.cs" />
-    <Compile Include="Migrations\Game\20201001163344_AddingCooldownGroupToItems.designer.cs">
-      <DependentUpon>20201001163344_AddingCooldownGroupToItems.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.cs" />
+    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.designer.cs">
+      <DependentUpon>20201001163344_ItemAndSpellCooldownImprovements.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

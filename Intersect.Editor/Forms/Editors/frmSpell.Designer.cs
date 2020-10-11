@@ -52,6 +52,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpSpellCost = new DarkUI.Controls.DarkGroupBox();
+            this.chkIgnoreGlobalCooldown = new DarkUI.Controls.DarkCheckBox();
             this.btnAddCooldownGroup = new DarkUI.Controls.DarkButton();
             this.cmbCooldownGroup = new DarkUI.Controls.DarkComboBox();
             this.lblCooldownGroup = new System.Windows.Forms.Label();
@@ -502,6 +503,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpSpellCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpSpellCost.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSpellCost.Controls.Add(this.chkIgnoreGlobalCooldown);
             this.grpSpellCost.Controls.Add(this.btnAddCooldownGroup);
             this.grpSpellCost.Controls.Add(this.cmbCooldownGroup);
             this.grpSpellCost.Controls.Add(this.lblCooldownGroup);
@@ -520,6 +522,16 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpellCost.TabIndex = 36;
             this.grpSpellCost.TabStop = false;
             this.grpSpellCost.Text = "Spell Cost:";
+            // 
+            // chkIgnoreGlobalCooldown
+            // 
+            this.chkIgnoreGlobalCooldown.AutoSize = true;
+            this.chkIgnoreGlobalCooldown.Location = new System.Drawing.Point(9, 112);
+            this.chkIgnoreGlobalCooldown.Name = "chkIgnoreGlobalCooldown";
+            this.chkIgnoreGlobalCooldown.Size = new System.Drawing.Size(145, 17);
+            this.chkIgnoreGlobalCooldown.TabIndex = 56;
+            this.chkIgnoreGlobalCooldown.Text = "Ignore Global Cooldown?";
+            this.chkIgnoreGlobalCooldown.CheckedChanged += new System.EventHandler(this.chkIgnoreGlobalCooldown_CheckedChanged);
             // 
             // btnAddCooldownGroup
             // 
@@ -2508,5 +2520,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnAddCooldownGroup;
         private DarkComboBox cmbCooldownGroup;
         private System.Windows.Forms.Label lblCooldownGroup;
+        private DarkCheckBox chkIgnoreGlobalCooldown;
     }
 }

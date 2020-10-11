@@ -69,6 +69,11 @@ namespace Intersect.GameObjects
         /// </summary>
         public string CooldownGroup { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Configures whether this should not trigger and be triggered by the global cooldown.
+        /// </summary>
+        public bool IgnoreGlobalCooldown { get; set; } = false;
+
         //Spell Bound
         public bool Bound { get; set; }
 

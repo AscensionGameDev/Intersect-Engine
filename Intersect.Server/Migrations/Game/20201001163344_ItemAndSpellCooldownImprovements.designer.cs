@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20201001163344_AddingCooldownGroupToItems")]
-    partial class AddingCooldownGroupToItems
+    [Migration("20201001163344_ItemAndSpellCooldownImprovements")]
+    partial class ItemAndSpellCooldownImprovements
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -213,7 +213,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("Cooldown");
 
-                    b.Property<int>("CooldownGroup");
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<int>("CritChance");
 
@@ -629,6 +631,10 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("CastDuration");
 
                     b.Property<int>("CooldownDuration");
+
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<string>("Description");
 

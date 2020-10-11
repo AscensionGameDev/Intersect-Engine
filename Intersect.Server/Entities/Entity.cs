@@ -2106,7 +2106,12 @@ namespace Intersect.Server.Entities
                 if (this is Player player)
                 {
                     player.UpdateCooldown(spellBase);
-                    player.UpdateGlobalCooldown();
+
+                    // Trigger the global cooldown, if we're allowed to.
+                    if (!spellBase.IgnoreGlobalCooldown)
+                    {
+                        player.UpdateGlobalCooldown();
+                    }
                 }
                 else
                 {

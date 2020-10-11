@@ -2804,6 +2804,9 @@ Tick timer saved in server config.json.";
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CooldownGroupPrompt = @"Enter a name for the cooldown group you'd like to add:";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString IgnoreGlobalCooldown = @"Ignore Global Cooldown?";
+
             public static LocalizedString copy = @"Copy Item";
 
             public static LocalizedString critchance = @"Crit Chance (%):";
@@ -4006,6 +4009,9 @@ Tick timer saved in server config.json.";
 
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CooldownGroupPrompt = @"Enter a name for the cooldown group you'd like to add:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString IgnoreGlobalCooldown = @"Ignore Global Cooldown?";
 
             public static LocalizedString copy = @"Copy Spell";
 
