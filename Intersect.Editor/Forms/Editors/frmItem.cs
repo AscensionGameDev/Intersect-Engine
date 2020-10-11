@@ -907,6 +907,26 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CooldownGroup = cmbCooldownGroup.Text;
         }
 
+        private void btnAddCooldownGroup_Click(object sender, EventArgs e)
+        {
+            var cdGroupName = "";
+            var result = DarkInputBox.ShowInformation(
+                Strings.ItemEditor.CooldownGroupPrompt, Strings.ItemEditor.CooldownGroupTitle, ref cdGroupName,
+                DarkDialogButton.OkCancel
+            );
+
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(cdGroupName))
+            {
+                if (!cmbCooldownGroup.Items.Contains(cdGroupName))
+                {
+                    mEditorItem.CooldownGroup = cdGroupName;
+                    mKnownCooldownGroups.Add(cdGroupName);
+                    InitEditor();
+                    cmbCooldownGroup.Text = cdGroupName;
+                }
+            }
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -953,6 +973,19 @@ namespace Intersect.Editor.Forms.Editors
                     !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
                 {
                     mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);    
+                }
+            }
+
+            // Do we add spell cooldown groups as well?
+            if (Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach(var itm in SpellBase.Lookup)
+                {
+                    if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
+                    !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
+                    {
+                        mKnownCooldownGroups.Add(((SpellBase)itm.Value).CooldownGroup);
+                    }
                 }
             }
 
@@ -1167,25 +1200,6 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-        private void btnAddCooldownGroup_Click(object sender, EventArgs e)
-        {
-            var cdGroupName = "";
-            var result = DarkInputBox.ShowInformation(
-                Strings.ItemEditor.CooldownGroupPrompt, Strings.ItemEditor.CooldownGroupTitle, ref cdGroupName,
-                DarkDialogButton.OkCancel
-            );
-
-            if (result == DialogResult.OK && !string.IsNullOrEmpty(cdGroupName))
-            {
-                if (!cmbCooldownGroup.Items.Contains(cdGroupName))
-                {
-                    mEditorItem.CooldownGroup = cdGroupName;
-                    mKnownCooldownGroups.Add(cdGroupName);
-                    InitEditor();
-                    cmbCooldownGroup.Text = cdGroupName;
-                }
-            }
-        }
     }
 
 }

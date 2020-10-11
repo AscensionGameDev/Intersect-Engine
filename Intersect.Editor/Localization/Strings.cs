@@ -3998,6 +3998,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString cooldown = @"Cooldown (ms):";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CooldownGroup = @"Cooldown Group:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CooldownGroupTitle = @"Add Cooldown Group";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CooldownGroupPrompt = @"Enter a name for the cooldown group you'd like to add:";
+
             public static LocalizedString copy = @"Copy Spell";
 
             public static LocalizedString cost = @"Spell Cost:";

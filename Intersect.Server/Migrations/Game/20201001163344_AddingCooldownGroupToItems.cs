@@ -11,6 +11,12 @@ namespace Intersect.Server.Migrations.Game
                 table: "Items",
                 nullable: false,
                 defaultValue: string.Empty);
+
+            migrationBuilder.AddColumn<string>(
+                name: "CooldownGroup",
+                table: "Spells",
+                nullable: false,
+                defaultValue: string.Empty);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -18,6 +24,10 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.DropColumn(
                 name: "CooldownGroup",
                 table: "Items");
+
+            migrationBuilder.DropColumn(
+                name: "CooldownGroup",
+                table: "Spells");
         }
     }
 }

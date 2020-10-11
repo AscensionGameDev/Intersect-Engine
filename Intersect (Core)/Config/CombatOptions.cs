@@ -26,9 +26,15 @@
 
         /// <summary>
         /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
-        /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item being used when false.
+        /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item or spell being used when false.
         /// </summary>
         public bool MatchGroupCooldownHighest = true;
+
+        /// <summary>
+        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+        /// Configures whether cooldown groups between items and spells are shared.
+        /// </summary>
+        public bool LinkSpellAndItemCooldowns = true;
 
     }
 
