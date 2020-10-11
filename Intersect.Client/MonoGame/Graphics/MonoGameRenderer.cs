@@ -35,8 +35,6 @@ namespace Intersect.Client.MonoGame.Graphics
                 TextureEnabled = true
             });
 
-        private ContentManager mContentManager;
-
         private GameBlendModes mCurrentBlendmode = GameBlendModes.None;
 
         private IShader mCurrentShader;
@@ -406,11 +404,6 @@ namespace Intersect.Client.MonoGame.Graphics
         public override ITexture GetWhiteTexture()
         {
             return mWhiteTexture;
-        }
-
-        public ContentManager GetContentManager()
-        {
-            return mContentManager;
         }
 
         public override IRenderTexture CreateRenderTexture(int width, int height)
@@ -824,7 +817,7 @@ namespace Intersect.Client.MonoGame.Graphics
                         }
                     }
 
-                    return new MonoFont(name, filename, size, mContentManager);
+                    return new MonoFont(name, filename, size, Content);
                 }
             }
 
@@ -832,7 +825,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override IShader LoadShader(string name) => new MonoShader(
-            name, mContentManager.Load<Effect>(GameContentManager.RemoveExtension(name))
+            name, Content.Load<Effect>(GameContentManager.RemoveExtension(name))
         );
 
         public override ITexture LoadTexture(TextureType textureType, string assetName)
