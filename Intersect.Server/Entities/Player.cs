@@ -5535,6 +5535,10 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Update the cooldown for a specific item.
+        /// </summary>
+        /// <param name="item">The <see cref="ItemBase"/> to update the cooldown for.</param>
         public void UpdateCooldown(ItemBase item)
         {
             if (item == null)
@@ -5558,6 +5562,10 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Update the cooldown for a specific spell.
+        /// </summary>
+        /// <param name="item">The <see cref="SpellBase"/> to update the cooldown for.</param>
         public void UpdateCooldown(SpellBase spell)
         {
             if (spell == null)
@@ -5580,6 +5588,10 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Forces an update of the global cooldown.
+        /// Does nothing when disabled by configuration.
+        /// </summary>
         public void UpdateGlobalCooldown()
         {
             // Are we allowed to execute this code?
@@ -5615,6 +5627,12 @@ namespace Intersect.Server.Entities
             PacketSender.SendSpellCooldowns(this);
         }
 
+        /// <summary>
+        /// Update all cooldowns within the specified cooldown group on a type of object, or all when configured as such.
+        /// </summary>
+        /// <param name="type">The <see cref="GameObjectType"/> to set trigger the cooldown group for. Currently only accepts Items and Spells</param>
+        /// <param name="group">The cooldown group to trigger.</param>
+        /// <param name="cooldown">The base cooldown of the object that triggered this cooldown group.</param>
         private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown)
         {
             // We're only dealing with these two types for now.
@@ -5696,6 +5714,12 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Assign a cooldown time to a specified item.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="ItemBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
         private void AssignItemCooldown(Guid itemId, long cooldownTime)
         {
             // Do we already have a cooldown entry for this item?
@@ -5709,6 +5733,12 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Assign a cooldown time to a specified spell.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="SpellBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
         private void AssignSpellCooldown(Guid spellId, long cooldownTime)
         {
             // Do we already have a cooldown entry for this item?
