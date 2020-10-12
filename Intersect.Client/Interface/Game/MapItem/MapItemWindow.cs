@@ -14,8 +14,6 @@ namespace Intersect.Client.Interface.Game.Inventory
 
     public class MapItemWindow
     {
-        private const int MAX_LOOT_ITEMS = 10;
-
         //Item List
         public List<MapItemIcon> Items = new List<MapItemIcon>();
         private List<Label> mValues = new List<Label>();
@@ -56,6 +54,13 @@ namespace Intersect.Client.Interface.Game.Inventory
         //Methods
         public void Update()
         {
+            // Is this disabled from the server config? If so, skip doing anything.
+            if (!Options.Loot.EnableLootWindow)
+            {
+                mMapItemWindow.Hide();
+                return;
+            }
+
             var location = new Point(Globals.Me.X, Globals.Me.Y);
             var mapItems = Globals.Me.MapInstance.MapItems;
             if ((!mapItems.ContainsKey(location) || mapItems[location].Count < 1) && !mMapItemWindow.IsHidden)
@@ -108,7 +113,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
 
             // Update our UI and hide our unused icons.
-            for (var slot = 0; slot < MAX_LOOT_ITEMS; slot++)
+            for (var slot = 0; slot < Options.Loot.MaximumLootWindowItems; slot++)
             {
                 if (slot > itemSlot - 1)
                 {
@@ -123,7 +128,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private void CreateItemContainer()
         {
-            for (var i = 0; i < MAX_LOOT_ITEMS; i++)
+            for (var i = 0; i < Options.Loot.MaximumLootWindowItems; i++)
             {
                 Items.Add(new MapItemIcon(this));
                 Items[i].Container = new ImagePanel(mItemContainer, "MapItemIcon");
