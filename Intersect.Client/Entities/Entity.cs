@@ -18,7 +18,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
-
+using Intersect.Utilities;
 using JetBrains.Annotations;
 
 namespace Intersect.Client.Entities
@@ -118,7 +118,7 @@ namespace Intersect.Client.Entities
 
         public int MoveDir = -1;
 
-        public float MoveTimer;
+        public long MoveTimer;
 
         protected byte mRenderPriority = 1;
 
@@ -949,7 +949,7 @@ namespace Intersect.Client.Entities
                     if (SpriteAnimation == SpriteAnimations.Normal)
                     {
                         var attackTime = CalculateAttackTime();
-                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                        if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || Blocking)
                         {
                             srcRectangle = new FloatRect(
                                 Options.Instance.Sprites.NormalSheetAttackFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
@@ -1114,7 +1114,7 @@ namespace Intersect.Client.Entities
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
                 if (SpriteAnimation == SpriteAnimations.Normal)
                 {
-                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                    if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || Blocking)
                     {
                         srcRectangle = new FloatRect(
                             3 * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
@@ -1684,9 +1684,9 @@ namespace Intersect.Client.Entities
                 SpriteAnimation = SpriteAnimations.Normal;
                 LastActionTime = Globals.System.GetTimeMs();
             }
-            else if (AttackTimer > Globals.System.GetTimeMs()) //Attacking
+            else if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) //Attacking
             {
-                var timeIn = CalculateAttackTime() - (AttackTimer - Globals.System.GetTimeMs());
+                var timeIn = CalculateAttackTime() - (AttackTimer - Timing.Global.Ticks / TimeSpan.TicksPerMillisecond);
                 LastActionTime = Globals.System.GetTimeMs();
 
                 if (AnimatedTextures[SpriteAnimations.Attack] != null)

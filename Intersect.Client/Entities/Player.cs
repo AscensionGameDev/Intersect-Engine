@@ -19,6 +19,7 @@ using Intersect.Network.Packets.Server;
 
 using Newtonsoft.Json;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Entities
 {
@@ -151,9 +152,9 @@ namespace Intersect.Client.Entities
                 {
                     if (!Globals.Me.TryAttack())
                     {
-                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                        if (Globals.Me.AttackTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
                         {
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMs() + Globals.Me.CalculateAttackTime();
+                            Globals.Me.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + Globals.Me.CalculateAttackTime();
                         }
                     }
                 }
@@ -920,7 +921,7 @@ namespace Intersect.Client.Entities
 
         public bool TryBlock()
         {
-            if (AttackTimer > Globals.System.GetTimeMs())
+            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
             {
                 return false;
             }
@@ -946,13 +947,13 @@ namespace Intersect.Client.Entities
             {
                 Blocking = false;
                 PacketSender.SendBlock(false);
-                AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+                AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
             }
         }
 
         public bool TryAttack()
         {
-            if (AttackTimer > Globals.System.GetTimeMs() || Blocking)
+            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || Blocking)
             {
                 return false;
             }
@@ -998,7 +999,7 @@ namespace Intersect.Client.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+                            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
 
                             return true;
                         }
@@ -1021,7 +1022,7 @@ namespace Intersect.Client.Entities
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Key);
-                            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+                            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
 
                             return true;
                         }
@@ -1031,7 +1032,7 @@ namespace Intersect.Client.Entities
 
             //Projectile/empty swing for animations
             PacketSender.SendAttack(Guid.Empty);
-            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
 
             return true;
         }
@@ -1318,9 +1319,6 @@ namespace Intersect.Client.Entities
         //Movement Processing
         private void ProcessDirectionalInput()
         {
-            var didMove = false;
-            var tmpI = -1;
-
             //Check if player is crafting
             if (Globals.InCraft == true)
             {
@@ -1344,7 +1342,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (AttackTimer > Globals.System.GetTimeMs())
+            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
             {
                 return;
             }
@@ -1356,7 +1354,7 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Globals.System.GetTimeMs() && CastTime < Globals.System.GetTimeMs())
+                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && CastTime < Globals.System.GetTimeMs())
                 {
                     switch (MoveDir)
                     {
@@ -1413,8 +1411,8 @@ namespace Intersect.Client.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
-                        didMove = true;
+                        PacketSender.SendMove((long)GetMovementTime());
+                        MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
                         if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
                         {
                             var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
@@ -1478,13 +1476,6 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
-            }
-
-            Globals.MyX = X;
-            Globals.MyY = Y;
-            if (didMove)
-            {
-                PacketSender.SendMove();
             }
         }
 

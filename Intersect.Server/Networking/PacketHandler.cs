@@ -299,17 +299,20 @@ namespace Intersect.Server.Networking
 
                     if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
-                        Log.Error(
-                            "Dropping Packet. Client Speedhacking?\n\t" +
-                            $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                            $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
-                            $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
-                            $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                            $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                            $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                            $"Time Desync[{timeDesync}]\n\t" +
-                            $"Packet[{packet.ToString()}]"
-                        );
+                        if (!(packet is PingPacket))
+                        {
+                            Log.Error(
+                                "Dropping Packet. Time desync? Debug Info:\n\t" +
+                                $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                                $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                                $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
+                                $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                                $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                                $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                                $"Time Desync[{timeDesync}]\n\t" +
+                                $"Packet[{packet.ToString()}]"
+                            );
+                        }
 
                         try
                         {
@@ -564,6 +567,7 @@ namespace Intersect.Server.Networking
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
                         player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
+                        Console.WriteLine($"Accepted pmp [{packet.Adjusted / TimeSpan.TicksPerMillisecond} + {(long)player.GetMovementTime()} = {(packet.Adjusted / TimeSpan.TicksPerMillisecond) + (long)player.GetMovementTime()}   /   {player.ClientActionTimer}");
                     }
                 }
                 else
@@ -576,7 +580,6 @@ namespace Intersect.Server.Networking
             else
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
-
                 return;
             }
 
@@ -896,7 +899,7 @@ namespace Intersect.Server.Networking
             var target = packet.Target;
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer < clientTime)
+            if (player.ClientActionTimer >= clientTime)
             {
                 return;
             }
