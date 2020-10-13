@@ -1451,8 +1451,6 @@ namespace Intersect.Client.Entities
                                 FetchNewMaps();
                             }
 
-                            PacketSender.SendMove();
-                            MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
                         }
                         else
                         {
@@ -1461,6 +1459,8 @@ namespace Intersect.Client.Entities
                         }
 
                         TryToChangeDimension();
+                        PacketSender.SendMove();
+                        MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
                     }
                     else
                     {
