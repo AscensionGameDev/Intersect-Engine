@@ -44,6 +44,11 @@ namespace Intersect.Config
         /// </summary>
         public float DesyncForgivenessFactor { get; set; } = 2.0f;
 
+        /// <summary>
+        /// A value measured in milliseconds in which a packet that is out of sync will be forgiven (no matter how out of sync) and timing will sent to the client.
+        /// </summary>
+        public int DesyncForgivenessInterval { get; set; } = 5000;
+
         #endregion
 
 
