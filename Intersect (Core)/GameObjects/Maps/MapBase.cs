@@ -55,7 +55,6 @@ namespace Intersect.GameObjects.Maps
             if (Layers == null)
             {
                 Layers = new Dictionary<string,Tile[,]>();
-                //TODO: Add new layers from config? Remove layers if they no longer exist? Idk!
                 TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
                 Layers = null;
             }

@@ -124,7 +124,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
                 using (var updateCmd = connection.CreateCommand())
                 {
-                    updateCmd.CommandText = "";
+                    updateCmd.CommandText = string.Empty;
                     updateCmd.Transaction = trans;
                     var i = 0;
                     var currentCount = 0;
