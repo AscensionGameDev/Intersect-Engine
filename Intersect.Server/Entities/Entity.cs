@@ -424,8 +424,7 @@ namespace Intersect.Server.Entities
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
-                            if (!resource.IsDead() && !resource.Base.WalkableBefore ||
-                                resource.IsDead() && !resource.Base.WalkableAfter)
+                            if (!resource.IsPassable())
                             {
                                 return (int) EntityTypes.Resource;
                             }
