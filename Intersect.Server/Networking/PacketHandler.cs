@@ -567,7 +567,6 @@ namespace Intersect.Server.Networking
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
                         player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
-                        Console.WriteLine($"Accepted pmp [{packet.Adjusted / TimeSpan.TicksPerMillisecond} + {(long)player.GetMovementTime()} = {(packet.Adjusted / TimeSpan.TicksPerMillisecond) + (long)player.GetMovementTime()}   /   {player.ClientActionTimer}");
                     }
                 }
                 else
