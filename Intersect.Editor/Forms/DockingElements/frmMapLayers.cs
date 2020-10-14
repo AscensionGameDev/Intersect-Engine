@@ -12,6 +12,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Localization;
 using Intersect.Utilities;
 
 using JetBrains.Annotations;
@@ -77,7 +78,9 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     if (i < Options.Instance.MapOpts.Layers.All.Count)
                     {
-                        mMapLayers[i].Text = Options.Instance.MapOpts.Layers.All[i];
+                        LocalizedString layerName = Options.Instance.MapOpts.Layers.All[i];
+                        Strings.Tiles.maplayers.TryGetValue(Options.Instance.MapOpts.Layers.All[i], out layerName);
+                        mMapLayers[i].Text = layerName;
                         mMapLayers[i].Show();
                     }
                     else

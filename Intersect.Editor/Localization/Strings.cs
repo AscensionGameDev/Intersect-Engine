@@ -4301,6 +4301,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString layer = @"Layer:";
 
+            public static Dictionary<string, LocalizedString> maplayers = new Dictionary<string, LocalizedString>
+            {
+                { @"Ground", @"Ground" },
+                { @"Mask 1", @"Mask 1" },
+                { @"Mask 2", @"Mask 2" },
+                { @"Fringe 1", @"Fringe 1" },
+                { @"Fringe 2", @"Fringe 2" }
+            };
+
             public static LocalizedString normal = @"Normal";
 
             public static LocalizedString tileset = @"Tileset:";

@@ -22,6 +22,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect.Network;
 using Intersect.Updater;
 
@@ -372,7 +373,9 @@ namespace Intersect.Editor.Forms
             //Init layer visibility buttons
             foreach (var layer in Options.Instance.MapOpts.Layers.All)
             {
-                var btn = new ToolStripMenuItem(layer);
+                LocalizedString layerName = layer;
+                Strings.Tiles.maplayers.TryGetValue(layer, out layerName);
+                var btn = new ToolStripMenuItem(layerName);
                 btn.Checked = true;
                 btn.Click += HideLayerBtn_Click;
                 btn.Tag = layer;
