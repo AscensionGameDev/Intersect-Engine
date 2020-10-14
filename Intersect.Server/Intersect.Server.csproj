@@ -431,7 +431,6 @@
     <Compile Include="Core\IServerContext.cs" />
     <Compile Include="Core\LogicService.cs" />
     <Compile Include="Core\LogicService.LogicThread.cs" />
-    <Compile Include="Core\ServerTiming.cs" />
     <Compile Include="Core\Services\IConsoleService.cs" />
     <Compile Include="Core\Services\ILogicService.cs" />
     <Compile Include="Database\DbLogger.cs" />

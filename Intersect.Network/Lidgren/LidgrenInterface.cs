@@ -732,7 +732,7 @@ namespace Intersect.Network.Lidgren
                         if (mNetwork.ConnectionCount >= Options.MaxConnections)
                         {
                             Log.Info($"Connection limit reached, denying connection [{lidgrenIdHex}].");
-                                connection?.Deny(NetworkStatus.ServerFull.ToString());
+                                senderConnection?.Deny(NetworkStatus.ServerFull.ToString());
                             break;
                         }
 
