@@ -722,7 +722,7 @@ namespace Intersect.Client.Networking
 
             if (attackTimer > -1 && en != Globals.Me)
             {
-                en.AttackTimer = Globals.System.GetTimeMs() + attackTimer;
+                en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
                 en.AttackTime = attackTimer;
             }
         }

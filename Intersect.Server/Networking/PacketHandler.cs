@@ -244,11 +244,12 @@ namespace Intersect.Server.Networking
                 var configurableAllowedSpikePackets = Options.Instance.SecurityOpts.PacketOpts.AllowedSpikePackets;
                 var configurableBaseDesyncForgiveness = Options.Instance.SecurityOpts.PacketOpts.BaseDesyncForegiveness;
                 var configurablePingDesyncForgivenessFactor = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessFactor;
+                var configurablePacketDesyncForgivenessInternal = Options.Instance.SecurityOpts.PacketOpts.DesyncForgivenessInterval;
 
                 var errorMargin = Math.Max(ping, configurableMininumPing) * configurableErrorMarginFactor;
                 var errorRangeMinimum = ping - errorMargin;
                 var errorRangeMaximum = ping + errorMargin;
-                
+
                 var deltaWithErrorMinimum = deltaAdjusted - errorRangeMinimum;
                 var deltaWithErrorMaximum = deltaAdjusted - errorRangeMaximum;
 
@@ -267,6 +268,14 @@ namespace Intersect.Server.Networking
 
                 var adjustedDesync = Math.Abs(deltaAdjusted);
                 var timeDesync = adjustedDesync > configurableBaseDesyncForgiveness + errorRangeMaximum * configurablePingDesyncForgivenessFactor;
+
+                if (timeDesync && Globals.Timing.MillisecondsUTC > client.LastPacketDesyncForgiven)
+                {
+                    client.LastPacketDesyncForgiven = Globals.Timing.MillisecondsUTC + configurablePacketDesyncForgivenessInternal;
+                    PacketSender.SendPing(client, false);
+                    timeDesync = false;
+                }
+
 
                 if (Debugger.IsAttached)
                 {
@@ -290,17 +299,20 @@ namespace Intersect.Server.Networking
 
                     if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
-                        Log.Error(
-                            "Dropping Packet. Client Speedhacking?\n\t" +
-                            $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                            $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
-                            $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
-                            $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                            $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                            $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                            $"Time Desync[{timeDesync}]\n\t" +
-                            $"Packet[{packet.ToString()}]"
-                        );
+                        if (!(packet is PingPacket))
+                        {
+                            Log.Error(
+                                "Dropping Packet. Time desync? Debug Info:\n\t" +
+                                $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                                $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                                $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
+                                $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                                $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                                $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                                $"Time Desync[{timeDesync}]\n\t" +
+                                $"Packet[{packet.ToString()}]"
+                            );
+                        }
 
                         try
                         {
@@ -542,7 +554,7 @@ namespace Intersect.Server.Networking
             }
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer < clientTime)
+            if (player.ClientActionTimer <= clientTime)
             {
                 var canMove = player.CanMove(packet.Dir);
                 if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
@@ -555,6 +567,7 @@ namespace Intersect.Server.Networking
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
                         player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
+                        Console.WriteLine($"Accepted pmp [{packet.Adjusted / TimeSpan.TicksPerMillisecond} + {(long)player.GetMovementTime()} = {(packet.Adjusted / TimeSpan.TicksPerMillisecond) + (long)player.GetMovementTime()}   /   {player.ClientActionTimer}");
                     }
                 }
                 else
@@ -567,7 +580,6 @@ namespace Intersect.Server.Networking
             else
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
-
                 return;
             }
 
@@ -887,22 +899,25 @@ namespace Intersect.Server.Networking
             var target = packet.Target;
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer < clientTime)
+            if (player.ClientActionTimer > clientTime)
             {
                 return;
             }
 
-            if (player.AttackTimer >= Globals.Timing.Milliseconds)
+            if (player.AttackTimer > Globals.Timing.Milliseconds)
             {
                 return;
             }
 
-            if (player.CastTime >= Globals.Timing.Milliseconds)
+            if (player.CastTime > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack);
 
                 return;
             }
+
+            var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+            var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
             //check if player is blinded or stunned
             var statuses = player.Statuses.Values.ToArray();
@@ -1044,7 +1059,7 @@ namespace Intersect.Server.Networking
                         }
 #endif
 
-                    player.AttackTimer = Globals.Timing.Milliseconds + player.CalculateAttackTime();
+                    player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
 
                 }
                 else
@@ -1089,6 +1104,11 @@ namespace Intersect.Server.Networking
                         break;
                     }
                 }
+            }
+
+            if (player.AttackTimer > Globals.Timing.Milliseconds)
+            {
+                player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
             }
         }
 

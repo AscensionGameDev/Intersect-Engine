@@ -85,6 +85,8 @@ namespace Intersect.Server.Networking
 
         public long TotalFloodDetects { get; set; }
 
+        public long LastPacketDesyncForgiven { get; set; }
+
         public UserRights Power
         {
             get => User?.Power ?? UserRights.None;
