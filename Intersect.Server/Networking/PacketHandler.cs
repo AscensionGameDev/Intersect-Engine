@@ -1389,7 +1389,7 @@ namespace Intersect.Server.Networking
 
                 var canTake = false;
                 // Can we actually take this item?
-                if (mapItem.Owner == Guid.Empty || Globals.Timing.TimeMs > mapItem.OwnershipTime)
+                if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
                 {
                     // The ownership time has run out, or there's no owner!
                     canTake = true;
