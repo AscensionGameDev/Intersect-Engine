@@ -293,6 +293,20 @@ namespace Intersect.Client.Framework.Gwen.Control
         }
 
         /// <summary>
+        ///     Handles mouse button events. Called from Input subsystems.
+        /// </summary>
+        /// <returns>True if handled.</returns>
+        public bool Input_MouseScroll(int deltaX, int deltaY)
+        {
+            if (IsHidden)
+            {
+                return false;
+            }
+
+            return InputHandler.OnMouseScroll(this, deltaX, deltaY);
+        }
+
+        /// <summary>
         ///     Handles keyboard events. Called from Input subsystems.
         /// </summary>
         /// <returns>True if handled.</returns>

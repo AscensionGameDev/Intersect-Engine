@@ -165,6 +165,7 @@ namespace Intersect.Editor.Forms
             hideFogToolStripMenuItem.Text = Strings.MainForm.fog;
             hideOverlayToolStripMenuItem.Text = Strings.MainForm.overlay;
             hideResourcesToolStripMenuItem.Text = Strings.MainForm.resources;
+            hideEventsToolStripMenuItem.Text = Strings.MainForm.Events;
             hideTilePreviewToolStripMenuItem.Text = Strings.MainForm.tilepreview;
             mapGridToolStripMenuItem.Text = Strings.MainForm.grid;
 
@@ -1136,6 +1137,12 @@ namespace Intersect.Editor.Forms
             hideResourcesToolStripMenuItem.Checked = !Core.Graphics.HideResources;
         }
 
+        private void hideEventsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Core.Graphics.HideEvents = !Core.Graphics.HideEvents;
+            hideEventsToolStripMenuItem.Checked = !Core.Graphics.HideEvents;
+        }
+
         private void mapGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Core.Graphics.HideGrid = !Core.Graphics.HideGrid;
@@ -1971,6 +1978,7 @@ namespace Intersect.Editor.Forms
 
             return filesProcessed;
         }
+
     }
 
 }
