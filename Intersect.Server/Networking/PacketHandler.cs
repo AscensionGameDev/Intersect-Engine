@@ -899,22 +899,25 @@ namespace Intersect.Server.Networking
             var target = packet.Target;
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer >= clientTime)
+            if (player.ClientActionTimer > clientTime)
             {
                 return;
             }
 
-            if (player.AttackTimer >= Globals.Timing.Milliseconds)
+            if (player.AttackTimer > Globals.Timing.Milliseconds)
             {
                 return;
             }
 
-            if (player.CastTime >= Globals.Timing.Milliseconds)
+            if (player.CastTime > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack);
 
                 return;
             }
+
+            var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+            var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
             //check if player is blinded or stunned
             var statuses = player.Statuses.Values.ToArray();
@@ -1056,7 +1059,7 @@ namespace Intersect.Server.Networking
                         }
 #endif
 
-                    player.AttackTimer = Globals.Timing.Milliseconds + player.CalculateAttackTime();
+                    player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
 
                 }
                 else
@@ -1101,6 +1104,11 @@ namespace Intersect.Server.Networking
                         break;
                     }
                 }
+            }
+
+            if (player.AttackTimer > Globals.Timing.Milliseconds)
+            {
+                player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
             }
         }
 
