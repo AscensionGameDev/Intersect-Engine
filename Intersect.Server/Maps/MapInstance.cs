@@ -916,7 +916,7 @@ namespace Intersect.Server.Maps
                             {
                                 npcSpawnInstance.RespawnTime = Globals.Timing.Milliseconds +
                                                                ((Npc) npcSpawnInstance.Entity).Base.SpawnDuration -
-                                                               (Globals.Timing.TimeMs - LastUpdateTime);
+                                                               (Globals.Timing.Milliseconds - LastUpdateTime);
                             }
                             else if (npcSpawnInstance.RespawnTime < Globals.Timing.Milliseconds)
                             {
