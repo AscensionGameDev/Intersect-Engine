@@ -123,6 +123,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.chkHasElse = new DarkUI.Controls.DarkCheckBox();
             this.grpConditional.SuspendLayout();
             this.grpFreeInventorySlots.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFreeInventorySlots)).BeginInit();
@@ -153,6 +154,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.chkHasElse);
             this.grpConditional.Controls.Add(this.grpFreeInventorySlots);
             this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.btnSave);
@@ -1544,6 +1546,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least:";
             // 
+            // chkHasElse
+            // 
+            this.chkHasElse.Location = new System.Drawing.Point(112, 279);
+            this.chkHasElse.Name = "chkHasElse";
+            this.chkHasElse.Size = new System.Drawing.Size(72, 17);
+            this.chkHasElse.TabIndex = 56;
+            this.chkHasElse.Text = "Has Else";
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1693,5 +1703,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpFreeInventorySlots;
         private DarkNumericUpDown nudFreeInventorySlots;
         private System.Windows.Forms.Label lblFreeInventorySlotAmount;
+        private DarkCheckBox chkHasElse;
     }
 }

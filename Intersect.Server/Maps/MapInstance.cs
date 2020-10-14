@@ -275,9 +275,9 @@ namespace Intersect.Server.Maps
             if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
             {
                 var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
-                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                    DespawnTime = Globals.Timing.Milliseconds + Options.Loot.ItemDespawnTime,
                     Owner = owner,
-                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                    OwnershipTime = Globals.Timing.Milliseconds + Options.Loot.ItemOwnershipTime,
                     VisibleToAll = Options.Loot.ShowUnownedItems
                 };
 
@@ -296,9 +296,9 @@ namespace Intersect.Server.Maps
                 for (var i = 0; i < amount; i++)
                 {
                     var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
-                        DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                        DespawnTime = Globals.Timing.Milliseconds + Options.Loot.ItemDespawnTime,
                         Owner = owner,
-                        OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                        OwnershipTime = Globals.Timing.Milliseconds + Options.Loot.ItemOwnershipTime,
                         VisibleToAll = Options.Loot.ShowUnownedItems
                     };
 
@@ -396,7 +396,7 @@ namespace Intersect.Server.Maps
                             ItemRespawns.Add(new MapItemSpawn());
                             ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = location.X;
                             ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = location.Y;
-                            ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.Timing.TimeMs + Options.Map.ItemAttributeRespawnTime;
+                            ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.Timing.Milliseconds + Options.Map.ItemAttributeRespawnTime;
                         }
                     }
                     
@@ -914,11 +914,11 @@ namespace Intersect.Server.Maps
                         {
                             if (npcSpawnInstance.RespawnTime == -1)
                             {
-                                npcSpawnInstance.RespawnTime = Globals.Timing.TimeMs +
+                                npcSpawnInstance.RespawnTime = Globals.Timing.Milliseconds +
                                                                ((Npc) npcSpawnInstance.Entity).Base.SpawnDuration -
                                                                (Globals.Timing.TimeMs - LastUpdateTime);
                             }
-                            else if (npcSpawnInstance.RespawnTime < Globals.Timing.TimeMs)
+                            else if (npcSpawnInstance.RespawnTime < Globals.Timing.Milliseconds)
                             {
                                 SpawnMapNpc(i);
                                 npcSpawnInstance.RespawnTime = -1;
@@ -937,13 +937,33 @@ namespace Intersect.Server.Maps
                         {
                             if (resourceSpawnInstance.RespawnTime == -1)
                             {
-                                resourceSpawnInstance.RespawnTime = Globals.Timing.TimeMs +
+                                resourceSpawnInstance.RespawnTime = Globals.Timing.Milliseconds +
                                                                     resourceSpawnInstance.Entity.Base.SpawnDuration;
                             }
-                            else if (resourceSpawnInstance.RespawnTime < Globals.Timing.TimeMs)
+                            else if (resourceSpawnInstance.RespawnTime < Globals.Timing.Milliseconds)
                             {
-                                SpawnMapResource(i);
-                                resourceSpawnInstance.RespawnTime = -1;
+                                // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
+                                // Unless of course the resource is walkable regardless.
+                                var canSpawn = false;
+                                if (resourceSpawnInstance.Entity.Base.WalkableBefore)
+                                {
+                                    canSpawn = true;
+                                }
+                                else
+                                {
+                                    // Check if this resource is currently stepped on
+                                    var spawnBlockers = GetEntities().Where(x => x is Player || x is Npc).ToArray();
+                                    if (!spawnBlockers.Any(e => e.X == resourceSpawnInstance.Entity.X && e.Y == resourceSpawnInstance.Entity.Y))
+                                    {
+                                        canSpawn = true;
+                                    }
+                                }
+
+                                if (canSpawn) 
+                                {
+                                    SpawnMapResource(i);
+                                    resourceSpawnInstance.RespawnTime = -1;
+                                }
                             }
                         }
                     }
@@ -953,7 +973,7 @@ namespace Intersect.Server.Maps
                 var evts = GlobalEventInstances.Values.ToList();
                 for (var i = 0; i < evts.Count; i++)
                 {
-                    //Only do movement processing on the first page.
+                        //Only do movement processing on the first page.
                     //This is because global events need to keep all of their pages at the same tile
                     //Think about a global event moving randomly that needed to turn into a warewolf and back (separate pages)
                     //If they were in different tiles the transition would make the event jump

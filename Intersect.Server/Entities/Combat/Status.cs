@@ -30,8 +30,8 @@ namespace Intersect.Server.Entities.Combat
             mEntity = en;
             Spell = spell;
             Type = type;
-            StartTime = Globals.Timing.TimeMs;
-            Duration = Globals.Timing.TimeMs + duration;
+            StartTime = Globals.Timing.Milliseconds;
+            Duration = Globals.Timing.Milliseconds + duration;
             Data = data;
 
             if (en.GetType() == typeof(Player))
@@ -43,7 +43,7 @@ namespace Intersect.Server.Entities.Combat
                     type == StatusTypes.Stun ||
                     type == StatusTypes.Taunt)
                 {
-                    Duration = Globals.Timing.TimeMs + duration - (long) (((Player) en).GetTenacity() / 100 * duration);
+                    Duration = Globals.Timing.Milliseconds + duration - (long) (((Player) en).GetTenacity() / 100 * duration);
                 }
             }
 
@@ -93,7 +93,7 @@ namespace Intersect.Server.Entities.Combat
 
         public void TryRemoveStatus()
         {
-            if (Duration <= Globals.Timing.TimeMs) //Check the timer
+            if (Duration <= Globals.Timing.Milliseconds) //Check the timer
             {
                 RemoveStatus();
             }

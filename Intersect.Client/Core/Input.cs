@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Logging;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -298,20 +299,18 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.AttackTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
                 {
-                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() + Globals.Me.CalculateAttackTime();
+                    Globals.Me.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + Globals.Me.CalculateAttackTime();
                 }
             }
 
-            if (!Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, key))
             {
-                return;
-            }
-
-            if (Globals.Me.TryBlock())
-            {
-                return;
+                if (Globals.Me.TryBlock())
+                {
+                    return;
+                }
             }
 
             if (key != Keys.None)

@@ -463,6 +463,7 @@ namespace Intersect.Client.Interface.Game
             if (mShouldUpdateFriendsList)
             {
                 GameMenu.UpdateFriendsList();
+                mShouldUpdateFriendsList = false;
             }
 
             mShouldCloseTrading = false;
