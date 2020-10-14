@@ -58,7 +58,7 @@ namespace Intersect.Server.Core.CommandParsing
                 );
             }
 
-            if (defaultConstructor.Invoke(args ?? new object[0]) is ICommand command)
+            if (defaultConstructor.Invoke(args ?? Array.Empty<object>()) is ICommand command)
             {
                 return Register(command);
             }

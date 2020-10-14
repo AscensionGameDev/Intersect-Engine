@@ -26,14 +26,17 @@ using Owin;
 
 namespace Intersect.Server.Web.RestApi
 {
-
+    // TODO: Migrate to a proper service
     internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
+        [NotNull] private readonly object mDisposeLock;
 
         [CanBeNull] private IDisposable mWebAppHandle;
 
         public RestApi(ushort apiPort)
         {
+            mDisposeLock = new object();
+
             StartOptions = new StartOptions();
 
             Configuration = ApiConfiguration.Create();
@@ -111,7 +114,7 @@ namespace Intersect.Server.Web.RestApi
 
         public void Dispose()
         {
-            lock (this)
+            lock (mDisposeLock)
             {
                 if (Disposed || Disposing)
                 {

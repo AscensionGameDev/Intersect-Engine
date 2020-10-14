@@ -722,11 +722,19 @@ namespace Intersect.Network.Lidgren
 
                             break;
                         }
-
+                        
                         Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={(long)Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
                         Log.Debug($"real delta={(Timing.Global.TicksUTC - hail.UTC) / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"NCPing={(long)Math.Ceiling(senderConnection.AverageRoundtripTime * 1000)}");
+
+                        // Check if we've got more connections than we're allowed to handle!
+                        if (mNetwork.ConnectionCount >= Options.MaxConnections)
+                        {
+                            Log.Info($"Connection limit reached, denying connection [{lidgrenIdHex}].");
+                                connection?.Deny(NetworkStatus.ServerFull.ToString());
+                            break;
+                        }
 
                         if (OnConnectionApproved == null)
                         {

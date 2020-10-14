@@ -1,15 +1,14 @@
-﻿using System.Collections.Immutable;
-
-using Intersect.Localization;
+﻿using Intersect.Localization;
 
 using JetBrains.Annotations;
 
+using System;
+using System.Collections.Immutable;
+
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
-
     public class EnumArgument<TValue> : CommandArgument<TValue>
     {
-
         public EnumArgument(
             [NotNull] LocaleArgument localization,
             bool required = false,
@@ -17,7 +16,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, required, positional)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public EnumArgument(
@@ -28,7 +27,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, required, positional, allowsMultiple)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public EnumArgument(
@@ -40,7 +39,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, required, positional, allowsMultiple, defaultValue)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public EnumArgument(
@@ -50,7 +49,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, requiredPredicate, positional)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public EnumArgument(
@@ -61,7 +60,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, requiredPredicate, positional, allowsMultiple)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public EnumArgument(
@@ -73,16 +72,12 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [CanBeNull] params TValue[] allowedValues
         ) : base(localization, requiredPredicate, positional, allowsMultiple, defaultValue)
         {
-            AllowedValues = (allowedValues ?? new TValue[0]).ToImmutableArray();
+            AllowedValues = (allowedValues ?? Array.Empty<TValue>()).ToImmutableArray();
         }
 
         public ImmutableArray<TValue> AllowedValues { get; }
 
-        public override bool IsValueAllowed(object value)
-        {
-            return value is TValue castedValue && AllowedValues.Contains(castedValue);
-        }
-
+        public override bool IsValueAllowed(object value) =>
+            value is TValue castedValue && AllowedValues.Contains(castedValue);
     }
-
 }

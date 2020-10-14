@@ -411,6 +411,15 @@ namespace Intersect.Server.Networking
 
             client.ResetTimeout();
 
+
+            // Are we at capacity yet, or can this user still log in?
+            if (Globals.OnlineList.Count >= Options.MaxLoggedinUsers)
+            {
+                PacketSender.SendError(client, Strings.Networking.ServerFull);
+
+                return;
+            }
+
             if (!DbInterface.CheckPassword(packet.Username, packet.Password))
             {
                 client.FailedAttempt();
@@ -2386,7 +2395,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            lock (ServerLoop.Lock)
+            lock (ServerContext.Instance.LogicService.LogicLock)
             {
                 var newMap = Guid.Empty;
                 var tmpMap = new MapInstance(true);
@@ -2646,7 +2655,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        lock (ServerLoop.Lock)
+                        lock (ServerContext.Instance.LogicService.LogicLock)
                         {
                             mapId = packet.TargetId;
                             var players = MapInstance.Get(mapId).GetPlayersOnMap();
@@ -2686,7 +2695,7 @@ namespace Intersect.Server.Networking
             {
                 if (client.IsEditor)
                 {
-                    lock (ServerLoop.Lock)
+                    lock (ServerContext.Instance.LogicService.LogicLock)
                     {
                         var map = MapInstance.Get(mapId);
                         if (map != null)
@@ -2751,8 +2760,8 @@ namespace Intersect.Server.Networking
             long gridY = packet.GridY;
             var canLink = true;
 
-            lock (ServerLoop.Lock)
-            {
+            lock (ServerContext.Instance.LogicService.LogicLock) 
+            { 
                 if (adjacentMap != null && linkMap != null)
                 {
                     //Clear to test if we can link.
@@ -3122,7 +3131,7 @@ namespace Intersect.Server.Networking
 
             if (obj != null)
             {
-                lock (ServerLoop.Lock)
+                lock (ServerContext.Instance.LogicService.LogicLock)
                 {
                     //if Item or Resource, kill all global entities of that kind
                     if (type == GameObjectType.Item)

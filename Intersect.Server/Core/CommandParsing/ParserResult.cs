@@ -34,9 +34,9 @@ namespace Intersect.Server.Core.CommandParsing
         {
             Command = command;
             Parsed = parsed;
-            Errors = (errors ?? new ParserError[0]).ToImmutableList() ?? throw new InvalidOperationException();
-            Missing = (missing ?? new ICommandArgument[0]).ToImmutableList() ?? throw new InvalidOperationException();
-            Omitted = (omitted ?? new ICommandArgument[0]).ToImmutableList() ?? throw new InvalidOperationException();
+            Errors = (errors ?? Array.Empty<ParserError>()).ToImmutableList() ?? throw new InvalidOperationException();
+            Missing = (missing ?? Array.Empty<ICommandArgument>()).ToImmutableList() ?? throw new InvalidOperationException();
+            Omitted = (omitted ?? Array.Empty<ICommandArgument>()).ToImmutableList() ?? throw new InvalidOperationException();
             Unhandled = Errors.Where(error => error is UnhandledArgumentError)
                             .Cast<UnhandledArgumentError>()
                             .ToImmutableList() ??

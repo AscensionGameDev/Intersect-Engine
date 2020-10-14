@@ -60,15 +60,17 @@ namespace Intersect.Logging.Output
                     return mWriter;
                 }
 
-                var directory = Path.IsPathRooted(mFilename) ? Path.GetDirectoryName(mFilename) : null;
-                directory = string.IsNullOrWhiteSpace(directory) ? "logs" : directory;
+                var directory = Path.GetDirectoryName(mFilename) ?? "";
+                directory = Path.Combine("logs", directory);
 
                 if (!FileSystemHelper.EnsureDirectoryExists(directory))
                 {
                     throw new InvalidOperationException("The logger directory could not be created or is a file.");
                 }
 
-                mWriter = new StreamWriter(Path.Combine(directory, mFilename), Append, Encoding.UTF8)
+                var filename = Path.GetFileName(mFilename);
+
+                mWriter = new StreamWriter(Path.Combine(directory, filename), Append, Encoding.UTF8)
                 {
                     AutoFlush = true
                 };

@@ -17,7 +17,7 @@ using JetBrains.Annotations;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class MainMenu
+    public class MainMenu : MutableInterface
     {
 
         public delegate void NetworkStatusHandler();
@@ -69,7 +69,7 @@ namespace Intersect.Client.Interface.Menu
         private bool mShouldOpenCharacterSelection;
 
         //Init
-        public MainMenu(Canvas menuCanvas)
+        public MainMenu(Canvas menuCanvas) : base(menuCanvas)
         {
             mMenuCanvas = menuCanvas;
 

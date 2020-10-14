@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 using CommandLine;
 
+using Intersect.Factories;
 using Intersect.Logging;
+using Intersect.Plugins;
+using Intersect.Plugins.Contexts;
 using Intersect.Server.Database;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -27,29 +30,32 @@ namespace Intersect.Server.Core
 
         static Bootstrapper()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-            TaskScheduler.UnobservedTaskException += UnobservedTaskException;
-
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
 
-        public static ServerContext Context { get; private set; }
-
-        private static bool mErrored { get; set; }
+        public static IServerContext Context { get; private set; }
 
         [NotNull]
         public static LockingActionQueue MainThread { get; private set; }
 
         public static void Start(params string[] args)
         {
+            var commandLineOptions = ParseCommandLineArgs(args);
+            if (!string.IsNullOrWhiteSpace(commandLineOptions.WorkingDirectory))
+            {
+                var workingDirectory = commandLineOptions.WorkingDirectory.Trim();
+                if (Directory.Exists(workingDirectory))
+                {
+                    Directory.SetCurrentDirectory(workingDirectory);
+                }
+            }
+
             if (!PreContextSetup(args))
             {
                 return;
             }
 
-            var commandLineOptions = ParseCommandLineArgs(args);
-            Context = new ServerContext(commandLineOptions);
+            Context = new ServerContext(commandLineOptions, Log.Default);
             var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())
@@ -57,7 +63,7 @@ namespace Intersect.Server.Core
                 return;
             }
 
-            MainThread = ServerContext.Instance.StartWithActionQueue();
+            MainThread = Context.StartWithActionQueue();
             Action action;
             while (null != (action = MainThread.NextAction))
             {
@@ -66,9 +72,9 @@ namespace Intersect.Server.Core
 
             Log.Diagnostic("Bootstrapper exited.");
 
-            //At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
-            //Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
-            if (mErrored)
+            // At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
+            // Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
+            if (Context.HasErrors)
             {
                 if (noHaltOnError)
                 {
@@ -82,26 +88,29 @@ namespace Intersect.Server.Core
             }
         }
 
-        [NotNull]
-        private static CommandLineOptions ParseCommandLineArgs(params string[] args)
+        private static ServerCommandLineOptions ParseCommandLineArgs(params string[] args)
         {
-            return new Parser(
-                           settings =>
-                           {
-                               if (settings == null)
-                               {
-                                   throw new ArgumentNullException(
-                                       nameof(settings),
-                                       @"If this is null the CommandLineParser dependency is likely broken."
-                                   );
-                               }
+            var parser = new Parser(
+                parserSettings =>
+                    {
+                        if (parserSettings == null)
+                        {
+                            throw new ArgumentNullException(
+                                nameof(parserSettings), @"If this is null the CommandLineParser dependency is likely broken."
+                            );
+                        }
 
-                               settings.IgnoreUnknownArguments = true;
-                               settings.MaximumDisplayWidth = Console.BufferWidth;
-                           }
-                       ).ParseArguments<CommandLineOptions>(args)
-                       .MapResult(commandLineOptions => commandLineOptions, errors => null) ??
-                   throw new InvalidOperationException();
+                        parserSettings.AutoHelp = true;
+                        parserSettings.AutoVersion = true;
+                        parserSettings.IgnoreUnknownArguments = true;
+                        parserSettings.MaximumDisplayWidth = Console.BufferWidth;
+                    }
+                );
+
+            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser));
+
+            return parser.ParseArguments<ServerCommandLineOptions>(args)
+                .MapResult(commandLineOptions => commandLineOptions, errors => default);
         }
 
         #region Networking
@@ -381,109 +390,6 @@ namespace Intersect.Server.Core
 
             Log.Error($"Failed to extract {sqliteFileName} library, terminating startup.");
             Environment.Exit(-0x1000);
-        }
-
-        #endregion
-
-        #region AppDomain
-
-        private static Assembly OnAssemblyResolve([NotNull] object sender, [NotNull] ResolveEventArgs args)
-        {
-            // Ignore missing resources
-            if (args.Name?.Contains(".resources") ?? false)
-            {
-                return null;
-            }
-
-            // check for assemblies already loaded
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(fodAssembly => fodAssembly?.FullName == args.Name);
-
-            if (assembly != null)
-            {
-                return assembly;
-            }
-
-            var filename = args.Name?.Split(',')[0] + ".dll";
-
-            //Try Loading from libs/server first
-            Debug.Assert(
-                AppDomain.CurrentDomain.SetupInformation.ApplicationBase != null,
-                "AppDomain.CurrentDomain.SetupInformation.ApplicationBase != null"
-            );
-
-            var libsFolder = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "libs", "server");
-            if (File.Exists(Path.Combine(libsFolder, filename)))
-            {
-                return Assembly.LoadFile(Path.Combine(libsFolder, filename));
-            }
-
-            var archSpecificPath = Path.Combine(
-                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                Environment.Is64BitProcess
-                    ? Path.Combine("libs", "server", "x64")
-                    : Path.Combine("libs", "server", "x86"), filename
-            );
-
-            return File.Exists(archSpecificPath) ? Assembly.LoadFile(archSpecificPath) : null;
-        }
-
-        public static void ProcessUnhandledException([NotNull] object sender, [NotNull] Exception exception)
-        {
-            Log.Error($"Received unhandled exception from {sender}.");
-            Log.Error(exception);
-            if (exception.InnerException != null)
-            {
-                Log.Error($"Inner Exception?");
-                Log.Error(exception.InnerException);
-
-                if (exception.InnerException.InnerException != null)
-                {
-                    Log.Error($"Inner Exception? Inner Exception?");
-                    Log.Error(exception.InnerException.InnerException);
-                }
-            }
-        }
-
-        //Really basic error handler for debugging purposes
-        public static void OnUnhandledException(
-            [NotNull] object sender,
-            [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent
-        )
-        {
-            ProcessUnhandledException(
-                sender, unhandledExceptionEvent.ExceptionObject as Exception ?? throw new InvalidOperationException()
-            );
-
-            if (!(unhandledExceptionEvent?.IsTerminating ?? false))
-            {
-                Console.WriteLine(Strings.Errors.errorlogged);
-            }
-
-            mErrored = true;
-
-            //Dispose Server Context Before Waiting
-            //Under no circumstances do we want the game to continue
-            if (!(Context?.IsDisposed ?? true))
-            {
-                Context?.RequestShutdown(true);
-            }
-        }
-
-        private static void UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            ProcessUnhandledException(
-                sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException()
-            );
-
-            mErrored = true;
-
-            //Dispose Server Context Before Waiting
-            //Under no circumstances do we want the game to continue
-            if (!(Context?.IsDisposed ?? true))
-            {
-                Context?.RequestShutdown(true);
-            }
         }
 
         #endregion

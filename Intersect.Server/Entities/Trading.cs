@@ -38,7 +38,7 @@ namespace Intersect.Server.Entities
 
         public void Dispose()
         {
-            Offer = new Item[0];
+            Offer = Array.Empty<Item>();
             Requester = null;
             Requests.Clear();
         }
