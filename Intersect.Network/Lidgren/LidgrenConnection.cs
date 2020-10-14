@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 
 using Intersect.Logging;
 using Intersect.Network.Packets;
+using Intersect.Utilities;
 
 using Lidgren.Network;
 
@@ -119,6 +120,12 @@ namespace Intersect.Network.Lidgren
             mAesKey = approval.AesKey;
 
             CreateAes();
+
+            Timing.Global.Synchronize(approval.UTC, approval.Offset);
+            Log.Debug($"approval Time={approval.Adjusted / TimeSpan.TicksPerMillisecond} Offset={approval.Offset / TimeSpan.TicksPerMillisecond} Real={approval.UTC / TimeSpan.TicksPerMillisecond}");
+            Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
+            Log.Debug($"real delta={(Timing.Global.TicksUTC - approval.UTC) / TimeSpan.TicksPerMillisecond}");
+            Log.Debug($"this.Statistics.Ping={this.Statistics.Ping} NCPing={(long)Math.Ceiling(NetConnection.AverageRoundtripTime * 1000)}");
 
             return true;
         }

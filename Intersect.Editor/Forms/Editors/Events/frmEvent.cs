@@ -60,6 +60,8 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         public bool NewEvent;
 
+        public int mOldSelectedCommand;
+
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
@@ -69,6 +71,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
         {
             mCurrentCommand = lstEventCommands.SelectedIndex;
+            mOldSelectedCommand = lstEventCommands.SelectedIndex;
         }
 
         private void lstEventCommands_KeyDown(object sender, KeyEventArgs e)
@@ -97,6 +100,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
             mCurrentCommand = -1;
+
+            mOldSelectedCommand = lstEventCommands.SelectedIndex;
             ListPageCommands();
         }
 
@@ -136,6 +141,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             btnCopy.Enabled = btnEdit.Enabled;
             btnCut.Enabled = btnEdit.Enabled;
             btnDelete.Enabled = true;
+
+            mOldSelectedCommand = lstEventCommands.SelectedIndex;
         }
 
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
@@ -162,6 +169,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 DisableButtons();
                 mIsInsert = true;
             }
+
+            mOldSelectedCommand = lstEventCommands.SelectedIndex;
         }
 
         /// <summary>
@@ -1077,6 +1086,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             CommandPrinter.PrintCommandList(
                 CurrentPage, CurrentPage.CommandLists.Values.First(), " ", lstEventCommands, mCommandProperties, MyMap
             );
+
+            // Reset our view to roughly where the user left off.
+            if (mOldSelectedCommand > (lstEventCommands.Items.Count -1))
+            {
+                lstEventCommands.SelectedIndex = lstEventCommands.Items.Count - 1;
+            }
+            else
+            {
+                lstEventCommands.SelectedIndex = mOldSelectedCommand;
+            }
         }
 
         /// <summary>

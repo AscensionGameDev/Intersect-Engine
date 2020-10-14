@@ -198,28 +198,30 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 mCommandProperties, map
                             );
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
-                            clp = new CommandListProperties
+                            if (cnd.Condition.ElseEnabled)
                             {
-                                Editable = false,
-                                MyIndex = i,
-                                MyList = commandList,
-                                Type = commandList[i].Type,
-                                Cmd = commandList[i]
-                            };
+                                lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
+                                clp = new CommandListProperties {
+                                    Editable = false,
+                                    MyIndex = i,
+                                    MyList = commandList,
+                                    Type = commandList[i].Type,
+                                    Cmd = commandList[i]
+                                };
 
-                            mCommandProperties.Add(clp);
+                                mCommandProperties.Add(clp);
 
-                            if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
-                            {
-                                Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                                if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
+                                {
+                                    Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                                }
+
+                                PrintCommandList(
+                                    page, branchCommandList, indent + "          ", lstEventCommands,
+                                    mCommandProperties, map
+                                );
                             }
-
-                            PrintCommandList(
-                                page, branchCommandList, indent + "          ", lstEventCommands,
-                                mCommandProperties, map
-                            );
-
+                            
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalend);
                             clp = new CommandListProperties
                             {

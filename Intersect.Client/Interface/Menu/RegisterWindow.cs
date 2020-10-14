@@ -141,6 +141,7 @@ namespace Intersect.Client.Interface.Menu
         public void Show()
         {
             mRegistrationPanel.Show();
+            mUsernameTextbox.Focus();
         }
 
         public void Hide()

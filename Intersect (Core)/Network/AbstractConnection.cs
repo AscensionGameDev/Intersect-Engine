@@ -18,6 +18,7 @@ namespace Intersect.Network
             mDisposeLock = new object();
 
             Guid = guid ?? Guid.NewGuid();
+            Statistics = new ConnectionStatistics();
         }
 
         public Ceras Ceras { get; } = new Ceras(true);
@@ -42,6 +43,8 @@ namespace Intersect.Network
         public abstract string Ip { get; }
 
         public abstract int Port { get; }
+
+        public ConnectionStatistics Statistics { get; }
 
         public abstract bool Send(IPacket packet);
 
