@@ -4309,11 +4309,11 @@ Tick timer saved in server config.json.";
 
             public static Dictionary<string, LocalizedString> maplayers = new Dictionary<string, LocalizedString>
             {
-                { @"Ground", @"Ground" },
-                { @"Mask 1", @"Mask 1" },
-                { @"Mask 2", @"Mask 2" },
-                { @"Fringe 1", @"Fringe 1" },
-                { @"Fringe 2", @"Fringe 2" }
+                { @"ground", @"Ground" },
+                { @"mask 1", @"Mask 1" },
+                { @"mask 2", @"Mask 2" },
+                { @"fringe 1", @"Fringe 1" },
+                { @"fringe 2", @"Fringe 2" }
             };
 
             public static LocalizedString normal = @"Normal";

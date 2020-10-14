@@ -78,8 +78,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     if (i < Options.Instance.MapOpts.Layers.All.Count)
                     {
-                        LocalizedString layerName = Options.Instance.MapOpts.Layers.All[i];
-                        Strings.Tiles.maplayers.TryGetValue(Options.Instance.MapOpts.Layers.All[i], out layerName);
+                        Strings.Tiles.maplayers.TryGetValue(Options.Instance.MapOpts.Layers.All[i].ToLower(), out LocalizedString layerName);
+                        if (layerName == null) layerName = Options.Instance.MapOpts.Layers.All[i];
                         mMapLayers[i].Text = layerName;
                         mMapLayers[i].Show();
                     }

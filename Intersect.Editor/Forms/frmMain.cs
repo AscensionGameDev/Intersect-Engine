@@ -374,8 +374,8 @@ namespace Intersect.Editor.Forms
             //Init layer visibility buttons
             foreach (var layer in Options.Instance.MapOpts.Layers.All)
             {
-                LocalizedString layerName = layer;
-                Strings.Tiles.maplayers.TryGetValue(layer, out layerName);
+                Strings.Tiles.maplayers.TryGetValue(layer.ToLower(), out LocalizedString layerName);
+                if (layerName == null) layerName = layer;
                 var btn = new ToolStripMenuItem(layerName);
                 btn.Checked = true;
                 btn.Click += HideLayerBtn_Click;
