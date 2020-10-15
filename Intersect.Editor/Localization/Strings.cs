@@ -1903,6 +1903,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString negated = @"Negated";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString HasElse = @"Has Else";
+
             public static LocalizedString numericvariable = @"Numeric Variable:";
 
             public static LocalizedString okay = @"Ok";
@@ -3157,6 +3160,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString resourceeditor = @"Resource Editor";
 
             public static LocalizedString resources = @"Resources";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Events = @"Events";
 
             public static LocalizedString revision = @"Revision: {00}";
 

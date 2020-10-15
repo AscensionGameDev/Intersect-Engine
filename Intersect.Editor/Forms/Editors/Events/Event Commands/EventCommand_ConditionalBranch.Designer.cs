@@ -129,6 +129,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblInvVariable = new System.Windows.Forms.Label();
             this.rdoInvGlobalVariable = new DarkUI.Controls.DarkRadioButton();
             this.rdoInvPlayerVariable = new DarkUI.Controls.DarkRadioButton();
+            this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.chkHasElse = new DarkUI.Controls.DarkCheckBox();
             this.grpConditional.SuspendLayout();
             this.grpVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
@@ -160,6 +162,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.chkHasElse);
             this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
@@ -1628,6 +1631,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoInvPlayerVariable.Text = "Player Variable";
             this.rdoInvPlayerVariable.CheckedChanged += new System.EventHandler(this.rdoInvPlayerVariable_CheckedChanged);
             // 
+            // chkHasElse
+            // 
+            this.chkHasElse.Location = new System.Drawing.Point(112, 279);
+            this.chkHasElse.Name = "chkHasElse";
+            this.chkHasElse.Size = new System.Drawing.Size(72, 17);
+            this.chkHasElse.TabIndex = 56;
+            this.chkHasElse.Text = "Has Else";
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1786,5 +1797,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblInvVariable;
         private DarkRadioButton rdoInvGlobalVariable;
         private DarkRadioButton rdoInvPlayerVariable;
+        private DarkCheckBox chkHasElse;
     }
 }

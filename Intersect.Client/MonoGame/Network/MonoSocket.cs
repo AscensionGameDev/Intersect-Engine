@@ -99,11 +99,13 @@ namespace Intersect.Client.MonoGame.Network
             return ClientLidgrenNetwork?.IsConnected ?? false;
         }
 
-        public override int Ping()
+        public override int Ping
         {
-            return ClientLidgrenNetwork?.Ping ?? -1;
+            get
+            {
+                return ClientLidgrenNetwork?.Ping ?? -1;
+            }
         }
-
     }
 
 }

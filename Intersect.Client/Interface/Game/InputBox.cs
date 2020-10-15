@@ -89,6 +89,7 @@ namespace Intersect.Client.Interface.Game
 
             mNumericTextboxBg = new ImagePanel(mMyWindow, "Textbox");
             mNumericTextbox = new TextBoxNumeric(mNumericTextboxBg, "TextboxText");
+            mNumericTextbox.SubmitPressed += TextBox_SubmitPressed;
             if (inputtype == InputType.NumericInput)
             {
                 mNumericTextbox.Focus();
@@ -96,6 +97,7 @@ namespace Intersect.Client.Interface.Game
 
             mTextboxBg = new ImagePanel(mMyWindow, "Textbox");
             mTextbox = new TextBox(mTextboxBg, "TextboxText");
+            mTextbox.SubmitPressed += TextBox_SubmitPressed;
             if (inputtype == InputType.TextInput)
             {
                 mTextbox.Focus();
@@ -124,6 +126,11 @@ namespace Intersect.Client.Interface.Game
             mOkayButton.Clicked += okayBtn_Clicked;
 
             mPromptLabel = new Label(mMyWindow, "PromptLabel");
+        }
+
+        private void TextBox_SubmitPressed(Base sender, EventArgs arguments)
+        {
+            SubmitInput();
         }
 
         private void _myWindow_BeforeDraw(Base sender, EventArgs arguments)
@@ -216,6 +223,11 @@ namespace Intersect.Client.Interface.Game
         }
 
         void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            SubmitInput();
+        }
+
+        private void SubmitInput()
         {
             if (mNumericTextbox != null)
             {

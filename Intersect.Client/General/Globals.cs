@@ -131,10 +131,6 @@ namespace Intersect.Client.General
 
         public static bool MoveRouteActive = false;
 
-        public static int MyX = 0;
-
-        public static int MyY = 0;
-
         public static bool NeedsMaps = true;
 
         //Event Guid and the Map its associated with
