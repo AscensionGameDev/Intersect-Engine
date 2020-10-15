@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Network.Packets.Server
 {
 
-    public class JoinGamePacket : CerasPacket
+    public class JoinGamePacket : AbstractTimedPacket
     {
 
     }

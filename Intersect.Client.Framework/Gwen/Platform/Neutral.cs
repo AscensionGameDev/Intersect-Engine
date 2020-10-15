@@ -2,6 +2,7 @@
 using System.Threading;
 
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Platform
 {
@@ -36,12 +37,12 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 {
                     try
                     {
-                        if (!Clipboard.ContainsText())
+                        if (GameClipboard.Instance == null || !GameClipboard.Instance.ContainsText())
                         {
                             return;
                         }
 
-                        ret = Clipboard.GetText();
+                        ret = GameClipboard.Instance.GetText();
                     }
                     catch (Exception)
                     {
@@ -71,7 +72,11 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 {
                     try
                     {
-                        Clipboard.SetText(text);
+                        if (GameClipboard.Instance == null)
+                        {
+                            return;
+                        }
+                        GameClipboard.Instance.SetText(text);
                         ret = true;
                     }
                     catch (Exception)
