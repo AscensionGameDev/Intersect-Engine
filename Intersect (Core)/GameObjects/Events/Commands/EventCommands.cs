@@ -151,6 +151,10 @@ namespace Intersect.GameObjects.Events.Commands
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
                 {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                    {
+                        cmd.GetCopyData(commandLists, copyLists);
+                    }
                 }
             }
 

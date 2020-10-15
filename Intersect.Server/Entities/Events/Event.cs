@@ -139,7 +139,7 @@ namespace Intersect.Server.Entities.Events
                         }
 
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer &&
-                            WaitTimer < Globals.Timing.TimeMs)
+                            WaitTimer < Globals.Timing.Milliseconds)
                         {
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }
@@ -154,7 +154,7 @@ namespace Intersect.Server.Entities.Events
                                 if (curStack.WaitingForRoute == Player.Id)
                                 {
                                     if (Player.MoveRoute == null ||
-                                        Player.MoveRoute.Complete && Player.MoveTimer < Globals.Timing.TimeMs)
+                                        Player.MoveRoute.Complete && Player.MoveTimer < Globals.Timing.Milliseconds)
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -199,7 +199,7 @@ namespace Intersect.Server.Entities.Events
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Globals.Timing.TimeMs)
+                                    if (WaitTimer < Globals.Timing.Milliseconds)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command, Player, this);
                                         commandsExecuted++;
@@ -250,7 +250,7 @@ namespace Intersect.Server.Entities.Events
                     }
                     else
                     {
-                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Globals.Timing.TimeMs)
+                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Globals.Timing.Milliseconds)
                         {
                             var newStack = new CommandInstance(PageInstance.MyPage);
                             CallStack.Push(newStack);

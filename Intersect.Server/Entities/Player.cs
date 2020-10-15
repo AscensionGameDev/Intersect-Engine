@@ -111,6 +111,9 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
 
+        [NotMapped, JsonIgnore]
+        public long ClientActionTimer { get; set; }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -217,7 +220,7 @@ namespace Intersect.Server.Entities
 
         public void TryLogout()
         {
-            if (CombatTimer < Globals.Timing.TimeMs)
+            if (CombatTimer < Globals.Timing.Milliseconds)
             {
                 Logout();
             }
@@ -280,7 +283,7 @@ namespace Intersect.Server.Entities
             var keys = SpellCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (SpellCooldowns[key] < Globals.Timing.RealTimeMs)
+                if (SpellCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
                     SpellCooldowns.Remove(key);
                 }
@@ -289,7 +292,7 @@ namespace Intersect.Server.Entities
             keys = ItemCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (ItemCooldowns[key] < Globals.Timing.RealTimeMs)
+                if (ItemCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
                     ItemCooldowns.Remove(key);
                 }
@@ -323,7 +326,7 @@ namespace Intersect.Server.Entities
 
             if (Client == null) //Client logged out
             {
-                if (CombatTimer < Globals.Timing.TimeMs)
+                if (CombatTimer < Globals.Timing.Milliseconds)
                 {
                     Logout();
 
@@ -565,9 +568,9 @@ namespace Intersect.Server.Entities
                 pkt.AccessLevel = 0;
             }
 
-            if (CombatTimer > Globals.Timing.TimeMs)
+            if (CombatTimer > Globals.Timing.Milliseconds)
             {
-                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.TimeMs;
+                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.Milliseconds;
             }
 
             if (forPlayer != null && GetType() == typeof(Player))
@@ -996,7 +999,7 @@ namespace Intersect.Server.Entities
 
         public override void TryAttack(Entity target)
         {
-            if (CastTime >= Globals.Timing.TimeMs)
+            if (CastTime >= Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Error);
 
@@ -1801,7 +1804,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.RealTimeMs)
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.MillisecondsUTC)
                 {
                     //Cooldown warning!
                     PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
@@ -1961,12 +1964,12 @@ namespace Intersect.Server.Entities
                     if (ItemCooldowns.ContainsKey(itemBase.Id))
                     {
                         ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction);
+                            Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction);
                     }
                     else
                     {
                         ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction)
+                            itemBase.Id, Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction)
                         );
                     }
 
@@ -3439,7 +3442,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.FriendRequests.Remove(this);
             }
 
-            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.TimeMs))
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.Milliseconds))
             {
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
@@ -3502,7 +3505,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.Trading.Requests.Remove(this);
             }
 
-            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
@@ -3789,7 +3792,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.PartyRequests.Remove(this);
             }
 
-            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
@@ -4242,11 +4245,11 @@ namespace Intersect.Server.Entities
             }
 
             if (!SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId) ||
-                SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.RealTimeMs)
+                SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.MillisecondsUTC)
             {
                 if (CastTime == 0)
                 {
-                    CastTime = Globals.Timing.TimeMs + spell.CastDuration;
+                    CastTime = Globals.Timing.Milliseconds + spell.CastDuration;
 
                     if (spell.VitalCost[(int) Vitals.Mana] > 0)
                     {
@@ -4291,7 +4294,7 @@ namespace Intersect.Server.Entities
                     PacketSender.SendEntityVitals(this);
 
                     //Check if cast should be instance
-                    if (Globals.Timing.TimeMs >= CastTime)
+                    if (Globals.Timing.Milliseconds >= CastTime)
                     {
                         //Cast now!
                         CastTime = 0;
@@ -5485,9 +5488,9 @@ namespace Intersect.Server.Entities
         {
             foreach (var evt in EventLookup)
             {
-                if (evt.Value.MapId == MapId)
+                if (evt.Value.MapId == mapId)
                 {
-                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == MapId && evt.Value.BaseEvent.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == mapId && evt.Value.BaseEvent.Id == eventId)
                     {
                         var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
                         var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;

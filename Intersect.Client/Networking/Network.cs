@@ -28,7 +28,7 @@ namespace Intersect.Client.Networking
 
         public static int Ping
         {
-            get => Socket?.Ping() ?? sPing;
+            get => Socket?.Ping ?? sPing;
             set => sPing = value;
         }
 

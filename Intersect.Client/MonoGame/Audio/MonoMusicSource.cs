@@ -20,6 +20,7 @@ namespace Intersect.Client.MonoGame.Audio
     {
 
         private readonly string mPath;
+        private readonly string mRealPath;
 
         public VorbisReader Reader { get; set; }
         public DynamicSoundEffectInstance Instance { get; set; }
@@ -31,9 +32,10 @@ namespace Intersect.Client.MonoGame.Audio
 
         
 
-        public MonoMusicSource(string path)
+        public MonoMusicSource(string path, string realPath)
         {
             mPath = path;
+            mRealPath = realPath;
 
             if (mUnderlyingThread == null)
             {
@@ -56,13 +58,13 @@ namespace Intersect.Client.MonoGame.Audio
         {
             lock (mInstanceLock)
             {
-                if (!string.IsNullOrWhiteSpace(mPath))
+                if (!string.IsNullOrWhiteSpace(mRealPath))
                 {
                     try
                     {
                         if (Reader == null)
                         {
-                            Reader = new VorbisReader(mPath);
+                            Reader = new VorbisReader(mRealPath);
                         }
 
                         if (Instance != null)

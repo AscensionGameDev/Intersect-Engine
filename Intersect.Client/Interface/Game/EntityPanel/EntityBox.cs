@@ -39,13 +39,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         //Controls
         [NotNull] public readonly ImagePanel EntityWindow;
 
-        public float CurExpWidth;
+        public float CurExpWidth = -1;
 
-        public float CurHpWidth;
+        public float CurHpWidth = -1;
 
-        public float CurMpWidth;
+        public float CurMpWidth = -1;
 
-        public float CurShieldWidth;
+        public float CurShieldWidth = -1;
 
         public ImagePanel EntityFace;
 
