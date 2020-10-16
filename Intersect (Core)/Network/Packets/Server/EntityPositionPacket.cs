@@ -5,7 +5,7 @@ using Intersect.Enums;
 namespace Intersect.Network.Packets.Server
 {
 
-    public class EntityPositionPacket : CerasPacket
+    public class EntityPositionPacket : AbstractTimedPacket
     {
 
         public EntityPositionPacket(

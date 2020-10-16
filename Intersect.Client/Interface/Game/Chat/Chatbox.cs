@@ -6,6 +6,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -101,6 +102,12 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
+
+            // Platform check, are we capable of copy/pasting on this machine?
+            if (GameClipboard.Instance == null || !GameClipboard.Instance.CanCopyPaste())
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.UnableToCopy, CustomColors.Alerts.Error));
+            }
         }
 
         //Update

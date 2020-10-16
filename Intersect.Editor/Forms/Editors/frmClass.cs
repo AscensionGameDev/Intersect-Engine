@@ -230,20 +230,26 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
+                var mapIndex = -1;
+
                 for (var i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
                     if (MapList.OrderedMaps[i].MapId == mEditorItem.SpawnMapId)
                     {
-                        cmbWarpMap.SelectedIndex = i;
+                        mapIndex = i;
 
                         break;
                     }
                 }
 
-                if (cmbWarpMap.SelectedIndex == -1)
+                if (mapIndex == -1)
                 {
                     cmbWarpMap.SelectedIndex = 0;
                     mEditorItem.SpawnMapId = MapList.OrderedMaps[0].MapId;
+                }
+                else
+                {
+                    cmbWarpMap.SelectedIndex = mapIndex;
                 }
 
                 nudX.Value = mEditorItem.SpawnX;

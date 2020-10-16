@@ -10,7 +10,7 @@ namespace Intersect.Config
 
         public List<string> IpBlacklist = new List<string>();
 
-        [JsonProperty("PacketFlooding")] public PacketOptions PacketOpts = new PacketOptions();
+        [JsonProperty("Packets")] public PacketOptions PacketOpts = new PacketOptions();
 
         public bool CheckIp(string ip)
         {
