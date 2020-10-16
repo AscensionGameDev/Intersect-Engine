@@ -71,7 +71,6 @@ namespace Intersect.Server.Entities
         public long FindTargetWaitTime;
         public int FindTargetDelay = 500;
 
-
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
@@ -92,10 +91,16 @@ namespace Intersect.Server.Entities
         /// </summary>
         public int AggroCenterZ;
 
+        /// <summary>
+        /// Defines the ARGB color settings for this Entity.
+        /// </summary>
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
+            Color = myBase.Color;
             Level = myBase.Level;
             Base = myBase;
             Despawnable = despawnable;

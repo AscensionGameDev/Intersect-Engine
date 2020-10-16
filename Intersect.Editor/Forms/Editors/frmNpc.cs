@@ -134,6 +134,11 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior.Text = Strings.NpcEditor.behavior;
 
             lblPic.Text = Strings.NpcEditor.sprite;
+            lblRed.Text = Strings.NpcEditor.Red;
+            lblGreen.Text = Strings.NpcEditor.Green;
+            lblBlue.Text = Strings.NpcEditor.Blue;
+            lblAlpha.Text = Strings.NpcEditor.Alpha;
+
             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
 
             //Behavior
@@ -240,6 +245,11 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
+                nudRgbaR.Value = mEditorItem.Color.R;
+                nudRgbaG.Value = mEditorItem.Color.G;
+                nudRgbaB.Value = mEditorItem.Color.B;
+                nudRgbaA.Value = mEditorItem.Color.A;
+
                 nudLevel.Value = mEditorItem.Level;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
 
@@ -896,6 +906,30 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
         }
 
+        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.R = (byte)nudRgbaR.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.G = (byte)nudRgbaG.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.B = (byte)nudRgbaB.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.A = (byte)nudRgbaA.Value;
+            DrawNpcSprite();
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -1131,25 +1165,6 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
-        {
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
-        {
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
-        {
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
-        {
-            DrawNpcSprite();
-        }
     }
 
 }

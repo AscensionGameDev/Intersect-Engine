@@ -493,6 +493,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.cs" />
+    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.designer.cs">
+      <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />
