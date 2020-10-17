@@ -2075,18 +2075,10 @@ namespace Intersect.Server.Entities
 
                     break;
                 case SpellTypes.WarpTo:
-                    if (CastTarget == null)
+                    if (CastTarget != null)
                     {
-                        if (this is Player p)
-                        {
-                            PacketSender.SendSpellCooldown(p, Spells[spellSlot].SpellId);
-                        }
-
-                        return;
+                        HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                     }
-
-                    HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
-
                     break;
                 case SpellTypes.Dash:
                     PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
