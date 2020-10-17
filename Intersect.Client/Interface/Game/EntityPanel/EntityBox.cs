@@ -691,6 +691,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
                 EntityFace.Texture = faceTex;
+                EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
                 EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
@@ -827,6 +828,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 {
                     PaperdollPanels[i].Hide();
                 }
+            }
+
+            if (EntityFace.RenderColor != MyEntity.Color)
+            {
+                EntityFace.RenderColor = MyEntity.Color;
             }
         }
 
