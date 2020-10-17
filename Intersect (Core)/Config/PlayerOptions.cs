@@ -50,7 +50,7 @@
         public int TradeRange = 6;
 
         /// <summary>
-        /// Unlinks attack and move timers so players can move immediately after attacking, and to attack while moving.
+        /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
         /// </summary>
         public bool AllowCombatMovement = true;
 
