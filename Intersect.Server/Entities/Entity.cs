@@ -2077,7 +2077,10 @@ namespace Intersect.Server.Entities
                 case SpellTypes.WarpTo:
                     if (CastTarget == null)
                     {
-                        PacketSender.SendSpellCooldown((Player) this, Spells[spellSlot].SpellId);
+                        if (this is Player p)
+                        {
+                            PacketSender.SendSpellCooldown(p, Spells[spellSlot].SpellId);
+                        }
 
                         return;
                     }
