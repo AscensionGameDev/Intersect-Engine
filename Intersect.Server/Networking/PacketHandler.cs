@@ -563,7 +563,7 @@ namespace Intersect.Server.Networking
             }
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer <= clientTime)
+            if (player.ClientMoveTimer <= clientTime && (Options.Instance.PlayerOpts.AllowCombatMovement || player.ClientAttackTimer <= clientTime))
             {
                 var canMove = player.CanMove(packet.Dir);
                 if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
@@ -575,8 +575,7 @@ namespace Intersect.Server.Networking
                     if (player.MoveTimer > currentMs)
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
-                        player.ClientActionTimer = clientTime + (long)player.GetMovementTime();
-                        Console.WriteLine($"Accepted pmp [{packet.Adjusted / TimeSpan.TicksPerMillisecond} + {(long)player.GetMovementTime()} = {(packet.Adjusted / TimeSpan.TicksPerMillisecond) + (long)player.GetMovementTime()}   /   {player.ClientActionTimer}");
+                        player.ClientMoveTimer = clientTime + (long)player.GetMovementTime();
                     }
                 }
                 else
@@ -908,7 +907,7 @@ namespace Intersect.Server.Networking
             var target = packet.Target;
 
             var clientTime = packet.Adjusted / TimeSpan.TicksPerMillisecond;
-            if (player.ClientActionTimer > clientTime)
+            if (player.ClientAttackTimer > clientTime || (!Options.Instance.PlayerOpts.AllowCombatMovement && player.ClientMoveTimer > clientTime))
             {
                 return;
             }
@@ -980,7 +979,7 @@ namespace Intersect.Server.Networking
 
             PacketSender.SendEntityAttack(player, player.CalculateAttackTime());
 
-            player.ClientActionTimer = clientTime + (long)player.CalculateAttackTime();
+            player.ClientAttackTimer = clientTime + (long)player.CalculateAttackTime();
 
             //Fire projectile instead if weapon has it
             if (Options.WeaponIndex > -1)
@@ -1056,6 +1055,8 @@ namespace Intersect.Server.Networking
                                 (byte) player.Y, (byte) player.Z, (byte) player.Dir, null
                             );
 
+                        player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
+
                         return;
                     }
 #if INTERSECT_DIAGNOSTIC
@@ -1067,8 +1068,6 @@ namespace Intersect.Server.Networking
                             return;
                         }
 #endif
-
-                    player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
 
                 }
                 else
