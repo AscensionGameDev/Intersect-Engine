@@ -52,7 +52,7 @@
         /// <summary>
         /// Unlinks attack and move timers so players can move immediately after attacking, and to attack while moving.
         /// </summary>
-        public bool AllowAttackMove = true;
+        public bool AllowCombatMovement = true;
 
     }
 
