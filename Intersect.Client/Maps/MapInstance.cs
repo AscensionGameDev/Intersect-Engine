@@ -669,7 +669,7 @@ namespace Intersect.Client.Maps
                             new FloatRect(
                                 GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,
                                 Options.TileWidth, Options.TileHeight
-                            ), Color.White
+                            ), itemBase.Color
                         );
                     }
                 }

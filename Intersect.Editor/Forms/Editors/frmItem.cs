@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -163,6 +165,10 @@ namespace Intersect.Editor.Forms.Editors
 
             lblDesc.Text = Strings.ItemEditor.description;
             lblPic.Text = Strings.ItemEditor.picture;
+            lblRed.Text = Strings.ItemEditor.Red;
+            lblGreen.Text = Strings.ItemEditor.Green;
+            lblBlue.Text = Strings.ItemEditor.Blue;
+            lblAlpha.Text = Strings.ItemEditor.Alpha;
             lblPrice.Text = Strings.ItemEditor.price;
             lblAnim.Text = Strings.ItemEditor.animation;
             chkBound.Text = Strings.ItemEditor.bound;
@@ -276,6 +282,10 @@ namespace Intersect.Editor.Forms.Editors
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
+                nudRgbaR.Value = mEditorItem.Color.R;
+                nudRgbaG.Value = mEditorItem.Color.G;
+                nudRgbaB.Value = mEditorItem.Color.B;
+                nudRgbaA.Value = mEditorItem.Color.A;
                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
                 nudPrice.Value = mEditorItem.Price;
                 cmbRarity.SelectedIndex = mEditorItem.Rarity;
@@ -335,23 +345,21 @@ namespace Intersect.Editor.Forms.Editors
                 picItem.BackgroundImage = null;
                 if (cmbPic.SelectedIndex > 0)
                 {
-                    picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
+                    DrawItemIcon();
                 }
 
                 picMalePaperdoll.BackgroundImage?.Dispose();
                 picMalePaperdoll.BackgroundImage = null;
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
-                    picMalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                    DrawItemPaperdoll(Gender.Male);
                 }
 
                 picFemalePaperdoll.BackgroundImage?.Dispose();
                 picFemalePaperdoll.BackgroundImage = null;
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
-                    picFemalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                    DrawItemPaperdoll(Gender.Female);
                 }
 
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
@@ -491,7 +499,7 @@ namespace Intersect.Editor.Forms.Editors
             picItem.BackgroundImage = null;
             if (cmbPic.SelectedIndex > 0)
             {
-                picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
+                DrawItemIcon();
             }
         }
 
@@ -507,8 +515,7 @@ namespace Intersect.Editor.Forms.Editors
             picMalePaperdoll.BackgroundImage = null;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
-                picMalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                DrawItemPaperdoll(Gender.Male);
             }
         }
 
@@ -562,8 +569,7 @@ namespace Intersect.Editor.Forms.Editors
             picFemalePaperdoll.BackgroundImage = null;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
-                picFemalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                DrawItemPaperdoll(Gender.Female);
             }
         }
 
@@ -896,6 +902,139 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbRarity_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Rarity = cmbRarity.SelectedIndex;
+        }
+
+        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.R = (byte)nudRgbaR.Value;
+            DrawItemIcon();
+            DrawItemPaperdoll(Gender.Male);
+            DrawItemPaperdoll(Gender.Female);
+        }
+
+        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.G = (byte)nudRgbaG.Value;
+            DrawItemIcon();
+            DrawItemPaperdoll(Gender.Male);
+            DrawItemPaperdoll(Gender.Female);
+        }
+
+        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.B = (byte)nudRgbaB.Value;
+            DrawItemIcon();
+            DrawItemPaperdoll(Gender.Male);
+            DrawItemPaperdoll(Gender.Female);
+        }
+
+        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.A = (byte)nudRgbaA.Value;
+            DrawItemIcon();
+            DrawItemPaperdoll(Gender.Male);
+            DrawItemPaperdoll(Gender.Female);
+        }
+
+        /// <summary>
+        /// Draw the item Icon to the form.
+        /// </summary>
+        private void DrawItemIcon()
+        {
+            var picItemBmp = new Bitmap(picItem.Width, picItem.Height);
+            var gfx = Graphics.FromImage(picItemBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picItem.Width, picItem.Height));
+            if (cmbPic.SelectedIndex > 0)
+            {
+                var img = Image.FromFile("resources/items/" + cmbPic.Text);
+                var imgAttributes = new ImageAttributes();
+
+                // Microsoft, what the heck is this crap?
+                imgAttributes.SetColorMatrix(
+                    new ColorMatrix(
+                        new float[][]
+                        {
+                            new float[] { (float)nudRgbaR.Value / 255,  0,  0,  0, 0},  // Modify the red space
+                            new float[] {0, (float)nudRgbaG.Value / 255,  0,  0, 0},    // Modify the green space
+                            new float[] {0,  0, (float)nudRgbaB.Value / 255,  0, 0},    // Modify the blue space
+                            new float[] {0,  0,  0, (float)nudRgbaA.Value / 255, 0},    // Modify the alpha space
+                            new float[] {0, 0, 0, 0, 1}                                 // We're not adding any non-linear changes. Value of 1 at the end is a dummy value!
+                        }
+                    )
+                );
+
+                gfx.DrawImage(
+                    img, new Rectangle(0, 0, img.Width, img.Height),
+                    0, 0, img.Width, img.Height, GraphicsUnit.Pixel, imgAttributes
+                );
+
+                img.Dispose();
+                imgAttributes.Dispose();
+            }
+
+            gfx.Dispose();
+
+            picItem.BackgroundImage = picItemBmp;
+        }
+
+        /// <summary>
+        /// Draw the item Paperdoll to the form for the specified Gender.
+        /// </summary>
+        /// <param name="gender"></param>
+        private void DrawItemPaperdoll(Gender gender)
+        {
+            PictureBox picPaperdoll;
+            ComboBox cmbPaperdoll;
+            switch (gender)
+            {
+                case Gender.Male:
+                    picPaperdoll = picMalePaperdoll;
+                    cmbPaperdoll = cmbMalePaperdoll;
+                    break;
+
+                case Gender.Female:
+                    picPaperdoll = picFemalePaperdoll;
+                    cmbPaperdoll = cmbFemalePaperdoll;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            var picItemBmp = new Bitmap(picPaperdoll.Width, picPaperdoll.Height);
+            var gfx = Graphics.FromImage(picItemBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picPaperdoll.Width, picPaperdoll.Height));
+            if (cmbPaperdoll.SelectedIndex > 0)
+            {
+                var img = Image.FromFile("resources/paperdolls/" + cmbPaperdoll.Text);
+                var imgAttributes = new ImageAttributes();
+
+                // Microsoft, what the heck is this crap?
+                imgAttributes.SetColorMatrix(
+                    new ColorMatrix(
+                        new float[][]
+                        {
+                            new float[] { (float)nudRgbaR.Value / 255,  0,  0,  0, 0},  // Modify the red space
+                            new float[] {0, (float)nudRgbaG.Value / 255,  0,  0, 0},    // Modify the green space
+                            new float[] {0,  0, (float)nudRgbaB.Value / 255,  0, 0},    // Modify the blue space
+                            new float[] {0,  0,  0, (float)nudRgbaA.Value / 255, 0},    // Modify the alpha space
+                            new float[] {0, 0, 0, 0, 1}                                 // We're not adding any non-linear changes. Value of 1 at the end is a dummy value!
+                        }
+                    )
+                );
+
+                gfx.DrawImage(
+                    img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
+                    0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions, GraphicsUnit.Pixel, imgAttributes
+                );
+
+                img.Dispose();
+                imgAttributes.Dispose();
+            }
+
+            gfx.Dispose();
+
+            picPaperdoll.BackgroundImage = picItemBmp;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

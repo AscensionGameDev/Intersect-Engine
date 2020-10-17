@@ -91,11 +91,6 @@ namespace Intersect.Server.Entities
         /// </summary>
         public int AggroCenterZ;
 
-        /// <summary>
-        /// Defines the ARGB color settings for this Entity.
-        /// </summary>
-        public Color Color { get; set; } = new Color(255, 255, 255, 255);
-
         public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;

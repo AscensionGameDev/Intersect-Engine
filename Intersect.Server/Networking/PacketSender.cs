@@ -331,11 +331,6 @@ namespace Intersect.Server.Networking
             var packet = en.EntityPacket(null, player);
             packet.IsSelf = en == player;
 
-            if (en is Npc npc)
-            {
-                packet.Color = npc.Color;
-            }
-
             player.SendPacket(packet);
 
             if (en == player)

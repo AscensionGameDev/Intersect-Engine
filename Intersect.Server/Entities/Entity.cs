@@ -72,6 +72,23 @@ namespace Intersect.Server.Entities
 
         public string Sprite { get; set; }
 
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [Column("Color")]
+        [JsonIgnore]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Entity.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         public string Face { get; set; }
 
         public int Level { get; set; }
@@ -2497,6 +2514,7 @@ namespace Intersect.Server.Entities
             packet.MapId = MapId;
             packet.Name = Name;
             packet.Sprite = Sprite;
+            packet.Color = Color;
             packet.Face = Face;
             packet.Level = Level;
             packet.X = (byte) X;

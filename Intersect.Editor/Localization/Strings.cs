@@ -2859,6 +2859,18 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString picture = @"Pic:";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Red = @"Red:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Green = @"Green:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Blue = @"Blue:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Alpha = @"Alpha:";
+
             public static LocalizedString price = @"Price:";
 
             public static Dictionary<int, LocalizedString> rarity = new Dictionary<int, LocalizedString>
