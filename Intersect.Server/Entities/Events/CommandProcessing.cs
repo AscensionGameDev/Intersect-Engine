@@ -1169,6 +1169,19 @@ namespace Intersect.Server.Entities.Events
             player.CompleteQuest(command.QuestId, command.SkipCompletionEvent);
         }
 
+        // Change Player Color Command
+        private static void ProcessCommand(
+            ChangePlayerColorCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.Color = command.Color;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             var newStack = new Stack<CommandInstance>();
