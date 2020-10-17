@@ -112,7 +112,10 @@ namespace Intersect.Server.Entities
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
 
         [NotMapped, JsonIgnore]
-        public long ClientActionTimer { get; set; }
+        public long ClientAttackTimer { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public long ClientMoveTimer { get; set; }
 
         public static Player FindOnline(Guid id)
         {
