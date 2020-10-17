@@ -1539,6 +1539,12 @@ namespace Intersect.Client.Localization
 
         }
 
+        public struct GameWindow
+        {
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EntityNameAndLevel = @"{00} [Lv. {01}]";
+        }
+
     }
 
 }

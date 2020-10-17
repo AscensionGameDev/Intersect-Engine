@@ -29,6 +29,11 @@
         /// </summary>
         public bool ResetVitalsAndStatusses = false;
 
+        /// <summary>
+        /// Configures whether or not the level of an Npc is shown next to their name.
+        /// </summary>
+        public bool ShowLevelByName = false;
+
     }
 
 }
