@@ -1254,7 +1254,7 @@ namespace Intersect.Client.Entities
             }
 
             var location = new Point(x, y);
-            if (!map.MapItems.ContainsKey(location) && map.MapItems[location].Count < 1)
+            if (!map.MapItems.ContainsKey(location) || map.MapItems[location].Count < 1)
             {
                 return false;
             }

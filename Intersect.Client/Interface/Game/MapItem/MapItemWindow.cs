@@ -62,8 +62,8 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
 
             var location = new Point(Globals.Me.X, Globals.Me.Y);
-            var mapItems = Globals.Me.MapInstance.MapItems;
-            if ((!mapItems.ContainsKey(location) || mapItems[location].Count < 1) && !mMapItemWindow.IsHidden)
+            var mapItems = Globals.Me.MapInstance?.MapItems;
+            if (mapItems == null || ((!mapItems.ContainsKey(location) || mapItems[location].Count < 1) && !mMapItemWindow.IsHidden))
             {
                 mMapItemWindow.Hide();
             }
