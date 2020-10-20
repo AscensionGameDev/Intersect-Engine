@@ -1757,7 +1757,7 @@ namespace Intersect.Editor.Forms.DockingElements
             var layers = Options.Instance.MapOpts.Layers.All;
             if (Globals.SelectionType == (int) SelectionTypes.CurrentLayer)
             {
-                layers = new List<string>() { Globals.CurrentLayer };
+                layers = Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
             }
 
             //Finish by copying the source tiles over
@@ -1909,7 +1909,7 @@ namespace Intersect.Editor.Forms.DockingElements
             var layers = Options.Instance.MapOpts.Layers.All;
             if (Globals.SelectionType == (int)SelectionTypes.CurrentLayer)
             {
-                layers = new List<string>() { Globals.CurrentLayer };
+                layers = Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) ? new List<string>() { Globals.CurrentLayer } : new List<string>();
             }
 
             //start by deleting the source tiles
