@@ -974,7 +974,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 ITexture gameTexture = null;
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Interface, fileName);
+                    gameTexture = GameContentManager.Current?.FindTexture(TextureType.Interface, fileName);
                 }
 
                 mToolTipBackgroundFilename = fileName;
@@ -985,7 +985,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["ToolTipFont"]).Split(',');
                 mToolTipFontInfo = (string) obj["ToolTipFont"];
-                mToolTipFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
+                mToolTipFont = GameContentManager.Current.FindFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             if (obj["ToolTipTextColor"] != null)
@@ -2155,15 +2155,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             Redraw();
         }
 
-        protected void PlaySound(string filename)
+        protected void PlaySound(string assetName)
         {
-            if (filename == null || this.IsDisabled)
+            if (assetName == null || IsDisabled)
             {
                 return;
             }
 
-            filename = GameContentManager.RemoveExtension(filename).ToLower();
-            var sound = GameContentManager.Current.GetSound(filename);
+            var sound = GameContentManager.Current.FindSound(assetName);
             if (sound != null)
             {
                 var soundInstance = sound.CreateInstance();

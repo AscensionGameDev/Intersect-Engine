@@ -324,7 +324,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
@@ -344,7 +344,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["ItemFont"]).Split(',');
                 mItemFontInfo = (string) obj["ItemFont"];
-                mItemFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
+                mItemFont = GameContentManager.Current.FindFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             UpdateItemStyles();
@@ -375,7 +375,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (gameTexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
+                gameTexture = GameContentManager.Current?.FindTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;

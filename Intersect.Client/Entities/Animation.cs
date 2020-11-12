@@ -150,7 +150,7 @@ namespace Intersect.Client.Entities
             if (!upper && mShowLower && mZDimension < 1 || !upper && mShowLower && mZDimension > 0)
             {
                 //Draw Lower
-                var tex = GameContext.ContentManager.LoadTexture(
+                var tex = GameContext.ContentManager.FindTexture(
                     TextureType.Animation, MyBase.Lower.Sprite
                 );
 
@@ -190,7 +190,7 @@ namespace Intersect.Client.Entities
             if (upper && mShowUpper && mZDimension != 0 || upper && mShowUpper && mZDimension == 0)
             {
                 //Draw Upper
-                var tex = GameContext.ContentManager.LoadTexture(
+                var tex = GameContext.ContentManager.FindTexture(
                     TextureType.Animation, MyBase.Upper.Sprite
                 );
 
@@ -379,7 +379,7 @@ namespace Intersect.Client.Entities
         {
             var size = new Point(0, 0);
 
-            var tex = GameContext.ContentManager.LoadTexture(TextureType.Animation, MyBase.Lower.Sprite);
+            var tex = GameContext.ContentManager.FindTexture(TextureType.Animation, MyBase.Lower.Sprite);
             if (tex != null)
             {
                 if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
@@ -398,7 +398,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            tex = GameContext.ContentManager.LoadTexture(TextureType.Animation, MyBase.Upper.Sprite);
+            tex = GameContext.ContentManager.FindTexture(TextureType.Animation, MyBase.Upper.Sprite);
             if (tex != null)
             {
                 if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)

@@ -1,37 +1,43 @@
-﻿using System;
-
+﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Logging;
 
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+using System;
+using System.Diagnostics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-
     public class MonoFont : GameFont
     {
+        internal new MonoGameContext GameContext => base.GameContext as MonoGameContext;
 
-        private SpriteFont mFont;
+        private SpriteFont Font { get; set; }
 
-        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(
-            fontName, fontSize
-        )
+        public MonoFont(IGameContext gameContext, AssetReference assetReference) : base(gameContext, assetReference)
         {
-            try
-            {
-                fileName = GameContentManager.RemoveExtension(fileName);
-                mFont = contentManager.Load<SpriteFont>(fileName);
-            }
-            catch (Exception ex)
-            {
-                Log.Trace(ex);
-            }
         }
 
-        public override TFont AsPlatformFont<TFont>() => (TFont) (mFont as object);
+        public override TFont AsPlatformFont<TFont>()
+        {
+            if (Font == null)
+            {
+                try
+                {
+                    Font = GameContext.Game.Content.Load<SpriteFont>(Reference.ResolvedPathWithoutExtension);
+                }
+                catch (Exception exception)
+                {
+#if DEBUG
+                    Debugger.Break();
+#endif
+                    Log.Trace(exception);
+                }
+            }
 
+            return (TFont) (Font as object);
+        }
     }
-
 }

@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
 
 using System;
+using System.IO;
 
 namespace Intersect.Client.Core.Sounds
 {
@@ -30,9 +31,9 @@ namespace Intersect.Client.Core.Sounds
                 return;
             }
 
-            mFilename = GameContentManager.RemoveExtension(filename).ToLower();
+            mFilename = Path.GetFileNameWithoutExtension(filename);
             mLoop = loop;
-            var sound = GameContext.ContentManager.LoadSound(mFilename);
+            var sound = GameContext.ContentManager.Find<IAudioSource>(ContentType.Sound, mFilename);
             if (sound != null)
             {
                 mSound = sound.CreateInstance();

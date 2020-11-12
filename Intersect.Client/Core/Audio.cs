@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
@@ -49,7 +50,7 @@ namespace Intersect.Client.Core
 
             GameContext = gameContext;
 
-            GameContext.ContentManager.LoadAudio();
+            // GameContext.ContentManager.LoadAudio();
             sIsInitialized = true;
         }
 
@@ -128,7 +129,8 @@ namespace Intersect.Client.Core
 
             ClearQueue();
 
-            filename = GameContentManager.RemoveExtension(filename);
+            // filename = GameContentManager.RemoveExtension(filename);
+            filename = Path.GetFileNameWithoutExtension(filename);
             if (sMyMusic != null)
             {
                 if (fadeout < 0.01 ||
@@ -168,7 +170,8 @@ namespace Intersect.Client.Core
 
         private static void StartMusic(string filename, float fadein = 0f, bool loop = false)
         {
-            var music = GameContext.ContentManager.LoadMusic(filename);
+            var trackName = Path.GetFileNameWithoutExtension(filename);
+            var music = GameContext.ContentManager.Find<IAudioSource>(ContentType.Music, trackName);
             if (music == null)
             {
                 return;

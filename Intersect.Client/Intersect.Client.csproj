@@ -119,6 +119,7 @@
     <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
+    <Compile Include="MonoGame\Content\FileSystemAssetProvider.cs" />
     <Compile Include="MonoGame\Extensions\TypeConversionExtensions.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
     <Compile Include="MonoGame\Input\MonoClipboard.cs" />

@@ -59,7 +59,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                var itemTex = mCraftingWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = mCraftingWindow.GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.GameTexture = itemTex;

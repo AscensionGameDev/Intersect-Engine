@@ -1266,7 +1266,7 @@ namespace Intersect.Client.Networking
                     TilesetBase.Lookup.Set(id, obj);
                     if (Globals.HasGameData && !another)
                     {
-                        GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                        // GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                     }
 
                     break;

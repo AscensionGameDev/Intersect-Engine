@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Intersect.Client.Framework.Content;
+
 namespace Intersect.Client.Framework.Audio
 {
     /// <summary>
@@ -10,15 +12,18 @@ namespace Intersect.Client.Framework.Audio
         protected IGameContext GameContext { get; }
 
         /// <inheritdoc />
-        public string Name { get; }
+        public string Name => Reference.Name;
+
+        /// <inheritdoc />
+        public AssetReference Reference { get; }
 
         /// <inheritdoc />
         public AudioType AudioType { get; }
 
-        protected GameAudioSource(IGameContext gameContext, string name, AudioType audioType)
+        protected GameAudioSource(IGameContext gameContext, AssetReference assetReference, AudioType audioType)
         {
             GameContext = gameContext ?? throw new ArgumentNullException(nameof(gameContext));
-            Name = name;
+            Reference = assetReference;
             AudioType = audioType;
         }
 

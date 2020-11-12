@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
@@ -7,23 +8,19 @@ using Intersect.Logging;
 using Microsoft.Xna.Framework.Audio;
 
 using System;
-using System.IO;
 
 namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoSoundSource : GameAudioSource
     {
-        private readonly string mAssetPath;
-
         private int mInstanceCount;
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(IGameContext gameContext, string name, string assetPath) : base(
-            gameContext, name, AudioType.SoundEffect
+        public MonoSoundSource(IGameContext gameContext, AssetReference assetReference) : base(
+            gameContext, assetReference, AudioType.SoundEffect
         )
         {
-            mAssetPath = assetPath;
         }
 
         public SoundEffect Effect
@@ -59,18 +56,18 @@ namespace Intersect.Client.MonoGame.Audio
 
         private void LoadSound()
         {
-            using (var fileStream = new FileStream(mAssetPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var assetStream = GameContext.ContentManager.OpenRead(Reference))
             {
                 try
                 {
-                    mSound = SoundEffect.FromStream(fileStream);
+                    mSound = SoundEffect.FromStream(assetStream);
                 }
                 catch (Exception exception)
                 {
-                    Log.Error($"Error loading '{mAssetPath}'.", exception);
+                    Log.Error($"Error loading '{Reference}'.", exception);
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mAssetPath}]",
+                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{Reference}]",
                             new Color(0xBF, 0x0, 0x0)
                         )
                     );

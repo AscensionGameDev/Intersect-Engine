@@ -58,8 +58,6 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract FloatRect GetView();
 
-        public abstract IFont LoadFont(string filename);
-
         public abstract void DrawTexture(
             ITexture tex,
             float sx,
@@ -89,14 +87,13 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract IRenderTexture CreateRenderTexture(int width, int height);
 
+        public abstract IFont LoadFont(AssetReference assetReference);
+
+        public abstract IShader LoadShader(AssetReference assetReference);
+
         public abstract ITexture LoadTexture(TextureType textureType, string assetName);
 
-        public abstract ITexture LoadTexture(string filename, ITexturePackFrame texturePackFrame = null);
-
-        public abstract ITexture LoadTexture(
-            [NotNull] string assetName,
-            [NotNull] Func<Stream> createStream
-        );
+        public abstract ITexture LoadTexture(AssetReference assetReference, ITexturePackFrame texturePackFrame = null);
 
         public abstract ITexture GetWhiteTexture();
 
@@ -135,8 +132,6 @@ namespace Intersect.Client.Framework.Graphics
         public abstract void Close();
 
         public abstract List<string> GetValidVideoModes();
-
-        public abstract IShader LoadShader(string name);
 
         public void RequestScreenshot(string screenshotDir = "screenshots")
         {

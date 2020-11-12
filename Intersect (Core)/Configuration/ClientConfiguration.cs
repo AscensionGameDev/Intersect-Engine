@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Configuration
 {
     /// <inheritdoc />
@@ -13,26 +11,18 @@ namespace Intersect.Configuration
     /// </summary>
     public sealed class ClientConfiguration : IClientConfiguration
     {
-
         public const string DefaultPath = @"resources/config.json";
 
         /// <inheritdoc />
-        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false)
-        {
-            return ConfigurationHelper.Load(this, filePath, failQuietly);
-        }
+        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Load(this, filePath, failQuietly);
 
         /// <inheritdoc />
-        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false)
-        {
-            return ConfigurationHelper.Save(this, filePath, failQuietly);
-        }
+        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Save(this, filePath, failQuietly);
 
-        [NotNull]
-        public static ClientConfiguration LoadAndSave([CanBeNull] string filePath = null)
-        {
-            return ConfigurationHelper.LoadSafely(Instance, filePath);
-        }
+        public static ClientConfiguration LoadAndSave(string filePath = null) =>
+            ConfigurationHelper.LoadSafely(Instance, filePath);
 
         #region Constants
 
@@ -46,16 +36,15 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
-        public const string DEFAULT_MENU_BACKGROUND = "background.png";
+        public const string DEFAULT_MENU_BACKGROUND = "background";
 
-        public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
+        public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping";
 
         #endregion
 
         #region Static Properties and Methods
 
-        [NotNull]
-        public static ClientConfiguration Instance { get; } = new ClientConfiguration();
+        public static ClientConfiguration Instance { get; private set; } = new ClientConfiguration();
 
         public void Validate()
         {
@@ -68,6 +57,12 @@ namespace Intersect.Configuration
         }
 
         #endregion
+
+        // TODO: Remove this
+        public ClientConfiguration()
+        {
+            Instance = this;
+        }
 
         #region Options
 
@@ -148,7 +143,5 @@ namespace Intersect.Configuration
         }
 
         #endregion
-
     }
-
 }

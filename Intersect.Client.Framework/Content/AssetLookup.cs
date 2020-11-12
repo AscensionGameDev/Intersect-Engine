@@ -40,12 +40,19 @@ namespace Intersect.Client.Framework.Content
             return default;
         }
 
-        public TAsset Find<TAsset>(ContentType contentType, string assetName) => (TAsset) Find(contentType, assetName);
+        public TAsset Find<TAsset>(ContentType contentType, string assetName) => string.IsNullOrWhiteSpace(assetName)
+            ? default
+            : (TAsset) Find(contentType, assetName);
 
         public IEnumerable<TAsset> FindAll<TAsset>(ContentType contentType, Func<TAsset, bool> predicate)
             where TAsset : IAsset
         {
-            var assets = FindDictionaryFor(contentType).Values.Cast<TAsset>();
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var assets = GetAssets<TAsset>(contentType);
             return assets.Where(predicate);
         }
 
@@ -116,7 +123,14 @@ namespace Intersect.Client.Framework.Content
 
         public void ClearAll() => mAssetDictionaries.Keys.ToList().ForEach(Clear);
 
-        public bool Contains(ContentType contentType, string assetName) => FindDictionaryFor(contentType)?.ContainsKey(assetName) ?? false;
+        public bool Contains(ContentType contentType, string assetName) =>
+            FindDictionaryFor(contentType)?.ContainsKey(assetName) ?? false;
+
+        public IEnumerable<TAsset> GetAssets<TAsset>(ContentType contentType) where TAsset : IAsset =>
+            FindDictionaryFor(contentType)?.Values.Cast<TAsset>();
+
+        public IEnumerable<AssetReference> ListAssets(ContentType contentType) =>
+            FindDictionaryFor(contentType)?.Values.Select(asset => asset.Reference);
 
         public IList<string> GetAvailableAssetNamesFor(ContentType contentType) =>
             FindDictionaryFor(contentType)?.Keys.ToList() ?? new List<string>();

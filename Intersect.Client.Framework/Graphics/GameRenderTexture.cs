@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Intersect.Client.Framework.Content;
+
 namespace Intersect.Client.Framework.Graphics
 {
     /// <summary>
@@ -12,23 +14,23 @@ namespace Intersect.Client.Framework.Graphics
         /// <summary>
         /// Current number of render textures for <see cref="TPlatformTexture"/>.
         /// </summary>
-        public static int RenderTextureCount { get; set; } = 0;
+        private static int RenderTextureCount { get; set; } = 0;
 
         /// <summary>
         /// Most recent render texture ID for <see cref="TPlatformTexture"/>.
         /// </summary>
-        public static int RenderTextureId { get; set; } = 0;
+        private static int RenderTextureId { get; set; } = 0;
 
-        /// <summary>
-        /// Generate a name for the given render texture.
-        /// </summary>
-        /// <returns></returns>
-        public static string GenerateName() =>
-            $"{nameof(GameRenderTexture<TPlatformTexture, TRenderer>)}<{typeof(TPlatformTexture).Name}, {typeof(TRenderer).Name}>#{++RenderTextureId}";
+        private static AssetReference GenerateReference()
+        {
+            var name =
+                $"{nameof(GameRenderTexture<TPlatformTexture, TRenderer>)}<{typeof(TPlatformTexture).Name}, {typeof(TRenderer).Name}>#{++RenderTextureId}";
 
-        protected GameRenderTexture(TRenderer renderer, TPlatformTexture platformTexture) : base(
-            GenerateName(), platformTexture
-        )
+            return new AssetReference(null, ContentType.Image, name, name);
+        }
+
+        protected GameRenderTexture(IGameContext gameContext, TRenderer renderer, TPlatformTexture platformTexture) :
+            base(gameContext, GenerateReference(), platformTexture)
         {
             ++RenderTextureCount;
             Renderer = renderer;

@@ -240,7 +240,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["Font"]).Split(',');
                 mFontInfo = (string) obj["Font"];
-                mFont = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
+                mFont = GameContentManager.Current.FindFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             foreach (var itm in mTable.Children)

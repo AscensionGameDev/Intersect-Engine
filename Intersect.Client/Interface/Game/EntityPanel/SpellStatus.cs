@@ -113,7 +113,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     Container.Show();
                     if (spell != null)
                     {
-                        var spellTex = GameContext.ContentManager.LoadTexture(TextureType.Spell, spell.Icon);
+                        var spellTex = GameContext.ContentManager.FindTexture(TextureType.Spell, spell.Icon);
 
                         if (spellTex != null)
                         {

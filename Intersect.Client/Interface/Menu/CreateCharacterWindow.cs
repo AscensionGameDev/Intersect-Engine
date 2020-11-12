@@ -224,13 +224,13 @@ namespace Intersect.Client.Interface.Menu
                 {
                     if (mMaleChk.IsChecked)
                     {
-                        mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                        mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                             TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                            mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                                 TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
@@ -239,13 +239,13 @@ namespace Intersect.Client.Interface.Menu
                     }
                     else
                     {
-                        mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                        mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                             TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.GameTexture == null)
                         {
-                            mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                            mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                                 TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 

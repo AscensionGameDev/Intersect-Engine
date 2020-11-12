@@ -129,5 +129,41 @@ namespace Intersect.Client.Framework.Content
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
             }
         }
+
+        public static string GetExtension(this ContentType contentType)
+        {
+            switch (contentType)
+            {
+                case ContentType.Animation:
+                case ContentType.Entity:
+                case ContentType.Face:
+                case ContentType.Fog:
+                case ContentType.Image:
+                case ContentType.Interface:
+                case ContentType.Item:
+                case ContentType.Miscellaneous:
+                case ContentType.Paperdoll:
+                case ContentType.Resource:
+                case ContentType.Spell:
+                case ContentType.Tileset:
+                    return "png";
+
+                case ContentType.Font:
+                case ContentType.Shader:
+                    return "xnb";
+
+                case ContentType.Music:
+                    return "ogg";
+
+                case ContentType.Sound:
+                    return "wav";
+
+                case ContentType.TexturePack:
+                    return "json";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
+            }
+        }
     }
 }

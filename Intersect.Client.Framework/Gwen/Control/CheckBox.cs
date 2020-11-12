@@ -102,7 +102,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["NormalImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["NormalImage"]
                     ), (string) obj["NormalImage"], ControlState.Normal
                 );
@@ -111,7 +111,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["CheckedImage"]
                     ), (string) obj["CheckedImage"], ControlState.CheckedNormal
                 );
@@ -120,7 +120,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["DisabledImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["DisabledImage"]
                     ), (string) obj["DisabledImage"], ControlState.Disabled
                 );
@@ -129,7 +129,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedDisabledImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["CheckedDisabledImage"]
                     ), (string) obj["CheckedDisabledImage"], ControlState.CheckedDisabled
                 );

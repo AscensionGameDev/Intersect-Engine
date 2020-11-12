@@ -19,13 +19,6 @@ namespace Intersect.Client.Framework.Content
                 );
             }
 
-            if (!type.IsClass)
-            {
-                throw new ArgumentException(
-                    $@"Invalid asset type {type.FullName}. Must be a class (abstract is acceptable).", nameof(type)
-                );
-            }
-
             Type = type;
         }
 

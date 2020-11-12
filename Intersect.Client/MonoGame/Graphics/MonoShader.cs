@@ -6,11 +6,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 using System;
 
+using Intersect.Client.Framework.Content;
+
 namespace Intersect.Client.MonoGame.Graphics
 {
     public class MonoShader : GameShader<Effect>
     {
-        public MonoShader(string name, Effect effect) : base(name, effect)
+        public MonoShader(AssetReference assetReference, Effect effect) : base(assetReference, effect)
         {
         }
 

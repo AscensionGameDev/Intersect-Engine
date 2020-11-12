@@ -83,7 +83,7 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                var itemTex = mShopWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = mShopWindow.GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.GameTexture = itemTex;

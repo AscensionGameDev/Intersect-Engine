@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.GenericClasses;
 
 using System;
 
@@ -7,7 +8,10 @@ namespace Intersect.Client.Framework.Graphics
     public abstract class GameShader : IShader
     {
         /// <inheritdoc />
-        public string Name { get; }
+        public string Name => Reference.Name;
+
+        /// <inheritdoc />
+        public AssetReference Reference { get; }
 
         /// <inheritdoc />
         public bool Dirty { get; private set; }
@@ -15,14 +19,9 @@ namespace Intersect.Client.Framework.Graphics
         /// <inheritdoc />
         public object ShaderObject { get; protected set; }
 
-        protected GameShader(string name, object shaderObject)
+        protected GameShader(AssetReference assetReference, object shaderObject)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            Name = name;
+            Reference = assetReference;
             ShaderObject = shaderObject ?? throw new ArgumentNullException(nameof(shaderObject));
         }
 
@@ -45,10 +44,11 @@ namespace Intersect.Client.Framework.Graphics
         public TShader GetShader<TShader>() where TShader : class => ShaderObject as TShader;
     }
 
-    public abstract class GameShader<TShader> : GameShader where TShader : class {
+    public abstract class GameShader<TShader> : GameShader where TShader : class
+    {
         public TShader Shader { get; private set; }
 
-        protected GameShader(string name, TShader shader) : base(name, shader)
+        protected GameShader(AssetReference assetReference, TShader shader) : base(assetReference, shader)
         {
             Shader = shader;
         }

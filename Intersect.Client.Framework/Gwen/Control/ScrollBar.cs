@@ -133,7 +133,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
@@ -164,7 +164,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (ITexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                ITexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
+                ITexture = GameContentManager.Current?.FindTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;

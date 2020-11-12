@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Intersect.Client.Framework.Content;
+
+using System;
 
 namespace Intersect.Client.Framework.Graphics
 {
@@ -7,17 +9,22 @@ namespace Intersect.Client.Framework.Graphics
     /// </summary>
     public abstract class GameTexture<TPlatformTexture> : ITexture, IDisposable where TPlatformTexture : IDisposable
     {
-        protected GameTexture(string name)
+        protected GameTexture(
+            IGameContext gameContext,
+            AssetReference assetReference,
+            ITexturePackFrame texturePackFrame = null
+        )
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            Name = name;
+            GameContext = gameContext;
+            Reference = assetReference;
+            TexturePackFrame = texturePackFrame;
         }
 
-        protected GameTexture(string name, TPlatformTexture platformTexture) : this(name)
+        protected GameTexture(
+            IGameContext gameContext,
+            AssetReference assetReference,
+            TPlatformTexture platformTexture
+        ) : this(gameContext, assetReference)
         {
             if (platformTexture == null)
             {
@@ -27,10 +34,10 @@ namespace Intersect.Client.Framework.Graphics
             PlatformTexture = platformTexture;
         }
 
-        protected GameTexture(string name, ITexturePackFrame texturePackFrame) : this(name)
-        {
-            TexturePackFrame = texturePackFrame ?? throw new ArgumentNullException(nameof(texturePackFrame));
-        }
+        /// <summary>
+        /// The game context this texture belongs to.
+        /// </summary>
+        protected IGameContext GameContext { get; }
 
         /// <summary>
         /// The platform-specific texture data container.
@@ -38,7 +45,10 @@ namespace Intersect.Client.Framework.Graphics
         protected TPlatformTexture PlatformTexture { get; set; }
 
         /// <inheritdoc />
-        public string Name { get; }
+        public string Name => Reference.Name;
+
+        /// <inheritdoc />
+        public AssetReference Reference { get; }
 
         /// <inheritdoc />
         public abstract int Width { get; }

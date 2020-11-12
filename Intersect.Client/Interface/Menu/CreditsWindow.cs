@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Menu
                 {
                     mRichLabel.AddText(
                         line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B), line.GetAlignment(),
-                        GameContentManager.Current.LoadFont(line.Font, line.Size)
+                        GameContentManager.Current.FindFont(line.Font, line.Size)
                     );
 
                     mRichLabel.AddLineBreak();

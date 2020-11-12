@@ -30,6 +30,9 @@ namespace Intersect.Examples.ClientPlugin
         /// <inheritdoc />
         public override void OnBootstrap([NotNull, ValidatedNotNull] IPluginBootstrapContext context)
         {
+            var assembly = GetType().Assembly;
+            var resourceNames = assembly.GetManifestResourceNames();
+
             context.Logging.Application.Info(
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnBootstrap)} writing to the application log!");
 

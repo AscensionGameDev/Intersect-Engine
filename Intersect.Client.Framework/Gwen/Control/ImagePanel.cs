@@ -105,7 +105,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.LoadJson(obj);
             if (obj["Texture"] != null)
             {
-                GameTexture = GameContentManager.Current.LoadTexture(
+                GameTexture = GameContentManager.Current.FindTexture(
                     TextureType.Gui, (string) obj["Texture"]
                 );
 

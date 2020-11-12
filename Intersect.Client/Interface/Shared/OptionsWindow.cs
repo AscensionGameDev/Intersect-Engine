@@ -198,7 +198,7 @@ namespace Intersect.Client.Interface.Shared
             mRestoreKeybindingsButton.Clicked += RestoreKeybindingsButton_Clicked;
 
             var row = 0;
-            var defaultFont = GameContentManager.Current?.LoadFont("sourcesansproblack", 16);
+            var defaultFont = GameContentManager.Current?.FindFont("sourcesansproblack", 16);
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
                 var offset = row * 32;

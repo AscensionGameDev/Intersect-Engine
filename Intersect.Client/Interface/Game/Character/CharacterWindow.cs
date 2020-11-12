@@ -176,7 +176,7 @@ namespace Intersect.Client.Interface.Game.Character
 
             //Load Portrait
             //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
-            var entityTex = GameContext.ContentManager.LoadTexture(
+            var entityTex = GameContext.ContentManager.FindTexture(
                 TextureType.Entity, Globals.Me.MySprite
             );
 
@@ -240,7 +240,7 @@ namespace Intersect.Client.Interface.Game.Character
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
-                        var paperdollTex = GameContext.ContentManager.LoadTexture(
+                        var paperdollTex = GameContext.ContentManager.FindTexture(
                             TextureType.Paperdoll, paperdoll
                         );
 

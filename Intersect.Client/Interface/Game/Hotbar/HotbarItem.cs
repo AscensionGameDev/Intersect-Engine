@@ -336,7 +336,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
-                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.LoadTexture(
+                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.FindTexture(
                         TextureType.Item, mCurrentItem.Icon
                     );
 
@@ -377,7 +377,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 else if (mCurrentSpell != null)
                 {
                     mContentPanel.Show();
-                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.LoadTexture(
+                    mContentPanel.GameTexture = mHotbarWindow.GameContext.ContentManager.FindTexture(
                         TextureType.Spell, mCurrentSpell.Icon
                     );
 

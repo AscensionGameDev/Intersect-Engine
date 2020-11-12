@@ -187,13 +187,13 @@ namespace Intersect.Client.Interface.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                     TextureType.Face, Characters[mSelectedChar].Face
                 );
 
                 if (mCharacterPortrait.GameTexture == null)
                 {
-                    mCharacterPortrait.GameTexture = GameContext.ContentManager.LoadTexture(
+                    mCharacterPortrait.GameTexture = GameContext.ContentManager.FindTexture(
                         TextureType.Entity, Characters[mSelectedChar].Sprite
                     );
 
@@ -244,7 +244,7 @@ namespace Intersect.Client.Interface.Menu
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                mPaperdollPortraits[i].GameTexture = GameContext.ContentManager.LoadTexture(
+                                mPaperdollPortraits[i].GameTexture = GameContext.ContentManager.FindTexture(
                                     TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
                                 );
 

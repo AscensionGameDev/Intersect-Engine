@@ -687,8 +687,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateImage()
         {
-            var faceTex = GameContext.ContentManager.LoadTexture(TextureType.Face, MyEntity.Face);
-            var entityTex = GameContext.ContentManager.LoadTexture(TextureType.Entity, MyEntity.MySprite);
+            var faceTex = GameContext.ContentManager.FindTexture(TextureType.Face, MyEntity.Face);
+            var entityTex = GameContext.ContentManager.FindTexture(TextureType.Entity, MyEntity.MySprite);
             if (faceTex != null && faceTex != EntityFace.GameTexture)
             {
                 EntityFace.GameTexture = faceTex;
@@ -783,7 +783,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
-                        var paperdollTex = GameContext.ContentManager.LoadTexture(
+                        var paperdollTex = GameContext.ContentManager.FindTexture(
                             TextureType.Paperdoll, paperdoll
                         );
 

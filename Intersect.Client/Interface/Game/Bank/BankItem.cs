@@ -145,7 +145,7 @@ namespace Intersect.Client.Interface.Game.Bank
                 var item = ItemBase.Get(Globals.Bank[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = mBankWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = mBankWindow.GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;

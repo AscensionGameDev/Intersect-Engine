@@ -35,7 +35,7 @@ namespace Intersect.Client.Interface.Game
             Size = size;
             Clickable = clickable;
 
-            mPicture.GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Image, picture);
+            mPicture.GameTexture = GameContext.ContentManager.FindTexture(TextureType.Image, picture);
             if (mPicture.GameTexture != null)
             {
                 mPicture.SetSize(mPicture.GameTexture.Width, mPicture.GameTexture.Height);

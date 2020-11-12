@@ -152,7 +152,7 @@ namespace Intersect.Client.Maps
 
         private void CacheTextures()
         {
-            if (mTexturesFound == false && GameContentManager.Current.TilesetsLoaded)
+            if (mTexturesFound == false)
             {
                 for (var i = 0; i < Options.LayerCount; i++)
                 {
@@ -163,7 +163,7 @@ namespace Intersect.Client.Maps
                             var tileset = TilesetBase.Get(Layers[i].Tiles[x, y].TilesetId);
                             if (tileset != null)
                             {
-                                var tilesetTex = GameContext.ContentManager.LoadTexture(
+                                var tilesetTex = GameContext.ContentManager.FindTexture(
                                     TextureType.Tileset, tileset.Name
                                 );
 
@@ -666,7 +666,7 @@ namespace Intersect.Client.Maps
                 var itemBase = ItemBase.Get(item.Value.ItemId);
                 if (itemBase != null)
                 {
-                    var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, itemBase.Icon);
+                    var itemTex = GameContext.ContentManager.FindTexture(TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
@@ -915,7 +915,7 @@ namespace Intersect.Client.Maps
 
             if (Fog != null && Fog.Length > 0)
             {
-                var fogTex = GameContext.ContentManager.LoadTexture(TextureType.Fog, Fog);
+                var fogTex = GameContext.ContentManager.FindTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     var xCount = (int) (Options.MapWidth * Options.TileWidth * 3 / fogTex.Width);
@@ -1059,7 +1059,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = GameContext.ContentManager.LoadTexture(TextureType.Image, Panorama);
+            var imageTex = GameContext.ContentManager.FindTexture(TextureType.Image, Panorama);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
@@ -1093,7 +1093,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = GameContext.ContentManager.LoadTexture(TextureType.Image, OverlayGraphic);
+            var imageTex = GameContext.ContentManager.FindTexture(TextureType.Image, OverlayGraphic);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
@@ -1105,7 +1105,7 @@ namespace Intersect.Client.Maps
             //Check if fogs the same
             if (oldMap.Fog == Fog)
             {
-                var fogTex = GameContext.ContentManager.LoadTexture(TextureType.Fog, Fog);
+                var fogTex = GameContext.ContentManager.FindTexture(TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     //Copy over fog values

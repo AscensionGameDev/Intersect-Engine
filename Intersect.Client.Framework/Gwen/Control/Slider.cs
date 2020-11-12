@@ -138,7 +138,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["BackgroundImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["BackgroundImage"]
                     ), (string) obj["BackgroundImage"]
                 );

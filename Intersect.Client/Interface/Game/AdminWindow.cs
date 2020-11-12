@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
@@ -174,7 +175,7 @@ namespace Intersect.Client.Interface.Game
             mSpriteDropdown = new ComboBox(mAdminWindow);
             mSpriteDropdown.SetBounds(6, 128, 80, 18);
             mSpriteDropdown.AddItem(Strings.Admin.none);
-            var sprites = GameContext.ContentManager.GetTextureNames(TextureType.Entity);
+            var sprites = GameContext.ContentManager.ListAvailableTextures(TextureType.Entity).Select(reference => reference.Name).ToArray();
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
             {
@@ -203,7 +204,7 @@ namespace Intersect.Client.Interface.Game
             mFaceDropdown = new ComboBox(mAdminWindow);
             mFaceDropdown.SetBounds(6, 188, 80, 18);
             mFaceDropdown.AddItem(Strings.Admin.none);
-            var faces = GameContext.ContentManager.GetTextureNames(TextureType.Face);
+            var faces = GameContext.ContentManager.ListAvailableTextures(TextureType.Face).Select(reference => reference.Name).ToArray();
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
             {
@@ -267,7 +268,7 @@ namespace Intersect.Client.Interface.Game
 
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            SpritePanel.GameTexture = GameContext.ContentManager.LoadTexture(
+            SpritePanel.GameTexture = GameContext.ContentManager.FindTexture(
                 TextureType.Entity, mSpriteDropdown.Text
             );
 
@@ -282,7 +283,7 @@ namespace Intersect.Client.Interface.Game
 
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            FacePanel.GameTexture = GameContext.ContentManager.LoadTexture(
+            FacePanel.GameTexture = GameContext.ContentManager.FindTexture(
                 TextureType.Face, mFaceDropdown.Text
             );
         }

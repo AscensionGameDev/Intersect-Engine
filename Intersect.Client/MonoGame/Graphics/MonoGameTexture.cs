@@ -1,8 +1,9 @@
-﻿using Intersect.Client.Framework.Graphics;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
-using Intersect.IO.Files;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework;
@@ -15,73 +16,34 @@ namespace Intersect.Client.MonoGame.Graphics
 {
     public class MonoGameTexture : GameTexture<Texture2D>
     {
-        private GraphicsDevice mGraphicsDevice;
+        internal new MonoGameContext GameContext => base.GameContext as MonoGameContext;
 
         private int mHeight = -1;
 
-        private long mLastAccessTime;
-
-        private bool mLoadError;
-
-        private string mName = "";
-
-        private string mPath = "";
-
         private int mWidth = -1;
 
-        private readonly Func<Stream> CreateStream;
+        private long LastAccessTime { get; set; }
 
-        public MonoGameTexture(GraphicsDevice graphicsDevice, string filename) : base(Path.GetFileName(filename))
-        {
-            mGraphicsDevice = graphicsDevice;
-            mPath = filename;
-            mName = Path.GetFileName(filename);
-        }
+        private bool LoadError { get; set; }
 
-        public MonoGameTexture(GraphicsDevice graphicsDevice, string assetName, Func<Stream> createStream) : base(assetName)
+        public MonoGameTexture(
+            IGameContext gameContext,
+            AssetReference assetReference,
+            ITexturePackFrame texturePackFrame = null
+        ) : base(gameContext, assetReference, texturePackFrame)
         {
-            mGraphicsDevice = graphicsDevice;
-            mPath = assetName;
-            mName = assetName;
-            CreateStream = createStream;
-        }
-
-        public MonoGameTexture(GraphicsDevice graphicsDevice, string filename, ITexturePackFrame texturePackFrame) : base(Path.GetFileName(filename), texturePackFrame)
-        {
-            mGraphicsDevice = graphicsDevice;
-            mPath = filename;
-            mName = Path.GetFileName(filename);
-            mWidth = TexturePackFrame.SourceBounds.Width;
-            mHeight = TexturePackFrame.SourceBounds.Height;
-        }
-
-        private void Load(Stream stream)
-        {
-            PlatformTexture = Texture2D.FromStream(mGraphicsDevice, stream);
-            if (PlatformTexture == null)
+            if (TexturePackFrame != null)
             {
-                throw new InvalidDataException("Failed to load texture, received no data.");
+                mWidth = TexturePackFrame.SourceBounds.Width;
+                mHeight = TexturePackFrame.SourceBounds.Height;
             }
-
-            mWidth = PlatformTexture.Width;
-            mHeight = PlatformTexture.Height;
-            mLoadError = false;
         }
 
-        public void LoadTexture()
+        private void LoadTexture()
         {
             if (PlatformTexture != null)
             {
                 return;
-            }
-
-            if (CreateStream != null)
-            {
-                using (var stream = CreateStream())
-                {
-                    Load(stream);
-                    return;
-                }
             }
 
             if (TexturePackFrame != null)
@@ -91,56 +53,44 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
-            mLoadError = true;
-            if (string.IsNullOrWhiteSpace(mPath))
+            LoadError = true;
+
+            try
             {
-                Log.Error("Invalid texture path (empty/null).");
-
-                return;
-            }
-
-            var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
-
-            if (!File.Exists(mPath))
-            {
-                Log.Error($"Texture does not exist: {relativePath}");
-
-                return;
-            }
-
-            using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                try
+                using (var stream = GameContext.ContentManager.OpenRead(Reference))
                 {
-                    Load(fileStream);
-                }
-                catch (Exception exception)
-                {
-                    Log.Error(
-                        exception,
-                        $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
-                    );
+                    PlatformTexture = Texture2D.FromStream(GameContext.Game.GraphicsDevice, stream);
+                    if (PlatformTexture == null)
+                    {
+                        throw new InvalidDataException("Failed to load texture, received no data.");
+                    }
 
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
-                            new Color(0xBF, 0x0, 0x0)
-                        )
-                    );
+                    mWidth = PlatformTexture.Width;
+                    mHeight = PlatformTexture.Height;
+                    LoadError = false;
                 }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, $"Failed to load texture ({Reference})");
+
+                ChatboxMsg.AddMessage(
+                    new ChatboxMsg(
+                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite)} [{Name}]",
+                        new Color(0xBF, 0x0, 0x0)
+                    )
+                );
             }
         }
 
-        public void ResetAccessTime()
-        {
-            mLastAccessTime = Globals.System.GetTimeMs() + 15000;
-        }
+        public void ResetAccessTime() => LastAccessTime = Globals.System.GetTimeMs() + 15000;
 
         public override int Width
         {
             get
             {
                 ResetAccessTime();
+
                 if (mWidth != -1)
                 {
                     return mWidth;
@@ -151,7 +101,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     LoadTexture();
                 }
 
-                if (mLoadError)
+                if (LoadError)
                 {
                     mWidth = 0;
                 }
@@ -175,7 +125,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     LoadTexture();
                 }
 
-                if (mLoadError)
+                if (LoadError)
                 {
                     mHeight = 0;
                 }
@@ -199,39 +149,39 @@ namespace Intersect.Client.MonoGame.Graphics
             return base.AsPlatformTexture<TTexture>();
         }
 
-        public override Color GetPixel(int x1, int y1)
+        public override Color GetPixel(int x, int y)
         {
             if (PlatformTexture == null)
             {
                 LoadTexture();
             }
 
-            if (mLoadError)
+            if (LoadError)
             {
-                return Color.White;
+                return Color.Magenta;
             }
 
-            var tex = PlatformTexture;
+            var platformTexture = PlatformTexture;
+            var texturePackFrame = TexturePackFrame;
 
-            var pack = TexturePackFrame;
-            if (pack != null)
+            if (texturePackFrame != null)
             {
-                tex = pack.PackedTexture.AsPlatformTexture<Texture2D>();
-                if (pack.IsRotated)
+                platformTexture = texturePackFrame.PackedTexture.AsPlatformTexture<Texture2D>();
+                if (texturePackFrame.IsRotated)
                 {
-                    var z = x1;
-                    x1 = pack.Bounds.Right - y1 - pack.Bounds.Height;
-                    y1 = pack.Bounds.Top + z;
+                    var z = x;
+                    x = texturePackFrame.Bounds.Right - y - texturePackFrame.Bounds.Height;
+                    y = texturePackFrame.Bounds.Top + z;
                 }
                 else
                 {
-                    x1 += pack.Bounds.X;
-                    y1 += pack.Bounds.Y;
+                    x += texturePackFrame.Bounds.X;
+                    y += texturePackFrame.Bounds.Y;
                 }
             }
 
             var pixel = new Microsoft.Xna.Framework.Color[1];
-            tex?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+            platformTexture?.GetData(0, new Rectangle(x, y, 1, 1), pixel, 0, 1);
 
             return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
@@ -243,7 +193,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
-            if (mLastAccessTime >= Globals.System.GetTimeMs())
+            if (LastAccessTime >= Globals.System.GetTimeMs())
             {
                 return;
             }

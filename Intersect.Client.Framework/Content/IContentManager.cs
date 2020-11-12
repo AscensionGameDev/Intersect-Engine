@@ -1,57 +1,39 @@
-﻿using JetBrains.Annotations;
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
-using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Plugins;
 
 namespace Intersect.Client.Framework.Content
 {
-
     public interface IContentManager
     {
+        void Clear();
 
-        void LoadAll();
+        void Clear(ContentType contentType);
 
-        TAsset Load<TAsset>(ContentType contentType, [NotNull] string assetName) where TAsset : class, IAsset;
+        TAsset Find<TAsset>(ContentType contentType, string assetName) where TAsset : class, IAsset;
 
-        TAsset Load<TAsset>(ContentType contentType, [NotNull] string assetName, [NotNull] Func<string, Stream> createStream)
-            where TAsset : class, IAsset;
+        TAsset Find<TAsset>(AssetReference assetReference) where TAsset : class, IAsset;
 
-        TAsset LoadEmbedded<TAsset>(
-            [NotNull] IPluginContext context,
-            ContentType contentType,
-            [NotNull] string assetName
-        ) where TAsset : class, IAsset;
+        IEnumerable<TAsset> FindAll<TAsset>(ContentType contentType) where TAsset : class, IAsset;
 
-        IFont LoadFont(string name, int size);
+        IFont FindFont(string fontName, int fontSize);
 
-        IAudioSource LoadMusic(string musicName);
+        ITexture FindTexture(TextureType textureType, string assetName);
 
-        IAudioSource LoadSound(string soundName);
+        void IndexAvailableAssets();
 
-        ITexture LoadTexture(TextureType textureType, string textureFileName);
+        void IndexEmbeddedAssets(Assembly assembly);
 
-        ITexturePackFrame FindTexturePackFrameFor(TextureType textureType, string textureName);
+        IEnumerable<AssetReference> ListAvailableAssets(ContentType contentType);
 
-        void LoadAudio();
+        IEnumerable<AssetReference> ListAvailableTextures(TextureType textureType);
 
-        void LoadMusic();
+        Stream OpenRead(AssetReference assetReference);
 
-        void LoadSounds();
+        AssetReference Resolve(ContentType contentType, string assetName);
 
-        void LoadTilesets(params string[] tilesetNames);
-
-        void LoadTilesets(IEnumerable<string> tilesetNames);
-
-        string[] GetTextureNames(TextureType textureType);
-
-        string GetPathForAssetType(ContentType contentType);
-
-        string GetPathForAsset(ContentType contentType, string assetName);
+        AssetReference ResolveEmbedded(ContentType contentType, Assembly assembly, string assetName);
     }
-
 }

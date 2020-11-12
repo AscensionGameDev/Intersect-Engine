@@ -94,7 +94,7 @@ namespace Intersect.Client.Core
         {
             GameContext = gameContext;
             GameRenderer.Init();
-            GameContext.ContentManager.LoadAll();
+            GameContext.ContentManager.IndexAvailableAssets();
             GameFont = FindFont(ClientConfiguration.Instance.GameFont);
             UIFont = FindFont(ClientConfiguration.Instance.UIFont);
             EntityNameFont = FindFont(ClientConfiguration.Instance.EntityNameFont);
@@ -113,7 +113,7 @@ namespace Intersect.Client.Core
                 int.TryParse(parts[1], out size);
             }
 
-            return GameContext.ContentManager.LoadFont(font, size);
+            return GameContext.ContentManager.FindFont(font, size);
         }
 
         public static void InitInGame()
@@ -130,7 +130,7 @@ namespace Intersect.Client.Core
 
         public static void DrawIntro()
         {
-            var imageTex = GameContext.ContentManager.LoadTexture(
+            var imageTex = GameContext.ContentManager.FindTexture(
                 TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
             );
 
@@ -142,8 +142,8 @@ namespace Intersect.Client.Core
 
         public static void DrawMenu()
         {
-            var imageTex = GameContext.ContentManager.LoadTexture(
-                TextureType.Interface, ClientConfiguration.Instance.MenuBackground
+            var imageTex = GameContext.ContentManager.FindTexture(
+                TextureType.Interface, GameContext.Storage.Configuration.MenuBackground
             );
 
             if (imageTex != null)
@@ -497,7 +497,7 @@ namespace Intersect.Client.Core
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    GameContext.ContentManager.LoadTexture(TextureType.Miscellaneous, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+                    GameContext.ContentManager.FindTexture(TextureType.Miscellaneous, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
 
@@ -905,7 +905,7 @@ namespace Intersect.Client.Core
 
         public static void DrawDarkness()
         {
-            var radialShader = GameContext.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
+            var radialShader = GameContext.ContentManager.Find<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 DrawGameTexture(sDarknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
@@ -920,7 +920,7 @@ namespace Intersect.Client.Core
 
         private static void DrawLights()
         {
-            var radialShader = GameContext.ContentManager.Load<IShader>(ContentType.Shader, "radialgradient");
+            var radialShader = GameContext.ContentManager.Find<IShader>(ContentType.Shader, "radialgradient");
             if (radialShader != null)
             {
                 foreach (var l in sLightQueue)

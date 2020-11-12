@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Graphics;
+﻿using Intersect.Client.Framework;
+using Intersect.Client.Framework.Graphics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +8,8 @@ namespace Intersect.Client.MonoGame.Graphics
 {
     internal class MonoRenderTexture : GameRenderTexture<RenderTarget2D, MonoGameRenderer>
     {
-        public MonoRenderTexture(MonoGameRenderer renderer, RenderTarget2D renderTarget) : base(renderer, renderTarget)
+        public MonoRenderTexture(IGameContext gameContext, MonoGameRenderer renderer, RenderTarget2D renderTarget) :
+            base(gameContext, renderer, renderTarget)
         {
         }
 

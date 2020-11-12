@@ -48,18 +48,18 @@ namespace Intersect.Client.Entities
                 if (IsDead && BaseResource.Exhausted.GraphicFromTileset ||
                     !IsDead && BaseResource.Initial.GraphicFromTileset)
                 {
-                    if (GameContentManager.Current.TilesetsLoaded)
+                    // if (GameContentManager.Current.TilesetsLoaded)
                     {
-                        GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Tileset, mMySprite);
+                        GameTexture = GameContext.ContentManager.FindTexture(TextureType.Tileset, mMySprite);
                     }
-                    else
-                    {
-                        _waitingForTilesets = true;
-                    }
+                    // else
+                    // {
+                    //     _waitingForTilesets = true;
+                    // }
                 }
                 else
                 {
-                    GameTexture = GameContext.ContentManager.LoadTexture(TextureType.Resource, mMySprite);
+                    GameTexture = GameContext.ContentManager.FindTexture(TextureType.Resource, mMySprite);
                 }
 
                 mHasRenderBounds = false;
@@ -238,12 +238,12 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (_waitingForTilesets && !GameContentManager.Current.TilesetsLoaded)
-            {
-                return;
-            }
+            // if (_waitingForTilesets && !GameContentManager.Current.TilesetsLoaded)
+            // {
+            //     return;
+            // }
 
-            if (_waitingForTilesets && GameContentManager.Current.TilesetsLoaded)
+            if (_waitingForTilesets/* && GameContentManager.Current.TilesetsLoaded*/)
             {
                 _waitingForTilesets = false;
                 MySprite = MySprite;

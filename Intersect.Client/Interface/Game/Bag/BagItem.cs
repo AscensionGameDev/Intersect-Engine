@@ -145,7 +145,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 var item = ItemBase.Get(Globals.Bag[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = mBagWindow.GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = mBagWindow.GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;

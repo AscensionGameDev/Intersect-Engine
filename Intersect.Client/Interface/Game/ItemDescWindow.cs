@@ -207,7 +207,7 @@ namespace Intersect.Client.Interface.Game
 
                 //Load Again for positioning purposes.
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.GameRenderer.ActiveResolution.ToString());
-                var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                var itemTex = GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     icon.GameTexture = itemTex;

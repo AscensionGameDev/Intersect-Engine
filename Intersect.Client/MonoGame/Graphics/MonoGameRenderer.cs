@@ -80,8 +80,7 @@ namespace Intersect.Client.MonoGame.Graphics
         private SpriteBatch mSpriteBatch;
 
         private SpriteBatch SpriteBatch =>
-            mSpriteBatch ??
-            (mSpriteBatch = new SpriteBatch(GraphicsDevice));
+            mSpriteBatch ?? (mSpriteBatch = new SpriteBatch(GraphicsDevice));
 
         private bool mSpriteBatchBegan;
 
@@ -159,7 +158,8 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
             }
 
-            var fsChanged = GraphicsDeviceManager.IsFullScreen != GameContext.Storage.Preferences.Fullscreen && !GameContext.Storage.Preferences.Fullscreen;
+            var fsChanged = GraphicsDeviceManager.IsFullScreen != GameContext.Storage.Preferences.Fullscreen &&
+                            !GameContext.Storage.Preferences.Fullscreen;
 
             GraphicsDeviceManager.IsFullScreen = GameContext.Storage.Preferences.Fullscreen;
             if (fsChanged)
@@ -414,7 +414,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 GraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
             );
 
-            return new MonoRenderTexture(this, renderTarget);
+            return new MonoRenderTexture(GameContext, this, renderTarget);
         }
 
         public override void SetRenderTexture(IRenderTexture renderTexture) =>
@@ -795,64 +795,33 @@ namespace Intersect.Client.MonoGame.Graphics
             mInitializing = false;
         }
 
-        public override IFont LoadFont(string filename)
-        {
-            //Get font size from filename, format should be name_size.xnb or whatever
-            var name = GameContentManager.RemoveExtension(filename)
-                .Replace(Path.Combine("resources", "fonts"), "")
-                .TrimStart(Path.DirectorySeparatorChar);
+        public override IFont LoadFont(AssetReference assetReference) => new MonoFont(GameContext, assetReference);
 
-            var parts = name.Split('_');
-            if (parts.Length >= 1)
+        public override IShader LoadShader(AssetReference assetReference)
+        {
+            try
             {
-                if (int.TryParse(parts[parts.Length - 1], out var size))
-                {
-                    name = "";
-                    for (var i = 0; i <= parts.Length - 2; i++)
-                    {
-                        name += parts[i];
-                        if (i + 1 < parts.Length - 2)
-                        {
-                            name += "_";
-                        }
-                    }
-
-                    return new MonoFont(name, filename, size, Content);
-                }
+                var effect = Content.Load<Effect>(assetReference.ResolvedPathWithoutExtension);
+                return new MonoShader(assetReference, effect);
             }
-
-            return null;
-        }
-
-        public override IShader LoadShader(string name) => new MonoShader(
-            name, Content.Load<Effect>(GameContentManager.RemoveExtension(name))
-        );
-
-        public override ITexture LoadTexture(TextureType textureType, string assetName)
-        {
-            var texturePackFrame = GameContext.ContentManager.FindTexturePackFrameFor(textureType, assetName);
-            return LoadTexture(assetName, texturePackFrame);
-        }
-
-        public override ITexture LoadTexture(string filename, ITexturePackFrame texturePackFrame = null)
-        {
-            if (texturePackFrame != null)
+            catch
             {
-                var tx = new MonoGameTexture(GraphicsDevice, filename, texturePackFrame);
-                mAllTextures.Add(tx);
-
-                return tx;
+#if DEBUG
+                Debugger.Break();
+#endif
+                throw;
             }
-
-            var tex = new MonoGameTexture(GraphicsDevice, filename);
-            mAllTextures.Add(tex);
-
-            return tex;
         }
 
-        /// <inheritdoc />
-        public override ITexture LoadTexture(string assetName, Func<Stream> createStream) =>
-            new MonoGameTexture(GraphicsDevice, assetName, createStream);
+        public override ITexture LoadTexture(TextureType textureType, string assetName) =>
+            GameContext.ContentManager.Find<ITexture>(textureType.ToContentType(), assetName);
+
+        public override ITexture LoadTexture(AssetReference assetReference, ITexturePackFrame texturePackFrame = null)
+        {
+            var texture = new MonoGameTexture(GameContext, assetReference, texturePackFrame);
+            mAllTextures.Add(texture);
+            return texture;
+        }
 
         public override Pointf MeasureText(string text, IFont gameFont, float fontScale)
         {
@@ -890,8 +859,8 @@ namespace Intersect.Client.MonoGame.Graphics
             projection.M42 += -0.5f * projection.M22;
             BasicEffect.Projection = projection;
             BasicEffect.View = Matrix.CreateRotationZ(0f) *
-                                Matrix.CreateScale(new Vector3(1, 1, 1)) *
-                                Matrix.CreateTranslation(-view.X, -view.Y, 0);
+                               Matrix.CreateScale(new Vector3(1, 1, 1)) *
+                               Matrix.CreateTranslation(-view.X, -view.Y, 0);
 
             return;
         }

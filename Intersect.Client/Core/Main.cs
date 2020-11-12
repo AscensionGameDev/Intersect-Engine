@@ -120,7 +120,7 @@ namespace Intersect.Client.Core
         {
             if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
-                ITexture imageTex = GameContext.ContentManager.LoadTexture(
+                ITexture imageTex = GameContext.ContentManager.FindTexture(
                     TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
                 );
 
@@ -187,7 +187,7 @@ namespace Intersect.Client.Core
 
             if (!_loadedTilesets && Globals.HasGameData)
             {
-                GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                // GameContext.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
             }
 

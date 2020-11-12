@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Graphics
@@ -7,26 +8,23 @@ namespace Intersect.Client.Framework.Graphics
     public class GameTexturePackFrame : ITexturePackFrame
     {
         public GameTexturePackFrame(
-            string name,
+            AssetReference assetReference,
             Rectangle bounds,
             bool rotated,
             Rectangle sourceSpriteBounds,
             ITexture packedTexture
         )
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            Name = name.Replace('\\', '/');
+            Reference = assetReference;
             Bounds = bounds;
             IsRotated = rotated;
             SourceBounds = sourceSpriteBounds;
             PackedTexture = packedTexture;
         }
 
-        public string Name { get; }
+        public string Name => Reference.Name;
+
+        public AssetReference Reference { get; }
 
         public Rectangle Bounds { get; }
 

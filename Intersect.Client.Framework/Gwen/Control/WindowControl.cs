@@ -168,7 +168,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["ActiveImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["ActiveImage"]
                     ), (string) obj["ActiveImage"], ControlState.Active
                 );
@@ -177,7 +177,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["InactiveImage"] != null)
             {
                 SetImage(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["InactiveImage"]
                     ), (string) obj["InactiveImage"], ControlState.Inactive
                 );

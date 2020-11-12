@@ -66,10 +66,14 @@
     <Compile Include="Audio\IAudioInstance.cs" />
     <Compile Include="Audio\IAudioSource.cs" />
     <Compile Include="Content\AssetLookup.cs" />
+    <Compile Include="Content\AssetProvider.cs" />
+    <Compile Include="Content\AssetReference.cs" />
     <Compile Include="Content\AssetTypeAttribute.cs" />
     <Compile Include="Content\ContentType.cs" />
     <Compile Include="Content\ContentTypesExtensions.cs" />
+    <Compile Include="Content\EmbeddedAssetProvider.cs" />
     <Compile Include="Content\IAsset.cs" />
+    <Compile Include="Content\IAssetProvider.cs" />
     <Compile Include="Content\IContentManager.cs" />
     <Compile Include="Content\TextureType.cs" />
     <Compile Include="HasGameContext.cs" />

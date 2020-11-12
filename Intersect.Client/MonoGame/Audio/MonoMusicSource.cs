@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework;
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
@@ -17,8 +18,6 @@ namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoMusicSource : GameAudioSource
     {
-        private readonly string mAssetPath;
-
         public VorbisReader Reader { get; set; }
 
         public DynamicSoundEffectInstance Instance { get; set; }
@@ -29,12 +28,10 @@ namespace Intersect.Client.MonoGame.Audio
 
         private static MonoMusicSource mActiveSource;
 
-        public MonoMusicSource(IGameContext gameContext, string name, string assetPath) : base(
-            gameContext, name, AudioType.Music
+        public MonoMusicSource(IGameContext gameContext, AssetReference assetReference) : base(
+            gameContext, assetReference, AudioType.Music
         )
         {
-            mAssetPath = assetPath;
-
             if (mUnderlyingThread == null)
             {
                 mUnderlyingThread = new Thread(EnsureBuffersFilled)
@@ -53,37 +50,35 @@ namespace Intersect.Client.MonoGame.Audio
         {
             lock (mInstanceLock)
             {
-                if (!string.IsNullOrWhiteSpace(mAssetPath))
+                try
                 {
-                    try
+                    if (Reader == null)
                     {
-                        if (Reader == null)
-                        {
-                            Reader = new VorbisReader(mAssetPath);
-                        }
-
-                        if (Instance != null)
-                        {
-                            Instance.Dispose();
-                            Instance = null;
-                        }
-
-                        Instance = new DynamicSoundEffectInstance(
-                            Reader.SampleRate, Reader.Channels == 1 ? AudioChannels.Mono : AudioChannels.Stereo
-                        );
-
-                        mActiveSource = this;
-                        return Instance;
+                        var assetStream = GameContext.ContentManager.OpenRead(Reference);
+                        Reader = new VorbisReader(assetStream, true);
                     }
-                    catch (Exception exception)
+
+                    if (Instance != null)
                     {
-                        Log.Error($"Error loading '{mAssetPath}'.", exception);
-                        ChatboxMsg.AddMessage(
-                            new ChatboxMsg(
-                                Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
-                            )
-                        );
+                        Instance.Dispose();
+                        Instance = null;
                     }
+
+                    Instance = new DynamicSoundEffectInstance(
+                        Reader.SampleRate, Reader.Channels == 1 ? AudioChannels.Mono : AudioChannels.Stereo
+                    );
+
+                    mActiveSource = this;
+                    return Instance;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error($"Error loading '{Reference}'.", exception);
+                    ChatboxMsg.AddMessage(
+                        new ChatboxMsg(
+                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
+                        )
+                    );
                 }
             }
 

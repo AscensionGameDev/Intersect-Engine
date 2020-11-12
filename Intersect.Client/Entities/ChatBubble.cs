@@ -41,7 +41,7 @@ namespace Intersect.Client.Entities
             mOwner = owner;
             mSourceText = text;
             mRenderTimer = Globals.System.GetTimeMs() + 5000;
-            mBubbleTex = gameContext.ContentManager.LoadTexture(TextureType.Miscellaneous, "chatbubble.png");
+            mBubbleTex = gameContext.ContentManager.FindTexture(TextureType.Miscellaneous, "chatbubble.png");
         }
 
         public bool Update()

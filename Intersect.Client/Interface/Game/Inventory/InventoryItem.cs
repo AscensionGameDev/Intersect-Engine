@@ -258,7 +258,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = GameContext.ContentManager.LoadTexture(TextureType.Item, item.Icon);
+                    var itemTex = GameContext.ContentManager.FindTexture(TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.GameTexture = itemTex;

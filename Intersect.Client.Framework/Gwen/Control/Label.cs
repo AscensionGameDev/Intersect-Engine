@@ -123,8 +123,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public string FontName
         {
-            get => (mText?.Font).Name ?? "arial";
-            set => Font = GameContentManager.Current?.LoadFont(value, FontSize);
+            get => mText?.Font?.FontName ?? "arial";
+            set => Font = GameContentManager.Current?.FindFont(value, FontSize);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public int FontSize
         {
             get => mText?.Font?.Size ?? 12;
-            set => Font = GameContentManager.Current?.LoadFont(FontName, value);
+            set => Font = GameContentManager.Current?.FindFont(FontName, value);
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
-                    GameContentManager.Current.LoadTexture(
+                    GameContentManager.Current.FindTexture(
                         TextureType.Gui, (string) obj["BackgroundTemplate"]
                     ), (string) obj["BackgroundTemplate"]
                 );
@@ -281,7 +281,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var fontArr = ((string) obj["Font"]).Split(',');
                 fontInfo = (string) obj["Font"];
-                Font = GameContentManager.Current.LoadFont(fontArr[0], int.Parse(fontArr[1]));
+                Font = GameContentManager.Current.FindFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             if (obj["TextScale"] != null)
@@ -299,7 +299,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (gameTexture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                gameTexture = GameContentManager.Current?.LoadTexture(TextureType.Gui, fileName);
+                gameTexture = GameContentManager.Current?.FindTexture(TextureType.Gui, fileName);
             }
 
             mBackgroundTemplateFilename = fileName;
