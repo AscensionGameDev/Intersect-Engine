@@ -445,12 +445,19 @@
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
+    <Compile Include="Database\GameData\Migrations\20200329021500_Beta6.cs" />
+    <Compile Include="Database\GameData\Migrations\20201112213700_AddInitialDataMigrationHistory.cs" />
+    <Compile Include="Database\Migration\DataMigration.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
     <Compile Include="Database\Logging\RequestLog.cs" />
     <Compile Include="Database\MigrationBuilderExtensions.cs" />
+    <Compile Include="Database\Migration\DataMigrationAttribute.cs" />
+    <Compile Include="Database\Migration\DataMigrationHistory.cs" />
+    <Compile Include="Database\Migration\DataMigrationMetadata.cs" />
+    <Compile Include="Database\Migration\RequiresMigrationAttribute.cs" />
     <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Database\PlayerData\Ban.cs" />
     <Compile Include="Database\PlayerData\IPlayerContext.cs" />
@@ -507,6 +514,14 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20201112030147_AddDataMigrationHistory.cs" />
+    <Compile Include="Migrations\20201112030147_AddDataMigrationHistory.designer.cs">
+      <DependentUpon>20201112030147_AddDataMigrationHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20201112030046_AddDataMigrationHistory.cs" />
+    <Compile Include="Migrations\Game\20201112030046_AddDataMigrationHistory.designer.cs">
+      <DependentUpon>20201112030046_AddDataMigrationHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

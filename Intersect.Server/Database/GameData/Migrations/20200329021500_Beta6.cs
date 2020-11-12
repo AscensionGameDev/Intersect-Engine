@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
+using Intersect.Server.Database.Migration;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +13,20 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+
 namespace Intersect.Server.Database.GameData.Migrations
 {
-
-    public static class Beta6Migration
+    [DataMigration("20200329021500_Beta6")]
+    [RequiresMigration("20190611170819_CombiningSwitchesVariables")]
+    internal class Beta6 : DataMigration<GameContext>
     {
-
         private static readonly Ceras mCeras = new Ceras(false);
 
-        public static void Run(GameContext context)
+        public override bool Up(GameContext context)
         {
             RemoveByteBufferUsageFromMaps(context);
 
@@ -40,6 +41,8 @@ namespace Intersect.Server.Database.GameData.Migrations
             FixVariableCommandsAndConditions(context, "Resources", "HarvestingRequirements");
             FixVariableCommandsAndConditions(context, "Quests", "Requirements");
             FixVariableCommandsAndConditions(context, "Items", "UsageRequirements");
+
+            return true;
         }
 
         private static void FixVariableCommandsAndConditions(GameContext context, string table, string column)
@@ -156,6 +159,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 }
 
                                 break;
+
                             case "Intersect.GameObjects.Events.PlayerVariableCondition, Intersect Core":
                                 var newNode2 = ConvertPlayerVariableCondition(childObj);
                                 childObj.RemoveAll();
@@ -165,6 +169,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 }
 
                                 break;
+
                             case "Intersect.GameObjects.Events.PlayerSwitchCondition, Intersect Core":
                                 var newNode3 = ConvertPlayerSwitchCondition(childObj);
                                 childObj.RemoveAll();
@@ -174,6 +179,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 }
 
                                 break;
+
                             case "Intersect.GameObjects.Events.ServerVariableCondition, Intersect Core":
                                 var newNode4 = ConvertGlobalVariableCondition(childObj);
                                 childObj.RemoveAll();
@@ -183,6 +189,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 }
 
                                 break;
+
                             case "Intersect.GameObjects.Events.ServerSwitchCondition, Intersect Core":
                                 var newNode5 = ConvertGlobalSwitchCondition(childObj);
                                 childObj.RemoveAll();
@@ -192,6 +199,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                                 }
 
                                 break;
+
                             default:
                                 break;
                         }
@@ -268,10 +276,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(EventCommand),
-                new JsonSerializerSettings()
+                cmd, typeof(EventCommand), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -340,10 +348,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(EventCommand),
-                new JsonSerializerSettings()
+                cmd, typeof(EventCommand), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -382,10 +390,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(Condition),
-                new JsonSerializerSettings()
+                cmd, typeof(Condition), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -424,10 +432,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(Condition),
-                new JsonSerializerSettings()
+                cmd, typeof(Condition), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -493,10 +501,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(Condition),
-                new JsonSerializerSettings()
+                cmd, typeof(Condition), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -562,10 +570,10 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
 
             var newJson = JsonConvert.SerializeObject(
-                cmd, typeof(Condition),
-                new JsonSerializerSettings()
+                cmd, typeof(Condition), new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -593,8 +601,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                     var attributeData = (byte[]) reader["Attributes"];
                     var newAttributeData = mCeras.Compress(
                         JsonConvert.DeserializeObject<MapAttribute[,]>(
-                            System.Text.Encoding.UTF8.GetString(Decompress(attributeData)),
-                            new JsonSerializerSettings()
+                            System.Text.Encoding.UTF8.GetString(Decompress(attributeData)), new JsonSerializerSettings()
                             {
                                 TypeNameHandling = TypeNameHandling.Auto,
                                 DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
@@ -720,7 +727,5 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             return null;
         }
-
     }
-
 }

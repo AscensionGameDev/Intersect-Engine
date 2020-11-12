@@ -1,0 +1,67 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "mgfxc/3.8.0.1641": {
+        "dependencies": {
+          "CppNet": "1.0.0.0",
+          "SharpDX.D3DCompiler": "4.0.1.0",
+          "SharpDX": "4.0.1.0"
+        },
+        "runtime": {
+          "mgfxc.dll": {}
+        }
+      },
+      "CppNet/1.0.0.0": {
+        "runtime": {
+          "CppNet.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "SharpDX.D3DCompiler/4.0.1.0": {
+        "runtime": {
+          "SharpDX.D3DCompiler.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.0.1.0"
+          }
+        }
+      },
+      "SharpDX/4.0.1.0": {
+        "runtime": {
+          "SharpDX.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.0.1.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "mgfxc/3.8.0.1641": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CppNet/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SharpDX.D3DCompiler/4.0.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SharpDX/4.0.1.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
