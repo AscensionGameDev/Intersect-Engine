@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -438,6 +438,10 @@
     <Compile Include="Core\Services\ILogicService.cs" />
     <Compile Include="Database\ContextProvider.cs" />
     <Compile Include="Database\ContextProvider.Locking.cs" />
+    <Compile Include="Database\GameData\Migrations\20200329021500_Beta6.cs" />
+    <Compile Include="Database\GameData\Migrations\20201112213700_AddInitialDataMigrationHistory.cs" />
+    <Compile Include="Database\GameData\Migrations\20201112223800_Beta7AssetCorrection.cs" />
+    <Compile Include="Database\Migration\DataMigration.cs" />
     <Compile Include="Database\DbLogger.cs" />
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />
@@ -445,8 +449,6 @@
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
-    <Compile Include="Database\GameData\Migrations\20200329021500_Beta6.cs" />
-    <Compile Include="Database\GameData\Migrations\20201112213700_AddInitialDataMigrationHistory.cs" />
     <Compile Include="Database\Migration\DataMigration.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
