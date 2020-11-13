@@ -11,7 +11,7 @@ namespace Intersect.Server.Database.GameData.Migrations
     }
 
     [DataMigration("20201112213700_AddInitialDataMigrationHistory")]
-    [RequiresMigration("20201112030046_AddDataMigrationHistory")]
+    [RequiresMigration("20201112030046_AddDataMigrationHistory", MigrationType.Schema)]
     internal class AddInitialDataMigrationHistoryGameContext : AddInitialDataMigrationHistory<GameContext>
     {
         public override bool Up(GameContext context)
@@ -30,8 +30,9 @@ namespace Intersect.Server.Database.GameData.Migrations
     }
 
     [DataMigration("20201112213700_AddInitialDataMigrationHistory")]
-    [RequiresMigration("20201112030147_AddDataMigrationHistory")]
+    [RequiresMigration("20201112030147_AddDataMigrationHistory", MigrationType.Schema)]
     internal class AddInitialDataMigrationHistoryPlayerContext : AddInitialDataMigrationHistory<PlayerContext>
     {
+        public override bool Up(PlayerContext context) => true;
     }
 }

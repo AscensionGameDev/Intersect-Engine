@@ -136,16 +136,40 @@ namespace Intersect.Server.Database
         public ICollection<string> PendingMigrations =>
             Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
 
-        public ICollection<DataMigrationMetadata> PendingDataMigrations
+        public ICollection<string> AppliedSchemaMigrations =>
+            Database?.GetAppliedMigrations()?.ToList() ?? new List<string>();
+
+        public ICollection<string> AppliedDataMigrations =>
+            AppliedDataMigrationHistory.Select(history => history.Id).ToList();
+
+        public ICollection<DataMigrationHistory> AppliedDataMigrationHistory
         {
             get
             {
-                var allMigrationsForContext = DataMigrationMetadata.FindAvailableMigrations<TContext>();
+                try
+                {
+                    return __DataMigrationsHistory.ToList();
+                }
+                catch
+                {
+                    return new List<DataMigrationHistory>();
+                }
+            }
+        }
+
+        public ICollection<string> PendingDataMigrations =>
+            PendingDataMigrationMetadata.Select(metadata => metadata.Id).ToList();
+
+        public ICollection<DataMigrationMetadata> PendingDataMigrationMetadata
+        {
+            get
+            {
+                var allMigrationsForContext = AvailableDataMigrationMetadata;
 
                 try
                 {
                     return allMigrationsForContext.Where(
-                            availableMigration => __DataMigrationsHistory.Any(
+                            availableMigration => !__DataMigrationsHistory.Any(
                                 history => history.Id == availableMigration.DataMigrationAttribute.Id
                             )
                         )
@@ -157,6 +181,9 @@ namespace Intersect.Server.Database
                 }
             }
         }
+
+        public ICollection<DataMigrationMetadata> AvailableDataMigrationMetadata =>
+            DataMigrationMetadata.FindAvailableMigrations<TContext>();
 
         protected Intersect.Logging.Logger Logger { get; }
 
@@ -307,20 +334,31 @@ namespace Intersect.Server.Database
 
             context.OnMigrationsProcessed(processedSchemaMigrations);
 
-            var appliedMigrations = context.Database.GetAppliedMigrations();
-            var availableMigrations = DataMigrationMetadata.FindAvailableMigrations<TContext>();
+            var appliedDataMigrations = context.AppliedDataMigrations;
+            var appliedSchemaMigrations = context.Database.GetAppliedMigrations().ToList();
 
-            var applicableDataMigrations = pendingDataMigrations.Where(
-                    metadata =>
-                    {
-                        var ids = metadata.RequiresMigrationAttributes.Select(migration => migration.Id);
-                        return ids.Any(processedSchemaMigrations.Contains) && ids.All(appliedMigrations.Contains);
-                    }
+            var orderedPendingDataMigrations =
+                pendingDataMigrations.OrderBy(metadata => metadata.DataMigrationAttribute.Id);
+
+            var applicableDataMigrations = orderedPendingDataMigrations
+                .Where(
+                    (metadata, index) => !metadata.DataMigrationAttribute.Skippable ||
+                                         metadata.CanPerformMigration(
+                                             processedSchemaMigrations, appliedSchemaMigrations,
+                                             new List<string>(appliedDataMigrations).Concat(
+                                                 orderedPendingDataMigrations.Take(index)
+                                                     .Select(migration => migration.Id)
+                                             )
+                                         )
                 )
-                .OrderBy(metadata => metadata.DataMigrationAttribute.Id)
+                .TakeWhile(
+                    metadata => metadata.CanPerformMigration(
+                        processedSchemaMigrations, appliedSchemaMigrations, appliedDataMigrations
+                    )
+                )
                 .ToList();
 
-            var appliedDataMigrations = applicableDataMigrations.TakeWhile(
+            var newlyAppliedDataMigrations = applicableDataMigrations.TakeWhile(
                     pendingDataMigration =>
                     {
                         if (!(Activator.CreateInstance(pendingDataMigration.Type) is DataMigration<TContext> instance))
@@ -340,7 +378,7 @@ namespace Intersect.Server.Database
                 )
                 .ToList();
 
-            var appliedDataMigrationHistory = appliedDataMigrations.Select(
+            var appliedDataMigrationHistory = newlyAppliedDataMigrations.Select(
                     appliedDataMigration => appliedDataMigration.CreateHistory<TContext>()
                 )
                 .ToList();

@@ -20,8 +20,8 @@ using System.IO.Compression;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
-    [DataMigration("20200329021500_Beta6")]
-    [RequiresMigration("20190611170819_CombiningSwitchesVariables")]
+    [DataMigration("20200329021500_Beta6", Skippable = true)]
+    [RequiresMigration("20190611170819_CombiningSwitchesVariables", MigrationType.Schema)]
     internal class Beta6 : DataMigration<GameContext>
     {
         private static readonly Ceras mCeras = new Ceras(false);

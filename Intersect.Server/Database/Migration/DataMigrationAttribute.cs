@@ -21,5 +21,10 @@ namespace Intersect.Server.Database.Migration
         /// The migration identifier.
         /// </summary>
         public string Id { get; }
+
+        /// <summary>
+        /// If the migration can be skipped.
+        /// </summary>
+        public bool Skippable { get; set; } = false;
     }
 }

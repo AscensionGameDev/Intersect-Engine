@@ -209,13 +209,13 @@ namespace Intersect.Server.Database
             }
 
             var pendingGameSchemaMigrations = sGameDb.PendingMigrations;
-            var pendingGameDataMigrations = sGameDb.PendingDataMigrations;
+            var pendingGameDataMigrations = sGameDb.PendingDataMigrationMetadata;
             var showGameMigrationWarning = (pendingGameSchemaMigrations.Any() &&
                                             !pendingGameSchemaMigrations.Contains("20180905042857_Initial")) ||
                                            pendingGameDataMigrations.Any();
 
             var pendingPlayerSchemaMigrations = sPlayerDb.PendingMigrations;
-            var pendingPlayerDataMigrations = sPlayerDb.PendingDataMigrations;
+            var pendingPlayerDataMigrations = sPlayerDb.PendingDataMigrationMetadata;
             var showPlayerMigrationWarning =
                 (pendingPlayerSchemaMigrations.Any() &&
                  !pendingPlayerSchemaMigrations.Contains("20180927161502_InitialPlayerDb")) ||
