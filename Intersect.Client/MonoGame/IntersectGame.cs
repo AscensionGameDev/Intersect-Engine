@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+using Intersect.Client.MonoGame.Debugging;
+
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 
 namespace Intersect.Client.MonoGame
@@ -65,8 +67,15 @@ namespace Intersect.Client.MonoGame
 
         private MonoGameContext GameContext => Context.GameContext as MonoGameContext;
 
+        private HarmonyDebugger HarmonyDebugger { get; }
+
         private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
+#if DEBUG
+            HarmonyDebugger = new HarmonyDebugger(context.Logger);
+            HarmonyDebugger.Start();
+#endif
+
             Context = context;
             PostStartupAction = postStartupAction;
 
@@ -483,6 +492,8 @@ namespace Intersect.Client.MonoGame
 
         protected override void Dispose(bool disposing)
         {
+            HarmonyDebugger?.Stop();
+
             base.Dispose(disposing);
 
             if (!disposing)

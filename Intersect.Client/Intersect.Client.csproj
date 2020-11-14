@@ -120,6 +120,8 @@
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
     <Compile Include="MonoGame\Content\FileSystemAssetProvider.cs" />
+    <Compile Include="MonoGame\Debugging\HarmonyDebugger.cs" />
+    <Compile Include="MonoGame\Debugging\Patches\DynamicSoundEffectInstancePatches.cs" />
     <Compile Include="MonoGame\Extensions\TypeConversionExtensions.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
     <Compile Include="MonoGame\Input\MonoClipboard.cs" />
@@ -211,6 +213,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.0.4\lib\net45\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
