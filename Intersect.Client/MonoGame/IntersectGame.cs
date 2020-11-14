@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+using HarmonyLib;
+
 using Intersect.Client.MonoGame.Debugging;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
@@ -67,10 +69,15 @@ namespace Intersect.Client.MonoGame
 
         private MonoGameContext GameContext => Context.GameContext as MonoGameContext;
 
+        private Harmony Harmony { get; }
+
         private HarmonyDebugger HarmonyDebugger { get; }
 
         private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
+            Harmony = new Harmony(typeof(IntersectGame).FullName);
+            Harmony.PatchAll();
+
 #if DEBUG
             HarmonyDebugger = new HarmonyDebugger(context.Logger);
             HarmonyDebugger.Start();

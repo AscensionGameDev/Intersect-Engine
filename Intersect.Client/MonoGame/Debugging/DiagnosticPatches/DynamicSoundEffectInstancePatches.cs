@@ -1,17 +1,15 @@
-﻿using System;
-
+﻿#if INTERSECT_DIAGNOSTIC
 using HarmonyLib;
-
-using Microsoft.Xna.Framework.Audio;
-
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 using Intersect.Logging;
 
-namespace Intersect.Client.MonoGame.Debugging.Patches
+using Microsoft.Xna.Framework.Audio;
+
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+namespace Intersect.Client.MonoGame.Debugging.DiagnosticPatches
 {
     internal static class DynamicSoundEffectInstancePatches
     {
@@ -23,23 +21,32 @@ namespace Intersect.Client.MonoGame.Debugging.Patches
 
             public int QueuedBuffers { get; set; }
 
-            public override string ToString() => $"{{ \"Name\": \"{Name}\", \"ALBuffers\": {ALBuffers}, \"QueuedBuffers\": {QueuedBuffers} }}";
+            public override string ToString() =>
+                $"{{ \"Name\": \"{Name}\", \"ALBuffers\": {ALBuffers}, \"QueuedBuffers\": {QueuedBuffers} }}";
         }
 
         internal static Queue<Metric> Metrics = new Queue<Metric>();
+
+        private static object CollectionLock { get; } = new object();
 
         private static Type type_AL { get; }
 
         private static Type type_ALGetSourcei { get; }
 
         private static FieldInfo info_DynamicSoundEffectInstance__format { get; }
+
         private static FieldInfo info_DynamicSoundEffectInstance__queuedBuffers { get; }
 
         private static FieldInfo info_ALGetSourcei_BuffersProcessed { get; }
+
         private static FieldInfo info_AL_GetSource { get; }
+
         private static FieldInfo info_DynamicSoundEffectInstance_SourceId { get; }
 
+        private static PropertyInfo info_DynamicSoundEffectInstance__queuedBuffers_Count { get; }
+
         private static MulticastDelegate field_AL_GetSource { get; }
+
         private static object field_ALGetSourcei_BuffersProcessed { get; }
 
         static DynamicSoundEffectInstancePatches()
@@ -48,7 +55,14 @@ namespace Intersect.Client.MonoGame.Debugging.Patches
             type_ALGetSourcei = AccessTools.TypeByName("ALGetSourcei");
 
             info_DynamicSoundEffectInstance__format = AccessTools.Field(typeof(DynamicSoundEffectInstance), "_format");
-            info_DynamicSoundEffectInstance__queuedBuffers = AccessTools.Field(typeof(DynamicSoundEffectInstance), "_queuedBuffers");
+            info_DynamicSoundEffectInstance__queuedBuffers = AccessTools.Field(
+                typeof(DynamicSoundEffectInstance), "_queuedBuffers"
+            );
+
+            info_DynamicSoundEffectInstance__queuedBuffers_Count = AccessTools.Property(
+                info_DynamicSoundEffectInstance__queuedBuffers.FieldType, "Count"
+            );
+
             info_ALGetSourcei_BuffersProcessed = AccessTools.Field(type_ALGetSourcei, "BuffersProcessed");
             info_AL_GetSource = AccessTools.Field(type_AL, "GetSource");
             info_DynamicSoundEffectInstance_SourceId = AccessTools.Field(typeof(SoundEffectInstance), "SourceId");
@@ -59,25 +73,30 @@ namespace Intersect.Client.MonoGame.Debugging.Patches
 
         internal abstract class MetricsCollector<TPatch> where TPatch : MetricsCollector<TPatch>
         {
-            private static string Name => $"{nameof(DynamicSoundEffectInstance)}.{typeof(TPatch).Name}";
+            private static string Name { get; } = $"{nameof(DynamicSoundEffectInstance)}.{typeof(TPatch).Name}";
 
             protected static void Collect(DynamicSoundEffectInstance __instance, string subkey)
             {
-                var queuedBuffersEnumerable = info_DynamicSoundEffectInstance__queuedBuffers.GetValue(__instance) as IEnumerable;
-
-                var queuedBuffers = queuedBuffersEnumerable?.Cast<object>()?.ToList();
-                Metrics.Enqueue(
-                    new Metric
-                    {
-                        Name = $"{Name}_{subkey}",
-                        ALBuffers = GetALBufferCount(__instance),
-                        QueuedBuffers = queuedBuffers?.Count ?? int.MinValue
-                    }
-                );
-
-                if (Metrics.Count > 50)
+                lock (CollectionLock)
                 {
-                    Metrics.Dequeue();
+                    var queuedBuffers = info_DynamicSoundEffectInstance__queuedBuffers.GetValue(__instance);
+                    var queuedBuffersCount = queuedBuffers == null
+                        ? int.MinValue
+                        : (int) info_DynamicSoundEffectInstance__queuedBuffers_Count.GetValue(queuedBuffers);
+
+                    Metrics.Enqueue(
+                        new Metric
+                        {
+                            Name = $"{Name}_{subkey}",
+                            ALBuffers = GetALBufferCount(__instance),
+                            QueuedBuffers = queuedBuffersCount
+                        }
+                    );
+
+                    if (Metrics.Count > 100)
+                    {
+                        Metrics.Dequeue();
+                    }
                 }
             }
 
@@ -164,3 +183,4 @@ namespace Intersect.Client.MonoGame.Debugging.Patches
         }
     }
 }
+#endif

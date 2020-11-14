@@ -121,7 +121,7 @@
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
     <Compile Include="MonoGame\Content\FileSystemAssetProvider.cs" />
     <Compile Include="MonoGame\Debugging\HarmonyDebugger.cs" />
-    <Compile Include="MonoGame\Debugging\Patches\DynamicSoundEffectInstancePatches.cs" />
+    <Compile Include="MonoGame\Debugging\DiagnosticPatches\DynamicSoundEffectInstancePatches.cs" />
     <Compile Include="MonoGame\Extensions\TypeConversionExtensions.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
     <Compile Include="MonoGame\Input\MonoClipboard.cs" />
@@ -150,6 +150,7 @@
     <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
     <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
+    <Compile Include="MonoGame\Audio\DynamicSoundEffectInstance.Patch.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicSource.cs" />
     <Compile Include="MonoGame\Audio\MonoSoundInstance.cs" />
@@ -282,11 +283,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
       <Link>Resources\libopenal.so.1</Link>
-      <!-- <LogicalName>libopenal</LogicalName> -->
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
       <Link>Resources\libSDL2-2.0.so.0</Link>
-      <!-- <LogicalName>libSDL2</LogicalName> -->
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
