@@ -23,7 +23,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             cmbFace.Items.Clear();
-            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
+            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Face));
             if (cmbFace.Items.IndexOf(mMyCommand.Face) > -1)
             {
                 cmbFace.SelectedIndex = cmbFace.Items.IndexOf(mMyCommand.Face);
@@ -50,9 +50,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             var destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             var g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.Black);
-            if (File.Exists("resources/faces/" + cmbFace.Text))
+            if (GameContentManager.TryOpenImage(TextureType.Face, cmbFace.Text, out var sourceBitmap))
             {
-                var sourceBitmap = new Bitmap("resources/faces/" + cmbFace.Text);
                 g.DrawImage(
                     sourceBitmap,
                     new Rectangle(

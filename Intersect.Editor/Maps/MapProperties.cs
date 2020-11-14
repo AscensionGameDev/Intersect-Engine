@@ -336,7 +336,7 @@ namespace Intersect.Editor.Maps
                     Strings.General.none
                 };
 
-                fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
+                fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Fog));
                 if (fogList.IndexOf(mMyMap.Fog) <= -1)
                 {
                     mMyMap.Fog = null;
@@ -505,7 +505,7 @@ namespace Intersect.Editor.Maps
                     Strings.General.none
                 };
 
-                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Image));
                 if (imageList.IndexOf(mMyMap.Panorama) <= -1)
                 {
                     mMyMap.Panorama = null;
@@ -535,7 +535,7 @@ namespace Intersect.Editor.Maps
                     Strings.General.none
                 };
 
-                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+                imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Image));
                 if (imageList.IndexOf(mMyMap.OverlayGraphic) <= -1)
                 {
                     mMyMap.OverlayGraphic = null;
@@ -639,7 +639,7 @@ namespace Intersect.Editor.Maps
                 Strings.General.none
             };
 
-            fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
+            fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Fog));
 
             return new StandardValuesCollection(fogList.ToArray());
         }
@@ -669,7 +669,7 @@ namespace Intersect.Editor.Maps
                 Strings.General.none
             };
 
-            imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
+            imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Image));
 
             return new StandardValuesCollection(imageList.ToArray());
         }

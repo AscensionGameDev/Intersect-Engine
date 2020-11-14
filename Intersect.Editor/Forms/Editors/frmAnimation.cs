@@ -112,14 +112,14 @@ namespace Intersect.Editor.Forms.Editors
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add(Strings.General.none);
             cmbLowerGraphic.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Animation)
             );
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add(Strings.General.none);
             cmbUpperGraphic.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Animation)
             );
 
             mLowerWindow = new SwapChainRenderTarget(
@@ -383,7 +383,7 @@ namespace Intersect.Editor.Forms.Editors
             graphicsDevice.SetRenderTarget(mLowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             var animTexture = GameContentManager.GetTexture(
-                GameContentManager.TextureType.Animation, cmbLowerGraphic.Text
+                TextureType.Animation, cmbLowerGraphic.Text
             );
 
             if (animTexture != null)
@@ -447,7 +447,7 @@ namespace Intersect.Editor.Forms.Editors
             graphicsDevice.SetRenderTarget(mUpperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             var animTexture = GameContentManager.GetTexture(
-                GameContentManager.TextureType.Animation, cmbUpperGraphic.Text
+                TextureType.Animation, cmbUpperGraphic.Text
             );
 
             if (animTexture != null)

@@ -22,36 +22,6 @@ namespace Intersect.Editor.Content
 
     public static class GameContentManager
     {
-
-        public enum TextureType
-        {
-
-            Tileset = 0,
-
-            Item,
-
-            Entity,
-
-            Spell,
-
-            Animation,
-
-            Face,
-
-            Image,
-
-            Fog,
-
-            Resource,
-
-            Paperdoll,
-
-            Gui,
-
-            Misc,
-
-        }
-
         //Game Content
         [NotNull] public static List<Texture> AllTextures { get; } = new List<Texture>();
 
@@ -94,11 +64,11 @@ namespace Intersect.Editor.Content
 
         public static List<Texture> TilesetTextures = new List<Texture>();
 
-        public static string[] MusicNames => sMusicDict?.Keys.ToArray();
+        public static string[] MusicNames => sMusicDict?.Keys.Select(key => key.Replace(".ogg", "")).ToArray();
 
         public static string[] SmartSortedMusicNames => SmartSort(MusicNames);
 
-        public static string[] SoundNames => sSoundDict?.Keys.ToArray();
+        public static string[] SoundNames => sSoundDict?.Keys.Select(key => key.Replace(".wav", "")).ToArray();
 
         public static string[] SmartSortedSoundNames => SmartSort(SoundNames);
 
@@ -242,12 +212,14 @@ namespace Intersect.Editor.Content
 
                     if (!tilesetWarning)
                     {
-                        using (var img = Image.FromFile("resources/tilesets/" + tileset.Name))
+                        if (TryOpenImage(TextureType.Tileset, tileset.Name, out var image))
                         {
-                            if (img.Width > 2048 || img.Height > 2048)
+                            if (image.Width > 2048 || image.Height > 2048)
                             {
                                 badTilesets.Add(tileset.Name);
                             }
+
+                            image.Dispose();
                         }
                     }
                 }
@@ -455,13 +427,8 @@ namespace Intersect.Editor.Content
                 return null;
             }
 
-            if (textureDict == sTilesetDict
-            ) //When assigning name in tilebase base we force it to be lowercase.. so lets save some processing time here..
-            {
-                return textureDict.TryGetValue(name, out var texture1) ? texture1.GetTexture() : null;
-            }
-
-            return textureDict.TryGetValue(name.ToLower(), out var texture) ? texture.GetTexture() : null;
+            var assetKey = EnsureExtension(name.ToLower(), "png");
+            return textureDict.TryGetValue(assetKey, out var texture) ? texture.GetTexture() : null;
         }
 
         public static Effect GetShader(string name)
@@ -495,7 +462,8 @@ namespace Intersect.Editor.Content
                 return null;
             }
 
-            return sMusicDict.TryGetValue(name.ToLower(), out var music) ? music : null;
+            var assetKey = EnsureExtension(name.ToLower(), "ogg");
+            return sMusicDict.TryGetValue(assetKey, out var music) ? music : null;
         }
 
         public static object GetSound(string name)
@@ -512,13 +480,11 @@ namespace Intersect.Editor.Content
                 return null;
             }
 
-            return sSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound : null;
+            var assetKey = EnsureExtension(name.ToLower(), "wav");
+            return sSoundDict.TryGetValue(assetKey, out var sound) ? sound : null;
         }
 
-        public static string[] GetSmartSortedTextureNames(TextureType type)
-        {
-            return SmartSort(GetTextureNames(type));
-        }
+        public static string[] GetSmartSortedTextureNames(TextureType type) => SmartSort(GetTextureNames(type)).Select(name => name.Replace(".png", "")).ToArray();
 
         //Getting Filenames
         public static string[] GetTextureNames(TextureType type)
@@ -594,6 +560,103 @@ namespace Intersect.Editor.Content
 
             return sortedStrings;
         }
+
+        public static string GetDirectory(this TextureType textureType)
+        {
+            switch (textureType)
+            {
+                case TextureType.Animation:
+                    return "animations";
+
+                case TextureType.Entity:
+                    return "entities";
+
+                case TextureType.Face:
+                    return "faces";
+
+                case TextureType.Fog:
+                    return "fogs";
+
+                case TextureType.Image:
+                    return "images";
+
+                case TextureType.Gui:
+                    return "gui";
+
+                case TextureType.Item:
+                    return "items";
+
+                case TextureType.Misc:
+                    return "misc";
+
+                case TextureType.Paperdoll:
+                    return "paperdolls";
+
+                case TextureType.Resource:
+                    return "resources";
+
+                case TextureType.Spell:
+                    return "spells";
+
+                case TextureType.Tileset:
+                    return "tilesets";
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(textureType), textureType, null);
+            }
+        }
+
+        public static string EnsureExtension(string name, string extension) =>
+            (name?.EndsWith($".{extension}", StringComparison.OrdinalIgnoreCase) ?? true) ? name : $"{name}.{extension}";
+
+        public static bool TryGetTexture2D(TextureType textureType, string name, out Texture2D texture)
+        {
+            texture = GetTexture(textureType, name);
+            return texture != null;
+        }
+
+        public static bool TryOpenImage(TextureType textureType, string name, out Image image)
+        {
+            image = default;
+
+            var path = Path.Combine("resources", textureType.GetDirectory(), EnsureExtension(name, "png"));
+            if (!File.Exists(path))
+            {
+                return false;
+            }
+
+            image = Image.FromFile(path);
+            return true;
+        }
+
+    }
+
+    public enum TextureType
+    {
+
+        Tileset = 0,
+
+        Item,
+
+        Entity,
+
+        Spell,
+
+        Animation,
+
+        Face,
+
+        Image,
+
+        Fog,
+
+        Resource,
+
+        Paperdoll,
+
+        Gui,
+
+        Misc,
 
     }
 

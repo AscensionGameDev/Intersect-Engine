@@ -411,7 +411,7 @@ namespace Intersect.Editor.Core
 
         private static void DrawTransparentBorders(int gridX, int gridY)
         {
-            var transTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "transtile.png");
+            var transTex = GameContentManager.GetTexture(TextureType.Misc, "transtile.png");
             if (transTex == null)
             {
                 return;
@@ -808,7 +808,7 @@ namespace Intersect.Editor.Core
                                 }
 
                                 var tilesetTex = GameContentManager.GetTexture(
-                                    GameContentManager.TextureType.Tileset, tilesetObj.Name
+                                    TextureType.Tileset, tilesetObj.Name
                                 );
 
                                 if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Autotile == null)
@@ -948,7 +948,7 @@ namespace Intersect.Editor.Core
                                 if (tmpMap.Attributes[x, y].Type > 0)
                                 {
                                     var attributesTex = GameContentManager.GetTexture(
-                                        GameContentManager.TextureType.Misc, "attributes.png"
+                                        TextureType.Misc, "attributes.png"
                                     );
 
                                     if (attributesTex != null)
@@ -986,7 +986,7 @@ namespace Intersect.Editor.Core
                             }
 
                             var eventTex = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Misc, "eventicon.png"
+                                TextureType.Misc, "eventicon.png"
                             );
 
                             if (eventTex != null)
@@ -1009,7 +1009,7 @@ namespace Intersect.Editor.Core
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
                             var spawnTex = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Misc, "spawnicon.png"
+                                TextureType.Misc, "spawnicon.png"
                             );
 
                             if (spawnTex != null)
@@ -1218,7 +1218,7 @@ namespace Intersect.Editor.Core
             if (Globals.CurrentTileset != null)
             {
                 var tilesetTex = GameContentManager.GetTexture(
-                    GameContentManager.TextureType.Tileset, Globals.CurrentTileset.Name
+                    TextureType.Tileset, Globals.CurrentTileset.Name
                 );
 
                 if (tilesetTex != null)
@@ -1396,7 +1396,7 @@ namespace Intersect.Editor.Core
                         if (resource.Initial.GraphicFromTileset)
                         {
                             var res = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Tileset, resource.Initial.Graphic
+                                TextureType.Tileset, resource.Initial.Graphic
                             );
 
                             if (res == null)
@@ -1426,7 +1426,7 @@ namespace Intersect.Editor.Core
                         else
                         {
                             var res = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Resource, resource.Initial.Graphic
+                                TextureType.Resource, resource.Initial.Graphic
                             );
 
                             if (res == null)
@@ -1569,7 +1569,7 @@ namespace Intersect.Editor.Core
                     {
                         case EventGraphicType.Sprite: //Sprite
                             eventTex = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Entity, tmpGraphic.Filename
+                                TextureType.Entity, tmpGraphic.Filename
                             );
                             if (eventTex == null)
                             {
@@ -1584,7 +1584,7 @@ namespace Intersect.Editor.Core
                             break;
                         case EventGraphicType.Tileset: //Tile
                             eventTex = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Tileset, tmpGraphic.Filename
+                                TextureType.Tileset, tmpGraphic.Filename
                             );
                             if (eventTex == null)
                             {
@@ -1848,7 +1848,7 @@ namespace Intersect.Editor.Core
                 return;
             }
 
-            var fogTex = GameContentManager.GetTexture(GameContentManager.TextureType.Fog, Globals.CurrentMap.Fog);
+            var fogTex = GameContentManager.GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
             if (fogTex == null)
             {
                 return;
@@ -2051,7 +2051,7 @@ namespace Intersect.Editor.Core
                         }
 
                         var lightTex = GameContentManager.GetTexture(
-                            GameContentManager.TextureType.Misc, "lighticon.png"
+                            TextureType.Misc, "lighticon.png"
                         );
 
                         if (lightTex != null)

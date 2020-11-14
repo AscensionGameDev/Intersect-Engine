@@ -17,10 +17,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
-
     public partial class FrmClass : EditorForm
     {
-
         private List<ClassBase> mChanged = new List<ClassBase>();
 
         private string mCopiedItem;
@@ -278,13 +276,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
-            cmbSprite.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
-            );
+            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Entity));
 
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.General.none);
-            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
+            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Face));
             cmbSpawnItem.Items.Clear();
             cmbSpawnItem.Items.Add(Strings.General.none);
             cmbSpawnItem.Items.AddRange(ItemBase.Names);
@@ -721,15 +717,21 @@ namespace Intersect.Editor.Forms.Editors
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
-                if (File.Exists("resources/entities/" + cmbSprite.Text))
+                if (GameContentManager.TryOpenImage(TextureType.Entity, cmbSprite.Text, out var image))
                 {
-                    var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
                     gfx.DrawImage(
-                        img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
-                        new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
+                        image,
+                        new Rectangle(
+                            0, 0, image.Width / Options.Instance.Sprites.NormalFrames,
+                            image.Height / Options.Instance.Sprites.Directions
+                        ),
+                        new Rectangle(
+                            0, 0, image.Width / Options.Instance.Sprites.NormalFrames,
+                            image.Height / Options.Instance.Sprites.Directions
+                        ), GraphicsUnit.Pixel
                     );
 
-                    img.Dispose();
+                    image.Dispose();
                 }
             }
 
@@ -741,9 +743,8 @@ namespace Intersect.Editor.Forms.Editors
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbFace.SelectedIndex > 0)
             {
-                if (File.Exists("resources/faces/" + cmbFace.Text))
+                if (GameContentManager.TryOpenImage(TextureType.Face, cmbFace.Text, out var img))
                 {
-                    var img = Image.FromFile("resources/faces/" + cmbFace.Text);
                     gfx.DrawImage(
                         img, new Rectangle(0, 0, img.Width, img.Height), new Rectangle(0, 0, img.Width, img.Height),
                         GraphicsUnit.Pixel
@@ -1692,7 +1693,5 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
-
 }

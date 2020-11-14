@@ -30,25 +30,33 @@ namespace Intersect.Editor.Content
             GameContentManager.AllTextures.Add(this);
         }
 
-        public void LoadTexture()
+        public bool CheckCanLoad()
         {
-            mLoadError = true;
             if (string.IsNullOrWhiteSpace(mPath))
             {
                 Log.Error("Invalid texture path (empty/null).");
+                return false;
+            }
 
+            var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
+            if (!File.Exists(mPath))
+            {
+                Log.Error($"Texture does not exist: {relativePath}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public void LoadTexture()
+        {
+            mLoadError = true;
+            if (!CheckCanLoad())
+            {
                 return;
             }
 
             var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
-
-            if (!File.Exists(mPath))
-            {
-                Log.Error($"Texture does not exist: {relativePath}");
-
-                return;
-            }
-
             using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 try

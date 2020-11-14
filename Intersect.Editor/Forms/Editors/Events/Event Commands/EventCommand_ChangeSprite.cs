@@ -25,7 +25,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitLocalization();
             cmbSprite.Items.Clear();
             cmbSprite.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Entity)
             );
 
             if (cmbSprite.Items.IndexOf(mMyCommand.Sprite) > -1)
@@ -53,9 +53,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             var destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             var g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.Black);
-            if (File.Exists("resources/entities/" + cmbSprite.Text))
+            if (GameContentManager.TryOpenImage(TextureType.Entity, cmbSprite.Text, out var sourceBitmap))
             {
-                var sourceBitmap = new Bitmap("resources/entities/" + cmbSprite.Text);
                 g.DrawImage(
                     sourceBitmap,
                     new Rectangle(

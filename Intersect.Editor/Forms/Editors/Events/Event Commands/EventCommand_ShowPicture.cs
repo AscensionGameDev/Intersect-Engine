@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             cmbPicture.Items.Clear();
             cmbPicture.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image)
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Image)
             );
 
             if (cmbPicture.Items.IndexOf(mMyCommand.File) > -1)

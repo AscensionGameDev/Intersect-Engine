@@ -16,10 +16,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
-
     public partial class FrmNpc : EditorForm
     {
-
         private List<NpcBase> mChanged = new List<NpcBase>();
 
         private string mCopiedItem;
@@ -82,9 +80,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
-            cmbSprite.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
-            );
+            cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Entity));
 
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(SpellBase.Names);
@@ -367,13 +363,22 @@ namespace Intersect.Editor.Forms.Editors
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
-                var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
-                gfx.DrawImage(
-                    img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
-                    new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
-                );
+                if (GameContentManager.TryOpenImage(TextureType.Entity, cmbSprite.Text, out var img))
+                {
+                    gfx.DrawImage(
+                        img,
+                        new Rectangle(
+                            0, 0, img.Width / Options.Instance.Sprites.NormalFrames,
+                            img.Height / Options.Instance.Sprites.Directions
+                        ),
+                        new Rectangle(
+                            0, 0, img.Width / Options.Instance.Sprites.NormalFrames,
+                            img.Height / Options.Instance.Sprites.Directions
+                        ), GraphicsUnit.Pixel
+                    );
 
-                img.Dispose();
+                    img.Dispose();
+                }
             }
 
             gfx.Dispose();
@@ -1111,7 +1116,5 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
-
 }

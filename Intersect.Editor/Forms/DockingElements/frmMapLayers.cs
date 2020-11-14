@@ -240,16 +240,10 @@ namespace Intersect.Editor.Forms.DockingElements
             var tilesetList = new List<string>();
             tilesetList.AddRange(TilesetBase.Names);
             tilesetList.Sort(new AlphanumComparatorFast());
-            foreach (var filename in tilesetList)
-            {
-                if (File.Exists("resources/tilesets/" + filename))
-                {
-                    Globals.MapLayersWindow.cmbTilesets.Items.Add(filename);
-                }
-                else
-                {
-                }
-            }
+            Globals.MapLayersWindow.cmbTilesets.Items.AddRange(
+                tilesetList.Where(filename => File.Exists("resources/tilesets/" + filename))
+                    .Select(filename => filename.Replace(".png", "")).ToArray()
+            );
 
             if (TilesetBase.Lookup.Count > 0)
             {
@@ -284,19 +278,14 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (tSet != null)
             {
-                if (File.Exists("resources/tilesets/" + tSet.Name))
+                if (GameContentManager.TryGetTexture2D(TextureType.Tileset, tSet.Name, out var tilesetTexture))
                 {
                     picTileset.Show();
                     Globals.CurrentTileset = tSet;
                     Globals.CurSelX = 0;
                     Globals.CurSelY = 0;
-                    var tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, tSet.Name);
-                    if (tilesetTex != null)
-                    {
-                        picTileset.Width = tilesetTex.Width;
-                        picTileset.Height = tilesetTex.Height;
-                    }
-
+                    picTileset.Width = tilesetTexture.Width;
+                    picTileset.Height = tilesetTexture.Height;
                     cmbTilesets.SelectedItem = name;
                     CreateSwapChain();
                 }

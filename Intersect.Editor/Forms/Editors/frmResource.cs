@@ -29,13 +29,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private Bitmap mEndBitmap;
 
-        private Bitmap mEndGraphic;
+        private Image mEndGraphic;
 
         private List<string> mExpandedFolders = new List<string>();
 
         private Bitmap mInitialBitmap;
 
-        private Bitmap mInitialGraphic;
+        private Image mInitialGraphic;
 
         private List<string> mKnownFolders = new List<string>();
 
@@ -111,10 +111,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbInitialSprite.Items.Clear();
             cmbInitialSprite.Items.Add(Strings.General.none);
-            var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
+            var resources = GameContentManager.GetSmartSortedTextureNames(TextureType.Resource);
             if (mEditorItem.Initial.GraphicFromTileset)
             {
-                resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tileset);
+                resources = GameContentManager.GetSmartSortedTextureNames(TextureType.Tileset);
             }
 
             for (var i = 0; i < resources.Length; i++)
@@ -141,10 +141,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             cmbEndSprite.Items.Clear();
             cmbEndSprite.Items.Add(Strings.General.none);
-            var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
+            var resources = GameContentManager.GetSmartSortedTextureNames(TextureType.Resource);
             if (mEditorItem.Exhausted.GraphicFromTileset)
             {
-                resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tileset);
+                resources = GameContentManager.GetSmartSortedTextureNames(TextureType.Tileset);
             }
 
             for (var i = 0; i < resources.Length; i++)
@@ -326,14 +326,9 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 mEditorItem.Initial.Graphic = cmbInitialSprite.Text;
-                var graphic = Path.Combine(
-                    "resources", mEditorItem.Initial.GraphicFromTileset ? "tilesets" : "resources",
-                    cmbInitialSprite.Text
-                );
-
-                if (File.Exists(graphic))
+                if (GameContentManager.TryOpenImage(mEditorItem.Initial.GraphicFromTileset ? TextureType.Tileset : TextureType.Resource, cmbInitialSprite.Text, out var image))
                 {
-                    mInitialGraphic = (Bitmap) Image.FromFile(graphic);
+                    mInitialGraphic = image;
                     picInitialResource.Width = mInitialGraphic.Width;
                     picInitialResource.Height = mInitialGraphic.Height;
                     mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -355,13 +350,9 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 mEditorItem.Exhausted.Graphic = cmbEndSprite.Text;
-                var graphic = Path.Combine(
-                    "resources", mEditorItem.Exhausted.GraphicFromTileset ? "tilesets" : "resources", cmbEndSprite.Text
-                );
-
-                if (File.Exists(graphic))
+                if (GameContentManager.TryOpenImage(mEditorItem.Initial.GraphicFromTileset ? TextureType.Tileset : TextureType.Resource, cmbEndSprite.Text, out var image))
                 {
-                    mEndGraphic = (Bitmap) Image.FromFile(graphic);
+                    mEndGraphic = image;
                     picEndResource.Width = mEndGraphic.Width;
                     picEndResource.Height = mEndGraphic.Height;
                     mEndBitmap = new Bitmap(picEndResource.Width, picEndResource.Height);

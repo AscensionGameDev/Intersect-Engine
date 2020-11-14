@@ -19,10 +19,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
-
     public partial class FrmSpell : EditorForm
     {
-
         private List<SpellBase> mChanged = new List<SpellBase>();
 
         private string mCopiedItem;
@@ -97,12 +95,12 @@ namespace Intersect.Editor.Forms.Editors
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
-            var spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
+            var spellNames = GameContentManager.GetSmartSortedTextureNames(TextureType.Spell);
             cmbSprite.Items.AddRange(spellNames);
 
             cmbTransform.Items.Clear();
             cmbTransform.Items.Add(Strings.General.none);
-            var spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
+            var spriteNames = GameContentManager.GetSmartSortedTextureNames(TextureType.Entity);
             cmbTransform.Items.AddRange(spriteNames);
 
             nudWarpX.Maximum = (int) Options.MapWidth;
@@ -274,7 +272,8 @@ namespace Intersect.Editor.Forms.Editors
                 picSpell.BackgroundImage = null;
                 if (cmbSprite.SelectedIndex > 0)
                 {
-                    picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
+                    GameContentManager.TryOpenImage(TextureType.Spell, cmbSprite.Text, out var image);
+                    picSpell.BackgroundImage = image;
                 }
 
                 nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
@@ -471,9 +470,11 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Icon = cmbSprite.Text;
             picSpell.BackgroundImage?.Dispose();
             picSpell.BackgroundImage = null;
-            picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0
-                ? Image.FromFile("resources/spells/" + cmbSprite.Text)
-                : null;
+            if (cmbSprite.SelectedIndex > 0)
+            {
+                GameContentManager.TryOpenImage(TextureType.Spell, cmbSprite.Text, out var image);
+                picSpell.BackgroundImage = image;
+            }
         }
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
@@ -511,20 +512,30 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (cmbTransform.SelectedIndex > 0)
                 {
-                    var bmp = new Bitmap(picSprite.Width, picSprite.Height);
-                    var g = Graphics.FromImage(bmp);
-                    var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
-                    g.DrawImage(
-                        src,
-                        new Rectangle(
-                            picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
-                            src.Height / Options.Instance.Sprites.Directions
-                        ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
-                    );
+                    var target = new Bitmap(picSprite.Width, picSprite.Height);
+                    using (var graphics = Graphics.FromImage(target))
+                    {
+                        if (GameContentManager.TryOpenImage(TextureType.Entity, cmbTransform.Text, out var source))
+                        {
+                            graphics.DrawImage(
+                                source,
+                                new Rectangle(
+                                    picSprite.Width / 2 - source.Width / (Options.Instance.Sprites.NormalFrames * 2),
+                                    picSprite.Height / 2 - source.Height / (Options.Instance.Sprites.Directions * 2),
+                                    source.Width / Options.Instance.Sprites.NormalFrames,
+                                    source.Height / Options.Instance.Sprites.Directions
+                                ),
+                                new Rectangle(
+                                    0, 0, source.Width / Options.Instance.Sprites.NormalFrames,
+                                    source.Height / Options.Instance.Sprites.Directions
+                                ), GraphicsUnit.Pixel
+                            );
 
-                    g.Dispose();
-                    src.Dispose();
-                    picSprite.BackgroundImage = bmp;
+                            source.Dispose();
+                        }
+                    }
+
+                    picSprite.BackgroundImage = target;
                 }
                 else
                 {
@@ -569,20 +580,29 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Combat.TransformSprite = cmbTransform.Text;
             if (cmbTransform.SelectedIndex > 0)
             {
-                var bmp = new Bitmap(picSprite.Width, picSprite.Height);
-                var g = Graphics.FromImage(bmp);
-                var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
-                g.DrawImage(
-                    src,
-                    new Rectangle(
-                        picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
-                        src.Height / Options.Instance.Sprites.Directions
-                    ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
-                );
+                var target = new Bitmap(picSprite.Width, picSprite.Height);
+                using (var graphics = Graphics.FromImage(target))
+                {
+                    if (GameContentManager.TryOpenImage(TextureType.Entity, cmbTransform.Text, out var source))
+                    {
+                        graphics.DrawImage(
+                            source,
+                            new Rectangle(
+                                picSprite.Width / 2 - source.Width / (Options.Instance.Sprites.NormalFrames * 2),
+                                picSprite.Height / 2 - source.Height / (Options.Instance.Sprites.Directions * 2),
+                                source.Width / Options.Instance.Sprites.NormalFrames,
+                                source.Height / Options.Instance.Sprites.Directions
+                            ),
+                            new Rectangle(
+                                0, 0, source.Width / Options.Instance.Sprites.NormalFrames,
+                                source.Height / Options.Instance.Sprites.Directions
+                            ), GraphicsUnit.Pixel
+                        );
 
-                g.Dispose();
-                src.Dispose();
-                picSprite.BackgroundImage = bmp;
+                        source.Dispose();
+                    }
+                }
+                picSprite.BackgroundImage = target;
             }
             else
             {
@@ -1158,7 +1178,5 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
-
 }

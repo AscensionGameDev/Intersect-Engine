@@ -64,7 +64,7 @@ namespace Intersect.Editor.Entities
             if (!upper)
             {
                 //Draw Lower
-                var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Lower.Sprite);
+                var tex = GameContentManager.GetTexture(TextureType.Animation, MyBase.Lower.Sprite);
                 if (mShowLower)
                 {
                     if (mLowerFrame >= MyBase.Lower.FrameCount)
@@ -107,7 +107,7 @@ namespace Intersect.Editor.Entities
             else
             {
                 //Draw Upper
-                var tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Upper.Sprite);
+                var tex = GameContentManager.GetTexture(TextureType.Animation, MyBase.Upper.Sprite);
                 if (mShowUpper)
                 {
                     if (mUpperFrame >= MyBase.Upper.FrameCount)

@@ -35,7 +35,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             txtShowOptionsOpt4.Text = mMyCommand.Options[3];
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.General.none);
-            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
+            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Face));
             if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Face)) > -1)
             {
                 cmbFace.SelectedIndex = cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Face));

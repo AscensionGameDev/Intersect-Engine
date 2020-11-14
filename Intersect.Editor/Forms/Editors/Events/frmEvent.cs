@@ -187,25 +187,23 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void UpdateEventPreview()
         {
             Graphics graphics;
-            Bitmap sourceBitmap = null;
-            Bitmap destBitmap = null;
-            destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
+            Image sourceBitmap = null;
+            var destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             graphics = Graphics.FromImage(destBitmap);
             graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
 
-            if (CurrentPage.Graphic.Type == EventGraphicType.Sprite)
+            switch (CurrentPage.Graphic.Type)
             {
-                if (File.Exists("resources/entities/" + CurrentPage.Graphic.Filename))
-                {
-                    sourceBitmap = new Bitmap("resources/entities/" + CurrentPage.Graphic.Filename);
-                }
-            }
-            else if (CurrentPage.Graphic.Type == EventGraphicType.Tileset)
-            {
-                if (File.Exists("resources/tilesets/" + CurrentPage.Graphic.Filename))
-                {
-                    sourceBitmap = new Bitmap("resources/tilesets/" + CurrentPage.Graphic.Filename);
-                }
+                case EventGraphicType.Sprite:
+                    GameContentManager.TryOpenImage(
+                        TextureType.Entity, CurrentPage.Graphic.Filename, out sourceBitmap
+                    );
+                    break;
+                case EventGraphicType.Tileset:
+                    GameContentManager.TryOpenImage(
+                        TextureType.Tileset, CurrentPage.Graphic.Filename, out sourceBitmap
+                    );
+                    break;
             }
 
             if (sourceBitmap != null)
@@ -917,7 +915,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add(Strings.General.none);
             cmbPreviewFace.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face)
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Face)
             );
 
             cmbAnimation.Items.Clear();
@@ -1770,9 +1768,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 return;
             }
 
-            if (File.Exists("resources/faces/" + cmbPreviewFace.Text))
+            if (GameContentManager.TryOpenImage(TextureType.Face, cmbPreviewFace.Text, out var image))
             {
-                pnlFacePreview.BackgroundImage = new Bitmap("resources/faces/" + cmbPreviewFace.Text);
+                pnlFacePreview.BackgroundImage = image;
             }
         }
 

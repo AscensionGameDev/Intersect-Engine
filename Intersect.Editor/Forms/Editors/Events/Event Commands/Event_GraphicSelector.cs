@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using Intersect.Editor.Content;
@@ -11,10 +12,8 @@ using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
-
     public partial class EventGraphicSelector : UserControl
     {
-
         private EventGraphic mEditingGraphic;
 
         private FrmEvent mEventEditor;
@@ -45,7 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEditingGraphic = editingGraphic;
             mEventEditor = eventEditor;
             mLoading = true;
-            cmbGraphicType.SelectedIndex = (int)mEditingGraphic.Type;
+            cmbGraphicType.SelectedIndex = (int) mEditingGraphic.Type;
             UpdateGraphicList();
             if (cmbGraphic.Items.Contains(mEditingGraphic.Filename))
             {
@@ -93,9 +92,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
-                cmbGraphic.Items.AddRange(
-                    GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
-                );
+                cmbGraphic.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Entity));
 
                 if (cmbGraphic.Items.Count > 0)
                 {
@@ -110,16 +107,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 lblGraphic.Show();
                 cmbGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in TilesetBase.Names)
-                {
-                    if (File.Exists("resources/tilesets/" + filename))
-                    {
-                        cmbGraphic.Items.Add(filename);
-                    }
-                    else
-                    {
-                    }
-                }
+                cmbGraphic.Items.AddRange(
+                    TilesetBase.Names.Where(
+                            name => GameContentManager.TilesetTextures.Any(
+                                texture => texture.GetPath().EndsWith(GameContentManager.EnsureExtension(name, "png"))
+                            )
+                        )
+                        .ToArray()
+                );
 
                 if (cmbGraphic.Items.Count > 0)
                 {
@@ -140,9 +135,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbGraphic.Show();
                 lblGraphic.Show();
-                cmbGraphic.Items.AddRange(
-                    GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
-                );
+                cmbGraphic.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(TextureType.Entity));
 
                 if (cmbGraphic.Items.Count > 0)
                 {
@@ -153,16 +146,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 lblGraphic.Show();
                 cmbGraphic.Show();
-                foreach (var filename in TilesetBase.Names)
-                {
-                    if (File.Exists("resources/tilesets/" + filename))
-                    {
-                        cmbGraphic.Items.Add(filename);
-                    }
-                    else
-                    {
-                    }
-                }
+                cmbGraphic.Items.AddRange(
+                    TilesetBase.Names.Where(
+                            name => GameContentManager.TilesetTextures.Any(
+                                texture => texture.GetPath().EndsWith(GameContentManager.EnsureExtension(name, "png"))
+                            )
+                        )
+                        .ToArray()
+                );
 
                 if (cmbGraphic.Items.Count > 0)
                 {
@@ -174,23 +165,24 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void UpdatePreview()
         {
             Graphics graphics;
-            Bitmap sourceBitmap = null;
-            Bitmap destBitmap = null;
+            Image sourceBitmap = null;
             if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
-                sourceBitmap = new Bitmap("resources/entities/" + cmbGraphic.Text);
-                mSpriteWidth = sourceBitmap.Width / Options.Instance.Sprites.NormalFrames;
-                mSpriteHeight = sourceBitmap.Height / Options.Instance.Sprites.Directions;
+                if (GameContentManager.TryOpenImage(TextureType.Entity, cmbGraphic.Text, out sourceBitmap))
+                {
+                    mSpriteWidth = sourceBitmap.Width / Options.Instance.Sprites.NormalFrames;
+                    mSpriteHeight = sourceBitmap.Height / Options.Instance.Sprites.Directions;
+                }
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
-                sourceBitmap = new Bitmap("resources/tilesets/" + cmbGraphic.Text);
+                GameContentManager.TryOpenImage(TextureType.Tileset, cmbGraphic.Text, out sourceBitmap);
             }
 
             if (sourceBitmap != null)
             {
                 pnlGraphic.Show();
-                destBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
+                Bitmap destBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
                 pnlGraphic.Width = sourceBitmap.Width;
                 pnlGraphic.Height = sourceBitmap.Height;
                 graphics = Graphics.FromImage(destBitmap);
@@ -201,8 +193,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     graphics.DrawRectangle(
                         new Pen(System.Drawing.Color.White, 2f),
                         new Rectangle(
-                            mTmpGraphic.X * sourceBitmap.Width / Options.Instance.Sprites.NormalFrames, mTmpGraphic.Y * sourceBitmap.Height / Options.Instance.Sprites.Directions,
-                            sourceBitmap.Width / Options.Instance.Sprites.NormalFrames, sourceBitmap.Height / Options.Instance.Sprites.Directions
+                            mTmpGraphic.X * sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            mTmpGraphic.Y * sourceBitmap.Height / Options.Instance.Sprites.Directions,
+                            sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            sourceBitmap.Height / Options.Instance.Sprites.Directions
                         )
                     );
                 }
@@ -365,7 +359,5 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             mEventEditor.CloseGraphicSelector(this);
         }
-
     }
-
 }

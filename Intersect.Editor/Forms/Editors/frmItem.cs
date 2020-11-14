@@ -89,7 +89,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbPic.Items.Clear();
             cmbPic.Items.Add(Strings.General.none);
 
-            var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
+            var itemnames = GameContentManager.GetSmartSortedTextureNames(TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
@@ -118,7 +118,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFemalePaperdoll.Items.Clear();
             cmbFemalePaperdoll.Items.Add(Strings.General.none);
             var paperdollnames =
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
+                GameContentManager.GetSmartSortedTextureNames(TextureType.Paperdoll);
 
             for (var i = 0; i < paperdollnames.Length; i++)
             {
@@ -335,23 +335,30 @@ namespace Intersect.Editor.Forms.Editors
                 picItem.BackgroundImage = null;
                 if (cmbPic.SelectedIndex > 0)
                 {
-                    picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
+                    if (GameContentManager.TryOpenImage(TextureType.Item, cmbPic.Text, out var image))
+                    {
+                        picItem.BackgroundImage = image;
+                    }
                 }
 
                 picMalePaperdoll.BackgroundImage?.Dispose();
                 picMalePaperdoll.BackgroundImage = null;
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
-                    picMalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                    if (GameContentManager.TryOpenImage(TextureType.Paperdoll, cmbMalePaperdoll.Text, out var image))
+                    {
+                        picMalePaperdoll.BackgroundImage = image;
+                    }
                 }
 
                 picFemalePaperdoll.BackgroundImage?.Dispose();
                 picFemalePaperdoll.BackgroundImage = null;
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
-                    picFemalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                    if (GameContentManager.TryOpenImage(TextureType.Paperdoll, cmbFemalePaperdoll.Text, out var image))
+                    {
+                        picFemalePaperdoll.BackgroundImage = image;
+                    }
                 }
 
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
@@ -491,7 +498,8 @@ namespace Intersect.Editor.Forms.Editors
             picItem.BackgroundImage = null;
             if (cmbPic.SelectedIndex > 0)
             {
-                picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
+                GameContentManager.TryOpenImage(TextureType.Item, cmbPic.Text, out var image);
+                picItem.BackgroundImage = image;
             }
         }
 
@@ -507,8 +515,8 @@ namespace Intersect.Editor.Forms.Editors
             picMalePaperdoll.BackgroundImage = null;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
-                picMalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
+                GameContentManager.TryOpenImage(TextureType.Paperdoll, cmbMalePaperdoll.Text, out var image);
+                picMalePaperdoll.BackgroundImage = image;
             }
         }
 
@@ -562,8 +570,8 @@ namespace Intersect.Editor.Forms.Editors
             picFemalePaperdoll.BackgroundImage = null;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
-                picFemalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                GameContentManager.TryOpenImage(TextureType.Paperdoll, cmbFemalePaperdoll.Text, out var image);
+                picFemalePaperdoll.BackgroundImage = image;
             }
         }
 
