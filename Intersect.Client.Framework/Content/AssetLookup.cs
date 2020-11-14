@@ -17,6 +17,8 @@ namespace Intersect.Client.Framework.Content
             mAssetDictionaries = new ConcurrentDictionary<ContentType, IDictionary<string, IAsset>>();
         }
 
+        protected string CreateAssetKey(string assetName) => assetName?.ToUpperInvariant();
+
         protected IDictionary<string, IAsset> FindDictionaryFor(ContentType contentType)
         {
             if (mAssetDictionaries.TryGetValue(contentType, out var assetDictionary))
@@ -31,8 +33,9 @@ namespace Intersect.Client.Framework.Content
 
         public IAsset Find(ContentType contentType, string assetName)
         {
+            var assetKey = CreateAssetKey(assetName);
             var assetDictionary = FindDictionaryFor(contentType);
-            if (assetDictionary.TryGetValue(assetName, out var asset))
+            if (assetDictionary.TryGetValue(assetKey, out var asset))
             {
                 return asset;
             }
@@ -81,9 +84,10 @@ namespace Intersect.Client.Framework.Content
                     throw new ArgumentException("One or more assets have null or whitespace names.", nameof(assets));
                 }
 
-                if (!assetDictionary.ContainsKey(asset.Name))
+                var assetKey = CreateAssetKey(asset.Name);
+                if (!assetDictionary.ContainsKey(assetKey))
                 {
-                    assetDictionary[asset.Name] = asset;
+                    assetDictionary[assetKey] = asset;
                 }
             }
         }
@@ -112,9 +116,10 @@ namespace Intersect.Client.Framework.Content
                     throw new ArgumentException("One or more assets names are null or whitespace.", nameof(assetNames));
                 }
 
-                if (assetDictionary.ContainsKey(assetName))
+                var assetKey = CreateAssetKey(assetName);
+                if (assetDictionary.ContainsKey(assetKey))
                 {
-                    assetDictionary.Remove(assetName);
+                    assetDictionary.Remove(assetKey);
                 }
             }
         }
@@ -124,7 +129,7 @@ namespace Intersect.Client.Framework.Content
         public void ClearAll() => mAssetDictionaries.Keys.ToList().ForEach(Clear);
 
         public bool Contains(ContentType contentType, string assetName) =>
-            FindDictionaryFor(contentType)?.ContainsKey(assetName) ?? false;
+            FindDictionaryFor(contentType)?.ContainsKey(CreateAssetKey(assetName)) ?? false;
 
         public IEnumerable<TAsset> GetAssets<TAsset>(ContentType contentType) where TAsset : IAsset =>
             FindDictionaryFor(contentType)?.Values.Cast<TAsset>();
