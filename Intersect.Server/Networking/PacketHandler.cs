@@ -1484,7 +1484,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.DropItemFrom(packet.Slot, packet.Quantity);
+            player?.DropItems(packet.Slot, packet.Quantity);
         }
 
         //UseItemPacket
