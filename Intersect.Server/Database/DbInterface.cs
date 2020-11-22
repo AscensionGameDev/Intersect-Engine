@@ -181,9 +181,11 @@ namespace Intersect.Server.Database
                 ), Options.PlayerDb.Type, playerDbLogger, Options.PlayerDb.LogLevel
             );
 
-            LoggingContext.Configure(
-                DatabaseOptions.DatabaseType.SQLite, LoggingContext.DefaultConnectionStringBuilder
+            Logging.LoggingContext.Configure(
+                DatabaseOptions.DatabaseType.SQLite, Logging.LoggingContext.DefaultConnectionStringBuilder
             );
+
+            ContextProvider.Add(Logging.LoggingContext.Create());
 
             // We don't want anyone running the old migration tool accidentally
             try
@@ -271,12 +273,16 @@ namespace Intersect.Server.Database
             }
 #endif
 
-            if (serverContext.RestApi.Configuration.RequestLogging)
+            try
             {
-                using (var loggingContext = LoggingContext.Create())
+                using (var loggingContext = LoggingContext)
                 {
                     loggingContext.Database?.Migrate();
                 }
+            }
+            catch (Exception exception)
+            {
+                throw;
             }
 
             LoadAllGameObjects();
@@ -485,16 +491,13 @@ namespace Intersect.Server.Database
             SavePlayerDatabaseAsync();
         }
 
-        public static bool CheckPassword([NotNull] string username, [NotNull] string password)
+        public static bool TryLogin([NotNull] string username, [NotNull] string password, out Guid userId)
         {
             lock (mPlayerDbLock)
             {
-                // ReSharper disable once SpecifyStringComparison
-                var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower())
-                    .Select(p => new {p.Password, p.Salt})
-                    .FirstOrDefault();
-
-                return user != null && User.SaltPasswordHash(password, user.Salt) == user.Password;
+                var user = User.Find(username);
+                userId = user?.Id ?? Guid.Empty;
+                return user != null && string.Equals(user.Password, User.SaltPasswordHash(password, user.Salt), StringComparison.Ordinal);
             }
         }
 
@@ -1923,6 +1926,10 @@ namespace Intersect.Server.Database
         {
             return sPlayerDb;
         }
+
+        private static readonly ContextProvider ContextProvider = new ContextProvider();
+
+        public static ILoggingContext LoggingContext => ContextProvider.Access<ILoggingContext, LoggingContextInterface>();
 
         private struct IdTrace
         {
