@@ -20,7 +20,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace Intersect.Server.Database.GameData
 {
 
-    public class GameContext : IntersectDbContext<GameContext>
+    public class GameContext : IntersectDbContext<GameContext>, IGameContext
     {
 
         public GameContext() : base(DefaultConnectionStringBuilder)

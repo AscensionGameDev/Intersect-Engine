@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.Server.Database.PlayerData
 {
 
-    public class PlayerContext : IntersectDbContext<PlayerContext>
+    public class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext
     {
 
         public PlayerContext() : base(DefaultConnectionStringBuilder)
