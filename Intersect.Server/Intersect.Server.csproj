@@ -115,7 +115,7 @@
     <Optimize>false</Optimize>
     <DisableFody>true</DisableFody>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <NetworkKeyOutputDir>$(SolutionDir)build\debug\keys</NetworkKeyOutputDir>
+    <NetworkKeyOutputDir>..\build\debug\keys</NetworkKeyOutputDir>
     <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
     <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
   </PropertyGroup>
