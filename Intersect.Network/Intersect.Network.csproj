@@ -120,7 +120,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
-    <Exec Command="&quot;$(MSBuildBinPath)\MSBuild.exe&quot; &quot;$(SolutionDir)targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="&quot;$(MSBuildBinPath)\MSBuild.exe&quot; &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
+    <Exec Condition=" '$(OS)' != 'Windows_NT' " Command="msbuild &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
