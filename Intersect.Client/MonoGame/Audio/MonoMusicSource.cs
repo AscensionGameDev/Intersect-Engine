@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Audio;
 using NVorbis;
 
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Intersect.Client.MonoGame.Audio
@@ -102,54 +103,66 @@ namespace Intersect.Client.MonoGame.Audio
 
         private static void EnsureBuffersFilled()
         {
-            var buffers = 3;
-            var samples = 44100;
-            var updateRate = 10;
-
-            while (Globals.IsRunning)
+            try
             {
-                Thread.Sleep((int) (1000 / Math.Max(updateRate, 1)));
-                lock (mInstanceLock)
+                var buffers = 3;
+                var samples = 44100;
+                var updateRate = 10;
+
+                while (Globals.IsRunning)
                 {
-                    if (mActiveSource != null)
+                    Thread.Sleep((int) (1000 / Math.Max(updateRate, 1)));
+                    lock (mInstanceLock)
                     {
-                        var reader = mActiveSource.Reader;
-                        var soundInstance = mActiveSource.Instance;
-
-                        if (reader != null && soundInstance != null && !soundInstance.IsDisposed)
+                        if (mActiveSource != null)
                         {
-                            float[] sampleBuffer = null;
-                            while (soundInstance.PendingBufferCount < buffers)
+                            var reader = mActiveSource.Reader;
+                            var soundInstance = mActiveSource.Instance;
+
+                            if (reader != null && soundInstance != null && !soundInstance.IsDisposed)
                             {
-                                if (sampleBuffer == null)
-                                    sampleBuffer = new float[samples];
-
-                                var read = reader.ReadSamples(sampleBuffer, 0, sampleBuffer.Length);
-                                if (read == 0)
+                                float[] sampleBuffer = null;
+                                while (soundInstance.PendingBufferCount < buffers)
                                 {
-                                    reader.DecodedPosition = 0;
-                                    continue;
+                                    if (sampleBuffer == null)
+                                        sampleBuffer = new float[samples];
+
+                                    var read = reader.ReadSamples(sampleBuffer, 0, sampleBuffer.Length);
+                                    if (read == 0)
+                                    {
+                                        reader.DecodedPosition = 0;
+
+                                        continue;
+                                    }
+
+                                    var dataBuffer = new byte[read << 1];
+                                    for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
+                                    {
+                                        var sample = (short) MathHelper.Clamp(
+                                            sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue
+                                        );
+
+                                        var sampleData = BitConverter.GetBytes(sample);
+                                        for (var sampleByteIndex = 0;
+                                            sampleByteIndex < sampleData.Length;
+                                            ++sampleByteIndex)
+                                            dataBuffer[(sampleIndex << 1) + sampleByteIndex] =
+                                                sampleData[sampleByteIndex];
+                                    }
+
+                                    soundInstance.SubmitBuffer(dataBuffer, 0, read << 1);
                                 }
-
-                                var dataBuffer = new byte[read << 1];
-                                for (var sampleIndex = 0; sampleIndex < read; ++sampleIndex)
-                                {
-                                    var sample = (short) MathHelper.Clamp(
-                                        sampleBuffer[sampleIndex] * 32767f, short.MinValue, short.MaxValue
-                                    );
-
-                                    var sampleData = BitConverter.GetBytes(sample);
-                                    for (var sampleByteIndex = 0;
-                                        sampleByteIndex < sampleData.Length;
-                                        ++sampleByteIndex)
-                                        dataBuffer[(sampleIndex << 1) + sampleByteIndex] = sampleData[sampleByteIndex];
-                                }
-
-                                soundInstance.SubmitBuffer(dataBuffer, 0, read << 1);
                             }
                         }
                     }
                 }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+#if DEBUG
+                Debugger.Break();
+#endif
             }
         }
 
