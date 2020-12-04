@@ -13,6 +13,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
+using Intersect.Server.Database.Migration;
+
 namespace Intersect.Server.Database
 {
     /// <summary>

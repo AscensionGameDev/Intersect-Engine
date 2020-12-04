@@ -446,7 +446,6 @@
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />
     <Compile Include="Database\GameData\IGameContext.cs" />
-    <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\Migration\DataMigration.cs" />

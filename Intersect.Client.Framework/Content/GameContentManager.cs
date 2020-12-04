@@ -47,7 +47,7 @@ namespace Intersect.Client.Framework.Content
         public IEnumerable<TAsset> FindAll<TAsset>(ContentType contentType) where TAsset : class, IAsset =>
             AssetLookup.GetAssets<TAsset>(contentType);
 
-        public IFont FindFont(string fontName, int fontSize) => Find<IFont>(
+        public virtual IFont FindFont(string fontName, int fontSize) => Find<IFont>(
             ContentType.Font, GameFont.FormatAssetName(fontName, fontSize)
         );
 

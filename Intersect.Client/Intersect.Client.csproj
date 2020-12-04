@@ -120,9 +120,11 @@
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
     <Compile Include="MonoGame\Content\FileSystemAssetProvider.cs" />
+    <Compile Include="MonoGame\Content\PipelineManager.cs" />
     <Compile Include="MonoGame\Debugging\HarmonyDebugger.cs" />
     <Compile Include="MonoGame\Debugging\DiagnosticPatches\DynamicSoundEffectInstancePatches.cs" />
     <Compile Include="MonoGame\Extensions\TypeConversionExtensions.cs" />
+    <Compile Include="MonoGame\Graphics\MonoFontGenerator.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
     <Compile Include="MonoGame\Input\MonoClipboard.cs" />
     <Compile Include="MonoGame\MonoGameContext.cs" />
@@ -217,11 +219,20 @@
     <Reference Include="0Harmony, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Lib.Harmony.2.0.4\lib\net45\0Harmony.dll</HintPath>
     </Reference>
+    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
+    </Reference>
+    <Reference Include="ATI.TextureConverter, Version=1.0.5522.26319, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\ATI.TextureConverter.dll</HintPath>
+    </Reference>
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
+    </Reference>
+    <Reference Include="CppNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\CppNet.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -233,16 +244,43 @@
     <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Win32.Registry, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Win32.Registry.4.5.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="MonoGame.Framework.Content.Pipeline, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Nvidia.TextureTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\Nvidia.TextureTools.dll</HintPath>
+    </Reference>
+    <Reference Include="PVRTexLibNET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\PVRTexLibNET.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.D3DCompiler, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpFont, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\lib\netstandard2.0\SharpFont.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Security.AccessControl, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.4.5.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.4.5.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -272,14 +310,17 @@
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\SDL2.dll">
       <Link>Resources\x86\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\SDL2.dll">
-      <Link>Resources\x64\SDL2.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\soft_oal.dll">
       <Link>Resources\x86\soft_oal.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\SDL2.dll">
+      <Link>Resources\x64\SDL2.dll</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\soft_oal.dll">
       <Link>Resources\x64\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\runtimes\win-x64\native\freetype6.dll">
+      <Link>Resources\x64\freetype6.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
       <Link>Resources\libopenal.so.1</Link>
@@ -287,11 +328,17 @@
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
       <Link>Resources\libSDL2-2.0.so.0</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\runtimes\linux-x64\native\libfreetype.6.so">
+      <Link>Resources\libfreetype.6.so</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.Content.Pipeline.3.8.0.1641\runtimes\osx\native\libfreetype.6.dylib">
+      <Link>Resources\libfreetype.6.dylib</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -319,7 +366,6 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
@@ -334,13 +380,11 @@
     <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
     <ItemGroup>
       <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
-      
       <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
         <WithCulture>false</WithCulture>
         <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
         <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
       </_MixedResourceWithNoCulture>
-
       <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
     </ItemGroup>
   </Target>
@@ -357,10 +401,12 @@
     <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
     <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets'))" />
+    <Error Condition="!Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
   </Target>
   <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
   <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" />
+  <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -17,12 +17,7 @@ using System.Linq;
 
 namespace Intersect.Server.Database.GameData
 {
-<<<<<<< HEAD
-
     public class GameContext : IntersectDbContext<GameContext>, IGameContext
-=======
-    public class GameContext : IntersectDbContext<GameContext>
->>>>>>> Data migration system
     {
         public GameContext() : base(DefaultConnectionStringBuilder)
         {

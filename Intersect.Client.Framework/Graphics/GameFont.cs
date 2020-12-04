@@ -25,9 +25,9 @@ namespace Intersect.Client.Framework.Graphics
             }
             else
             {
-                FontName = match.Groups[0].Value;
+                FontName = match.Groups[1].Value;
 
-                var sizeGroup = match.Groups[1];
+                var sizeGroup = match.Groups[2];
 
                 if (!sizeGroup.Success || !int.TryParse(sizeGroup.Value, out int size))
                 {

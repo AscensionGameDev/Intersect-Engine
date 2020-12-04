@@ -69,13 +69,12 @@ namespace Intersect.Client.MonoGame
 
         private MonoGameContext GameContext => Context.GameContext as MonoGameContext;
 
-        private Harmony Harmony { get; }
+        internal static Harmony Harmony { get; } = new Harmony(typeof(IntersectGame).FullName);
 
         private HarmonyDebugger HarmonyDebugger { get; }
 
         private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
         {
-            Harmony = new Harmony(typeof(IntersectGame).FullName);
             Harmony.PatchAll();
 
 #if DEBUG

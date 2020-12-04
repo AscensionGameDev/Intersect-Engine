@@ -97,6 +97,7 @@ namespace Intersect.Client
             DeleteIfExists("openal32.dll");
             DeleteIfExists("MonoGame.Framework.Client.dll.config");
             DeleteIfExists("MonoGame.Framework.Client.dll");
+            DeleteIfExists("freetype6.dll");
         }
 
         private static string ReadProcessOutput(string name)
@@ -158,12 +159,17 @@ namespace Intersect.Client
                 case PlatformID.WinCE:
                     ExportDependency("SDL2.dll", folder);
                     ExportDependency("soft_oal.dll", folder);
+                    if (Environment.Is64BitProcess)
+                    {
+                        ExportDependency("freetype6.dll", folder);
+                    }
 
                     break;
 
                 case PlatformID.MacOSX:
                     ExportDependency("libopenal.1.dylib", "");
                     ExportDependency("libSDL2-2.0.0.dylib", "");
+                    ExportDependency("libfreetype.6.dylib", "");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
 
@@ -176,6 +182,7 @@ namespace Intersect.Client
                 default:
                     ExportDependency("libopenal.so.1", "");
                     ExportDependency("libSDL2-2.0.so.0", "");
+                    ExportDependency("libfreetype.6.so", "");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
 
