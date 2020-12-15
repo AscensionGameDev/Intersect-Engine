@@ -305,22 +305,27 @@ namespace Intersect.Client.MonoGame.Graphics
                         blend = mNormalState;
 
                         break;
+
                     case GameBlendModes.Alpha:
                         blend = BlendState.AlphaBlend;
 
                         break;
+
                     case GameBlendModes.Multiply:
                         blend = mMultiplyState;
 
                         break;
+
                     case GameBlendModes.Add:
                         blend = BlendState.Additive;
 
                         break;
+
                     case GameBlendModes.Opaque:
                         blend = BlendState.Opaque;
 
                         break;
+
                     case GameBlendModes.Cutout:
                         blend = mCutoutState;
 
@@ -795,13 +800,15 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             var targetVideoMode = validVideoModes?[targetResolution];
-            var resolution = Resolution.Parse(targetVideoMode);
-            mGraphics.PreferredBackBufferWidth = resolution.X;
-            mGraphics.PreferredBackBufferHeight = resolution.Y;
+            if (Resolution.TryParse(targetVideoMode, out var resolution))
+            {
+                PreferredResolution = resolution;
+            }
 
-            UpdateGraphicsState(
-                mGraphics?.PreferredBackBufferWidth ?? 800, mGraphics?.PreferredBackBufferHeight ?? 600, true
-            );
+            mGraphics.PreferredBackBufferWidth = PreferredResolution.X;
+            mGraphics.PreferredBackBufferHeight = PreferredResolution.Y;
+
+            UpdateGraphicsState(ActiveResolution.X, ActiveResolution.Y, true);
 
             if (mWhiteTexture == null)
             {
@@ -854,7 +861,7 @@ namespace Intersect.Client.MonoGame.Graphics
             return new MonoShader(shaderName, mContentManager);
         }
 
-        public override GameTexture LoadTexture(string filename)
+        public override GameTexture LoadTexture(string filename, string realFilename)
         {
             var packFrame = GameTexturePacks.GetFrame(filename);
             if (packFrame != null)
@@ -865,11 +872,15 @@ namespace Intersect.Client.MonoGame.Graphics
                 return tx;
             }
 
-            var tex = new MonoTexture(mGraphicsDevice, filename);
+            var tex = new MonoTexture(mGraphicsDevice, filename, realFilename);
             mAllTextures.Add(tex);
 
             return tex;
         }
+
+        /// <inheritdoc />
+        public override GameTexture LoadTexture(string assetName, Func<Stream> createStream) =>
+            new MonoTexture(mGraphicsDevice, assetName, createStream);
 
         public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
         {

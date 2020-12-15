@@ -1,0 +1,9 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <BuildConfigurationDir>..\build\$(Configuration.ToLower())</BuildConfigurationDir>
+    <IntersectBuildingAssemblyFile>$(BuildConfigurationDir)\Intersect.Building\Intersect.Building.dll</IntersectBuildingAssemblyFile>
+    <NetworkKeyOutputDir>..\build\$(Configuration.ToLower())\keys</NetworkKeyOutputDir>
+    <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
+    <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
+  </PropertyGroup>
+</Project>

@@ -268,7 +268,7 @@ namespace Intersect.Network.Lidgren
             if (nullTerminated)
             {
                 var position = Buffer?.PositionInBytes ?? int.MaxValue;
-                var buffer = Buffer?.PeekDataBuffer() ?? new byte[0];
+                var buffer = Buffer?.PeekDataBuffer() ?? Array.Empty<byte>();
                 while (Buffer?.LengthBytes - position > 0)
                 {
                     if (buffer[position] == 0)

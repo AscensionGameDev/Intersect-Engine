@@ -21,7 +21,7 @@ namespace Intersect.Server.Web.RestApi.Attributes
         [NotNull]
         protected IEnumerable<string> InternalRoles =>
             Roles?.Split(',').Where(role => !string.IsNullOrWhiteSpace(role)).Select(role => role.Trim()) ??
-            new string[0];
+            Array.Empty<string>();
 
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {

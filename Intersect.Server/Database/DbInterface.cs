@@ -101,7 +101,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "GAMEDB",
-                        Pretty = false,
                         LogLevel = Options.GameDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
@@ -116,7 +115,6 @@ namespace Intersect.Server.Database
                     new LogConfiguration
                     {
                         Tag = "PLAYERDB",
-                        Pretty = false,
                         LogLevel = Options.PlayerDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
@@ -170,7 +168,7 @@ namespace Intersect.Server.Database
         }
 
         // Database setup, version checking
-        internal static bool InitDatabase([NotNull] ServerContext serverContext)
+        internal static bool InitDatabase([NotNull] IServerContext serverContext)
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
@@ -183,9 +181,11 @@ namespace Intersect.Server.Database
                 ), Options.PlayerDb.Type, playerDbLogger, Options.PlayerDb.LogLevel
             );
 
-            LoggingContext.Configure(
-                DatabaseOptions.DatabaseType.SQLite, LoggingContext.DefaultConnectionStringBuilder
+            Logging.LoggingContext.Configure(
+                DatabaseOptions.DatabaseType.SQLite, Logging.LoggingContext.DefaultConnectionStringBuilder
             );
+
+            ContextProvider.Add(Logging.LoggingContext.Create());
 
             // We don't want anyone running the old migration tool accidentally
             try
@@ -273,12 +273,16 @@ namespace Intersect.Server.Database
             }
 #endif
 
-            if (serverContext.RestApi.Configuration.RequestLogging)
+            try
             {
-                using (var loggingContext = LoggingContext.Create())
+                using (var loggingContext = LoggingContext)
                 {
                     loggingContext.Database?.Migrate();
                 }
+            }
+            catch (Exception exception)
+            {
+                throw;
             }
 
             LoadAllGameObjects();
@@ -388,7 +392,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Users.Any(
-                    p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                    p => string.Equals(p.Email, email, StringComparison.CurrentCultureIgnoreCase)
                 );
             }
         }
@@ -398,7 +402,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Players.Any(
-                    p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                    p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)
                 );
             }
         }
@@ -408,7 +412,7 @@ namespace Intersect.Server.Database
             lock (mPlayerDbLock)
             {
                 return sPlayerDb.Players.Where(
-                        p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                        p => string.Equals(p.Name, name, StringComparison.CurrentCultureIgnoreCase)
                     )
                     ?.First()
                     ?.Id;
@@ -487,16 +491,13 @@ namespace Intersect.Server.Database
             SavePlayerDatabaseAsync();
         }
 
-        public static bool CheckPassword([NotNull] string username, [NotNull] string password)
+        public static bool TryLogin([NotNull] string username, [NotNull] string password, out Guid userId)
         {
             lock (mPlayerDbLock)
             {
-                // ReSharper disable once SpecifyStringComparison
-                var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower())
-                    .Select(p => new {p.Password, p.Salt})
-                    .FirstOrDefault();
-
-                return user != null && User.SaltPasswordHash(password, user.Salt) == user.Password;
+                var user = User.Find(username);
+                userId = user?.Id ?? Guid.Empty;
+                return user != null && string.Equals(user.Password, User.SaltPasswordHash(password, user.Salt), StringComparison.Ordinal);
             }
         }
 
@@ -1427,9 +1428,9 @@ namespace Intersect.Server.Database
                         gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
                         gameDbTraces.TryDequeue(out _);
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        if (ex is InvalidOperationException)
+                        if (exception is InvalidOperationException)
                         {
                             //Collection was modified?
                             //Loop and try to save again!
@@ -1440,14 +1441,10 @@ namespace Intersect.Server.Database
                                     "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                                 );
 
-                                Task.Factory.StartNew(
-                                    () => Bootstrapper.OnUnhandledException(
-                                        Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                    )
-                                );
+                                ServerContext.DispatchUnhandledException(exception);
 
                                 gameDbLogger?.Error(
-                                    ex,
+                                    exception,
                                     "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " +
                                     failures +
                                     "]"
@@ -1459,7 +1456,7 @@ namespace Intersect.Server.Database
                             //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
                             //TODO change to .Warn
                             gameDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Collection was modified? while trying to save game db, will loop and try to save again! [Failures: " +
                                 failures +
                                 "]"
@@ -1471,14 +1468,10 @@ namespace Intersect.Server.Database
                                 "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
-                            Task.Factory.StartNew(
-                                () => Bootstrapper.OnUnhandledException(
-                                    Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                )
-                            );
+                            ServerContext.DispatchUnhandledException(exception);
 
                             gameDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
@@ -1568,9 +1561,9 @@ namespace Intersect.Server.Database
                                 : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
                         );
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        if (ex is InvalidOperationException)
+                        if (exception is InvalidOperationException)
                         {
                             //Collection was modified?
                             //Loop and try to save again!
@@ -1581,14 +1574,10 @@ namespace Intersect.Server.Database
                                     "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                                 );
 
-                                Task.Factory.StartNew(
-                                    () => Bootstrapper.OnUnhandledException(
-                                        Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                    )
-                                );
+                                ServerContext.DispatchUnhandledException(exception);
 
                                 playerDbLogger?.Error(
-                                    ex,
+                                    exception,
                                     "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " +
                                     failures +
                                     "]"
@@ -1600,7 +1589,7 @@ namespace Intersect.Server.Database
                             //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
                             //TODO change to .Warn
                             playerDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Collection was modified? while trying to save player db, will loop and try to save again! [Failures: " +
                                 failures +
                                 "]"
@@ -1612,14 +1601,10 @@ namespace Intersect.Server.Database
                                 "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
-                            Task.Factory.StartNew(
-                                () => Bootstrapper.OnUnhandledException(
-                                    Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)
-                                )
-                            );
+                            ServerContext.DispatchUnhandledException(exception);
 
                             playerDbLogger?.Error(
-                                ex,
+                                exception,
                                 "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!"
                             );
 
@@ -1883,7 +1868,7 @@ namespace Intersect.Server.Database
             }
 
             Console.WriteLine(Strings.Migration.migrationcomplete);
-            Bootstrapper.Context.ServerConsole.Wait(true);
+            Bootstrapper.Context.ConsoleService.Wait(true);
             Environment.Exit(0);
         }
 
@@ -1937,6 +1922,10 @@ namespace Intersect.Server.Database
         {
             return sPlayerDb;
         }
+
+        private static readonly ContextProvider ContextProvider = new ContextProvider();
+
+        public static ILoggingContext LoggingContext => ContextProvider.Access<ILoggingContext, LoggingContextInterface>();
 
         private struct IdTrace
         {

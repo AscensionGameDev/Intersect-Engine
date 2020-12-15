@@ -111,6 +111,12 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
 
+        [NotMapped, JsonIgnore]
+        public long ClientAttackTimer { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public long ClientMoveTimer { get; set; }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -217,7 +223,7 @@ namespace Intersect.Server.Entities
 
         public void TryLogout()
         {
-            if (CombatTimer < Globals.Timing.TimeMs)
+            if (CombatTimer < Globals.Timing.Milliseconds)
             {
                 Logout();
             }
@@ -280,7 +286,7 @@ namespace Intersect.Server.Entities
             var keys = SpellCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (SpellCooldowns[key] < Globals.Timing.RealTimeMs)
+                if (SpellCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
                     SpellCooldowns.Remove(key);
                 }
@@ -289,7 +295,7 @@ namespace Intersect.Server.Entities
             keys = ItemCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (ItemCooldowns[key] < Globals.Timing.RealTimeMs)
+                if (ItemCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
                     ItemCooldowns.Remove(key);
                 }
@@ -323,7 +329,7 @@ namespace Intersect.Server.Entities
 
             if (Client == null) //Client logged out
             {
-                if (CombatTimer < Globals.Timing.TimeMs)
+                if (CombatTimer < Globals.Timing.Milliseconds)
                 {
                     Logout();
 
@@ -565,9 +571,9 @@ namespace Intersect.Server.Entities
                 pkt.AccessLevel = 0;
             }
 
-            if (CombatTimer > Globals.Timing.TimeMs)
+            if (CombatTimer > Globals.Timing.Milliseconds)
             {
-                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.TimeMs;
+                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.Milliseconds;
             }
 
             if (forPlayer != null && GetType() == typeof(Player))
@@ -995,7 +1001,7 @@ namespace Intersect.Server.Entities
 
         public override void TryAttack(Entity target)
         {
-            if (CastTime >= Globals.Timing.TimeMs)
+            if (CastTime >= Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack);
 
@@ -1581,7 +1587,7 @@ namespace Intersect.Server.Entities
 
 
         /// <summary>
-        /// Gives the player an item. NOTE: This method MAKES ZERO CHECKS to see if this is possible! 
+        /// Gives the player an item. NOTE: This method MAKES ZERO CHECKS to see if this is possible!
         /// Use TryGiveItem where possible!
         /// </summary>
         /// <param name="item"></param>
@@ -1775,7 +1781,7 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                // Unequip items even if you do not meet the requirements. 
+                // Unequip items even if you do not meet the requirements.
                 // (Need this for silly devs who give people items and then later add restrictions...)
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
@@ -1800,7 +1806,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.RealTimeMs)
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.MillisecondsUTC)
                 {
                     //Cooldown warning!
                     PacketSender.SendChatMsg(this, Strings.Items.cooldown);
@@ -1816,8 +1822,6 @@ namespace Intersect.Server.Entities
 
                         return;
                     case ItemTypes.Consumable:
-                        var negative = itemBase.Consumable.Value < 0;
-                        var symbol = negative ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
                         var value = 0;
                         var color = CustomColors.Items.ConsumeHp;
                         var die = false;
@@ -1831,7 +1835,7 @@ namespace Intersect.Server.Entities
                                         100;
 
                                 AddVital(Vitals.Health, value);
-                                if (negative)
+                                if (value < 0)
                                 {
                                     color = CustomColors.Items.ConsumePoison;
 
@@ -1865,7 +1869,8 @@ namespace Intersect.Server.Entities
                                 throw new IndexOutOfRangeException();
                         }
 
-                        var number = $"{symbol}{value}";
+                        var symbol = value < 0 ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
+                        var number = $"{symbol}{Math.Abs(value)}";
                         PacketSender.SendActionMsg(this, number, color);
 
                         if (die)
@@ -1919,7 +1924,7 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        if (itemBase.DestroySpell)
+                        if (itemBase.SingleUse)
                         {
                             TryTakeItem(Items[slot], 1);
                         }
@@ -1932,7 +1937,10 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        TryTakeItem(Items[slot], 1);
+                        if (itemBase.SingleUse)
+                        {
+                            TryTakeItem(Items[slot], 1);
+                        }
 
                         break;
                     case ItemTypes.Bag:
@@ -1958,12 +1966,12 @@ namespace Intersect.Server.Entities
                     if (ItemCooldowns.ContainsKey(itemBase.Id))
                     {
                         ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction);
+                            Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction);
                     }
                     else
                     {
                         ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.RealTimeMs + (long) (itemBase.Cooldown * cooldownReduction)
+                            itemBase.Id, Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction)
                         );
                     }
 
@@ -2076,7 +2084,7 @@ namespace Intersect.Server.Entities
 
                     // We can take all of the items we need!
                     toTake = amount;
-                    
+
                     break;
                 case ItemHandling.UpTo:
                     // Can we take all our items or just some?
@@ -2135,7 +2143,7 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Take an item away from the player, or an amount of it if they have more. NOTE: This method MAKES ZERO CHECKS to see if this is possible! 
+        /// Take an item away from the player, or an amount of it if they have more. NOTE: This method MAKES ZERO CHECKS to see if this is possible!
         /// Use TryTakeItem where possible!
         /// </summary>
         /// <param name="slot"></param>
@@ -2172,7 +2180,7 @@ namespace Intersect.Server.Entities
             }
 
             var itemCount = 0;
-            for (var i = 0; i < Options.MaxInvItems; i++) 
+            for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 var item = Items[i];
                 if (item.ItemId == itemId)
@@ -3436,7 +3444,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.FriendRequests.Remove(this);
             }
 
-            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.TimeMs))
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.Milliseconds))
             {
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
@@ -3499,7 +3507,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.Trading.Requests.Remove(this);
             }
 
-            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, CustomColors.Alerts.Error);
             }
@@ -3786,7 +3794,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.PartyRequests.Remove(this);
             }
 
-            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, CustomColors.Alerts.Error);
             }
@@ -3832,7 +3840,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Party.Count < Options.Party.MaximumMembers)
+            if (Party.Count < 4)
             {
                 target.LeaveParty();
                 Party.Add(target);
@@ -4237,11 +4245,11 @@ namespace Intersect.Server.Entities
             }
 
             if (!SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId) ||
-                SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.RealTimeMs)
+                SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.MillisecondsUTC)
             {
                 if (CastTime == 0)
                 {
-                    CastTime = Globals.Timing.TimeMs + spell.CastDuration;
+                    CastTime = Globals.Timing.Milliseconds + spell.CastDuration;
 
                     if (spell.VitalCost[(int) Vitals.Mana] > 0)
                     {
@@ -4286,7 +4294,7 @@ namespace Intersect.Server.Entities
                     PacketSender.SendEntityVitals(this);
 
                     //Check if cast should be instance
-                    if (Globals.Timing.TimeMs >= CastTime)
+                    if (Globals.Timing.Milliseconds >= CastTime)
                     {
                         //Cast now!
                         CastTime = 0;
@@ -5390,7 +5398,7 @@ namespace Intersect.Server.Entities
 
         public override int CanMove(int moveDir)
         {
-            //If crafting or locked by event return blocked 
+            //If crafting or locked by event return blocked
             if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
             {
                 return -5;
@@ -5478,9 +5486,9 @@ namespace Intersect.Server.Entities
         {
             foreach (var evt in EventLookup)
             {
-                if (evt.Value.MapId == MapId)
+                if (evt.Value.MapId == mapId)
                 {
-                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == MapId && evt.Value.BaseEvent.Id == eventId)
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.MapId == mapId && evt.Value.BaseEvent.Id == eventId)
                     {
                         var x = evt.Value.PageInstance.GlobalClone?.X ?? evt.Value.PageInstance.X;
                         var y = evt.Value.PageInstance.GlobalClone?.Y ?? evt.Value.PageInstance.Y;

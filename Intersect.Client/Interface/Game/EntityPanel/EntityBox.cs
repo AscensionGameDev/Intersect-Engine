@@ -39,13 +39,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         //Controls
         [NotNull] public readonly ImagePanel EntityWindow;
 
-        public float CurExpWidth;
+        public float CurExpWidth = -1;
 
-        public float CurHpWidth;
+        public float CurHpWidth = -1;
 
-        public float CurMpWidth;
+        public float CurMpWidth = -1;
 
-        public float CurShieldWidth;
+        public float CurShieldWidth = -1;
 
         public ImagePanel EntityFace;
 
@@ -719,7 +719,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 if (entityTex != EntityFace.Texture)
                 {
                     EntityFace.Texture = entityTex;
-                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                    EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
                     mCurrentSprite = MyEntity.MySprite;
@@ -791,14 +791,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         {
                             PaperdollPanels[n]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / 4,
-                                    PaperdollPanels[n].Texture.GetHeight() / 4
+                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]
                                 .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / 4,
-                                    PaperdollPanels[n].Texture.GetHeight() / 4
+                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[n]

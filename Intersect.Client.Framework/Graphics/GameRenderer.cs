@@ -17,8 +17,15 @@ namespace Intersect.Client.Framework.Graphics
             ScreenshotRequests = new List<Stream>();
         }
 
-        [NotNull]
-        public List<Stream> ScreenshotRequests { get; }
+        [NotNull] public List<Stream> ScreenshotRequests { get; }
+
+        public Resolution ActiveResolution => new Resolution(PreferredResolution, OverrideResolution);
+
+        public bool HasOverrideResolution => OverrideResolution != Resolution.Empty;
+
+        public Resolution OverrideResolution { get; set; }
+
+        public Resolution PreferredResolution { get; set; }
 
         public abstract void Init();
 
@@ -79,7 +86,12 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract GameRenderTexture CreateRenderTexture(int width, int height);
 
-        public abstract GameTexture LoadTexture(string filename);
+        public abstract GameTexture LoadTexture(string filename, string realFilename);
+
+        public abstract GameTexture LoadTexture(
+            [NotNull] string assetName,
+            [NotNull] Func<Stream> createStream
+        );
 
         public abstract GameTexture GetWhiteTexture();
 

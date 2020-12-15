@@ -16,7 +16,7 @@ namespace Intersect.Memory
         {
         }
 
-        public MemoryBuffer(IBuffer buffer) : base(buffer?.ToBytes() ?? new byte[0])
+        public MemoryBuffer(IBuffer buffer) : base(buffer?.ToBytes() ?? Array.Empty<byte>())
         {
         }
 
@@ -681,7 +681,7 @@ namespace Intersect.Memory
 
         public void Write(byte[] value, long offset, long count)
         {
-            base.Write(value ?? new byte[0], 0, (int) count);
+            base.Write(value ?? Array.Empty<byte>(), 0, (int) count);
         }
 
         public void Write(char value)

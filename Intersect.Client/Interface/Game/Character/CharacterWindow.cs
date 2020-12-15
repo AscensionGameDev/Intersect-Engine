@@ -226,7 +226,7 @@ namespace Intersect.Client.Interface.Game.Character
                     {
                         PaperdollPanels[z].Show();
                         PaperdollPanels[z].Texture = entityTex;
-                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / 4, entityTex.GetHeight() / 4);
+                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                         PaperdollPanels[z].SizeToContents();
                         Align.Center(PaperdollPanels[z]);
                     }
@@ -248,14 +248,14 @@ namespace Intersect.Client.Interface.Game.Character
                         {
                             PaperdollPanels[z]
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / 4,
-                                    PaperdollPanels[z].Texture.GetHeight() / 4
+                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[z]
                                 .SetSize(
-                                    PaperdollPanels[z].Texture.GetWidth() / 4,
-                                    PaperdollPanels[z].Texture.GetHeight() / 4
+                                    PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
                             PaperdollPanels[z]

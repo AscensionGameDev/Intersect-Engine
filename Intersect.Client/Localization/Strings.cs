@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 
 using Intersect.Localization;
-
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -456,6 +456,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString title = @"Chat";
 
             public static LocalizedString toofast = @"You are chatting too fast!";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
 
         }
 
@@ -1146,6 +1149,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString musicvolume = @"Music Volume: {00}%";
 
             public static LocalizedString resolution = @"Resolution:";
+
+            public static LocalizedString ResolutionCustom = @"Custom Resolution";
 
             public static LocalizedString restore = @"Restore Defaults";
 

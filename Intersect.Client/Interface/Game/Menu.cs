@@ -201,6 +201,11 @@ namespace Intersect.Client.Interface.Game
             }
         }
 
+        public void OpenInventory()
+        {
+            mInventoryWindow.Show();
+        }
+
         public void TogglePartyWindow()
         {
             if (mPartyWindow.IsVisible())

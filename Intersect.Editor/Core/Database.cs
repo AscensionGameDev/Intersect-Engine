@@ -41,6 +41,8 @@ namespace Intersect.Editor
 
         public static bool GridHideResources;
 
+        public static bool GridHideEvents;
+
         public static int GridLightColor = System.Drawing.Color.White.ToArgb();
 
         private static SqliteConnection sDbConnection;
@@ -82,6 +84,7 @@ namespace Intersect.Editor
             GridHideOverlay = GetOptionBool("HideOverlay");
             GridLightColor = GetOptionInt("LightColor");
             GridHideResources = GetOptionBool("HideResources");
+            GridHideEvents = GetOptionBool("HideEvents");
         }
 
         private static void CreateDatabase()
@@ -118,6 +121,7 @@ namespace Intersect.Editor
             SaveOption("HideFog", GridHideFog.ToString());
             SaveOption("HideOverlay", GridHideOverlay.ToString());
             SaveOption("HideResources", GridHideResources.ToString());
+            SaveOption("HideEvents", GridHideEvents.ToString());
             SaveOption("LightColor", GridLightColor.ToString());
         }
 

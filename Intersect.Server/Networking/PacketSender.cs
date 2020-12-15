@@ -14,6 +14,7 @@ using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
+using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
@@ -57,12 +58,28 @@ namespace Intersect.Server.Networking
         //JoinGamePacket
         public static void SendJoinGame(Client client)
         {
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.UserActivityHistory.Add(
+                    new UserActivityHistory
+                    {
+                        UserId = client.User.Id,
+                        Ip = client.GetIp(),
+                        Peer = client.IsEditor ? UserActivityHistory.PeerType.Editor : UserActivityHistory.PeerType.Client,
+                        PlayerId = client.Entity?.Id,
+                        Action = UserActivityHistory.UserAction.SelectPlayer,
+                        Meta = $"{client.Name},{client.Entity?.Name}"
+                    }
+                );
+            }
+
             if (!client.IsEditor)
             {
                 SendEnteringGamePacket(client.Entity);
                 SendEntityDataTo(client.Entity, client.Entity);
             }
 
+            client.TimedBufferPacketsRemaining = 5;
             client.SendPacket(new JoinGamePacket());
             PacketSender.SendGameData(client);
 
@@ -211,7 +228,7 @@ namespace Intersect.Server.Networking
             {
                 if (client.SentMaps.TryGetValue(mapId, out var sentMap))
                 {
-                    if (sentMap.Item1 > Globals.Timing.TimeMs && sentMap.Item2 == map.Revision)
+                    if (sentMap.Item1 > Globals.Timing.Milliseconds && sentMap.Item2 == map.Revision)
                     {
                         return;
                     }
@@ -221,7 +238,7 @@ namespace Intersect.Server.Networking
 
                 try
                 {
-                    client.SentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.TimeMs + 5000, map.Revision));
+                    client.SentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.Milliseconds + 5000, map.Revision));
                 }
                 catch (Exception exception)
                 {
@@ -691,7 +708,7 @@ namespace Intersect.Server.Networking
 
             return new EntityVitalsPacket(
                 en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets(),
-                en.CombatTimer - Globals.Timing.TimeMs
+                en.CombatTimer - Globals.Timing.Milliseconds
             );
         }
 
@@ -1158,7 +1175,7 @@ namespace Intersect.Server.Networking
             if (player.SpellCooldowns.ContainsKey(spellId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.RealTimeMs);
+                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUTC);
                 player.SendPacket(new SpellCooldownPacket(cds));
             }
         }
@@ -1170,7 +1187,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.SpellCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
                 player.SendPacket(new SpellCooldownPacket(cds));
@@ -1183,7 +1200,7 @@ namespace Intersect.Server.Networking
             if (player.ItemCooldowns.ContainsKey(itemId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.RealTimeMs);
+                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUTC);
                 player.SendPacket(new ItemCooldownPacket(cds));
             }
         }
@@ -1195,7 +1212,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.ItemCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
                 player.SendPacket(new ItemCooldownPacket(cds));
