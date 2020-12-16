@@ -125,10 +125,23 @@ namespace Intersect.Client.Interface.Menu
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
 
-            // Re-Enable our Play button if we're not waiting for the server anymore with it disabled.
-            if (mPlayButton.IsDisabled && !Globals.WaitingOnServer)
+            // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
+            if (!Globals.WaitingOnServer)
             {
-                mPlayButton.Enable();
+                if (mPlayButton.IsDisabled)
+                {
+                    mPlayButton.Enable();
+                }
+
+                if (mNewButton.IsDisabled)
+                {
+                    mNewButton.Enable();
+                }
+
+                if (mDeleteButton.IsDisabled)
+                {
+                    mDeleteButton.Enable();
+                }
             }
         }
 
@@ -355,6 +368,11 @@ namespace Intersect.Client.Interface.Menu
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (Globals.WaitingOnServer)
+            {
+                return;
+            }
+
             var iBox = new InputBox(
                 Strings.CharacterSelection.deletetitle.ToString(Characters[mSelectedChar].Name),
                 Strings.CharacterSelection.deleteprompt.ToString(Characters[mSelectedChar].Name), true,
@@ -366,13 +384,25 @@ namespace Intersect.Client.Interface.Menu
         private void DeleteCharacter(Object sender, EventArgs e)
         {
             PacketSender.SendDeleteCharacter((Guid) ((InputBox) sender).UserData);
+
+            Globals.WaitingOnServer = true;
+            mDeleteButton.Disable();
+
             mSelectedChar = 0;
             UpdateDisplay();
         }
 
         private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (Globals.WaitingOnServer)
+            {
+                return;
+            }
+
             PacketSender.SendNewCharacter();
+
+            Globals.WaitingOnServer = true;
+            mNewButton.Disable();
         }
 
     }
