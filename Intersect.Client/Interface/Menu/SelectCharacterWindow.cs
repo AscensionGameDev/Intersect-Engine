@@ -335,8 +335,14 @@ namespace Intersect.Client.Interface.Menu
 
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (Globals.WaitingOnServer)
+            {
+                return;
+            }
+
             ChatboxMsg.ClearMessages();
             PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
+            Globals.WaitingOnServer = true;
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
