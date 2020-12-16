@@ -364,6 +364,8 @@ namespace Intersect.Client.Interface.Menu
 
             Globals.WaitingOnServer = true;
             mPlayButton.Disable();
+            mNewButton.Disable();
+            mDeleteButton.Disable();
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -386,6 +388,8 @@ namespace Intersect.Client.Interface.Menu
             PacketSender.SendDeleteCharacter((Guid) ((InputBox) sender).UserData);
 
             Globals.WaitingOnServer = true;
+            mPlayButton.Disable();
+            mNewButton.Disable();
             mDeleteButton.Disable();
 
             mSelectedChar = 0;
@@ -402,7 +406,9 @@ namespace Intersect.Client.Interface.Menu
             PacketSender.SendNewCharacter();
 
             Globals.WaitingOnServer = true;
+            mPlayButton.Disable();
             mNewButton.Disable();
+            mDeleteButton.Disable();
         }
 
     }
