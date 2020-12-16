@@ -124,6 +124,12 @@ namespace Intersect.Client.Interface.Menu
                 mMainMenu.Show();
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
+
+            // Re-Enable our Play button if we're not waiting for the server anymore with it disabled.
+            if (mPlayButton.IsDisabled && !Globals.WaitingOnServer)
+            {
+                mPlayButton.Enable();
+            }
         }
 
         private void UpdateDisplay()
@@ -342,7 +348,9 @@ namespace Intersect.Client.Interface.Menu
 
             ChatboxMsg.ClearMessages();
             PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
+
             Globals.WaitingOnServer = true;
+            mPlayButton.Disable();
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
