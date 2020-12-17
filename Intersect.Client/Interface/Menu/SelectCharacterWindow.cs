@@ -142,6 +142,11 @@ namespace Intersect.Client.Interface.Menu
                 {
                     mDeleteButton.Enable();
                 }
+
+                if (mLogoutButton.IsDisabled)
+                {
+                    mLogoutButton.Enable();
+                }
             }
         }
 
@@ -366,6 +371,7 @@ namespace Intersect.Client.Interface.Menu
             mPlayButton.Disable();
             mNewButton.Disable();
             mDeleteButton.Disable();
+            mLogoutButton.Disable();
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -391,6 +397,7 @@ namespace Intersect.Client.Interface.Menu
             mPlayButton.Disable();
             mNewButton.Disable();
             mDeleteButton.Disable();
+            mLogoutButton.Disable();
 
             mSelectedChar = 0;
             UpdateDisplay();
@@ -409,6 +416,7 @@ namespace Intersect.Client.Interface.Menu
             mPlayButton.Disable();
             mNewButton.Disable();
             mDeleteButton.Disable();
+            mLogoutButton.Disable();
         }
 
     }
