@@ -137,7 +137,7 @@ namespace Intersect.Client.Interface.Menu
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
 
-            // Re-Enable our buttons button if we're not waiting for the server anymore with it disabled.
+            // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
             if (!Globals.WaitingOnServer && mRegisterBtn.IsDisabled)
             {
                 mRegisterBtn.Enable();

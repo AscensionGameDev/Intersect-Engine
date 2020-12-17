@@ -210,7 +210,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            // Re-Enable our buttons button if we're not waiting for the server anymore with it disabled.
+            // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
             if (!Globals.WaitingOnServer && mCreateButton.IsDisabled)
             {
                 mCreateButton.Enable();
