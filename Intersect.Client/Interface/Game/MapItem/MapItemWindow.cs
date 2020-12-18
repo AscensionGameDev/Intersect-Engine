@@ -80,6 +80,12 @@ namespace Intersect.Client.Interface.Game.Inventory
             var itemSlot = 0;
             foreach(var mapItem in mapItems[location])
             {
+                // Skip rendering this item if we're already past the cap we are allowed to display.
+                if (itemSlot > Options.Loot.MaximumLootWindowItems - 1)
+                {
+                    continue;
+                }
+
                 // Are we allowed to see and pick this item up?
                 if (!mapItem.VisibleToAll && mapItem.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(mapItem.Owner))
                 {
