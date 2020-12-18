@@ -12,6 +12,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Items;
+using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Spells;
 using Intersect.Enums;
@@ -1354,7 +1355,13 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+            var name = Name;
+            if ((this is Player && Options.Player.ShowLevelByName) || Options.Npc.ShowLevelByName)
+            {
+                name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
+            }
+
+            var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Name);
@@ -1368,7 +1375,7 @@ namespace Intersect.Client.Entities
             }
 
             Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
+                name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
         }
