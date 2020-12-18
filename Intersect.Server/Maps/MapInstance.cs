@@ -272,21 +272,40 @@ namespace Intersect.Server.Maps
             }
 
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
-            if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
+            // Does not count for Equipment and bags, these are ALWAYS their own separate item spawn. We don't want to lose data on that!
+            if ((itemDescriptor.ItemType != ItemTypes.Equipment && itemDescriptor.ItemType != ItemTypes.Bag) &&
+                (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops))
             {
-                var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag) {
+
+                // Does this item already exist on this tile? If so, get its value so we can simply consolidate the stack.
+                var existingCount = 0;
+                var existingItems = FindItemsAt(x, y);
+                var toRemove = new List<Guid>();
+                foreach(var exItem in existingItems)
+                {
+                    // If the Id matches, get its quantity and remove the item so we don't get multiple stacks.
+                    if (exItem.ItemId == item.ItemId)
+                    {
+                        existingCount += exItem.Quantity;
+                        toRemove.Add(exItem.UniqueId);
+                    }
+                }
+                
+                var mapItem = new MapItem(item.ItemId, amount + existingCount, item.BagId, item.Bag) {
                     DespawnTime = Globals.Timing.Milliseconds + Options.Loot.ItemDespawnTime,
                     Owner = owner,
                     OwnershipTime = Globals.Timing.Milliseconds + Options.Loot.ItemOwnershipTime,
                     VisibleToAll = Options.Loot.ShowUnownedItems
                 };
 
-                // If this is a piece of equipment, set up the stat buffs for it.
-                if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                // Remove existing items if we need to.
+                foreach(var reItem in toRemove)
                 {
-                    mapItem.SetupStatBuffs(item);
+                    RemoveItem(reItem);
+                    PacketSender.SendMapItemUpdate(Id, reItem);
                 }
 
+                // Drop the new item.
                 AddItem(x, y, mapItem);
                 PacketSender.SendMapItemUpdate(Id, mapItem.UniqueId);
             }
@@ -370,6 +389,31 @@ namespace Intersect.Server.Maps
             lock (MapItems)
             {
                 return AllMapItems.Where(item => item.UniqueId == uniqueId).SingleOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// /// Find all map items at a specificed location.
+        /// </summary>
+        /// <param name="x">The X Coordinate to request items for.</param>
+        /// <param name="y">The Y Coordinate to request items for.</param>
+        /// <returns>Returns a <see cref="List"/> of <see cref="MapItem"/></returns>
+        public List<MapItem> FindItemsAt(int x, int y) => FindItemsAt(new Point(x, y));
+
+        /// <summary>
+        /// Find all map items at a specificed location.
+        /// </summary>
+        /// <param name="location">The <see cref="Point"/> for which to request map items.</param>
+        /// <returns>Returns a <see cref="List"/> of <see cref="MapItem"/></returns>
+        public List<MapItem> FindItemsAt(Point location)
+        {
+            if (MapItems.ContainsKey(location))
+            {
+                return MapItems[location];
+            }
+            else
+            {
+                return new List<MapItem>();
             }
         }
 
