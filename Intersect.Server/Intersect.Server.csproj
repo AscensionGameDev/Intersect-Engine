@@ -203,6 +203,7 @@
     <OutputPath>..\build\debug\server\</OutputPath>
     <DisableFody>true</DisableFody>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <ExternalConsole>false</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -505,7 +506,7 @@
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
-    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.designer.cs">
+    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
@@ -588,7 +589,7 @@
       <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.designer.cs">
+    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.Designer.cs">
       <DependentUpon>20190611170927_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.cs" />
@@ -596,19 +597,19 @@
       <DependentUpon>20190804133420_Custom_Player_Name_Colors.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs" />
-    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.designer.cs">
+    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.Designer.cs">
       <DependentUpon>20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.cs" />
-    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.designer.cs">
+    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.Designer.cs">
       <DependentUpon>20191030214333_PlayerUpgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20191126025000_RefactoringCooldowns.cs" />
-    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.designer.cs">
+    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.Designer.cs">
       <DependentUpon>20191126025000_RefactoringCooldowns.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.cs" />
-    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.designer.cs">
+    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.Designer.cs">
       <DependentUpon>20200301145105_SavingPlayerLabelsInDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
@@ -620,31 +621,31 @@
       <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.cs" />
-    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.designer.cs">
+    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.Designer.cs">
       <DependentUpon>20190320233655_ItemRarityAndSpellQuickCast.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.cs" />
-    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.designer.cs">
+    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.Designer.cs">
       <DependentUpon>20190530000628_AddingCraftingQuantities.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.designer.cs">
+    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.Designer.cs">
       <DependentUpon>20190611170819_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.cs" />
-    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.designer.cs">
+    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.Designer.cs">
       <DependentUpon>20190615010038_AddingExpOveridesToClasses.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.cs" />
-    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.designer.cs">
+    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.Designer.cs">
       <DependentUpon>20190618013705_AddingFoldersToGameObjects.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.cs" />
-    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.designer.cs">
+    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.Designer.cs">
       <DependentUpon>20190618014158_AddingFoldersToVaraibles.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.cs" />
-    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.designer.cs">
+    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.Designer.cs">
       <DependentUpon>20190712220904_AddingAnimationSoundCompletionOpt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190726203949_SpellUpgrades_Percentage_Buffs.cs" />
@@ -652,20 +653,20 @@
       <DependentUpon>20190726203949_SpellUpgrades_Percentage_Buffs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.cs" />
-    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.designer.cs">
+    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.Designer.cs">
       <DependentUpon>20190727120303_ItemUpgrades_Percentage_Based_Stats.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.cs" />
-    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.designer.cs">
+    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.Designer.cs">
       <DependentUpon>20200216143942_MoreGraularAttackSpeedOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20191118024649_RequestLogs.cs" />
-    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.designer.cs">
+    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.Designer.cs">
       <DependentUpon>20191118024649_RequestLogs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\LoggingContextModelSnapshot.cs" />
     <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs" />
-    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.designer.cs">
+    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.Designer.cs">
       <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
