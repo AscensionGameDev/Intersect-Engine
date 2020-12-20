@@ -30,7 +30,9 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private GameTexturePackFrame mPackFrame;
 
-        private string mPath = "";
+        private readonly string mPath = "";
+
+        private readonly string mRealPath = "";
 
         private Texture2D mTexture;
 
@@ -38,10 +40,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private readonly Func<Stream> CreateStream;
 
-        public MonoTexture(GraphicsDevice graphicsDevice, string filename)
+        public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath)
         {
             mGraphicsDevice = graphicsDevice;
             mPath = filename;
+            mRealPath = realPath;
             mName = Path.GetFileName(filename);
         }
 
@@ -100,7 +103,7 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             mLoadError = true;
-            if (string.IsNullOrWhiteSpace(mPath))
+            if (string.IsNullOrWhiteSpace(mRealPath))
             {
                 Log.Error("Invalid texture path (empty/null).");
 
@@ -109,14 +112,14 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
 
-            if (!File.Exists(mPath))
+            if (!File.Exists(mRealPath))
             {
                 Log.Error($"Texture does not exist: {relativePath}");
 
                 return;
             }
 
-            using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var fileStream = File.Open(mRealPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 try
                 {

@@ -115,6 +115,9 @@
     <Optimize>false</Optimize>
     <DisableFody>true</DisableFody>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <NetworkKeyOutputDir>..\build\debug\keys</NetworkKeyOutputDir>
+    <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
+    <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\build\release\server\</OutputPath>
@@ -200,6 +203,7 @@
     <OutputPath>..\build\debug\server\</OutputPath>
     <DisableFody>true</DisableFody>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <ExternalConsole>false</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -211,8 +215,8 @@
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=2012.1.7.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.2\lib\net46\Lidgren.Network.dll</HintPath>
+    <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Markdown, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1b320cc08ad5aa89, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdown.2.2.1\lib\net451\Markdown.dll</HintPath>
@@ -431,19 +435,26 @@
     <Compile Include="Core\IServerContext.cs" />
     <Compile Include="Core\LogicService.cs" />
     <Compile Include="Core\LogicService.LogicThread.cs" />
-    <Compile Include="Core\ServerTiming.cs" />
     <Compile Include="Core\Services\IConsoleService.cs" />
     <Compile Include="Core\Services\ILogicService.cs" />
+    <Compile Include="Database\ContextProvider.cs" />
+    <Compile Include="Database\ContextProvider.Locking.cs" />
     <Compile Include="Database\DbLogger.cs" />
     <Compile Include="Database\DbLoggerProvider.cs" />
     <Compile Include="Database\GameData\GameContext.cs" />
+    <Compile Include="Database\GameData\IGameContext.cs" />
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\ContextInterface.cs" />
+    <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
+    <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
+    <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
     <Compile Include="Database\Logging\RequestLog.cs" />
     <Compile Include="Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Database\PlayerData\Ban.cs" />
+    <Compile Include="Database\PlayerData\IPlayerContext.cs" />
     <Compile Include="Database\PlayerData\Players\Bag.cs" />
     <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
@@ -494,6 +505,18 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\20201017065035_AddColorToEntities.cs" />
+    <Compile Include="Migrations\20201017065035_AddColorToEntities.designer.cs">
+      <DependentUpon>20201017065035_AddColorToEntities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.cs" />
+    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.designer.cs">
+      <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
+    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
+      <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />
@@ -574,7 +597,7 @@
       <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.designer.cs">
+    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.Designer.cs">
       <DependentUpon>20190611170927_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.cs" />
@@ -582,19 +605,19 @@
       <DependentUpon>20190804133420_Custom_Player_Name_Colors.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs" />
-    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.designer.cs">
+    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.Designer.cs">
       <DependentUpon>20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.cs" />
-    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.designer.cs">
+    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.Designer.cs">
       <DependentUpon>20191030214333_PlayerUpgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20191126025000_RefactoringCooldowns.cs" />
-    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.designer.cs">
+    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.Designer.cs">
       <DependentUpon>20191126025000_RefactoringCooldowns.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.cs" />
-    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.designer.cs">
+    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.Designer.cs">
       <DependentUpon>20200301145105_SavingPlayerLabelsInDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
@@ -606,31 +629,31 @@
       <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.cs" />
-    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.designer.cs">
+    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.Designer.cs">
       <DependentUpon>20190320233655_ItemRarityAndSpellQuickCast.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.cs" />
-    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.designer.cs">
+    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.Designer.cs">
       <DependentUpon>20190530000628_AddingCraftingQuantities.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.designer.cs">
+    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.Designer.cs">
       <DependentUpon>20190611170819_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.cs" />
-    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.designer.cs">
+    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.Designer.cs">
       <DependentUpon>20190615010038_AddingExpOveridesToClasses.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.cs" />
-    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.designer.cs">
+    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.Designer.cs">
       <DependentUpon>20190618013705_AddingFoldersToGameObjects.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.cs" />
-    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.designer.cs">
+    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.Designer.cs">
       <DependentUpon>20190618014158_AddingFoldersToVaraibles.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.cs" />
-    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.designer.cs">
+    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.Designer.cs">
       <DependentUpon>20190712220904_AddingAnimationSoundCompletionOpt.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190726203949_SpellUpgrades_Percentage_Buffs.cs" />
@@ -638,20 +661,20 @@
       <DependentUpon>20190726203949_SpellUpgrades_Percentage_Buffs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.cs" />
-    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.designer.cs">
+    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.Designer.cs">
       <DependentUpon>20190727120303_ItemUpgrades_Percentage_Based_Stats.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.cs" />
-    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.designer.cs">
+    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.Designer.cs">
       <DependentUpon>20200216143942_MoreGraularAttackSpeedOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20191118024649_RequestLogs.cs" />
-    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.designer.cs">
+    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.Designer.cs">
       <DependentUpon>20191118024649_RequestLogs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\LoggingContextModelSnapshot.cs" />
     <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs" />
-    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.designer.cs">
+    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.Designer.cs">
       <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

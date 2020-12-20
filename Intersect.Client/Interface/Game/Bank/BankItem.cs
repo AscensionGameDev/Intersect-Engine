@@ -147,6 +147,7 @@ namespace Intersect.Client.Interface.Game.Bank
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
+                        Pnl.RenderColor = item.Color;
                     }
                     else
                     {

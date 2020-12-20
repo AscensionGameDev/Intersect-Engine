@@ -174,8 +174,8 @@ namespace Intersect.Client
 
                 case PlatformID.Unix:
                 default:
-                    ExportDependency("libopenal.so.1", folder);
-                    ExportDependency("libSDL2-2.0.so.0", folder);
+                    ExportDependency("libopenal.so.1", "");
+                    ExportDependency("libSDL2-2.0.so.0", "");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
 

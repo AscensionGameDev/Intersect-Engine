@@ -127,6 +127,11 @@ namespace Intersect.Configuration
 
         public string UpdateUrl { get; set; } = "";
 
+        /// <summary>
+        /// Sets a custom mouse cursor.
+        /// </summary>
+        public string MouseCursor { get; set; } = "";
+
         #endregion
 
         #region Serialization Hooks

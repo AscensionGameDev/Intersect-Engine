@@ -16,15 +16,17 @@ namespace Intersect.Client.MonoGame.Audio
     public class MonoSoundSource : GameAudioSource
     {
 
-        private readonly string mFilename;
+        private readonly string mPath;
+        private readonly string mRealPath;
 
         private int mInstanceCount;
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(string filename, ContentManager contentManager)
+        public MonoSoundSource(string path, string realPath)
         {
-            mFilename = filename;
+            mPath = path;
+            mRealPath = realPath;
         }
 
         public SoundEffect Effect
@@ -62,9 +64,9 @@ namespace Intersect.Client.MonoGame.Audio
         {
             try
             {
-                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.Contains(mFilename))
+                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.Contains(mRealPath))
                 {
-                    using (var stream = Globals.ContentManager.SoundPacks.GetAsset(mFilename))
+                    using (var stream = Globals.ContentManager.SoundPacks.GetAsset(mRealPath))
                     {
                         mSound = SoundEffect.FromStream(stream);
                     }
@@ -79,10 +81,10 @@ namespace Intersect.Client.MonoGame.Audio
             }
             catch (Exception exception)
             {
-                Log.Error($"Error loading '{mFilename}'.", exception);
+                Log.Error($"Error loading '{mPath}'.", exception);
                 ChatboxMsg.AddMessage(
                     new ChatboxMsg(
-                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]",
+                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
                         new Color(0xBF, 0x0, 0x0)
                     )
                 );

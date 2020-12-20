@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
 
 using Intersect.Editor.Content;
@@ -45,6 +47,9 @@ namespace Intersect.Editor.Core
 
         //Resources
         public static bool HideResources = false;
+
+        // Events
+        public static bool HideEvents = false;
 
         //Advanced Editing Features
         public static bool HideTilePreview = false;
@@ -277,6 +282,28 @@ namespace Intersect.Editor.Core
                                             map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
                                             false, null, true, true
                                         );
+                                    }
+                                }
+                            }
+                        }
+
+                        // Draw events
+                        for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                        {
+                            for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                            {
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                                {
+                                    var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
+                                    if (map != null)
+                                    {
+                                        lock (map.MapLock)
+                                        {
+                                            DrawMapEvents(
+                                                map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                                false, null
+                                            );
+                                        }
                                     }
                                 }
                             }
@@ -1453,6 +1480,139 @@ namespace Intersect.Editor.Core
             }
         }
 
+        private static void DrawMapEvents(
+            MapInstance map,
+            int gridX,
+            int gridY,
+            bool screenShotting,
+            RenderTarget2D renderTarget
+        )
+        {
+            if (!screenShotting && HideEvents)
+            {
+                return;
+            }
+
+            if (screenShotting && Database.GridHideEvents)
+            {
+                return;
+            }
+
+            var tmpMap = Globals.CurrentMap;
+            if (tmpMap == null)
+            {
+                return;
+            }
+
+            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
+
+            x1 = 0;
+            x2 = Options.MapWidth;
+            y1 = 0;
+            y2 = Options.MapHeight;
+            xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
+            yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
+            if (gridX != 0 || gridY != 0)
+            {
+                tmpMap = map;
+            }
+
+            if (screenShotting)
+            {
+                xoffset -= CurrentView.Left;
+                yoffset -= CurrentView.Top;
+            }
+
+            if (gridX == 0 && gridY == 0)
+            {
+                if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
+                {
+                    tmpMap = TilePreviewStruct;
+                }
+            }
+
+            if (tmpMap == null)
+            {
+                return;
+            }
+
+            for (var y = y1; y < y2; y++)
+            {
+                for (var x = x1; x < x2; x++)
+                {
+                    var tmpEvent = tmpMap.FindEventAt(x, y);
+                    if (tmpEvent == null)
+                    {
+                        continue;
+                    }
+
+                    if (tmpEvent.Pages[0].Graphic == null)
+                    {
+                        continue;
+                    }
+
+                    var tmpGraphic = tmpEvent.Pages[0].Graphic;
+                    if (TextUtils.IsNone(tmpGraphic.Filename))
+                    {
+                        continue;
+                    }
+
+                    Texture2D eventTex = null;
+                    var destinationX = x * Options.TileWidth + xoffset;
+                    var destinationY = y * Options.TileHeight + yoffset;
+                    var sourceX = 0;
+                    var sourceY = 0;
+                    var width = 0;
+                    var height = 0;
+
+                    switch (tmpGraphic.Type)
+                    {
+                        case EventGraphicType.Sprite: //Sprite
+                            eventTex = GameContentManager.GetTexture(
+                                GameContentManager.TextureType.Entity, tmpGraphic.Filename
+                            );
+                            if (eventTex == null)
+                            {
+                                continue;
+                            }
+
+                            sourceX = (int)tmpGraphic.X * (eventTex.Width / Options.Instance.Sprites.NormalFrames);
+                            sourceY = (int)tmpGraphic.Y * (eventTex.Height / Options.Instance.Sprites.Directions);
+                            width = (eventTex.Width / Options.Instance.Sprites.NormalFrames);
+                            height = (eventTex.Height / Options.Instance.Sprites.Directions);
+
+                            break;
+                        case EventGraphicType.Tileset: //Tile
+                            eventTex = GameContentManager.GetTexture(
+                                GameContentManager.TextureType.Tileset, tmpGraphic.Filename
+                            );
+                            if (eventTex == null)
+                            {
+                                continue;
+                            }
+
+                            sourceX = (int)tmpGraphic.X * Options.TileWidth;
+                            sourceY = (int)tmpGraphic.Y * Options.TileHeight;
+                            width = (tmpGraphic.Width + 1) * Options.TileWidth;
+                            height = (tmpGraphic.Height + 1) * Options.TileHeight;
+
+                            break;
+                    }
+
+                    if (height > Options.TileHeight)
+                    {
+                        destinationY -= (height - Options.TileHeight);
+                    }
+
+                    if (width > Options.TileWidth)
+                    {
+                        destinationX -= (width  - Options.TileWidth) / 2;
+                    }
+
+                    DrawTexture(eventTex, destinationX, destinationY, sourceX, sourceY, width, height, renderTarget);
+                }
+            }
+        }
         private static void DrawMapOverlay(RenderTarget2D target)
         {
             DrawTexture(
@@ -1534,6 +1694,28 @@ namespace Intersect.Editor.Core
                                     DrawMapAttributes(
                                         map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true,
                                         sScreenShotRenderTexture, true, true
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Draw events
+                for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                {
+                    for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    {
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        {
+                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
+                            if (map != null)
+                            {
+                                lock (map.MapLock)
+                                {
+                                    DrawMapEvents(
+                                        map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                        true, sScreenShotRenderTexture
                                     );
                                 }
                             }
@@ -2013,26 +2195,26 @@ namespace Intersect.Editor.Core
             {
                 StartSpritebatch(blendMode, shader, null, false, null);
                 sSpriteBatch.Draw(
-                    tex, null,
+                    tex,
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
                     ),
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0
+                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
                 );
             }
             else
             {
                 StartSpritebatch(blendMode, shader, renderTarget, false, null);
                 sSpriteBatch.Draw(
-                    tex, null,
+                    tex,
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
                     ),
                     new Microsoft.Xna.Framework.Rectangle(
                         (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0
+                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
                 );
             }
         }

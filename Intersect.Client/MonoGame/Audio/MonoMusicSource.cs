@@ -22,6 +22,7 @@ namespace Intersect.Client.MonoGame.Audio
     {
 
         private readonly string mPath;
+        private readonly string mRealPath;
 
         public VorbisReader Reader { get; set; }
         public DynamicSoundEffectInstance Instance { get; set; }
@@ -33,9 +34,10 @@ namespace Intersect.Client.MonoGame.Audio
 
         
 
-        public MonoMusicSource(string path)
+        public MonoMusicSource(string path, string realPath)
         {
             mPath = path;
+            mRealPath = realPath;
 
             if (mUnderlyingThread == null)
             {
@@ -60,20 +62,20 @@ namespace Intersect.Client.MonoGame.Audio
             {
                 try
                 {
-                    if (!string.IsNullOrWhiteSpace(mPath))
+                    if (!string.IsNullOrWhiteSpace(mRealPath))
                     {
 
                         if (Reader == null)
                         {
                             // Do we have this cached?
-                            if (Globals.ContentManager.MusicPacks != null && Globals.ContentManager.MusicPacks.Contains(Path.GetFileName(mPath)))
+                            if (Globals.ContentManager.MusicPacks != null && Globals.ContentManager.MusicPacks.Contains(Path.GetFileName(mRealPath)))
                             {
                                 // Read from cache, but close reader when we're done with it!
-                                Reader = new VorbisReader(Globals.ContentManager.MusicPacks.GetAsset(Path.GetFileName(mPath)), true);
+                                Reader = new VorbisReader(Globals.ContentManager.MusicPacks.GetAsset(Path.GetFileName(mRealPath)), true);
                             }
                             else
                             {
-                                Reader = new VorbisReader(mPath);
+                                Reader = new VorbisReader(mRealPath);
                             }
                         }
 
@@ -96,7 +98,7 @@ namespace Intersect.Client.MonoGame.Audio
                     Log.Error($"Error loading '{mPath}'.", exception);
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
-                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)
+                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]", new Color(0xBF, 0x0, 0x0)
                         )
                     );
                 }

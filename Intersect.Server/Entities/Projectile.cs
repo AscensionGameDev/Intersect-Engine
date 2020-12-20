@@ -117,7 +117,7 @@ namespace Intersect.Server.Entities
             }
 
             mQuantity++;
-            mSpawnTime = Globals.Timing.TimeMs + Base.Delay;
+            mSpawnTime = Globals.Timing.Milliseconds + Base.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -233,7 +233,7 @@ namespace Intersect.Server.Entities
 
         public void Update()
         {
-            if (mQuantity < Base.Quantity && Globals.Timing.TimeMs > mSpawnTime)
+            if (mQuantity < Base.Quantity && Globals.Timing.Milliseconds > mSpawnTime)
             {
                 AddProjectileSpawns();
             }
@@ -295,7 +295,7 @@ namespace Intersect.Server.Entities
                 for (var i = 0; i < mSpawnedAmount; i++)
                 {
                     var spawn = Spawns[i];
-                    if (spawn != null && Globals.Timing.TimeMs > spawn.TransmittionTimer)
+                    if (spawn != null && Globals.Timing.Milliseconds > spawn.TransmittionTimer)
                     {
                         var killSpawn = MoveFragment(spawn);
                         if (!killSpawn)
@@ -406,7 +406,7 @@ namespace Intersect.Server.Entities
                     {
                         if (z == entities.Count - 1)
                         {
-                            spawn.TransmittionTimer = Globals.Timing.TimeMs +
+                            spawn.TransmittionTimer = Globals.Timing.Milliseconds +
                                                       (long) ((float) Base.Speed / (float) Base.Range);
 
                             if (spawn.Distance >= Base.Range)

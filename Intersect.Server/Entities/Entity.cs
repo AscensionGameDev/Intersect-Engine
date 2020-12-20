@@ -72,6 +72,22 @@ namespace Intersect.Server.Entities
 
         public string Sprite { get; set; }
 
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [JsonIgnore, Column(nameof(Color))]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Entity.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         public string Face { get; set; }
 
         public int Level { get; set; }
@@ -87,7 +103,7 @@ namespace Intersect.Server.Entities
         public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [JsonIgnore, Column("BaseStats")]
+        [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
@@ -99,7 +115,7 @@ namespace Intersect.Server.Entities
             new int[(int) Enums.Stats
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [JsonIgnore, Column("StatPointAllocations")]
+        [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
@@ -117,7 +133,7 @@ namespace Intersect.Server.Entities
         [NotNull, JsonIgnore]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        [JsonIgnore, Column("NameColor")]
+        [JsonIgnore, Column(nameof(NameColor))]
         public string NameColorJson
         {
             get => DatabaseUtils.SaveColor(NameColor);
@@ -134,7 +150,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label HeaderLabel { get; set; }
 
-        [JsonIgnore, Column("HeaderLabel")]
+        [JsonIgnore, Column(nameof(HeaderLabel))]
         public string HeaderLabelJson
         {
             get => JsonConvert.SerializeObject(HeaderLabel);
@@ -144,7 +160,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label FooterLabel { get; set; }
 
-        [JsonIgnore, Column("FooterLabel")]
+        [JsonIgnore, Column(nameof(FooterLabel))]
         public string FooterLabelJson
         {
             get => JsonConvert.SerializeObject(FooterLabel);
@@ -200,7 +216,7 @@ namespace Intersect.Server.Entities
         public bool Passable { get; set; } = false;
 
         [NotMapped, JsonIgnore]
-        public long RegenTimer { get; set; } = Globals.Timing.TimeMs;
+        public long RegenTimer { get; set; } = Globals.Timing.Milliseconds;
 
         [NotMapped, JsonIgnore]
         public int SpellCastSlot { get; set; } = 0;
@@ -424,8 +440,7 @@ namespace Intersect.Server.Entities
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
-                            if (!resource.IsDead() && !resource.Base.WalkableBefore ||
-                                resource.IsDead() && !resource.Base.WalkableAfter)
+                            if (!resource.IsPassable())
                             {
                                 return (int) EntityTypes.Resource;
                             }
@@ -650,17 +665,17 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.Wait100:
-                        MoveTimer = Globals.Timing.TimeMs + 100;
+                        MoveTimer = Globals.Timing.Milliseconds + 100;
                         moved = true;
 
                         break;
                     case MoveRouteEnum.Wait500:
-                        MoveTimer = Globals.Timing.TimeMs + 500;
+                        MoveTimer = Globals.Timing.Milliseconds + 500;
                         moved = true;
 
                         break;
                     case MoveRouteEnum.Wait1000:
-                        MoveTimer = Globals.Timing.TimeMs + 1000;
+                        MoveTimer = Globals.Timing.Milliseconds + 1000;
                         moved = true;
 
                         break;
@@ -683,9 +698,9 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (moved && MoveTimer < Globals.Timing.TimeMs)
+                if (moved && MoveTimer < Globals.Timing.Milliseconds)
                 {
-                    MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                    MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                 }
             }
 
@@ -716,7 +731,7 @@ namespace Intersect.Server.Entities
 
         public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            if (Globals.Timing.TimeMs <= MoveTimer || CastTime > 0)
+            if (Globals.Timing.Milliseconds <= MoveTimer || CastTime > 0)
             {
                 return;
             }
@@ -851,7 +866,7 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                    MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                 }
 
                 if (TryToChangeDimension() && doNotUpdate == true)
@@ -1021,9 +1036,9 @@ namespace Intersect.Server.Entities
 
         public void TryBlock(bool blocking)
         {
-            if (AttackTimer < Globals.Timing.TimeMs)
+            if (AttackTimer < Globals.Timing.Milliseconds)
             {
-                if (blocking && !Blocking && AttackTimer < Globals.Timing.TimeMs)
+                if (blocking && !Blocking && AttackTimer < Globals.Timing.Milliseconds)
                 {
                     Blocking = true;
                     PacketSender.SendEntityAttack(this, -1);
@@ -1031,7 +1046,7 @@ namespace Intersect.Server.Entities
                 else if (!blocking && Blocking)
                 {
                     Blocking = false;
-                    AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
+                    AttackTimer = Globals.Timing.Milliseconds + CalculateAttackTime();
                     PacketSender.SendEntityAttack(this, 0);
                 }
             }
@@ -1588,7 +1603,7 @@ namespace Intersect.Server.Entities
             ItemBase weapon = null
         )
         {
-            if (AttackTimer > Globals.Timing.TimeMs || Blocking)
+            if (AttackTimer > Globals.Timing.Milliseconds || Blocking)
             {
                 return;
             }
@@ -1637,7 +1652,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
+            AttackTimer = Globals.Timing.Milliseconds + CalculateAttackTime();
 
             //Check if the attacker is blinded.
             if (IsOneBlockAway(target))
@@ -1663,7 +1678,7 @@ namespace Intersect.Server.Entities
             );
 
             //If we took damage lets reset our combat timer
-            target.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+            target.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
         }
 
         public void Attack(
@@ -1698,7 +1713,7 @@ namespace Intersect.Server.Entities
                     // Add a timer before able to make the next move.
                     if (this is Npc npc)
                     {
-                        npc.MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                        npc.MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                     }
 
                     return;
@@ -1729,7 +1744,7 @@ namespace Intersect.Server.Entities
 
                 if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
                 {
-                    enemy.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                    enemy.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                     enemy.SubVital(Vitals.Health, (int) baseDamage);
                     switch (damageType)
                     {
@@ -1811,7 +1826,7 @@ namespace Intersect.Server.Entities
                 if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
                 {
                     //If we took damage lets reset our combat timer
-                    enemy.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                    enemy.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                     enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.removesymbol + (int) secondaryDamage, CustomColors.Combat.RemoveMana
@@ -1913,7 +1928,7 @@ namespace Intersect.Server.Entities
             // Add a timer before able to make the next move.
             if (GetType() == typeof(Npc))
             {
-                ((Npc) this).MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                ((Npc) this).MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
             }
         }
 
@@ -2112,7 +2127,7 @@ namespace Intersect.Server.Entities
                 }
 
                 SpellCooldowns[Spells[spellSlot].SpellId] =
-                    Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
+                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration * cooldownReduction);
 
                 if (thisPlayer != null)
                 {
@@ -2498,6 +2513,7 @@ namespace Intersect.Server.Entities
             packet.MapId = MapId;
             packet.Name = Name;
             packet.Sprite = Sprite;
+            packet.Color = Color;
             packet.Face = Face;
             packet.Level = Level;
             packet.X = (byte) X;
@@ -2537,7 +2553,7 @@ namespace Intersect.Server.Entities
                 }
 
                 statusPackets[i] = new StatusPacket(
-                    status.Spell.Id, status.Type, status.Data, (int) (status.Duration - Globals.Timing.TimeMs),
+                    status.Spell.Id, status.Type, status.Data, (int) (status.Duration - Globals.Timing.Milliseconds),
                     (int) (status.Duration - status.StartTime), vitalShields
                 );
             }

@@ -24,7 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(SolutionDir)\build\debug\clientextras\</OutputPath>
+    <OutputPath>..\build\debug\clientextras\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,7 +34,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)\build\release\clientextras\</OutputPath>
+    <OutputPath>..\build\release\clientextras\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -77,6 +77,7 @@
     <Compile Include="Graphics\GameTexture.cs" />
     <Compile Include="Graphics\GameTexturePack.cs" />
     <Compile Include="Graphics\GameTileBuffer.cs" />
+    <Compile Include="Input\GameClipboard.cs" />
     <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="Input\GameInput.cs" />
     <Compile Include="Interface\IMutableInterface.cs" />
@@ -85,7 +86,6 @@
     <Compile Include="Plugins\IClientPluginContext.cs" />
     <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
     <Compile Include="Sys\GameSystem.cs" />
-    <Compile Include="GenericClasses\Clipboard.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />
     <Compile Include="GenericClasses\Keys.cs" />

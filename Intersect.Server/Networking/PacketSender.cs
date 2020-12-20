@@ -14,6 +14,7 @@ using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
+using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
@@ -23,6 +24,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Networking
 {
@@ -57,12 +59,28 @@ namespace Intersect.Server.Networking
         //JoinGamePacket
         public static void SendJoinGame(Client client)
         {
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.UserActivityHistory.Add(
+                    new UserActivityHistory
+                    {
+                        UserId = client.User.Id,
+                        Ip = client.GetIp(),
+                        Peer = client.IsEditor ? UserActivityHistory.PeerType.Editor : UserActivityHistory.PeerType.Client,
+                        PlayerId = client.Entity?.Id,
+                        Action = UserActivityHistory.UserAction.SelectPlayer,
+                        Meta = $"{client.Name},{client.Entity?.Name}"
+                    }
+                );
+            }
+
             if (!client.IsEditor)
             {
                 SendEnteringGamePacket(client.Entity);
                 SendEntityDataTo(client.Entity, client.Entity);
             }
 
+            client.TimedBufferPacketsRemaining = 5;
             client.SendPacket(new JoinGamePacket());
             PacketSender.SendGameData(client);
 
@@ -211,7 +229,7 @@ namespace Intersect.Server.Networking
             {
                 if (client.SentMaps.TryGetValue(mapId, out var sentMap))
                 {
-                    if (sentMap.Item1 > Globals.Timing.TimeMs && sentMap.Item2 == map.Revision)
+                    if (sentMap.Item1 > Globals.Timing.Milliseconds && sentMap.Item2 == map.Revision)
                     {
                         return;
                     }
@@ -221,7 +239,7 @@ namespace Intersect.Server.Networking
 
                 try
                 {
-                    client.SentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.TimeMs + 5000, map.Revision));
+                    client.SentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.Milliseconds + 5000, map.Revision));
                 }
                 catch (Exception exception)
                 {
@@ -329,6 +347,7 @@ namespace Intersect.Server.Networking
 
             var packet = en.EntityPacket(null, player);
             packet.IsSelf = en == player;
+
             player.SendPacket(packet);
 
             if (en == player)
@@ -691,7 +710,7 @@ namespace Intersect.Server.Networking
 
             return new EntityVitalsPacket(
                 en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets(),
-                en.CombatTimer - Globals.Timing.TimeMs
+                en.CombatTimer - Globals.Timing.Milliseconds
             );
         }
 
@@ -835,16 +854,21 @@ namespace Intersect.Server.Networking
         public static MapItemsPacket GenerateMapItemsPacket(Guid mapId)
         {
             var map = MapInstance.Get(mapId);
-            var items = new string[map.MapItems.Count];
-            for (var i = 0; i < map.MapItems.Count; i++)
+            // Generate our data to be send to the client.
+            var itemData = new Dictionary<Point, List<string>>();
+            lock (map.MapItems)
             {
-                if (map.MapItems[i] != null)
+                foreach (var location in map.MapItems)
                 {
-                    items[i] = map.MapItems[i].Data();
+                    itemData.Add(location.Key, new List<string>());
+                    foreach (var item in location.Value)
+                    {
+                        itemData[location.Key].Add(item.Data());
+                    }
                 }
             }
 
-            return new MapItemsPacket(mapId, items);
+            return new MapItemsPacket(mapId, itemData);
         }
 
         //MapItemsPacket
@@ -856,30 +880,30 @@ namespace Intersect.Server.Networking
         //MapItemsPacket
         public static void SendMapItemsToProximity(Guid mapId)
         {
-            var map = MapInstance.Get(mapId);
-            var items = new string[map.MapItems.Count];
-            for (var i = 0; i < map.MapItems.Count; i++)
-            {
-                if (map.MapItems[i] != null)
-                {
-                    items[i] = map.MapItems[i].Data();
-                }
-            }
-
-            SendDataToProximity(mapId, new MapItemsPacket(mapId, items));
+            // Send our data to the client.
+            SendDataToProximity(mapId, GenerateMapItemsPacket(mapId));
         }
 
         //MapItemUpdatePacket
-        public static void SendMapItemUpdate(Guid mapId, int index)
+        public static void SendMapItemUpdate(Guid mapId, Guid uniqueId)
         {
             var map = MapInstance.Get(mapId);
-            string itemData = null;
-            if (map != null && map.MapItems[index].ItemId != Guid.Empty)
+            
+            // Get our location and item
+            var location = map.FindItemLocation(uniqueId);
+            var item = map.FindItem(uniqueId);
+            
+            // Does the item exist? If not, send a delete notification. If it does, send an update.
+            if (item == null)
             {
-                itemData = map.MapItems[index].Data();
+                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, uniqueId.ToString(), true));
+            }
+            else
+            {
+                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, item.Data()));
             }
 
-            SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, index, itemData));
+            
         }
 
         //InventoryPacket
@@ -1158,7 +1182,7 @@ namespace Intersect.Server.Networking
             if (player.SpellCooldowns.ContainsKey(spellId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.RealTimeMs);
+                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUTC);
                 player.SendPacket(new SpellCooldownPacket(cds));
             }
         }
@@ -1170,7 +1194,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.SpellCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
                 player.SendPacket(new SpellCooldownPacket(cds));
@@ -1183,7 +1207,7 @@ namespace Intersect.Server.Networking
             if (player.ItemCooldowns.ContainsKey(itemId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.RealTimeMs);
+                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUTC);
                 player.SendPacket(new ItemCooldownPacket(cds));
             }
         }
@@ -1195,7 +1219,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.ItemCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
                 player.SendPacket(new ItemCooldownPacket(cds));

@@ -950,6 +950,10 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString disconnected = @"Client disconnected.";
 
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString ServerFull = @"The server is currently full, please try again later.";
+
         }
 
         public sealed class NotificationsNamespace : LocaleNamespace
@@ -1240,6 +1244,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString offerinvalid = @"Invalid item selected to offer!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString RevokeNotAllowed = @"You can't revoke this item, {00} already accepted the trade!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";

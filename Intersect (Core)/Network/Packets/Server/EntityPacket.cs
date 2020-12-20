@@ -14,6 +14,8 @@ namespace Intersect.Network.Packets.Server
 
         public string Sprite { get; set; }
 
+        public Color Color { get; set; }
+
         public string Face { get; set; }
 
         public int Level { get; set; }

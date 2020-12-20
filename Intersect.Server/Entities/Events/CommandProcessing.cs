@@ -188,18 +188,20 @@ namespace Intersect.Server.Entities.Events
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
             }
 
-            if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
+            if (!success && command.Condition.ElseEnabled && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
             {
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];
             }
 
-            var tmpStack = new CommandInstance(stackInfo.Page)
+            if (newCommandList != null)
             {
-                CommandList = newCommandList,
-                CommandIndex = 0,
-            };
+                var tmpStack = new CommandInstance(stackInfo.Page) {
+                    CommandList = newCommandList,
+                    CommandIndex = 0,
+                };
 
-            callStack.Push(tmpStack);
+                callStack.Push(tmpStack);
+            }
         }
 
         //Exit Event Process Command
@@ -293,7 +295,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Health, -command.Amount);
-                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                 if (player.GetVital(Vitals.Health) <= 0)
                 {
                     player.Die(Options.ItemDropChance);
@@ -321,7 +323,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Mana, -command.Amount);
-                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
             }
             else
             {
@@ -350,7 +352,22 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            player.GiveExperience(command.Exp);
+            var quantity = command.Exp;
+            if (command.UseVariable)
+            {
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+                        break;
+                }
+            }
+
+            player.GiveExperience(quantity);
         }
 
         //Change Level Command
@@ -419,14 +436,46 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
+            var skip = false;
 
-            if (command.Add)
+            // Use the command quantity, unless we're using a variable for input!
+            var quantity = command.Quantity;
+            if (command.UseVariable)
             {
-                success = player.TryGiveItem(command.ItemId, command.Quantity, command.ItemHandling);
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+                        break;
+                }
+
+                // The code further ahead converts 0 to quantity 1, due to some legacy junk where some editors would (maybe still do?) set quantity to 0 for non-stackable items.
+                // but if we want to give a player no items through an event we should listen to that.
+                if (quantity <= 0)
+                {
+                    skip = true;
+                }
+            }
+
+            if (!skip)
+            {
+                if (command.Add)
+                {
+                    success = player.TryGiveItem(command.ItemId, quantity, command.ItemHandling);
+                }
+                else
+                {
+                    success = player.TryTakeItem(command.ItemId, quantity, command.ItemHandling);
+                }
             }
             else
             {
-                success = player.TryTakeItem(command.ItemId, command.Quantity, command.ItemHandling);
+                // If we're skipping, this always succeeds.
+                success = true;
             }
 
             List<EventCommand> newCommandList = null;
@@ -1030,7 +1079,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            instance.WaitTimer = Globals.Timing.TimeMs + command.Time;
+            instance.WaitTimer = Globals.Timing.Milliseconds + command.Time;
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Timer;
         }
 
@@ -1165,6 +1214,19 @@ namespace Intersect.Server.Entities.Events
         )
         {
             player.CompleteQuest(command.QuestId, command.SkipCompletionEvent);
+        }
+
+        // Change Player Color Command
+        private static void ProcessCommand(
+            ChangePlayerColorCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.Color = command.Color;
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)

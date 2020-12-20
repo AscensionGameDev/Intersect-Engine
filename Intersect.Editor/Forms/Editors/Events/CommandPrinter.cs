@@ -198,28 +198,30 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 mCommandProperties, map
                             );
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
-                            clp = new CommandListProperties
+                            if (cnd.Condition.ElseEnabled)
                             {
-                                Editable = false,
-                                MyIndex = i,
-                                MyList = commandList,
-                                Type = commandList[i].Type,
-                                Cmd = commandList[i]
-                            };
+                                lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
+                                clp = new CommandListProperties {
+                                    Editable = false,
+                                    MyIndex = i,
+                                    MyList = commandList,
+                                    Type = commandList[i].Type,
+                                    Cmd = commandList[i]
+                                };
 
-                            mCommandProperties.Add(clp);
+                                mCommandProperties.Add(clp);
 
-                            if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
-                            {
-                                Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                                if (!page.CommandLists.TryGetValue(cnd.BranchIds[1], out branchCommandList))
+                                {
+                                    Log.Error($"Missing command list for branch {cnd.BranchIds[1]}");
+                                }
+
+                                PrintCommandList(
+                                    page, branchCommandList, indent + "          ", lstEventCommands,
+                                    mCommandProperties, map
+                                );
                             }
-
-                            PrintCommandList(
-                                page, branchCommandList, indent + "          ", lstEventCommands,
-                                mCommandProperties, map
-                            );
-
+                            
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalend);
                             clp = new CommandListProperties
                             {
@@ -600,7 +602,25 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(GiveExperienceCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.giveexp.ToString(command.Exp);
+            if (command.UseVariable)
+            {
+                var exp = string.Empty;
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
+                        break;
+                    case VariableTypes.ServerVariable:
+                        exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.ServerVariable, ServerVariableBase.GetName(command.VariableId));
+                        break;
+                }
+
+                return Strings.EventCommandList.giveexp.ToString(exp);
+            }
+            else
+            {
+                return Strings.EventCommandList.giveexp.ToString(command.Exp);
+            }
         }
 
         private static string GetCommandText(ChangeLevelCommand command, MapInstance map)
@@ -1023,6 +1043,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.endquest.ToString(
                 QuestBase.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent
             );
+        }
+
+        private static string GetCommandText(ChangePlayerColorCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.ChangePlayerColor.ToString(command.Color.R, command.Color.G, command.Color.B, command.Color.A);
         }
 
         //Set Variable Modification Texts

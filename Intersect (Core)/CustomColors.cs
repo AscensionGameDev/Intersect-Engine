@@ -221,6 +221,16 @@ namespace Intersect
                 {5, Color.Yellow},
             };
 
+            public Dictionary<int, LabelColor> MapRarities = new Dictionary<int, LabelColor>() 
+            {
+                { 0, new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0)) },
+                { 1, new LabelColor(Color.Gray, Color.Black, new Color(100, 0, 0, 0)) },
+                { 2, new LabelColor(Color.Red, Color.Black, new Color(100, 0, 0, 0)) },
+                { 3, new LabelColor(Color.Blue, Color.Black, new Color(100, 0, 0, 0)) },
+                { 4, new LabelColor(Color.Gray, Color.Black, new Color(100, 0, 0, 0)) },
+                { 5, new LabelColor(Color.Yellow, Color.Black, new Color(100, 0, 0, 0)) },
+            };
+
         }
 
         #region Serialization

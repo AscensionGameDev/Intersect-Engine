@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Logging;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -126,7 +127,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.PickUp:
-                                        Globals.Me?.TryPickupItem();
+                                        Globals.Me?.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true);
 
                                         break;
 
@@ -293,25 +294,23 @@ namespace Intersect.Client.Core
 
             if (Controls.Controls.ControlHasKey(Control.PickUp, key))
             {
-                if (Globals.Me.TryPickupItem())
+                if (Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true))
                 {
                     return;
                 }
 
-                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.AttackTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
                 {
-                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() + Globals.Me.CalculateAttackTime();
+                    Globals.Me.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + Globals.Me.CalculateAttackTime();
                 }
             }
 
-            if (!Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, key))
             {
-                return;
-            }
-
-            if (Globals.Me.TryBlock())
-            {
-                return;
+                if (Globals.Me.TryBlock())
+                {
+                    return;
+                }
             }
 
             if (key != Keys.None)

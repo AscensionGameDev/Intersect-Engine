@@ -31,6 +31,12 @@ namespace Intersect
         [JsonProperty("OpenPortChecker", Order = 0)]
         protected bool _portChecker = true;
 
+        [JsonProperty("MaxClientConnections")]
+        protected int _maxConnections = 100;
+
+        [JsonProperty("MaximumLoggedinUsers")]
+        protected int _maxUsers = 50;
+
         [JsonProperty("UPnP", Order = -1)] protected bool _upnp = true;
 
         [JsonProperty("Chat")] public ChatOptions ChatOpts = new ChatOptions();
@@ -56,6 +62,10 @@ namespace Intersect
 
         [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
 
+        public SpriteOptions Sprites = new SpriteOptions();
+
+        [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         [NotNull]
@@ -66,6 +76,16 @@ namespace Intersect
 
         //Public Getters
         public static ushort ServerPort { get => Instance._serverPort; set => Instance._serverPort = value; }
+
+        /// <summary>
+        /// Defines the maximum amount of network connections our server is allowed to handle.
+        /// </summary>
+        public static int MaxConnections => Instance._maxConnections;
+
+        /// <summary>
+        /// Defines the maximum amount of logged in users our server is allowed to handle.
+        /// </summary>
+        public static int MaxLoggedinUsers => Instance._maxUsers;
 
         public static int MaxStatValue => Instance.PlayerOpts.MaxStat;
 
@@ -128,6 +148,8 @@ namespace Intersect
         public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static LootOptions Loot => Instance.LootOpts;
+
+        public static NpcOptions Npc => Instance.NpcOpts;
 
         public static PartyOptions Party => Instance.PartyOpts;
 

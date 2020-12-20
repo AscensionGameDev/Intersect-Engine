@@ -109,6 +109,8 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
     <Compile Include="Interface\MutableInterface.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
     <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
+    <Compile Include="MonoGame\Input\MonoClipboard.cs" />
     <Compile Include="MonoGame\Network\MonoSocket.cs" />
     <Compile Include="Interface\Game\Bag\BagItem.cs" />
     <Compile Include="Interface\Game\Bank\BankItem.cs" />
@@ -214,15 +217,15 @@
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=2012.1.7.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.2\lib\net46\Lidgren.Network.dll</HintPath>
+    <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.8.0.1375, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\lib\net452\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -231,56 +234,58 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\lib\net452\MonoGame.Framework.dll">
-      <Link>Resources\MonoGame.Framework.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\win-x86\native\SDL2.dll">
-      <Link>Resources\x86\SDL2.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\win-x64\native\SDL2.dll">
-      <Link>Resources\x64\SDL2.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\win-x86\native\soft_oal.dll">
-      <Link>Resources\x86\soft_oal.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\win-x64\native\soft_oal.dll">
-      <Link>Resources\x64\soft_oal.dll</Link>
-    </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x64\libSDL2</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x64\libopenal</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\osx\native\libSDL2-2.0.0.dylib">
-      <Link>Resources\libSDL2-2.0.0.dylib</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\runtimes\osx\native\libopenal.1.dylib">
-      <Link>Resources\libopenal.1.dylib</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Icon.ico" />
+    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
+    <EmbeddedResource Include="Resources\openal32.dll" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Resources\openal32.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll">
+      <Link>Resources\MonoGame.Framework.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\SDL2.dll">
+      <Link>Resources\x86\SDL2.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\SDL2.dll">
+      <Link>Resources\x64\SDL2.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\soft_oal.dll">
+      <Link>Resources\x86\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\soft_oal.dll">
+      <Link>Resources\x64\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
+      <Link>Resources\libopenal.so.1</Link>
+      <!-- <LogicalName>libopenal</LogicalName> -->
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+      <Link>Resources\libSDL2-2.0.so.0</Link>
+      <!-- <LogicalName>libSDL2</LogicalName> -->
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
+      <Link>Resources\libSDL2-2.0.0.dylib</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libopenal.1.dylib">
+      <Link>Resources\libopenal.1.dylib</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
@@ -295,9 +300,6 @@
       <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
       <Name>Intersect.Network</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
@@ -319,6 +321,21 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Target Name="WorkaroundMSBuild3064_LinuxLibs" BeforeTargets="SplitResourcesByCulture">
+    <!-- Workaround until https://github.com/dotnet/msbuild/issues/3064 gets merged into mono/msbuild -->
+    <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
+    <ItemGroup>
+      <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
+      
+      <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
+        <WithCulture>false</WithCulture>
+        <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
+        <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
+      </_MixedResourceWithNoCulture>
+
+      <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
+    </ItemGroup>
+  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -331,11 +348,11 @@
     <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\build\MonoGame.Framework.DesktopGL.targets'))" />
+    <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets'))" />
   </Target>
   <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
-  <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1375-develop\build\MonoGame.Framework.DesktopGL.targets')" />
+  <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
