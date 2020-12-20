@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Runtime.InteropServices;
+
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
@@ -71,6 +73,16 @@ namespace Intersect.GameObjects
         public double CritMultiplier { get; set; } = 1.5;
 
         public int Cooldown { get; set; }
+
+        /// <summary>
+        /// Defines which cooldown group this item belongs to.
+        /// </summary>
+        public string CooldownGroup { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Configures whether this should not trigger and be triggered by the global cooldown.
+        /// </summary>
+        public bool IgnoreGlobalCooldown { get; set; } = false;
 
         public int Damage { get; set; }
 
@@ -244,6 +256,24 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
+
+        /// <summary>
+        /// Gets an array of all items sharing the provided cooldown group.
+        /// </summary>
+        /// <param name="cooldownGroup">The cooldown group to search for.</param>
+        /// <returns>Returns an array of <see cref="ItemBase"/> containing all items with the supplied cooldown group.</returns>
+        public static ItemBase[] GetCooldownGroup(string cooldownGroup)
+        {
+            cooldownGroup = cooldownGroup.Trim();
+
+            // No point looking for nothing.
+            if (string.IsNullOrWhiteSpace(cooldownGroup))
+            {
+                return Array.Empty<ItemBase>();
+            }
+
+            return Lookup.Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (ItemBase)i.Value).ToArray();
+        }
 
         private void Initialize()
         {

@@ -1960,22 +1960,16 @@ namespace Intersect.Server.Entities
                     ); //Target Type 1 will be global entity
                 }
 
+                // Does this item have a cooldown to process of its own?
                 if (itemBase.Cooldown > 0)
                 {
-                    var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-                    if (ItemCooldowns.ContainsKey(itemBase.Id))
-                    {
-                        ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction);
-                    }
-                    else
-                    {
-                        ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction)
-                        );
-                    }
+                    UpdateCooldown(itemBase);
+                }
 
-                    PacketSender.SendItemCooldown(this, itemBase.Id);
+                // Update the global cooldown, if we can trigger it here.
+                if (!itemBase.IgnoreGlobalCooldown)
+                {
+                    UpdateGlobalCooldown();
                 }
             }
         }
@@ -5547,6 +5541,235 @@ namespace Intersect.Server.Entities
 
                 var newStack = new CommandInstance(eventInstance.PageInstance.MyPage);
                 eventInstance.CallStack.Push(newStack);
+            }
+        }
+
+        /// <summary>
+        /// Update the cooldown for a specific item.
+        /// </summary>
+        /// <param name="item">The <see cref="ItemBase"/> to update the cooldown for.</param>
+        public void UpdateCooldown(ItemBase item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            // Are we dealing with a cooldown group?
+            if (item.CooldownGroup.Trim().Length > 0)
+            {
+                // Yes, so handle it!
+                UpdateCooldownGroup(GameObjectType.Item, item.CooldownGroup, item.Cooldown);
+            }
+            else
+            {
+                // No, handle singular cooldown as normal.
+                
+                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+                AssignItemCooldown(item.Id, Globals.Timing.MillisecondsUTC + (long)(item.Cooldown * cooldownReduction));
+                PacketSender.SendItemCooldown(this, item.Id);
+            }
+        }
+
+        /// <summary>
+        /// Update the cooldown for a specific spell.
+        /// </summary>
+        /// <param name="item">The <see cref="SpellBase"/> to update the cooldown for.</param>
+        public void UpdateCooldown(SpellBase spell)
+        {
+            if (spell == null)
+            {
+                return;
+            }
+
+            // Are we dealing with a cooldown group?
+            if (spell.CooldownGroup.Trim().Length > 0)
+            {
+                // Yes, so handle it!
+                UpdateCooldownGroup(GameObjectType.Spell, spell.CooldownGroup, spell.CooldownDuration);
+            }
+            else
+            {
+                // No, handle singular cooldown as normal.
+                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+                AssignSpellCooldown(spell.Id, Globals.Timing.MillisecondsUTC + (long)(spell.CooldownDuration * cooldownReduction));
+                PacketSender.SendSpellCooldown(this, spell.Id);
+            }
+        }
+
+        /// <summary>
+        /// Forces an update of the global cooldown.
+        /// Does nothing when disabled by configuration.
+        /// </summary>
+        public void UpdateGlobalCooldown()
+        {
+            // Are we allowed to execute this code?
+            if (!Options.Combat.EnableGlobalCooldowns)
+            {
+                return;
+            }
+
+            // Calculate our global cooldown.
+            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+            var cooldown = Globals.Timing.MillisecondsUTC + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+
+            // Go through each item and spell to assign this cooldown.
+            // Do not allow this to overwrite things that are still on a cooldown above our new cooldown though, don't want us to lower cooldowns!
+            // We do however want to overwrite lower cooldowns than our new one, it is a GLOBAL cooldown after all!
+            foreach(var item in ItemBase.Lookup)
+            {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((ItemBase)item.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
+                if (!ItemCooldowns.ContainsKey(item.Key) || ItemCooldowns[item.Key] < cooldown)
+                {
+                    AssignItemCooldown(item.Key, cooldown);
+                }
+            }
+            foreach (var spell in SpellBase.Lookup)
+            {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((SpellBase)spell.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
+                if (!SpellCooldowns.ContainsKey(spell.Key) || SpellCooldowns[spell.Key] < cooldown)
+                {
+                    AssignSpellCooldown(spell.Key, cooldown);
+                }
+            }
+
+            // Send these cooldowns to the user!
+            PacketSender.SendItemCooldowns(this);
+            PacketSender.SendSpellCooldowns(this);
+        }
+
+        /// <summary>
+        /// Update all cooldowns within the specified cooldown group on a type of object, or all when configured as such.
+        /// </summary>
+        /// <param name="type">The <see cref="GameObjectType"/> to set trigger the cooldown group for. Currently only accepts Items and Spells</param>
+        /// <param name="group">The cooldown group to trigger.</param>
+        /// <param name="cooldown">The base cooldown of the object that triggered this cooldown group.</param>
+        private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown)
+        {
+            // We're only dealing with these two types for now.
+            if (type != GameObjectType.Item && type != GameObjectType.Spell)
+            {
+                return;
+            }
+
+            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+
+            // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
+            var matchingItems = Array.Empty<ItemBase>();
+            var matchingSpells = Array.Empty<SpellBase>();
+            var itemsUpdated = false;
+            var spellsUpdated = false;
+            
+            if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                matchingItems = ItemBase.GetCooldownGroup(group);
+            }
+            if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                matchingSpells = SpellBase.GetCooldownGroup(group);
+            }
+
+            // Set our matched cooldown, should we need to use it.
+            var matchedCooldowntime = cooldown;
+            if (Options.Combat.MatchGroupCooldownHighest)
+            {
+                // Get our highest cooldown value from all available options.
+                matchedCooldowntime = Math.Max(
+                    matchingItems.Length > 0 ? matchingItems.Max(i => i.Cooldown) : 0, 
+                    matchingSpells.Length > 0 ? matchingSpells.Max(i => i.CooldownDuration) : 0);
+            }
+
+            // Set the cooldown for all items matching this cooldown group.
+            var baseTime = Globals.Timing.MillisecondsUTC;
+            if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach (var item in matchingItems)
+                {
+                    // Do we have to match our cooldown times, or do we use each individual item cooldown?
+                    var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
+
+                    // Asign it! Assuming our cooldown isn't already going..
+                    if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Globals.Timing.MillisecondsUTC)
+                    {
+                        AssignItemCooldown(item.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        itemsUpdated = true;
+                    }
+                }
+            }
+
+            // Set the cooldown for all Spells matching this cooldown group.
+            if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach (var spell in matchingSpells)
+                {
+                    // Do we have to match our cooldown times, or do we use each individual item cooldown?
+                    var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
+
+                    // Asign it! Assuming our cooldown isn't already going...
+                    if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Globals.Timing.MillisecondsUTC)
+                    {
+                        AssignSpellCooldown(spell.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        spellsUpdated = true;
+                    }
+                }
+            }
+
+            // Send all of our updated cooldowns.
+            if (itemsUpdated)
+            {
+                PacketSender.SendItemCooldowns(this);
+            }
+            if (spellsUpdated)
+            {
+                PacketSender.SendSpellCooldowns(this);
+            }
+        }
+
+        /// <summary>
+        /// Assign a cooldown time to a specified item.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="ItemBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
+        private void AssignItemCooldown(Guid itemId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (ItemCooldowns.ContainsKey(itemId))
+            {
+                ItemCooldowns[itemId] = cooldownTime;
+            }
+            else
+            {
+                ItemCooldowns.Add(itemId, cooldownTime);
+            }
+        }
+
+        /// <summary>
+        /// Assign a cooldown time to a specified spell.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="SpellBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
+        private void AssignSpellCooldown(Guid spellId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (SpellCooldowns.ContainsKey(spellId))
+            {
+                SpellCooldowns[spellId] = cooldownTime;
+            }
+            else
+            {
+                SpellCooldowns.Add(spellId, cooldownTime);
             }
         }
 

@@ -505,6 +505,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.cs" />
+    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.designer.cs">
+      <DependentUpon>20201001163344_ItemAndSpellCooldownImprovements.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\20201017065035_AddColorToEntities.cs" />
     <Compile Include="Migrations\20201017065035_AddColorToEntities.designer.cs">
       <DependentUpon>20201017065035_AddColorToEntities.cs</DependentUpon>
