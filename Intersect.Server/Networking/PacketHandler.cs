@@ -20,6 +20,7 @@ using Intersect.Network.Packets.Client;
 using Intersect.Server.Admin.Actions;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
+using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
@@ -420,8 +421,22 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (!DbInterface.CheckPassword(packet.Username, packet.Password))
+            if (!DbInterface.TryLogin(packet.Username, packet.Password, out var userId))
             {
+                using (var logging = DbInterface.LoggingContext)
+                {
+                    logging.UserActivityHistory.Add(
+                        new UserActivityHistory
+                        {
+                            UserId = userId,
+                            Ip = client.GetIp(),
+                            Peer = UserActivityHistory.PeerType.Client,
+                            Action = UserActivityHistory.UserAction.FailedLogin,
+                            Meta = packet.Username
+                        }
+                    );
+                }
+
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
 
@@ -490,6 +505,19 @@ namespace Intersect.Server.Networking
             //Check Mute Status and Load into user property
             Mute.FindMuteReason(client.User, client.GetIp());
 
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.UserActivityHistory.Add(
+                    new UserActivityHistory
+                    {
+                        UserId = userId,
+                        Ip = client.GetIp(),
+                        Peer = UserActivityHistory.PeerType.Client,
+                        Action = UserActivityHistory.UserAction.Login
+                    }
+                );
+            }
+
             PacketSender.SendServerConfig(client);
 
             //Character selection if more than one.
@@ -501,6 +529,7 @@ namespace Intersect.Server.Networking
             {
                 client.LoadCharacter(client.Characters.First());
                 client.Entity.SetOnline();
+
                 PacketSender.SendJoinGame(client);
             }
             else
@@ -513,7 +542,27 @@ namespace Intersect.Server.Networking
         //LogoutPacket
         public void HandlePacket(Client client, Player player, LogoutPacket packet)
         {
-            client?.Logout();
+            if (client != null)
+            {
+                using (var logging = DbInterface.LoggingContext)
+                {
+                    logging.UserActivityHistory.Add(
+                        new UserActivityHistory
+                        {
+                            UserId = client.User?.Id ?? Guid.Empty,
+                            Ip = client.GetIp(),
+                            Peer = UserActivityHistory.PeerType.Client,
+                            Action = packet.ReturningToCharSelect
+                                ? UserActivityHistory.UserAction.SwitchPlayer
+                                : UserActivityHistory.UserAction.DisconnectLogout,
+                            Meta = $"{client.Name},{client.Entity?.Name}"
+                        }
+                    );
+                }
+
+                client.Logout();
+            }
+
             if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
             {
                 PacketSender.SendPlayerCharacters(client);
@@ -1221,6 +1270,20 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
+                    using (var logging = DbInterface.LoggingContext)
+                    {
+                        logging.UserActivityHistory.Add(
+                            new UserActivityHistory
+                            {
+                                UserId = client.User?.Id ?? Guid.Empty,
+                                Ip = client.GetIp(),
+                                Peer = UserActivityHistory.PeerType.Client,
+                                Action = UserActivityHistory.UserAction.Create,
+                                Meta = client.Name
+                            }
+                        );
+                    }
+
                     DbInterface.CreateAccount(client, packet.Username, packet.Password, packet.Email);
                     PacketSender.SendServerConfig(client);
 
@@ -1276,65 +1339,79 @@ namespace Intersect.Server.Networking
             if (DbInterface.CharacterNameInUse(packet.Name))
             {
                 PacketSender.SendError(client, Strings.Account.characterexists);
+                return;
             }
-            else
+
+            var newChar = new Player();
+            newChar.Id = Guid.NewGuid();
+            DbInterface.AddCharacter(client.User, newChar);
+            newChar.ValidateLists();
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                var newChar = new Player();
-                newChar.Id = Guid.NewGuid();
-                DbInterface.AddCharacter(client.User, newChar);
-                newChar.ValidateLists();
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    newChar.Equipment[i] = -1;
-                }
-
-                newChar.Name = packet.Name;
-                newChar.ClassId = packet.ClassId;
-                newChar.Level = 1;
-
-                if (classBase.Sprites.Count > 0)
-                {
-                    var spriteIndex = Math.Max(0, Math.Min(classBase.Sprites.Count, packet.Sprite));
-                    newChar.Sprite = classBase.Sprites[spriteIndex].Sprite;
-                    newChar.Face = classBase.Sprites[spriteIndex].Face;
-                    newChar.Gender = classBase.Sprites[spriteIndex].Gender;
-                }
-
-                client.LoadCharacter(newChar);
-
-                newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
-                newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
-
-                for (var i = 0; i < (int) Stats.StatCount; i++)
-                {
-                    newChar.Stat[i].BaseStat = 0;
-                }
-
-                newChar.StatPoints = classBase.BasePoints;
-
-                for (var i = 0; i < classBase.Spells.Count; i++)
-                {
-                    if (classBase.Spells[i].Level <= 1)
-                    {
-                        var tempSpell = new Spell(classBase.Spells[i].Id);
-                        newChar.TryTeachSpell(tempSpell, false);
-                    }
-                }
-
-                foreach (var item in classBase.Items)
-                {
-                    if (ItemBase.Get(item.Id) != null)
-                    {
-                        var tempItem = new Item(item.Id, item.Quantity);
-                        newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
-                    }
-                }
-
-                PacketSender.SendJoinGame(client);
-                newChar.SetOnline();
-
-                DbInterface.SavePlayerDatabaseAsync();
+                newChar.Equipment[i] = -1;
             }
+
+            newChar.Name = packet.Name;
+            newChar.ClassId = packet.ClassId;
+            newChar.Level = 1;
+
+            if (classBase.Sprites.Count > 0)
+            {
+                var spriteIndex = Math.Max(0, Math.Min(classBase.Sprites.Count, packet.Sprite));
+                newChar.Sprite = classBase.Sprites[spriteIndex].Sprite;
+                newChar.Face = classBase.Sprites[spriteIndex].Face;
+                newChar.Gender = classBase.Sprites[spriteIndex].Gender;
+            }
+
+            client.LoadCharacter(newChar);
+
+            newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
+            newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+
+            for (var i = 0; i < (int) Stats.StatCount; i++)
+            {
+                newChar.Stat[i].BaseStat = 0;
+            }
+
+            newChar.StatPoints = classBase.BasePoints;
+
+            for (var i = 0; i < classBase.Spells.Count; i++)
+            {
+                if (classBase.Spells[i].Level <= 1)
+                {
+                    var tempSpell = new Spell(classBase.Spells[i].Id);
+                    newChar.TryTeachSpell(tempSpell, false);
+                }
+            }
+
+            foreach (var item in classBase.Items)
+            {
+                if (ItemBase.Get(item.Id) != null)
+                {
+                    var tempItem = new Item(item.Id, item.Quantity);
+                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
+                }
+            }
+
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.UserActivityHistory.Add(
+                    new UserActivityHistory
+                    {
+                        UserId = client.User?.Id ?? Guid.Empty,
+                        PlayerId = client.Entity?.Id,
+                        Ip = client.GetIp(),
+                        Peer = UserActivityHistory.PeerType.Client,
+                        Action = UserActivityHistory.UserAction.CreatePlayer,
+                        Meta = $"{client.Name},{client.Entity?.Name}"
+                    }
+                );
+            }
+
+            PacketSender.SendJoinGame(client);
+            newChar.SetOnline();
+
+            DbInterface.SavePlayerDatabaseAsync();
         }
 
         //PickupItemPacket
@@ -1878,7 +1955,10 @@ namespace Intersect.Server.Networking
 
             if (player.Trading.Counterparty.Trading.Accepted)
             {
-                PacketSender.SendChatMsg(player, Strings.Trading.RevokeNotAllowed.ToString(player.Trading.Counterparty.Name), CustomColors.Alerts.Declined);
+                PacketSender.SendChatMsg(
+                    player, Strings.Trading.RevokeNotAllowed.ToString(player.Trading.Counterparty.Name),
+                    CustomColors.Alerts.Declined
+                );
             }
             else
             {
@@ -2116,6 +2196,22 @@ namespace Intersect.Server.Networking
             if (character != null)
             {
                 client.LoadCharacter(character);
+
+                using (var logging = DbInterface.LoggingContext)
+                {
+                    logging.UserActivityHistory.Add(
+                        new UserActivityHistory
+                        {
+                            UserId = client.User?.Id ?? Guid.Empty,
+                            PlayerId = client.Entity?.Id,
+                            Ip = client.GetIp(),
+                            Peer = UserActivityHistory.PeerType.Client,
+                            Action = UserActivityHistory.UserAction.SelectPlayer,
+                            Meta = $"{client.Name},{client.Entity?.Name}"
+                        }
+                    );
+                }
+
                 try
                 {
                     client.Entity?.SetOnline();
@@ -2143,6 +2239,22 @@ namespace Intersect.Server.Networking
                 {
                     if (chr.Id == packet.CharacterId)
                     {
+
+                        using (var logging = DbInterface.LoggingContext)
+                        {
+                            logging.UserActivityHistory.Add(
+                                new UserActivityHistory
+                                {
+                                    UserId = client.User?.Id ?? Guid.Empty,
+                                    PlayerId = client.Entity?.Id,
+                                    Ip = client.GetIp(),
+                                    Peer = UserActivityHistory.PeerType.Client,
+                                    Action = UserActivityHistory.UserAction.DeletePlayer,
+                                    Meta = $"{client.Name},{client.Entity?.Name}"
+                                }
+                            );
+                        }
+
                         DbInterface.DeleteCharacter(client.User, chr);
                     }
                 }
@@ -2254,16 +2366,22 @@ namespace Intersect.Server.Networking
 
             client.ResetTimeout();
 
-            if (!DbInterface.AccountExists(packet.Username))
+            if (!DbInterface.TryLogin(packet.Username, packet.Password, out var userId))
             {
-                client.FailedAttempt();
-                PacketSender.SendError(client, Strings.Account.badlogin);
+                using (var logging = DbInterface.LoggingContext)
+                {
+                    logging.UserActivityHistory.Add(
+                        new UserActivityHistory
+                        {
+                            UserId = userId,
+                            Ip = client.GetIp(),
+                            Peer = UserActivityHistory.PeerType.Editor,
+                            Action = UserActivityHistory.UserAction.FailedLogin,
+                            Meta = packet.Username
+                        }
+                    );
+                }
 
-                return;
-            }
-
-            if (!DbInterface.CheckPassword(packet.Username, packet.Password))
-            {
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
 
@@ -2759,8 +2877,8 @@ namespace Intersect.Server.Networking
             long gridY = packet.GridY;
             var canLink = true;
 
-            lock (ServerContext.Instance.LogicService.LogicLock) 
-            { 
+            lock (ServerContext.Instance.LogicService.LogicLock)
+            {
                 if (adjacentMap != null && linkMap != null)
                 {
                     //Clear to test if we can link.

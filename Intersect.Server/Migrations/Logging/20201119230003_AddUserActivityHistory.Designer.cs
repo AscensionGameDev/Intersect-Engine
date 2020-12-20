@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Logging
 {
     [DbContext(typeof(LoggingContext))]
-    partial class LoggingContextModelSnapshot : ModelSnapshot
+    [Migration("20201119230003_AddUserActivityHistory")]
+    partial class AddUserActivityHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
