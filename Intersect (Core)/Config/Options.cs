@@ -153,6 +153,8 @@ namespace Intersect
 
         public static PartyOptions Party => Instance.PartyOpts;
 
+        public static ChatOptions Chat => Instance.ChatOpts;
+
         public static bool UPnP => Instance._upnp;
 
         public static bool OpenPortChecker => Instance._portChecker;
