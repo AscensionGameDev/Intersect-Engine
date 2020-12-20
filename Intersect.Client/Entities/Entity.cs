@@ -12,6 +12,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Items;
+using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Spells;
 using Intersect.Enums;
@@ -115,6 +116,8 @@ namespace Intersect.Client.Entities
         private long mLastUpdate;
 
         protected string mMySprite = "";
+
+        public Color Color = new Color(255,255,255,255);
 
         public int MoveDir = -1;
 
@@ -288,6 +291,7 @@ namespace Intersect.Client.Entities
             CurrentMap = packet.MapId;
             Name = packet.Name;
             MySprite = packet.Sprite;
+            Color = packet.Color;
             Face = packet.Face;
             Level = packet.Level;
             X = packet.X;
@@ -992,7 +996,7 @@ namespace Intersect.Client.Entities
                     if (paperdoll == "Player")
                     {
                         Graphics.DrawGameTexture(
-                            texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
+                            texture, srcRectangle, destRectangle, Color ?? new Color(alpha, 255, 255, 255)
                         );
                     }
                     else if (equipSlot > -1)
@@ -1354,7 +1358,13 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+            var name = Name;
+            if ((this is Player && Options.Player.ShowLevelByName) || Options.Npc.ShowLevelByName)
+            {
+                name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
+            }
+
+            var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Name);
@@ -1368,7 +1378,7 @@ namespace Intersect.Client.Entities
             }
 
             Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
+                name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
         }

@@ -54,6 +54,11 @@
         /// </summary>
         public bool AllowCombatMovement = true;
 
+        /// <summary>
+        /// Configures whether or not the level of a player is shown next to their name.
+        /// </summary>
+        public bool ShowLevelByName = false;
+
     }
 
 }

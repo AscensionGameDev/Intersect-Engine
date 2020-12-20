@@ -1237,7 +1237,15 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public bool TryPickupItem()
+        /// <summary>
+        /// Attempts to pick up an item at the specified location.
+        /// </summary>
+        /// <param name="x">The X location on the current map.</param>
+        /// <param name="y">The Y location on the current map.</param>
+        /// <param name="uniqueId">The Unique Id of the specific item we want to pick up, leave <see cref="Guid.Empty"/> to not specificy an item and pick up the first thing we can find.</param>
+        /// <param name="firstOnly">Defines whether we only want to pick up the first item we can find when true, or all items when false.</param>
+        /// <returns></returns>
+        public bool TryPickupItem(int x, int y, Guid uniqueId = new Guid(), bool firstOnly = false)
         {
             var map = MapInstance.Get(CurrentMap);
             if (map == null)
@@ -1245,21 +1253,41 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
-            foreach (var item in map.MapItems)
+            var location = new Point(x, y);
+            if (!map.MapItems.ContainsKey(location) || map.MapItems[location].Count < 1)
             {
-                if (item.Value.X == X && item.Value.Y == Y)
+                return false;
+            }
+
+            // Are we trying to pick up anything in particular, or everything?
+            if (uniqueId != Guid.Empty || firstOnly)
+            {
+                foreach (var item in map.MapItems[location])
                 {
                     // Are we allowed to see and pick this item up?
-                    if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
+                    if (!item.VisibleToAll && item.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Owner))
                     {
                         // This item does not apply to us!
-                        return false;
+                        continue;
                     }
 
-                    PacketSender.SendPickupItem(item.Key);
+                    // Check if we are trying to pick up a specific item, and if this is the one.
+                    if (uniqueId != Guid.Empty && item.UniqueId != uniqueId)
+                    {
+                        continue;
+                    }
+
+                    PacketSender.SendPickupItem(location, item.UniqueId);
 
                     return true;
                 }
+            }
+            else
+            {
+                // Let the server worry about what we can and can not pick up.
+                PacketSender.SendPickupItem(location, uniqueId);
+
+                return true;
             }
 
             return false;

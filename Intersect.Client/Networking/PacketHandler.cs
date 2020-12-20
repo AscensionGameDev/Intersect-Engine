@@ -832,11 +832,12 @@ namespace Intersect.Client.Networking
             }
 
             map.MapItems.Clear();
-            for (var i = 0; i < packet.Items.Length; i++)
+            foreach(var location in packet.Items)
             {
-                if (packet.Items[i] != null)
+                map.MapItems.Add(location.Key, new List<MapItemInstance>());
+                foreach (var item in location.Value)
                 {
-                    map.MapItems.Add(i, new MapItemInstance(packet.Items[i]));
+                    map.MapItems[location.Key].Add(new MapItemInstance(item));
                 }
             }
         }
@@ -845,23 +846,49 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(MapItemUpdatePacket packet)
         {
             var map = MapInstance.Get(packet.MapId);
-            if (map != null)
+            if (map == null)
             {
-                if (packet.ItemData == null)
+                return;
+            }
+
+            // Are we deleting this item?
+            if (packet.Remove)
+            {
+                // Find our item based on our unique Id and remove it.
+                var uniqueId = Guid.Parse(packet.ItemData);
+                foreach(var location in map.MapItems.Keys)
                 {
-                    map.MapItems.Remove(packet.ItemIndex);
+                    var tempItem = map.MapItems[location].Where(item => item.UniqueId == uniqueId).SingleOrDefault();
+                    if (tempItem != null)
+                    {
+                        map.MapItems[location].Remove(tempItem);
+                    }
+                }
+            }
+            else
+            {
+                if (!map.MapItems.ContainsKey(packet.Location))
+                {
+                    map.MapItems.Add(packet.Location, new List<MapItemInstance>());
+                }
+
+                // Check if the item already exists, if it does replace it. Otherwise just add it.
+                var mapItem = new MapItemInstance(packet.ItemData);
+                if (map.MapItems[packet.Location].Any(item => item.UniqueId == mapItem.UniqueId))
+                {
+                    for (var index = 0; index < map.MapItems[packet.Location].Count; index++)
+                    {
+                        if (map.MapItems[packet.Location][index].UniqueId == mapItem.UniqueId)
+                        {
+                            map.MapItems[packet.Location][index] = mapItem;
+                        }
+                    }
                 }
                 else
                 {
-                    if (!map.MapItems.ContainsKey(packet.ItemIndex))
-                    {
-                        map.MapItems.Add(packet.ItemIndex, new MapItemInstance(packet.ItemData));
-                    }
-                    else
-                    {
-                        map.MapItems[packet.ItemIndex] = new MapItemInstance(packet.ItemData);
-                    }
-                }
+                    // Reverse the array again to match server, add item.. then  reverse again to get the right render order.
+                    map.MapItems[packet.Location].Add(mapItem);
+                } 
             }
         }
 

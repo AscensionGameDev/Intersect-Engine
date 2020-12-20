@@ -125,62 +125,6 @@
         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="cmbVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbStringComparitor.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbBooleanComparator.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbBooleanGlobalVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbBooleanPlayerVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbNumericComparitor.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbCompareGlobalVar.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="cmbComparePlayerVar.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
-        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
-        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="cmbCompletedQuest.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
@@ -293,7 +237,70 @@
         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="cmbVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbStringComparitor.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbBooleanComparator.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbBooleanGlobalVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbBooleanPlayerVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbNumericComparitor.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbCompareGlobalVar.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbComparePlayerVar.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
   <data name="cmbItem.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
+        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="cmbInvVariable.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
         MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f

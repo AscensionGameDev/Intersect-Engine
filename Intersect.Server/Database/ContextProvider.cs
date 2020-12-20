@@ -21,7 +21,7 @@ namespace Intersect.Server.Database
         {
             var contextType = typeof(TContext);
             var contextInterfaceType = contextType.GetInterfaces()
-                .FirstOrDefault(type => typeof(IDbContext).IsAssignableFrom(type));
+                .FirstOrDefault(type => typeof(IDbContext) != type && typeof(IDbContext).IsAssignableFrom(type));
             if (Contexts.ContainsKey(contextInterfaceType))
             {
                 throw new Exception($"Context for {contextInterfaceType.Name} already exists.");

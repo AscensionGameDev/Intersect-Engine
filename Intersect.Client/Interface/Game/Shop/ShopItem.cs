@@ -88,6 +88,7 @@ namespace Intersect.Client.Interface.Game.Shop
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
+                    Pnl.RenderColor = item.Color;
                 }
             }
         }
