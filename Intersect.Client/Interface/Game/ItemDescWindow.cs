@@ -212,6 +212,7 @@ namespace Intersect.Client.Interface.Game
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;
+                    icon.RenderColor = item.Color;
                 }
 
                 itemDesc.SizeToChildren(false, true);

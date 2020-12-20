@@ -347,6 +347,7 @@ namespace Intersect.Server.Networking
 
             var packet = en.EntityPacket(null, player);
             packet.IsSelf = en == player;
+
             player.SendPacket(packet);
 
             if (en == player)

@@ -117,6 +117,8 @@ namespace Intersect.Client.Entities
 
         protected string mMySprite = "";
 
+        public Color Color = new Color(255,255,255,255);
+
         public int MoveDir = -1;
 
         public long MoveTimer;
@@ -289,6 +291,7 @@ namespace Intersect.Client.Entities
             CurrentMap = packet.MapId;
             Name = packet.Name;
             MySprite = packet.Sprite;
+            Color = packet.Color;
             Face = packet.Face;
             Level = packet.Level;
             X = packet.X;
@@ -993,7 +996,7 @@ namespace Intersect.Client.Entities
                     if (paperdoll == "Player")
                     {
                         Graphics.DrawGameTexture(
-                            texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
+                            texture, srcRectangle, destRectangle, Color ?? new Color(alpha, 255, 255, 255)
                         );
                     }
                     else if (equipSlot > -1)

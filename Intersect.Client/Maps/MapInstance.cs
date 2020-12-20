@@ -672,7 +672,7 @@ namespace Intersect.Client.Maps
                             new FloatRect(
                                 x, y,
                                 Options.TileWidth, Options.TileHeight
-                            ), Color.White
+                            ), itemBase.Color
                         );
                     }
                 }
