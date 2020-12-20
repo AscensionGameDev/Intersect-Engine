@@ -1495,7 +1495,7 @@ namespace Intersect.Server.Networking
                 else
                 {
                     // Item does not belong to them.
-                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, ChatMessageType.Loot, CustomColors.Alerts.Error);
                 }
             }
 
