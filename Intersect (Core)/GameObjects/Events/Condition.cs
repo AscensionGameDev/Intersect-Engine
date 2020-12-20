@@ -78,6 +78,21 @@ namespace Intersect.GameObjects.Events
 
         public int Quantity { get; set; }
 
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
+
     }
 
     public class ClassIsCondition : Condition
@@ -223,6 +238,22 @@ namespace Intersect.GameObjects.Events
         /// Defines the amount of inventory slots that need to be free to clear this condition.
         /// </summary>
         public int Quantity { get; set; }
+
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
+
     }
 
     public class VariableCompaison

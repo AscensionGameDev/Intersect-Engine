@@ -353,6 +353,7 @@ namespace Intersect.Client.Core
                             map.DrawWeather();
                             map.DrawFog();
                             map.DrawOverlayGraphic();
+                            map.DrawItemNames();
                         }
                     }
                 }

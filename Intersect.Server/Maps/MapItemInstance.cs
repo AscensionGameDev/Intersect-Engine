@@ -17,6 +17,11 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] public long DespawnTime;
 
+        /// <summary>
+        /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
+        /// </summary>
+        public Guid UniqueId { get; private set; }
+
         public Guid Owner;
 
         [JsonIgnore] public long OwnershipTime;
@@ -24,16 +29,14 @@ namespace Intersect.Server.Maps
         // We need this mostly for the client-side.. They can't keep track of our timer after all!
         public bool VisibleToAll = true;
 
-        public int X = 0;
-
-        public int Y = 0;
-
         public MapItem(Guid itemId, int quantity) : base(itemId, quantity, null, null)
         {
+            UniqueId = Guid.NewGuid();
         }
 
         public MapItem(Guid itemId, int quantity, Guid? bagId, Bag bag) : base(itemId, quantity, bagId, bag)
         {
+            UniqueId = Guid.NewGuid();
         }
 
         public string Data()

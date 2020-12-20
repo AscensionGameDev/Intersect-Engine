@@ -24,6 +24,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Networking
 {
@@ -346,6 +347,7 @@ namespace Intersect.Server.Networking
 
             var packet = en.EntityPacket(null, player);
             packet.IsSelf = en == player;
+
             player.SendPacket(packet);
 
             if (en == player)
@@ -852,16 +854,21 @@ namespace Intersect.Server.Networking
         public static MapItemsPacket GenerateMapItemsPacket(Guid mapId)
         {
             var map = MapInstance.Get(mapId);
-            var items = new string[map.MapItems.Count];
-            for (var i = 0; i < map.MapItems.Count; i++)
+            // Generate our data to be send to the client.
+            var itemData = new Dictionary<Point, List<string>>();
+            lock (map.MapItems)
             {
-                if (map.MapItems[i] != null)
+                foreach (var location in map.MapItems)
                 {
-                    items[i] = map.MapItems[i].Data();
+                    itemData.Add(location.Key, new List<string>());
+                    foreach (var item in location.Value)
+                    {
+                        itemData[location.Key].Add(item.Data());
+                    }
                 }
             }
 
-            return new MapItemsPacket(mapId, items);
+            return new MapItemsPacket(mapId, itemData);
         }
 
         //MapItemsPacket
@@ -873,30 +880,30 @@ namespace Intersect.Server.Networking
         //MapItemsPacket
         public static void SendMapItemsToProximity(Guid mapId)
         {
-            var map = MapInstance.Get(mapId);
-            var items = new string[map.MapItems.Count];
-            for (var i = 0; i < map.MapItems.Count; i++)
-            {
-                if (map.MapItems[i] != null)
-                {
-                    items[i] = map.MapItems[i].Data();
-                }
-            }
-
-            SendDataToProximity(mapId, new MapItemsPacket(mapId, items));
+            // Send our data to the client.
+            SendDataToProximity(mapId, GenerateMapItemsPacket(mapId));
         }
 
         //MapItemUpdatePacket
-        public static void SendMapItemUpdate(Guid mapId, int index)
+        public static void SendMapItemUpdate(Guid mapId, Guid uniqueId)
         {
             var map = MapInstance.Get(mapId);
-            string itemData = null;
-            if (map != null && map.MapItems[index].ItemId != Guid.Empty)
+            
+            // Get our location and item
+            var location = map.FindItemLocation(uniqueId);
+            var item = map.FindItem(uniqueId);
+            
+            // Does the item exist? If not, send a delete notification. If it does, send an update.
+            if (item == null)
             {
-                itemData = map.MapItems[index].Data();
+                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, uniqueId.ToString(), true));
+            }
+            else
+            {
+                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, item.Data()));
             }
 
-            SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, index, itemData));
+            
         }
 
         //InventoryPacket

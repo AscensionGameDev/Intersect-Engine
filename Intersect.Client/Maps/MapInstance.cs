@@ -12,6 +12,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Items;
+using Intersect.Client.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -59,11 +60,11 @@ namespace Intersect.Client.Maps
         public List<Guid> LocalEntitiesToDispose = new List<Guid>();
 
         //Map Items
-        public Dictionary<int, MapItemInstance> MapItems = new Dictionary<int, MapItemInstance>();
+        public Dictionary<Point, List<MapItemInstance>> MapItems = new Dictionary<Point, List<MapItemInstance>>();
 
         //Map Attributes
-        private Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation> mAttributeAnimInstances =
-            new Dictionary<Intersect.GameObjects.Maps.MapAttribute, Animation>();
+        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances =
+            new Dictionary<MapAttribute, Animation>();
 
         protected float mCurFogIntensity;
 
@@ -648,28 +649,30 @@ namespace Intersect.Client.Maps
 
         public void DrawItemsAndLights()
         {
-            //Draw Map Items
-            foreach (var item in MapItems)
+            // Draw map item icons.
+            foreach (var itemCollection in MapItems)
             {
-                // Are we allowed to see and pick this item up?
-                if (!item.Value.VisibleToAll && item.Value.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Value.Owner))
-                {
-                    // This item does not apply to us!
-                    continue;
-                }
+                var location = itemCollection.Key;
+                var tileItems = itemCollection.Value;
 
-                var itemBase = ItemBase.Get(item.Value.ItemId);
-                if (itemBase != null)
+                // Loop through this in reverse to match client/server display and pick-up order.
+                for (var index = tileItems.Count -1; index >= 0; index--)
                 {
+                    var x = GetX() + location.X * Options.TileWidth;
+                    var y = GetY() + location.Y * Options.TileHeight;
+
+                    // Set up all information we need to draw this name.
+                    var itemBase = ItemBase.Get(tileItems[index].ItemId);
+
                     var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
                             itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
                             new FloatRect(
-                                GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,
+                                x, y,
                                 Options.TileWidth, Options.TileHeight
-                            ), Color.White
+                            ), itemBase.Color
                         );
                     }
                 }
@@ -682,6 +685,63 @@ namespace Intersect.Client.Maps
                 var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
                 var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
                 Graphics.AddLight((int) x, (int) y, (int) w, light.Intensity, light.Expand, light.Color);
+            }
+        }
+
+        /// <summary>
+        /// Draws all names of the items on the tile the user is hovering over.
+        /// </summary>
+        public void DrawItemNames()
+        {
+            // Get where our mouse is located and convert it to a tile based location.
+            var mousePos = Graphics.ConvertToWorldPoint(
+                    Globals.InputManager.GetMousePosition()
+            );
+            var x = (int)(mousePos.X - (int)GetX()) / Options.TileWidth;
+            var y = (int)(mousePos.Y - (int)GetY()) / Options.TileHeight;
+            var mapId = Id;
+
+            // Is this an actual location on this map?
+            if (Globals.Me.GetRealLocation(ref x, ref y, ref mapId))
+            {
+                // Apparently it is! Do we have any items to render here?
+                var tileItems = new List<MapItemInstance>();
+                if (MapItems.TryGetValue(new Point(x, y), out tileItems))
+                {
+                    var baseOffset = 0;
+                    // Loop through this in reverse to match client/server display and pick-up order.
+                    for (var index = tileItems.Count - 1; index >= 0; index--)
+                    {
+                        // Set up all information we need to draw this name.
+                        var itemBase = ItemBase.Get(tileItems[index].ItemId);
+                        var name = itemBase.Name;
+                        var quantity = tileItems[index].Quantity;
+                        var rarity = itemBase.Rarity;
+                        if (tileItems[index].Quantity > 1)
+                        {
+                            name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
+                        }
+                        var color = CustomColors.Items.MapRarities[rarity];
+                        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                        var offsetY = (baseOffset * textSize.Y);
+                        var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
+                        var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
+
+                        // Do we need to draw a background?
+                        if (color.Background != Color.Transparent)
+                        {
+                            Graphics.DrawGameTexture(
+                                Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                                new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y), color.Background
+                            );
+                        }
+
+                        // Finaly, draw the actual name!
+                        Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
+
+                        baseOffset++;
+                    }
+                }
             }
         }
 

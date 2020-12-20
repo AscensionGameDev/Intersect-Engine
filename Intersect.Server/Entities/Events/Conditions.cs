@@ -122,7 +122,22 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            if (player.CountItems(condition.ItemId) >= condition.Quantity)
+            var quantity = condition.Quantity;
+            if (condition.UseVariable)
+            {
+                switch (condition.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(condition.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+                        break;
+                }
+            }
+
+            if ((!condition.Negated && player.CountItems(condition.ItemId) >= quantity) || (condition.Negated && player.CountItems(condition.ItemId) < quantity))
             {
                 return true;
             }
@@ -431,9 +446,24 @@ namespace Intersect.Server.Entities.Events
         )
         {
 
+            var quantity = condition.Quantity;
+            if (condition.UseVariable)
+            {
+                switch (condition.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(condition.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+                        break;
+                }
+            }
+
             // Check if the user has (or does not have when negated) the desired amount of inventory slots.
             var slots = player.FindOpenInventorySlots().Count;
-            if ((!condition.Negated && slots >= condition.Quantity) || (condition.Negated && slots < condition.Quantity))
+            if ((!condition.Negated && slots >= quantity) || (condition.Negated && slots < quantity))
             {
                 return true;
             }
