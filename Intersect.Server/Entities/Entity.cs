@@ -75,8 +75,7 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// The database compatible version of <see cref="Color"/>
         /// </summary>
-        [Column("Color")]
-        [JsonIgnore]
+        [JsonIgnore, Column(nameof(Color))]
         public string JsonColor
         {
             get => JsonConvert.SerializeObject(Color);
@@ -104,7 +103,7 @@ namespace Intersect.Server.Entities
         public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [JsonIgnore, Column("BaseStats")]
+        [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
@@ -116,7 +115,7 @@ namespace Intersect.Server.Entities
             new int[(int) Enums.Stats
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [JsonIgnore, Column("StatPointAllocations")]
+        [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
@@ -134,7 +133,7 @@ namespace Intersect.Server.Entities
         [NotNull, JsonIgnore]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        [JsonIgnore, Column("NameColor")]
+        [JsonIgnore, Column(nameof(NameColor))]
         public string NameColorJson
         {
             get => DatabaseUtils.SaveColor(NameColor);
@@ -151,7 +150,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label HeaderLabel { get; set; }
 
-        [JsonIgnore, Column("HeaderLabel")]
+        [JsonIgnore, Column(nameof(HeaderLabel))]
         public string HeaderLabelJson
         {
             get => JsonConvert.SerializeObject(HeaderLabel);
@@ -161,7 +160,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label FooterLabel { get; set; }
 
-        [JsonIgnore, Column("FooterLabel")]
+        [JsonIgnore, Column(nameof(FooterLabel))]
         public string FooterLabelJson
         {
             get => JsonConvert.SerializeObject(FooterLabel);
