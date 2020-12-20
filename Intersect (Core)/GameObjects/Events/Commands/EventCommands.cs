@@ -336,6 +336,21 @@ namespace Intersect.GameObjects.Events.Commands
 
         public long Exp { get; set; }
 
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
+
     }
 
     public class ChangeLevelCommand : EventCommand
@@ -433,6 +448,21 @@ namespace Intersect.GameObjects.Events.Commands
         /// Defines how the server is supposed to handle changing the items of this request.
         /// </summary>
         public ItemHandling ItemHandling { get; set; } = ItemHandling.Normal;
+
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
 
         public int Quantity { get; set; }
 
