@@ -42,6 +42,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.chkIgnoreGlobalCooldown = new DarkUI.Controls.DarkCheckBox();
             this.btnAddCooldownGroup = new DarkUI.Controls.DarkButton();
             this.cmbCooldownGroup = new DarkUI.Controls.DarkComboBox();
             this.lblCooldownGroup = new System.Windows.Forms.Label();
@@ -192,7 +193,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.chkIgnoreGlobalCooldown = new DarkUI.Controls.DarkCheckBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).BeginInit();
@@ -372,15 +372,24 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGeneral.Location = new System.Drawing.Point(2, 1);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(439, 304);
             this.grpGeneral.Size = new System.Drawing.Size(439, 313);
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
+            // chkIgnoreGlobalCooldown
+            // 
+            this.chkIgnoreGlobalCooldown.AutoSize = true;
+            this.chkIgnoreGlobalCooldown.Location = new System.Drawing.Point(263, 285);
+            this.chkIgnoreGlobalCooldown.Name = "chkIgnoreGlobalCooldown";
+            this.chkIgnoreGlobalCooldown.Size = new System.Drawing.Size(145, 17);
+            this.chkIgnoreGlobalCooldown.TabIndex = 53;
+            this.chkIgnoreGlobalCooldown.Text = "Ignore Global Cooldown?";
+            this.chkIgnoreGlobalCooldown.CheckedChanged += new System.EventHandler(this.chkIgnoreGlobalCooldown_CheckedChanged);
+            // 
             // btnAddCooldownGroup
             // 
-            this.btnAddCooldownGroup.Location = new System.Drawing.Point(415, 206);
+            this.btnAddCooldownGroup.Location = new System.Drawing.Point(415, 254);
             this.btnAddCooldownGroup.Name = "btnAddCooldownGroup";
             this.btnAddCooldownGroup.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddCooldownGroup.Size = new System.Drawing.Size(18, 21);
@@ -402,7 +411,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbCooldownGroup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbCooldownGroup.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbCooldownGroup.FormattingEnabled = true;
-            this.cmbCooldownGroup.Location = new System.Drawing.Point(262, 206);
+            this.cmbCooldownGroup.Location = new System.Drawing.Point(262, 254);
             this.cmbCooldownGroup.Name = "cmbCooldownGroup";
             this.cmbCooldownGroup.Size = new System.Drawing.Size(147, 21);
             this.cmbCooldownGroup.TabIndex = 51;
@@ -413,11 +422,12 @@ namespace Intersect.Editor.Forms.Editors
             // lblCooldownGroup
             // 
             this.lblCooldownGroup.AutoSize = true;
-            this.lblCooldownGroup.Location = new System.Drawing.Point(259, 189);
+            this.lblCooldownGroup.Location = new System.Drawing.Point(259, 237);
             this.lblCooldownGroup.Name = "lblCooldownGroup";
             this.lblCooldownGroup.Size = new System.Drawing.Size(89, 13);
             this.lblCooldownGroup.TabIndex = 50;
             this.lblCooldownGroup.Text = "Cooldown Group:";
+            // 
             // lblAlpha
             // 
             this.lblAlpha.AutoSize = true;
@@ -596,9 +606,9 @@ namespace Intersect.Editor.Forms.Editors
             "Rare",
             "Epic",
             "Legendary"});
-            this.cmbRarity.Location = new System.Drawing.Point(262, 250);
+            this.cmbRarity.Location = new System.Drawing.Point(53, 127);
             this.cmbRarity.Name = "cmbRarity";
-            this.cmbRarity.Size = new System.Drawing.Size(171, 21);
+            this.cmbRarity.Size = new System.Drawing.Size(149, 21);
             this.cmbRarity.TabIndex = 41;
             this.cmbRarity.Text = "None";
             this.cmbRarity.TextPadding = new System.Windows.Forms.Padding(2);
@@ -607,7 +617,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblRarity
             // 
             this.lblRarity.AutoSize = true;
-            this.lblRarity.Location = new System.Drawing.Point(259, 234);
+            this.lblRarity.Location = new System.Drawing.Point(8, 130);
             this.lblRarity.Name = "lblRarity";
             this.lblRarity.Size = new System.Drawing.Size(37, 13);
             this.lblRarity.TabIndex = 40;
@@ -644,7 +654,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnEditRequirements
             // 
-            this.btnEditRequirements.Location = new System.Drawing.Point(262, 282);
+            this.btnEditRequirements.Location = new System.Drawing.Point(13, 275);
             this.btnEditRequirements.Name = "btnEditRequirements";
             this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
             this.btnEditRequirements.Size = new System.Drawing.Size(171, 23);
@@ -717,7 +727,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDesc
             // 
             this.lblDesc.AutoSize = true;
-            this.lblDesc.Location = new System.Drawing.Point(9, 126);
+            this.lblDesc.Location = new System.Drawing.Point(11, 152);
             this.lblDesc.Name = "lblDesc";
             this.lblDesc.Size = new System.Drawing.Size(35, 13);
             this.lblDesc.TabIndex = 13;
@@ -728,10 +738,10 @@ namespace Intersect.Editor.Forms.Editors
             this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtDesc.Location = new System.Drawing.Point(12, 142);
+            this.txtDesc.Location = new System.Drawing.Point(12, 168);
             this.txtDesc.Multiline = true;
             this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(186, 93);
+            this.txtDesc.Size = new System.Drawing.Size(186, 67);
             this.txtDesc.TabIndex = 12;
             this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
             // 
@@ -2571,16 +2581,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
-            // 
-            // chkIgnoreGlobalCooldown
-            // 
-            this.chkIgnoreGlobalCooldown.AutoSize = true;
-            this.chkIgnoreGlobalCooldown.Location = new System.Drawing.Point(262, 233);
-            this.chkIgnoreGlobalCooldown.Name = "chkIgnoreGlobalCooldown";
-            this.chkIgnoreGlobalCooldown.Size = new System.Drawing.Size(145, 17);
-            this.chkIgnoreGlobalCooldown.TabIndex = 53;
-            this.chkIgnoreGlobalCooldown.Text = "Ignore Global Cooldown?";
-            this.chkIgnoreGlobalCooldown.CheckedChanged += new System.EventHandler(this.chkIgnoreGlobalCooldown_CheckedChanged);
             // 
             // FrmItem
             // 
