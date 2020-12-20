@@ -109,6 +109,7 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\AnnouncementWindow.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
     <Compile Include="Interface\MutableInterface.cs" />
@@ -326,13 +327,11 @@
     <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
     <ItemGroup>
       <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
-      
       <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
         <WithCulture>false</WithCulture>
         <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
         <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
       </_MixedResourceWithNoCulture>
-
       <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
     </ItemGroup>
   </Target>

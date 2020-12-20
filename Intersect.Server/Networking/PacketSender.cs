@@ -1559,6 +1559,16 @@ namespace Intersect.Server.Networking
             SendDataToProximity(en.MapId, new EntityDashPacket(en.Id, endMapId, endX, endY, dashTime, direction));
         }
 
+        /// <summary>
+        /// Send a game announcement to all players.
+        /// </summary>
+        /// <param name="message">The message to send as an announcement.</param>
+        /// <param name="duration">The duration (in milliseconds) for the message to display.</param>
+        public static void SendGameAnnouncement(string message, long duration)
+        {
+             SendDataToAllPlayers(new AnnouncementPacket(message, duration));
+        }
+
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {

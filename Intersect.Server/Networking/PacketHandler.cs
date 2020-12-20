@@ -813,6 +813,13 @@ namespace Intersect.Server.Networking
                         Strings.Chat.announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
                         player.Name
                     );
+
+                    // Show an announcement banner if configured to do so as well!
+                    if (Options.Chat.ShowAnnouncementBanners)
+                    {
+                        // TODO: Make the duration configurable through chat?
+                        PacketSender.SendGameAnnouncement(msg, Options.Chat.AnnouncementDisplayDuration);
+                    }
                 }
             }
             else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)

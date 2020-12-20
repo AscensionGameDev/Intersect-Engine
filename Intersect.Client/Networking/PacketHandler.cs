@@ -386,6 +386,12 @@ namespace Intersect.Client.Networking
             );
         }
 
+        //AnnouncementPacket
+        private static void HandlePacket(AnnouncementPacket packet)
+        {
+            Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);   
+        }
+
         //ActionMsgPacket
         private static void HandlePacket(ActionMsgPacket packet)
         {

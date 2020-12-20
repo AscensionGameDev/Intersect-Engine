@@ -84,6 +84,7 @@ namespace Intersect.Client.Interface.Game
         {
             GameCanvas = canvas;
             EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+            AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
             InitGameGui();
         }
@@ -93,6 +94,9 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull]
         public EscapeMenu EscapeMenu { get; }
+
+        [NotNull]
+        public AnnouncementWindow AnnouncementWindow { get; }
 
         public Menu GameMenu { get; private set; }
 
@@ -316,6 +320,7 @@ namespace Intersect.Client.Interface.Game
             EscapeMenu.Update();
             PlayerBox?.Update();
             mMapItemWindow.Update();
+            AnnouncementWindow?.Update();
 
             if (Globals.QuestOffers.Count > 0)
             {
