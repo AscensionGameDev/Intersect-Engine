@@ -40,14 +40,14 @@ namespace Intersect.Server.Networking
         {
             if (client != null)
             {
-                client.SendPacket(new PingPacket(request));
+                client.Send(new PingPacket(request));
             }
         }
 
         //ConfigPacket
         public static void SendServerConfig(Client client)
         {
-            client.SendPacket(new ConfigPacket(Options.OptionsData));
+            client.Send(new ConfigPacket(Options.OptionsData));
         }
 
         //EnteringGamePacket
@@ -81,7 +81,7 @@ namespace Intersect.Server.Networking
             }
 
             client.TimedBufferPacketsRemaining = 5;
-            client.SendPacket(new JoinGamePacket());
+            client.Send(new JoinGamePacket());
             PacketSender.SendGameData(client);
 
             if (!client.IsEditor)
@@ -260,12 +260,12 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    client.SendPacket(GenerateMapPacket(client, mapId));
+                    client.Send(GenerateMapPacket(client, mapId));
                 }
             }
             else
             {
-                client.SendPacket(GenerateMapPacket(client, mapId));
+                client.Send(GenerateMapPacket(client, mapId));
                 var entity = client.Entity;
                 if (entity != null)
                 {
@@ -463,7 +463,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            client.SendPacket(
+            client.Send(
                 new EntityPositionPacket(
                     en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, en.Passable,
                     en.HideName
@@ -565,7 +565,7 @@ namespace Intersect.Server.Networking
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                client.SendPacket(CachedGameDataPacket);
+                client.Send(CachedGameDataPacket);
                 SendGameObject(client, ClassBase.Get(client.Entity.ClassId));
                 Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to send game data to client!");
 
@@ -595,7 +595,7 @@ namespace Intersect.Server.Networking
             }
 
             //Let the client/editor know they have everything now
-            client.SendPacket(new GameDataPacket(gameObjects.ToArray(), CustomColors.Json()));
+            client.Send(new GameDataPacket(gameObjects.ToArray(), CustomColors.Json()));
         }
 
         //GameDataPacket
@@ -753,7 +753,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            client.SendPacket(GenerateEntityVitalsPacket(en));
+            client.Send(GenerateEntityVitalsPacket(en));
         }
 
         //EntityStatsPacket
@@ -771,7 +771,7 @@ namespace Intersect.Server.Networking
         //EntityStatsPacket
         public static void SendEntityStatsTo(Client client, Entity en)
         {
-            client.SendPacket(GenerateEntityStatsPacket(en));
+            client.Send(GenerateEntityStatsPacket(en));
         }
 
         //EntityDirectionPacket
@@ -835,7 +835,7 @@ namespace Intersect.Server.Networking
         //MapListPacket
         public static void SendMapList(Client client)
         {
-            client.SendPacket(new MapListPacket(MapList.List.JsonData));
+            client.Send(new MapListPacket(MapList.List.JsonData));
         }
 
         //MapListPacket
@@ -847,7 +847,7 @@ namespace Intersect.Server.Networking
         //ErrorPacket
         public static void SendError(Client client, string error, string header = "")
         {
-            client.SendPacket(new ErrorMessagePacket(header, error));
+            client.Send(new ErrorMessagePacket(header, error));
         }
 
         //MapItemsPacket
@@ -1030,7 +1030,7 @@ namespace Intersect.Server.Networking
         //CreateCharacterPacket
         public static void SendCreateCharacter(Client client)
         {
-            client.SendPacket(new CharacterCreationPacket());
+            client.Send(new CharacterCreationPacket());
         }
 
         //CharactersPacket
@@ -1094,7 +1094,7 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            client.SendPacket(
+            client.Send(
                 new CharactersPacket(characters.ToArray(), client.Characters.Count < Options.MaxCharacters)
             );
         }
@@ -1102,7 +1102,7 @@ namespace Intersect.Server.Networking
         //AdminPanelPacket
         public static void SendOpenAdminWindow(Client client)
         {
-            client.SendPacket(new AdminPanelPacket());
+            client.Send(new AdminPanelPacket());
         }
 
         //MapGridPacket
@@ -1158,11 +1158,11 @@ namespace Intersect.Server.Networking
 
             if (client.IsEditor)
             {
-                client.SendPacket(new MapGridPacket(null, grid.GetEditorData(), clearKnownMaps));
+                client.Send(new MapGridPacket(null, grid.GetEditorData(), clearKnownMaps));
             }
             else
             {
-                client.SendPacket(new MapGridPacket(grid.GetClientData(), null, clearKnownMaps));
+                client.Send(new MapGridPacket(grid.GetClientData(), null, clearKnownMaps));
                 if (clearKnownMaps)
                 {
                     SendAreaPacket(client.Entity);
@@ -1508,7 +1508,7 @@ namespace Intersect.Server.Networking
 
             if (packetList == null)
             {
-                client.SendPacket(
+                client.Send(
                     new GameObjectPacket(obj.Id, obj.Type, deleted ? null : obj.JsonData, deleted, another)
                 );
             }
@@ -1550,7 +1550,7 @@ namespace Intersect.Server.Networking
         //OpenEditorPacket
         public static void SendOpenEditor(Client client, GameObjectType type)
         {
-            client.SendPacket(new OpenEditorPacket(type));
+            client.Send(new OpenEditorPacket(type));
         }
 
         //EntityDashPacket
@@ -1578,13 +1578,13 @@ namespace Intersect.Server.Networking
         //EnterMapPacket
         public static void SendEnterMap(Client client, Guid mapId)
         {
-            client.SendPacket(new EnterMapPacket(mapId));
+            client.Send(new EnterMapPacket(mapId));
         }
 
         //TimeDataPacket
         public static void SendTimeBaseTo(Client client)
         {
-            client.SendPacket(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
+            client.Send(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
         }
 
         //TimeDataPacket
@@ -1607,7 +1607,7 @@ namespace Intersect.Server.Networking
         //TimePacket
         public static void SendTimeTo(Client client)
         {
-            client?.SendPacket(
+            client?.Send(
                 new TimePacket(
                     Time.GetTime(), TimeBase.GetTimeBase().SyncTime ? 1 : TimeBase.GetTimeBase().Rate,
                     Time.GetTimeColor()
@@ -1839,7 +1839,7 @@ namespace Intersect.Server.Networking
         //PasswordResetResultPacket
         public static void SendPasswordResetResult(Client client, bool result)
         {
-            client.SendPacket(new PasswordResetResultPacket(result));
+            client.Send(new PasswordResetResultPacket(result));
         }
 
         //TargetOverridePacket
@@ -1889,7 +1889,7 @@ namespace Intersect.Server.Networking
                 {
                     if (client.IsEditor)
                     {
-                        client.SendPacket(packet);
+                        client.Send(packet);
                     }
                 }
             }
@@ -1903,7 +1903,7 @@ namespace Intersect.Server.Networking
                 {
                     if (client?.Entity != null)
                     {
-                        client.SendPacket(packet);
+                        client.Send(packet);
                     }
                 }
             }
@@ -1917,7 +1917,7 @@ namespace Intersect.Server.Networking
                 {
                     if ((client?.IsEditor ?? false) || client?.Entity != null)
                     {
-                        client.SendPacket(packet);
+                        client.Send(packet);
                     }
                 }
             }

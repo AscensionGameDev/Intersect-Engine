@@ -194,7 +194,7 @@ namespace Intersect.Server.Core
 
             #region Configure Packet Handlers
 
-            var packetHandler = new PacketHandler();
+            var packetHandler = new PacketHandler(Logger);
             network.Handler = packetHandler.HandlePacket;
             network.PreProcessHandler = packetHandler.PreProcessPacket;
 

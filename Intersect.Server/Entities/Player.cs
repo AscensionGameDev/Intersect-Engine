@@ -203,7 +203,7 @@ namespace Intersect.Server.Entities
 
         public void SendPacket(CerasPacket packet)
         {
-            Client?.SendPacket(packet);
+            Client?.Send(packet);
         }
 
         public override void Dispose()
