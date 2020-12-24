@@ -2415,13 +2415,13 @@ namespace Intersect.Server.Entities
                     var luck = 1.0 + (playerKiller != null ? playerKiller.GetLuck() : 0) / 100;
 
                     //Player drop rates
-                    if (Randomization.Next(1, 101) >= dropitems * luck)
+                    if (Randomization.Next(1, 101) <= dropitems * luck)
                     {
                         continue;
                     }
 
                     //Npc drop rates
-                    if (Randomization.Next(1, 101) >= item.DropChance * luck)
+                    if (Randomization.Next(1, 101) <= item.DropChance * luck)
                     {
                         continue;
                     }
