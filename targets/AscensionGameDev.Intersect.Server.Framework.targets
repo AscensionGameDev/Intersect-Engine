@@ -19,6 +19,12 @@
   </Target>
 
   <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild">
-    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).dll" DestinationFolder="$(TargetDir)\$(AssemblyName)" />
+    <ItemGroup>
+      <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="**/Ceras.*; **/CommandLine.*; **/Newtonsoft.Json.*; **/Semver.*; **/System.Runtime.CompilerServices.Unsafe.*; **/System.ValueTuple.*; **/Intersect Core.*; **/Intersect.*.Framework.*" />
+    </ItemGroup>
+
+    <Message Importance="High" Text="TargetDir=$(TargetDir)"/>
+    <Message Importance="High" Text="CopiedBinaries=@(CopiedBinaries)"/>
+    <Copy SourceFiles="@(CopiedBinaries)" DestinationFolder="$(TargetDir)\$(AssemblyName)" />
   </Target>
 </Project>

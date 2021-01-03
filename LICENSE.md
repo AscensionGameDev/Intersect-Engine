@@ -38,6 +38,9 @@ The common networking library for all "client" applications (both the client and
 #### [Intersect.Client/LICENSE.md (MIT)](/Intersect.Client/LICENSE.md)
 The game client application that is intended to be distributed to players.
 
+#### [Intersect.Client.Framework/LICENSE.md (MIT)](/Intersect.Client.Framework/LICENSE.md)
+The game client framework that is intended to be distributed to players.
+
 ### Non-publicly distributed compilables (GPL v3)
 
 _Licensed under GPL v3 to dissuade the sale of improvements without disclosing source code modifications to purchasers._
@@ -47,6 +50,9 @@ The game editor application that content developers for games will use to do the
 
 #### [Intersect.Server/LICENSE.md (GPL v3)](/Intersect.Server/LICENSE.md)
 The server application that is not publicly distributed and is running in secured environments.
+
+#### [Intersect.Server.Framework/LICENSE.md (MIT)](/Intersect.Server.Framework/LICENSE.md)
+The game server framework that is not publicly distributed and is used in secured environments.
 
 
 
