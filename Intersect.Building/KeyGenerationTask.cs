@@ -6,8 +6,6 @@ using Intersect.Building.Properties;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
 
-using JetBrains.Annotations;
-
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -16,7 +14,6 @@ namespace Intersect.Building
     /// <summary>
     /// Task for generating network security keys automatically at build time.
     /// </summary>
-    [UsedImplicitly]
     public class KeyGenerationTask : AppDomainIsolatedTask
     {
         /// <summary>
@@ -37,7 +34,6 @@ namespace Intersect.Building
         /// <summary>
         /// Directory path to output the generated keys to.
         /// </summary>
-        [CanBeNull]
         [Required]
         public string OutputDirectory { get; set; }
 
