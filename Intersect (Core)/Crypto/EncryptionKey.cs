@@ -5,8 +5,6 @@ using System.IO.Compression;
 using Intersect.Crypto.Formats;
 using Intersect.Memory;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Crypto
 {
     public abstract class EncryptionKey
@@ -24,7 +22,7 @@ namespace Intersect.Crypto
 
         protected abstract bool InternalWrite(IBuffer buffer);
 
-        public bool Read([NotNull] Stream stream)
+        public bool Read(Stream stream)
         {
             var readStream = stream;
             if (Compressed)
@@ -41,7 +39,7 @@ namespace Intersect.Crypto
             }
         }
 
-        public bool Write([NotNull] Stream stream)
+        public bool Write(Stream stream)
         {
             var buffer = new StreamWrapper(stream);
 
@@ -56,11 +54,10 @@ namespace Intersect.Crypto
             return InternalWrite(buffer);
         }
 
-        public static bool ToStream([NotNull] EncryptionKey encryptionKey, [NotNull] Stream stream) =>
+        public static bool ToStream(EncryptionKey encryptionKey, Stream stream) =>
             encryptionKey.Write(stream);
 
-        [NotNull]
-        public static EncryptionKey FromStream([NotNull] Stream stream)
+        public static EncryptionKey FromStream(Stream stream)
         {
             using (var wrapper = new StreamWrapper(stream))
             {
@@ -103,8 +100,7 @@ namespace Intersect.Crypto
             }
         }
 
-        [NotNull]
-        public static TKey FromStream<TKey>([NotNull] Stream stream) where TKey : EncryptionKey
+        public static TKey FromStream<TKey>(Stream stream) where TKey : EncryptionKey
         {
             var key = FromStream(stream);
 

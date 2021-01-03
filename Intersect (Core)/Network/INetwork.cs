@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
 
 namespace Intersect.Network
 {
@@ -9,8 +9,9 @@ namespace Intersect.Network
     public interface INetwork : IDisposable
     {
 
-        [NotNull]
         NetworkConfiguration Configuration { get; }
+
+        INetworkHelper Helper { get; }
 
         Guid Guid { get; }
 

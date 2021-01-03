@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 using Intersect.Admin.Actions;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;

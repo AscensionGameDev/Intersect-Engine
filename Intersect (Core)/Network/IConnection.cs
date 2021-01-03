@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 
 namespace Intersect.Network
@@ -16,7 +15,7 @@ namespace Intersect.Network
 
         int Port { get; }
 
-        [NotNull] ConnectionStatistics Statistics { get; }
+        ConnectionStatistics Statistics { get; }
 
         bool Send(IPacket packet);
 

@@ -26,8 +26,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
@@ -37,7 +35,7 @@ namespace Intersect.Server.Entities
     {
 
         //Online Players List
-        [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
+        private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
 
         #region Chat
 
@@ -86,23 +84,23 @@ namespace Intersect.Server.Entities
         public DateTime? LastOnline { get; set; }
 
         //Bank
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
         //Friends
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //HotBar
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
 
         //Quests
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
         //Variables
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
         [JsonIgnore, NotMapped]
@@ -365,8 +363,7 @@ namespace Intersect.Server.Entities
             //Check for autorun common events and run them
             foreach (var obj in EventBase.Lookup)
             {
-                var evt = obj.Value as EventBase;
-                if (evt != null && evt.CommonEvent)
+                if (obj.Value is EventBase evt && evt.CommonEvent)
                 {
                     StartCommonEvent(evt, CommonEventTrigger.Autorun);
                 }
@@ -539,8 +536,7 @@ namespace Intersect.Server.Entities
 
         public void RemoveEvent(Guid id)
         {
-            Event outInstance;
-            EventLookup.TryRemove(id, out outInstance);
+            EventLookup.TryRemove(id, out var outInstance);
             PacketSender.SendEntityLeaveTo(this, this);
         }
 
@@ -1429,8 +1425,7 @@ namespace Intersect.Server.Entities
         /// <param name="slot">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
         /// <param name="createSlotIfNull">if the slot is in an invalid state (<see langword="null"/>), set it</param>
         /// <returns>returns <see langword="false"/> if <paramref name="slot"/> is set to <see langword="null"/></returns>
-        [ContractAnnotation(" => true, slot: notnull; createSlotIfNull:false => false, slot: null")]
-        public bool TryGetSlot(int slotIndex, [CanBeNull] out InventorySlot slot, bool createSlotIfNull = false)
+        public bool TryGetSlot(int slotIndex, out InventorySlot slot, bool createSlotIfNull = false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute Justification: slot is never null when this returns true.
             slot = Items[slotIndex];
@@ -1452,7 +1447,6 @@ namespace Intersect.Server.Entities
         /// <param name="slotIndex">the slot to load the <see cref="Item"/> from</param>
         /// <param name="item">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
         /// <returns>returns <see langword="false"/> if <paramref name="item"/> is set to <see langword="null"/></returns>
-        [ContractAnnotation("=> true, item: notnull; => false, item: null")]
         public bool TryGetItemAt(int slotIndex, out Item item)
         {
             TryGetSlot(slotIndex, out var slot);
@@ -2914,7 +2908,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool TryDepositItem([NotNull] Item item, bool sendUpdate = true)
+        public bool TryDepositItem(Item item, bool sendUpdate = true)
         {
             var itemBase = item.Descriptor;
 
@@ -4044,7 +4038,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool TryForgetSpell([NotNull] Spell spell, bool sendUpdate = true)
+        public bool TryForgetSpell(Spell spell, bool sendUpdate = true)
         {
             Spell slot = null;
             var slotIndex = -1;
@@ -4101,7 +4095,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual bool IsAllyOf([NotNull] Player otherPlayer)
+        public virtual bool IsAllyOf(Player otherPlayer)
         {
             return base.IsAllyOf(otherPlayer) || this.InParty(otherPlayer);
         }

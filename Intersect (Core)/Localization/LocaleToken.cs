@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Localization
@@ -17,7 +15,7 @@ namespace Intersect.Localization
         {
         }
 
-        public LocaleToken([NotNull] string name)
+        public LocaleToken(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -44,7 +42,6 @@ namespace Intersect.Localization
             }
         }
 
-        [NotNull]
         [JsonIgnore]
         public virtual LocalizedString Name
         {

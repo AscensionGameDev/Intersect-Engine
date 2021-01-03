@@ -11,10 +11,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
-
-using JetBrains.Annotations;
 #if DEBUG || DIAGNOSTIC
-using Intersect.Logging;
 #endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -1383,7 +1380,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="predicate">The <see cref="T:System.Predicate`1" /> delegate that defines the conditions of the element to search for.</param>
         /// <param name="recurse">Whether or not the search will recurse through the element tree.</param>
         /// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <see cref="Base" />.</returns>
-        public virtual Base Find([NotNull] Predicate<Base> predicate, bool recurse = false)
+        public virtual Base Find(Predicate<Base> predicate, bool recurse = false)
         {
             var child = mChildren.Find(predicate);
             if (child != null)
@@ -1402,8 +1399,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="predicate">The <see cref="T:System.Predicate`1" /> delegate that defines the conditions of the element to search for.</param>
         /// <param name="recurse">Whether or not the search will recurse through the element tree.</param>
         /// <returns>All elements that matches the conditions defined by the specified predicate.</returns>
-        [NotNull]
-        public virtual IEnumerable<Base> FindAll([NotNull] Predicate<Base> predicate, bool recurse = false)
+        public virtual IEnumerable<Base> FindAll(Predicate<Base> predicate, bool recurse = false)
         {
             var children = new List<Base>();
 
@@ -2095,10 +2091,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             //					Should be called by the event handler.
             OnMouseClickedLeft(x, y, true);
 
-            if (DoubleClicked != null)
-            {
-                DoubleClicked(this, new ClickedEventArgs(x, y, true));
-            }
+            DoubleClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
         }
 
         /// <summary>
@@ -2119,10 +2112,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             // [halfofastaple] See: OnMouseDoubleClicked for discussion on triggering single clicks in a double click event
             OnMouseClickedRight(x, y, true);
 
-            if (DoubleRightClicked != null)
-            {
-                DoubleRightClicked(this, new ClickedEventArgs(x, y, true));
-            }
+            DoubleRightClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
         }
 
         /// <summary>

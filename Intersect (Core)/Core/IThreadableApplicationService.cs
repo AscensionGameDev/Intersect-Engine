@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System.Threading;
 
 namespace Intersect.Core
@@ -12,7 +11,6 @@ namespace Intersect.Core
         /// <summary>
         /// The thread for this service.
         /// </summary>
-        [CanBeNull]
         Thread Thread { get; }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Intersect.Core;
 using Intersect.Server.Core.Services;
 
-using JetBrains.Annotations;
-
 using System.Threading;
 
 namespace Intersect.Server.Core
@@ -11,7 +9,7 @@ namespace Intersect.Server.Core
     internal sealed partial class ConsoleService : ApplicationService<IServerContext, IConsoleService, ConsoleService>, IConsoleService
     {
 
-        [NotNull] private readonly ConsoleThread mConsoleThread;
+        private readonly ConsoleThread mConsoleThread;
 
         public Thread Thread { get; private set; }
 

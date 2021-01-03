@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Intersect.Logging;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
 
     public abstract class AbstractConnection : IConnection
     {
-        [NotNull] private readonly object mDisposeLock;
+        private readonly object mDisposeLock;
 
         private bool mDisposed;
 
@@ -19,9 +18,10 @@ namespace Intersect.Network
 
             Guid = guid ?? Guid.NewGuid();
             Statistics = new ConnectionStatistics();
+            Ceras = new Ceras(true);
         }
 
-        public Ceras Ceras { get; } = new Ceras(true);
+        public Ceras Ceras { get; }
 
         public virtual void Dispose()
         {

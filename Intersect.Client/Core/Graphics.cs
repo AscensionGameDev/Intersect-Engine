@@ -8,7 +8,6 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
-using Intersect.Client.MonoGame.Input;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;

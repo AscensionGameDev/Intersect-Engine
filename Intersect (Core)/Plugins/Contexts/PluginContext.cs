@@ -3,8 +3,6 @@
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins.Contexts
 {
     /// <summary>
@@ -17,7 +15,7 @@ namespace Intersect.Plugins.Contexts
         where TPluginContext : IPluginContext<TPluginContext> where TLifecycleHelper : ILifecycleHelper
     {
 
-        [NotNull] private Plugin Plugin { get; }
+        private Plugin Plugin { get; }
 
         /// <inheritdoc />
         public Assembly Assembly => Plugin.Reference.Assembly;
@@ -43,7 +41,7 @@ namespace Intersect.Plugins.Contexts
         /// Instantiates a <see cref="PluginContext{TPluginContext, TLifecycleHelper}"/>.
         /// </summary>
         /// <param name="plugin">the <see cref="Plugin"/> this context will be used for</param>
-        protected PluginContext([NotNull] Plugin plugin)
+        protected PluginContext(Plugin plugin)
         {
             Plugin = plugin;
             EmbeddedResources = new EmbeddedResourceHelper(Assembly);

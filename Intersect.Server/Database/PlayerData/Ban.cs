@@ -6,8 +6,6 @@ using System.Linq;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
-using JetBrains.Annotations;
-
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -68,7 +66,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Expired(Ban ban) => ban.EndTime <= DateTime.UtcNow;
 
-        public static bool Add([NotNull] Ban ban, [CanBeNull] PlayerContext playerContext = null)
+        public static bool Add(Ban ban, PlayerContext playerContext = null)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
@@ -93,30 +91,30 @@ namespace Intersect.Server.Database.PlayerData
         public static bool Add(
             Guid userId,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string banner,
+            string reason,
+            string banner,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         ) =>
             Add(new Ban(userId, ip, reason, duration, banner), playerContext);
 
         public static bool Add(
-            [NotNull] User user,
+            User user,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string banner,
+            string reason,
+            string banner,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         ) =>
             Add(new Ban(user, ip, reason, duration, banner), playerContext);
 
         public static bool Add(
-            [NotNull] Client client,
+            Client client,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string banner,
+            string reason,
+            string banner,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         ) =>
             client.User != null && Add(client.User, duration, reason, banner, ip, playerContext);
 
@@ -188,7 +186,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
+        public static bool Remove(User user, PlayerContext playerContext = null)
         {
             if (!Remove(user.Ban))
             {
@@ -200,7 +198,7 @@ namespace Intersect.Server.Database.PlayerData
             return true;
         }
 
-        public static bool Remove([NotNull] Client client, [CanBeNull] PlayerContext playerContext = null) =>
+        public static bool Remove(Client client, PlayerContext playerContext = null) =>
             client.User != null && Remove(client.User, playerContext);
 
         public static string CheckBan(User user, string ip)
@@ -233,7 +231,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public static string CheckBan(string ip) => CheckBan(null, ip);
 
-        public static Ban Find([NotNull] User user) => Find(user.Id);
+        public static Ban Find(User user) => Find(user.Id);
 
         public static Ban Find(Guid userId)
         {
@@ -256,7 +254,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<Ban> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
+        public static IEnumerable<Ban> FindAll(User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
 
         public static IEnumerable<Ban> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
 
@@ -264,14 +262,12 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Compiled Queries
 
-        [NotNull]
         private static readonly Func<PlayerContext, Guid, IEnumerable<Ban>> ByUser =
             EF.CompileQuery<PlayerContext, Guid, Ban>(
                 (context, userId) => context.Bans.Where(ban => ban.UserId == userId && ban.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull]
         private static readonly Func<PlayerContext, string, IEnumerable<Ban>> ByIp =
             EF.CompileQuery<PlayerContext, string, Ban>(
                 (context, ip) => context.Bans.Where(

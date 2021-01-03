@@ -9,8 +9,6 @@ using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Plugins.Contexts
 {
     /// <summary>
@@ -45,7 +43,7 @@ namespace Intersect.Client.Plugins.Contexts
         public override IClientLifecycleHelper Lifecycle { get; }
 
         /// <inheritdoc />
-        private ClientPluginContext([NotNull] Plugin plugin) : base(plugin)
+        private ClientPluginContext(Plugin plugin) : base(plugin)
         {
             Lifecycle = new ClientLifecycleHelper(this);
         }

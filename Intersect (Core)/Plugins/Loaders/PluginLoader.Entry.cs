@@ -1,8 +1,6 @@
 ﻿using Intersect.Properties;
 using Intersect.Reflection;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +17,7 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="type">the <see cref="Type"/> to check</param>
         /// <returns>if <paramref name="type"/> is a valid plugin entry type</returns>
-        internal static bool IsPluginEntryType([NotNull] Type type)
+        internal static bool IsPluginEntryType(Type type)
         {
             // Abstract, interface and generic types are not valid virtual manifest types.
             if (type.IsAbstract || type.IsInterface || type.IsGenericType)
@@ -36,7 +34,7 @@ namespace Intersect.Plugins.Loaders
             return constructor != null;
         }
 
-        internal static PluginReference CreatePluginReference([NotNull] Assembly assembly)
+        internal static PluginReference CreatePluginReference(Assembly assembly)
         {
             var assemblyTypes = assembly.GetTypes();
             var entryType = assemblyTypes.FirstOrDefault(IsPluginEntryType);

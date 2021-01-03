@@ -7,18 +7,16 @@ using CommandLine;
 using Intersect.Logging;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins.Helpers
 {
     /// <inheritdoc cref="ICommandLineHelper" />
     internal sealed class CommandLineHelper : PluginHelper, ICommandLineHelper
     {
-        [NotNull] private readonly Parser mParser;
+        private readonly Parser mParser;
 
-        [NotNull] private readonly string[] mArgs;
+        private readonly string[] mArgs;
 
-        internal CommandLineHelper([NotNull] Logger logger, [NotNull] string[] args, [NotNull] Parser parser) : base(
+        internal CommandLineHelper(Logger logger, string[] args, Parser parser) : base(
             logger
         )
         {

@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 using Intersect.Utilities;
 
 namespace Intersect.Network.Packets

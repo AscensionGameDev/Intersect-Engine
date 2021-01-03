@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Server.General;
 using Intersect.Utilities;
-
-using JetBrains.Annotations;
 
 using Newtonsoft.Json;
 
@@ -118,7 +113,6 @@ namespace Intersect.Server.Database
         /// </summary>
         /// <param name="bag">the bag if there is one associated with this <see cref="Item"/></param>
         /// <returns>if <paramref name="bag"/> is not <see langword="null"/></returns>
-        [ContractAnnotation(" => true, bag:notnull; => false, bag:null")]
         public bool TryGetBag(out Bag bag)
         {
             bag = Bag;

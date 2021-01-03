@@ -18,8 +18,6 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
@@ -1597,7 +1595,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void SmartFillAttribute(int x, int y, [CanBeNull] string data  = null, [CanBeNull] MapAttribute newAttribute = null)
+        private void SmartFillAttribute(int x, int y, string data  = null, MapAttribute newAttribute = null)
         {
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {

@@ -1,7 +1,5 @@
 ﻿using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins
 {
     /// <summary>
@@ -12,7 +10,6 @@ namespace Intersect.Plugins
         /// <summary>
         /// The <see cref="ILifecycleHelper"/> of the current plugin.
         /// </summary>
-        [NotNull]
         ILifecycleHelper Lifecycle { get; }
     }
 }

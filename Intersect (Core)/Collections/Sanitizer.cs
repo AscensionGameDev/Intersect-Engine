@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using Intersect.Extensions;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Collections
 {
 
@@ -13,10 +11,9 @@ namespace Intersect.Collections
 
         private Dictionary<string, SanitizedValue<object>> mSanitizedValues;
 
-        [CanBeNull]
         public Dictionary<string, SanitizedValue<object>> Sanitized => mSanitizedValues?.ToDictionary();
 
-        public Sanitizer Add<T>([NotNull] string name, T before, T after)
+        public Sanitizer Add<T>(string name, T before, T after)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -33,8 +30,7 @@ namespace Intersect.Collections
             return this;
         }
 
-        [NotNull]
-        public T IsNotNull<T>([NotNull] string name, [CanBeNull] T value, [NotNull] T defaultValue) where T : class
+        public T IsNotNull<T>(string name, T value, T defaultValue) where T : class
         {
             if (value == null)
             {
@@ -44,8 +40,7 @@ namespace Intersect.Collections
             return defaultValue;
         }
 
-        [CanBeNull]
-        public T IsNull<T>([NotNull] string name, [CanBeNull] T value) where T : class
+        public T IsNull<T>(string name, T value) where T : class
         {
             if (value != null)
             {
@@ -55,7 +50,7 @@ namespace Intersect.Collections
             return null;
         }
 
-        public T Is<T>([NotNull] string name, T actualValue, T expectedValue)
+        public T Is<T>(string name, T actualValue, T expectedValue)
         {
             if (expectedValue == null && actualValue == null || (expectedValue?.Equals(actualValue) ?? false))
             {
@@ -67,7 +62,7 @@ namespace Intersect.Collections
             return expectedValue;
         }
 
-        public T IsNot<T>([NotNull] string name, T actualValue, T expectedValue)
+        public T IsNot<T>(string name, T actualValue, T expectedValue)
         {
             if (expectedValue == null && actualValue != null || !(expectedValue?.Equals(actualValue) ?? false))
             {
@@ -79,7 +74,7 @@ namespace Intersect.Collections
             return expectedValue;
         }
 
-        public T MaximumExclusive<T>([NotNull] string name, T actualValue, [NotNull] T expectedMinimum)
+        public T MaximumExclusive<T>(string name, T actualValue, T expectedMinimum)
             where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) < 0)
@@ -92,7 +87,7 @@ namespace Intersect.Collections
             return expectedMinimum;
         }
 
-        public T Maximum<T>([NotNull] string name, T actualValue, [NotNull] T expectedMinimum) where T : IComparable<T>
+        public T Maximum<T>(string name, T actualValue, T expectedMinimum) where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) <= 0)
             {
@@ -104,7 +99,7 @@ namespace Intersect.Collections
             return expectedMinimum;
         }
 
-        public T MinimumExclusive<T>([NotNull] string name, T actualValue, [NotNull] T expectedMaximum)
+        public T MinimumExclusive<T>(string name, T actualValue, T expectedMaximum)
             where T : IComparable<T>
         {
             if (expectedMaximum.CompareTo(actualValue) > 0)
@@ -117,7 +112,7 @@ namespace Intersect.Collections
             return expectedMaximum;
         }
 
-        public T Minimum<T>([NotNull] string name, T actualValue, [NotNull] T expectedMaximum) where T : IComparable<T>
+        public T Minimum<T>(string name, T actualValue, T expectedMaximum) where T : IComparable<T>
         {
             if (expectedMaximum.CompareTo(actualValue) >= 0)
             {
@@ -130,10 +125,10 @@ namespace Intersect.Collections
         }
 
         public T Clamp<T>(
-            [NotNull] string name,
+            string name,
             T actualValue,
-            [NotNull] T expectedMinimum,
-            [NotNull] T expectedMaximum
+            T expectedMinimum,
+            T expectedMaximum
         ) where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) > 0)
@@ -154,10 +149,10 @@ namespace Intersect.Collections
         }
 
         public T ClampExclusive<T>(
-            [NotNull] string name,
+            string name,
             T actualValue,
-            [NotNull] T expectedMinimum,
-            [NotNull] T expectedMaximum
+            T expectedMinimum,
+            T expectedMaximum
         ) where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) >= 0)
@@ -178,10 +173,10 @@ namespace Intersect.Collections
         }
 
         public T ClampExclusiveMinimum<T>(
-            [NotNull] string name,
+            string name,
             T actualValue,
-            [NotNull] T expectedMinimum,
-            [NotNull] T expectedMaximum
+            T expectedMinimum,
+            T expectedMaximum
         ) where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) > 0)
@@ -202,10 +197,10 @@ namespace Intersect.Collections
         }
 
         public T ClampExclusiveMaximum<T>(
-            [NotNull] string name,
+            string name,
             T actualValue,
-            [NotNull] T expectedMinimum,
-            [NotNull] T expectedMaximum
+            T expectedMinimum,
+            T expectedMaximum
         ) where T : IComparable<T>
         {
             if (expectedMinimum.CompareTo(actualValue) >= 0)

@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
@@ -7,13 +8,12 @@ using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
-
-using JetBrains.Annotations;
+using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Networking
 {
 
-    public static class Network
+    internal static class Network
     {
 
         public static bool Connecting;
@@ -22,7 +22,7 @@ namespace Intersect.Client.Networking
 
         public static GameSocket Socket { get; set; }
 
-        public static PacketHandler PacketHandler { get; }
+        internal static PacketHandler PacketHandler { get; set; }
 
         private static int sPing;
 
@@ -34,12 +34,7 @@ namespace Intersect.Client.Networking
             set => sPing = value;
         }
 
-        static Network()
-        {
-            PacketHandler = new PacketHandler(Log.Default);
-        }
-
-        public static void InitNetwork()
+        public static void InitNetwork(IClientContext context)
         {
             if (Socket == null)
             {
@@ -60,7 +55,7 @@ namespace Intersect.Client.Networking
             Socket?.Connect(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
         }
 
-        private static void MySocket_OnConnectionFailed([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs, bool denied)
+        private static void MySocket_OnConnectionFailed(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied)
         {
             sConnected = false;
             if (!denied)
@@ -74,7 +69,7 @@ namespace Intersect.Client.Networking
             PacketHandler.HandlePacket(packet);
         }
 
-        private static void MySocket_OnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
+        private static void MySocket_OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
             //Not sure how to handle this yet!
             sConnected = false;
@@ -91,7 +86,7 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static void MySocket_OnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
+        private static void MySocket_OnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
             //Not sure how to handle this yet!
             sConnected = true;

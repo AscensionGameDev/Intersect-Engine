@@ -24,8 +24,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,16 +32,18 @@ using System.Text;
 
 namespace Intersect.Server.Networking
 {
-    public class PacketHandler
+    internal sealed class PacketHandler
     {
-        public Logger Logger { get; }
+        public IServerContext Context { get; }
+
+        public Logger Logger => Context.Logger;
 
         public PacketHandlerRegistry Registry { get; }
 
-        public PacketHandler(Logger logger)
+        public PacketHandler(IServerContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            Registry = new PacketHandlerRegistry(logger);
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Registry = packetHandlerRegistry ?? throw new ArgumentNullException(nameof(packetHandlerRegistry));
 
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
@@ -378,7 +378,39 @@ namespace Intersect.Server.Networking
                     return false;
                 }
 
-                handler(client, packet);
+                if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+                {
+                    if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
+                    {
+                        // Preprocessors are intended to be silent filter functions
+                        return false;
+                    }
+                }
+
+                if (Registry.TryGetPreHooks(packet, out var preHooks))
+                {
+                    if (!preHooks.All(hook => hook.Handle(client, packet)))
+                    {
+                        // Hooks should not fail, if they do that's an error
+                        Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                        return false;
+                    }
+                }
+
+                if (!handler(client, packet))
+                {
+                    return false;
+                }
+
+                if (Registry.TryGetPostHooks(packet, out var postHooks))
+                {
+                    if (!postHooks.All(hook => hook.Handle(client, packet)))
+                    {
+                        // Hooks should not fail, if they do that's an error
+                        Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                        return false;
+                    }
+                }
             }
             catch (Exception exception)
             {
@@ -2062,7 +2094,7 @@ namespace Intersect.Server.Networking
         }
 
         //OfferTradeItemPacket
-        public void HandlePacket(Client client, [NotNull] OfferTradeItemPacket packet)
+        public void HandlePacket(Client client, OfferTradeItemPacket packet)
         {
             var player = client?.Entity;
             if (player == null || player.Trading.Counterparty == null)
@@ -2074,7 +2106,7 @@ namespace Intersect.Server.Networking
         }
 
         //RevokeTradeItemPacket
-        public void HandlePacket(Client client, [NotNull] RevokeTradeItemPacket packet)
+        public void HandlePacket(Client client, RevokeTradeItemPacket packet)
         {
             var player = client?.Entity;
             if (player == null || player.Trading.Counterparty == null)

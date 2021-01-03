@@ -60,12 +60,12 @@ namespace Intersect.Server.Core
 
         public ushort ValidPort(ushort defaultPort)
         {
-            return NetworkHelper.IsValidPort(Port) ? Port : defaultPort;
+            return PortHelper.IsValidPort(Port) ? Port : defaultPort;
         }
 
         public ushort ValidApiPort(ushort defaultApiPort)
         {
-            return NetworkHelper.IsValidPort(defaultApiPort) ? ApiPort : defaultApiPort;
+            return PortHelper.IsValidPort(defaultApiPort) ? ApiPort : defaultApiPort;
         }
 
     }

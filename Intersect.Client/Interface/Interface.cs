@@ -12,9 +12,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared.Errors;
-using Intersect.Client.Plugins.Interfaces;
-
-using JetBrains.Annotations;
 
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
@@ -24,7 +21,7 @@ namespace Intersect.Client.Interface
     public static class Interface
     {
 
-        [NotNull] public static readonly List<KeyValuePair<string, string>> MsgboxErrors =
+        public static readonly List<KeyValuePair<string, string>> MsgboxErrors =
             new List<KeyValuePair<string, string>>();
 
         public static ErrorHandler ErrorMsgHandler;

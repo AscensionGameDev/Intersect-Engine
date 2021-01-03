@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Routes
 {
 
@@ -24,7 +22,6 @@ namespace Intersect.Server.Web.RestApi.Routes
                 .ToArray();
         }
 
-        [NotNull]
         private static string[] DiscoveredVersions { get; }
 
         [Route]

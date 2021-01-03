@@ -17,8 +17,6 @@ using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
 
-using JetBrains.Annotations;
-
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;
 
@@ -29,9 +27,9 @@ namespace Intersect.Server.Web.RestApi
     // TODO: Migrate to a proper service
     internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
-        [NotNull] private readonly object mDisposeLock;
+        private readonly object mDisposeLock;
 
-        [CanBeNull] private IDisposable mWebAppHandle;
+        private IDisposable mWebAppHandle;
 
         public RestApi(ushort apiPort)
         {
@@ -58,10 +56,8 @@ namespace Intersect.Server.Web.RestApi
 
         public bool IsStarted => mWebAppHandle != null;
 
-        [NotNull]
         public StartOptions StartOptions { get; }
 
-        [NotNull]
         private AuthenticationProvider AuthenticationProvider { get; }
 
         public void Configure(IAppBuilder appBuilder)

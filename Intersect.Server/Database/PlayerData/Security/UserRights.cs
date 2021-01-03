@@ -6,8 +6,6 @@ using System.Reflection;
 
 using Intersect.Enums;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Security
@@ -16,17 +14,17 @@ namespace Intersect.Server.Database.PlayerData.Security
     public class UserRights
     {
 
-        [NotNull] private static readonly Type ApiRolesType = typeof(ApiRoles);
+        private static readonly Type ApiRolesType = typeof(ApiRoles);
 
-        [NotNull] private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
+        private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanWrite)
             .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
             .ToList();
 
-        [NotNull] private static readonly Type UserRightsType = typeof(UserRights);
+        private static readonly Type UserRightsType = typeof(UserRights);
 
-        [NotNull] private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
+        private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanWrite)
             .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
@@ -52,10 +50,8 @@ namespace Intersect.Server.Database.PlayerData.Security
         [JsonIgnore]
         public bool IsAdmin => Ban && Mute && Kick && Editor;
 
-        [NotNull]
         public static UserRights None => new UserRights();
 
-        [NotNull]
         public static UserRights Moderation => new UserRights
         {
             Ban = true,
@@ -63,7 +59,6 @@ namespace Intersect.Server.Database.PlayerData.Security
             Mute = true
         };
 
-        [NotNull]
         public static UserRights Admin => new UserRights
         {
             Editor = true,
@@ -72,7 +67,7 @@ namespace Intersect.Server.Database.PlayerData.Security
             Mute = true
         };
 
-        [JsonIgnore, NotNull]
+        [JsonIgnore]
         public ImmutableList<string> Roles => EnumeratePermissions();
 
         public static bool operator ==(UserRights b1, UserRights b2)
@@ -95,7 +90,7 @@ namespace Intersect.Server.Database.PlayerData.Security
             return obj is UserRights userRights && Equals(userRights);
         }
 
-        protected bool Equals([NotNull] UserRights other)
+        protected bool Equals(UserRights other)
         {
             var permissions = EnumeratePermissions();
             var otherPermissions = other.EnumeratePermissions();
@@ -113,7 +108,6 @@ namespace Intersect.Server.Database.PlayerData.Security
             return mHashCode;
         }
 
-        [NotNull]
         internal ImmutableList<string> EnumeratePermissions(bool permitted = true)
         {
             var userRights = UserRightsPermissions
@@ -140,7 +134,6 @@ namespace Intersect.Server.Database.PlayerData.Security
     public static class AccessExtensions
     {
 
-        [NotNull]
         public static UserRights AsUserRights(this Access access)
         {
             switch (access)

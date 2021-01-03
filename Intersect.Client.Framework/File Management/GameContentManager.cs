@@ -3,8 +3,6 @@ using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -449,7 +447,6 @@ namespace Intersect.Client.Framework.File_Management
             }
         }
 
-        [NotNull]
         protected Dictionary<string, IAsset> GetAssetLookup(ContentTypes contentType)
         {
             switch (contentType)
@@ -508,12 +505,11 @@ namespace Intersect.Client.Framework.File_Management
             }
         }
 
-        [NotNull]
         protected abstract TAsset Load<TAsset>(
-            [NotNull] Dictionary<string, IAsset> lookup,
+            Dictionary<string, IAsset> lookup,
             ContentTypes contentType,
-            [NotNull] string assetName,
-            [NotNull] Func<Stream> createStream
+            string assetName,
+            Func<Stream> createStream
         ) where TAsset : class, IAsset;
 
         /// <inheritdoc />

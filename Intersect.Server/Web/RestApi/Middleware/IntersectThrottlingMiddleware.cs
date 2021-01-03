@@ -3,8 +3,6 @@ using System.Linq;
 
 using Intersect.Server.Web.Utilities;
 
-using JetBrains.Annotations;
-
 using Microsoft.Owin;
 
 using WebApiThrottle;
@@ -15,17 +13,17 @@ namespace Intersect.Server.Web.RestApi.Middleware
     public class IntersectThrottlingMiddleware : ThrottlingMiddleware
     {
 
-        [NotNull] private const string DefaultAuthorizedFallbackClientKey = "authorized";
+        private const string DefaultAuthorizedFallbackClientKey = "authorized";
 
-        [NotNull] public const string DefaultFallbackClientKey = "test";
+        public const string DefaultFallbackClientKey = "test";
 
-        [NotNull] public const string DefaultHeader = "X-Intersect-ApiKey";
+        public const string DefaultHeader = "X-Intersect-ApiKey";
 
-        [NotNull] public static readonly IThrottleRepository DefaultRepository = new MemoryCacheRepository();
+        public static readonly IThrottleRepository DefaultRepository = new MemoryCacheRepository();
 
-        [NotNull] private string mFallbackClientKey;
+        private string mFallbackClientKey;
 
-        [NotNull] private string mHeader;
+        private string mHeader;
 
         /// <inheritdoc />
         public IntersectThrottlingMiddleware(
@@ -40,7 +38,6 @@ namespace Intersect.Server.Web.RestApi.Middleware
             mFallbackClientKey = fallbackClientKey ?? DefaultFallbackClientKey;
         }
 
-        [NotNull]
         public string Header
         {
             get => mHeader;
@@ -53,7 +50,6 @@ namespace Intersect.Server.Web.RestApi.Middleware
             }
         }
 
-        [NotNull]
         public string FallbackClientKey
         {
             get => mFallbackClientKey;
@@ -66,7 +62,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
             }
         }
 
-        protected override RequestIdentity SetIdentity([NotNull] IOwinRequest request)
+        protected override RequestIdentity SetIdentity(IOwinRequest request)
         {
             if (request.Headers == null)
             {

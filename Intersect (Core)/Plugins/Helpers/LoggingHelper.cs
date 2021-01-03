@@ -2,8 +2,6 @@
 using Intersect.Logging.Output;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -14,13 +12,11 @@ namespace Intersect.Plugins.Helpers
     /// <inheritdoc />
     internal sealed class LoggingHelper : ILoggingHelper
     {
-        [NotNull]
         private static readonly string BasePluginLogPath = Path.Combine(
             "plugins", $"{Log.Initial:yyyy_MM_dd-HH_mm_ss_fff}"
         );
 
-        [NotNull]
-        private static Logger CreateLogger([NotNull] IManifestHelper manifest, CreateLoggerOptions createLoggerOptions)
+        private static Logger CreateLogger(IManifestHelper manifest, CreateLoggerOptions createLoggerOptions)
         {
             var logName = string.IsNullOrWhiteSpace(createLoggerOptions.Name)
                 ? manifest.Key
@@ -52,14 +48,14 @@ namespace Intersect.Plugins.Helpers
             );
         }
 
-        [NotNull] private readonly IManifestHelper mManifest;
+        private readonly IManifestHelper mManifest;
 
         /// <inheritdoc />
         public Logger Application { get; }
 
         public Logger Plugin { get; }
 
-        internal LoggingHelper([NotNull] Logger applicationLogger, [NotNull] IManifestHelper manifest)
+        internal LoggingHelper(Logger applicationLogger, IManifestHelper manifest)
         {
             mManifest = manifest;
 

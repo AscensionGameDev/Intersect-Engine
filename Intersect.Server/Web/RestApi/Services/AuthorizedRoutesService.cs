@@ -6,8 +6,6 @@ using System.Web.Http.Description;
 
 using Intersect.Server.Web.RestApi.Configuration;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Services
 {
 
@@ -15,18 +13,16 @@ namespace Intersect.Server.Web.RestApi.Services
     {
 
         public AuthorizedRoutesService(
-            [NotNull] ApiConfiguration apiConfiguration,
-            [NotNull] HttpConfiguration httpConfiguration
+            ApiConfiguration apiConfiguration,
+            HttpConfiguration httpConfiguration
         )
         {
             ApiExplorer = httpConfiguration.Services.GetApiExplorer() ?? throw new InvalidOperationException();
             Routes = apiConfiguration.RouteAuthorization;
         }
 
-        [NotNull]
         private IReadOnlyDictionary<string, object> Routes { get; }
 
-        [NotNull]
         public IApiExplorer ApiExplorer { get; }
 
         /// <inheritdoc />
@@ -45,8 +41,8 @@ namespace Intersect.Server.Web.RestApi.Services
         }
 
         private bool PartialEndpointRequiresAuthorization(
-            [NotNull] IReadOnlyList<string> segments,
-            [NotNull] string method
+            IReadOnlyList<string> segments,
+            string method
         )
         {
             if (segments.Count < 1)
@@ -76,13 +72,13 @@ namespace Intersect.Server.Web.RestApi.Services
             return requiresAuthorization;
         }
 
-        private bool SegmentRequiresAuthorization([NotNull] string segment, [NotNull] string method)
+        private bool SegmentRequiresAuthorization(string segment, string method)
         {
             return !Routes.TryGetValue(segment, out var segmentAuthorization) ||
                    SegmentRequiresAuthorization(segmentAuthorization, method);
         }
 
-        private static bool SegmentRequiresAuthorization([NotNull] object segmentAuthorization, [NotNull] string method)
+        private static bool SegmentRequiresAuthorization(object segmentAuthorization, string method)
         {
             switch (segmentAuthorization)
             {

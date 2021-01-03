@@ -104,6 +104,9 @@ namespace Intersect.Network
                 );
         }
 
+        public static Type GetPacketType<THandler>() where THandler : IPacketHandler =>
+            GetPacketType(typeof(THandler));
+
         public static Type GetPacketType(Type packetHandlerType)
         {
             if (packetHandlerType == default)

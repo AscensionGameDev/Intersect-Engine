@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 
 using Intersect.Immutability;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
@@ -17,13 +14,11 @@ namespace Intersect.Logging
     /// </summary>
     public sealed class LogConfiguration
     {
-        [NotNull] private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
+        private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
 
-        [NotNull]
         private static readonly ImmutableList<ILogFormatter> DefaultFormatters =
             ImmutableList.Create<ILogFormatter>() ?? throw new InvalidOperationException();
 
-        [NotNull]
         private static readonly ImmutableList<ILogOutput> DefaultOutputs =
             ImmutableList.Create<ILogOutput>() ?? throw new InvalidOperationException();
 
@@ -35,7 +30,6 @@ namespace Intersect.Logging
 
         private Immutable<string> mTag;
 
-        [NotNull]
         public static LogConfiguration Default => new LogConfiguration
         {
             Formatters = DefaultFormatters,
@@ -49,9 +43,8 @@ namespace Intersect.Logging
             Tag = null
         };
 
-        [NotNull] public ILogFormatter Formatter => mFormatters.Value?[0] ?? DefaultFormatter;
+        public ILogFormatter Formatter => mFormatters.Value?[0] ?? DefaultFormatter;
 
-        [NotNull]
         public IReadOnlyList<ILogFormatter> Formatters
         {
             get => mFormatters.Value ?? DefaultFormatters;
@@ -64,7 +57,6 @@ namespace Intersect.Logging
             set => mLogLevel.Value = value;
         }
 
-        [NotNull]
         public IReadOnlyList<ILogOutput> Outputs
         {
             get => mOutputs.Value ?? DefaultOutputs;
@@ -77,7 +69,6 @@ namespace Intersect.Logging
             set => mTag.Value = value;
         }
 
-        [NotNull]
         internal LogConfiguration Clone() =>
             MemberwiseClone() as LogConfiguration ?? throw new InvalidOperationException();
     }

@@ -1,8 +1,6 @@
 ﻿using Intersect.Core;
 using Intersect.Server.Core.Services;
 
-using JetBrains.Annotations;
-
 using System.Threading;
 
 namespace Intersect.Server.Core
@@ -10,7 +8,7 @@ namespace Intersect.Server.Core
     internal sealed partial class LogicService : ApplicationService<IServerContext, ILogicService, LogicService>, ILogicService
     {
 
-        [NotNull] private readonly LogicThread mLogicThread;
+        private readonly LogicThread mLogicThread;
 
         public LogicService()
         {

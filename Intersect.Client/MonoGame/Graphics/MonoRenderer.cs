@@ -8,10 +8,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
-using Intersect.Client.Interface;
 using Intersect.Client.Localization;
-
-using JetBrains.Annotations;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -26,7 +23,7 @@ namespace Intersect.Client.MonoGame.Graphics
     public class MonoRenderer : GameRenderer
     {
 
-        [NotNull] private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();
+        private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();
 
         private BasicEffect mBasicEffect;
 
@@ -60,7 +57,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private Game mGame;
 
-        [NotNull] private GameWindow mGameWindow;
+        private GameWindow mGameWindow;
 
         private GraphicsDeviceManager mGraphics;
 
@@ -92,7 +89,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private GameRenderTexture mWhiteTexture;
 
-        public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, [NotNull] Game monoGame)
+        public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
         {
             mGame = monoGame;
             mGraphics = graphics;
@@ -912,8 +909,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             mCurrentView = view;
 
-            Matrix projection;
-            Matrix.CreateOrthographicOffCenter(0, view.Width, view.Height, 0, 0f, -1, out projection);
+            Matrix.CreateOrthographicOffCenter(0, view.Width, view.Height, 0, 0f, -1, out var projection);
             projection.M41 += -0.5f * projection.M11;
             projection.M42 += -0.5f * projection.M22;
             mBasicEffect.Projection = projection;

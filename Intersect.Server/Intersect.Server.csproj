@@ -212,9 +212,6 @@
     <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
@@ -682,9 +679,7 @@
       <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
-    <Compile Include="Plugins\Helpers\IServerLifecycleHelper.cs" />
     <Compile Include="Plugins\Helpers\ServerLifecycleHelper.cs" />
-    <Compile Include="Plugins\IServerPluginContext.cs" />
     <Compile Include="Plugins\ServerPluginContext.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
@@ -810,6 +805,10 @@
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
       <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
       <Name>Intersect.Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Intersect.Server.Framework\Intersect.Server.Framework.csproj">
+      <Project>{4e38c9b0-df8c-44e4-9704-d6b05e092733}</Project>
+      <Name>Intersect.Server.Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

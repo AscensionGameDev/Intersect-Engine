@@ -4,20 +4,18 @@ using System.Threading;
 
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Network
 {
 
     public sealed class NetworkThread
     {
-        [NotNull] private readonly object mLifecycleLock;
+        private readonly object mLifecycleLock;
 
-        [NotNull] private readonly PacketDispatcher mDispatcher;
+        private readonly PacketDispatcher mDispatcher;
 
         private bool mStarted;
 
-        public NetworkThread([NotNull] PacketDispatcher dispatcher, string name = null)
+        public NetworkThread(PacketDispatcher dispatcher, string name = null)
         {
             mLifecycleLock = new object();
             mDispatcher = dispatcher;
@@ -28,13 +26,13 @@ namespace Intersect.Network
             Connections = new List<IConnection>();
         }
 
-        [NotNull] public string Name { get; }
+        public string Name { get; }
 
-        [NotNull] public Thread CurrentThread { get; }
+        public Thread CurrentThread { get; }
 
-        [NotNull] public PacketQueue Queue { get; }
+        public PacketQueue Queue { get; }
 
-        [NotNull] public IList<IConnection> Connections { get; }
+        public IList<IConnection> Connections { get; }
 
         public bool IsRunning { get; private set; }
 

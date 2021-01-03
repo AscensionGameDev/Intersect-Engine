@@ -4,8 +4,6 @@ using System.IO;
 
 using Intersect.Client.Framework.GenericClasses;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Framework.Graphics
 {
 
@@ -17,7 +15,7 @@ namespace Intersect.Client.Framework.Graphics
             ScreenshotRequests = new List<Stream>();
         }
 
-        [NotNull] public List<Stream> ScreenshotRequests { get; }
+        public List<Stream> ScreenshotRequests { get; }
 
         public Resolution ActiveResolution => new Resolution(PreferredResolution, OverrideResolution);
 
@@ -89,8 +87,8 @@ namespace Intersect.Client.Framework.Graphics
         public abstract GameTexture LoadTexture(string filename, string realFilename);
 
         public abstract GameTexture LoadTexture(
-            [NotNull] string assetName,
-            [NotNull] Func<Stream> createStream
+            string assetName,
+            Func<Stream> createStream
         );
 
         public abstract GameTexture GetWhiteTexture();

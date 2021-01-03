@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 using System.Linq;
 
@@ -9,7 +8,6 @@ namespace Intersect.Client.Framework.Content
     public static class ContentTypesExtensions
     {
 
-        [NotNull]
         public static Type GetAssetType(this ContentTypes contentType)
         {
             var memberName = contentType.ToString();

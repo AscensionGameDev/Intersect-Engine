@@ -14,8 +14,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
@@ -573,7 +571,6 @@ namespace Intersect.Editor.Forms.DockingElements
         }
 
         [Obsolete("The entire switch statement should be implemented as a parameterized CreateAttribute().")]
-        [NotNull]
         public MapAttribute CreateAttribute()
         {
             var attributeType = SelectedMapAttributeType;
