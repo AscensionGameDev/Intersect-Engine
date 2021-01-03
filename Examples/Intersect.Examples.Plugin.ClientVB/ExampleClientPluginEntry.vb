@@ -9,7 +9,6 @@ Imports Intersect.Client.[Interface]
 Imports Intersect.Client.Plugins
 Imports Intersect.Client.Plugins.Interfaces
 Imports Intersect.Plugins
-Imports JetBrains.Annotations
 Imports Microsoft
 
 Namespace Intersect.Examples.ClientPlugin
@@ -21,13 +20,15 @@ Namespace Intersect.Examples.ClientPlugin
         Inherits ClientPluginEntry
 
         Private mDisposed As Boolean
-        <UsedImplicitly> Private mMutex As Mutex
+        Private mMutex As Mutex
 
         Private mButtonTexture As GameTexture
 
         ''' <inheritdoc />
         Public Overrides Sub OnBootstrap(
-                                         <NotNull, ValidatedNotNull> ByVal context As IPluginBootstrapContext)
+                                         <ValidatedNotNull> ByVal context As IPluginBootstrapContext)
+            MyBase.OnBootstrap(context)
+
             context.Logging.Application.Info(
                 $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnBootstrap)} writing to the application log!")
             context.Logging.Plugin.Info(
@@ -36,10 +37,10 @@ Namespace Intersect.Examples.ClientPlugin
             mMutex = New Mutex(True, "testplugin", createdNew)
 
             If Not createdNew Then
-                Environment.[Exit](- 1)
+                Environment.[Exit](-1)
             End If
 
-            Dim exampleCommandLineOptions = context.CommandLine.ParseArguments (Of ExampleCommandLineOptions)()
+            Dim exampleCommandLineOptions = context.CommandLine.ParseArguments(Of ExampleCommandLineOptions)()
 
             If Not exampleCommandLineOptions.ExampleFlag Then
                 context.Logging.Plugin.Warn("Client wasn't started with the start-up flag!")
@@ -51,19 +52,19 @@ Namespace Intersect.Examples.ClientPlugin
 
         ''' <inheritdoc />
         Public Overrides Sub OnStart(
-                                     <NotNull, ValidatedNotNull> ByVal context As IClientPluginContext)
+                                     <ValidatedNotNull> ByVal context As IClientPluginContext)
             context.Logging.Application.Info(
                 $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the application log!")
             context.Logging.Plugin.Info(
                 $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStart)} writing to the plugin log!")
-            mButtonTexture = context.ContentManager.LoadEmbedded (Of GameTexture)(context, ContentTypes.[Interface],
+            mButtonTexture = context.ContentManager.LoadEmbedded(Of GameTexture)(context, ContentTypes.[Interface],
                                                                                   "join-our-discord.png")
             AddHandler context.Lifecycle.LifecycleChangeState, AddressOf HandleLifecycleChangeState
         End Sub
 
         ''' <inheritdoc />
         Public Overrides Sub OnStop(
-                                    <NotNull, ValidatedNotNull> ByVal context As IClientPluginContext)
+                                    <ValidatedNotNull> ByVal context As IClientPluginContext)
             context.Logging.Application.Info(
                 $"{NameOf(ExampleClientPluginEntry)}.{NameOf(OnStop)} writing to the application log!")
             context.Logging.Plugin.Info(
@@ -71,8 +72,8 @@ Namespace Intersect.Examples.ClientPlugin
         End Sub
 
         Private Sub HandleLifecycleChangeState(
-                                               <NotNull, ValidatedNotNull> ByVal context As IClientPluginContext,
-                                               <NotNull, ValidatedNotNull> ByVal lifecycleChangeStateArgs As _
+                                               <ValidatedNotNull> ByVal context As IClientPluginContext,
+                                               <ValidatedNotNull> ByVal lifecycleChangeStateArgs As _
                                                   LifecycleChangeStateArgs)
             Debug.Assert(mButtonTexture IsNot Nothing, NameOf(mButtonTexture) & " != null")
             Dim activeInterface = context.Lifecycle.[Interface]
@@ -88,11 +89,11 @@ Namespace Intersect.Examples.ClientPlugin
         End Sub
 
         Private Sub AddButtonToMainMenu(
-                                        <NotNull, ValidatedNotNull> ByVal context As IClientPluginContext,
-                                        <NotNull, ValidatedNotNull> ByVal activeInterface As IMutableInterface)
-            Dim button = activeInterface.Create (Of Button)("DiscordButton")
+                                        <ValidatedNotNull> ByVal context As IClientPluginContext,
+                                        <ValidatedNotNull> ByVal activeInterface As IMutableInterface)
+            Dim button = activeInterface.Create(Of Button)("DiscordButton")
             Debug.Assert(button IsNot Nothing, NameOf(button) & " != null")
-            Dim discordInviteUrl = context.GetTypedConfiguration (Of ExamplePluginConfiguration)()?.DiscordInviteUrl
+            Dim discordInviteUrl = context.GetTypedConfiguration(Of ExamplePluginConfiguration)()?.DiscordInviteUrl
             AddHandler button.Clicked,
                 Sub(sender, args)
                     If String.IsNullOrWhiteSpace(discordInviteUrl) Then

@@ -2,18 +2,15 @@
 
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using System;
 
-namespace Intersect.Examples.ClientPlugin
+namespace Intersect.Examples.Plugin.Client
 {
     /// <summary>
     /// Example immutable command line options structure.
     /// </summary>
     public struct ExampleCommandLineOptions : IEquatable<ExampleCommandLineOptions>
     {
-        [UsedImplicitly]
         public ExampleCommandLineOptions(bool exampleFlag, int exampleVariable)
         {
             ExampleFlag = exampleFlag;

@@ -1,6 +1,5 @@
 ﻿Imports CommandLine
 Imports Intersect.Utilities
-Imports JetBrains.Annotations
 
 Namespace Intersect.Examples.ClientPlugin
     ''' <summary>
@@ -9,7 +8,6 @@ Namespace Intersect.Examples.ClientPlugin
     Public Structure ExampleCommandLineOptions
         Implements IEquatable(Of ExampleCommandLineOptions)
 
-        <UsedImplicitly>
         Public Sub New(ByVal exampleFlag As Boolean, ByVal exampleVariable As Integer)
             Me.ExampleFlag = exampleFlag
             Me.ExampleVariable = exampleVariable

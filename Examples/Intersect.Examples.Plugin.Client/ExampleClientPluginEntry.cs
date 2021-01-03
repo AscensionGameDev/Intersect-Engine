@@ -5,7 +5,6 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Plugins;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
-using JetBrains.Annotations;
 using Microsoft;
 using System;
 using System.Diagnostics;
@@ -13,8 +12,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
+using Intersect.Examples.Plugin.Packets.Server;
+using Intersect.Examples.Plugin.Client.PacketHandlers;
+using Intersect.Examples.Plugin.Packets.Client;
 
-namespace Intersect.Examples.ClientPlugin
+namespace Intersect.Examples.Plugin.Client
 {
     /// <summary>
     /// Demonstrates basic plugin functionality for the client.
@@ -23,12 +25,12 @@ namespace Intersect.Examples.ClientPlugin
     public class ExampleClientPluginEntry : ClientPluginEntry
     {
         private bool mDisposed;
-        [UsedImplicitly] private Mutex mMutex;
+        private Mutex mMutex;
 
         private GameTexture mButtonTexture;
 
         /// <inheritdoc />
-        public override void OnBootstrap([NotNull, ValidatedNotNull] IPluginBootstrapContext context)
+        public override void OnBootstrap([ValidatedNotNull] IPluginBootstrapContext context)
         {
             context.Logging.Application.Info(
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnBootstrap)} writing to the application log!");
@@ -39,7 +41,7 @@ namespace Intersect.Examples.ClientPlugin
             mMutex = new Mutex(true, "testplugin", out var createdNew);
             if (!createdNew)
             {
-                Environment.Exit(-1);
+                Environment.Exit(-2);
             }
 
             var exampleCommandLineOptions = context.CommandLine.ParseArguments<ExampleCommandLineOptions>();
@@ -48,12 +50,32 @@ namespace Intersect.Examples.ClientPlugin
                 context.Logging.Plugin.Warn("Client wasn't started with the start-up flag!");
             }
 
+            context.Logging.Plugin.Info("Registering packets...");
+            if (!context.Network.TryRegisterPacketType<ExamplePluginClientPacket>())
+            {
+                context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginClientPacket)} packet.");
+                Environment.Exit(-3);
+            }
+
+            if (!context.Network.TryRegisterPacketType<ExamplePluginServerPacket>())
+            {
+                context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginServerPacket)} packet.");
+                Environment.Exit(-3);
+            }
+
+            context.Logging.Plugin.Info("Registering packet handlers...");
+            if (!context.Network.TryRegisterPacketHandler<ExamplePluginServerPacketHandler, ExamplePluginServerPacket>(out _))
+            {
+                context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginServerPacketHandler)} packet handler.");
+                Environment.Exit(-4);
+            }
+
             context.Logging.Plugin.Info(
                 $@"{nameof(exampleCommandLineOptions.ExampleVariable)} = {exampleCommandLineOptions.ExampleVariable}");
         }
 
         /// <inheritdoc />
-        public override void OnStart([NotNull, ValidatedNotNull] IClientPluginContext context)
+        public override void OnStart([ValidatedNotNull] IClientPluginContext context)
         {
             context.Logging.Application.Info(
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnStart)} writing to the application log!");
@@ -68,7 +90,7 @@ namespace Intersect.Examples.ClientPlugin
         }
 
         /// <inheritdoc />
-        public override void OnStop([NotNull, ValidatedNotNull] IClientPluginContext context)
+        public override void OnStop([ValidatedNotNull] IClientPluginContext context)
         {
             context.Logging.Application.Info(
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnStop)} writing to the application log!");
@@ -77,8 +99,8 @@ namespace Intersect.Examples.ClientPlugin
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnStop)} writing to the plugin log!");
         }
 
-        private void HandleLifecycleChangeState([NotNull, ValidatedNotNull] IClientPluginContext context,
-            [NotNull, ValidatedNotNull] LifecycleChangeStateArgs lifecycleChangeStateArgs)
+        private void HandleLifecycleChangeState([ValidatedNotNull] IClientPluginContext context,
+            [ValidatedNotNull] LifecycleChangeStateArgs lifecycleChangeStateArgs)
         {
             Debug.Assert(mButtonTexture != null, nameof(mButtonTexture) + " != null");
 
@@ -96,8 +118,8 @@ namespace Intersect.Examples.ClientPlugin
             }
         }
 
-        private void AddButtonToMainMenu([NotNull, ValidatedNotNull] IClientPluginContext context,
-            [NotNull, ValidatedNotNull] IMutableInterface activeInterface)
+        private void AddButtonToMainMenu([ValidatedNotNull] IClientPluginContext context,
+            [ValidatedNotNull] IMutableInterface activeInterface)
         {
             var button = activeInterface.Create<Button>("DiscordButton");
             Debug.Assert(button != null, nameof(button) + " != null");

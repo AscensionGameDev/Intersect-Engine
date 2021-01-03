@@ -7,7 +7,7 @@ using Semver;
 using System;
 using System.Collections.Generic;
 
-namespace Intersect.Examples.ClientPlugin
+namespace Intersect.Examples.Plugin.Server
 {
     /// <summary>
     /// Defines a plugin manifest in code rather than an embedded manifest.json file.

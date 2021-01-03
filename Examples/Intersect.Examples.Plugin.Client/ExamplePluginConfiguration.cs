@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace Intersect.Examples.ClientPlugin
+namespace Intersect.Examples.Plugin.Client
 {
 
     /// <summary>
