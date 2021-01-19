@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- import custom targets -->
-  <Import Condition="$(OS) != 'Windows_NT' AND Exists('$(HOME)\intersect.developer.targets')" Project="$(HOME)\intersect.developer.targets" />
-  <Import Condition="$(OS) == 'Windows_NT' AND Exists('$(USERPROFILE)\intersect.developer.targets')" Project="$(USERPROFILE)\intersect.developer.targets" />
+  <Import Condition="$(OS) != 'Windows_NT' AND Exists('$(HOME)\intersect.developer.targets') AND '$(IntersectDeveloperTargetsImported)'== ''" Project="$(HOME)\intersect.developer.targets" />
+  <Import Condition="$(OS) == 'Windows_NT' AND Exists('$(USERPROFILE)\intersect.developer.targets') AND '$(IntersectDeveloperTargetsImported)'== ''" Project="$(USERPROFILE)\intersect.developer.targets" />
 
   <!-- set intersect metadata -->
   <PropertyGroup>

@@ -8,14 +8,9 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
-using Intersect.Client.MonoGame.Graphics;
 using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Intersect.Client.MonoGame.File_Management
 {

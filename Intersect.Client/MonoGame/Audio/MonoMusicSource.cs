@@ -9,7 +9,6 @@ using Intersect.Client.Utilities;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 
 using NVorbis;
 

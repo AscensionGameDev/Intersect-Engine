@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Configuration
 {
 
@@ -29,8 +27,7 @@ namespace Intersect.Configuration
             return ConfigurationHelper.Save(this, filePath, failQuietly);
         }
 
-        [NotNull]
-        public static ClientConfiguration LoadAndSave([CanBeNull] string filePath = null)
+        public static ClientConfiguration LoadAndSave(string filePath = null)
         {
             return ConfigurationHelper.LoadSafely(Instance, filePath);
         }
@@ -55,7 +52,6 @@ namespace Intersect.Configuration
 
         #region Static Properties and Methods
 
-        [NotNull]
         public static ClientConfiguration Instance { get; } = new ClientConfiguration();
 
         public void Validate()

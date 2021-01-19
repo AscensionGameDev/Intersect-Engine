@@ -2,8 +2,6 @@
 
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using NCalc;
 
 namespace Intersect.Server.Utilities
@@ -34,10 +32,8 @@ namespace Intersect.Server.Utilities
             Gain = 1.5;
         }
 
-        //[CanBeNull]
         //private Formula mFormula;
 
-        //[NotNull]
         //public Formula Formula
         //{
         //    get => mFormula ?? (mFormula = new Formula(DEFAULT_EXPERIENCE_FORMULA));
@@ -48,7 +44,7 @@ namespace Intersect.Server.Utilities
 
         public double Gain { get; set; }
 
-        protected virtual void Exp([NotNull] FunctionArgs args)
+        protected virtual void Exp(FunctionArgs args)
         {
             if (args.Parameters == null || args.Parameters.Length < 3)
             {

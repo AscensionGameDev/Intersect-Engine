@@ -23,9 +23,6 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-
 namespace Intersect.Server.Networking
 {
 
@@ -1188,12 +1185,12 @@ namespace Intersect.Server.Networking
         }
 
         //MapGridPacket
-        public static void SendMapGrid([NotNull] Client client, int gridId, bool clearKnownMaps = false)
+        public static void SendMapGrid(Client client, int gridId, bool clearKnownMaps = false)
         {
             var grid = DbInterface.GetGrid(gridId);
             SendMapGrid(client,grid,clearKnownMaps);
         }
-        public static void SendMapGrid([NotNull] Client client, MapGrid grid, bool clearKnownMaps = false)
+        public static void SendMapGrid(Client client, MapGrid grid, bool clearKnownMaps = false)
         {
             if (client == null || grid == null)
             {

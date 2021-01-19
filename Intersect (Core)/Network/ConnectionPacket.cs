@@ -5,8 +5,6 @@ using Ceras;
 
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif
@@ -67,12 +65,12 @@ namespace Intersect.Network
             set => mOffset = value;
         }
 
-        [Include, NotNull]
+        [Include]
         protected byte[] EncryptedData { get; set; }
 
         public abstract bool Encrypt();
 
-        public abstract bool Decrypt([NotNull] RSACryptoServiceProvider rsa);
+        public abstract bool Decrypt(RSACryptoServiceProvider rsa);
 
         protected static void DumpKey(RSAParameters parameters, bool isPublic)
         {

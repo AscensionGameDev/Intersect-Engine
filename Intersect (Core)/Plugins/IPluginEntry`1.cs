@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using Microsoft;
 
 namespace Intersect.Plugins
@@ -18,12 +17,12 @@ namespace Intersect.Plugins
         /// Invoked during application startup after basic initialization.
         /// </summary>
         /// <param name="context">the current specialized plugin context</param>
-        void OnStart([NotNull, ValidatedNotNull] TPluginContext context);
+        void OnStart([ValidatedNotNull] TPluginContext context);
 
         /// <summary>
         /// Invoked during application shutdown.
         /// </summary>
         /// <param name="context">the current specialized plugin context</param>
-        void OnStop([NotNull, ValidatedNotNull] TPluginContext context);
+        void OnStop([ValidatedNotNull] TPluginContext context);
     }
 }

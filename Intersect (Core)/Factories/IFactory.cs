@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.Factories
+﻿namespace Intersect.Factories
 {
     /// <summary>
     /// Defines the interface for a factory class.
@@ -13,7 +11,6 @@ namespace Intersect.Factories
         /// </summary>
         /// <param name="args">the optional arguments used in creating a <typeparamref name="TValue"/></param>
         /// <returns>a not-null <typeparamref name="TValue"/></returns>
-        [NotNull]
-        TValue Create([NotNull] params object[] args);
+        TValue Create(params object[] args);
     }
 }

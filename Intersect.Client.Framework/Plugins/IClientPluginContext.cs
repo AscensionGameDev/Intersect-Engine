@@ -2,8 +2,6 @@
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Plugins
 {
     /// <summary>
@@ -14,7 +12,6 @@ namespace Intersect.Client.Plugins
         /// <summary>
         /// The <see cref="IContentManager"/> of the current plugin.
         /// </summary>
-        [NotNull]
         IContentManager ContentManager { get; }
     }
 }

@@ -8,8 +8,6 @@ using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -227,7 +225,7 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        public SpellBase GetRandomSpell([NotNull] Random random)
+        public SpellBase GetRandomSpell(Random random)
         {
             if (Spells == null || Spells.Count == 0)
             {

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Utilities
 {
 
@@ -80,7 +78,7 @@ namespace Intersect.Server.Utilities
 
         public static IOrderedEnumerable<T> OrderBy<T, TKey>(
             IEnumerable<T> enumerable,
-            [NotNull] Func<T, TKey> keySelector,
+            Func<T, TKey> keySelector,
             bool ascending
         )
         {

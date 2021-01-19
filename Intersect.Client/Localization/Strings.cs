@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.Localization;
-using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -457,7 +457,6 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString toofast = @"You are chatting too fast!";
 
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
                 { ChatboxTab.All, @"All" },
                 { ChatboxTab.Local, @"Local" },
@@ -465,8 +464,7 @@ namespace Intersect.Client.Localization
                 { ChatboxTab.Global, @"Global" },
                 { ChatboxTab.System, @"System" },
             };
-            
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
             public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
 
         }
@@ -792,7 +790,7 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString none = @"None";
 
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MapItemStackable = @"{01} {00}";
 
         }
@@ -812,10 +810,10 @@ namespace Intersect.Client.Localization
 
         public struct MapItemWindow
         {
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Loot";
 
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString LootButton = @"Loot All";
 
         }
@@ -1563,7 +1561,7 @@ namespace Intersect.Client.Localization
 
         public struct GameWindow
         {
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString EntityNameAndLevel = @"{00} [Lv. {01}]";
         }
 

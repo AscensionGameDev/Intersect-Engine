@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Localization
@@ -18,12 +16,11 @@ namespace Intersect.Localization
         {
         }
 
-        public LocaleDescribableToken([NotNull] string name, [CanBeNull] string description = null) : base(name)
+        public LocaleDescribableToken(string name, string description = null) : base(name)
         {
             mDescription = description?.Trim();
         }
 
-        [NotNull]
         [JsonIgnore]
         public virtual LocalizedString Description
         {

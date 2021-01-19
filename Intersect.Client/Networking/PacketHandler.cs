@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
@@ -13,6 +9,7 @@ using Intersect.Client.Interface.Menu;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
+using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -23,13 +20,22 @@ using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Intersect.Client.Networking
 {
 
-    public class PacketHandler
+    internal sealed class PacketHandler
     {
         private sealed class VirtualPacketSender : IPacketSender
         {
+            public IApplicationContext ApplicationContext { get; }
+
+            public VirtualPacketSender(IApplicationContext applicationContext) =>
+                ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
+            
             #region Implementation of IPacketSender
 
             /// <inheritdoc />
@@ -51,23 +57,25 @@ namespace Intersect.Client.Networking
 
         public long PingTime { get; set; }
 
-        public Logger Logger { get; }
+        public IClientContext Context { get; }
+
+        public Logger Logger => Context.Logger;
 
         public PacketHandlerRegistry Registry { get; }
 
         public IPacketSender VirtualSender { get; }
 
-        public PacketHandler(Logger logger)
+        public PacketHandler(IClientContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Registry = packetHandlerRegistry ?? throw new ArgumentNullException(nameof(packetHandlerRegistry));
 
-            Registry = new PacketHandlerRegistry(logger);
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
             }
 
-            VirtualSender = new VirtualPacketSender();
+            VirtualSender = new VirtualPacketSender(context);
         }
 
         public bool HandlePacket(IPacket packet)
@@ -82,6 +90,11 @@ namespace Intersect.Client.Networking
                 return false;
             }
 
+            if (!packet.IsValid)
+            {
+                return false;
+            }
+
             if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
             {
                 Logger.Error($"No registered handler for {packet.GetType().FullName}!");
@@ -89,7 +102,39 @@ namespace Intersect.Client.Networking
                 return false;
             }
 
-            handler(VirtualSender, packet);
+            if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+            {
+                if (!preprocessors.All(preprocessor => preprocessor.Handle(VirtualSender, packet)))
+                {
+                    // Preprocessors are intended to be silent filter functions
+                    return false;
+                }
+            }
+
+            if (Registry.TryGetPreHooks(packet, out var preHooks))
+            {
+                if (!preHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
+
+            if (!handler(VirtualSender, packet))
+            {
+                return false;
+            }
+
+            if (Registry.TryGetPostHooks(packet, out var postHooks))
+            {
+                if (!postHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
 
             return true;
         }
@@ -189,10 +234,7 @@ namespace Intersect.Client.Networking
                 }
             }
 
-            if (MapInstance.OnMapLoaded != null)
-            {
-                MapInstance.OnMapLoaded(map);
-            }
+            MapInstance.OnMapLoaded?.Invoke(map);
         }
 
         //MapPacket
@@ -959,10 +1001,7 @@ namespace Intersect.Client.Networking
             if (Globals.Me != null)
             {
                 Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
-                if (Globals.Me.InventoryUpdatedDelegate != null)
-                {
-                    Globals.Me.InventoryUpdatedDelegate();
-                }
+                Globals.Me.InventoryUpdatedDelegate?.Invoke();
             }
         }
 
@@ -1142,7 +1181,7 @@ namespace Intersect.Client.Networking
                         if (animBase != null)
                         {
                             var animInstance = new Animation(
-                                animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]
+                                animBase, false, packet.Direction != -1, -1, Globals.Entities[entityId]
                             );
 
                             if (packet.Direction > -1)
@@ -1168,7 +1207,7 @@ namespace Intersect.Client.Networking
                             if (animBase != null)
                             {
                                 var animInstance = new Animation(
-                                    animBase, false, packet.Direction == -1 ? true : false, -1,
+                                    animBase, false, packet.Direction == -1, -1,
                                     map.LocalEntities[entityId]
                                 );
 

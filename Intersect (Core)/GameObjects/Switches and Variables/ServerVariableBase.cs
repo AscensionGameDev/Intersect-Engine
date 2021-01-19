@@ -6,8 +6,6 @@ using Intersect.Enums;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -35,7 +33,6 @@ namespace Intersect.GameObjects
 
         [NotMapped]
         [JsonIgnore]
-        [NotNull]
         public VariableValue Value { get; set; } = new VariableValue();
 
         [NotMapped]

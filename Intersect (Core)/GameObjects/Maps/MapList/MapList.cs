@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Collections;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
@@ -23,7 +21,6 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public static MapList List { get; set; } = new MapList();
 
-        [NotNull]
         public static List<MapListMap> OrderedMaps { get; } = new List<MapListMap>();
 
         [JsonIgnore]

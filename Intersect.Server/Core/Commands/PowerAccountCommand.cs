@@ -6,8 +6,6 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.Commands
 {
 
@@ -21,7 +19,6 @@ namespace Intersect.Server.Core.Commands
         {
         }
 
-        [NotNull]
         private VariableArgument<Access> Power => FindArgumentOrThrow<VariableArgument<Access>>();
 
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)

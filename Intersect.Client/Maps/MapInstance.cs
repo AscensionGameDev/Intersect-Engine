@@ -19,8 +19,6 @@ using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Client.Maps
@@ -120,7 +118,6 @@ namespace Intersect.Client.Maps
         //Map Sounds
         public MapSound BackgroundSound { get; set; }
 
-        [NotNull]
         public new static MapInstances Lookup => sLookup ?? (sLookup = new MapInstances(MapBase.Lookup));
 
         //Load

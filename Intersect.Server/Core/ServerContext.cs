@@ -11,8 +11,6 @@ using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Web.RestApi;
 
-using JetBrains.Annotations;
-
 using Open.Nat;
 
 using System;
@@ -25,6 +23,7 @@ using System.Threading.Tasks;
 using Intersect.Factories;
 using Intersect.Plugins;
 using Intersect.Server.Plugins;
+using Intersect.Plugins.Interfaces;
 
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
@@ -37,8 +36,8 @@ namespace Intersect.Server.Core
     /// </summary>
     internal sealed class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
-        internal ServerContext(ServerCommandLineOptions startupOptions, [NotNull] Logger logger) : base(
-            startupOptions, logger
+        internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, INetworkHelper networkHelper) : base(
+            startupOptions, logger, networkHelper
         )
         {
             // Register the factory for creating service plugin contexts
@@ -51,7 +50,7 @@ namespace Intersect.Server.Core
 
             RestApi = new RestApi(startupOptions.ApiPort);
 
-            Network = CreateNetwork();
+            Network = CreateNetwork(networkHelper);
         }
 
         public IConsoleService ConsoleService => GetExpectedService<IConsoleService>();
@@ -68,6 +67,7 @@ namespace Intersect.Server.Core
         {
             try
             {
+                Ceras.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
                 InternalStartNetworking();
             }
             catch (Exception exception)
@@ -149,6 +149,8 @@ namespace Intersect.Server.Core
                         }
                     }
                 }
+
+                NetworkHelper.HandlerRegistry.Dispose();
             }
 
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
@@ -169,8 +171,7 @@ namespace Intersect.Server.Core
 
         #region Network
 
-        [NotNull]
-        private ServerNetwork CreateNetwork()
+        private ServerNetwork CreateNetwork(INetworkHelper networkHelper)
         {
             ServerNetwork network;
 
@@ -187,14 +188,14 @@ namespace Intersect.Server.Core
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                network = new ServerNetwork(this, networkHelper, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
             #endregion
 
             #region Configure Packet Handlers
 
-            var packetHandler = new PacketHandler(Logger);
+            var packetHandler = new PacketHandler(this, networkHelper.HandlerRegistry);
             network.Handler = packetHandler.HandlePacket;
             network.PreProcessHandler = packetHandler.PreProcessPacket;
 
@@ -259,7 +260,7 @@ namespace Intersect.Server.Core
         protected override void NotifyNonTerminatingExceptionOccurred() =>
             Console.WriteLine(Strings.Errors.errorlogged);
 
-        internal static void DispatchUnhandledException([NotNull] Exception exception, bool isTerminating = true)
+        internal static void DispatchUnhandledException(Exception exception, bool isTerminating = true)
         {
             var sender = Thread.CurrentThread;
             Task.Factory.StartNew(

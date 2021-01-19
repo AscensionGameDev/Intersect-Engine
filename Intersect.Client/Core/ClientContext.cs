@@ -1,11 +1,12 @@
-﻿using Intersect.Client.Plugins.Contexts;
+﻿using Intersect.Client.Networking;
+using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Plugins;
+using Intersect.Plugins.Interfaces;
 using Intersect.Reflection;
-
-using JetBrains.Annotations;
 
 using System;
 using System.Threading;
@@ -20,8 +21,8 @@ namespace Intersect.Client.Core
     {
         private IPlatformRunner mPlatformRunner;
 
-        internal ClientContext(ClientCommandLineOptions startupOptions, [NotNull] Logger logger) : base(
-            startupOptions, logger
+        internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, INetworkHelper networkHelper) : base(
+            startupOptions, logger, networkHelper
         )
         {
             FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
@@ -29,7 +30,6 @@ namespace Intersect.Client.Core
 
         protected override bool UsesMainThread => true;
 
-        [NotNull]
         public IPlatformRunner PlatformRunner
         {
             get => mPlatformRunner ?? throw new ArgumentNullException(nameof(PlatformRunner));
@@ -39,15 +39,16 @@ namespace Intersect.Client.Core
         /// <inheritdoc />
         protected override void InternalStart()
         {
+            Ceras.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
+            Networking.Network.PacketHandler = new PacketHandler(this, NetworkHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
             PlatformRunner.Start(this, StartServices);
         }
 
         #region Exception Handling
 
-        [UsedImplicitly]
         internal static void DispatchUnhandledException(
-            [NotNull] Exception exception,
+            Exception exception,
             bool isTerminating = true,
             bool wait = false
         )
@@ -64,5 +65,15 @@ namespace Intersect.Client.Core
         }
 
         #endregion Exception Handling
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing)
+            {
+                NetworkHelper.HandlerRegistry.Dispose();
+            }
+        }
     }
 }

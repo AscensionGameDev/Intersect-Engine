@@ -9,8 +9,6 @@ using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
 
-using JetBrains.Annotations;
-
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -35,7 +33,7 @@ namespace Intersect.Server.Entities
 
         #region Lookup
 
-        public static Tuple<Client, Player> Fetch(LookupKey lookupKey, [CanBeNull] PlayerContext playerContext = null)
+        public static Tuple<Client, Player> Fetch(LookupKey lookupKey, PlayerContext playerContext = null)
         {
             if (!lookupKey.HasName && !lookupKey.HasId)
             {
@@ -48,8 +46,8 @@ namespace Intersect.Server.Entities
         }
 
         public static Tuple<Client, Player> Fetch(
-            [NotNull] string playerName,
-            [CanBeNull] PlayerContext playerContext = null
+            string playerName,
+            PlayerContext playerContext = null
         )
         {
             var client = Globals.Clients.Find(queryClient => Entity.CompareName(playerName, queryClient?.Entity?.Name));
@@ -57,14 +55,14 @@ namespace Intersect.Server.Entities
             return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName, playerContext));
         }
 
-        public static Tuple<Client, Player> Fetch(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
+        public static Tuple<Client, Player> Fetch(Guid playerId, PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
 
             return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId, playerContext));
         }
 
-        public static Player Find(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
+        public static Player Find(Guid playerId, PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -81,7 +79,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public static Player Find([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
+        public static Player Find(string playerName, PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -102,24 +100,21 @@ namespace Intersect.Server.Entities
 
         #region Loading
 
-        [CanBeNull]
-        public static Player Load(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
+        public static Player Load(Guid playerId, PlayerContext playerContext = null)
         {
             var player = Find(playerId, playerContext);
 
             return Load(player);
         }
 
-        [CanBeNull]
-        public static Player Load([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
+        public static Player Load(string playerName, PlayerContext playerContext = null)
         {
             var player = Find(playerName, playerContext);
 
             return Load(player);
         }
 
-        [CanBeNull]
-        public static Player Load([CanBeNull] Player player)
+        public static Player Load(Player player)
         {
             if (player == null)
             {
@@ -142,7 +137,6 @@ namespace Intersect.Server.Entities
 
         #region Listing
 
-        [NotNull]
         public static int Count()
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -153,8 +147,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        [NotNull]
-        public static IList<Player> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        public static IList<Player> List(int page, int count, PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -171,12 +164,11 @@ namespace Intersect.Server.Entities
             }
         }
 
-        [NotNull]
         public static IEnumerable<Player> Rank(
             int page,
             int count,
             SortDirection sortDirection,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         )
         {
             var context = playerContext;
@@ -200,7 +192,7 @@ namespace Intersect.Server.Entities
 
         #region Compiled Queries
 
-        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
+        private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
             EF.CompileQuery(
                 (PlayerContext context, int offset, int count) => context.Players
                     .OrderBy(player => player.Id.ToString())
@@ -217,7 +209,7 @@ namespace Intersect.Server.Entities
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
+        private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
             EF.CompileQuery(
                 (PlayerContext context, int offset, int count) => context.Players
                     .OrderByDescending(entity => EF.Property<dynamic>(entity, "Level"))
@@ -235,7 +227,6 @@ namespace Intersect.Server.Entities
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull]
         private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRankAscending =
             EF.CompileQuery(
                 (PlayerContext context, int offset, int count) => context.Players
@@ -254,7 +245,7 @@ namespace Intersect.Server.Entities
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
+        private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
             EF.CompileQuery(
                 (PlayerContext context, Guid id) => context.Players.Where(p => p.Id == id)
                     .Include(p => p.Bank)
@@ -269,7 +260,7 @@ namespace Intersect.Server.Entities
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, string, Player> QueryPlayerByName =
+        private static readonly Func<PlayerContext, string, Player> QueryPlayerByName =
             EF.CompileQuery(
                 (PlayerContext context, string name) => context.Players.Where(p => p.Name == name)
                     .Include(p => p.Bank)

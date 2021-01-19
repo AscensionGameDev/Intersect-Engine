@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
 
@@ -12,16 +10,14 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
         {
         }
 
-        public Tokenizer([NotNull] TokenizerSettings settings)
+        public Tokenizer(TokenizerSettings settings)
         {
             Settings = settings;
         }
 
-        [NotNull]
         public TokenizerSettings Settings { get; }
 
-        [NotNull]
-        public IEnumerable<string> Tokenize([NotNull] string input)
+        public IEnumerable<string> Tokenize(string input)
         {
             var tokens = new List<string>();
 
@@ -46,7 +42,7 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
             return tokens;
         }
 
-        public string ExtractToken([NotNull] string input, ref int position, char delimeter)
+        public string ExtractToken(string input, ref int position, char delimeter)
         {
             var offset = input[position] == delimeter ? 1 : 0;
             var start = position + offset;

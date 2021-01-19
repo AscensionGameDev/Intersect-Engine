@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using Newtonsoft.Json;
 
 using NUnit.Framework;
@@ -16,7 +15,7 @@ namespace Intersect.Plugins.Manifests
     {
 
         private static TResourceType LoadResource<TResourceType>(
-            [NotNull] string resourceName,
+            string resourceName,
             TResourceType resource = default
         )
         {

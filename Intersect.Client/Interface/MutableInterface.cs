@@ -1,8 +1,6 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Reflection;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +11,12 @@ namespace Intersect.Client.Interface
     public abstract class MutableInterface : IMutableInterface
     {
 
-        protected internal MutableInterface([NotNull] Base root)
+        protected internal MutableInterface(Base root)
         {
             Root = root;
         }
 
-        [NotNull] internal Base Root { get; }
+        internal Base Root { get; }
 
         /// <inheritdoc />
         public List<Base> Children => Root.Children ?? new List<Base>();

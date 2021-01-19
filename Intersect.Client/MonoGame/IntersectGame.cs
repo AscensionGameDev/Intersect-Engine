@@ -15,8 +15,6 @@ using Intersect.Client.MonoGame.System;
 using Intersect.Configuration;
 using Intersect.Updater;
 
-using JetBrains.Annotations;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -59,11 +57,11 @@ namespace Intersect.Client.MonoGame
 
         #endregion
 
-        [NotNull] private IClientContext Context { get; }
+        private IClientContext Context { get; }
 
-        [NotNull] private Action PostStartupAction { get; }
+        private Action PostStartupAction { get; }
 
-        private IntersectGame([NotNull] IClientContext context, [NotNull] Action postStartupAction)
+        private IntersectGame(IClientContext context, Action postStartupAction)
         {
             Context = context;
             PostStartupAction = postStartupAction;
@@ -155,7 +153,7 @@ namespace Intersect.Client.MonoGame
             (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            Networking.Network.Socket = new MonoSocket();
+            Networking.Network.Socket = new MonoSocket(Context);
             Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
@@ -165,7 +163,7 @@ namespace Intersect.Client.MonoGame
             Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
-            Main.Start();
+            Main.Start(Context);
 
             mInitialized = true;
 
@@ -506,7 +504,6 @@ namespace Intersect.Client.MonoGame
         /// <summary>
         /// Implements <see cref="IPlatformRunner"/> for MonoGame.
         /// </summary>
-        [UsedImplicitly]
         internal class MonoGameRunner : IPlatformRunner
         {
             /// <inheritdoc />

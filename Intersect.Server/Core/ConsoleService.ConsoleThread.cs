@@ -6,8 +6,6 @@ using Intersect.Server.Core.Commands;
 using Intersect.Server.Localization;
 using Intersect.Threading;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Linq;
 
@@ -18,7 +16,7 @@ namespace Intersect.Server.Core
         internal sealed class ConsoleThread : Threaded<ServerContext>
         {
 
-            [NotNull] private readonly object mInputLock;
+            private readonly object mInputLock;
 
             private bool mDoNotContinue;
 
@@ -54,7 +52,6 @@ namespace Intersect.Server.Core
                 Parser.Register<UnmuteCommand>();
             }
 
-            [NotNull]
             public CommandParser Parser { get; }
 
             public void Wait(bool doNotContinue = false)

@@ -3,18 +3,15 @@ using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi
 {
 
     internal static class MediaTypeFormatterExtensions
     {
 
-        [NotNull]
         public static MediaTypeFormatter AddSupportedMediaType(
-            [NotNull] this MediaTypeFormatter mediaTypeFormatter,
-            [NotNull] string mimeType
+            this MediaTypeFormatter mediaTypeFormatter,
+            string mimeType
         )
         {
             var mediaTypeHeaderValue =
@@ -28,10 +25,9 @@ namespace Intersect.Server.Web.RestApi
             return mediaTypeFormatter;
         }
 
-        [NotNull]
         public static MediaTypeFormatter RemoveSupportedMediaType(
-            [NotNull] this MediaTypeFormatter mediaTypeFormatter,
-            [NotNull] string mimeType
+            this MediaTypeFormatter mediaTypeFormatter,
+            string mimeType
         )
         {
             var mediaTypeHeaderValue =
@@ -45,12 +41,11 @@ namespace Intersect.Server.Web.RestApi
             return mediaTypeFormatter;
         }
 
-        [NotNull]
         public static MediaTypeFormatter Map(
-            [NotNull] this MediaTypeFormatter mediaTypeFormatter,
-            [NotNull] string headerName,
-            [NotNull] string headerValue,
-            [NotNull] string mediaType,
+            this MediaTypeFormatter mediaTypeFormatter,
+            string headerName,
+            string headerValue,
+            string mediaType,
             bool isValueSubstring = true,
             StringComparison valueComparison = StringComparison.OrdinalIgnoreCase
         )
@@ -62,12 +57,11 @@ namespace Intersect.Server.Web.RestApi
             return mediaTypeFormatter;
         }
 
-        [NotNull]
         public static MediaTypeFormatter Unmap(
-            [NotNull] this MediaTypeFormatter mediaTypeFormatter,
-            [NotNull] string headerName,
-            [NotNull] string headerValue,
-            [CanBeNull] string mediaType = null
+            this MediaTypeFormatter mediaTypeFormatter,
+            string headerName,
+            string headerValue,
+            string mediaType = null
         )
         {
             var requestHeaderMapping =
@@ -83,19 +77,17 @@ namespace Intersect.Server.Web.RestApi
             return mediaTypeFormatter;
         }
 
-        [NotNull]
-        public static Func<MediaTypeHeaderValue, bool> FindMediaTypeHeaderValue([NotNull] string mimeType)
+        public static Func<MediaTypeHeaderValue, bool> FindMediaTypeHeaderValue(string mimeType)
         {
             return mediaTypeHeaderValue => string.Equals(
                 mediaTypeHeaderValue?.MediaType, mimeType, StringComparison.OrdinalIgnoreCase
             );
         }
 
-        [NotNull]
         public static Func<MediaTypeMapping, bool> FindRequestHeaderMapping(
-            [NotNull] string headerName,
-            [NotNull] string headerValue,
-            [CanBeNull] string mediaType = null
+            string headerName,
+            string headerValue,
+            string mediaType = null
         )
         {
             return mediaTypeMapping =>

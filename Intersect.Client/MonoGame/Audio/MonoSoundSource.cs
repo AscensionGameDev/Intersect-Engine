@@ -7,7 +7,6 @@ using Intersect.Client.Localization;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 
 namespace Intersect.Client.MonoGame.Audio
 {

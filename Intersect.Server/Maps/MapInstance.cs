@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,8 +19,6 @@ using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Maps
@@ -32,7 +29,7 @@ namespace Intersect.Server.Maps
 
         private static MapInstances sLookup;
 
-        [NotNull, NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
+        [NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
 
         //Does the map have a player on or nearby it?
         [JsonIgnore] [NotMapped] public bool Active;
@@ -99,12 +96,10 @@ namespace Intersect.Server.Maps
             Layers = null;
         }
 
-        [NotNull]
         [JsonIgnore]
         [NotMapped]
         public Dictionary<Point, List<MapItem>> MapItems { get; } = new Dictionary<Point, List<MapItem>>();
 
-        [NotNull]
         [JsonIgnore]
         [NotMapped]
         public MapItem[] AllMapItems => MapItems.SelectMany(x => x.Value).ToArray();
@@ -112,14 +107,12 @@ namespace Intersect.Server.Maps
         //Projectiles
         [JsonIgnore]
         [NotMapped]
-        [NotNull]
         public List<Projectile> MapProjectiles { get; } = new List<Projectile>();
 
         [NotMapped]
         [JsonIgnore]
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
-        [NotNull]
         public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
 
         //GameObject Functions
@@ -1046,7 +1039,6 @@ namespace Intersect.Server.Maps
             }
         }
 
-        [NotNull]
         public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
         {
             Debug.Assert(Lookup != null, "Lookup != null");
@@ -1123,7 +1115,6 @@ namespace Intersect.Server.Maps
             return false;
         }
 
-        [NotNull]
         public List<Entity> GetEntities(bool includeSurroundingMaps = false)
         {
 

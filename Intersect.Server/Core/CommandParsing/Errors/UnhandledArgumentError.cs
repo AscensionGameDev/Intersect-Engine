@@ -1,7 +1,5 @@
 ﻿using Intersect.Localization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
 
@@ -9,9 +7,9 @@ namespace Intersect.Server.Core.CommandParsing.Errors
     {
 
         protected UnhandledArgumentError(
-            [NotNull] string commandName,
-            [NotNull] string argumentName,
-            [NotNull] string message
+            string commandName,
+            string argumentName,
+            string message
         ) : base(message)
         {
             CommandName = commandName;
@@ -19,10 +17,10 @@ namespace Intersect.Server.Core.CommandParsing.Errors
         }
 
         protected UnhandledArgumentError(
-            [NotNull] string commandName,
+            string commandName,
             int position,
-            [NotNull] string value,
-            [NotNull] string message
+            string value,
+            string message
         ) : base(message)
         {
             CommandName = commandName;
@@ -30,35 +28,30 @@ namespace Intersect.Server.Core.CommandParsing.Errors
             Value = value;
         }
 
-        [NotNull]
         public string CommandName { get; }
 
-        [CanBeNull]
         public string ArgumentName { get; }
 
         public int Position { get; }
 
-        [CanBeNull]
         public string Value { get; }
 
         public bool Positional => string.IsNullOrWhiteSpace(ArgumentName);
 
-        [NotNull]
         public static UnhandledArgumentError Create(
-            [NotNull] string commandName,
-            [NotNull] string argumentName,
-            [NotNull] LocalizedString message
+            string commandName,
+            string argumentName,
+            LocalizedString message
         )
         {
             return new UnhandledArgumentError(commandName, argumentName, message.ToString(argumentName, commandName));
         }
 
-        [NotNull]
         public static UnhandledArgumentError Create(
-            [NotNull] string commandName,
+            string commandName,
             int position,
-            [NotNull] string argumentValue,
-            [NotNull] LocalizedString message
+            string argumentValue,
+            LocalizedString message
         )
         {
             return new UnhandledArgumentError(

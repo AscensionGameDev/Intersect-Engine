@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Threading;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Threading
 {
 
     public abstract class Threaded : IDisposable
     {
 
-        [NotNull] private readonly Thread mThread;
+        private readonly Thread mThread;
 
         private bool mDisposed;
 

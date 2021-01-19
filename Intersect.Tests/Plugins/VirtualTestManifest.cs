@@ -1,15 +1,13 @@
 ﻿using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests.Types;
 
-using JetBrains.Annotations;
-
 using Semver;
 
 namespace Intersect.Plugins
 {
     internal class VirtualTestManifest : IManifestHelper
     {
-        [NotNull] internal static readonly string Namespace = typeof(VirtualTestManifest).Namespace ?? "Intersect.Plugins";
+        internal static readonly string Namespace = typeof(VirtualTestManifest).Namespace ?? "Intersect.Plugins";
 
         /// <inheritdoc />
         public string Name { get; } = "Test Manifest";

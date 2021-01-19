@@ -8,8 +8,6 @@ using Intersect.Client.Localization;
 using Intersect.IO.Files;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -47,7 +45,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mName = Path.GetFileName(filename);
         }
 
-        public MonoTexture([NotNull] GraphicsDevice graphicsDevice, [NotNull] string assetName, [NotNull] Func<Stream> createStream)
+        public MonoTexture(GraphicsDevice graphicsDevice, string assetName, Func<Stream> createStream)
         {
             mGraphicsDevice = graphicsDevice;
             mPath = assetName;
@@ -65,7 +63,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mHeight = packFrame.SourceRect.Height;
         }
 
-        private void Load([NotNull] Stream stream)
+        private void Load(Stream stream)
         {
             mTexture = Texture2D.FromStream(mGraphicsDevice, stream);
             if (mTexture == null)

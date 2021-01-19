@@ -10,9 +10,6 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Network;
-using Intersect.Network.Events;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Client.Interface.Menu
 {
@@ -36,7 +33,7 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly ForgotPasswordWindow mForgotPasswordWindow;
 
-        [NotNull] private readonly Button mLoginButton;
+        private readonly Button mLoginButton;
 
         private readonly LoginWindow mLoginWindow;
 
@@ -51,7 +48,7 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly OptionsWindow mOptionsWindow;
 
-        [NotNull] private readonly Button mRegisterButton;
+        private readonly Button mRegisterButton;
 
         private readonly RegisterWindow mRegisterWindow;
 
@@ -59,7 +56,7 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly SelectCharacterWindow mSelectCharacterWindow;
 
-        [NotNull] private readonly Label mServerStatusLabel;
+        private readonly Label mServerStatusLabel;
 
         //Character creation feild check
         private bool mHasMadeCharacterCreation;

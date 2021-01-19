@@ -5,9 +5,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Client;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Networking
 {

@@ -5,8 +5,6 @@ using System.Runtime.Serialization;
 using Intersect.Extensions;
 using Intersect.Properties;
 
-using JetBrains.Annotations;
-
 using Microsoft;
 
 namespace Intersect.Plugins.Loaders
@@ -33,7 +31,7 @@ namespace Intersect.Plugins.Loaders
         /// Initializes a new instance of <see cref="MissingPluginEntryException"/> for the specified <see cref="Assembly"/>.
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> for the exception instance</param>
-        public MissingPluginEntryException([NotNull, ValidatedNotNull] Assembly assembly) : base(assembly.FullName)
+        public MissingPluginEntryException([ValidatedNotNull] Assembly assembly) : base(assembly.FullName)
         {
         }
 

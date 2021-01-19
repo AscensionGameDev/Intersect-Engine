@@ -2,8 +2,6 @@
 using Intersect.Reflection;
 using Intersect.Threading;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Intersect.Properties;
+using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Core
 {
@@ -33,9 +32,9 @@ namespace Intersect.Core
 
         private bool mNeedsLockPulse;
 
-        [NotNull] private readonly object mDisposeLock;
+        private readonly object mDisposeLock;
 
-        [NotNull] private readonly object mShutdownLock;
+        private readonly object mShutdownLock;
 
         #endregion Lifecycle Fields
 
@@ -44,7 +43,8 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="startupOptions">the <typeparamref name="TStartupOptions"/> the application was started with</param>
         /// <param name="logger">the application-level <see cref="Logger"/></param>
-        protected ApplicationContext([NotNull] TStartupOptions startupOptions, [NotNull] Logger logger)
+        /// <param name="networkHelper"></param>
+        protected ApplicationContext(TStartupOptions startupOptions, Logger logger, INetworkHelper networkHelper)
         {
             mDisposeLock = new object();
             mShutdownLock = new object();
@@ -53,6 +53,7 @@ namespace Intersect.Core
 
             StartupOptions = startupOptions;
             Logger = logger;
+            NetworkHelper = networkHelper;
 
             ConcurrentInstance.Set(This);
         }
@@ -64,6 +65,9 @@ namespace Intersect.Core
 
         /// <inheritdoc />
         public Logger Logger { get; }
+
+        /// <inheritdoc />
+        public INetworkHelper NetworkHelper { get; }
 
         #region Lifecycle Properties
 
@@ -99,7 +103,7 @@ namespace Intersect.Core
 
         #region Services
 
-        [NotNull] private readonly IDictionary<Type, IApplicationService> mServices;
+        private readonly IDictionary<Type, IApplicationService> mServices;
 
         /// <inheritdoc />
         public List<IApplicationService> Services => mServices.Values.ToList();
@@ -121,7 +125,6 @@ namespace Intersect.Core
         /// <typeparam name="TApplicationService">the service type</typeparam>
         /// <returns>the expected <typeparamref name="TApplicationService"/> instance</returns>
         /// <exception cref="AccessViolationException">if there is no registered <typeparamref name="TApplicationService"/></exception>
-        [NotNull]
         protected TApplicationService GetExpectedService<TApplicationService>()
             where TApplicationService : IApplicationService
         {
@@ -140,12 +143,10 @@ namespace Intersect.Core
         /// Gets all of the interesting assemblies (e.g. core and application).
         /// </summary>
         /// <returns>interesting assemblies</returns>
-        [NotNull]
-        [Pure]
         protected virtual IEnumerable<Assembly> GetAssemblies() =>
             new List<Assembly> {typeof(IApplicationContext).Assembly, typeof(TContext).Assembly};
 
-        private void AddService([NotNull] Type type, [NotNull] IApplicationService service)
+        private void AddService(Type type, IApplicationService service)
         {
             if (mServices.ContainsKey(type))
             {
@@ -177,7 +178,7 @@ namespace Intersect.Core
                     }
                 );
 
-        private void RunOnAllServices([NotNull] Action<IApplicationService> action) =>
+        private void RunOnAllServices(Action<IApplicationService> action) =>
             Services.Where(service => service?.IsEnabled ?? false).ToList().ForEach(action);
 
         /// <summary>
@@ -337,7 +338,7 @@ namespace Intersect.Core
         /// </summary>
         protected virtual void NotifyNonTerminatingExceptionOccurred() { }
 
-        internal static void ProcessUnhandledException([NotNull] object sender, [NotNull] Exception exception)
+        internal static void ProcessUnhandledException(object sender, Exception exception)
         {
             var currentException = exception;
             var innerException = false;
@@ -370,8 +371,8 @@ namespace Intersect.Core
         /// <param name="unhandledExceptionEvent">the event arguments</param>
         /// <exception cref="ArgumentNullException">if <see cref="UnhandledExceptionEventArgs.ExceptionObject"/> isn't actually an <see cref="Exception"/></exception>
         protected static void HandleUnhandledException(
-            [NotNull] object sender,
-            [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent
+            object sender,
+            UnhandledExceptionEventArgs unhandledExceptionEvent
         )
         {
             if (!(unhandledExceptionEvent.ExceptionObject is Exception unhandledException))
@@ -395,8 +396,8 @@ namespace Intersect.Core
         }
 
         private static void HandleUnobservedTaskException(
-            [NotNull] object sender,
-            [NotNull] UnobservedTaskExceptionEventArgs unobservedTaskExceptionEvent
+            object sender,
+            UnobservedTaskExceptionEventArgs unobservedTaskExceptionEvent
         )
         {
             ProcessUnhandledException(
@@ -417,7 +418,7 @@ namespace Intersect.Core
 
         #region Assembly Processing
 
-        private static Assembly HandleAssemblyResolve([NotNull] object sender, [NotNull] ResolveEventArgs args)
+        private static Assembly HandleAssemblyResolve(object sender, ResolveEventArgs args)
         {
             // Ignore missing resources
             if (args.Name?.Contains(".resources") ?? false)
@@ -462,14 +463,13 @@ namespace Intersect.Core
 
         #region Instance Management
 
-        [NotNull] private TContext This => this as TContext ?? throw new InvalidOperationException();
+        private TContext This => this as TContext ?? throw new InvalidOperationException();
 
-        [NotNull] private static ConcurrentInstance<TContext> ConcurrentInstance { get; }
+        private static ConcurrentInstance<TContext> ConcurrentInstance { get; }
 
         /// <summary>
         /// TODO: Finish refactoring code so this is no longer necessary.
         /// </summary>
-        [NotNull]
         public static TContext Instance => ConcurrentInstance;
 
         static ApplicationContext()

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Globalization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Extensions
 {
     /// <summary>
@@ -31,16 +29,13 @@ namespace Intersect.Extensions
         public static string Format(this string format, IFormatProvider formatProvider, params object[] args) =>
             string.Format(formatProvider, format, args);
 
-        [NotNull]
         public static string TerminateWith(this string self, char terminateWith, bool condition = true) =>
             TerminateWith(self, new[] {terminateWith}, condition);
 
-        [NotNull]
         public static string TerminateWith(this string self, char[] terminateWith, bool condition = true) =>
             TerminateWith(self, new string(terminateWith), condition);
 
-        [NotNull]
-        public static string TerminateWith(this string self, [NotNull] string terminateWith, bool condition = true)
+        public static string TerminateWith(this string self, string terminateWith, bool condition = true)
         {
             if (!condition)
             {
