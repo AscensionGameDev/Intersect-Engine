@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 
 namespace Intersect.Core
@@ -14,13 +13,11 @@ namespace Intersect.Core
         /// <summary>
         /// The actual type of the service, should be an interface type.
         /// </summary>
-        [NotNull]
         Type ServiceType { get; }
 
         /// <summary>
         /// The name of the service, should be the name of the implementation type.
         /// </summary>
-        [NotNull]
         string Name { get; }
 
         #endregion Service Properties
@@ -46,21 +43,21 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="applicationContext">the current application context</param>
         /// <returns>if bootstrapping was successful</returns>
-        bool Bootstrap([NotNull] IApplicationContext applicationContext);
+        bool Bootstrap(IApplicationContext applicationContext);
 
         /// <summary>
         /// Startup lifecycle method for application services.
         /// </summary>
         /// <param name="applicationContext">the current application context</param>
         /// <returns>if startup was successful</returns>
-        bool Start([NotNull] IApplicationContext applicationContext);
+        bool Start(IApplicationContext applicationContext);
 
         /// <summary>
         /// Shutdown lifecycle method for application services.
         /// </summary>
         /// <param name="applicationContext">the current application context</param>
         /// <returns>if shutdown was successful</returns>
-        bool Stop([NotNull] IApplicationContext applicationContext);
+        bool Stop(IApplicationContext applicationContext);
 
         #endregion Lifecycle Methods
     }

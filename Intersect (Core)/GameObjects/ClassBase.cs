@@ -8,8 +8,6 @@ using Intersect.Models;
 using Intersect.Server.Utilities;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -118,7 +116,6 @@ namespace Intersect.GameObjects
 
         [JsonIgnore]
         [NotMapped]
-        [NotNull]
         public ExperienceCurve ExperienceCurve { get; }
 
         //Locked - Can the class be chosen from character select?
@@ -239,7 +236,6 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        [Pure]
         public long ExperienceToNextLevel(int level)
         {
             if (ExperienceOverrides.ContainsKey(level))

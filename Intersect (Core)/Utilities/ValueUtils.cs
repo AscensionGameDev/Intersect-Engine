@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Utilities
 {
 
@@ -37,7 +35,7 @@ namespace Intersect.Utilities
         /// <typeparam name="TValue">the value type</typeparam>
         /// <param name="values">the enumerable set of values</param>
         /// <returns>the aggregate hash code</returns>
-        public static int ComputeHashCode<TValue>([CanBeNull] IEnumerable<TValue> values) =>
+        public static int ComputeHashCode<TValue>(IEnumerable<TValue> values) =>
             values?.Aggregate(
                 0, (current, value) => unchecked(current * (int) 0xA5555529 + (value?.GetHashCode() ?? 0))
             ) ??
@@ -51,8 +49,8 @@ namespace Intersect.Utilities
         /// <param name="stringComparison">the <see cref="StringComparison"/> mode to use</param>
         /// <returns>the comparison between the two <see cref="string"/> enumerables</returns>
         public static int Compare(
-            [CanBeNull] IEnumerable<string> a,
-            [CanBeNull] IEnumerable<string> b,
+            IEnumerable<string> a,
+            IEnumerable<string> b,
             StringComparison stringComparison = StringComparison.CurrentCulture
         )
         {

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Threading
 {
 
@@ -28,7 +26,7 @@ namespace Intersect.Threading
             ThreadStart((TArgument) args[0]);
         }
 
-        protected abstract void ThreadStart([CanBeNull] TArgument argument);
+        protected abstract void ThreadStart(TArgument argument);
 
     }
 

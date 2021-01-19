@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using Microsoft;
 
 using System;
@@ -59,13 +58,13 @@ namespace Intersect.Core
         /// Specialized internal startup handler declaration.
         /// </summary>
         /// <param name="applicationContext">the application context the service is being started in</param>
-        protected abstract void TaskStart([NotNull] TApplicationContext applicationContext);
+        protected abstract void TaskStart(TApplicationContext applicationContext);
 
         /// <summary>
         /// Specialized internal shutdown handler declaration.
         /// </summary>
         /// <param name="applicationContext">the application context the service is being shutdown in</param>
-        protected abstract void TaskStop([NotNull] TApplicationContext applicationContext);
+        protected abstract void TaskStop(TApplicationContext applicationContext);
 
         #endregion Specialized Internal Lifecycle Methods
     }

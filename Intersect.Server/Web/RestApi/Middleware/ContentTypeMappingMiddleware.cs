@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
-
 using Microsoft.Owin;
 
 namespace Intersect.Server.Web.RestApi.Middleware
@@ -17,13 +15,13 @@ namespace Intersect.Server.Web.RestApi.Middleware
     /// </summary>
     /// <param name="owinContext"></param>
     /// <returns></returns>
-    public delegate Task RequestMapFunc([NotNull] IOwinContext owinContext);
+    public delegate Task RequestMapFunc(IOwinContext owinContext);
 
     /// <inheritdoc />
     public sealed class ContentTypeMappingMiddleware : OwinMiddleware
     {
 
-        [NotNull] private readonly RequestMap mRequestMap;
+        private readonly RequestMap mRequestMap;
 
         /// <inheritdoc />
         /// <summary>
@@ -36,7 +34,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
         }
 
         /// <inheritdoc />
-        public override async Task Invoke([NotNull] IOwinContext owinContext)
+        public override async Task Invoke(IOwinContext owinContext)
         {
             var request = owinContext.Request;
             Debug.Assert(request != null);

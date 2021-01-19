@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.Plugins.Interfaces
+﻿namespace Intersect.Plugins.Interfaces
 {
     /// <summary>
     /// Defines the API for accessing command line arguments.
@@ -12,7 +10,6 @@ namespace Intersect.Plugins.Interfaces
         /// </summary>
         /// <typeparam name="TArguments">a custom arguments type</typeparam>
         /// <returns>an instance of <typeparamref name="TArguments"/> if valid</returns>
-        [CanBeNull]
         TArguments ParseArguments<TArguments>();
     }
 }

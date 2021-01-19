@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AscensionGameDev.Intersect.Server.Framework</id>
+    <version>0.7.0.4-beta</version>
+    <title>Intersect Server Framework</title>
+    <description>Library for the public Intersect Server API</description>
+    <authors>Ascension Game Dev</authors>
+    <owners>Ascension Game Dev</owners>
+    <copyright>Copyright ©  2020 Ascension Game Dev</copyright>
+    <tags>intersect agd server plugin framework</tags>
+    <license type="file">LICENSE.md</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+    <projectUrl>https://github.com/AscensionGameDev/Intersect-Engine</projectUrl>
+    <repository type="git" url="https://github.com/AscensionGameDev/Intersect-Engine" />
+    <icon>assets\Intersect.png</icon>
+
+    <releaseNotes>Nuget release of Intersect.Server.Framework for server plugin development.</releaseNotes>
+
+    <dependencies>
+      <group targetFramework="net461">
+        <dependency id="Ceras" version="4.0.40" />
+        <dependency id="CommandLineParser" version="2.7.82" />
+        <dependency id="Newtonsoft.Json" version="12.0.3" />
+        <dependency id="Semver" version="2.0.6" />
+      </group>
+    </dependencies>
+
+    <references>
+      <group targetFramework="net461">
+        <reference file="Intersect Core.dll" />
+        <reference file="Intersect.Server.Framework.dll" />
+      </group>
+    </references>
+  </metadata>
+  <files>
+    <file src="LICENSE.md" target="" />
+    <file src="..\assets\Intersect.png" target="assets" />
+    <file src="..\targets\FindIntersect.targets" target="build" />
+    <file src="..\targets\AscensionGameDev.Intersect.Server.Framework.targets" target="build" />
+    <file src="..\Intersect.Server.Framework\bin\Release\Intersect Core.dll" target="lib\net461" />
+    <file src="..\Intersect.Server.Framework\bin\Release\Intersect.Server.Framework.dll" target="lib\net461" />
+    <file src="..\Intersect.Server.Framework\bin\Release\Intersect Core.dll" target="ref\net461" />
+    <file src="..\Intersect.Server.Framework\bin\Release\Intersect.Server.Framework.dll" target="ref\net461" />
+  </files>
+</package>

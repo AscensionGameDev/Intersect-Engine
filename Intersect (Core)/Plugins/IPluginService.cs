@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System.Collections.Generic;
 
 using Intersect.Core;
@@ -16,12 +15,11 @@ namespace Intersect.Plugins
         /// </summary>
         /// <param name="pluginKey">the </param>
         /// <returns></returns>
-        Plugin this[[NotNull] string pluginKey] { get; }
+        Plugin this[string pluginKey] { get; }
 
         /// <summary>
         /// The directories to look for plugins in.
         /// </summary>
-        [NotNull]
         List<string> PluginDirectories { get; }
 
         /// <summary>
@@ -29,20 +27,20 @@ namespace Intersect.Plugins
         /// </summary>
         /// <param name="pluginKey">the plugin key string</param>
         /// <returns>if the plugin is enabled (false if it is not even registered)</returns>
-        bool IsPluginEnabled([NotNull] string pluginKey);
+        bool IsPluginEnabled(string pluginKey);
 
         /// <summary>
         /// Enable the <see cref="Plugin"/> with the given key.
         /// </summary>
         /// <param name="pluginKey">the plugin key string</param>
         /// <returns>true if the plugin exists and is now enabled, false otherwise</returns>
-        bool EnablePlugin([NotNull] string pluginKey);
+        bool EnablePlugin(string pluginKey);
 
         /// <summary>
         /// Disable the <see cref="Plugin"/> with the given key.
         /// </summary>
         /// <param name="pluginKey">the plugin key string</param>
         /// <returns>true if the plugin exists and is now disabled, false otherwise</returns>
-        bool DisablePlugin([NotNull] string pluginKey);
+        bool DisablePlugin(string pluginKey);
     }
 }

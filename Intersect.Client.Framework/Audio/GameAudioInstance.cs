@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.Client.Framework.Audio
+﻿namespace Intersect.Client.Framework.Audio
 {
 
     public abstract class GameAudioInstance
@@ -21,12 +19,11 @@ namespace Intersect.Client.Framework.Audio
 
         private bool mIsLooping;
 
-        protected GameAudioInstance([NotNull] GameAudioSource source)
+        protected GameAudioInstance(GameAudioSource source)
         {
             Source = source;
         }
 
-        [NotNull]
         public GameAudioSource Source { get; }
 
         public bool IsLooping

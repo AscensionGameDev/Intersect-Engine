@@ -16,8 +16,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
@@ -28,16 +26,16 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private static int sStatusYPadding = 2;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityLevel;
+        public readonly Framework.Gwen.Control.Label EntityLevel;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityMap;
+        public readonly Framework.Gwen.Control.Label EntityMap;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityName;
+        public readonly Framework.Gwen.Control.Label EntityName;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
+        public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
 
         //Controls
-        [NotNull] public readonly ImagePanel EntityWindow;
+        public readonly ImagePanel EntityWindow;
 
         public float CurExpWidth = -1;
 

@@ -7,8 +7,6 @@ using Ceras;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using K4os.Compression.LZ4;
 
 namespace Intersect.Network
@@ -16,10 +14,20 @@ namespace Intersect.Network
 
     public class Ceras
     {
+        private static readonly string[] BuiltInPacketNamespaces = new[]
+        {
+            "Intersect.Network.Packets",
+            "Intersect.Network.Packets.Client",
+            "Intersect.Network.Packets.Editor",
+            "Intersect.Network.Packets.Server",
+            "Intersect.Admin.Actions"
+        };
 
-        [NotNull] protected CerasSerializer mSerializer;
+        public static List<Type> KnownTypes { get; } = FindTypes(BuiltInPacketNamespaces).ToList();
 
-        [NotNull] protected SerializerConfig mSerializerConfig;
+        private readonly CerasSerializer mSerializer;
+
+        private readonly SerializerConfig mSerializerConfig;
 
         public Ceras(bool forNetworking = true)
         {
@@ -33,13 +41,11 @@ namespace Intersect.Network
             if (forNetworking)
             {
                 mSerializerConfig.VersionTolerance.Mode = VersionToleranceMode.Disabled;
-
-                //TODO: Cleanup?
-                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets");
-                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Client");
-                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Editor");
-                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Server");
-                AddKnownTypes(mSerializerConfig, "Intersect.Admin.Actions");
+                mSerializerConfig.KnownTypes.AddRange(KnownTypes);
+                mSerializerConfig.KnownTypes.ForEach(
+                    knownType =>
+                        mSerializerConfig.ConfigType(knownType).TypeConstruction = TypeConstruction.ByUninitialized()
+                );
             }
             else
             {
@@ -68,15 +74,12 @@ namespace Intersect.Network
             mSerializer = new CerasSerializer(mSerializerConfig);
         }
 
-        private void AddKnownTypes(SerializerConfig config, string nameSpce)
-        {
-            var packetTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == nameSpce).ToList();
-            foreach (var typ in packetTypes)
-            {
-                config.KnownTypes.Add(typ);
-                mSerializerConfig.ConfigType(typ).TypeConstruction = TypeConstruction.ByUninitialized();
-            }
-        }
+        public static void AddKnownTypes(IReadOnlyList<Type> types) => KnownTypes.AddRange(types.Where(type => !KnownTypes.Contains(type)));
+
+        private static IEnumerable<Type> FindTypes(IEnumerable<string> nameSpaces) => nameSpaces.SelectMany(FindTypes);
+
+        private static IEnumerable<Type> FindTypes(string nameSpace) =>
+            typeof(Ceras).Assembly.GetTypes().Where(type => type.Namespace == nameSpace);
 
         public byte[] Serialize(object obj)
         {

@@ -1,7 +1,5 @@
 ﻿using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins
 {
     /// <summary>
@@ -12,7 +10,11 @@ namespace Intersect.Plugins
         /// <summary>
         /// The <see cref="ICommandLineHelper"/> of the current plugin.
         /// </summary>
-        [NotNull]
         ICommandLineHelper CommandLine { get; }
+
+        /// <summary>
+        /// The <see cref="INetworkHelper"/> of the current plugin.
+        /// </summary>
+        INetworkHelper Network { get; }
     }
 }

@@ -4,8 +4,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Plugins.Interfaces
 {
     public class LifecycleChangeStateArgs : EventArgs
@@ -19,8 +17,8 @@ namespace Intersect.Client.Plugins.Interfaces
     }
 
     public delegate void LifecycleChangeStateHandler(
-        [NotNull] IClientPluginContext context,
-        [NotNull] LifecycleChangeStateArgs lifecycleChangeStateArgs
+        IClientPluginContext context,
+        LifecycleChangeStateArgs lifecycleChangeStateArgs
     );
 
     /// <summary>
@@ -37,7 +35,6 @@ namespace Intersect.Client.Plugins.Interfaces
         /// <summary>
         /// A reference to the currently active interface if one is loaded.
         /// </summary>
-        [CanBeNull]
         IMutableInterface Interface { get; }
 
         /// <summary>

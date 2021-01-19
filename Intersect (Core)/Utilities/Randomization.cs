@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Intersect.Core;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Utilities
 {
     public static class Randomization
     {
-        [NotNull] private static Random mRandom;
+        private static Random mRandom;
 
         static Randomization()
         {

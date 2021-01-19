@@ -7,7 +7,6 @@ using Intersect.Client.Localization;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 
 namespace Intersect.Client.MonoGame.Audio
 {
@@ -73,7 +72,7 @@ namespace Intersect.Client.MonoGame.Audio
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
                             $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
-                            new Color(0xBF, 0x0, 0x0)
+                            new Color(0xBF, 0x0, 0x0),  Enums.ChatMessageType.Error
                         )
                     );
                 }

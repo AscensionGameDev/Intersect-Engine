@@ -2,8 +2,6 @@
 
 using Intersect.Server.Web.RestApi.Middleware;
 
-using JetBrains.Annotations;
-
 using Microsoft.Owin;
 
 using Owin;
@@ -25,8 +23,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
         /// <param name="requestMap"></param>
         /// <returns></returns>
         public static IAppBuilder UseContentTypeMappingMiddleware(
-            [NotNull] this IAppBuilder appBuilder,
-            [NotNull] IDictionary<(PathString, string, string), RequestMapFunc> requestMap
+            this IAppBuilder appBuilder,
+            IDictionary<(PathString, string, string), RequestMapFunc> requestMap
         )
         {
             return appBuilder.Use<ContentTypeMappingMiddleware>(requestMap);

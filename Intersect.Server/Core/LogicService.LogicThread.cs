@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core
 {
     internal sealed partial class LogicService
@@ -17,7 +15,7 @@ namespace Intersect.Server.Core
 
         internal sealed class LogicThread : Threaded<ServerContext>
         {
-            [NotNull] public readonly object LogicLock = new object();
+            public readonly object LogicLock = new object();
 
             public LogicThread() : base("ServerLogic")
             {

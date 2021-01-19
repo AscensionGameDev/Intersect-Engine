@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 using CommandLine;
 
 using Intersect.Factories;
 using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
+using Intersect.Plugins.Helpers;
 using Intersect.Server.Database;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -20,11 +20,8 @@ using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core
 {
-
     internal static class Bootstrapper
     {
 
@@ -35,15 +32,14 @@ namespace Intersect.Server.Core
 
         public static IServerContext Context { get; private set; }
 
-        [NotNull]
         public static LockingActionQueue MainThread { get; private set; }
 
         public static void Start(params string[] args)
         {
-            var commandLineOptions = ParseCommandLineArgs(args);
-            if (!string.IsNullOrWhiteSpace(commandLineOptions.WorkingDirectory))
+            (string[] Args, Parser Parser, ServerCommandLineOptions CommandLineOptions) parsedArguments = ParseCommandLineArgs(args);
+            if (!string.IsNullOrWhiteSpace(parsedArguments.CommandLineOptions.WorkingDirectory))
             {
-                var workingDirectory = commandLineOptions.WorkingDirectory.Trim();
+                var workingDirectory = parsedArguments.CommandLineOptions.WorkingDirectory.Trim();
                 if (Directory.Exists(workingDirectory))
                 {
                     Directory.SetCurrentDirectory(workingDirectory);
@@ -55,7 +51,26 @@ namespace Intersect.Server.Core
                 return;
             }
 
-            Context = new ServerContext(commandLineOptions, Log.Default);
+            var logger = Log.Default;
+            var packetTypeRegistry = new PacketTypeRegistry(logger);
+            if (!packetTypeRegistry.TryRegisterBuiltIn())
+            {
+                logger.Error("Failed to load built-in packet types.");
+                return;
+            }
+
+            var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
+            var networkHelper = new NetworkHelper(packetTypeRegistry, packetHandlerRegistry);
+
+            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(
+                PluginBootstrapContext.CreateFactory(
+                    parsedArguments.Args ?? Array.Empty<string>(),
+                    parsedArguments.Parser,
+                    networkHelper
+                )
+            );
+
+            Context = new ServerContext(parsedArguments.CommandLineOptions, logger, networkHelper);
             var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())
@@ -88,7 +103,7 @@ namespace Intersect.Server.Core
             }
         }
 
-        private static ServerCommandLineOptions ParseCommandLineArgs(params string[] args)
+        private static ValueTuple<string[], Parser, ServerCommandLineOptions> ParseCommandLineArgs(params string[] args)
         {
             var parser = new Parser(
                 parserSettings =>
@@ -107,10 +122,10 @@ namespace Intersect.Server.Core
                     }
                 );
 
-            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser));
-
-            return parser.ParseArguments<ServerCommandLineOptions>(args)
+            var options = parser.ParseArguments<ServerCommandLineOptions>(args)
                 .MapResult(commandLineOptions => commandLineOptions, errors => default);
+
+            return (args, parser, options);
         }
 
         #region Networking
@@ -162,8 +177,8 @@ namespace Intersect.Server.Core
         #region System Console
 
         private static void OnConsoleCancelKeyPress(
-            [NotNull] object sender,
-            [NotNull] ConsoleCancelEventArgs cancelEvent
+            object sender,
+            ConsoleCancelEventArgs cancelEvent
         )
         {
             ServerContext.Instance.RequestShutdown(true);
@@ -423,7 +438,7 @@ namespace Intersect.Server.Core
 
         }
 
-        [NotNull] private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
+        private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
 
         private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
         {

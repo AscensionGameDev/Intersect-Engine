@@ -6,8 +6,6 @@ using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Interfaces;
 using Intersect.Server.Plugins.Helpers;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Plugins
 {
     /// <summary>
@@ -39,7 +37,7 @@ namespace Intersect.Server.Plugins
         }
 
         /// <inheritdoc />
-        public ServerPluginContext([NotNull] Plugin plugin) : base(plugin)
+        public ServerPluginContext(Plugin plugin) : base(plugin)
         {
             Lifecycle = new ServerLifecycleHelper(this);
         }

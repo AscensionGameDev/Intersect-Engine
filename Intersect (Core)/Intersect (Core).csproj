@@ -73,9 +73,6 @@
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="K4os.Compression.LZ4, Version=1.1.10.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
       <HintPath>..\packages\K4os.Compression.LZ4.1.1.10\lib\net46\K4os.Compression.LZ4.dll</HintPath>
     </Reference>
@@ -199,6 +196,7 @@
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Collections\NamedInstanceStore.cs" />
+    <Compile Include="Collections\ReadOnlyList.cs" />
     <Compile Include="Collections\SanitizedValue.cs" />
     <Compile Include="Collections\Sanitizer.cs" />
     <Compile Include="Collections\SingleOrList.cs" />
@@ -253,6 +251,8 @@
     <Compile Include="Core\ServiceLifecycleStage.cs" />
     <Compile Include="Core\ServiceLifecycleFailureException.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Enums\ChatboxTab.cs" />
+    <Compile Include="Enums\ChatMessageType.cs" />
     <Compile Include="Enums\ItemHandling.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
@@ -340,6 +340,7 @@
     <Compile Include="Network\PacketHandlerAttribute.cs" />
     <Compile Include="Network\PacketHandlerRegistry.cs" />
     <Compile Include="Network\PacketHandlerRegistry.DisposableHandler.cs" />
+    <Compile Include="Network\PacketLifecycle.cs" />
     <Compile Include="Network\Packets\AbstractTimedPacket.cs" />
     <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
     <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />
@@ -512,9 +513,12 @@
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
     <Compile Include="Network\Packets\SlotSwapPacket.cs" />
+    <Compile Include="Network\PacketTypeRegistry.cs" />
     <Compile Include="Plugins\Helpers\CommandLineHelper.cs" />
     <Compile Include="Plugins\Helpers\ContextHelper.cs" />
     <Compile Include="Plugins\Helpers\EmbeddedResourceHelper.cs" />
+    <Compile Include="Plugins\Helpers\NetworkHelper.cs" />
+    <Compile Include="Plugins\Interfaces\INetworkHelper.cs" />
     <Compile Include="Plugins\Helpers\LoggingHelper.cs" />
     <Compile Include="Plugins\Contexts\PluginBootstrapContext.cs" />
     <Compile Include="Plugins\Contexts\PluginContext.cs" />
@@ -652,7 +656,7 @@
     <Compile Include="Utilities\GuidUtils.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
-    <Compile Include="Network\NetworkHelper.cs" />
+    <Compile Include="Network\PortHelper.cs" />
     <Compile Include="Utilities\Nullability.cs" />
     <Compile Include="Utilities\Randomization.cs" />
     <Compile Include="Utilities\Retry.cs" />

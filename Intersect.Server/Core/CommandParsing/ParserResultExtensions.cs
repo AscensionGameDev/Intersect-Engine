@@ -4,18 +4,15 @@ using System.Linq;
 
 using Intersect.Server.Core.CommandParsing.Arguments;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.CommandParsing
 {
 
     public static class ParserResultExtensions
     {
 
-        [CanBeNull]
         public static TValue Find<TValue>(
-            [NotNull] this ParserResult result,
-            [NotNull] CommandArgument<TValue> argument,
+            this ParserResult result,
+            CommandArgument<TValue> argument,
             int index = 0,
             bool allowImplicit = true
         )
@@ -23,18 +20,17 @@ namespace Intersect.Server.Core.CommandParsing
             return result.Parsed.Find<TValue>(argument, index, allowImplicit);
         }
 
-        [CanBeNull]
         public static IEnumerable<TValue> FindAll<TValue>(
-            [NotNull] this ParserResult result,
-            [NotNull] ArrayCommandArgument<TValue> argument
+            this ParserResult result,
+            ArrayCommandArgument<TValue> argument
         )
         {
             return result.Parsed.FindAll(argument);
         }
 
         public static bool TryFind<TValue>(
-            [NotNull] this ParserResult result,
-            [NotNull] CommandArgument<TValue> argument,
+            this ParserResult result,
+            CommandArgument<TValue> argument,
             out TValue value,
             int index = 0,
             bool allowImplicit = true
@@ -44,8 +40,8 @@ namespace Intersect.Server.Core.CommandParsing
         }
 
         public static bool TryFindAll<TValue>(
-            [NotNull] this ParserResult result,
-            [NotNull] ArrayCommandArgument<TValue> argument,
+            this ParserResult result,
+            ArrayCommandArgument<TValue> argument,
             out IEnumerable<TValue> values
         )
         {
@@ -53,9 +49,9 @@ namespace Intersect.Server.Core.CommandParsing
         }
 
         public static ParserContext AsContext(
-            [NotNull] this ParserResult result,
+            this ParserResult result,
             bool filterOmitted = false,
-            [CanBeNull] IEnumerable<ICommandArgument> filterOut = null
+            IEnumerable<ICommandArgument> filterOut = null
         )
         {
             return new ParserContext

@@ -1,14 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.Utilities
 {
 
     public static class HeaderHelper
     {
 
-        [NotNull] public static readonly Regex PatternAuthorizationBearer = new Regex(
+        public static readonly Regex PatternAuthorizationBearer = new Regex(
             "^bearer .+$", RegexOptions.IgnoreCase
         );
 

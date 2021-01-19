@@ -1,8 +1,6 @@
 ﻿
 using Intersect.Factories;
 
-using JetBrains.Annotations;
-
 using Microsoft;
 
 namespace Intersect.Plugins
@@ -17,8 +15,7 @@ namespace Intersect.Plugins
         /// </summary>
         /// <param name="plugin">The plugin descriptor to create an instance for.</param>
         /// <returns>A <see cref="PluginInstance"/> for <paramref name="plugin"/>.</returns>
-        [NotNull]
-        public static PluginInstance Create([NotNull, ValidatedNotNull] Plugin plugin)
+        public static PluginInstance Create([ValidatedNotNull] Plugin plugin)
         {
             var bootstrapContext = FactoryRegistry<IPluginBootstrapContext>.Create(plugin);
             var context = FactoryRegistry<IPluginContext>.Create(plugin);
@@ -29,22 +26,22 @@ namespace Intersect.Plugins
         /// <summary>
         /// The entry point instance.
         /// </summary>
-        [NotNull] public IPluginEntry Entry { get; }
+        public IPluginEntry Entry { get; }
 
         /// <summary>
         /// The context used for bootstrap lifecycle actions.
         /// </summary>
-        [NotNull] public IPluginBootstrapContext BootstrapContext { get; }
+        public IPluginBootstrapContext BootstrapContext { get; }
 
         /// <summary>
         /// The context used for non-bootstrap lifecycle actions.
         /// </summary>
-        [NotNull] public IPluginContext Context { get; }
+        public IPluginContext Context { get; }
 
         private PluginInstance(
-            [NotNull] IPluginEntry entry,
-            [NotNull] IPluginBootstrapContext bootstrapContext,
-            [NotNull] IPluginContext context
+            IPluginEntry entry,
+            IPluginBootstrapContext bootstrapContext,
+            IPluginContext context
         )
         {
             Entry = entry;

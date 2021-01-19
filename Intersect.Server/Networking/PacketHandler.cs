@@ -24,8 +24,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,16 +32,18 @@ using System.Text;
 
 namespace Intersect.Server.Networking
 {
-    public class PacketHandler
+    internal sealed class PacketHandler
     {
-        public Logger Logger { get; }
+        public IServerContext Context { get; }
+
+        public Logger Logger => Context.Logger;
 
         public PacketHandlerRegistry Registry { get; }
 
-        public PacketHandler(Logger logger)
+        public PacketHandler(IServerContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            Registry = new PacketHandlerRegistry(logger);
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Registry = packetHandlerRegistry ?? throw new ArgumentNullException(nameof(packetHandlerRegistry));
 
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
@@ -378,7 +378,39 @@ namespace Intersect.Server.Networking
                     return false;
                 }
 
-                handler(client, packet);
+                if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+                {
+                    if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
+                    {
+                        // Preprocessors are intended to be silent filter functions
+                        return false;
+                    }
+                }
+
+                if (Registry.TryGetPreHooks(packet, out var preHooks))
+                {
+                    if (!preHooks.All(hook => hook.Handle(client, packet)))
+                    {
+                        // Hooks should not fail, if they do that's an error
+                        Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                        return false;
+                    }
+                }
+
+                if (!handler(client, packet))
+                {
+                    return false;
+                }
+
+                if (Registry.TryGetPostHooks(packet, out var postHooks))
+                {
+                    if (!postHooks.All(hook => hook.Handle(client, packet)))
+                    {
+                        // Hooks should not fail, if they do that's an error
+                        Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                        return false;
+                    }
+                }
             }
             catch (Exception exception)
             {
@@ -695,14 +727,14 @@ namespace Intersect.Server.Networking
             var channel = packet.Channel;
             if (client?.User.IsMuted ?? false) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason);
+                PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason, ChatMessageType.Notice);
 
                 return;
             }
 
             if (player.LastChatTime > Globals.Timing.MillisecondsUTC)
             {
-                PacketSender.SendChatMsg(player, Strings.Chat.toofast);
+                PacketSender.SendChatMsg(player, Strings.Chat.toofast, ChatMessageType.Notice);
                 player.LastChatTime = Globals.Timing.MillisecondsUTC + Options.MinChatInterval;
 
                 return;
@@ -758,21 +790,21 @@ namespace Intersect.Server.Networking
                 if (client?.Power.IsAdmin ?? false)
                 {
                     PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), player.MapId, CustomColors.Chat.AdminLocalChat,
+                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.AdminLocalChat,
                         player.Name
                     );
                 }
                 else if (client?.Power.IsModerator ?? false)
                 {
                     PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), player.MapId, CustomColors.Chat.ModLocalChat,
+                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.ModLocalChat,
                         player.Name
                     );
                 }
                 else
                 {
                     PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), player.MapId, CustomColors.Chat.LocalChat,
+                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.LocalChat,
                         player.Name
                     );
                 }
@@ -820,7 +852,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Parties.notinparty, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Parties.notinparty, ChatMessageType.Party, CustomColors.Alerts.Error);
                 }
             }
             else if (cmd == Strings.Chat.admincmd)
@@ -880,12 +912,12 @@ namespace Intersect.Server.Networking
                         if (msgSplit[0].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                         {
                             PacketSender.SendChatMsg(
-                                player, Strings.Chat.Private.ToString(player.Name, msg), CustomColors.Chat.PrivateChat,
+                                player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
                                 player.Name
                             );
 
                             PacketSender.SendChatMsg(
-                                Globals.Clients[i].Entity, Strings.Chat.Private.ToString(player.Name, msg),
+                                Globals.Clients[i].Entity, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
                                 CustomColors.Chat.PrivateChat, player.Name
                             );
 
@@ -897,7 +929,7 @@ namespace Intersect.Server.Networking
                     }
                 }
 
-                PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
             }
             else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
             {
@@ -909,12 +941,12 @@ namespace Intersect.Server.Networking
                 if (player.ChatTarget != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.Private.ToString(player.Name, msg), CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
-                        player.ChatTarget, Strings.Chat.Private.ToString(player.Name, msg),
+                        player.ChatTarget, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
                         CustomColors.Chat.PrivateChat, player.Name
                     );
 
@@ -922,7 +954,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
                 }
             }
             else
@@ -943,7 +975,7 @@ namespace Intersect.Server.Networking
                 }
 
                 //No common event /command, invalid command.
-                PacketSender.SendChatMsg(player, Strings.Commands.invalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(player, Strings.Commands.invalid, ChatMessageType.Error, CustomColors.Alerts.Error);
             }
         }
 
@@ -962,14 +994,14 @@ namespace Intersect.Server.Networking
             {
                 if (status.Type == StatusTypes.Stun)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunblocking);
+                    PacketSender.SendChatMsg(player, Strings.Combat.stunblocking, ChatMessageType.Combat);
 
                     return;
                 }
 
                 if (status.Type == StatusTypes.Sleep)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking);
+                    PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking, ChatMessageType.Combat);
 
                     return;
                 }
@@ -1016,7 +1048,7 @@ namespace Intersect.Server.Networking
 
             if (player.CastTime > Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack);
+                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
 
                 return;
             }
@@ -1030,14 +1062,14 @@ namespace Intersect.Server.Networking
             {
                 if (status.Type == StatusTypes.Stun)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking);
+                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
 
                     return;
                 }
 
                 if (status.Type == StatusTypes.Sleep)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking);
+                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
 
                     return;
                 }
@@ -1116,6 +1148,7 @@ namespace Intersect.Server.Networking
                                 PacketSender.SendChatMsg(
                                     player,
                                     Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                                    ChatMessageType.Inventory,
                                     CustomColors.Combat.NoAmmo
                                 );
 
@@ -1124,7 +1157,7 @@ namespace Intersect.Server.Networking
 #if INTERSECT_DIAGNOSTIC
                                 PacketSender.SendPlayerMsg(client,
                                     Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
-                                    CustomColors.NoAmmo);
+                                    ChatMessageType.Inventory, CustomColors.NoAmmo);
 #endif
                             if (!player.TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
                             {
@@ -1134,7 +1167,7 @@ namespace Intersect.Server.Networking
                                         CustomColors.NoAmmo);
                                     PacketSender.SendPlayerMsg(client,
                                         Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItems(projectileBase.Ammo)}"),
-                                        CustomColors.NoAmmo);
+                                        ChatMessageType.Inventory, CustomColors.NoAmmo);
 #endif
                             }
                         }
@@ -1143,7 +1176,7 @@ namespace Intersect.Server.Networking
                             {
                                 PacketSender.SendPlayerMsg(client,
                                     Strings.Get("items", "notenough", "NO_REGISTERED_AMMO"),
-                                    CustomColors.NoAmmo);
+                                    ChatMessageType.Inventory, CustomColors.NoAmmo);
                             }
 #endif
                         MapInstance.Get(player.MapId)
@@ -1163,7 +1196,7 @@ namespace Intersect.Server.Networking
                         {
                             PacketSender.SendPlayerMsg(client,
                                 Strings.Get("items", "notenough", "NONPROJECTILE"),
-                                CustomColors.NoAmmo);
+                                ChatMessageType.Inventory, CustomColors.NoAmmo);
                             return;
                         }
 #endif
@@ -1174,7 +1207,7 @@ namespace Intersect.Server.Networking
 #if INTERSECT_DIAGNOSTIC
                         PacketSender.SendPlayerMsg(client,
                             Strings.Get("items", "notenough", "NO_WEAPON"),
-                            CustomColors.NoAmmo);
+                            ChatMessageType.Inventory, CustomColors.NoAmmo);
 #endif
                 }
             }
@@ -1544,13 +1577,13 @@ namespace Intersect.Server.Networking
                     else
                     {
                         // We couldn't give the player their item, notify them.
-                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Loot, CustomColors.Alerts.Error);
                     }
                 }
                 else
                 {
                     // Item does not belong to them.
-                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, ChatMessageType.Loot, CustomColors.Alerts.Error);
                 }
             }
 
@@ -1869,7 +1902,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            PacketSender.SendChatMsg(player, Strings.Parties.outofrange, CustomColors.Combat.NoTarget);
+            PacketSender.SendChatMsg(player, Strings.Parties.outofrange, ChatMessageType.Combat, CustomColors.Combat.NoTarget);
         }
 
         //PartyInviteResponsePacket
@@ -1895,6 +1928,7 @@ namespace Intersect.Server.Networking
                 {
                     PacketSender.SendChatMsg(
                         player.PartyRequester, Strings.Parties.declined.ToString(client.Entity.Name),
+                        ChatMessageType.Party,
                         CustomColors.Alerts.Declined
                     );
 
@@ -1992,7 +2026,7 @@ namespace Intersect.Server.Networking
             }
 
             //Player Out of Range Or Offline
-            PacketSender.SendChatMsg(player, Strings.Trading.outofrange.ToString(), CustomColors.Combat.NoTarget);
+            PacketSender.SendChatMsg(player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget);
         }
 
         //TradeRequestResponsePacket
@@ -2022,14 +2056,14 @@ namespace Intersect.Server.Networking
                             else
                             {
                                 PacketSender.SendChatMsg(
-                                    player, Strings.Trading.outofrange.ToString(), CustomColors.Combat.NoTarget
+                                    player, Strings.Trading.outofrange.ToString(), ChatMessageType.Trading, CustomColors.Combat.NoTarget
                                 );
                             }
                         }
                         else
                         {
                             PacketSender.SendChatMsg(
-                                player, Strings.Trading.busy.ToString(player.Trading.Requester.Name), Color.Red
+                                player, Strings.Trading.busy.ToString(player.Trading.Requester.Name), ChatMessageType.Trading, Color.Red
                             );
                         }
                     }
@@ -2037,6 +2071,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendChatMsg(
                             player.Trading.Requester, Strings.Trading.declined.ToString(player.Name),
+                            ChatMessageType.Trading,
                             CustomColors.Alerts.Declined
                         );
 
@@ -2059,7 +2094,7 @@ namespace Intersect.Server.Networking
         }
 
         //OfferTradeItemPacket
-        public void HandlePacket(Client client, [NotNull] OfferTradeItemPacket packet)
+        public void HandlePacket(Client client, OfferTradeItemPacket packet)
         {
             var player = client?.Entity;
             if (player == null || player.Trading.Counterparty == null)
@@ -2071,7 +2106,7 @@ namespace Intersect.Server.Networking
         }
 
         //RevokeTradeItemPacket
-        public void HandlePacket(Client client, [NotNull] RevokeTradeItemPacket packet)
+        public void HandlePacket(Client client, RevokeTradeItemPacket packet)
         {
             var player = client?.Entity;
             if (player == null || player.Trading.Counterparty == null)
@@ -2082,7 +2117,7 @@ namespace Intersect.Server.Networking
             if (player.Trading.Counterparty.Trading.Accepted)
             {
                 PacketSender.SendChatMsg(
-                    player, Strings.Trading.RevokeNotAllowed.ToString(player.Trading.Counterparty.Name),
+                    player, Strings.Trading.RevokeNotAllowed.ToString(player.Trading.Counterparty.Name), ChatMessageType.Trading,
                     CustomColors.Alerts.Declined
                 );
             }
@@ -2113,9 +2148,9 @@ namespace Intersect.Server.Networking
                 player.Trading.Counterparty.ReturnTradeItems();
                 player.ReturnTradeItems();
 
-                PacketSender.SendChatMsg(player, Strings.Trading.accepted, CustomColors.Alerts.Accepted);
+                PacketSender.SendChatMsg(player, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted);
                 PacketSender.SendChatMsg(
-                    player.Trading.Counterparty, Strings.Trading.accepted, CustomColors.Alerts.Accepted
+                    player.Trading.Counterparty, Strings.Trading.accepted, ChatMessageType.Trading, CustomColors.Alerts.Accepted
                 );
 
                 PacketSender.SendTradeClose(player.Trading.Counterparty);
@@ -2226,13 +2261,13 @@ namespace Intersect.Server.Networking
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(player, Strings.Player.offline, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
                         }
                     }
                     else
                     {
                         PacketSender.SendChatMsg(
-                            player, Strings.Friends.alreadyfriends.ToString(packet.Name), CustomColors.Alerts.Info
+                            player, Strings.Friends.alreadyfriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
                         );
                     }
                 }
@@ -2248,7 +2283,7 @@ namespace Intersect.Server.Networking
                     {
                         player.RemoveFriend(character);
                         character.RemoveFriend(player);
-                        PacketSender.SendChatMsg(player, Strings.Friends.remove, CustomColors.Alerts.Declined);
+                        PacketSender.SendChatMsg(player, Strings.Friends.remove, ChatMessageType.Friend, CustomColors.Alerts.Declined);
                         PacketSender.SendFriends(player);
                         if (character.Client != null)
                         {
@@ -2281,7 +2316,7 @@ namespace Intersect.Server.Networking
                 {
                     player.AddFriend(target);
                     PacketSender.SendChatMsg(
-                        player, Strings.Friends.notification.ToString(target.Name), CustomColors.Alerts.Accepted
+                        player, Strings.Friends.notification.ToString(target.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                     );
 
                     PacketSender.SendFriends(player);
@@ -2291,7 +2326,7 @@ namespace Intersect.Server.Networking
                 {
                     target.AddFriend(player);
                     PacketSender.SendChatMsg(
-                        target, Strings.Friends.accept.ToString(player.Name), CustomColors.Alerts.Accepted
+                        target, Strings.Friends.accept.ToString(player.Name), ChatMessageType.Friend, CustomColors.Alerts.Accepted
                     );
 
                     PacketSender.SendFriends(target);

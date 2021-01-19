@@ -8,8 +8,6 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
@@ -26,8 +24,7 @@ namespace Intersect.GameObjects.Maps
             ObjectCreationHandling = ObjectCreationHandling.Replace
         };
 
-        [NotMapped] [JsonIgnore] [NotNull]
-        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotMapped] [JsonIgnore]        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         //Client/Editor Only
         [JsonIgnore] [NotMapped] public MapAutotiles Autotiles;
@@ -182,7 +179,6 @@ namespace Intersect.GameObjects.Maps
 
         [NotMapped]
         [JsonIgnore]
-        [NotNull]
         public MapAttribute[,] Attributes
         {
             get => mAttributes ?? (mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight]);
@@ -211,7 +207,6 @@ namespace Intersect.GameObjects.Maps
         }
 
         [NotMapped]
-        [NotNull]
         [JsonProperty]
         public List<LightBase> Lights { get; private set; } = new List<LightBase>();
 
@@ -264,7 +259,6 @@ namespace Intersect.GameObjects.Maps
         }
 
         [NotMapped]
-        [NotNull]
         [JsonProperty]
         public List<NpcSpawn> Spawns { get; private set; } = new List<NpcSpawn>();
 
@@ -354,7 +348,7 @@ namespace Intersect.GameObjects.Maps
 
             private readonly DatabaseObjectLookup mBaseLookup;
 
-            public MapInstances([NotNull] DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
+            public MapInstances(DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
             {
                 if (baseLookup == null)
                 {

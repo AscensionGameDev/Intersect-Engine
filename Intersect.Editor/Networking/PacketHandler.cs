@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
+using Intersect.Core;
 using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
@@ -16,10 +18,15 @@ using Intersect.Network.Packets.Server;
 
 namespace Intersect.Editor.Networking
 {
-    public class PacketHandler
+    internal sealed class PacketHandler
     {
         private sealed class VirtualPacketSender : IPacketSender
         {
+            public IApplicationContext ApplicationContext { get; }
+
+            public VirtualPacketSender(IApplicationContext applicationContext) =>
+                ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
+
             #region Implementation of IPacketSender
 
             /// <inheritdoc />
@@ -46,23 +53,25 @@ namespace Intersect.Editor.Networking
 
         public static MapUpdated MapUpdatedDelegate;
 
+        public IApplicationContext Context { get; }
+
         public Logger Logger { get; }
 
         public PacketHandlerRegistry Registry { get; }
 
         public IPacketSender VirtualSender { get; }
 
-        public PacketHandler(Logger logger)
+        public PacketHandler(IApplicationContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            Registry = packetHandlerRegistry ?? throw new ArgumentNullException(nameof(packetHandlerRegistry));
 
-            Registry = new PacketHandlerRegistry(logger);
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
             }
 
-            VirtualSender = new VirtualPacketSender();
+            VirtualSender = new VirtualPacketSender(context);
         }
 
         public bool HandlePacket(IConnection connection, IPacket packet)
@@ -79,7 +88,39 @@ namespace Intersect.Editor.Networking
                 return false;
             }
 
-            handler(VirtualSender, packet);
+            if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+            {
+                if (!preprocessors.All(preprocessor => preprocessor.Handle(VirtualSender, packet)))
+                {
+                    // Preprocessors are intended to be silent filter functions
+                    return false;
+                }
+            }
+
+            if (Registry.TryGetPreHooks(packet, out var preHooks))
+            {
+                if (!preHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
+
+            if (!handler(VirtualSender, packet))
+            {
+                return false;
+            }
+
+            if (Registry.TryGetPostHooks(packet, out var postHooks))
+            {
+                if (!postHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
 
             return true;
         }

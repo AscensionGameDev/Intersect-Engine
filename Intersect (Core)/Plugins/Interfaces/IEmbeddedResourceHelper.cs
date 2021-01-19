@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 using System.IO;
 using System.Reflection;
 
@@ -17,7 +15,7 @@ namespace Intersect.Plugins.Interfaces
         /// </summary>
         /// <param name="resourceName">the name of the resource to check for</param>
         /// <returns>if <paramref name="resourceName"/> exists</returns>
-        bool Exists([NotNull] string resourceName);
+        bool Exists(string resourceName);
 
         /// <summary>
         /// Gets the information for the requested resource using inexact name matching as described by <see cref="Resolve(string)"/>.
@@ -26,8 +24,7 @@ namespace Intersect.Plugins.Interfaces
         /// <returns>the <see cref="ManifestResourceInfo"/> of the specified resource</returns>
         /// <exception cref="InvalidOperationException">if <see cref="Resolve(string)"/> does not throw an error but the resource cannot be found</exception>
         /// <see cref="Resolve(string)"/>
-        [NotNull]
-        ManifestResourceInfo GetInfo([NotNull] string resourceName);
+        ManifestResourceInfo GetInfo(string resourceName);
 
         /// <summary>
         /// Opens a read stream for <paramref name="resourceName"/>.
@@ -35,8 +32,7 @@ namespace Intersect.Plugins.Interfaces
         /// <param name="resourceName">the name of the resource to open for reading</param>
         /// <returns>the read stream for <paramref name="resourceName"/></returns>
         /// <see cref="Resolve(string)"/>
-        [NotNull]
-        Stream Read([NotNull] string resourceName);
+        Stream Read(string resourceName);
 
         /// <summary>
         /// Resolves <paramref name="resourceName"/> to a fully-qualified resource name.
@@ -49,8 +45,7 @@ namespace Intersect.Plugins.Interfaces
         /// <returns>a fully-qualified resource name if any are found</returns>
         /// <exception cref="ArgumentNullException">if <see cref="string.IsNullOrWhiteSpace(string)"/> returns true for <paramref name="resourceName"/></exception>
         /// <exception cref="FileNotFoundException">if there are *no* resources that end with <paramref name="resourceName"/></exception>
-        [NotNull]
-        string Resolve([NotNull] string resourceName);
+        string Resolve(string resourceName);
 
         /// <summary>
         /// Attempts to get the <see cref="ManifestResourceInfo"/> of the resource
@@ -61,7 +56,7 @@ namespace Intersect.Plugins.Interfaces
         /// <param name="resourceInfo">the output variable for the resource info</param>
         /// <returns>if the <see cref="ManifestResourceInfo"/> was fetched successfully</returns>
         /// <see cref="GetInfo(string)"/>
-        bool TryGetInfo([NotNull] string resourceName, out ManifestResourceInfo resourceInfo);
+        bool TryGetInfo(string resourceName, out ManifestResourceInfo resourceInfo);
 
         /// <summary>
         /// Attempts to get the read <see cref="Stream"/> of the resource
@@ -72,7 +67,7 @@ namespace Intersect.Plugins.Interfaces
         /// <param name="stream">the output variable for the resource stream</param>
         /// <returns>if a read <see cref="Stream"/> was opened successfully</returns>
         /// <see cref="Read(string)"/>
-        bool TryRead([NotNull] string resourceName, out Stream stream);
+        bool TryRead(string resourceName, out Stream stream);
 
         /// <summary>
         /// Attempts to resolve the fully-qualified version of <paramref name="resourceName"/>,
@@ -82,6 +77,6 @@ namespace Intersect.Plugins.Interfaces
         /// <param name="manifestResourceName">the fully qualified resource name</param>
         /// <returns>if a resource was found that matches <paramref name="resourceName"/></returns>
         /// <see cref="Resolve(string)"/>
-        bool TryResolve([NotNull] string resourceName, out string manifestResourceName);
+        bool TryResolve(string resourceName, out string manifestResourceName);
     }
 }

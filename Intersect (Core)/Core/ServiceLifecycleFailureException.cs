@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -33,8 +32,8 @@ namespace Intersect.Core
         /// <param name="innerException">the cause of the failure</param>
         public ServiceLifecycleFailureException(
             ServiceLifecycleStage serviceLifecycleStage,
-            [NotNull] string serviceName,
-            [NotNull] Exception innerException
+            string serviceName,
+            Exception innerException
         ) : base($"Failure occurred during service {serviceLifecycleStage} in {serviceName}.", innerException)
         {
             ServiceLifecycleStage = serviceLifecycleStage;
@@ -53,7 +52,6 @@ namespace Intersect.Core
         /// <summary>
         /// The name of the service throwing the exception.
         /// </summary>
-        [NotNull]
         public string ServiceName { get; }
 
         #endregion Properties
@@ -95,7 +93,7 @@ namespace Intersect.Core
         /// <param name="message">The message that describes the error.</param>
         /// <param name="innerException">The exception that is the cause of the current exception. For this type of exception this should not be used.</param>
         [Obsolete("Use ServiceLifecycleFailureException(ServiceLifecycleStage, string, Exception) instead.", true)]
-        public ServiceLifecycleFailureException(string message, [NotNull] Exception innerException) : base(
+        public ServiceLifecycleFailureException(string message, Exception innerException) : base(
             message, innerException
         )
         {
@@ -116,7 +114,7 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext" /> that contains contextual information about the source or destination.</param>
-        protected ServiceLifecycleFailureException([NotNull] SerializationInfo info, StreamingContext context) : base(
+        protected ServiceLifecycleFailureException(SerializationInfo info, StreamingContext context) : base(
             info, context
         )
         {

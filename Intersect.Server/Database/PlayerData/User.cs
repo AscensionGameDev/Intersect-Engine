@@ -13,8 +13,6 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 
-using JetBrains.Annotations;
-
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -80,7 +78,7 @@ namespace Intersect.Server.Database.PlayerData
             return this;
         }
 
-        public static string SaltPasswordHash([NotNull] string passwordHash, [NotNull] string salt)
+        public static string SaltPasswordHash(string passwordHash, string salt)
         {
             using (var sha = new SHA256Managed())
             {
@@ -90,7 +88,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public bool IsPasswordValid([NotNull] string passwordHash)
+        public bool IsPasswordValid(string passwordHash)
         {
             if (string.IsNullOrWhiteSpace(passwordHash) || string.IsNullOrWhiteSpace(Salt))
             {
@@ -102,12 +100,12 @@ namespace Intersect.Server.Database.PlayerData
             return string.Equals(Password, saltedPasswordHash, StringComparison.Ordinal);
         }
 
-        public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
+        public bool TryChangePassword(string oldPassword, string newPassword)
         {
             return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
         }
 
-        public bool TrySetPassword([NotNull] string passwordHash)
+        public bool TrySetPassword(string passwordHash)
         {
             using (var sha = new SHA256Managed())
             {
@@ -128,7 +126,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        public static Tuple<Client, User> Fetch(Guid userId, PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
 
@@ -136,8 +134,8 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         public static Tuple<Client, User> Fetch(
-            [NotNull] string userName,
-            [CanBeNull] PlayerContext playerContext = null
+            string userName,
+            PlayerContext playerContext = null
         )
         {
             var client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
@@ -145,7 +143,7 @@ namespace Intersect.Server.Database.PlayerData
             return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
         }
 
-        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        public static User Find(Guid userId, PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -162,7 +160,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
+        public static User Find(string username, PlayerContext playerContext = null)
         {
             try
             {
@@ -226,7 +224,6 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Listing
 
-        [NotNull]
         public static int Count()
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -237,8 +234,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        [NotNull]
-        public static IEnumerable<User> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        public static IEnumerable<User> List(int page, int count, PlayerContext playerContext = null)
         {
             if (playerContext == null)
             {
@@ -267,7 +263,7 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Compiled Queries
 
-        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
+        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
             EF.CompileQuery(
                 (PlayerContext context, int offset, int count) => context.Users.OrderBy(user => user.Id.ToString())
                     .Skip(offset)
@@ -277,7 +273,7 @@ namespace Intersect.Server.Database.PlayerData
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, string, User> QueryUserByName =
+        private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery(
                 // ReSharper disable once SpecifyStringComparison
                 (PlayerContext context, string username) => context.Users.Where(u => u.Name.ToLower() == username.ToLower())
@@ -304,7 +300,7 @@ namespace Intersect.Server.Database.PlayerData
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, Guid, User> QueryUserById =
+        private static readonly Func<PlayerContext, Guid, User> QueryUserById =
             EF.CompileQuery(
                 (PlayerContext context, Guid id) => context.Users.Where(u => u.Id == id)
                     .Include(p => p.Ban)

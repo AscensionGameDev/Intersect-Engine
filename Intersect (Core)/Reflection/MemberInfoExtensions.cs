@@ -3,13 +3,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Reflection
 {
     public static class MemberInfoExtensions
     {
-        public static string GetFullName([NotNull] this MemberInfo memberInfo)
+        public static string GetFullName(this MemberInfo memberInfo)
         {
             if (memberInfo is Type type)
             {

@@ -3,8 +3,6 @@ using System.Linq;
 
 using Intersect.Server.Web.RestApi.Payloads;
 
-using JetBrains.Annotations;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Extensions
@@ -14,7 +12,7 @@ namespace Intersect.Server.Extensions
     {
 
         public static IEnumerable<TValue> Sort<TValue>(
-            [NotNull] this IEnumerable<TValue> queryable,
+            this IEnumerable<TValue> queryable,
             IReadOnlyCollection<Sort> sort
         )
         {

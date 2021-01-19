@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.GameObjects;
-using Intersect.Server.Core;
 using Intersect.Server.Entities;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Server.General
 {
@@ -17,17 +14,17 @@ namespace Intersect.Server.General
     public static class Globals
     {
 
-        [NotNull] public static readonly object ClientLock = new object();
+        public static readonly object ClientLock = new object();
 
-        [NotNull] public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
+        public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
-        [NotNull] public static readonly List<Client> Clients = new List<Client>();
+        public static readonly List<Client> Clients = new List<Client>();
 
         public static long Cps = 0;
 
         public static bool CpsLock = true;
 
-        [Obsolete, NotNull] public static Timing Timing => Timing.Global;
+        [Obsolete] public static Timing Timing => Timing.Global;
 
         public static List<Player> OnlineList => Clients.FindAll(client => client?.Entity != null)
             .Select(client => client.Entity)

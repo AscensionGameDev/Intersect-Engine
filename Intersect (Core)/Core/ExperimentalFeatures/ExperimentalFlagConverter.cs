@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
@@ -16,9 +14,9 @@ namespace Intersect.Core.ExperimentalFeatures
 
         /// <inheritdoc />
         public override void WriteJson(
-            [NotNull] JsonWriter writer,
+            JsonWriter writer,
             ExperimentalFlag value,
-            [NotNull] JsonSerializer serializer
+            JsonSerializer serializer
         )
         {
             serializer.Serialize(writer, value);
@@ -26,11 +24,11 @@ namespace Intersect.Core.ExperimentalFeatures
 
         /// <inheritdoc />
         public override ExperimentalFlag ReadJson(
-            [NotNull] JsonReader reader,
-            [NotNull] Type objectType,
+            JsonReader reader,
+            Type objectType,
             ExperimentalFlag existingValue,
             bool hasExistingValue,
-            [NotNull] JsonSerializer serializer
+            JsonSerializer serializer
         )
         {
             serializer.Populate(reader, existingValue);

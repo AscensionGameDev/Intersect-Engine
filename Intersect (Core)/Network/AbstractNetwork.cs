@@ -6,8 +6,7 @@ using System.Linq;
 
 using Intersect.Logging;
 using Intersect.Memory;
-
-using JetBrains.Annotations;
+using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Network
 {
@@ -15,14 +14,16 @@ namespace Intersect.Network
     {
         private bool mDisposed;
 
-        [NotNull] private readonly object mDisposeLock;
+        private readonly object mDisposeLock;
 
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
 
-        protected AbstractNetwork([NotNull] NetworkConfiguration configuration)
+        protected AbstractNetwork(INetworkHelper networkHelper, NetworkConfiguration configuration)
         {
             mDisposed = false;
             mDisposeLock = new object();
+
+            Helper = networkHelper ?? throw new ArgumentNullException(nameof(networkHelper));
 
             mNetworkLayerInterfaces = new List<INetworkLayerInterface>();
 
@@ -36,11 +37,13 @@ namespace Intersect.Network
             Configuration = configuration;
         }
 
-        [NotNull] public ICollection<IConnection> Connections => ConnectionLookup.Values;
+        public INetworkHelper Helper { get; }
 
-        [NotNull] public IDictionary<Guid, IConnection> ConnectionLookup { get; }
+        public ICollection<IConnection> Connections => ConnectionLookup.Values;
 
-        [NotNull] public HandlePacket Handler { get; set; }
+        public IDictionary<Guid, IConnection> ConnectionLookup { get; }
+
+        public HandlePacket Handler { get; set; }
 
         public ShouldProcessPacket PreProcessHandler { get; set; }
 
@@ -50,7 +53,7 @@ namespace Intersect.Network
 
         public Guid Guid { get; protected set; }
 
-        public bool AddConnection([NotNull] IConnection connection)
+        public bool AddConnection(IConnection connection)
         {
             if (ConnectionLookup.ContainsKey(connection.Guid))
             {
@@ -62,7 +65,7 @@ namespace Intersect.Network
             return true;
         }
 
-        public bool RemoveConnection([NotNull] IConnection connection) =>
+        public bool RemoveConnection(IConnection connection) =>
             !connection.IsConnected && ConnectionLookup.Remove(connection.Guid);
 
         public void Dispose()
@@ -138,16 +141,15 @@ namespace Intersect.Network
         public TConnection FindConnection<TConnection>(Guid guid) where TConnection : class, IConnection =>
             FindConnection(guid) as TConnection;
 
-        public TConnection FindConnection<TConnection>([NotNull] Func<TConnection, bool> selector)
+        public TConnection FindConnection<TConnection>(Func<TConnection, bool> selector)
             where TConnection : class, IConnection =>
             FindConnections<TConnection>().FirstOrDefault(selector);
 
-        public ICollection<IConnection> FindConnections([NotNull] ICollection<Guid> guids)
+        public ICollection<IConnection> FindConnections(ICollection<Guid> guids)
         {
             return guids.Select(FindConnection).Where(connection => connection != null).ToList();
         }
 
-        [NotNull]
         public ICollection<TConnection> FindConnections<TConnection>() where TConnection : class, IConnection =>
             Connections.OfType<TConnection>().ToList();
 
@@ -224,8 +226,7 @@ namespace Intersect.Network
             var data = buffer.ToBytes();
 
             // Get Packet From Data using Ceras
-            var sw = new Stopwatch();
-            sw.Start();
+            var sw = Stopwatch.StartNew();
             var packet = (IPacket) connection.Ceras.Deserialize(data);
             if (sw.ElapsedMilliseconds > 10)
             {
@@ -237,7 +238,7 @@ namespace Intersect.Network
             // Handle any packet identification errors
 
             // Pass packet to handler.
-            Handler.Invoke(connection, packet);
+            Handler(connection, packet);
         }
 
         protected abstract IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>();

@@ -6,8 +6,6 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Interface.Menu
 {
 
@@ -18,11 +16,11 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly Canvas mMenuCanvas;
 
-        [NotNull] private readonly ImagePanel mServerStatusArea;
+        private readonly ImagePanel mServerStatusArea;
 
-        [NotNull] private readonly Label mServerStatusLabel;
+        private readonly Label mServerStatusLabel;
 
-        [NotNull] public MainMenu MainMenu { get; }
+        public MainMenu MainMenu { get; }
 
         private bool mShouldReset;
 
