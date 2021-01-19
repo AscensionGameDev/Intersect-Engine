@@ -15,10 +15,8 @@ namespace Intersect
 
         //#region Instance Management
 
-        //[NotNull]
         //private static Console sInstance;
 
-        //[NotNull]
         //public static Console Instance
         //{
         //    get => sInstance;

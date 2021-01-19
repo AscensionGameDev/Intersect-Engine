@@ -32,10 +32,8 @@ namespace Intersect.Server.Utilities
             Gain = 1.5;
         }
 
-        //[CanBeNull]
         //private Formula mFormula;
 
-        //[NotNull]
         //public Formula Formula
         //{
         //    get => mFormula ?? (mFormula = new Formula(DEFAULT_EXPERIENCE_FORMULA));
