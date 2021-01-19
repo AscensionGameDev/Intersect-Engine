@@ -6,6 +6,7 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Crafting;
 using Intersect.Client.Interface.Game.EntityPanel;
 using Intersect.Client.Interface.Game.Hotbar;
+using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
 using Intersect.Client.Networking;
@@ -45,6 +46,8 @@ namespace Intersect.Client.Interface.Game
 
         private ShopWindow mShopWindow;
 
+        private MapItemWindow mMapItemWindow;
+
         private bool mShouldCloseBag;
 
         private bool mShouldCloseBank;
@@ -81,6 +84,7 @@ namespace Intersect.Client.Interface.Game
         {
             GameCanvas = canvas;
             EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+            AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
             InitGameGui();
         }
@@ -90,6 +94,9 @@ namespace Intersect.Client.Interface.Game
 
         [NotNull]
         public EscapeMenu EscapeMenu { get; }
+
+        [NotNull]
+        public AnnouncementWindow AnnouncementWindow { get; }
 
         public Menu GameMenu { get; private set; }
 
@@ -107,6 +114,7 @@ namespace Intersect.Client.Interface.Game
             mEventWindow = new EventWindow(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
+            mMapItemWindow = new MapItemWindow(GameCanvas);
         }
 
         //Chatbox
@@ -311,6 +319,8 @@ namespace Intersect.Client.Interface.Game
             mDebugMenu?.Update();
             EscapeMenu.Update();
             PlayerBox?.Update();
+            mMapItemWindow.Update();
+            AnnouncementWindow?.Update();
 
             if (Globals.QuestOffers.Count > 0)
             {

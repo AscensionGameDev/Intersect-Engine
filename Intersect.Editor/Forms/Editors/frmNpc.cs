@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -133,6 +134,11 @@ namespace Intersect.Editor.Forms.Editors
             grpBehavior.Text = Strings.NpcEditor.behavior;
 
             lblPic.Text = Strings.NpcEditor.sprite;
+            lblRed.Text = Strings.NpcEditor.Red;
+            lblGreen.Text = Strings.NpcEditor.Green;
+            lblBlue.Text = Strings.NpcEditor.Blue;
+            lblAlpha.Text = Strings.NpcEditor.Alpha;
+
             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
 
             //Behavior
@@ -239,6 +245,11 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
+                nudRgbaR.Value = mEditorItem.Color.R;
+                nudRgbaG.Value = mEditorItem.Color.G;
+                nudRgbaB.Value = mEditorItem.Color.B;
+                nudRgbaA.Value = mEditorItem.Color.A;
+
                 nudLevel.Value = mEditorItem.Level;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
 
@@ -368,15 +379,33 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbSprite.SelectedIndex > 0)
             {
                 var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
-                gfx.DrawImage(
-                    img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
-                    new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
+                var imgAttributes = new ImageAttributes();
+
+                // Microsoft, what the heck is this crap?
+                imgAttributes.SetColorMatrix(
+                    new ColorMatrix(
+                        new float[][]
+                        {
+                            new float[] { (float)nudRgbaR.Value / 255,  0,  0,  0, 0},  // Modify the red space
+                            new float[] {0, (float)nudRgbaG.Value / 255,  0,  0, 0},    // Modify the green space
+                            new float[] {0,  0, (float)nudRgbaB.Value / 255,  0, 0},    // Modify the blue space
+                            new float[] {0,  0,  0, (float)nudRgbaA.Value / 255, 0},    // Modify the alpha space
+                            new float[] {0, 0, 0, 0, 1}                                 // We're not adding any non-linear changes. Value of 1 at the end is a dummy value!
+                        }
+                    )
                 );
 
+                gfx.DrawImage(
+                    img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
+                    0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions, GraphicsUnit.Pixel, imgAttributes
+                );
+                
                 img.Dispose();
+                imgAttributes.Dispose();
             }
 
             gfx.Dispose();
+
             picNpc.BackgroundImage = picSpriteBmp;
         }
 
@@ -875,6 +904,30 @@ namespace Intersect.Editor.Forms.Editors
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
+        }
+
+        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.R = (byte)nudRgbaR.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.G = (byte)nudRgbaG.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.B = (byte)nudRgbaB.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.A = (byte)nudRgbaA.Value;
+            DrawNpcSprite();
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

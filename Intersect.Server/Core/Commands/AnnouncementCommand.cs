@@ -24,6 +24,11 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             PacketSender.SendGlobalMsg(result.Find(Message));
+
+            if (Options.Chat.ShowAnnouncementBanners)
+            {
+                PacketSender.SendGameAnnouncement(result.Find(Message), Options.Chat.AnnouncementDisplayDuration);
+            }
         }
 
     }

@@ -32,9 +32,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
-            this.grpFreeInventorySlots = new DarkUI.Controls.DarkGroupBox();
-            this.nudFreeInventorySlots = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblFreeInventorySlotAmount = new System.Windows.Forms.Label();
             this.chkNegated = new DarkUI.Controls.DarkCheckBox();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
@@ -118,15 +115,23 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem = new DarkUI.Controls.DarkGroupBox();
             this.cmbEquippedItem = new DarkUI.Controls.DarkComboBox();
             this.lblEquippedItem = new System.Windows.Forms.Label();
-            this.grpHasItem = new DarkUI.Controls.DarkGroupBox();
+            this.grpInventoryConditions = new DarkUI.Controls.DarkGroupBox();
+            this.grpManualAmount = new DarkUI.Controls.DarkGroupBox();
             this.nudItemAmount = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.grpAmountType = new DarkUI.Controls.DarkGroupBox();
+            this.rdoVariable = new DarkUI.Controls.DarkRadioButton();
+            this.rdoManual = new DarkUI.Controls.DarkRadioButton();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
+            this.grpVariableAmount = new DarkUI.Controls.DarkGroupBox();
+            this.cmbInvVariable = new DarkUI.Controls.DarkComboBox();
+            this.lblInvVariable = new System.Windows.Forms.Label();
+            this.rdoInvGlobalVariable = new DarkUI.Controls.DarkRadioButton();
+            this.rdoInvPlayerVariable = new DarkUI.Controls.DarkRadioButton();
             this.lblItemQuantity = new System.Windows.Forms.Label();
             this.chkHasElse = new DarkUI.Controls.DarkCheckBox();
             this.grpConditional.SuspendLayout();
-            this.grpFreeInventorySlots.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreeInventorySlots)).BeginInit();
             this.grpVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
             this.grpStringVariable.SuspendLayout();
@@ -146,8 +151,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpMapIs.SuspendLayout();
             this.grpGender.SuspendLayout();
             this.grpEquippedItem.SuspendLayout();
-            this.grpHasItem.SuspendLayout();
+            this.grpInventoryConditions.SuspendLayout();
+            this.grpManualAmount.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
+            this.grpAmountType.SuspendLayout();
+            this.grpVariableAmount.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
@@ -155,14 +163,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpConditional.Controls.Add(this.chkHasElse);
-            this.grpConditional.Controls.Add(this.grpFreeInventorySlots);
             this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
+            this.grpConditional.Controls.Add(this.grpQuestCompleted);
             this.grpConditional.Controls.Add(this.lblType);
             this.grpConditional.Controls.Add(this.btnCancel);
             this.grpConditional.Controls.Add(this.grpVariable);
-            this.grpConditional.Controls.Add(this.grpQuestCompleted);
             this.grpConditional.Controls.Add(this.grpQuestInProgress);
             this.grpConditional.Controls.Add(this.grpStartQuest);
             this.grpConditional.Controls.Add(this.grpTime);
@@ -174,56 +181,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.Controls.Add(this.grpMapIs);
             this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.grpEquippedItem);
-            this.grpConditional.Controls.Add(this.grpHasItem);
+            this.grpConditional.Controls.Add(this.grpInventoryConditions);
             this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditional.Location = new System.Drawing.Point(3, 3);
             this.grpConditional.Name = "grpConditional";
-            this.grpConditional.Size = new System.Drawing.Size(281, 337);
+            this.grpConditional.Size = new System.Drawing.Size(278, 337);
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
-            // 
-            // grpFreeInventorySlots
-            // 
-            this.grpFreeInventorySlots.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpFreeInventorySlots.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpFreeInventorySlots.Controls.Add(this.nudFreeInventorySlots);
-            this.grpFreeInventorySlots.Controls.Add(this.lblFreeInventorySlotAmount);
-            this.grpFreeInventorySlots.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpFreeInventorySlots.Location = new System.Drawing.Point(9, 40);
-            this.grpFreeInventorySlots.Name = "grpFreeInventorySlots";
-            this.grpFreeInventorySlots.Size = new System.Drawing.Size(262, 49);
-            this.grpFreeInventorySlots.TabIndex = 55;
-            this.grpFreeInventorySlots.TabStop = false;
-            this.grpFreeInventorySlots.Text = "Has X Free Inventory slots:";
-            // 
-            // nudFreeInventorySlots
-            // 
-            this.nudFreeInventorySlots.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudFreeInventorySlots.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudFreeInventorySlots.Location = new System.Drawing.Point(103, 16);
-            this.nudFreeInventorySlots.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.nudFreeInventorySlots.Name = "nudFreeInventorySlots";
-            this.nudFreeInventorySlots.Size = new System.Drawing.Size(150, 20);
-            this.nudFreeInventorySlots.TabIndex = 5;
-            this.nudFreeInventorySlots.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // lblFreeInventorySlotAmount
-            // 
-            this.lblFreeInventorySlotAmount.AutoSize = true;
-            this.lblFreeInventorySlotAmount.Location = new System.Drawing.Point(5, 20);
-            this.lblFreeInventorySlotAmount.Name = "lblFreeInventorySlotAmount";
-            this.lblFreeInventorySlotAmount.Size = new System.Drawing.Size(46, 13);
-            this.lblFreeInventorySlotAmount.TabIndex = 0;
-            this.lblFreeInventorySlotAmount.Text = "Amount:";
             // 
             // chkNegated
             // 
@@ -797,7 +762,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpQuestInProgress.Controls.Add(this.lblQuestProgress);
             this.grpQuestInProgress.Controls.Add(this.cmbQuestInProgress);
             this.grpQuestInProgress.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpQuestInProgress.Location = new System.Drawing.Point(8, 40);
+            this.grpQuestInProgress.Location = new System.Drawing.Point(9, 40);
             this.grpQuestInProgress.Name = "grpQuestInProgress";
             this.grpQuestInProgress.Size = new System.Drawing.Size(263, 122);
             this.grpQuestInProgress.TabIndex = 32;
@@ -953,7 +918,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpTime.Controls.Add(this.cmbTime1);
             this.grpTime.Controls.Add(this.lblAnd);
             this.grpTime.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTime.Location = new System.Drawing.Point(10, 40);
+            this.grpTime.Location = new System.Drawing.Point(9, 40);
             this.grpTime.Name = "grpTime";
             this.grpTime.Size = new System.Drawing.Size(261, 105);
             this.grpTime.TabIndex = 30;
@@ -1037,7 +1002,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpPowerIs.Controls.Add(this.cmbPower);
             this.grpPowerIs.Controls.Add(this.lblPower);
             this.grpPowerIs.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpPowerIs.Location = new System.Drawing.Point(9, 41);
+            this.grpPowerIs.Location = new System.Drawing.Point(9, 40);
             this.grpPowerIs.Name = "grpPowerIs";
             this.grpPowerIs.Size = new System.Drawing.Size(262, 51);
             this.grpPowerIs.TabIndex = 25;
@@ -1366,7 +1331,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpMapIs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpMapIs.Controls.Add(this.btnSelectMap);
             this.grpMapIs.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpMapIs.Location = new System.Drawing.Point(10, 41);
+            this.grpMapIs.Location = new System.Drawing.Point(9, 40);
             this.grpMapIs.Name = "grpMapIs";
             this.grpMapIs.Size = new System.Drawing.Size(261, 61);
             this.grpMapIs.TabIndex = 35;
@@ -1390,7 +1355,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGender.Controls.Add(this.cmbGender);
             this.grpGender.Controls.Add(this.lblGender);
             this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGender.Location = new System.Drawing.Point(10, 42);
+            this.grpGender.Location = new System.Drawing.Point(9, 40);
             this.grpGender.Name = "grpGender";
             this.grpGender.Size = new System.Drawing.Size(261, 51);
             this.grpGender.TabIndex = 33;
@@ -1434,7 +1399,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem.Controls.Add(this.cmbEquippedItem);
             this.grpEquippedItem.Controls.Add(this.lblEquippedItem);
             this.grpEquippedItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEquippedItem.Location = new System.Drawing.Point(8, 38);
+            this.grpEquippedItem.Location = new System.Drawing.Point(9, 40);
             this.grpEquippedItem.Name = "grpEquippedItem";
             this.grpEquippedItem.Size = new System.Drawing.Size(262, 58);
             this.grpEquippedItem.TabIndex = 26;
@@ -1471,27 +1436,42 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblEquippedItem.TabIndex = 2;
             this.lblEquippedItem.Text = "Item:";
             // 
-            // grpHasItem
+            // grpInventoryConditions
             // 
-            this.grpHasItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpHasItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpHasItem.Controls.Add(this.nudItemAmount);
-            this.grpHasItem.Controls.Add(this.cmbItem);
-            this.grpHasItem.Controls.Add(this.lblItem);
-            this.grpHasItem.Controls.Add(this.lblItemQuantity);
-            this.grpHasItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpHasItem.Location = new System.Drawing.Point(9, 40);
-            this.grpHasItem.Name = "grpHasItem";
-            this.grpHasItem.Size = new System.Drawing.Size(262, 83);
-            this.grpHasItem.TabIndex = 25;
-            this.grpHasItem.TabStop = false;
-            this.grpHasItem.Text = "Has Item";
+            this.grpInventoryConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpInventoryConditions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpInventoryConditions.Controls.Add(this.grpVariableAmount);
+            this.grpInventoryConditions.Controls.Add(this.grpManualAmount);
+            this.grpInventoryConditions.Controls.Add(this.grpAmountType);
+            this.grpInventoryConditions.Controls.Add(this.cmbItem);
+            this.grpInventoryConditions.Controls.Add(this.lblItem);
+            this.grpInventoryConditions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpInventoryConditions.Location = new System.Drawing.Point(9, 40);
+            this.grpInventoryConditions.Name = "grpInventoryConditions";
+            this.grpInventoryConditions.Size = new System.Drawing.Size(262, 179);
+            this.grpInventoryConditions.TabIndex = 25;
+            this.grpInventoryConditions.TabStop = false;
+            this.grpInventoryConditions.Text = "Has Item";
+            // 
+            // grpManualAmount
+            // 
+            this.grpManualAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpManualAmount.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpManualAmount.Controls.Add(this.nudItemAmount);
+            this.grpManualAmount.Controls.Add(this.lblItemQuantity);
+            this.grpManualAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpManualAmount.Location = new System.Drawing.Point(6, 68);
+            this.grpManualAmount.Name = "grpManualAmount";
+            this.grpManualAmount.Size = new System.Drawing.Size(250, 71);
+            this.grpManualAmount.TabIndex = 38;
+            this.grpManualAmount.TabStop = false;
+            this.grpManualAmount.Text = "Manual Amount:";
             // 
             // nudItemAmount
             // 
             this.nudItemAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudItemAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudItemAmount.Location = new System.Drawing.Point(104, 18);
+            this.nudItemAmount.Location = new System.Drawing.Point(86, 25);
             this.nudItemAmount.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -1499,13 +1479,58 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             0});
             this.nudItemAmount.Name = "nudItemAmount";
             this.nudItemAmount.Size = new System.Drawing.Size(150, 20);
-            this.nudItemAmount.TabIndex = 4;
+            this.nudItemAmount.TabIndex = 6;
             this.nudItemAmount.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nudItemAmount.ValueChanged += new System.EventHandler(this.NudItemAmount_ValueChanged);
+            // 
+            // lblItemQuantity
+            // 
+            this.lblItemQuantity.AutoSize = true;
+            this.lblItemQuantity.Location = new System.Drawing.Point(14, 27);
+            this.lblItemQuantity.Name = "lblItemQuantity";
+            this.lblItemQuantity.Size = new System.Drawing.Size(66, 13);
+            this.lblItemQuantity.TabIndex = 5;
+            this.lblItemQuantity.Text = "Has at least:";
+            // 
+            // grpAmountType
+            // 
+            this.grpAmountType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpAmountType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpAmountType.Controls.Add(this.rdoVariable);
+            this.grpAmountType.Controls.Add(this.rdoManual);
+            this.grpAmountType.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpAmountType.Location = new System.Drawing.Point(6, 14);
+            this.grpAmountType.Name = "grpAmountType";
+            this.grpAmountType.Size = new System.Drawing.Size(250, 48);
+            this.grpAmountType.TabIndex = 37;
+            this.grpAmountType.TabStop = false;
+            this.grpAmountType.Text = "Amount Type:";
+            // 
+            // rdoVariable
+            // 
+            this.rdoVariable.AutoSize = true;
+            this.rdoVariable.Location = new System.Drawing.Point(181, 19);
+            this.rdoVariable.Name = "rdoVariable";
+            this.rdoVariable.Size = new System.Drawing.Size(63, 17);
+            this.rdoVariable.TabIndex = 36;
+            this.rdoVariable.Text = "Variable";
+            this.rdoVariable.CheckedChanged += new System.EventHandler(this.rdoVariable_CheckedChanged);
+            // 
+            // rdoManual
+            // 
+            this.rdoManual.AutoSize = true;
+            this.rdoManual.Checked = true;
+            this.rdoManual.Location = new System.Drawing.Point(9, 19);
+            this.rdoManual.Name = "rdoManual";
+            this.rdoManual.Size = new System.Drawing.Size(60, 17);
+            this.rdoManual.TabIndex = 35;
+            this.rdoManual.TabStop = true;
+            this.rdoManual.Text = "Manual";
+            this.rdoManual.CheckedChanged += new System.EventHandler(this.rdoManual_CheckedChanged);
             // 
             // cmbItem
             // 
@@ -1521,9 +1546,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbItem.FormattingEnabled = true;
-            this.cmbItem.Location = new System.Drawing.Point(104, 52);
+            this.cmbItem.Location = new System.Drawing.Point(42, 145);
             this.cmbItem.Name = "cmbItem";
-            this.cmbItem.Size = new System.Drawing.Size(150, 21);
+            this.cmbItem.Size = new System.Drawing.Size(212, 21);
             this.cmbItem.TabIndex = 3;
             this.cmbItem.Text = null;
             this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1531,20 +1556,80 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // lblItem
             // 
             this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(7, 55);
+            this.lblItem.Location = new System.Drawing.Point(6, 147);
             this.lblItem.Name = "lblItem";
             this.lblItem.Size = new System.Drawing.Size(30, 13);
             this.lblItem.TabIndex = 2;
             this.lblItem.Text = "Item:";
             // 
-            // lblItemQuantity
+            // grpVariableAmount
             // 
-            this.lblItemQuantity.AutoSize = true;
-            this.lblItemQuantity.Location = new System.Drawing.Point(7, 20);
-            this.lblItemQuantity.Name = "lblItemQuantity";
-            this.lblItemQuantity.Size = new System.Drawing.Size(66, 13);
-            this.lblItemQuantity.TabIndex = 0;
-            this.lblItemQuantity.Text = "Has at least:";
+            this.grpVariableAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpVariableAmount.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpVariableAmount.Controls.Add(this.cmbInvVariable);
+            this.grpVariableAmount.Controls.Add(this.lblInvVariable);
+            this.grpVariableAmount.Controls.Add(this.rdoInvGlobalVariable);
+            this.grpVariableAmount.Controls.Add(this.rdoInvPlayerVariable);
+            this.grpVariableAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpVariableAmount.Location = new System.Drawing.Point(6, 68);
+            this.grpVariableAmount.Name = "grpVariableAmount";
+            this.grpVariableAmount.Size = new System.Drawing.Size(250, 71);
+            this.grpVariableAmount.TabIndex = 39;
+            this.grpVariableAmount.TabStop = false;
+            this.grpVariableAmount.Text = "Variable Amount:";
+            this.grpVariableAmount.Visible = false;
+            // 
+            // cmbInvVariable
+            // 
+            this.cmbInvVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbInvVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbInvVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbInvVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbInvVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbInvVariable.ButtonIcon")));
+            this.cmbInvVariable.DrawDropdownHoverOutline = false;
+            this.cmbInvVariable.DrawFocusRectangle = false;
+            this.cmbInvVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbInvVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbInvVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbInvVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbInvVariable.FormattingEnabled = true;
+            this.cmbInvVariable.Location = new System.Drawing.Point(67, 44);
+            this.cmbInvVariable.Name = "cmbInvVariable";
+            this.cmbInvVariable.Size = new System.Drawing.Size(177, 21);
+            this.cmbInvVariable.TabIndex = 39;
+            this.cmbInvVariable.Text = null;
+            this.cmbInvVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblInvVariable
+            // 
+            this.lblInvVariable.AutoSize = true;
+            this.lblInvVariable.Location = new System.Drawing.Point(8, 46);
+            this.lblInvVariable.Name = "lblInvVariable";
+            this.lblInvVariable.Size = new System.Drawing.Size(45, 13);
+            this.lblInvVariable.TabIndex = 38;
+            this.lblInvVariable.Text = "Variable";
+            // 
+            // rdoInvGlobalVariable
+            // 
+            this.rdoInvGlobalVariable.AutoSize = true;
+            this.rdoInvGlobalVariable.Location = new System.Drawing.Point(148, 19);
+            this.rdoInvGlobalVariable.Name = "rdoInvGlobalVariable";
+            this.rdoInvGlobalVariable.Size = new System.Drawing.Size(96, 17);
+            this.rdoInvGlobalVariable.TabIndex = 37;
+            this.rdoInvGlobalVariable.Text = "Global Variable";
+            this.rdoInvGlobalVariable.CheckedChanged += new System.EventHandler(this.rdoInvGlobalVariable_CheckedChanged);
+            // 
+            // rdoInvPlayerVariable
+            // 
+            this.rdoInvPlayerVariable.AutoSize = true;
+            this.rdoInvPlayerVariable.Checked = true;
+            this.rdoInvPlayerVariable.Location = new System.Drawing.Point(6, 19);
+            this.rdoInvPlayerVariable.Name = "rdoInvPlayerVariable";
+            this.rdoInvPlayerVariable.Size = new System.Drawing.Size(95, 17);
+            this.rdoInvPlayerVariable.TabIndex = 36;
+            this.rdoInvPlayerVariable.TabStop = true;
+            this.rdoInvPlayerVariable.Text = "Player Variable";
+            this.rdoInvPlayerVariable.CheckedChanged += new System.EventHandler(this.rdoInvPlayerVariable_CheckedChanged);
             // 
             // chkHasElse
             // 
@@ -1562,12 +1647,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpConditional);
             this.Name = "EventCommandConditionalBranch";
-            this.Size = new System.Drawing.Size(287, 345);
+            this.Size = new System.Drawing.Size(285, 345);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
-            this.grpFreeInventorySlots.ResumeLayout(false);
-            this.grpFreeInventorySlots.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFreeInventorySlots)).EndInit();
             this.grpVariable.ResumeLayout(false);
             this.grpSelectVariable.ResumeLayout(false);
             this.grpSelectVariable.PerformLayout();
@@ -1602,9 +1684,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGender.PerformLayout();
             this.grpEquippedItem.ResumeLayout(false);
             this.grpEquippedItem.PerformLayout();
-            this.grpHasItem.ResumeLayout(false);
-            this.grpHasItem.PerformLayout();
+            this.grpInventoryConditions.ResumeLayout(false);
+            this.grpInventoryConditions.PerformLayout();
+            this.grpManualAmount.ResumeLayout(false);
+            this.grpManualAmount.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).EndInit();
+            this.grpAmountType.ResumeLayout(false);
+            this.grpAmountType.PerformLayout();
+            this.grpVariableAmount.ResumeLayout(false);
+            this.grpVariableAmount.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1619,10 +1707,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpVariable;
         private DarkComboBox cmbNumericComparitor;
         private System.Windows.Forms.Label lblNumericComparator;
-        private DarkGroupBox grpHasItem;
+        private DarkGroupBox grpInventoryConditions;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
-        private System.Windows.Forms.Label lblItemQuantity;
         private DarkGroupBox grpSpell;
         private DarkComboBox cmbSpell;
         private System.Windows.Forms.Label lblSpell;
@@ -1665,7 +1752,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpGender;
         private DarkComboBox cmbGender;
         private System.Windows.Forms.Label lblGender;
-        private DarkNumericUpDown nudItemAmount;
         private DarkNumericUpDown nudLevelStatValue;
         private DarkCheckBox chkStatIgnoreBuffs;
         private DarkCheckBox chkNegated;
@@ -1700,9 +1786,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkTextBox txtStringValue;
         private System.Windows.Forms.Label lblStringComparatorValue;
         private System.Windows.Forms.Label lblStringTextVariables;
-        private DarkGroupBox grpFreeInventorySlots;
-        private DarkNumericUpDown nudFreeInventorySlots;
-        private System.Windows.Forms.Label lblFreeInventorySlotAmount;
+        private DarkGroupBox grpAmountType;
+        private DarkRadioButton rdoVariable;
+        private DarkRadioButton rdoManual;
+        private DarkGroupBox grpManualAmount;
+        private DarkNumericUpDown nudItemAmount;
+        private System.Windows.Forms.Label lblItemQuantity;
+        private DarkGroupBox grpVariableAmount;
+        private DarkComboBox cmbInvVariable;
+        private System.Windows.Forms.Label lblInvVariable;
+        private DarkRadioButton rdoInvGlobalVariable;
+        private DarkRadioButton rdoInvPlayerVariable;
         private DarkCheckBox chkHasElse;
     }
 }

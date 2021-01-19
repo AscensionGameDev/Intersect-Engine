@@ -13,7 +13,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Networking
 {
 
-    public class Client
+    public class Client : IPacketSender
     {
 
         public Guid EditorMap = Guid.Empty;
@@ -124,14 +124,6 @@ namespace Intersect.Server.Networking
 
             Entity.LastOnline = DateTime.Now;
             Entity.Client = this;
-        }
-
-        public void SendPacket(CerasPacket packet)
-        {
-            if (mConnection != null)
-            {
-                mConnection.Send(packet);
-            }
         }
 
         public void Pinged()
@@ -251,6 +243,12 @@ namespace Intersect.Server.Networking
             }
         }
 
+        #region Implementation of IPacketSender
+
+        /// <inheritdoc />
+        public bool Send(IPacket packet) => mConnection?.Send(packet) ?? false;
+
+        #endregion
     }
 
 }

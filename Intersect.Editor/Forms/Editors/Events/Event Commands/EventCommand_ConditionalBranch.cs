@@ -125,10 +125,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblStringComparatorValue.Text = Strings.EventConditional.value;
             lblStringTextVariables.Text = Strings.EventConditional.stringtip;
 
-            //Has Item
-            grpHasItem.Text = Strings.EventConditional.hasitem;
+            //Has Item + Has Free Inventory Slots
+            grpInventoryConditions.Text = Strings.EventConditional.hasitem;
             lblItemQuantity.Text = Strings.EventConditional.hasatleast;
             lblItem.Text = Strings.EventConditional.item;
+            lblInvVariable.Text = Strings.EventConditional.VariableLabel;
+            grpAmountType.Text = Strings.EventConditional.AmountType;
+            rdoManual.Text = Strings.EventConditional.Manual;
+            rdoVariable.Text = Strings.EventConditional.VariableLabel;
+            grpManualAmount.Text = Strings.EventConditional.Manual;
+            grpVariableAmount.Text = Strings.EventConditional.VariableLabel;
+            rdoInvPlayerVariable.Text = Strings.EventConditional.playervariable;
+            rdoInvGlobalVariable.Text = Strings.EventConditional.globalvariable;
 
             //Has Item Equipped
             grpEquippedItem.Text = Strings.EventConditional.hasitemequipped;
@@ -219,11 +227,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Map Is
             grpMapIs.Text = Strings.EventConditional.mapis;
             btnSelectMap.Text = Strings.EventConditional.selectmap;
-
-            // Free Inventory Slots
-            grpFreeInventorySlots.Text = Strings.EventConditional.FreeInventorySlots;
-            lblFreeInventorySlotAmount.Text = Strings.EventConditional.hasatleast;
-
 
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
@@ -339,7 +342,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.HasFreeInventorySlots:
                     Condition = new HasFreeInventorySlots();
-                    nudFreeInventorySlots.Value = 1;
+                    
 
                     break;
 
@@ -351,7 +354,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void UpdateFormElements(ConditionTypes type)
         {
             grpVariable.Hide();
-            grpHasItem.Hide();
+            grpInventoryConditions.Hide();
             grpSpell.Hide();
             grpClass.Hide();
             grpLevelStat.Hide();
@@ -364,7 +367,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpGender.Hide();
             grpMapIs.Hide();
             grpEquippedItem.Hide();
-            grpFreeInventorySlots.Hide();
             switch (type)
             {
                 case ConditionTypes.VariableIs:
@@ -382,9 +384,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                     break;
                 case ConditionTypes.HasItem:
-                    grpHasItem.Show();
+                    grpInventoryConditions.Show();
+                    grpInventoryConditions.Text = Strings.EventConditional.hasitem;
+                    lblItem.Visible = true;
+                    cmbItem.Visible = true;
                     cmbItem.Items.Clear();
                     cmbItem.Items.AddRange(ItemBase.Names);
+                    SetupAmountInput();
 
                     break;
                 case ConditionTypes.ClassIs:
@@ -462,7 +468,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
 
                 case ConditionTypes.HasFreeInventorySlots:
-                    grpFreeInventorySlots.Show();
+                    grpInventoryConditions.Show();
+                    grpInventoryConditions.Text = Strings.EventConditional.FreeInventorySlots;
+                    lblItem.Visible = false;
+                    cmbItem.Visible = false;
+                    cmbItem.Items.Clear();
+                    SetupAmountInput();
 
                     break;
                 default:
@@ -876,6 +887,114 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudItemAmount.Value = Math.Max(1, nudItemAmount.Value);
         }
 
+        private void rdoManual_CheckedChanged(object sender, EventArgs e)
+        {
+            SetupAmountInput();
+        }
+
+        private void rdoVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            SetupAmountInput();
+        }
+
+        private void rdoInvPlayerVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            SetupAmountInput();
+        }
+
+        private void rdoInvGlobalVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            SetupAmountInput();
+        }
+
+        private void SetupAmountInput()
+        {
+            grpManualAmount.Visible = rdoManual.Checked;
+            grpVariableAmount.Visible = !rdoManual.Checked;
+
+            VariableTypes conditionVariableType;
+            Guid conditionVariableId;
+            int ConditionQuantity;
+
+            switch (Condition.Type)
+            {
+                case ConditionTypes.HasFreeInventorySlots:
+                    conditionVariableType = ((HasFreeInventorySlots)Condition).VariableType;
+                    conditionVariableId = ((HasFreeInventorySlots)Condition).VariableId;
+                    ConditionQuantity = ((HasFreeInventorySlots)Condition).Quantity;
+                    break;
+                case ConditionTypes.HasItem:
+                    conditionVariableType = ((HasItemCondition)Condition).VariableType;
+                    conditionVariableId = ((HasItemCondition)Condition).VariableId;
+                    ConditionQuantity = ((HasItemCondition)Condition).Quantity;
+                    break;
+                default:
+                    conditionVariableType = VariableTypes.PlayerVariable;
+                    conditionVariableId = Guid.Empty;
+                    ConditionQuantity = 0;
+                    return;
+            }
+
+            cmbInvVariable.Items.Clear();
+            if (rdoInvPlayerVariable.Checked)
+            {
+                cmbInvVariable.Items.AddRange(PlayerVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                // Do not update if the wrong type of variable is saved
+                if (conditionVariableType == VariableTypes.PlayerVariable)
+                {
+                    var index = PlayerVariableBase.ListIndex(conditionVariableId, VariableDataTypes.Integer);
+                    if (index > -1)
+                    {
+                        cmbInvVariable.SelectedIndex = index;
+                    }
+                    else
+                    {
+                        VariableBlank();
+                    }
+                }
+                else
+                {
+                    VariableBlank();
+                }
+            }
+            else
+            {
+                cmbInvVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                // Do not update if the wrong type of variable is saved
+                if (conditionVariableType == VariableTypes.ServerVariable)
+                {
+                    var index = ServerVariableBase.ListIndex(conditionVariableId, VariableDataTypes.Integer);
+                    if (index > -1)
+                    {
+                        cmbInvVariable.SelectedIndex = index;
+                    }
+                    else
+                    {
+                        VariableBlank();
+                    }
+                }
+                else
+                {
+                    VariableBlank();
+                }
+            }
+
+            nudItemAmount.Value = Math.Max(1, ConditionQuantity);
+        }
+
+        private void VariableBlank()
+        {
+            if (cmbInvVariable.Items.Count > 0)
+            {
+                cmbInvVariable.SelectedIndex = 0;
+            }
+            else
+            {
+                cmbInvVariable.SelectedIndex = -1;
+                cmbInvVariable.Text = "";
+            }
+        }
+
         #region "SetupFormValues"
 
         private void SetupFormValues(VariableIsCondition condition)
@@ -898,6 +1017,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             cmbItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
             nudItemAmount.Value = condition.Quantity;
+            rdoVariable.Checked = condition.UseVariable;
+            rdoInvGlobalVariable.Checked = condition.VariableType == VariableTypes.ServerVariable;
+            SetupAmountInput();
         }
 
         private void SetupFormValues(ClassIsCondition condition)
@@ -993,7 +1115,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(HasFreeInventorySlots condition)
         {
-            nudFreeInventorySlots.Value = condition.Quantity;
+            nudItemAmount.Value = condition.Quantity;
+            rdoVariable.Checked = condition.UseVariable;
+            rdoInvGlobalVariable.Checked = condition.VariableType == VariableTypes.ServerVariable;
+            SetupAmountInput();
         }
 
 
@@ -1036,6 +1161,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             condition.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
             condition.Quantity = (int) nudItemAmount.Value;
+            condition.VariableType = rdoInvPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
+            condition.UseVariable = !rdoManual.Checked;
+            condition.VariableId = rdoInvPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex) : ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
         }
 
         private void SaveFormValues(ClassIsCondition condition)
@@ -1129,8 +1257,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(HasFreeInventorySlots condition)
         {
-            condition.Quantity = (int) nudFreeInventorySlots.Value;
+            condition.Quantity = (int) nudItemAmount.Value;
+            condition.VariableType = rdoInvPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
+            condition.UseVariable = !rdoManual.Checked;
+            condition.VariableId = rdoInvPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex) : ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
         }
+
         #endregion
     }
 

@@ -109,6 +109,9 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\AnnouncementWindow.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
+    <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
     <Compile Include="Interface\MutableInterface.cs" />
     <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
     <Compile Include="Items\Item.cs" />
@@ -236,7 +239,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icon.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="Icon.ico" />
+    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
+    <EmbeddedResource Include="Resources\openal32.dll" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll">
@@ -254,35 +273,20 @@
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\soft_oal.dll">
       <Link>Resources\x64\soft_oal.dll</Link>
     </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
-      <Link>Resources\x64\libSDL2</Link>
-    </Resource>
-    <Resource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
-      <Link>Resources\x64\libopenal</Link>
-    </Resource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
+      <Link>Resources\libopenal.so.1</Link>
+      <!-- <LogicalName>libopenal</LogicalName> -->
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+      <Link>Resources\libSDL2-2.0.so.0</Link>
+      <!-- <LogicalName>libSDL2</LogicalName> -->
+    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <None Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icon.bmp">
-      <LogicalName>Icon.bmp</LogicalName>
-    </EmbeddedResource>
-    <None Include="FodyWeavers.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <EmbeddedResource Include="Resources\openal32.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
@@ -297,9 +301,6 @@
       <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
       <Name>Intersect.Network</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
@@ -321,6 +322,19 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Target Name="WorkaroundMSBuild3064_LinuxLibs" BeforeTargets="SplitResourcesByCulture">
+    <!-- Workaround until https://github.com/dotnet/msbuild/issues/3064 gets merged into mono/msbuild -->
+    <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
+    <ItemGroup>
+      <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
+      <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
+        <WithCulture>false</WithCulture>
+        <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
+        <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
+      </_MixedResourceWithNoCulture>
+      <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
+    </ItemGroup>
+  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
