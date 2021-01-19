@@ -535,20 +535,20 @@ namespace Intersect.Editor.Forms
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
             toolStripBtnEyeDrop.Enabled = false;
-            if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+            if (Globals.CurrentLayer == LayerOptions.Attributes)
             {
                 toolStripBtnPen.Enabled = true;
                 toolStripBtnRect.Enabled = true;
             }
-            else if (Globals.CurrentLayer == LayerOptions.LIGHTS)
+            else if (Globals.CurrentLayer == LayerOptions.Lights)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == LayerOptions.EVENTS)
+            else if (Globals.CurrentLayer == LayerOptions.Events)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == LayerOptions.NPCS)
+            else if (Globals.CurrentLayer == LayerOptions.Npcs)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }

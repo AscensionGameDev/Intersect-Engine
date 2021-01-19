@@ -319,7 +319,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Fill)
                     {
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             Globals.MapEditorWindow.SmartFillAttributes(Globals.CurTileX, Globals.CurTileY);
                         }
@@ -334,7 +334,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     {
                         if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
                         {
-                            if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                            if (Globals.CurrentLayer == LayerOptions.Attributes)
                             {
                                 Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
                             }
@@ -348,7 +348,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else
                     {
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES) //Attributes
+                        if (Globals.CurrentLayer == LayerOptions.Attributes) //Attributes
                         {
                             Globals.MapLayersWindow.PlaceAttribute(
                                 Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
@@ -356,13 +356,13 @@ namespace Intersect.Editor.Forms.DockingElements
 
                             mMapChanged = true;
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.LIGHTS) //Lights
+                        else if (Globals.CurrentLayer == LayerOptions.Lights) //Lights
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.EVENTS) //Events
+                        else if (Globals.CurrentLayer == LayerOptions.Events) //Events
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.NPCS) //NPCS
+                        else if (Globals.CurrentLayer == LayerOptions.Npcs) //NPCS
                         {
                         }
                         else
@@ -440,7 +440,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         Globals.MouseButton = -1;
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                    else if (Globals.CurrentLayer == LayerOptions.Attributes)
                     {
                         if (Globals.CurrentTool == (int) EditingTool.Pen)
                         {
@@ -460,7 +460,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             Globals.CurMapSelH = 0;
                         }
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.LIGHTS)
+                    else if (Globals.CurrentLayer == LayerOptions.Lights)
                     {
                         LightBase tmpLight;
                         if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
@@ -470,7 +470,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             mMapChanged = true;
                         }
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.EVENTS)
+                    else if (Globals.CurrentLayer == LayerOptions.Events)
                     {
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
@@ -479,7 +479,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             mMapChanged = true;
                         }
                     }
-                    else if (Globals.CurrentLayer == LayerOptions.NPCS)
+                    else if (Globals.CurrentLayer == LayerOptions.Npcs)
                     {
                     }
                     else
@@ -641,17 +641,17 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else
                     {
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.LIGHTS)
+                        else if (Globals.CurrentLayer == LayerOptions.Lights)
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.EVENTS)
+                        else if (Globals.CurrentLayer == LayerOptions.Events)
                         {
                         }
-                        else if (Globals.CurrentLayer == LayerOptions.NPCS)
+                        else if (Globals.CurrentLayer == LayerOptions.Npcs)
                         {
                             if (Globals.MapLayersWindow.rbDeclared.Checked == true && Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
                             {
@@ -749,7 +749,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Pen)
                     {
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             Globals.MapLayersWindow.RemoveAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                         }
@@ -841,7 +841,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.CurMapSelW = selW;
                 Globals.CurMapSelH = selH;
 
-                if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                if (Globals.CurrentLayer == LayerOptions.Attributes)
                 {
                     for (var x = selX; x < selX + selW + 1; x++)
                     {
@@ -860,13 +860,13 @@ namespace Intersect.Editor.Forms.DockingElements
 
                     mMapChanged = true;
                 }
-                else if (Globals.CurrentLayer == LayerOptions.LIGHTS)
+                else if (Globals.CurrentLayer == LayerOptions.Lights)
                 {
                 }
-                else if (Globals.CurrentLayer == LayerOptions.EVENTS)
+                else if (Globals.CurrentLayer == LayerOptions.Events)
                 {
                 }
-                else if (Globals.CurrentLayer == LayerOptions.NPCS)
+                else if (Globals.CurrentLayer == LayerOptions.Npcs)
                 {
                 }
                 else
@@ -1153,11 +1153,11 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 //See if we should edit an event, light, npc, etc
                 //Attributes
-                case LayerOptions.ATTRIBUTES:
+                case LayerOptions.Attributes:
                     break;
 
                 //Lights
-                case LayerOptions.LIGHTS:
+                case LayerOptions.Lights:
                 {
                     LightBase tmpLight;
                     if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) == null)
@@ -1181,7 +1181,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 }
 
                 //Events
-                case LayerOptions.EVENTS:
+                case LayerOptions.Events:
                 {
                     var tmpEvent = currentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY);
                     FrmEvent tmpEventEditor;
@@ -1216,7 +1216,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 }
 
                 //NPCS
-                case LayerOptions.NPCS:
+                case LayerOptions.Npcs:
                 {
                     var spawnIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
                     var spawn = -1 < spawnIndex && spawnIndex < currentMap.Spawns.Count
@@ -1294,7 +1294,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
 
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             Globals.MapLayersWindow.PlaceAttribute(
                                 Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
@@ -1381,7 +1381,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
 
-                        if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             Globals.MapLayersWindow.RemoveAttribute(
                                 Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
@@ -1790,7 +1790,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     {
                         //Attributes
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                            Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
@@ -1805,7 +1805,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         //Spawns
                         NpcSpawn spawnCopy;
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.NPCS)
+                            Globals.CurrentLayer == LayerOptions.Npcs)
                         {
                             if (Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1827,7 +1827,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         //Lights
                         LightBase lightCopy;
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.LIGHTS)
+                            Globals.CurrentLayer == LayerOptions.Lights)
                         {
                             if (Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1849,7 +1849,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         //Events
                         EventBase eventCopy;
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.EVENTS)
+                            Globals.CurrentLayer == LayerOptions.Events)
                         {
                             if (Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1952,7 +1952,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     {
                         //Attributes
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                            Globals.CurrentLayer == LayerOptions.Attributes)
                         {
                             if (tmpMap.Attributes[x0, y0] != null)
                             {
@@ -1962,7 +1962,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         //Spawns
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.NPCS)
+                            Globals.CurrentLayer == LayerOptions.Npcs)
                         {
                             for (var w = 0; w < tmpMap.Spawns.Count; w++)
                             {
@@ -1975,7 +1975,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         //Lights
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.LIGHTS)
+                            Globals.CurrentLayer == LayerOptions.Lights)
                         {
                             for (var w = 0; w < tmpMap.Lights.Count; w++)
                             {
@@ -1988,7 +1988,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         //Events
                         if (Globals.SelectionType != (int) SelectionTypes.CurrentLayer ||
-                            Globals.CurrentLayer == LayerOptions.EVENTS)
+                            Globals.CurrentLayer == LayerOptions.Events)
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {

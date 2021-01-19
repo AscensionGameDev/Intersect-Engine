@@ -364,7 +364,7 @@ namespace Intersect.Editor.Core
                             DrawMapOverlay(null);
                         }
 
-                        if (!HideDarkness || Globals.CurrentLayer == LayerOptions.LIGHTS)
+                        if (!HideDarkness || Globals.CurrentLayer == LayerOptions.Lights)
                         {
                             OverlayDarkness(null);
                         }
@@ -592,7 +592,7 @@ namespace Intersect.Editor.Core
                         }
                         else
                         {
-                            if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES)
+                            if (Globals.CurrentLayer == LayerOptions.Attributes)
                             {
                                 if (Globals.CurrentTool == (int) EditingTool.Pen)
                                 {
@@ -616,13 +616,13 @@ namespace Intersect.Editor.Core
                                     }
                                 }
                             }
-                            else if (Globals.CurrentLayer == LayerOptions.LIGHTS)
+                            else if (Globals.CurrentLayer == LayerOptions.Lights)
                             {
                             }
-                            else if (Globals.CurrentLayer == LayerOptions.EVENTS) 
+                            else if (Globals.CurrentLayer == LayerOptions.Events) 
                             {
                             }
-                            else if (Globals.CurrentLayer == LayerOptions.NPCS)
+                            else if (Globals.CurrentLayer == LayerOptions.Npcs)
                             {
                             }
                             else if (Globals.CurrentTileset != null)
@@ -895,7 +895,7 @@ namespace Intersect.Editor.Core
             if (!HideTilePreview || Globals.Dragging)
             {
                 tmpMap = TilePreviewStruct;
-                if (Globals.CurrentLayer == LayerOptions.ATTRIBUTES) //Attributes
+                if (Globals.CurrentLayer == LayerOptions.Attributes) //Attributes
                 {
                     //Draw attributes
                     for (var x = 0; x < Options.MapWidth; x++)
@@ -930,10 +930,10 @@ namespace Intersect.Editor.Core
                         }
                     }
                 }
-                else if (Globals.CurrentLayer == LayerOptions.LIGHTS) //Lights
+                else if (Globals.CurrentLayer == LayerOptions.Lights) //Lights
                 {
                 }
-                else if (Globals.CurrentLayer == LayerOptions.EVENTS) //Events
+                else if (Globals.CurrentLayer == LayerOptions.Events) //Events
                 {
                     for (var x = 0; x < Options.MapWidth; x++)
                     {
@@ -961,7 +961,7 @@ namespace Intersect.Editor.Core
                         }
                     }
                 }
-                else if (Globals.CurrentLayer == LayerOptions.NPCS) //NPCS
+                else if (Globals.CurrentLayer == LayerOptions.Npcs) //NPCS
                 {
                     for (var i = 0; i < tmpMap.Spawns.Count; i++)
                     {
@@ -1753,7 +1753,7 @@ namespace Intersect.Editor.Core
                 DrawMapOverlay(sScreenShotRenderTexture);
             }
 
-            if (!Database.GridHideDarkness || Globals.CurrentLayer == LayerOptions.LIGHTS)
+            if (!Database.GridHideDarkness || Globals.CurrentLayer == LayerOptions.Lights)
             {
                 ClearDarknessTexture(sScreenShotRenderTexture, true);
                 OverlayDarkness(sScreenShotRenderTexture, true);
@@ -1993,7 +1993,7 @@ namespace Intersect.Editor.Core
             );
 
             ////Draw Light Attribute Icons
-            if (Globals.CurrentLayer != LayerOptions.LIGHTS)
+            if (Globals.CurrentLayer != LayerOptions.Lights)
             {
                 return;
             }
