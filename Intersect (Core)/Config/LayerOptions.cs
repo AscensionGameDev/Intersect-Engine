@@ -67,7 +67,7 @@ namespace Intersect.Config
             {
                 if (All.Contains(reserved))
                 {
-                    throw new Exception("Config Error: Layer '" + reserved + "' is reserved for editor use. Please choose different naming for map layers in your server config.");
+                    throw new Exception($"Config Error: Layer '{reserved}' is reserved for editor use. Please choose different naming for map layers in your server config.");
                 }
             }
 
