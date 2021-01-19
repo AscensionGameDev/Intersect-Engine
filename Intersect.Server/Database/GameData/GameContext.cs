@@ -102,6 +102,11 @@ namespace Intersect.Server.Database.GameData
             {
                 Beta6Migration.Run(this);
             }
+
+            if (migrations.IndexOf("20201004032158_EnablingCerasVersionTolerance") > -1)
+            {
+                CerasVersionToleranceMigration.Run(this);
+            }
         }
 
         internal static class Queries

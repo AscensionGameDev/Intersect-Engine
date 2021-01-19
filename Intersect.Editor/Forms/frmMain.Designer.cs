@@ -122,6 +122,7 @@ namespace Intersect.Editor.Forms
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -719,8 +720,9 @@ namespace Intersect.Editor.Forms
             this.hideOverlayToolStripMenuItem,
             this.hideTilePreviewToolStripMenuItem,
             this.hideResourcesToolStripMenuItem,
+            this.mapGridToolStripMenuItem,
             this.hideEventsToolStripMenuItem,
-            this.mapGridToolStripMenuItem});
+            this.layersToolStripMenuItem});
             this.viewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -997,6 +999,14 @@ namespace Intersect.Editor.Forms
             this.packageUpdateToolStripMenuItem.Text = "Package Update";
             this.packageUpdateToolStripMenuItem.Click += new System.EventHandler(this.packageUpdateToolStripMenuItem_Click);
             // 
+            // layersToolStripMenuItem
+            // 
+            this.layersToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
+            this.layersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.layersToolStripMenuItem.Text = "Layers";
+            this.layersToolStripMenuItem.DropDownOpened += new System.EventHandler(this.layersToolStripMenuItem_DropDownOpened);
+            //
             // hideEventsToolStripMenuItem
             // 
             this.hideEventsToolStripMenuItem.Checked = true;
@@ -1006,6 +1016,7 @@ namespace Intersect.Editor.Forms
             this.hideEventsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hideEventsToolStripMenuItem.Text = "Events";
             this.hideEventsToolStripMenuItem.Click += new System.EventHandler(this.hideEventsToolStripMenuItem_Click);
+
             // 
             // FrmMain
             // 
@@ -1126,6 +1137,7 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
         private ToolStripMenuItem packClientTexturesToolStripMenuItem;
         private ToolStripMenuItem packageUpdateToolStripMenuItem;
+        private ToolStripMenuItem layersToolStripMenuItem;
         private ToolStripMenuItem hideEventsToolStripMenuItem;
     }
 }

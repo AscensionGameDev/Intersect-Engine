@@ -22,6 +22,8 @@ namespace Intersect.Config
 
         public bool ZDimensionVisible;
 
+        public LayerOptions Layers = new LayerOptions();
+
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {

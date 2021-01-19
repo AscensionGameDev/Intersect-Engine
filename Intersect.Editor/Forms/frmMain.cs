@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using DarkUI.Controls;
 using DarkUI.Forms;
-
+using Intersect.Config;
 using Intersect.Editor.Classes.ContentManagement;
 using Intersect.Editor.Content;
 using Intersect.Editor.Forms.DockingElements;
@@ -22,6 +22,7 @@ using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Localization;
 using Intersect.Network;
 using Intersect.Updater;
 
@@ -369,6 +370,18 @@ namespace Intersect.Editor.Forms
             Globals.InEditor = true;
             GrabMouseDownEvents();
             UpdateRunState();
+
+            //Init layer visibility buttons
+            foreach (var layer in Options.Instance.MapOpts.Layers.All)
+            {
+                Strings.Tiles.maplayers.TryGetValue(layer.ToLower(), out LocalizedString layerName);
+                if (layerName == null) layerName = layer;
+                var btn = new ToolStripMenuItem(layerName);
+                btn.Checked = true;
+                btn.Click += HideLayerBtn_Click;
+                btn.Tag = layer;
+                layersToolStripMenuItem.DropDownItems.Add(btn);
+            }
         }
 
         protected override void OnClosed(EventArgs e)
@@ -502,7 +515,7 @@ namespace Intersect.Editor.Forms
             }
 
             //Process the Fill/Erase Buttons
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
             {
                 toolStripBtnFill.Enabled = true;
                 fillToolStripMenuItem.Enabled = true;
@@ -522,20 +535,20 @@ namespace Intersect.Editor.Forms
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
             toolStripBtnEyeDrop.Enabled = false;
-            if (Globals.CurrentLayer == Options.LayerCount) //Attributes
+            if (Globals.CurrentLayer == LayerOptions.Attributes)
             {
                 toolStripBtnPen.Enabled = true;
                 toolStripBtnRect.Enabled = true;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
+            else if (Globals.CurrentLayer == LayerOptions.Lights)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
+            else if (Globals.CurrentLayer == LayerOptions.Events)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS
+            else if (Globals.CurrentLayer == LayerOptions.Npcs)
             {
                 Globals.CurrentTool = (int) EditingTool.Selection;
             }
@@ -1040,7 +1053,7 @@ namespace Intersect.Editor.Forms
         //Edit
         private void fillToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
             {
                 Globals.MapEditorWindow.FillLayer();
             }
@@ -1048,7 +1061,7 @@ namespace Intersect.Editor.Forms
 
         private void eraseLayerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentLayer <= Options.LayerCount)
+            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
             {
                 Globals.MapEditorWindow.EraseLayer();
             }
@@ -1205,6 +1218,24 @@ namespace Intersect.Editor.Forms
         private void timeEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendOpenEditor(GameObjectType.Time);
+        }
+
+        private void layersToolStripMenuItem_DropDownOpened(object sender, EventArgs e)
+        {
+            foreach (var itm in ((ToolStripMenuItem)sender).DropDownItems)
+            {
+                var btn = (ToolStripMenuItem)itm;
+                btn.Checked = Globals.MapLayersWindow.LayerVisibility[(string)btn.Tag];
+            }
+        }
+
+        private void HideLayerBtn_Click(object sender, EventArgs e)
+        {
+            var btn = ((ToolStripMenuItem)sender);
+            var tag = (string)btn.Tag;
+            btn.Checked = !btn.Checked;
+            Globals.MapLayersWindow.LayerVisibility[tag] = btn.Checked;
+            Globals.MapLayersWindow.SetLayer(Globals.CurrentLayer);
         }
 
         //Help

@@ -121,64 +121,19 @@
   <data name="Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_1_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="layer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\layer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_1_A_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1_A Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="layer_face" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\layer_face.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_1_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="layer_face_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\layer_face_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_1_B_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\1_B Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="layer_hidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\layer_hidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_2_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_2_A_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2_A Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_2_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_2_B_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2_B Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_3_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\3_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_3_A_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\3_A Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_3_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\3_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_3_B_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\3_B Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_4_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_4_A_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4_A Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_4_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_4_B_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4_B Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_5_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_5_A_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5_A Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_5_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_5_B_Hide" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5_B Hide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="layer_sel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\layer_sel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

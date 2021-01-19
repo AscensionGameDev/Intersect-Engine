@@ -441,6 +441,7 @@
     <Compile Include="Database\GameData\GameContext.cs" />
     <Compile Include="Database\GameData\IGameContext.cs" />
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\GameData\Migrations\CerasVersionToleranceMigration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
@@ -502,6 +503,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
+    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.designer.cs">
+      <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.cs" />
     <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.designer.cs">
       <DependentUpon>20201001163344_ItemAndSpellCooldownImprovements.cs</DependentUpon>
