@@ -25,7 +25,14 @@ namespace Intersect.Editor.Networking
 
         public static ClientNetwork EditorLidgrenNetwork;
 
+        public static PacketHandler PacketHandler { get; }
+
         public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
+
+        static Network()
+        {
+            PacketHandler = new PacketHandler(Log.Default);
+        }
 
         public static void InitNetwork()
         {

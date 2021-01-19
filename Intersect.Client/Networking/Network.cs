@@ -20,7 +20,9 @@ namespace Intersect.Client.Networking
 
         private static bool sConnected;
 
-        public static GameSocket Socket;
+        public static GameSocket Socket { get; set; }
+
+        public static PacketHandler PacketHandler { get; }
 
         private static int sPing;
 
@@ -30,6 +32,11 @@ namespace Intersect.Client.Networking
         {
             get => Socket?.Ping ?? sPing;
             set => sPing = value;
+        }
+
+        static Network()
+        {
+            PacketHandler = new PacketHandler(Log.Default);
         }
 
         public static void InitNetwork()

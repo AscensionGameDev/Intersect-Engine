@@ -331,8 +331,13 @@
     <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\ConnectionStatistics.cs" />
     <Compile Include="Network\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Network\IPacketHandler.cs" />
+    <Compile Include="Network\IPacketSender.cs" />
     <Compile Include="Network\NetworkStatus.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
+    <Compile Include="Network\PacketHandlerAttribute.cs" />
+    <Compile Include="Network\PacketHandlerRegistry.cs" />
+    <Compile Include="Network\PacketHandlerRegistry.DisposableHandler.cs" />
     <Compile Include="Network\Packets\AbstractTimedPacket.cs" />
     <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
     <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />
@@ -620,7 +625,7 @@
     <Compile Include="Network\AbstractConnection.cs" />
     <Compile Include="Network\AbstractNetwork.cs" />
     <Compile Include="Network\DnsUtils.cs" />
-    <Compile Include="Network\HandlePacket.cs" />
+    <Compile Include="Network\Delegates.cs" />
     <Compile Include="Network\IClient.cs" />
     <Compile Include="Network\IConnection.cs" />
     <Compile Include="Network\INetwork.cs" />

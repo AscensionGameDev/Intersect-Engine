@@ -104,6 +104,7 @@
     <Compile Include="Extensions\RandomExtensionsTests.cs" />
     <Compile Include="IO\Files\FileSystemHelperTests.cs" />
     <Compile Include="Factories\FactoryRegistryTests.cs" />
+    <Compile Include="Network\PacketHandlerAttributeTests.cs" />
     <Compile Include="Plugins\Loaders\ManifestLoaderTest.cs" />
     <Compile Include="Plugins\Manifests\JsonManifestTests.cs" />
     <Compile Include="Plugins\Manifests\Types\AuthorTests.cs" />
