@@ -25,9 +25,9 @@ namespace Intersect.Network
 
         public static List<Type> KnownTypes { get; } = FindTypes(BuiltInPacketNamespaces).ToList();
 
-        private readonly CerasSerializer mSerializer;
+        protected CerasSerializer mSerializer;
 
-        private readonly SerializerConfig mSerializerConfig;
+        protected SerializerConfig mSerializerConfig;
 
         public Ceras(bool forNetworking = true)
         {
