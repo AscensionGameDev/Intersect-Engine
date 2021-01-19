@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Intersect.Enums;
 using Intersect.Localization;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -457,6 +457,15 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString toofast = @"You are chatting too fast!";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
+                { ChatboxTab.All, @"All" },
+                { ChatboxTab.Local, @"Local" },
+                { ChatboxTab.Party, @"Party" },
+                { ChatboxTab.Global, @"Global" },
+                { ChatboxTab.System, @"System" },
+            };
+            
             [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
 

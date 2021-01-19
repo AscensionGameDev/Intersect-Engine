@@ -94,11 +94,11 @@ namespace Intersect.Server.Networking
 
                 if (client.Power.Editor)
                 {
-                    SendChatMsg(player, Strings.Player.adminjoined, CustomColors.Alerts.AdminJoined);
+                    SendChatMsg(player, Strings.Player.adminjoined, ChatMessageType.Notice, CustomColors.Alerts.AdminJoined);
                 }
                 else if (client.Power.IsModerator)
                 {
-                    SendChatMsg(player, Strings.Player.modjoined, CustomColors.Alerts.ModJoined);
+                    SendChatMsg(player, Strings.Player.modjoined, ChatMessageType.Notice, CustomColors.Alerts.ModJoined);
                 }
 
                 if (player.MapId == Guid.Empty)
@@ -541,21 +541,34 @@ namespace Intersect.Server.Networking
             player.SendPacket(new EntityLeftPacket(evt.Id, EntityTypes.Event, evt.MapId));
         }
 
-        //ChatMsgPacket
-        public static void SendChatMsg(Player player, string message, string target = "")
+        /// <summary>
+        /// Sends a chat message to the specified player.
+        /// </summary>
+        /// <param name="player">The player to which to send a message.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        public static void SendChatMsg(Player player, string message, ChatMessageType type, string target = "")
         {
-            SendChatMsg(player, message, CustomColors.Chat.PlayerMsg, target);
+            SendChatMsg(player, message, type, CustomColors.Chat.PlayerMsg, target);
         }
 
-        //ChatMsgPacket
-        public static void SendChatMsg(Player player, string message, Color clr, string target = "")
+        /// <summary>
+        /// Sends a chat message to the specified player.
+        /// </summary>
+        /// <param name="player">The player to which to send a message.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        public static void SendChatMsg(Player player, string message, ChatMessageType type, Color color, string target = "")
         {
             if (player == null)
             {
                 return;
             }
 
-            player.SendPacket(new ChatMsgPacket(message, clr, target));
+            player.SendPacket(new ChatMsgPacket(message, type, color, target));
         }
 
         //GameDataPacket
@@ -625,32 +638,62 @@ namespace Intersect.Server.Networking
             CachedGameDataPacket = new GameDataPacket(gameObjects.ToArray(), CustomColors.Json());
         }
 
-        //ChatMsgPacket
+        /// <summary>
+        /// Sends a global chat message to every user online.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
         public static void SendGlobalMsg(string message, string target = "")
         {
             SendGlobalMsg(message, CustomColors.Chat.AnnouncementChat, target);
         }
 
-        //ChatMsgPacket
-        public static void SendGlobalMsg(string message, Color clr, string target = "")
+        /// <summary>
+        /// Sends a global chat message to every user online.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        public static void SendGlobalMsg(string message, Color color, string target = "", ChatMessageType type = ChatMessageType.Global)
         {
-            SendDataToAllPlayers(new ChatMsgPacket(message, clr, target));
+            SendDataToAllPlayers(new ChatMsgPacket(message, type, color, target));
         }
 
-        //ChatMsgPacket
-        public static bool SendProximityMsg(string message, Guid mapId, string target = "")
+        /// <summary>
+        /// Sends a chat message to the proximity of a specified map.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        /// <param name="mapId">The Map we are sending this message to (and its surroundings).</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        /// <returns>Returns whether or not the message was sent successfully.</returns>
+        public static bool SendProximityMsg(string message, ChatMessageType type, Guid mapId, string target = "")
         {
-            return SendProximityMsg(message, mapId, CustomColors.Chat.ProximityMsg);
+            return SendProximityMsg(message, type, mapId, CustomColors.Chat.ProximityMsg);
         }
 
-        //ChatMsgPacket
-        public static bool SendProximityMsg(string message, Guid mapId, Color clr, string target = "")
+        /// <summary>
+        /// Sends a chat message to the proximity of a specified map.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        /// <param name="mapId">The Map we are sending this message to (and its surroundings).</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        /// <returns></returns>
+        public static bool SendProximityMsg(string message, ChatMessageType type, Guid mapId, Color color, string target = "")
         {
-            return SendDataToProximity(mapId, new ChatMsgPacket(message, clr, target));
+            return SendDataToProximity(mapId, new ChatMsgPacket(message, type, color, target));
         }
 
-        //ChatMsgPacket
-        public static void SendAdminMsg(string message, Color clr, string target = "")
+        /// <summary>
+        /// Sends a message to all online staff members.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        public static void SendAdminMsg(string message, Color color, string target = "")
         {
             foreach (var player in Globals.OnlineList)
             {
@@ -658,20 +701,26 @@ namespace Intersect.Server.Networking
                 {
                     if (player.Power != UserRights.None)
                     {
-                        SendChatMsg(player, message, clr, target);
+                        SendChatMsg(player, message, ChatMessageType.Admin , color, target);
                     }
                 }
             }
         }
 
-        //ChatMsgPacket
-        public static void SendPartyMsg(Player player, string message, Color clr, string target = "")
+        /// <summary>
+        /// Sends a message to our player's party.
+        /// </summary>
+        /// <param name="player">The player of which to send a message to their party.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        public static void SendPartyMsg(Player player, string message, Color color, string target = "")
         {
             foreach (var p in player.Party)
             {
                 if (p != null)
                 {
-                    SendChatMsg(p, message, clr, target);
+                    SendChatMsg(p, message, ChatMessageType.Party , color, target);
                 }
             }
         }

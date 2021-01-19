@@ -426,7 +426,7 @@ namespace Intersect.Client.Networking
         {
             ChatboxMsg.AddMessage(
                 new ChatboxMsg(
-                    packet.Message ?? "", new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B),
+                    packet.Message ?? "", new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Type,
                     packet.Target
                 )
             );

@@ -73,7 +73,7 @@ namespace Intersect.Client.MonoGame.Audio
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
                             $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
-                            new Color(0xBF, 0x0, 0x0)
+                            new Color(0xBF, 0x0, 0x0),  Enums.ChatMessageType.Error
                         )
                     );
                 }
