@@ -261,10 +261,10 @@ namespace Intersect.Client.MonoGame.File_Management
                 SoundPacks = new AssetPacker(Path.Combine("resources", "packs", "sound.index"), Path.Combine("resources", "packs"));
                 foreach(var item in SoundPacks.FileList)
                 {
-                    if (!mSoundDict.ContainsKey(RemoveExtension(item)))
+                    if (!mSoundDict.ContainsKey(RemoveExtension(item).ToLower()))
                     {
                         mSoundDict.Add(
-                            RemoveExtension(item),
+                            RemoveExtension(item).ToLower(),
                             new MonoSoundSource(item, ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
                         );
                     }
@@ -295,7 +295,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 MusicPacks = new AssetPacker(Path.Combine("resources", "packs", "music.index"), Path.Combine("resources", "packs"));
                 foreach (var item in MusicPacks.FileList)
                 {
-                    if (!mMusicDict.ContainsKey(RemoveExtension(item)))
+                    if (!mMusicDict.ContainsKey(RemoveExtension(item).ToLower()))
                     {
                         mMusicDict.Add(
                             RemoveExtension(item).ToLower(),
