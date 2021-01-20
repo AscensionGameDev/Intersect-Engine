@@ -120,7 +120,6 @@ namespace Intersect.Editor.Forms
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideEventsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -976,20 +975,11 @@ namespace Intersect.Editor.Forms
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.packClientTexturesToolStripMenuItem,
             this.packageUpdateToolStripMenuItem});
             this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // packClientTexturesToolStripMenuItem
-            // 
-            this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
-            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
-            this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
             // 
             // packageUpdateToolStripMenuItem
             // 
@@ -1135,7 +1125,6 @@ namespace Intersect.Editor.Forms
 		private ToolStripButton toolStripBtnFlipVertical;
 		private ToolStripSeparator toolStripSeparator13;
 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
-        private ToolStripMenuItem packClientTexturesToolStripMenuItem;
         private ToolStripMenuItem packageUpdateToolStripMenuItem;
         private ToolStripMenuItem layersToolStripMenuItem;
         private ToolStripMenuItem hideEventsToolStripMenuItem;

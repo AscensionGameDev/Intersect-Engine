@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect.Compression;
 using Intersect.Config;
 using Intersect.Editor.Classes.ContentManagement;
 using Intersect.Editor.Content;
@@ -186,7 +187,6 @@ namespace Intersect.Editor.Forms
             timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
 
             toolsToolStripMenuItem.Text = Strings.MainForm.tools;
-            packClientTexturesToolStripMenuItem.Text = Strings.MainForm.packtextures;
 
             helpToolStripMenuItem.Text = Strings.MainForm.help;
             postQuestionToolStripMenuItem.Text = Strings.MainForm.postquestion;
@@ -1667,21 +1667,17 @@ namespace Intersect.Editor.Forms
 
         private void packClientTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Globals.PackingProgressForm = new FrmProgress();
-            Globals.PackingProgressForm.SetTitle(Strings.TexturePacking.title);
-            var packingthread = new Thread(() => packTextures());
-            packingthread.Start();
-            Globals.PackingProgressForm.ShowDialog();
+            
         }
 
-        private void packTextures()
+        private void packAssets()
         {
-            //TODO: Make the max pack size a configurable option, along with the packing heuristic that the texture packer class should use.
-            var maxPackSize = 2048;
+            //TODO: Make packing heuristic that the texture packer class should use configurable.
+            var maxPackSize = Convert.ToInt32(Preferences.LoadPreference("TexturePackSize"));
             var packsPath = Path.Combine("resources", "packs");
 
             //Delete Old Packs
-            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.deleting, 10, false);
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.deleting, 10, false);
             Application.DoEvents();
             if (Directory.Exists(packsPath))
             {
@@ -1703,7 +1699,7 @@ namespace Intersect.Editor.Forms
             }
 
             //Create two 'sets' of graphics we want to pack. Tilesets + Fogs in one set, everything else in the other.
-            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.collecting, 20, false);
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.collecting, 20, false);
             Application.DoEvents();
             var toPack = new HashSet<Texture>();
             foreach (var tex in GameContentManager.TilesetTextures)
@@ -1724,7 +1720,7 @@ namespace Intersect.Editor.Forms
                 }
             }
 
-            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.calculating, 30, false);
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.calculating, 30, false);
             Application.DoEvents();
             var packs = new List<TexturePacker>();
             while (toPack.Count > 0)
@@ -1764,7 +1760,7 @@ namespace Intersect.Editor.Forms
                 }
             }
 
-            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.exporting, 40, false);
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.exporting, 40, false);
             Application.DoEvents();
             var packIndex = 0;
             foreach (var pack in packs)
@@ -1773,7 +1769,17 @@ namespace Intersect.Editor.Forms
                 packIndex++;
             }
 
-            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.done, 100, false);
+            // Package up sounds!
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
+            Application.DoEvents();
+            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundBatchSize")));
+
+            // Package up music!
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
+            Application.DoEvents();
+            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicBatchSize")));
+
+            Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();
             System.Threading.Thread.Sleep(1000);
 
@@ -1823,7 +1829,18 @@ namespace Intersect.Editor.Forms
                             return;
                         }
                     }
-                    
+
+                    // Are we configured to package up our assets for an update?
+                    var packageUpdateAssets = Preferences.LoadPreference("PackageUpdateAssets");
+                    if (packageUpdateAssets != "" && Convert.ToBoolean(packageUpdateAssets))
+                    {
+                        Globals.PackingProgressForm = new FrmProgress();
+                        Globals.PackingProgressForm.SetTitle(Strings.AssetPacking.title);
+                        var assetThread = new Thread(() => packAssets());
+                        assetThread.Start();
+                        Globals.PackingProgressForm.ShowDialog();
+                    }
+
                     Globals.UpdateCreationProgressForm = new FrmProgress();
                     Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.Title);
                     Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Deleting,10,false);
@@ -1864,19 +1881,44 @@ namespace Intersect.Editor.Forms
 
                 if (Directory.Exists(Path.Combine("resources", "packs")))
                 {
-                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.json");
+                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.meta");
                     foreach (var pack in packs)
                     {
-                        var obj = JObject.Parse(File.ReadAllText(pack))["frames"];
+                        var obj = JObject.Parse(GzipCompression.ReadDecompressedString(pack))["frames"];
                         foreach (var frame in obj.Children())
                         {
                             var filename = frame["filename"].ToString();
                             clientExcludeFiles.Add(filename);
                         }
                     }
+
+                    var soundIndex = Path.Combine("resources", "packs", "sound.index");
+                    if (File.Exists(soundIndex))
+                    {
+                        using (var soundPacker = new AssetPacker(soundIndex, Path.Combine("resources", "packs")))
+                        {
+                            foreach (var sound in soundPacker.FileList)
+                            {
+                                // Add as lowercase as our update generator checks for lowercases!
+                                clientExcludeFiles.Add(Path.Combine("resources", "sounds", sound.ToLower()).Replace('\\', '/'));
+                            }
+                        }
+                    }
+
+                    var musicIndex = Path.Combine("resources", "packs", "music.index");
+                    if (File.Exists(musicIndex))
+                    {
+                        using (var musicPacker = new AssetPacker(musicIndex, Path.Combine("resources", "packs")))
+                        {
+                            foreach (var music in musicPacker.FileList)
+                            {
+                                // Add as lowercase as our update generator checks for lowercases!
+                                clientExcludeFiles.Add(Path.Combine("resources", "music", music.ToLower()).Replace('\\', '/'));
+                            }
+                        }
+                    }
+
                 }
-
-
 
                 var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
 

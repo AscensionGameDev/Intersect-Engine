@@ -6,6 +6,7 @@ using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
+using Intersect.Compression;
 using Intersect.Logging;
 
 namespace Intersect.Client.Core
@@ -107,6 +108,18 @@ namespace Intersect.Client.Core
                 {
                     sGameSounds.RemoveAt(i);
                 }
+            }
+
+            // Update our pack sound cache if we have any packs loaded.
+            if (Globals.ContentManager.SoundPacks != null)
+            {
+                Globals.ContentManager.SoundPacks.UpdateCache();
+            }
+
+            // Update our pack music cache if we have any packs loaded.
+            if (Globals.ContentManager.MusicPacks != null)
+            {
+                Globals.ContentManager.MusicPacks.UpdateCache();
             }
         }
 

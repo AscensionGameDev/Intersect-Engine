@@ -3189,8 +3189,6 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString overlay = @"Overlay";
 
-            public static LocalizedString packtextures = @"Pack Client Textures";
-
             public static LocalizedString paste = @"Paste";
 
             public static LocalizedString pen = @"Pen Tool";
@@ -3735,6 +3733,23 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString title = @"Options";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UpdateTab = @"Update";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PackageUpdates = @"Package assets when generating updates.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PackageOptions = @"Asset Packing Options";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MusicBatch = @"Music Batch Size";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SoundBatch = @"Sound Batch Size";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TextureSize = @"Texture Pack Size";
         }
 
         public struct ProgressForm
@@ -4426,18 +4441,22 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct TexturePacking
+        public struct AssetPacking
         {
 
-            public static LocalizedString title = "Packing textures, please wait!";
+            public static LocalizedString title = "Packing assets, please wait!";
 
             public static LocalizedString deleting = "Deleting old packs...";
 
-            public static LocalizedString collecting = "Creating packing list...";
+            public static LocalizedString collecting = "Creating texture packing list...";
 
-            public static LocalizedString calculating = "Calculating rects...";
+            public static LocalizedString calculating = "Calculating texture rects...";
 
             public static LocalizedString exporting = "Exporting textures...";
+
+            public static LocalizedString sounds = "Packing up sounds...";
+
+            public static LocalizedString music = "Packing up music...";
 
             public static LocalizedString done = "Done!";
 
