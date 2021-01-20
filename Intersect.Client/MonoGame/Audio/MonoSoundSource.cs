@@ -72,7 +72,7 @@ namespace Intersect.Client.MonoGame.Audio
                 }
                 else
                 {
-                    using (var fileStream = new FileStream(mFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var fileStream = new FileStream(mRealPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
                         mSound = SoundEffect.FromStream(fileStream);
                     }  

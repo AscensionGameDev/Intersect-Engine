@@ -36,13 +36,21 @@ namespace Intersect.Client.MonoGame.File_Management
         {
             mTilesetDict.Clear();
 
+            IEnumerable<string> tilesetFiles = Array.Empty<string>();
+
             var dir = Path.Combine("resources", "tilesets");
             if (!Directory.Exists(dir))
             {
-                Directory.CreateDirectory(dir);
+                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+            else
+            {
+                tilesetFiles = Directory.GetFiles(dir).Select(f => Path.GetFileName(f));
             }
 
-            var tilesetFiles = Directory.GetFiles(dir).Select(f => Path.GetFileName(f));
             foreach (var t in tilesetnames)
             {
                 var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? string.Empty;
@@ -112,14 +120,19 @@ namespace Intersect.Client.MonoGame.File_Management
             var dir = Path.Combine("resources", directory);
             if (!Directory.Exists(dir))
             {
-                Directory.CreateDirectory(dir);
+                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                {
+                    Directory.CreateDirectory(dir);
+                }
             }
-
-            var items = Directory.GetFiles(dir, "*.png");
-            for (var i = 0; i < items.Length; i++)
+            else
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                var items = Directory.GetFiles(dir, "*.png");
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                    dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                }
             }
 
             var packItems = GameTexturePacks.GetFolderFrames(directory);
@@ -240,19 +253,24 @@ namespace Intersect.Client.MonoGame.File_Management
             var dir = Path.Combine("resources", "sounds");
             if (!Directory.Exists(dir))
             {
-                Directory.CreateDirectory(dir);
+                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                {
+                    Directory.CreateDirectory(dir);
+                }
             }
-
-            var items = Directory.GetFiles(dir, "*.wav");
-            for (var i = 0; i < items.Length; i++)
+            else
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mSoundDict.Add(
-                    RemoveExtension(filename),
-                    new MonoSoundSource(
-                        Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))
-                    )
-                );
+                var items = Directory.GetFiles(dir, "*.wav");
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                    mSoundDict.Add(
+                        RemoveExtension(filename),
+                        new MonoSoundSource(
+                            Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))
+                        )
+                    );
+                }
             }
 
             // If we have a sound index file, load from it!
@@ -265,7 +283,7 @@ namespace Intersect.Client.MonoGame.File_Management
                     {
                         mSoundDict.Add(
                             RemoveExtension(item).ToLower(),
-                            new MonoSoundSource(item, ((MonoRenderer)Core.Graphics.Renderer).GetContentManager())
+                            new MonoSoundSource(item, item)
                         );
                     }
                 }
@@ -279,14 +297,19 @@ namespace Intersect.Client.MonoGame.File_Management
             var dir = Path.Combine("resources", "music");
             if (!Directory.Exists(dir))
             {
-                Directory.CreateDirectory(dir);
+                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                {
+                    Directory.CreateDirectory(dir);
+                }
             }
-
-            var items = Directory.GetFiles(dir, "*.ogg");
-            for (var i = 0; i < items.Length; i++)
+            else
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                var items = Directory.GetFiles(dir, "*.ogg");
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                    mMusicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                }
             }
 
             // If we have a music index file, load from it!
@@ -299,7 +322,7 @@ namespace Intersect.Client.MonoGame.File_Management
                     {
                         mMusicDict.Add(
                             RemoveExtension(item).ToLower(),
-                            new MonoMusicSource(item)
+                            new MonoMusicSource(item, item)
                         );
                     }
                 }

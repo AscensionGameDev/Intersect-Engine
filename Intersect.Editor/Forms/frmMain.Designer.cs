@@ -981,14 +981,6 @@ namespace Intersect.Editor.Forms
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
-            // packClientTexturesToolStripMenuItem
-            // 
-            this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
-            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
-            this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
-            // 
             // packageUpdateToolStripMenuItem
             // 
             this.packageUpdateToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
