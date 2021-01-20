@@ -31,6 +31,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private List<string> mKnownFolders = new List<string>();
 
+        private List<string> mKnownCooldownGroups = new List<string>();
+
         public FrmItem()
         {
             ApplyHooks();
@@ -218,6 +220,8 @@ namespace Intersect.Editor.Forms.Editors
             lblToolType.Text = Strings.ItemEditor.tooltype;
 
             lblCooldown.Text = Strings.ItemEditor.cooldown;
+            lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
+            chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -370,6 +374,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
 
                 nudCooldown.Value = mEditorItem.Cooldown;
+                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
+                chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -904,6 +910,35 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Rarity = cmbRarity.SelectedIndex;
         }
 
+        private void cmbCooldownGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CooldownGroup = cmbCooldownGroup.Text;
+        }
+
+        private void btnAddCooldownGroup_Click(object sender, EventArgs e)
+        {
+            var cdGroupName = "";
+            var result = DarkInputBox.ShowInformation(
+                Strings.ItemEditor.CooldownGroupPrompt, Strings.ItemEditor.CooldownGroupTitle, ref cdGroupName,
+                DarkDialogButton.OkCancel
+            );
+
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(cdGroupName))
+            {
+                if (!cmbCooldownGroup.Items.Contains(cdGroupName))
+                {
+                    mEditorItem.CooldownGroup = cdGroupName;
+                    mKnownCooldownGroups.Add(cdGroupName);
+                    InitEditor();
+                    cmbCooldownGroup.Text = cdGroupName;
+                }
+            }
+        }
+
+        private void chkIgnoreGlobalCooldown_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
+        }
         private void nudRgbaR_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Color.R = (byte)nudRgbaR.Value;
@@ -1065,7 +1100,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbProjectile.Items.Add(Strings.General.none);
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
 
-            //Collect folders
+            //Collect folders and cooldown groups
             var mFolders = new List<string>();
             foreach (var itm in ItemBase.Lookup)
             {
@@ -1078,7 +1113,31 @@ namespace Intersect.Editor.Forms.Editors
                         mKnownFolders.Add(((ItemBase) itm.Value).Folder);
                     }
                 }
+
+                if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) && 
+                    !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
+                {
+                    mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);    
+                }
             }
+
+            // Do we add spell cooldown groups as well?
+            if (Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach(var itm in SpellBase.Lookup)
+                {
+                    if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
+                    !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
+                    {
+                        mKnownCooldownGroups.Add(((SpellBase)itm.Value).CooldownGroup);
+                    }
+                }
+            }
+
+            mKnownCooldownGroups.Sort();
+            cmbCooldownGroup.Items.Clear();
+            cmbCooldownGroup.Items.Add(string.Empty);
+            cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
             mFolders.Sort();
             mKnownFolders.Sort();
@@ -1282,6 +1341,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtSearch.SelectAll();
             }
         }
+
 
         #endregion
 

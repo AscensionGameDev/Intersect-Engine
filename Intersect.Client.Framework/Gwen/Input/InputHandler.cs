@@ -2,7 +2,6 @@
 using System.Text;
 
 using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Framework.Gwen.Input

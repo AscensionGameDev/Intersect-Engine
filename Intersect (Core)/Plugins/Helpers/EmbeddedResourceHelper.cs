@@ -1,7 +1,5 @@
 ﻿using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 using System;
 using System.IO;
 using System.Linq;
@@ -12,9 +10,9 @@ namespace Intersect.Plugins.Helpers
     /// <inheritdoc />
     internal sealed class EmbeddedResourceHelper : IEmbeddedResourceHelper
     {
-        [NotNull] private Assembly Assembly { get; }
+        private Assembly Assembly { get; }
 
-        internal EmbeddedResourceHelper([NotNull] Assembly assembly)
+        internal EmbeddedResourceHelper(Assembly assembly)
         {
             Assembly = assembly;
         }

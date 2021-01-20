@@ -1,7 +1,5 @@
 ﻿using Intersect.Core;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 using System;
@@ -21,8 +19,8 @@ namespace Intersect.Plugins.Loaders
         /// <param name="applicationContext">the <see cref="IApplicationContext"/> in which to load plugin configurations</param>
         /// <param name="plugins">the <see cref="Plugin"/>s to load configuration for</param>
         internal void LoadConfigurations(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] IEnumerable<Plugin> plugins
+            IApplicationContext applicationContext,
+            IEnumerable<Plugin> plugins
         ) => plugins.ToList()
             .ForEach(
                 plugin =>
@@ -40,13 +38,12 @@ namespace Intersect.Plugins.Loaders
         /// <param name="applicationContext">the <see cref="IApplicationContext"/> in which to load plugin configuration</param>
         /// <param name="plugin">the <see cref="Plugin"/> to load configuration for</param>
         /// <returns>the <see cref="PluginConfiguration"/> that was loaded (or defaults set) for <paramref name="plugin"/></returns>
-        [NotNull]
         [SuppressMessage(
             "Design", "CA1031:Do not catch general exception types", Justification = "Intentional catch-all-and-logs."
         )]
         internal PluginConfiguration LoadConfiguration(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] Plugin plugin
+            IApplicationContext applicationContext,
+            Plugin plugin
         )
         {
             var configurationFilePath = plugin.Reference.ConfigurationFile;
@@ -79,8 +76,10 @@ namespace Intersect.Plugins.Loaders
 
                 var serializedUpdatedConfiguration = JsonConvert.SerializeObject(configuration, Formatting.Indented);
 
-                var backupConfigurationFilePath =
-                    $"{Path.GetFileNameWithoutExtension(configurationFilePath)}.{DateTime.Now:YYYYMMDDHHmmss}.backup.json";
+                var backupConfigurationFilePath = Path.Combine(
+                    Path.GetDirectoryName(configurationFilePath),
+                    $"{Path.GetFileNameWithoutExtension(configurationFilePath)}.{DateTime.Now:yyyyMMddHHmmss}.backup.json"
+                );
 
                 try
                 {

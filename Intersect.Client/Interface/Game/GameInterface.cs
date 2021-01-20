@@ -13,8 +13,6 @@ using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Interface.Game
 {
 
@@ -80,19 +78,20 @@ namespace Intersect.Client.Interface.Game
 
         public EntityBox PlayerBox;
 
-        public GameInterface([NotNull] Canvas canvas) : base(canvas)
+        public GameInterface(Canvas canvas) : base(canvas)
         {
             GameCanvas = canvas;
             EscapeMenu = new EscapeMenu(GameCanvas) {IsHidden = true};
+            AnnouncementWindow = new AnnouncementWindow(GameCanvas) { IsHidden = true };
 
             InitGameGui();
         }
 
-        [NotNull]
         public Canvas GameCanvas { get; }
 
-        [NotNull]
         public EscapeMenu EscapeMenu { get; }
+
+        public AnnouncementWindow AnnouncementWindow { get; }
 
         public Menu GameMenu { get; private set; }
 
@@ -316,6 +315,7 @@ namespace Intersect.Client.Interface.Game
             EscapeMenu.Update();
             PlayerBox?.Update();
             mMapItemWindow.Update();
+            AnnouncementWindow?.Update();
 
             if (Globals.QuestOffers.Count > 0)
             {

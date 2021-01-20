@@ -2,8 +2,6 @@
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins
 {
     /// <summary>
@@ -19,17 +17,17 @@ namespace Intersect.Plugins
         /// <param name="reference">the <see cref="PluginReference"/> with pre-searched reflection information</param>
         /// <returns></returns>
         internal static Plugin Create(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] IManifestHelper manifest,
-            [NotNull] PluginReference reference
+            IApplicationContext applicationContext,
+            IManifestHelper manifest,
+            PluginReference reference
         ) => new Plugin(manifest, new LoggingHelper(applicationContext.Logger, manifest), reference);
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         // Plugin instance is created at the Discovery phase and Configuration is loaded afterwards
         private Plugin(
-            [NotNull] IManifestHelper manifest,
-            [NotNull] ILoggingHelper logging,
-            [NotNull] PluginReference reference
+            IManifestHelper manifest,
+            ILoggingHelper logging,
+            PluginReference reference
         )
         {
             Manifest = manifest;
@@ -40,25 +38,21 @@ namespace Intersect.Plugins
         /// <summary>
         /// The <see cref="IManifestHelper"/> that describes this <see cref="Plugin"/>.
         /// </summary>
-        [NotNull]
         public IManifestHelper Manifest { get; }
 
         /// <summary>
         /// The <see cref="ILoggingHelper"/> for this <see cref="Plugin"/>.
         /// </summary>
-        [NotNull]
         public ILoggingHelper Logging { get; }
 
         /// <summary>
         /// The <see cref="PluginConfiguration"/> for this <see cref="Plugin"/>.
         /// </summary>
-        [NotNull]
         public PluginConfiguration Configuration { get; internal set; }
 
         /// <summary>
         /// The <see cref="PluginReference"/> to reflection information for this plugin.
         /// </summary>
-        [NotNull]
         internal PluginReference Reference { get; }
 
         /// <inheritdoc cref="PluginConfiguration.IsEnabled" />
@@ -69,7 +63,6 @@ namespace Intersect.Plugins
         }
 
         /// <inheritdoc cref="IManifestHelper.Key" />
-        [NotNull]
         public string Key => Manifest.Key;
 
         /// <inheritdoc />

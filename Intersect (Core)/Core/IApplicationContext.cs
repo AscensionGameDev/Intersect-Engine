@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 
 using Intersect.Logging;
+using Intersect.Plugins.Interfaces;
 using Intersect.Threading;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Core
 {
@@ -36,19 +35,21 @@ namespace Intersect.Core
         /// <summary>
         /// The options the application was started with.
         /// </summary>
-        [NotNull]
         ICommandLineOptions StartupOptions { get; }
 
         /// <summary>
         /// The application-specific logger.
         /// </summary>
-        [NotNull]
         Logger Logger { get; }
+
+        /// <summary>
+        /// The network helper for the application.
+        /// </summary>
+        INetworkHelper NetworkHelper { get; }
 
         /// <summary>
         /// The <see cref="IApplicationService"/>s currently registered.
         /// </summary>
-        [NotNull]
         List<IApplicationService> Services { get; }
 
         /// <summary>
@@ -56,7 +57,6 @@ namespace Intersect.Core
         /// </summary>
         /// <typeparam name="TApplicationService">the service type to look for</typeparam>
         /// <returns>an instance of <typeparamref name="TApplicationService"/> if found, otherwise <c>default(<typeparamref name="TApplicationService"/>)</c></returns>
-        [CanBeNull]
         TApplicationService GetService<TApplicationService>() where TApplicationService : IApplicationService;
 
         /// <summary>
@@ -69,7 +69,6 @@ namespace Intersect.Core
         /// Start the application with a <see cref="LockingActionQueue"/>.
         /// </summary>
         /// <returns>the <see cref="LockingActionQueue"/> instance being used</returns>
-        [NotNull]
         LockingActionQueue StartWithActionQueue();
     }
 }

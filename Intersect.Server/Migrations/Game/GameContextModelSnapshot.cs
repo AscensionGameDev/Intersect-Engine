@@ -211,6 +211,10 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("Cooldown");
 
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
+
                     b.Property<int>("CritChance");
 
                     b.Property<double>("CritMultiplier");
@@ -631,6 +635,10 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("CastDuration");
 
                     b.Property<int>("CooldownDuration");
+
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<string>("Description");
 

@@ -8,19 +8,17 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Collections
 {
 
     public class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
     {
 
-        [NotNull] private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
+        private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
 
-        [NotNull] private readonly object mLock;
+        private readonly object mLock;
 
-        public DatabaseObjectLookup([NotNull] Type storedType)
+        public DatabaseObjectLookup(Type storedType)
         {
             mLock = new object();
             mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
@@ -28,7 +26,6 @@ namespace Intersect.Collections
             StoredType = storedType;
         }
 
-        [NotNull]
         public Type StoredType { get; }
 
         public virtual IDatabaseObject this[Guid id]
@@ -37,7 +34,6 @@ namespace Intersect.Collections
             set => Set(id, value);
         }
 
-        [NotNull]
         public List<Guid> KeyList
         {
             get
@@ -49,7 +45,6 @@ namespace Intersect.Collections
             }
         }
 
-        [NotNull]
         public List<IDatabaseObject> ValueList
         {
             get
@@ -73,15 +68,12 @@ namespace Intersect.Collections
             }
         }
 
-        [NotNull]
         public Type IndexKeyType => typeof(int);
 
         public bool IsEmpty => Count < 1;
 
-        [NotNull]
         public Type KeyType => typeof(Guid);
 
-        [NotNull]
         public Type ValueType => typeof(IDatabaseObject);
 
         public virtual int Count
@@ -95,7 +87,6 @@ namespace Intersect.Collections
             }
         }
 
-        [NotNull]
         public virtual IDictionary<Guid, IDatabaseObject> Clone
         {
             get
@@ -107,10 +98,8 @@ namespace Intersect.Collections
             }
         }
 
-        [NotNull]
         public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
 
-        [NotNull]
         public virtual ICollection<Guid> Keys
         {
             get
@@ -122,7 +111,6 @@ namespace Intersect.Collections
             }
         }
 
-        [NotNull]
         public virtual ICollection<IDatabaseObject> Values => ValueList;
 
         public virtual IDatabaseObject Get(Guid id)
@@ -169,7 +157,7 @@ namespace Intersect.Collections
             return InternalSet(value, false);
         }
 
-        public IDatabaseObject AddNew([NotNull] Type type, Guid id)
+        public IDatabaseObject AddNew(Type type, Guid id)
         {
             var idConstructor = type.GetConstructor(new[] {KeyType});
             if (idConstructor == null)

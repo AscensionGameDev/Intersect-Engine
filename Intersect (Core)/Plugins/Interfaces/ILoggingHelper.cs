@@ -3,8 +3,6 @@
 using Intersect.Logging;
 using Intersect.Logging.Formatting;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins.Interfaces
 {
     /// <summary>
@@ -15,13 +13,11 @@ namespace Intersect.Plugins.Interfaces
         /// <summary>
         /// The <see cref="Logger"/> instance for the entire application.
         /// </summary>
-        [NotNull]
         Logger Application { get; }
 
         /// <summary>
         /// The <see cref="Logger"/> instance for the active plugin.
         /// </summary>
-        [NotNull]
         Logger Plugin { get; }
 
         /// <summary>
@@ -29,7 +25,6 @@ namespace Intersect.Plugins.Interfaces
         /// </summary>
         /// <param name="createLoggerOptions">options to configure the <see cref="Logger"/></param>
         /// <returns>a specialized <see cref="Logger"/> instance</returns>
-        [NotNull]
         Logger CreateLogger(CreateLoggerOptions createLoggerOptions);
     }
 
@@ -51,13 +46,11 @@ namespace Intersect.Plugins.Interfaces
         /// <summary>
         /// The custom formatters to use for output from the created <see cref="Logger"/>.
         /// </summary>
-        [NotNull]
         public IReadOnlyList<ILogFormatter> Formatters { get; set; }
 
         /// <summary>
         /// The name of the created <see cref="Logger"/>.
         /// </summary>
-        [NotNull]
         public string Name { get; set; }
     }
 }

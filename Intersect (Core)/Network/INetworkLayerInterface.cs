@@ -4,16 +4,14 @@ using System.Collections.Generic;
 using Intersect.Memory;
 using Intersect.Network.Events;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Network
 {
 
-    public delegate void HandlePacketAvailable([NotNull] INetworkLayerInterface sender);
+    public delegate void HandlePacketAvailable(INetworkLayerInterface sender);
 
-    public delegate void HandleConnectionEvent([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs);
+    public delegate void HandleConnectionEvent(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);
 
-    public delegate bool HandleConnectionRequest([NotNull] INetworkLayerInterface sender, IConnection connection);
+    public delegate bool HandleConnectionRequest(INetworkLayerInterface sender, IConnection connection);
 
     public interface INetworkLayerInterface : IDisposable
     {

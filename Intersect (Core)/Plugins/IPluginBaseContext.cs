@@ -2,8 +2,6 @@
 
 using Intersect.Plugins.Interfaces;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Plugins
 {
     /// <summary>
@@ -14,31 +12,26 @@ namespace Intersect.Plugins
         /// <summary>
         /// The <see cref="System.Reflection.Assembly"/> of the current plugin.
         /// </summary>
-        [NotNull]
         Assembly Assembly { get; }
 
         /// <summary>
         /// The <see cref="PluginConfiguration"/> of the current plugin.
         /// </summary>
-        [NotNull]
         PluginConfiguration Configuration { get; }
 
         /// <summary>
         /// The <see cref="IEmbeddedResourceHelper"/> for the current plugin.
         /// </summary>
-        [NotNull]
         IEmbeddedResourceHelper EmbeddedResources { get; }
 
         /// <summary>
         /// The <see cref="ILoggingHelper"/> for the current plugin.
         /// </summary>
-        [NotNull]
         ILoggingHelper Logging { get; }
 
         /// <summary>
         /// The <see cref="IManifestHelper"/> for the current plugin.
         /// </summary>
-        [NotNull]
         IManifestHelper Manifest { get; }
 
         /// <summary>

@@ -3,8 +3,6 @@ using System.IO;
 
 using Intersect.Config;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect
@@ -68,7 +66,6 @@ namespace Intersect
 
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
-        [NotNull]
         public static Options Instance { get; private set; }
 
         [JsonIgnore]
@@ -153,6 +150,8 @@ namespace Intersect
 
         public static PartyOptions Party => Instance.PartyOpts;
 
+        public static ChatOptions Chat => Instance.ChatOpts;
+
         public static bool UPnP => Instance._upnp;
 
         public static bool OpenPortChecker => Instance._portChecker;
@@ -181,16 +180,12 @@ namespace Intersect
             set => Instance.GameDatabase = value;
         }
 
-        [NotNull]
         public static PlayerOptions Player => Instance.PlayerOpts;
 
-        [NotNull]
         public static EquipmentOptions Equipment => Instance.EquipmentOpts;
 
-        [NotNull]
         public static CombatOptions Combat => Instance.CombatOpts;
 
-        [NotNull]
         public static MapOptions Map => Instance.MapOpts;
 
         public static bool Loaded => Instance != null;
@@ -204,7 +199,6 @@ namespace Intersect
         /// <summary>
         /// Passability configuration by map zone
         /// </summary>
-        [NotNull]
         public Passability Passability { get; } = new Passability();
 
         public bool SmtpValid { get; set; }
@@ -289,7 +283,6 @@ namespace Intersect
 
         // TODO: Clean these up
         //Values that cannot easily be changed:
-        public const int LayerCount = 5;
 
         public const int MaxStats = 5;
 

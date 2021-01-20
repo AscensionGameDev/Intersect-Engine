@@ -3,8 +3,6 @@ using Intersect.Server.Core.Services;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Web.RestApi;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core
 {
     /// <summary>
@@ -17,25 +15,21 @@ namespace Intersect.Server.Core
         /// <summary>
         /// The server's console processing service.
         /// </summary>
-        [NotNull]
         IConsoleService ConsoleService { get; }
 
         /// <summary>
         /// The server's core logic service.
         /// </summary>
-        [NotNull]
         ILogicService LogicService { get; }
 
         /// <summary>
         /// The server's network processing service.
         /// </summary>
-        [NotNull]
         ServerNetwork Network { get; }
 
         /// <summary>
         /// The server's REST API provider service.
         /// </summary>
-        [NotNull]
         RestApi RestApi { get; }
 
         #endregion Services

@@ -4,15 +4,13 @@ using System.Threading;
 
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Threading
 {
 
     public class ConcurrentInstance<TInstance> where TInstance : class
     {
 
-        [NotNull] private readonly object mLock;
+        private readonly object mLock;
 
         private TInstance mInstance;
 
@@ -23,10 +21,9 @@ namespace Intersect.Threading
 
         public bool HasInstance => mInstance != null;
 
-        [NotNull]
         public TInstance Instance => mInstance ?? throw new InvalidOperationException();
 
-        public void ClearWith([NotNull] TInstance instance, [NotNull] Action action)
+        public void ClearWith(TInstance instance, Action action)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -66,7 +63,7 @@ namespace Intersect.Threading
             Monitor.Exit(mLock);
         }
 
-        public void Set([NotNull] TInstance instance)
+        public void Set(TInstance instance)
         {
             if (!Monitor.TryEnter(mLock, 1000))
             {
@@ -88,7 +85,7 @@ namespace Intersect.Threading
             }
         }
 
-        public void Clear([NotNull] TInstance instance)
+        public void Clear(TInstance instance)
         {
             if (mInstance == instance)
             {
@@ -96,7 +93,7 @@ namespace Intersect.Threading
             }
         }
 
-        public static implicit operator TInstance([NotNull] ConcurrentInstance<TInstance> concurrentInstance)
+        public static implicit operator TInstance(ConcurrentInstance<TInstance> concurrentInstance)
         {
             return concurrentInstance.mInstance;
         }

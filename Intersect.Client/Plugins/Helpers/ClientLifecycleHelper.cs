@@ -3,8 +3,6 @@ using Intersect.Client.Interface;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins.Helpers;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Plugins.Helpers
 {
     /// <inheritdoc cref="IClientLifecycleHelper"/>
@@ -13,7 +11,7 @@ namespace Intersect.Client.Plugins.Helpers
         /// <inheritdoc />
         public event LifecycleChangeStateHandler LifecycleChangeState;
 
-        internal ClientLifecycleHelper([NotNull] IClientPluginContext context) : base(context)
+        internal ClientLifecycleHelper(IClientPluginContext context) : base(context)
         {
             Globals.ClientLifecycleHelpers.Add(this);
         }

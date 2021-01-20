@@ -4,8 +4,6 @@ using System.Text;
 
 using Intersect.IO;
 
-using JetBrains.Annotations;
-
 namespace Intersect
 {
 
@@ -17,10 +15,8 @@ namespace Intersect
 
         //#region Instance Management
 
-        //[NotNull]
         //private static Console sInstance;
 
-        //[NotNull]
         //public static Console Instance
         //{
         //    get => sInstance;
@@ -226,7 +222,6 @@ namespace Intersect
 
         #region General
 
-        [NotNull]
         public static string Title
         {
             get => SystemConsole.Title;
@@ -240,7 +235,6 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">The property value in a set operation is <see langword="null" />.</exception>
         /// <exception cref="T:System.IO.IOException">An error occurred during the execution of this operation.</exception>
         /// <exception cref="T:System.Security.SecurityException">Your application does not have permission to perform this operation.</exception>
-        [NotNull]
         public static Encoding InputEncoding
         {
             get => SystemConsole.InputEncoding;
@@ -252,7 +246,6 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">The property value in a set operation is <see langword="null" />.</exception>
         /// <exception cref="T:System.IO.IOException">An error occurred during the execution of this operation.</exception>
         /// <exception cref="T:System.Security.SecurityException">Your application does not have permission to perform this operation.</exception>
-        [NotNull]
         public static Encoding OutputEncoding
         {
             get => SystemConsole.OutputEncoding;
@@ -367,10 +360,8 @@ namespace Intersect
 
         #region Wait
 
-        [NotNull]
         private static ConsoleContext Context { get; }
 
-        [NotNull]
         private static ConsoleWriter ContextOut { get; }
 
         public static string WaitPrefix
@@ -442,7 +433,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="format" /> or <paramref name="arg" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.FormatException">The format specification in <paramref name="format" /> is invalid. </exception>
-        public static void WriteLine([NotNull] string format, [NotNull] params object[] arg)
+        public static void WriteLine(string format, params object[] arg)
         {
             SystemConsole.WriteLine(format, arg);
         }
@@ -466,7 +457,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentException">
         /// <paramref name="index" /> plus <paramref name="count" /> specify a position that is not within <paramref name="buffer" />. </exception>
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
-        public static void WriteLine([NotNull] char[] buffer, int index, int count)
+        public static void WriteLine(char[] buffer, int index, int count)
         {
             SystemConsole.WriteLine(buffer, index, count);
         }
@@ -570,7 +561,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="format" /> or <paramref name="arg" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.FormatException">The format specification in <paramref name="format" /> is invalid. </exception>
-        public static void Write([NotNull] string format, [NotNull] params object[] arg)
+        public static void Write(string format, params object[] arg)
         {
             SystemConsole.Write(format, arg);
         }
@@ -594,7 +585,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentException">
         /// <paramref name="index" /> plus <paramref name="count" /> specify a position that is not within <paramref name="buffer" />. </exception>
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
-        public static void Write([NotNull] char[] buffer, int index, int count)
+        public static void Write(char[] buffer, int index, int count)
         {
             SystemConsole.Write(buffer, index, count);
         }
@@ -765,7 +756,6 @@ namespace Intersect
 
         /// <summary>Gets the standard input stream.</summary>
         /// <returns>A <see cref="T:System.IO.TextReader" /> that represents the standard input stream.</returns>
-        [NotNull]
         public static TextReader In
         {
             get => SystemConsole.In;
@@ -774,7 +764,6 @@ namespace Intersect
 
         /// <summary>Gets the standard output stream.</summary>
         /// <returns>A <see cref="T:System.IO.TextWriter" /> that represents the standard output stream.</returns>
-        [NotNull]
         public static TextWriter Out
         {
             get => SystemConsole.Out;
@@ -783,7 +772,6 @@ namespace Intersect
 
         /// <summary>Gets the standard error output stream.</summary>
         /// <returns>A <see cref="T:System.IO.TextWriter" /> that represents the standard error output stream.</returns>
-        [NotNull]
         public static TextWriter Error
         {
             get => SystemConsole.Error;
@@ -795,7 +783,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newIn" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetIn([NotNull] TextReader newIn)
+        public static void SetIn(TextReader newIn)
         {
             SystemConsole.SetIn(newIn);
         }
@@ -805,7 +793,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newOut" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetOut([NotNull] TextWriter newOut)
+        public static void SetOut(TextWriter newOut)
         {
             SystemConsole.SetOut(newOut);
         }
@@ -815,7 +803,7 @@ namespace Intersect
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="newError" /> is <see langword="null" />. </exception>
         /// <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
-        public static void SetError([NotNull] TextWriter newError)
+        public static void SetError(TextWriter newError)
         {
             SystemConsole.SetError(newError);
         }

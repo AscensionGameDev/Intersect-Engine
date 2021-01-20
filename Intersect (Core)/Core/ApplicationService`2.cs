@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using Microsoft;
 
 using System;
@@ -18,7 +17,7 @@ namespace Intersect.Core
 
         private bool mDisposed;
 
-        [NotNull] private readonly object mLifecycleLock;
+        private readonly object mLifecycleLock;
 
         #endregion Fields
 
@@ -131,13 +130,13 @@ namespace Intersect.Core
         /// Internal startup handler declaration.
         /// </summary>
         /// <param name="applicationContext">the application context the service is being started in</param>
-        protected abstract void TaskStart([NotNull, ValidatedNotNull] IApplicationContext applicationContext);
+        protected abstract void TaskStart([ValidatedNotNull] IApplicationContext applicationContext);
 
         /// <summary>
         /// Internal shutdown handler declaration.
         /// </summary>
         /// <param name="applicationContext">the application context the service is being shutdown in</param>
-        protected abstract void TaskStop([NotNull, ValidatedNotNull] IApplicationContext applicationContext);
+        protected abstract void TaskStop([ValidatedNotNull] IApplicationContext applicationContext);
 
         #endregion Internal Lifecycle Methods
     }

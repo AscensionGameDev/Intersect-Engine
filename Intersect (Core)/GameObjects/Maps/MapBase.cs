@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text;
 using Intersect.Collections;
+using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
-
-using JetBrains.Annotations;
 
 using Newtonsoft.Json;
 
@@ -16,11 +15,16 @@ namespace Intersect.GameObjects.Maps
 
     public class MapBase : DatabaseObject<MapBase>
     {
+        [NotMapped]
+        [JsonIgnore]
+        protected JsonSerializerSettings mJsonSerializerSettings { get; } = new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ObjectCreationHandling = ObjectCreationHandling.Replace
+        };
 
-        protected static Network.Ceras mCeras = new Network.Ceras(false);
-
-        [NotMapped] [JsonIgnore] [NotNull]
-        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotMapped] [JsonIgnore]        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         //Client/Editor Only
         [JsonIgnore] [NotMapped] public MapAutotiles Autotiles;
@@ -28,7 +32,7 @@ namespace Intersect.GameObjects.Maps
         [NotMapped] public List<Guid> EventIds = new List<Guid>();
 
         //Core Data
-        [JsonIgnore] [NotMapped] public TileArray[] Layers = new TileArray[Options.LayerCount];
+        [JsonIgnore] [NotMapped] public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
 
         //Map Attributes
         private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
@@ -45,30 +49,18 @@ namespace Intersect.GameObjects.Maps
             Name = "New Map";
 
             //Create empty tile array and then compress it down
-            if (Layers == null || Layers[0].Tiles == null)
+            if (Layers == null)
             {
-                Layers = new TileArray[Options.LayerCount];
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y] = new Tile();
-                        }
-                    }
-                }
-
-                TileData = mCeras.Compress(Layers);
+                Layers = new Dictionary<string,Tile[,]>();
+                TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
                 Layers = null;
             }
             else
             {
-                TileData = mCeras.Compress(Layers);
+                TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
             }
 
-            mCachedAttributeData = mCeras.Compress(Attributes);
+            mCachedAttributeData = LZ4.PickleString(JsonConvert.SerializeObject(Attributes, Formatting.None, mJsonSerializerSettings));
         }
 
         //EF Constructor
@@ -93,27 +85,26 @@ namespace Intersect.GameObjects.Maps
                     IsIndoors = mapBase.IsIndoors;
                     if (Layers != null && mapBase.Layers != null)
                     {
-                        if (Layers.Length < Options.LayerCount)
-                        {
-                            Layers = new TileArray[Options.LayerCount];
-                        }
 
-                        for (var i = 0; i < Options.LayerCount; i++)
+                        Layers.Clear();
+
+                        foreach (var layer in mapBase.Layers)
                         {
-                            Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                            var tiles = new Tile[Options.MapWidth, Options.MapHeight];
                             for (var x = 0; x < Options.MapWidth; x++)
                             {
                                 for (var y = 0; y < Options.MapHeight; y++)
                                 {
-                                    Layers[i].Tiles[x, y] = new Tile
+                                    tiles[x, y] = new Tile
                                     {
-                                        TilesetId = mapBase.Layers[i].Tiles[x, y].TilesetId,
-                                        X = mapBase.Layers[i].Tiles[x, y].X,
-                                        Y = mapBase.Layers[i].Tiles[x, y].Y,
-                                        Autotile = mapBase.Layers[i].Tiles[x, y].Autotile
+                                        TilesetId = layer.Value[x, y].TilesetId,
+                                        X = layer.Value[x, y].X,
+                                        Y = layer.Value[x, y].Y,
+                                        Autotile = layer.Value[x, y].Autotile
                                     };
                                 }
                             }
+                            Layers.Add(layer.Key, tiles);
                         }
                     }
 
@@ -180,14 +171,14 @@ namespace Intersect.GameObjects.Maps
             get => GetAttributeData();
             set
             {
-                mAttributes = mCeras.Decompress<MapAttribute[,]>(value);
+                var str = LZ4.UnPickleString(value);
+                mAttributes = JsonConvert.DeserializeObject<MapAttribute[,]>(LZ4.UnPickleString(value), mJsonSerializerSettings);
                 mCachedAttributeData = value;
             }
         }
 
         [NotMapped]
         [JsonIgnore]
-        [NotNull]
         public MapAttribute[,] Attributes
         {
             get => mAttributes ?? (mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight]);
@@ -195,7 +186,7 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 mAttributes = value;
-                mCachedAttributeData = mCeras.Compress(mAttributes);
+                mCachedAttributeData = LZ4.PickleString(JsonConvert.SerializeObject(mAttributes, Formatting.None, mJsonSerializerSettings));
             }
         }
 
@@ -216,7 +207,6 @@ namespace Intersect.GameObjects.Maps
         }
 
         [NotMapped]
-        [NotNull]
         [JsonProperty]
         public List<LightBase> Lights { get; private set; } = new List<LightBase>();
 
@@ -269,7 +259,6 @@ namespace Intersect.GameObjects.Maps
         }
 
         [NotMapped]
-        [NotNull]
         [JsonProperty]
         public List<NpcSpawn> Spawns { get; private set; } = new List<NpcSpawn>();
 
@@ -359,7 +348,7 @@ namespace Intersect.GameObjects.Maps
 
             private readonly DatabaseObjectLookup mBaseLookup;
 
-            public MapInstances([NotNull] DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
+            public MapInstances(DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
             {
                 if (baseLookup == null)
                 {

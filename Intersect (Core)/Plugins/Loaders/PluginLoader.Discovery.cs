@@ -1,7 +1,5 @@
 ﻿using Intersect.Core;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,10 +22,9 @@ namespace Intersect.Plugins.Loaders
         /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
         /// <param name="pluginDirectories">the directories to scan for plugins in</param>
         /// <returns><see cref="IDictionary{TKey, TValue}"/> of plugins, keyed by <see cref="Plugin.Key"/></returns>
-        [NotNull]
         internal IDictionary<string, Plugin> DiscoverPlugins(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] IEnumerable<string> pluginDirectories
+            IApplicationContext applicationContext,
+            IEnumerable<string> pluginDirectories
         )
         {
             var discoveredPlugins = pluginDirectories.SelectMany(
@@ -61,10 +58,9 @@ namespace Intersect.Plugins.Loaders
         /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
         /// <param name="pluginDirectory">the directory to scan for plugins in</param>
         /// <returns><see cref="IEnumerable{T}"/> of plugins</returns>
-        [CanBeNull]
         internal IEnumerable<Plugin> DiscoverPlugins(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] string pluginDirectory
+            IApplicationContext applicationContext,
+            string pluginDirectory
         )
         {
             if (Directory.Exists(pluginDirectory))

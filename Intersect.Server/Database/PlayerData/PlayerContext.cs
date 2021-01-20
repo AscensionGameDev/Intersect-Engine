@@ -8,8 +8,6 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.SeedData;
 using Intersect.Server.Entities;
 
-using JetBrains.Annotations;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +22,7 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         public PlayerContext(
-            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
@@ -32,50 +30,35 @@ namespace Intersect.Server.Database.PlayerData
         {
         }
 
-        [NotNull]
         public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
             new SqliteConnectionStringBuilder(@"Data Source=resources/playerdata.db");
 
-        [NotNull]
         public DbSet<User> Users { get; set; }
 
-        [NotNull]
         public DbSet<Mute> Mutes { get; set; }
 
-        [NotNull]
         public DbSet<Ban> Bans { get; set; }
 
-        [NotNull]
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-        [NotNull]
         public DbSet<Player> Players { get; set; }
 
-        [NotNull]
         public DbSet<BankSlot> Player_Bank { get; set; }
 
-        [NotNull]
         public DbSet<Friend> Player_Friends { get; set; }
 
-        [NotNull]
         public DbSet<HotbarSlot> Player_Hotbar { get; set; }
 
-        [NotNull]
         public DbSet<InventorySlot> Player_Items { get; set; }
 
-        [NotNull]
         public DbSet<Quest> Player_Quests { get; set; }
 
-        [NotNull]
         public DbSet<SpellSlot> Player_Spells { get; set; }
 
-        [NotNull]
         public DbSet<Variable> Player_Variables { get; set; }
 
-        [NotNull]
         public DbSet<Bag> Bags { get; set; }
 
-        [NotNull]
         public DbSet<BagSlot> Bag_Items { get; set; }
 
         internal async ValueTask Commit(
@@ -95,7 +78,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<RefreshToken>().HasOne(token => token.User);
 

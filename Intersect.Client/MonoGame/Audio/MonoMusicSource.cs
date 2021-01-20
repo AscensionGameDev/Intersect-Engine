@@ -11,7 +11,6 @@ using Intersect.Client.Utilities;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 
 using NVorbis;
 
@@ -98,7 +97,7 @@ namespace Intersect.Client.MonoGame.Audio
                     Log.Error($"Error loading '{mPath}'.", exception);
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]", new Color(0xBF, 0x0, 0x0)
+                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]", new Color(0xBF, 0x0, 0x0), Enums.ChatMessageType.Error
                         )
                     );
                 }

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging.Output
 {
     // TODO: Figure out what doesn't need to be duplicated between this and ConsoleOutput
@@ -42,10 +40,10 @@ namespace Intersect.Logging.Output
         }
 
         private void InternalWrite(
-            [NotNull] LogConfiguration configuration,
+            LogConfiguration configuration,
             LogLevel logLevel,
             Exception exception,
-            [NotNull] string format,
+            string format,
             params object[] args
         )
         {

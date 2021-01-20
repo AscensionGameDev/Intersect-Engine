@@ -3,11 +3,8 @@ using Intersect.Server.Database.Logging.Entities;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.Logging
 {

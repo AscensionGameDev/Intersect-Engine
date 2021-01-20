@@ -1,12 +1,10 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.IO
+﻿namespace Intersect.IO
 {
 
     public interface ILoadable<in TFrom>
     {
 
-        bool Load([CanBeNull] TFrom from = default(TFrom));
+        bool Load(TFrom from = default(TFrom));
 
     }
 

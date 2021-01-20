@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Core
 {
     /// <summary>
@@ -14,6 +12,6 @@ namespace Intersect.Client.Core
         /// </summary>
         /// <param name="context">the <see cref="IClientContext"/> to run for</param>
         /// <param name="postStartupAction">the <see cref="Action"/> to do after startup</param>
-        void Start([NotNull] IClientContext context, [NotNull] Action postStartupAction);
+        void Start(IClientContext context, Action postStartupAction);
     }
 }

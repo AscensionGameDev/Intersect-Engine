@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
+using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -20,8 +19,6 @@ using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Maps
@@ -32,7 +29,7 @@ namespace Intersect.Server.Maps
 
         private static MapInstances sLookup;
 
-        [NotNull, NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
+        [NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
 
         //Does the map have a player on or nearby it?
         [JsonIgnore] [NotMapped] public bool Active;
@@ -99,12 +96,10 @@ namespace Intersect.Server.Maps
             Layers = null;
         }
 
-        [NotNull]
         [JsonIgnore]
         [NotMapped]
         public Dictionary<Point, List<MapItem>> MapItems { get; } = new Dictionary<Point, List<MapItem>>();
 
-        [NotNull]
         [JsonIgnore]
         [NotMapped]
         public MapItem[] AllMapItems => MapItems.SelectMany(x => x.Value).ToArray();
@@ -112,14 +107,12 @@ namespace Intersect.Server.Maps
         //Projectiles
         [JsonIgnore]
         [NotMapped]
-        [NotNull]
         public List<Projectile> MapProjectiles { get; } = new List<Projectile>();
 
         [NotMapped]
         [JsonIgnore]
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
-        [NotNull]
         public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
 
         //GameObject Functions
@@ -1046,7 +1039,6 @@ namespace Intersect.Server.Maps
             }
         }
 
-        [NotNull]
         public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
         {
             Debug.Assert(Lookup != null, "Lookup != null");
@@ -1123,7 +1115,6 @@ namespace Intersect.Server.Maps
             return false;
         }
 
-        [NotNull]
         public List<Entity> GetEntities(bool includeSurroundingMaps = false)
         {
 
@@ -1222,7 +1213,7 @@ namespace Intersect.Server.Maps
         public bool TileBlocked(int x, int y)
         {
             //Check if tile is a blocked attribute
-            if (Attributes[x, y] != null && Attributes[x, y].Type == MapAttributes.Blocked)
+            if (Attributes[x, y] != null && (Attributes[x, y].Type == MapAttributes.Blocked))
             {
                 return true;
             }
@@ -1280,6 +1271,24 @@ namespace Intersect.Server.Maps
         public static MapInstance Get(Guid id)
         {
             return MapInstance.Lookup.Get<MapInstance>(id);
+        }
+
+        public void DestroyOrphanedLayers()
+        {
+            if (Layers == null && TileData != null)
+            {
+                Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(TileData), mJsonSerializerSettings);
+                foreach (var key in Layers.Keys.ToArray())
+                {
+                    if (!Options.Instance.MapOpts.Layers.All.Contains(key))
+                    {
+                        Layers.Remove(key);
+                    }
+                }
+                TileData = LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
+                Layers = null;
+                
+            }
         }
 
         public override void Delete()

@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 
 namespace Intersect.Client.Framework.Content
@@ -9,7 +8,7 @@ namespace Intersect.Client.Framework.Content
     public class AssetTypeAttribute : Attribute
     {
 
-        public AssetTypeAttribute([NotNull] Type type)
+        public AssetTypeAttribute(Type type)
         {
             if (!typeof(IAsset).IsAssignableFrom(type))
             {
@@ -24,7 +23,7 @@ namespace Intersect.Client.Framework.Content
             Type = type;
         }
 
-        [NotNull] public Type Type { get; }
+        public Type Type { get; }
 
     }
 

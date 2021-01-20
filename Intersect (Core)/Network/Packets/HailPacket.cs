@@ -7,8 +7,6 @@ using Ceras;
 using Intersect.Logging;
 using Intersect.Memory;
 
-using JetBrains.Annotations;
-
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif

@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,13 +11,11 @@ namespace Intersect.Reflection
 {
     public static class TypeExtensions
     {
-        [NotNull]
-        public static string QualifiedGenericName([NotNull, ValidatedNotNull] this Type type) =>
+        public static string QualifiedGenericName([ValidatedNotNull] this Type type) =>
             $"{type.Name}<{string.Join(", ", type.GenericTypeArguments.Select(parameterType => parameterType.Name))}>";
 
-        [NotNull]
         public static IEnumerable<ConstructorInfo> FindConstructors(
-            [NotNull] this Type type,
+            this Type type,
             params object[] parameters
         ) => type.GetConstructors()
             .Where(

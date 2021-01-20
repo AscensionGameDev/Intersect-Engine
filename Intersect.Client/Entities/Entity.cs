@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
@@ -20,7 +19,6 @@ using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using JetBrains.Annotations;
 
 namespace Intersect.Client.Entities
 {
@@ -216,7 +214,6 @@ namespace Intersect.Client.Entities
         }
 
         //Status effects
-        [NotNull]
         public List<Status> Status { get; private set; } = new List<Status>();
 
         public byte Dir

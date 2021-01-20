@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Intersect.Collections;
@@ -34,8 +33,6 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
-using JetBrains.Annotations;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,9 +51,9 @@ namespace Intersect.Server.Database
 
         private const string PlayersDbFilename = "resources/playerdata.db";
 
-        [NotNull] private static readonly ConcurrentQueue<IdTrace> gameDbTraces = new ConcurrentQueue<IdTrace>();
+        private static readonly ConcurrentQueue<IdTrace> gameDbTraces = new ConcurrentQueue<IdTrace>();
 
-        [NotNull] private static readonly ConcurrentQueue<IdTrace> playerDbTraces = new ConcurrentQueue<IdTrace>();
+        private static readonly ConcurrentQueue<IdTrace> playerDbTraces = new ConcurrentQueue<IdTrace>();
 
         private static Logger gameDbLogger;
 
@@ -141,10 +138,9 @@ namespace Intersect.Server.Database
         {
         }
 
-        [NotNull]
         public static DbConnectionStringBuilder CreateConnectionStringBuilder(
-            [NotNull] DatabaseOptions databaseOptions,
-            [NotNull] string filename
+            DatabaseOptions databaseOptions,
+            string filename
         )
         {
             switch (databaseOptions.Type)
@@ -168,7 +164,7 @@ namespace Intersect.Server.Database
         }
 
         // Database setup, version checking
-        internal static bool InitDatabase([NotNull] IServerContext serverContext)
+        internal static bool InitDatabase(IServerContext serverContext)
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
@@ -294,7 +290,7 @@ namespace Intersect.Server.Database
             return true;
         }
 
-        public static Client GetPlayerClient([NotNull] string username)
+        public static Client GetPlayerClient(string username)
         {
             //Try to fetch a player entity by username, online or offline.
             //Check Online First
@@ -312,7 +308,7 @@ namespace Intersect.Server.Database
             return null;
         }
 
-        public static void SetPlayerPower([NotNull] string username, UserRights power)
+        public static void SetPlayerPower(string username, UserRights power)
         {
             var user = GetUser(username);
             if (user != null)
@@ -326,7 +322,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static bool SetPlayerPower([CanBeNull] User user, UserRights power)
+        public static bool SetPlayerPower(User user, UserRights power)
         {
             if (user != null)
             {
@@ -344,7 +340,7 @@ namespace Intersect.Server.Database
         }
 
         //User Info
-        public static bool AccountExists([NotNull] string accountname)
+        public static bool AccountExists(string accountname)
         {
             lock (mPlayerDbLock)
             {
@@ -354,7 +350,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static string UsernameFromEmail([NotNull] string email)
+        public static string UsernameFromEmail(string email)
         {
             lock (mPlayerDbLock)
             {
@@ -365,7 +361,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static User GetUser([NotNull] string username)
+        public static User GetUser(string username)
         {
             lock (mPlayerDbLock)
             {
@@ -387,7 +383,7 @@ namespace Intersect.Server.Database
             return null;
         }
 
-        public static bool EmailInUse([NotNull] string email)
+        public static bool EmailInUse(string email)
         {
             lock (mPlayerDbLock)
             {
@@ -397,7 +393,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static bool CharacterNameInUse([NotNull] string name)
+        public static bool CharacterNameInUse(string name)
         {
             lock (mPlayerDbLock)
             {
@@ -407,7 +403,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static Guid? GetCharacterId([NotNull] string name)
+        public static Guid? GetCharacterId(string name)
         {
             lock (mPlayerDbLock)
             {
@@ -427,7 +423,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static Player GetPlayer([NotNull] string playerName)
+        public static Player GetPlayer(string playerName)
         {
             lock (mPlayerDbLock)
             {
@@ -437,9 +433,9 @@ namespace Intersect.Server.Database
 
         public static void CreateAccount(
             Client client,
-            [NotNull] string username,
-            [NotNull] string password,
-            [NotNull] string email
+            string username,
+            string password,
+            string email
         )
         {
             var sha = new SHA256Managed();
@@ -491,7 +487,7 @@ namespace Intersect.Server.Database
             SavePlayerDatabaseAsync();
         }
 
-        public static bool TryLogin([NotNull] string username, [NotNull] string password, out Guid userId)
+        public static bool TryLogin(string username, string password, out Guid userId)
         {
             lock (mPlayerDbLock)
             {
@@ -501,7 +497,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static UserRights CheckAccess([NotNull] string username)
+        public static UserRights CheckAccess(string username)
         {
             lock (mPlayerDbLock)
             {
@@ -517,7 +513,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static bool LoadUser([NotNull] Client client, [NotNull] string username)
+        public static bool LoadUser(Client client, string username)
         {
             var user = GetUser(username);
             if (user != null)
@@ -572,7 +568,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public static bool BagEmpty([NotNull] Bag bag)
+        public static bool BagEmpty(Bag bag)
         {
             for (var i = 0; i < bag.Slots.Count; i++)
             {
@@ -769,6 +765,10 @@ namespace Intersect.Server.Database
                         foreach (var map in maps)
                         {
                             MapInstance.Lookup.Set(map.Id, map);
+                            if (Options.Instance.MapOpts.Layers.DestroyOrphanedLayers)
+                            {
+                                map.DestroyOrphanedLayers();
+                            }
                         }
 
                         break;
@@ -902,7 +902,7 @@ namespace Intersect.Server.Database
             return dbObj == null ? null : AddGameObject(gameObjectType, dbObj);
         }
 
-        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, [NotNull] IDatabaseObject dbObj)
+        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, IDatabaseObject dbObj)
         {
             if (sGameDb == null)
             {

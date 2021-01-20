@@ -64,7 +64,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             try
             {
                 PacketSender.SendChatMsg(
-                    client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.PlayerMsg,
+                    client.Entity, chatMessage.Message, Enums.ChatMessageType.PM, chatMessage.Color ?? CustomColors.Chat.PlayerMsg,
                     chatMessage.Target
                 );
 
@@ -93,7 +93,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             try
             {
                 if (PacketSender.SendProximityMsg(
-                    chatMessage.Message, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target
+                    chatMessage.Message, Enums.ChatMessageType.Local, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target
                 ))
                 {
                     return new

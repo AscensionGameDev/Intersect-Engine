@@ -109,6 +109,7 @@
     <Compile Include="Entities\Status.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Interface\Game\AnnouncementWindow.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
     <Compile Include="Interface\MutableInterface.cs" />
@@ -213,9 +214,6 @@
     </Reference>
     <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
@@ -326,13 +324,11 @@
     <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
     <ItemGroup>
       <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
-      
       <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
         <WithCulture>false</WithCulture>
         <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
         <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
       </_MixedResourceWithNoCulture>
-
       <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
     </ItemGroup>
   </Target>

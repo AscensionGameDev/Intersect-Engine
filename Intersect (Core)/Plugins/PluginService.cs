@@ -2,8 +2,6 @@
 using Intersect.Factories;
 using Intersect.Plugins.Loaders;
 
-using JetBrains.Annotations;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,7 +17,7 @@ namespace Intersect.Plugins
     /// </summary>
     internal sealed class PluginService : ApplicationService<IPluginService, PluginService>, IPluginService
     {
-        [NotNull] private static readonly string BuiltInPluginDirectory = Path.Combine("resources", "plugins");
+        private static readonly string BuiltInPluginDirectory = Path.Combine("resources", "plugins");
 
         /// <summary>
         /// Initializes the <see cref="PluginService"/>.
@@ -51,19 +49,16 @@ namespace Intersect.Plugins
         /// <summary>
         /// Map of all loaded <see cref="Plugin"/>s by their name.
         /// </summary>
-        [NotNull]
         private ConcurrentDictionary<string, Plugin> Plugins { get; }
 
         /// <summary>
         /// Map of all <see cref="PluginInstance"/>s by their describing <see cref="Plugin"/>.
         /// </summary>
-        [NotNull]
         private ConcurrentDictionary<Plugin, PluginInstance> Instances { get; }
 
         /// <summary>
         /// Reference to the <see cref="PluginLoader"/> used for discovering and loading <see cref="Plugin"/>s and their configuration.
         /// </summary>
-        [NotNull]
         private PluginLoader Loader { get; }
 
         /// <inheritdoc />
@@ -81,6 +76,10 @@ namespace Intersect.Plugins
 
                 // Discover plugins
                 var discoveredPlugins = Loader.DiscoverPlugins(applicationContext, PluginDirectories);
+
+                applicationContext.Logger.Info(
+                    $"Discovered {discoveredPlugins.Count} plugins:\n{string.Join("\n", discoveredPlugins.Select(plugin => plugin.Key))}"
+                );
 
                 // Load configuration for plugins
                 Loader.LoadConfigurations(applicationContext, discoveredPlugins.Values);
@@ -150,7 +149,7 @@ namespace Intersect.Plugins
             return true;
         }
 
-        private void RegisterPlugins([NotNull] IDictionary<string, Plugin> plugins)
+        private void RegisterPlugins(IDictionary<string, Plugin> plugins)
         {
             foreach (var pluginEntry in plugins)
             {
@@ -184,8 +183,8 @@ namespace Intersect.Plugins
                             "Not all exceptions here are fatal to the engine core itself."
         )]
         private void RunOnAllInstances(
-            [NotNull] IApplicationContext applicationContext,
-            [NotNull] Action<KeyValuePair<Plugin, PluginInstance>> action
+            IApplicationContext applicationContext,
+            Action<KeyValuePair<Plugin, PluginInstance>> action
         ) =>
             Instances.Where(instance => instance.Key?.IsEnabled ?? false)
                 .ToList()

@@ -2,10 +2,10 @@
 
 using Intersect.Factories;
 using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
-
-using JetBrains.Annotations;
+using Intersect.Plugins.Helpers;
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,6 @@ namespace Intersect.Client.Core
 
     internal static class Bootstrapper
     {
-        [NotNull]
         public static ClientContext Context { get; private set; }
 
         public static void Start(params string[] args)
@@ -38,7 +37,17 @@ namespace Intersect.Client.Core
                 }
             );
 
-            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser));
+            var logger = Log.Default;
+            var packetTypeRegistry = new PacketTypeRegistry(logger);
+            if (!packetTypeRegistry.TryRegisterBuiltIn())
+            {
+                logger.Error("Failed to register built-in packets.");
+                return;
+            }
+
+            var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
+            var networkHelper = new NetworkHelper(packetTypeRegistry, packetHandlerRegistry);
+            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser, networkHelper));
 
             var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
                 .MapResult(HandleParsedArguments, HandleParserErrors);
@@ -52,7 +61,7 @@ namespace Intersect.Client.Core
                 }
             }
 
-            Context = new ClientContext(commandLineOptions, Log.Default);
+            Context = new ClientContext(commandLineOptions, logger, networkHelper);
             Context.Start();
         }
 

@@ -2,8 +2,6 @@
 using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 using System;
@@ -28,13 +26,11 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        [CanBeNull]
-        public delegate IManifestHelper ManifestLoaderDelegate([NotNull] Assembly assembly);
+        public delegate IManifestHelper ManifestLoaderDelegate(Assembly assembly);
 
         /// <summary>
         /// Currently registered manifest loading functions.
         /// </summary>
-        [NotNull]
         public static readonly List<ManifestLoaderDelegate> ManifestLoaderDelegates = new List<ManifestLoaderDelegate>
         {
             LoadJsonManifestFrom,
@@ -50,7 +46,7 @@ namespace Intersect.Plugins.Loaders
             "Design", "CA1031:Do not catch general exception types",
             Justification = "This method is supposed to be safe and not leak exceptions upwards, only log them."
         )]
-        public static IManifestHelper FindManifest([NotNull] Assembly assembly)
+        public static IManifestHelper FindManifest(Assembly assembly)
         {
             if (ManifestLoaderDelegates.Count < 1)
             {
@@ -86,7 +82,7 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        public static IManifestHelper LoadJsonManifestFrom([NotNull] Assembly assembly)
+        public static IManifestHelper LoadJsonManifestFrom(Assembly assembly)
         {
             try
             {
@@ -122,7 +118,7 @@ namespace Intersect.Plugins.Loaders
             }
         }
 
-        internal static bool IsVirtualManifestType([NotNull] Type type)
+        internal static bool IsVirtualManifestType(Type type)
         {
             // Abstract, interface and generic types are not valid virtual manifest types.
             if (type.IsAbstract || type.IsInterface || type.IsGenericType)
@@ -179,19 +175,25 @@ namespace Intersect.Plugins.Loaders
         /// </summary>
         /// <param name="assembly">the <see cref="Assembly"/> to pull the manifest from</param>
         /// <returns>an instance of <see cref="IManifestHelper"/> or null if not found or an error occurred</returns>
-        public static IManifestHelper LoadVirtualManifestFrom([NotNull] Assembly assembly)
+        public static IManifestHelper LoadVirtualManifestFrom(Assembly assembly)
         {
+            if (default == assembly)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+
             try
             {
                 var assemblyTypes = assembly.GetTypes();
                 var manifestType = assemblyTypes.FirstOrDefault(IsVirtualManifestType);
-                if (manifestType != null)
+                if (default != manifestType)
                 {
                     return Activator.CreateInstance(manifestType) as IManifestHelper;
                 }
             }
             catch (Exception exception)
             {
+                Debugger.Break();
                 throw new Exception($"Failed to load virtual manifest from {assembly.FullName}.", exception);
             }
 

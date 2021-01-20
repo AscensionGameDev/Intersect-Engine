@@ -1,7 +1,5 @@
 ﻿using System.Runtime.Serialization;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Config
@@ -20,7 +18,6 @@ namespace Intersect.Config
         public bool Safe = true;
 
         [JsonIgnore]
-        [NotNull]
         public bool[] Passable
         {
             get => mPassableCache ?? (mPassableCache = new[] {Normal, Safe, Arena});

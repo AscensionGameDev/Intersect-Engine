@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 using Intersect.Admin.Actions;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
@@ -50,16 +49,16 @@ namespace Intersect.Server.Admin.Actions
                     }
 
                     target.Client?.Disconnect();
-                    PacketSender.SendChatMsg(player, Strings.Account.banned.ToString(target.Name), Color.Red);
+                    PacketSender.SendChatMsg(player, Strings.Account.banned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Account.alreadybanned.ToString(target.Name), Color.Red);
+                    PacketSender.SendChatMsg(player, Strings.Account.alreadybanned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -89,7 +88,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -104,7 +103,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -127,16 +126,16 @@ namespace Intersect.Server.Admin.Actions
                         Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
 
-                    PacketSender.SendChatMsg(player, Strings.Account.muted.ToString(target.Name), Color.Red);
+                    PacketSender.SendChatMsg(player, Strings.Account.muted.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Account.alreadymuted.ToString(target.Name), Color.Red);
+                    PacketSender.SendChatMsg(player, Strings.Account.alreadymuted.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -146,7 +145,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (client == null || target == null || target.Client == null)
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
 
                 return;
             }
@@ -182,12 +181,12 @@ namespace Intersect.Server.Admin.Actions
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Player.adminsetpower);
+                    PacketSender.SendChatMsg(player, Strings.Player.adminsetpower, Enums.ChatMessageType.Admin);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.changeownpower);
+                PacketSender.SendChatMsg(player, Strings.Player.changeownpower, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -202,7 +201,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -217,7 +216,7 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -228,11 +227,11 @@ namespace Intersect.Server.Admin.Actions
             if (unbannedUser != null)
             {
                 Ban.Remove(unbannedUser);
-                PacketSender.SendChatMsg(player, Strings.Account.unbanned.ToString(unbannedUser.Name));
+                PacketSender.SendChatMsg(player, Strings.Account.unbanned.ToString(unbannedUser.Name), Enums.ChatMessageType.Admin);
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Account.notfound.ToString(action.Name));
+                PacketSender.SendChatMsg(player, Strings.Account.notfound.ToString(action.Name), Enums.ChatMessageType.Admin);
             }
         }
 
@@ -243,7 +242,7 @@ namespace Intersect.Server.Admin.Actions
             if (unmutedUser != null)
             {
                 Mute.Remove(unmutedUser);
-                PacketSender.SendChatMsg(player, Strings.Account.unmuted.ToString(unmutedUser.Name));
+                PacketSender.SendChatMsg(player, Strings.Account.unmuted.ToString(unmutedUser.Name), Enums.ChatMessageType.Admin);
             }
             else
             {
@@ -251,11 +250,11 @@ namespace Intersect.Server.Admin.Actions
                 if (target != null)
                 {
                     Mute.Remove(target.User);
-                    PacketSender.SendChatMsg(player, Strings.Account.unmuted.ToString(target.Name));
+                    PacketSender.SendChatMsg(player, Strings.Account.unmuted.ToString(target.Name), Enums.ChatMessageType.Admin);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(player, Strings.Account.notfound.ToString(action.Name));
+                    PacketSender.SendChatMsg(player, Strings.Account.notfound.ToString(action.Name), Enums.ChatMessageType.Admin);
                 }
             }
         }
@@ -267,12 +266,12 @@ namespace Intersect.Server.Admin.Actions
             if (target != null)
             {
                 player.Warp(target.MapId, (byte) target.X, (byte) target.Y);
-                PacketSender.SendChatMsg(player, Strings.Player.warpedto.ToString(target.Name));
-                PacketSender.SendChatMsg(target, Strings.Player.warpedtoyou.ToString(player.Name));
+                PacketSender.SendChatMsg(player, Strings.Player.warpedto.ToString(target.Name), Enums.ChatMessageType.Admin);
+                PacketSender.SendChatMsg(target, Strings.Player.warpedtoyou.ToString(player.Name), Enums.ChatMessageType.Notice);
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 
@@ -295,12 +294,12 @@ namespace Intersect.Server.Admin.Actions
             if (target != null)
             {
                 target.Warp(player.MapId, (byte) player.X, (byte) player.Y);
-                PacketSender.SendChatMsg(player, Strings.Player.haswarpedto.ToString(target.Name), player.Name);
-                PacketSender.SendChatMsg(target, Strings.Player.beenwarpedto.ToString(player.Name), player.Name);
+                PacketSender.SendChatMsg(player, Strings.Player.haswarpedto.ToString(target.Name), Enums.ChatMessageType.Admin, player.Name);
+                PacketSender.SendChatMsg(target, Strings.Player.beenwarpedto.ToString(player.Name), Enums.ChatMessageType.Notice, player.Name);
             }
             else
             {
-                PacketSender.SendChatMsg(player, Strings.Player.offline);
+                PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
             }
         }
 

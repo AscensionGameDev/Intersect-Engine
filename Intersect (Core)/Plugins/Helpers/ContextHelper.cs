@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Intersect.Plugins.Helpers
+﻿namespace Intersect.Plugins.Helpers
 {
     /// <summary>
     /// Partial implementation class for helpers that require a known <see cref="IPluginContext"/>.
@@ -11,14 +9,13 @@ namespace Intersect.Plugins.Helpers
         /// <summary>
         /// Reference to the current <see cref="IPluginContext"/>.
         /// </summary>
-        [NotNull]
         protected TContext Context { get; }
 
         /// <summary>
         /// Partially instantiates a <see cref="ContextHelper{TContext}"/>.
         /// </summary>
         /// <param name="context">the required <typeparamref name="TContext"/></param>
-        protected ContextHelper([NotNull] TContext context)
+        protected ContextHelper(TContext context)
         {
             Context = context;
         }

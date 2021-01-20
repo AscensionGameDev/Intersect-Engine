@@ -8,15 +8,13 @@ using DarkUI.Controls;
 using Intersect.Collections;
 using Intersect.Models;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Editor.Forms.Controls
 {
 
     public partial class SearchableDarkTreeView : UserControl
     {
 
-        [NotNull] private readonly Dictionary<Guid, DarkTreeNode> mIdNodeLookup;
+        private readonly Dictionary<Guid, DarkTreeNode> mIdNodeLookup;
 
         private IGameObjectLookup<IDatabaseObject> mItemProvider;
 
@@ -39,7 +37,6 @@ namespace Intersect.Editor.Forms.Controls
             set => treeViewItems?.SelectNode(mIdNodeLookup.TryGetValue(value, out var node) ? node : null);
         }
 
-        [CanBeNull]
         public IGameObjectLookup<IDatabaseObject> ItemProvider
         {
             get => mItemProvider;
@@ -97,7 +94,7 @@ namespace Intersect.Editor.Forms.Controls
             return FilterBySearchText(pair.Value);
         }
 
-        protected virtual DarkTreeNode ObjectAsNode([NotNull] IDatabaseObject databaseObject)
+        protected virtual DarkTreeNode ObjectAsNode(IDatabaseObject databaseObject)
         {
             if (!mIdNodeLookup.TryGetValue(databaseObject.Id, out var node))
             {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
+using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Server.Database;
@@ -13,7 +14,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Networking
 {
 
-    public class Client
+    public class Client : IPacketSender
     {
 
         public Guid EditorMap = Guid.Empty;
@@ -39,7 +40,7 @@ namespace Intersect.Server.Networking
         //Sent Maps
         public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
 
-        public Client(IConnection connection = null)
+        public Client(IApplicationContext applicationContext, IConnection connection = null)
         {
             this.mConnection = connection;
             mConnectTime = Globals.Timing.Milliseconds;
@@ -107,6 +108,8 @@ namespace Intersect.Server.Networking
 
         public Player Entity { get; set; }
 
+        public IApplicationContext ApplicationContext { get; }
+
         public void SetUser(User user)
         {
             User = user;
@@ -124,14 +127,6 @@ namespace Intersect.Server.Networking
 
             Entity.LastOnline = DateTime.Now;
             Entity.Client = this;
-        }
-
-        public void SendPacket(CerasPacket packet)
-        {
-            if (mConnection != null)
-            {
-                mConnection.Send(packet);
-            }
         }
 
         public void Pinged()
@@ -168,9 +163,9 @@ namespace Intersect.Server.Networking
             return mConnection.Ip;
         }
 
-        public static Client CreateBeta4Client(IConnection connection)
+        public static Client CreateBeta4Client(IApplicationContext context, IConnection connection)
         {
-            var client = new Client(connection);
+            var client = new Client(context, connection);
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Add(client);
@@ -251,6 +246,12 @@ namespace Intersect.Server.Networking
             }
         }
 
+        #region Implementation of IPacketSender
+
+        /// <inheritdoc />
+        public bool Send(IPacket packet) => mConnection?.Send(packet) ?? false;
+
+        #endregion
     }
 
 }

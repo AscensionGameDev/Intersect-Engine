@@ -3,17 +3,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Forms;
 
 using Intersect.Configuration;
 using Intersect.Editor.Content;
-using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
-using Intersect.Editor.Networking;
-using Intersect.Network;
 using Intersect.Updater;
 
 namespace Intersect.Editor.Forms

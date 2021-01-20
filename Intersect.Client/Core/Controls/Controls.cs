@@ -5,15 +5,13 @@ using System.Linq;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Core.Controls
 {
 
     public class Controls
     {
 
-        [NotNull] public readonly IDictionary<Control, ControlMap> ControlMapping;
+        public readonly IDictionary<Control, ControlMap> ControlMapping;
 
         public Controls(Controls gameControls = null)
         {

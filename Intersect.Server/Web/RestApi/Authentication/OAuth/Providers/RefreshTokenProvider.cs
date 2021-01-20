@@ -8,8 +8,6 @@ using Intersect.Security.Claims;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Web.RestApi.Configuration;
 
-using JetBrains.Annotations;
-
 using Microsoft.Owin.Security.Infrastructure;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
@@ -18,15 +16,14 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
     internal class RefreshTokenProvider : AuthenticationTokenProvider
     {
 
-        public RefreshTokenProvider([NotNull] ApiConfiguration configuration)
+        public RefreshTokenProvider(ApiConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        [NotNull]
         private ApiConfiguration Configuration { get; }
 
-        public override async Task CreateAsync([NotNull] AuthenticationTokenCreateContext context)
+        public override async Task CreateAsync(AuthenticationTokenCreateContext context)
         {
             if (context.OwinContext == null)
             {

@@ -7,8 +7,6 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.CommandParsing
 {
 
@@ -16,20 +14,20 @@ namespace Intersect.Server.Core.CommandParsing
     {
 
         public ParserResult(
-            [NotNull] ArgumentValuesMap parsed,
-            [CanBeNull] IEnumerable<ParserError> errors = null,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            ArgumentValuesMap parsed,
+            IEnumerable<ParserError> errors = null,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         ) : this(default(TCommand), parsed, errors, missing, omitted)
         {
         }
 
         public ParserResult(
-            [CanBeNull] TCommand command,
-            [NotNull] ArgumentValuesMap parsed,
-            [CanBeNull] IEnumerable<ParserError> errors = null,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            TCommand command,
+            ArgumentValuesMap parsed,
+            IEnumerable<ParserError> errors = null,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         )
         {
             Command = command;
@@ -44,30 +42,24 @@ namespace Intersect.Server.Core.CommandParsing
         }
 
         public ParserResult(
-            [CanBeNull] TCommand command,
-            [NotNull] ParserError error,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            TCommand command,
+            ParserError error,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         ) : this(command, new ArgumentValuesMap(), new[] {error}, missing, omitted)
         {
         }
 
-        [CanBeNull]
         public TCommand Command { get; }
 
-        [NotNull]
         public ArgumentValuesMap Parsed { get; }
 
-        [NotNull]
         public ImmutableList<UnhandledArgumentError> Unhandled { get; }
 
-        [NotNull]
         public ImmutableList<ParserError> Errors { get; }
 
-        [NotNull]
         public ImmutableList<ICommandArgument> Missing { get; }
 
-        [NotNull]
         public ImmutableList<ICommandArgument> Omitted { get; }
 
     }
@@ -76,29 +68,29 @@ namespace Intersect.Server.Core.CommandParsing
     {
 
         public ParserResult(
-            [NotNull] ArgumentValuesMap parsed,
-            [CanBeNull] IEnumerable<ParserError> errors = null,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            ArgumentValuesMap parsed,
+            IEnumerable<ParserError> errors = null,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         ) : base(parsed, errors, missing, omitted)
         {
         }
 
         public ParserResult(
-            [CanBeNull] ICommand command,
-            [NotNull] ArgumentValuesMap parsed,
-            [CanBeNull] IEnumerable<ParserError> errors = null,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            ICommand command,
+            ArgumentValuesMap parsed,
+            IEnumerable<ParserError> errors = null,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         ) : base(command, parsed, errors, missing, omitted)
         {
         }
 
         public ParserResult(
-            [CanBeNull] ICommand command,
-            [NotNull] ParserError error,
-            [CanBeNull] IEnumerable<ICommandArgument> missing = null,
-            [CanBeNull] IEnumerable<ICommandArgument> omitted = null
+            ICommand command,
+            ParserError error,
+            IEnumerable<ICommandArgument> missing = null,
+            IEnumerable<ICommandArgument> omitted = null
         ) : base(command, error, missing, omitted)
         {
         }

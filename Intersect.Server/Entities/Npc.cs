@@ -18,8 +18,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Entities
 {
 
@@ -91,7 +89,7 @@ namespace Intersect.Server.Entities
         /// </summary>
         public int AggroCenterZ;
 
-        public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
+        public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
@@ -140,7 +138,6 @@ namespace Intersect.Server.Entities
             mPathFinder = new Pathfinder(this);
         }
 
-        [NotNull]
         public NpcBase Base { get; private set; }
 
         private bool IsStunnedOrSleeping => Statuses.Values.Any(PredicateStunnedOrSleeping);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging.Formatting
 {
 
@@ -19,7 +17,7 @@ namespace Intersect.Logging.Formatting
             TimestampFormat = DefaultTimestampFormat;
         }
 
-        [CanBeNull] public string TimestampFormat { get; set; }
+        public string TimestampFormat { get; set; }
 
         /// <inheritdoc />
         public string Format(
@@ -47,12 +45,11 @@ namespace Intersect.Logging.Formatting
             return builder.ToString();
         }
 
-        [NotNull]
         protected virtual StringBuilder FormatPrefix(
-            [NotNull] LogConfiguration configuration,
+            LogConfiguration configuration,
             LogLevel logLevel,
             DateTime dateTime,
-            [CanBeNull] StringBuilder builder = null
+            StringBuilder builder = null
         )
         {
             if (builder == null)
@@ -80,9 +77,9 @@ namespace Intersect.Logging.Formatting
         }
 
         private static void FormatLine(
-            [NotNull] StringBuilder builder,
-            [NotNull] string prefix,
-            [NotNull] string message,
+            StringBuilder builder,
+            string prefix,
+            string message,
             params object[] args
         )
         {
@@ -101,9 +98,9 @@ namespace Intersect.Logging.Formatting
         }
 
         private static void FormatLine(
-            [NotNull] StringBuilder builder,
-            [CanBeNull] string prefix,
-            [NotNull] Exception exception,
+            StringBuilder builder,
+            string prefix,
+            Exception exception,
             bool recurse = true
         )
         {

@@ -5,8 +5,6 @@ using System.Text;
 using Intersect.IO.Files;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Configuration
@@ -15,8 +13,7 @@ namespace Intersect.Configuration
     public static class ConfigurationHelper
     {
 
-        [NotNull]
-        public static T Load<T>([NotNull] T configuration, [NotNull] string filePath, bool failQuietly = false)
+        public static T Load<T>(T configuration, string filePath, bool failQuietly = false)
             where T : IConfiguration<T>
         {
             if (!File.Exists(filePath))
@@ -40,8 +37,7 @@ namespace Intersect.Configuration
             }
         }
 
-        [NotNull]
-        public static T Save<T>([NotNull] T configuration, [NotNull] string filePath, bool failQuietly = false)
+        public static T Save<T>(T configuration, string filePath, bool failQuietly = false)
             where T : IConfiguration<T>
         {
             var directoryPath = Path.GetDirectoryName(filePath);
@@ -71,8 +67,7 @@ namespace Intersect.Configuration
             }
         }
 
-        [NotNull]
-        public static T LoadSafely<T>([NotNull] T configuration, [CanBeNull] string filePath = null)
+        public static T LoadSafely<T>(T configuration, string filePath = null)
             where T : IConfiguration<T>
         {
             if (string.IsNullOrWhiteSpace(filePath))

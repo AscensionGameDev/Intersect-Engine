@@ -7,23 +7,19 @@ using System.Runtime.CompilerServices;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging
 {
     public static class Log
     {
         internal static readonly DateTime Initial = DateTime.Now;
 
-        [NotNull]
         private static string ExecutableName =>
             Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
 
-        [NotNull]
         public static string SuggestFilename(
             DateTime? time = null,
-            [CanBeNull] string prefix = null,
-            [CanBeNull] string extensionPrefix = null
+            string prefix = null,
+            string extensionPrefix = null
         ) =>
             $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? Initial:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
 
@@ -56,9 +52,9 @@ namespace Intersect.Logging
             );
         }
 
-        [NotNull] public static Logger Pretty { get; internal set; }
+        public static Logger Pretty { get; internal set; }
 
-        [NotNull] public static Logger Default { get; internal set; }
+        public static Logger Default { get; internal set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(LogLevel logLevel, string message)

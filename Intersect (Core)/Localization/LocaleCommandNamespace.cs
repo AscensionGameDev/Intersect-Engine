@@ -4,8 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Localization
@@ -55,11 +53,9 @@ namespace Intersect.Localization
         }
 
         [JsonIgnore]
-        [NotNull]
         public ImmutableList<LocaleCommand> CommandList { get; }
 
         [JsonIgnore]
-        [NotNull]
         public IDictionary<string, LocaleCommand> CommandLookup { get; }
 
     }

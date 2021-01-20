@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging.Formatting
 {
 
@@ -9,12 +7,12 @@ namespace Intersect.Logging.Formatting
     {
 
         string Format(
-            [NotNull] LogConfiguration configuration,
+            LogConfiguration configuration,
             LogLevel logLevel,
             DateTime dateTime,
-            [CanBeNull] Exception exception,
-            [CanBeNull] string message,
-            [CanBeNull] params object[] args
+            Exception exception,
+            string message,
+            params object[] args
         );
 
     }
