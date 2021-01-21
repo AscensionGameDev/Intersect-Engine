@@ -107,6 +107,12 @@ namespace Intersect.Client.Interface.Menu
                 mMainMenu.Show();
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
+
+            // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
+            if (!Globals.WaitingOnServer && mSubmitBtn.IsDisabled)
+            {
+                mSubmitBtn.Enable();
+            }
         }
 
         public void Hide()
@@ -133,7 +139,15 @@ namespace Intersect.Client.Interface.Menu
 
         void SubmitBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (Globals.WaitingOnServer)
+            {
+                return;
+            }
+
             TrySendCode();
+
+            Globals.WaitingOnServer = true;
+            mSubmitBtn.Disable();
         }
 
         public void TrySendCode()

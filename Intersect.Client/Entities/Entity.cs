@@ -978,9 +978,6 @@ namespace Intersect.Client.Entities
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
 
-                //GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
-                //    new Intersect.Color(alpha, 255, 255, 255));
-
                 WorldPos = destRectangle;
 
                 //Order the layers of paperdolls and sprites
@@ -1034,6 +1031,15 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
+            }
+            else
+            {
+                // We don't have a texture to render, but we still want this to be targetable.
+                WorldPos = new FloatRect(
+                    map.GetX() + X * Options.TileWidth + OffsetX,
+                    map.GetY() + Y * Options.TileHeight + OffsetY,
+                    Options.TileWidth,
+                    Options.TileHeight);
             }
         }
 

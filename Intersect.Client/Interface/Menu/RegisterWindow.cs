@@ -136,6 +136,12 @@ namespace Intersect.Client.Interface.Menu
                 mMainMenu.Show();
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
             }
+
+            // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
+            if (!Globals.WaitingOnServer && mRegisterBtn.IsDisabled)
+            {
+                mRegisterBtn.Enable();
+            }
         }
 
         public void Show()
@@ -190,6 +196,7 @@ namespace Intersect.Client.Interface.Menu
                                 }
 
                                 Globals.WaitingOnServer = true;
+                                mRegisterBtn.Disable();
                                 ChatboxMsg.ClearMessages();
                             }
                             else

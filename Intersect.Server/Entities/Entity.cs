@@ -2087,15 +2087,10 @@ namespace Intersect.Server.Entities
 
                     break;
                 case SpellTypes.WarpTo:
-                    if (CastTarget == null)
+                    if (CastTarget != null)
                     {
-                        PacketSender.SendSpellCooldown((Player) this, Spells[spellSlot].SpellId);
-
-                        return;
+                        HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                     }
-
-                    HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
-
                     break;
                 case SpellTypes.Dash:
                     PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);

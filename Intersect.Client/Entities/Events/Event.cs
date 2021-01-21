@@ -199,7 +199,13 @@ namespace Intersect.Client.Entities.Events
             destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
             destRectangle.Width = srcRectangle.Width;
             destRectangle.Height = srcRectangle.Height;
+
+            // Set up our targetting rectangle.
+            // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
+            WorldPos.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
+            WorldPos.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
+
             if (srcTexture != null)
             {
                 Graphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
