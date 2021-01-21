@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Threading;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Threading
 {
 
     public abstract class Threaded : IDisposable
     {
 
-        [NotNull] private readonly Thread mThread;
+        private readonly Thread mThread;
 
         private bool mDisposed;
 
         protected Threaded(string name = null)
         {
-            mThread = new Thread(ThreadStart);
+            mThread = new Thread(ThreadStartWrapper);
             if (!string.IsNullOrEmpty(name))
             {
                 mThread.Name = name;
@@ -29,17 +27,21 @@ namespace Intersect.Threading
                 return;
             }
 
+            mThread.Abort();
+
             mDisposed = true;
         }
 
-        public Thread Start()
+        public Thread Start(params object[] args)
         {
-            mThread.Start();
+            mThread.Start(args);
 
             return mThread;
         }
 
-        protected abstract void ThreadStart();
+        private void ThreadStartWrapper(object args) => ThreadStart(args as object[]);
+
+        protected abstract void ThreadStart(params object[] args);
 
     }
 

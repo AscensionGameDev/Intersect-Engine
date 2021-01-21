@@ -1,14 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-
-using Intersect.Core;
+﻿using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
+using Intersect.Server.Core.Services;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -16,9 +11,19 @@ using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Web.RestApi;
 
-using JetBrains.Annotations;
-
 using Open.Nat;
+
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Intersect.Factories;
+using Intersect.Plugins;
+using Intersect.Server.Plugins;
+using Intersect.Plugins.Interfaces;
 
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
@@ -26,39 +31,34 @@ using Intersect.Server.Networking.Websockets;
 
 namespace Intersect.Server.Core
 {
-
-    internal sealed class ServerContext : ApplicationContext<ServerContext>
+    /// <summary>
+    /// Implements <see cref="IServerContext"/>.
+    /// </summary>
+    internal sealed class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
-
-        public ServerContext([NotNull] CommandLineOptions startupOptions)
+        internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, INetworkHelper networkHelper) : base(
+            startupOptions, logger, networkHelper
+        )
         {
-            StartupOptions = startupOptions;
+            // Register the factory for creating service plugin contexts
+            FactoryRegistry<IPluginContext>.RegisterFactory(new ServerPluginContext.Factory());
 
             if (startupOptions.Port > 0)
             {
                 Options.ServerPort = startupOptions.Port;
             }
 
-            ServerConsole = new ServerConsole();
-            ServerLogic = new ServerLogic();
             RestApi = new RestApi(startupOptions.ApiPort);
 
-            Network = CreateNetwork();
+            Network = CreateNetwork(networkHelper);
         }
 
-        [NotNull]
-        public CommandLineOptions StartupOptions { get; }
+        public IConsoleService ConsoleService => GetExpectedService<IConsoleService>();
 
-        [NotNull]
-        public ServerConsole ServerConsole { get; }
+        public ILogicService LogicService => GetExpectedService<ILogicService>();
 
-        [NotNull]
-        public ServerLogic ServerLogic { get; }
-
-        [NotNull]
         public ServerNetwork Network { get; }
 
-        [NotNull]
         public RestApi RestApi { get; }
 
         #region Startup
@@ -67,14 +67,8 @@ namespace Intersect.Server.Core
         {
             try
             {
+                Ceras.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
                 InternalStartNetworking();
-
-                if (!StartupOptions.DoNotShowConsole)
-                {
-                    ThreadConsole = ServerConsole.Start();
-                }
-
-                ThreadLogic = ServerLogic.Start();
             }
             catch (Exception exception)
             {
@@ -155,6 +149,8 @@ namespace Intersect.Server.Core
                         }
                     }
                 }
+
+                NetworkHelper.HandlerRegistry.Dispose();
             }
 
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
@@ -167,16 +163,15 @@ namespace Intersect.Server.Core
 
         #region Threads
 
-        private Thread ThreadConsole { get; set; }
+        private Thread ThreadConsole => ConsoleService.Thread;
 
-        private Thread ThreadLogic { get; set; }
+        private Thread ThreadLogic => LogicService.Thread;
 
         #endregion
 
         #region Network
 
-        [NotNull]
-        private ServerNetwork CreateNetwork()
+        private ServerNetwork CreateNetwork(INetworkHelper networkHelper)
         {
             ServerNetwork network;
 
@@ -193,14 +188,14 @@ namespace Intersect.Server.Core
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                network = new ServerNetwork(this, networkHelper, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
             #endregion
 
             #region Configure Packet Handlers
 
-            var packetHandler = new PacketHandler();
+            var packetHandler = new PacketHandler(this, networkHelper.HandlerRegistry);
             network.Handler = packetHandler.HandlePacket;
             network.PreProcessHandler = packetHandler.PreProcessPacket;
 
@@ -232,7 +227,7 @@ namespace Intersect.Server.Core
 
             RestApi.Start();
 
-            if (!Options.UPnP || ServerContext.Instance.StartupOptions.NoNatPunchthrough)
+            if (!Options.UPnP || Instance.StartupOptions.NoNatPunchthrough)
             {
                 return;
             }
@@ -260,6 +255,19 @@ namespace Intersect.Server.Core
 
         #endregion
 
-    }
+        #region Exception Handling
 
+        protected override void NotifyNonTerminatingExceptionOccurred() =>
+            Console.WriteLine(Strings.Errors.errorlogged);
+
+        internal static void DispatchUnhandledException(Exception exception, bool isTerminating = true)
+        {
+            var sender = Thread.CurrentThread;
+            Task.Factory.StartNew(
+                () => HandleUnhandledException(sender, new UnhandledExceptionEventArgs(exception, isTerminating))
+            );
+        }
+
+        #endregion Exception Handling
+    }
 }

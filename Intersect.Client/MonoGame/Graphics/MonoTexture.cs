@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
+using Intersect.Compression;
 using Intersect.IO.Files;
 using Intersect.Logging;
 
@@ -13,10 +14,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-
     public class MonoTexture : GameTexture
     {
-
         private GraphicsDevice mGraphicsDevice;
 
         private int mHeight = -1;
@@ -37,12 +36,22 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private int mWidth = -1;
 
+        private readonly Func<Stream> CreateStream;
+
         public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath)
         {
             mGraphicsDevice = graphicsDevice;
             mPath = filename;
             mRealPath = realPath;
             mName = Path.GetFileName(filename);
+        }
+
+        public MonoTexture(GraphicsDevice graphicsDevice, string assetName, Func<Stream> createStream)
+        {
+            mGraphicsDevice = graphicsDevice;
+            mPath = assetName;
+            mName = assetName;
+            CreateStream = createStream;
         }
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame)
@@ -55,11 +64,33 @@ namespace Intersect.Client.MonoGame.Graphics
             mHeight = packFrame.SourceRect.Height;
         }
 
+        private void Load(Stream stream)
+        {
+            mTexture = Texture2D.FromStream(mGraphicsDevice, stream);
+            if (mTexture == null)
+            {
+                throw new InvalidDataException("Failed to load texture, received no data.");
+            }
+
+            mWidth = mTexture.Width;
+            mHeight = mTexture.Height;
+            mLoadError = false;
+        }
+
         public void LoadTexture()
         {
             if (mTexture != null)
             {
                 return;
+            }
+
+            if (CreateStream != null)
+            {
+                using (var stream = CreateStream())
+                {
+                    Load(stream);
+                    return;
+                }
             }
 
             if (mPackFrame != null)
@@ -68,7 +99,6 @@ namespace Intersect.Client.MonoGame.Graphics
 
                 return;
             }
-
 
             mLoadError = true;
             if (string.IsNullOrWhiteSpace(mRealPath))
@@ -91,22 +121,17 @@ namespace Intersect.Client.MonoGame.Graphics
             {
                 try
                 {
-                    mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
-                    if (mTexture == null)
+                    if (Path.GetExtension(mPath) == ".asset")
                     {
-                        Log.Error($"Failed to load texture due to unknown error: {relativePath}");
-                        ChatboxMsg.AddMessage(
-                            new ChatboxMsg(
-                                Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
-                                new Color(0xBF, 0x0, 0x0)
-                            )
-                        );
-                        return;
+                        using (var gzip = GzipCompression.CreateDecompressedFileStream(fileStream))
+                        {
+                            Load(gzip);
+                        }
                     }
-
-                    mWidth = mTexture.Width;
-                    mHeight = mTexture.Height;
-                    mLoadError = false;
+                    else
+                    {
+                        Load(fileStream);
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -114,10 +139,11 @@ namespace Intersect.Client.MonoGame.Graphics
                         exception,
                         $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
                     );
+
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
                             Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
-                            new Color(0xBF, 0x0, 0x0)
+                            new Color(0xBF, 0x0, 0x0), Enums.ChatMessageType.Error
                         )
                     );
                 }
@@ -250,7 +276,5 @@ namespace Intersect.Client.MonoGame.Graphics
             mTexture.Dispose();
             mTexture = null;
         }
-
     }
-
 }

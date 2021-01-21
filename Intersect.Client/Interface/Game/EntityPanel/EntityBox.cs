@@ -16,8 +16,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
@@ -28,16 +26,16 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private static int sStatusYPadding = 2;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityLevel;
+        public readonly Framework.Gwen.Control.Label EntityLevel;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityMap;
+        public readonly Framework.Gwen.Control.Label EntityMap;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityName;
+        public readonly Framework.Gwen.Control.Label EntityName;
 
-        [NotNull] public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
+        public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
 
         //Controls
-        [NotNull] public readonly ImagePanel EntityWindow;
+        public readonly ImagePanel EntityWindow;
 
         public float CurExpWidth = -1;
 
@@ -691,6 +689,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
                 EntityFace.Texture = faceTex;
+                EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
                 EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
@@ -719,6 +718,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 if (entityTex != EntityFace.Texture)
                 {
                     EntityFace.Texture = entityTex;
+                    EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
                     EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
@@ -826,6 +826,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 {
                     PaperdollPanels[i].Hide();
                 }
+            }
+
+            if (EntityFace.RenderColor != MyEntity.Color)
+            {
+                EntityFace.RenderColor = MyEntity.Color;
             }
         }
 

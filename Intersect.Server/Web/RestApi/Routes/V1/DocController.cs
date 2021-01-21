@@ -9,8 +9,6 @@ using System.Web.Http.Description;
 
 using Intersect.Server.Web.RestApi.Attributes;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
@@ -21,7 +19,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         private Collection<ApiDescription> mDescriptions;
 
-        [NotNull]
         private IEnumerable<ApiDescription> Descriptions
         {
             get
@@ -39,7 +36,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object Authorized(string path)
         {
-            var segments = path?.Trim().Split('/') ?? new string[0];
+            var segments = path?.Trim().Split('/') ?? Array.Empty<string>();
 
             var pathSegments = new List<string>();
             var descriptions = Descriptions.OrderBy(description => description?.RelativePath)
@@ -180,7 +177,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     internal static class ApiExtensions
     {
 
-        public static dynamic ToJson([NotNull] this HttpParameterDescriptor descriptor)
+        public static dynamic ToJson(this HttpParameterDescriptor descriptor)
         {
             return new
             {
@@ -189,7 +186,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        public static dynamic ToJson([NotNull] this ApiParameterDescription description)
+        public static dynamic ToJson(this ApiParameterDescription description)
         {
             return new
             {
@@ -201,7 +198,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         public static dynamic ToJson(
-            [NotNull] this ApiDescription description,
+            this ApiDescription description,
             bool method = true,
             bool documentation = true,
             bool parameters = true
@@ -224,7 +221,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (parameters)
             {
                 json.parameters = description.ParameterDescriptions?.Select(parameter => parameter?.ToJson()) ??
-                                  new object[0];
+                                  Array.Empty<object>();
             }
 
             return json;

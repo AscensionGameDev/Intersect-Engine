@@ -9,17 +9,25 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
+using Intersect.Client.Core;
 
 namespace Intersect.Client.MonoGame.Network
 {
 
-    public class MonoSocket : GameSocket
+    internal class MonoSocket : GameSocket
     {
 
         public static ClientNetwork ClientLidgrenNetwork;
 
         public static ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue =
             new ConcurrentQueue<KeyValuePair<IConnection, IPacket>>();
+
+        private IClientContext Context { get; }
+
+        internal MonoSocket(IClientContext context)
+        {
+            Context = context;
+        }
 
         public override void Connect(string host, int port)
         {
@@ -35,7 +43,7 @@ namespace Intersect.Client.MonoGame.Network
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
+                ClientLidgrenNetwork = new ClientNetwork(Context.NetworkHelper, config, rsaKey.Parameters);
             }
 
             if (ClientLidgrenNetwork == null)

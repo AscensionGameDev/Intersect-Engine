@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Text;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging.Formatting
 {
 
+    /// <summary>
+    /// Basic formatter for text logs, includes details and timestamps.
+    /// </summary>
     public class DefaultFormatter : ILogFormatter
     {
 
@@ -16,7 +17,6 @@ namespace Intersect.Logging.Formatting
             TimestampFormat = DefaultTimestampFormat;
         }
 
-        [CanBeNull]
         public string TimestampFormat { get; set; }
 
         /// <inheritdoc />
@@ -29,7 +29,7 @@ namespace Intersect.Logging.Formatting
             params object[] args
         )
         {
-            var prefix = FormatPrefix(configuration, logLevel, dateTime);
+            var prefix = FormatPrefix(configuration, logLevel, dateTime).ToString();
             var builder = new StringBuilder();
 
             if (message != null)
@@ -45,22 +45,26 @@ namespace Intersect.Logging.Formatting
             return builder.ToString();
         }
 
-        [NotNull]
-        private string FormatPrefix([NotNull] LogConfiguration configuration, LogLevel logLevel, DateTime dateTime)
+        protected virtual StringBuilder FormatPrefix(
+            LogConfiguration configuration,
+            LogLevel logLevel,
+            DateTime dateTime,
+            StringBuilder builder = null
+        )
         {
-            var builder = new StringBuilder();
-
-            if (!configuration.Pretty)
+            if (builder == null)
             {
-                if (!string.IsNullOrWhiteSpace(TimestampFormat))
-                {
-                    builder.Append(dateTime.ToString(TimestampFormat));
-                    builder.Append(' ');
-                }
+                builder = new StringBuilder();
+            }
 
-                builder.Append($"[{logLevel}]");
+            if (!string.IsNullOrWhiteSpace(TimestampFormat))
+            {
+                builder.Append(dateTime.ToString(TimestampFormat));
                 builder.Append(' ');
             }
+
+            builder.Append($"[{logLevel}]");
+            builder.Append(' ');
 
             // ReSharper disable once InvertIf
             if (!string.IsNullOrEmpty(configuration.Tag))
@@ -69,13 +73,13 @@ namespace Intersect.Logging.Formatting
                 builder.Append(": ");
             }
 
-            return builder.ToString();
+            return builder;
         }
 
         private static void FormatLine(
-            [NotNull] StringBuilder builder,
-            [NotNull] string prefix,
-            [NotNull] string message,
+            StringBuilder builder,
+            string prefix,
+            string message,
             params object[] args
         )
         {
@@ -94,9 +98,9 @@ namespace Intersect.Logging.Formatting
         }
 
         private static void FormatLine(
-            [NotNull] StringBuilder builder,
-            [CanBeNull] string prefix,
-            [NotNull] Exception exception,
+            StringBuilder builder,
+            string prefix,
+            Exception exception,
             bool recurse = true
         )
         {

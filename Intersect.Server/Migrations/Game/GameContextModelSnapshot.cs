@@ -211,6 +211,10 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("Cooldown");
 
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
+
                     b.Property<int>("CritChance");
 
                     b.Property<double>("CritMultiplier");
@@ -220,8 +224,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("DamageType");
 
                     b.Property<string>("Description");
-
-                    b.Property<bool>("DestroySpell");
 
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
@@ -238,6 +240,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Icon");
 
                     b.Property<int>("ItemType");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnName("Color");
 
                     b.Property<string>("JsonUsageRequirements")
                         .HasColumnName("UsageRequirements");
@@ -264,6 +269,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("Scaling");
 
                     b.Property<int>("ScalingStat");
+
+                    b.Property<bool>("SingleUse")
+                        .HasColumnName("DestroySpell");
 
                     b.Property<int>("SlotCount");
 
@@ -349,6 +357,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("JsonAggroList")
                         .HasColumnName("AggroList");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnName("Color");
 
                     b.Property<string>("JsonDrops")
                         .HasColumnName("Drops");
@@ -624,6 +635,10 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("CastDuration");
 
                     b.Property<int>("CooldownDuration");
+
+                    b.Property<string>("CooldownGroup");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<string>("Description");
 

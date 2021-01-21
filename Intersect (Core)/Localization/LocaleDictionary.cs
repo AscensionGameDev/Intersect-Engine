@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Localization
 {
 
@@ -12,13 +10,13 @@ namespace Intersect.Localization
         where TKey : IComparable<TKey> where TValue : Localized
     {
 
-        [NotNull] private readonly IDictionary<TKey, TValue> mDefaults;
+        private readonly IDictionary<TKey, TValue> mDefaults;
 
-        [NotNull] private readonly IDictionary<TKey, TValue> mValues;
+        private readonly IDictionary<TKey, TValue> mValues;
 
         public LocaleDictionary(
-            [CanBeNull] IEnumerable<KeyValuePair<TKey, TValue>> defaults = null,
-            [CanBeNull] IEnumerable<KeyValuePair<TKey, TValue>> values = null
+            IEnumerable<KeyValuePair<TKey, TValue>> defaults = null,
+            IEnumerable<KeyValuePair<TKey, TValue>> values = null
         )
         {
             mDefaults = defaults == null
@@ -38,7 +36,6 @@ namespace Intersect.Localization
                 );
         }
 
-        [NotNull]
         private ICollection<KeyValuePair<TKey, TValue>> Pairs =>
             Keys.Select(
                     key =>

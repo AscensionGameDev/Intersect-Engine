@@ -20,8 +20,6 @@ using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
@@ -624,8 +622,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            AdminActions adminAction;
-            if (!Enum.TryParse<AdminActions>(act, true, out adminAction))
+            if (!Enum.TryParse<AdminActions>(act, true, out var adminAction))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
             }
@@ -653,8 +650,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            AdminActions adminAction;
-            if (!Enum.TryParse<AdminActions>(act, true, out adminAction))
+            if (!Enum.TryParse<AdminActions>(act, true, out var adminAction))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
             }
@@ -675,8 +671,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         private object DoAdminActionOnUser(
-            [NotNull] Func<Tuple<Client, User>> fetch,
-            [NotNull] Func<HttpResponseMessage> onError,
+            Func<Tuple<Client, User>> fetch,
+            Func<HttpResponseMessage> onError,
             AdminActions adminAction,
             AdminActionParameters actionParameters
         )

@@ -13,8 +13,6 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared.Errors;
 
-using JetBrains.Annotations;
-
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
 namespace Intersect.Client.Interface
@@ -23,7 +21,7 @@ namespace Intersect.Client.Interface
     public static class Interface
     {
 
-        [NotNull] public static readonly List<KeyValuePair<string, string>> MsgboxErrors =
+        public static readonly List<KeyValuePair<string, string>> MsgboxErrors =
             new List<KeyValuePair<string, string>>();
 
         public static ErrorHandler ErrorMsgHandler;
@@ -43,9 +41,9 @@ namespace Intersect.Client.Interface
 
         public static bool SetupHandlers { get; set; }
 
-        public static GameInterface GameUi { get; set; }
+        public static GameInterface GameUi { get; private set; }
 
-        public static MenuGuiBase MenuUi { get; set; }
+        public static MenuGuiBase MenuUi { get; private set; }
 
         public static TexturedBase Skin { get; set; }
 
@@ -71,15 +69,9 @@ namespace Intersect.Client.Interface
                 };
             }
 
-            if (MenuUi != null)
-            {
-                MenuUi.Dispose();
-            }
+            MenuUi?.Dispose();
 
-            if (GameUi != null)
-            {
-                GameUi.Dispose();
-            }
+            GameUi?.Dispose();
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(Skin, "MainMenu")
@@ -133,6 +125,8 @@ namespace Intersect.Client.Interface
                 GameUi = new GameInterface(sGameCanvas);
                 MenuUi = null;
             }
+
+            Globals.OnLifecycleChangeState();
 
             GwenInitialized = true;
         }

@@ -8,31 +8,29 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Client.Interface.Game
 {
 
     public class EscapeMenu : ImagePanel
     {
 
-        [NotNull] private readonly Button mClose;
+        private readonly Button mClose;
 
-        [NotNull] private readonly ImagePanel mContainer;
+        private readonly ImagePanel mContainer;
 
-        [NotNull] private readonly Button mExitToDesktop;
+        private readonly Button mExitToDesktop;
 
-        [NotNull] private readonly Button mGoToCharacterSelect;
+        private readonly Button mGoToCharacterSelect;
 
-        [NotNull] private readonly Button mLogout;
+        private readonly Button mLogout;
 
-        [NotNull] private readonly Button mOptions;
+        private readonly Button mOptions;
 
-        [NotNull] private readonly OptionsWindow mOptionsWindow;
+        private readonly OptionsWindow mOptionsWindow;
 
-        [NotNull] private readonly Label mTitle;
+        private readonly Label mTitle;
 
-        public EscapeMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
+        public EscapeMenu(Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
         {
             Interface.InputBlockingElements?.Add(this);
 

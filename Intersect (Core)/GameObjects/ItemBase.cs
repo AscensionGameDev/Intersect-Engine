@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
@@ -72,6 +73,16 @@ namespace Intersect.GameObjects
 
         public int Cooldown { get; set; }
 
+        /// <summary>
+        /// Defines which cooldown group this item belongs to.
+        /// </summary>
+        public string CooldownGroup { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Configures whether this should not trigger and be triggered by the global cooldown.
+        /// </summary>
+        public bool IgnoreGlobalCooldown { get; set; } = false;
+
         public int Damage { get; set; }
 
         public int DamageType { get; set; }
@@ -128,6 +139,23 @@ namespace Intersect.GameObjects
         public string MalePaperdoll { get; set; } = "";
 
         public string Icon { get; set; } = "";
+
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [Column("Color")]
+        [JsonIgnore]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Item.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; }
 
         public int Price { get; set; }
 
@@ -228,6 +256,24 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
+        /// <summary>
+        /// Gets an array of all items sharing the provided cooldown group.
+        /// </summary>
+        /// <param name="cooldownGroup">The cooldown group to search for.</param>
+        /// <returns>Returns an array of <see cref="ItemBase"/> containing all items with the supplied cooldown group.</returns>
+        public static ItemBase[] GetCooldownGroup(string cooldownGroup)
+        {
+            cooldownGroup = cooldownGroup.Trim();
+
+            // No point looking for nothing.
+            if (string.IsNullOrWhiteSpace(cooldownGroup))
+            {
+                return Array.Empty<ItemBase>();
+            }
+
+            return Lookup.Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (ItemBase)i.Value).ToArray();
+        }
+
         private void Initialize()
         {
             Name = "New Item";
@@ -239,6 +285,7 @@ namespace Intersect.GameObjects
             PercentageVitalsGiven = new int[(int) Vitals.VitalCount];
             Consumable = new ConsumableData();
             Effect = new EffectData();
+            Color = new Color(255, 255, 255, 255);
         }
 
     }

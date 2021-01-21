@@ -9,6 +9,7 @@ namespace Intersect.Network
 
     public sealed class NetworkThread
     {
+        private readonly object mLifecycleLock;
 
         private readonly PacketDispatcher mDispatcher;
 
@@ -16,10 +17,12 @@ namespace Intersect.Network
 
         public NetworkThread(PacketDispatcher dispatcher, string name = null)
         {
+            mLifecycleLock = new object();
+            mDispatcher = dispatcher;
+
             Name = name ?? "Network Worker Thread";
             CurrentThread = new Thread(Loop);
             Queue = new PacketQueue();
-            mDispatcher = dispatcher;
             Connections = new List<IConnection>();
         }
 
@@ -35,7 +38,7 @@ namespace Intersect.Network
 
         public void Start()
         {
-            lock (this)
+            lock (mLifecycleLock)
             {
                 if (mStarted)
                 {
@@ -51,12 +54,12 @@ namespace Intersect.Network
 
         public void Stop()
         {
-            lock (this)
+            lock (mLifecycleLock)
             {
                 IsRunning = false;
             }
 
-            Queue?.Interrupt();
+            Queue.Interrupt();
         }
 
         private void Loop()
@@ -75,7 +78,7 @@ namespace Intersect.Network
                 }
 
                 //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
-                if (!(mDispatcher?.Dispatch(packet) ?? false))
+                if (!mDispatcher.Dispatch(packet))
                 {
                     Log.Warn($"Failed to dispatch packet '{packet}'.");
                 }
@@ -88,7 +91,7 @@ namespace Intersect.Network
                 }
 #endif
 
-                packet.Dispose();
+                packet?.Dispose();
 
                 Thread.Yield();
             }

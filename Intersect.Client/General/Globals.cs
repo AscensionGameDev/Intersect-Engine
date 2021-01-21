@@ -8,11 +8,10 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
-
-using JetBrains.Annotations;
 
 namespace Intersect.Client.General
 {
@@ -38,7 +37,7 @@ namespace Intersect.Client.General
 
         public static int CurrentMap = -1;
 
-        [NotNull] public static GameDatabase Database;
+        public static GameDatabase Database;
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
@@ -59,7 +58,29 @@ namespace Intersect.Client.General
         public static ShopBase GameShop;
 
         //Crucial game variables
-        public static GameStates GameState = GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
+
+        internal static List<IClientLifecycleHelper> ClientLifecycleHelpers { get; } =
+            new List<IClientLifecycleHelper>();
+
+        internal static void OnLifecycleChangeState()
+        {
+            ClientLifecycleHelpers.ForEach(
+                clientLifecycleHelper => clientLifecycleHelper?.OnLifecycleChangeState(GameState)
+            );
+        }
+
+        private static GameStates mGameState = GameStates.Intro;
+
+        /// <see cref="GameStates" />
+        public static GameStates GameState
+        {
+            get => mGameState;
+            set
+            {
+                mGameState = value;
+                OnLifecycleChangeState();
+            }
+        }
 
         public static List<Guid> GridMaps = new List<Guid>();
 
@@ -78,7 +99,7 @@ namespace Intersect.Client.General
 
         public static bool CanCloseInventory => !(InBag || InBank || InCraft || InShop || InTrade);
 
-        [NotNull] public static GameInput InputManager;
+        public static GameInput InputManager;
 
         public static bool IntroComing = true;
 
@@ -124,7 +145,7 @@ namespace Intersect.Client.General
 
         public static Random Random = new Random();
 
-        [NotNull] public static GameSystem System;
+        public static GameSystem System;
 
         //Trading (Only 2 people can trade at once)
         public static Item[,] Trade;

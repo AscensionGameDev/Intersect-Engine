@@ -26,8 +26,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
@@ -37,7 +35,7 @@ namespace Intersect.Server.Entities
     {
 
         //Online Players List
-        [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
+        private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
 
         #region Chat
 
@@ -86,23 +84,23 @@ namespace Intersect.Server.Entities
         public DateTime? LastOnline { get; set; }
 
         //Bank
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
         //Friends
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //HotBar
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
 
         //Quests
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
         //Variables
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
         [JsonIgnore, NotMapped]
@@ -203,7 +201,7 @@ namespace Intersect.Server.Entities
 
         public void SendPacket(CerasPacket packet)
         {
-            Client?.SendPacket(packet);
+            Client?.Send(packet);
         }
 
         public override void Dispose()
@@ -365,8 +363,7 @@ namespace Intersect.Server.Entities
             //Check for autorun common events and run them
             foreach (var obj in EventBase.Lookup)
             {
-                var evt = obj.Value as EventBase;
-                if (evt != null && evt.CommonEvent)
+                if (obj.Value is EventBase evt && evt.CommonEvent)
                 {
                     StartCommonEvent(evt, CommonEventTrigger.Autorun);
                 }
@@ -539,8 +536,7 @@ namespace Intersect.Server.Entities
 
         public void RemoveEvent(Guid id)
         {
-            Event outInstance;
-            EventLookup.TryRemove(id, out outInstance);
+            EventLookup.TryRemove(id, out var outInstance);
             PacketSender.SendEntityLeaveTo(this, this);
         }
 
@@ -790,17 +786,17 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), CustomColors.Combat.LevelUp, Name);
+            PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
             PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.Combat.LevelUp);
             foreach (var message in messages)
             {
-                PacketSender.SendChatMsg(this, message, CustomColors.Alerts.Info, Name);
+                PacketSender.SendChatMsg(this, message, ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
             }
 
             if (StatPoints > 0)
             {
                 PacketSender.SendChatMsg(
-                    this, Strings.Player.statpoints.ToString(StatPoints), CustomColors.Combat.StatPoints, Name
+                    this, Strings.Player.statpoints.ToString(StatPoints), ChatMessageType.Experience, CustomColors.Combat.StatPoints, Name
                 );
             }
 
@@ -941,7 +937,8 @@ namespace Intersect.Server.Entities
                                         Strings.Quests.npctask.ToString(
                                             quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                             NpcBase.GetName(questTask.TargetId)
-                                        )
+                                        ),
+                                        ChatMessageType.Quest
                                     );
                                 }
                             }
@@ -978,7 +975,7 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs);
+                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
 
                     return;
                 }
@@ -988,7 +985,7 @@ namespace Intersect.Server.Entities
                     if (parentItem == null || descriptor.Tool != parentItem.Tool)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool])
+                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                         );
 
                         return;
@@ -1003,7 +1000,7 @@ namespace Intersect.Server.Entities
         {
             if (CastTime >= Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack);
+                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Error);
 
                 return;
             }
@@ -1050,7 +1047,7 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs);
+                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
 
                     return;
                 }
@@ -1060,7 +1057,7 @@ namespace Intersect.Server.Entities
                     if (weapon == null || descriptor.Tool != weapon.Tool)
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool])
+                            this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                         );
 
                         return;
@@ -1428,8 +1425,7 @@ namespace Intersect.Server.Entities
         /// <param name="slot">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
         /// <param name="createSlotIfNull">if the slot is in an invalid state (<see langword="null"/>), set it</param>
         /// <returns>returns <see langword="false"/> if <paramref name="slot"/> is set to <see langword="null"/></returns>
-        [ContractAnnotation(" => true, slot: notnull; createSlotIfNull:false => false, slot: null")]
-        public bool TryGetSlot(int slotIndex, [CanBeNull] out InventorySlot slot, bool createSlotIfNull = false)
+        public bool TryGetSlot(int slotIndex, out InventorySlot slot, bool createSlotIfNull = false)
         {
             // ReSharper disable once AssignNullToNotNullAttribute Justification: slot is never null when this returns true.
             slot = Items[slotIndex];
@@ -1451,7 +1447,6 @@ namespace Intersect.Server.Entities
         /// <param name="slotIndex">the slot to load the <see cref="Item"/> from</param>
         /// <param name="item">the <see cref="Item"/> at <paramref name="slotIndex"/></param>
         /// <returns>returns <see langword="false"/> if <paramref name="item"/> is set to <see langword="null"/></returns>
-        [ContractAnnotation("=> true, item: notnull; => false, item: null")]
         public bool TryGetItemAt(int slotIndex, out Item item)
         {
             TryGetSlot(slotIndex, out var slot);
@@ -1701,7 +1696,7 @@ namespace Intersect.Server.Entities
 
             if (Equipment?.Any(equipmentSlotIndex => equipmentSlotIndex == slotIndex) ?? false)
             {
-                PacketSender.SendChatMsg(this, Strings.Items.equipped, CustomColors.Items.Bound);
+                PacketSender.SendChatMsg(this, Strings.Items.equipped, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
             }
 
@@ -1713,13 +1708,13 @@ namespace Intersect.Server.Entities
 
             if (itemDescriptor.Bound)
             {
-                PacketSender.SendChatMsg(this, Strings.Items.bound, CustomColors.Items.Bound);
+                PacketSender.SendChatMsg(this, Strings.Items.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
             }
 
             if (itemInSlot.TryGetBag(out var bag) && !bag.IsEmpty)
             {
-                PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Bags.dropnotempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 return false;
             }
 
@@ -1768,14 +1763,14 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Items.stunned);
+                        PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
 
                         return;
                     }
 
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Items.sleep);
+                        PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
 
                         return;
                     }
@@ -1801,7 +1796,7 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq);
+                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
 
                     return;
                 }
@@ -1809,7 +1804,7 @@ namespace Intersect.Server.Entities
                 if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.MillisecondsUTC)
                 {
                     //Cooldown warning!
-                    PacketSender.SendChatMsg(this, Strings.Items.cooldown);
+                    PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
 
                     return;
                 }
@@ -1818,7 +1813,7 @@ namespace Intersect.Server.Entities
                 {
                     case ItemTypes.None:
                     case ItemTypes.Currency:
-                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse);
+                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
 
                         return;
                     case ItemTypes.Consumable:
@@ -1948,7 +1943,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     default:
-                        PacketSender.SendChatMsg(this, Strings.Items.notimplemented);
+                        PacketSender.SendChatMsg(this, Strings.Items.notimplemented, ChatMessageType.Error);
 
                         return;
                 }
@@ -1960,22 +1955,16 @@ namespace Intersect.Server.Entities
                     ); //Target Type 1 will be global entity
                 }
 
+                // Does this item have a cooldown to process of its own?
                 if (itemBase.Cooldown > 0)
                 {
-                    var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-                    if (ItemCooldowns.ContainsKey(itemBase.Id))
-                    {
-                        ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction);
-                    }
-                    else
-                    {
-                        ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.MillisecondsUTC + (long) (itemBase.Cooldown * cooldownReduction)
-                        );
-                    }
+                    UpdateCooldown(itemBase);
+                }
 
-                    PacketSender.SendItemCooldown(this, itemBase.Id);
+                // Update the global cooldown, if we can trigger it here.
+                if (!itemBase.IgnoreGlobalCooldown)
+                {
+                    UpdateGlobalCooldown();
                 }
             }
         }
@@ -2463,7 +2452,7 @@ namespace Intersect.Server.Entities
                 {
                     if (itemDescriptor.Bound)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Shops.bound, CustomColors.Items.Bound);
+                        PacketSender.SendChatMsg(this, Strings.Shops.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
 
                         return;
                     }
@@ -2475,7 +2464,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!bag.IsEmpty)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Bags.onlysellempty, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                                 return;
                             }
                         }
@@ -2487,7 +2476,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!shop.BuyingWhitelist)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                                 return;
                             }
@@ -2505,7 +2494,7 @@ namespace Intersect.Server.Entities
                     {
                         if (shop.BuyingWhitelist)
                         {
-                            PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(this, Strings.Shops.doesnotaccept, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                             return;
                         }
@@ -2609,14 +2598,14 @@ namespace Intersect.Server.Entities
                                 else
                                 {
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Shops.inventoryfull, CustomColors.Alerts.Error, Name
+                                        this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name
                                     );
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, CustomColors.Alerts.Error, Name);
+                            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                         }
                     }
                 }
@@ -2729,7 +2718,7 @@ namespace Intersect.Server.Entities
                 if (TryGiveItem(CraftBase.Get(id).ItemId, quantity))
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+                        this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Success
                     );
                 }
@@ -2742,7 +2731,7 @@ namespace Intersect.Server.Entities
 
                     PacketSender.SendInventory(this);
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+                        this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Error
                     );
                 }
@@ -2908,18 +2897,18 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Banks.banknospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
                 }
             }
 
             return false;
         }
 
-        public bool TryDepositItem([NotNull] Item item, bool sendUpdate = true)
+        public bool TryDepositItem(Item item, bool sendUpdate = true)
         {
             var itemBase = item.Descriptor;
 
@@ -2971,11 +2960,11 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Banks.banknospace, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
 
             return false;
@@ -3061,7 +3050,7 @@ namespace Intersect.Server.Entities
                 /* If we don't have a slot send an error. */
                 if (inventorySlot < 0)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Banks.inventorynospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                     return; //Panda forgot this :P
                 }
@@ -3093,7 +3082,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Banks.withdrawinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Banks.withdrawinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
             }
         }
 
@@ -3221,14 +3210,14 @@ namespace Intersect.Server.Entities
                     //Make Sure we are not Storing a Bag inside of itself
                     if (Items[slot].Bag == InBag)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginself, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return;
                     }
 
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginbag, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return;
                     }
@@ -3290,11 +3279,11 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.depositinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.depositinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3362,7 +3351,7 @@ namespace Intersect.Server.Entities
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.inventorynospace, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(this, Strings.Bags.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
 
                         return; //Panda forgot this :P
                     }
@@ -3395,7 +3384,7 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3450,12 +3439,12 @@ namespace Intersect.Server.Entities
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(this, fromPlayer);
-                    PacketSender.SendChatMsg(fromPlayer, Strings.Friends.sent, CustomColors.Alerts.RequestSent);
+                    PacketSender.SendChatMsg(fromPlayer, Strings.Friends.sent, ChatMessageType.Friend, CustomColors.Alerts.RequestSent);
                 }
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Friends.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Friends.busy.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3509,7 +3498,7 @@ namespace Intersect.Server.Entities
 
             if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
             else
             {
@@ -3521,7 +3510,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Trading.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Trading.busy.ToString(Name), ChatMessageType.Trading, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3555,7 +3544,7 @@ namespace Intersect.Server.Entities
                     //Check if the item is bound.. if so don't allow trade
                     if (itemBase.Bound)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Bags.tradebound, CustomColors.Items.Bound);
+                        PacketSender.SendChatMsg(this, Strings.Bags.tradebound, ChatMessageType.Trading, CustomColors.Items.Bound);
 
                         return;
                     }
@@ -3567,7 +3556,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!bag.IsEmpty)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, CustomColors.Alerts.Error);
+                                PacketSender.SendChatMsg(this, Strings.Bags.onlytradeempty, ChatMessageType.Trading, CustomColors.Alerts.Error);
                                 return;
                             }
                         }
@@ -3630,11 +3619,11 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendChatMsg(this, Strings.Trading.tradenospace, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.tradenospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Trading.offerinvalid, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.offerinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
                 }
             }
         }
@@ -3659,7 +3648,7 @@ namespace Intersect.Server.Entities
 
             if (Trading.Offer[slot] == null || Trading.Offer[slot].ItemId == Guid.Empty)
             {
-                PacketSender.SendChatMsg(this, Strings.Trading.revokeinvalid, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.revokeinvalid, ChatMessageType.Trading, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -3697,7 +3686,7 @@ namespace Intersect.Server.Entities
             /* If we don't have a slot send an error. */
             if (inventorySlot < 0)
             {
-                PacketSender.SendChatMsg(this, Strings.Trading.inventorynospace, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Trading.inventorynospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
 
             if (amount > Trading.Offer[slot].Quantity)
@@ -3751,7 +3740,7 @@ namespace Intersect.Server.Entities
                 if (!TryGiveItem(offer.ItemId, offer.Quantity))
                 {
                     MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity, Id);
-                    PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 }
 
                 offer.ItemId = Guid.Empty;
@@ -3769,12 +3758,12 @@ namespace Intersect.Server.Entities
             }
 
             Trading.Counterparty.ReturnTradeItems();
-            PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.declined, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(Trading.Counterparty, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
             PacketSender.SendTradeClose(Trading.Counterparty);
             Trading.Counterparty.Trading.Counterparty = null;
 
             ReturnTradeItems();
-            PacketSender.SendChatMsg(this, Strings.Trading.declined, CustomColors.Alerts.Error);
+            PacketSender.SendChatMsg(this, Strings.Trading.declined, ChatMessageType.Trading, CustomColors.Alerts.Error);
             PacketSender.SendTradeClose(this);
             Trading.Counterparty = null;
         }
@@ -3784,7 +3773,7 @@ namespace Intersect.Server.Entities
         {
             if (Party.Count != 0)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -3796,7 +3785,7 @@ namespace Intersect.Server.Entities
 
             if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
             else
             {
@@ -3808,7 +3797,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     PacketSender.SendChatMsg(
-                        fromPlayer, Strings.Parties.busy.ToString(Name), CustomColors.Alerts.Error
+                        fromPlayer, Strings.Parties.busy.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error
                     );
                 }
             }
@@ -3825,7 +3814,7 @@ namespace Intersect.Server.Entities
             {
                 if (Party[0] != this)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                     return;
                 }
@@ -3840,7 +3829,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Party.Count < Options.Party.MaximumMembers)
+            if (Party.Count < 4)
             {
                 target.LeaveParty();
                 Party.Add(target);
@@ -3851,13 +3840,13 @@ namespace Intersect.Server.Entities
                     Party[i].Party = Party;
                     PacketSender.SendParty(Party[i]);
                     PacketSender.SendChatMsg(
-                        Party[i], Strings.Parties.joined.ToString(target.Name), CustomColors.Alerts.Accepted
+                        Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
                     );
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Parties.limitreached, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Parties.limitreached, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
         }
 
@@ -3872,7 +3861,7 @@ namespace Intersect.Server.Entities
                     {
                         oldMember.Party = new List<Player>();
                         PacketSender.SendParty(oldMember);
-                        PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, CustomColors.Alerts.Error);
+                        PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
                         Party.Remove(oldMember);
 
                         if (Party.Count > 1) //Need atleast 2 party members to function
@@ -3884,6 +3873,7 @@ namespace Intersect.Server.Entities
                                 PacketSender.SendParty(Party[i]);
                                 PacketSender.SendChatMsg(
                                     Party[i], Strings.Parties.memberkicked.ToString(oldMember.Name),
+                                    ChatMessageType.Party,
                                     CustomColors.Alerts.Error
                                 );
                             }
@@ -3893,7 +3883,7 @@ namespace Intersect.Server.Entities
                             var remainder = Party[0];
                             remainder.Party.Clear();
                             PacketSender.SendParty(remainder);
-                            PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
                         }
                     }
                 }
@@ -3915,7 +3905,7 @@ namespace Intersect.Server.Entities
                         Party[i].Party = Party;
                         PacketSender.SendParty(Party[i]);
                         PacketSender.SendChatMsg(
-                            Party[i], Strings.Parties.memberleft.ToString(oldMember.Name), CustomColors.Alerts.Error
+                            Party[i], Strings.Parties.memberleft.ToString(oldMember.Name), ChatMessageType.Party, CustomColors.Alerts.Error
                         );
                     }
                 }
@@ -3924,10 +3914,10 @@ namespace Intersect.Server.Entities
                     var remainder = Party[0];
                     remainder.Party.Clear();
                     PacketSender.SendParty(remainder);
-                    PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Parties.left, CustomColors.Alerts.Error);
+                PacketSender.SendChatMsg(this, Strings.Parties.left, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
 
             Party = new List<Player>();
@@ -4044,11 +4034,11 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell);
+                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
             }
         }
 
-        public bool TryForgetSpell([NotNull] Spell spell, bool sendUpdate = true)
+        public bool TryForgetSpell(Spell spell, bool sendUpdate = true)
         {
             Spell slot = null;
             var slotIndex = -1;
@@ -4081,7 +4071,7 @@ namespace Intersect.Server.Entities
 
             if (spellBase.Bound)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell);
+                PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
 
                 return false;
             }
@@ -4105,7 +4095,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual bool IsAllyOf([NotNull] Player otherPlayer)
+        public virtual bool IsAllyOf(Player otherPlayer)
         {
             return base.IsAllyOf(otherPlayer) || this.InParty(otherPlayer);
         }
@@ -4114,7 +4104,7 @@ namespace Intersect.Server.Entities
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq);
+                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
 
                 return false;
             }
@@ -4127,21 +4117,21 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Silence)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.silenced);
+                        PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.stunned);
+                        PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.sleep);
+                        PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
 
                         return false;
                     }
@@ -4165,6 +4155,7 @@ namespace Intersect.Server.Entities
                     {
                         PacketSender.SendChatMsg(
                             this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            ChatMessageType.Inventory,
                             CustomColors.Alerts.Error
                         );
 
@@ -4213,14 +4204,14 @@ namespace Intersect.Server.Entities
             {
                 if (spell.VitalCost[(int) Vitals.Mana] > GetVital(Vitals.Mana))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowmana);
+                    PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
 
                     return false;
                 }
 
                 if (spell.VitalCost[(int) Vitals.Health] > GetVital(Vitals.Health))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowhealth);
+                    PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
 
                     return false;
                 }
@@ -4309,12 +4300,12 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.channeling);
+                    PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.cooldown);
+                PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
             }
         }
 
@@ -4652,7 +4643,7 @@ namespace Intersect.Server.Entities
 
                 StartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendChatMsg(
-                    this, Strings.Quests.started.ToString(quest.Name), CustomColors.Quests.Started
+                    this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.Quests.Started
                 );
 
                 PacketSender.SendQuestProgress(this, quest.Id);
@@ -4703,7 +4694,7 @@ namespace Intersect.Server.Entities
                 {
                     QuestOffers.Remove(questId);
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), CustomColors.Quests.Declined
+                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.Quests.Declined
                     );
 
                     foreach (var evt in EventLookup)
@@ -4745,7 +4736,7 @@ namespace Intersect.Server.Entities
                         questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
                         PacketSender.SendChatMsg(
-                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), Color.Red
+                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, Color.Red
                         );
 
                         PacketSender.SendQuestProgress(this, questId);
@@ -4769,7 +4760,7 @@ namespace Intersect.Server.Entities
                         {
                             if (quest.Tasks[i].Id == taskId)
                             {
-                                PacketSender.SendChatMsg(this, Strings.Quests.taskcompleted);
+                                PacketSender.SendChatMsg(this, Strings.Quests.taskcompleted, ChatMessageType.Quest);
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
@@ -4783,7 +4774,7 @@ namespace Intersect.Server.Entities
 
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Quests.completed.ToString(quest.Name), Color.Green
+                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green
                                     );
                                 }
                                 else
@@ -4803,6 +4794,7 @@ namespace Intersect.Server.Entities
 
                                     PacketSender.SendChatMsg(
                                         this, Strings.Quests.updated.ToString(quest.Name),
+                                        ChatMessageType.Quest,
                                         CustomColors.Quests.TaskUpdated
                                     );
                                 }
@@ -4830,7 +4822,7 @@ namespace Intersect.Server.Entities
                     if (!skipCompletionEvent)
                     {
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
-                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), Color.Green);
+                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
                     }
                 }
             }
@@ -4869,7 +4861,8 @@ namespace Intersect.Server.Entities
                                             Strings.Quests.itemtask.ToString(
                                                 quest.Name, questProgress.TaskProgress, questTask.Quantity,
                                                 ItemBase.GetName(questTask.TargetId)
-                                            )
+                                            ),
+                                            ChatMessageType.Quest
                                         );
                                     }
                                 }
@@ -5547,6 +5540,235 @@ namespace Intersect.Server.Entities
 
                 var newStack = new CommandInstance(eventInstance.PageInstance.MyPage);
                 eventInstance.CallStack.Push(newStack);
+            }
+        }
+
+        /// <summary>
+        /// Update the cooldown for a specific item.
+        /// </summary>
+        /// <param name="item">The <see cref="ItemBase"/> to update the cooldown for.</param>
+        public void UpdateCooldown(ItemBase item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            // Are we dealing with a cooldown group?
+            if (item.CooldownGroup.Trim().Length > 0)
+            {
+                // Yes, so handle it!
+                UpdateCooldownGroup(GameObjectType.Item, item.CooldownGroup, item.Cooldown);
+            }
+            else
+            {
+                // No, handle singular cooldown as normal.
+                
+                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+                AssignItemCooldown(item.Id, Globals.Timing.MillisecondsUTC + (long)(item.Cooldown * cooldownReduction));
+                PacketSender.SendItemCooldown(this, item.Id);
+            }
+        }
+
+        /// <summary>
+        /// Update the cooldown for a specific spell.
+        /// </summary>
+        /// <param name="item">The <see cref="SpellBase"/> to update the cooldown for.</param>
+        public void UpdateCooldown(SpellBase spell)
+        {
+            if (spell == null)
+            {
+                return;
+            }
+
+            // Are we dealing with a cooldown group?
+            if (spell.CooldownGroup.Trim().Length > 0)
+            {
+                // Yes, so handle it!
+                UpdateCooldownGroup(GameObjectType.Spell, spell.CooldownGroup, spell.CooldownDuration);
+            }
+            else
+            {
+                // No, handle singular cooldown as normal.
+                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+                AssignSpellCooldown(spell.Id, Globals.Timing.MillisecondsUTC + (long)(spell.CooldownDuration * cooldownReduction));
+                PacketSender.SendSpellCooldown(this, spell.Id);
+            }
+        }
+
+        /// <summary>
+        /// Forces an update of the global cooldown.
+        /// Does nothing when disabled by configuration.
+        /// </summary>
+        public void UpdateGlobalCooldown()
+        {
+            // Are we allowed to execute this code?
+            if (!Options.Combat.EnableGlobalCooldowns)
+            {
+                return;
+            }
+
+            // Calculate our global cooldown.
+            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+            var cooldown = Globals.Timing.MillisecondsUTC + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+
+            // Go through each item and spell to assign this cooldown.
+            // Do not allow this to overwrite things that are still on a cooldown above our new cooldown though, don't want us to lower cooldowns!
+            // We do however want to overwrite lower cooldowns than our new one, it is a GLOBAL cooldown after all!
+            foreach(var item in ItemBase.Lookup)
+            {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((ItemBase)item.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
+                if (!ItemCooldowns.ContainsKey(item.Key) || ItemCooldowns[item.Key] < cooldown)
+                {
+                    AssignItemCooldown(item.Key, cooldown);
+                }
+            }
+            foreach (var spell in SpellBase.Lookup)
+            {
+                // Skip this item if it is unaffected by global cooldowns.
+                if (((SpellBase)spell.Value).IgnoreGlobalCooldown)
+                {
+                    continue;
+                }
+
+                if (!SpellCooldowns.ContainsKey(spell.Key) || SpellCooldowns[spell.Key] < cooldown)
+                {
+                    AssignSpellCooldown(spell.Key, cooldown);
+                }
+            }
+
+            // Send these cooldowns to the user!
+            PacketSender.SendItemCooldowns(this);
+            PacketSender.SendSpellCooldowns(this);
+        }
+
+        /// <summary>
+        /// Update all cooldowns within the specified cooldown group on a type of object, or all when configured as such.
+        /// </summary>
+        /// <param name="type">The <see cref="GameObjectType"/> to set trigger the cooldown group for. Currently only accepts Items and Spells</param>
+        /// <param name="group">The cooldown group to trigger.</param>
+        /// <param name="cooldown">The base cooldown of the object that triggered this cooldown group.</param>
+        private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown)
+        {
+            // We're only dealing with these two types for now.
+            if (type != GameObjectType.Item && type != GameObjectType.Spell)
+            {
+                return;
+            }
+
+            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+
+            // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
+            var matchingItems = Array.Empty<ItemBase>();
+            var matchingSpells = Array.Empty<SpellBase>();
+            var itemsUpdated = false;
+            var spellsUpdated = false;
+            
+            if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                matchingItems = ItemBase.GetCooldownGroup(group);
+            }
+            if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                matchingSpells = SpellBase.GetCooldownGroup(group);
+            }
+
+            // Set our matched cooldown, should we need to use it.
+            var matchedCooldowntime = cooldown;
+            if (Options.Combat.MatchGroupCooldownHighest)
+            {
+                // Get our highest cooldown value from all available options.
+                matchedCooldowntime = Math.Max(
+                    matchingItems.Length > 0 ? matchingItems.Max(i => i.Cooldown) : 0, 
+                    matchingSpells.Length > 0 ? matchingSpells.Max(i => i.CooldownDuration) : 0);
+            }
+
+            // Set the cooldown for all items matching this cooldown group.
+            var baseTime = Globals.Timing.MillisecondsUTC;
+            if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach (var item in matchingItems)
+                {
+                    // Do we have to match our cooldown times, or do we use each individual item cooldown?
+                    var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
+
+                    // Asign it! Assuming our cooldown isn't already going..
+                    if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Globals.Timing.MillisecondsUTC)
+                    {
+                        AssignItemCooldown(item.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        itemsUpdated = true;
+                    }
+                }
+            }
+
+            // Set the cooldown for all Spells matching this cooldown group.
+            if (type == GameObjectType.Spell || Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach (var spell in matchingSpells)
+                {
+                    // Do we have to match our cooldown times, or do we use each individual item cooldown?
+                    var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
+
+                    // Asign it! Assuming our cooldown isn't already going...
+                    if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Globals.Timing.MillisecondsUTC)
+                    {
+                        AssignSpellCooldown(spell.Id, baseTime + (long)(tempCooldown * cooldownReduction));
+                        spellsUpdated = true;
+                    }
+                }
+            }
+
+            // Send all of our updated cooldowns.
+            if (itemsUpdated)
+            {
+                PacketSender.SendItemCooldowns(this);
+            }
+            if (spellsUpdated)
+            {
+                PacketSender.SendSpellCooldowns(this);
+            }
+        }
+
+        /// <summary>
+        /// Assign a cooldown time to a specified item.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="ItemBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
+        private void AssignItemCooldown(Guid itemId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (ItemCooldowns.ContainsKey(itemId))
+            {
+                ItemCooldowns[itemId] = cooldownTime;
+            }
+            else
+            {
+                ItemCooldowns.Add(itemId, cooldownTime);
+            }
+        }
+
+        /// <summary>
+        /// Assign a cooldown time to a specified spell.
+        /// WARNING: Makes no checks at all to see whether this SHOULD happen!
+        /// </summary>
+        /// <param name="itemId">The <see cref="SpellBase"/> id to assign the cooldown for.</param>
+        /// <param name="cooldownTime">The cooldown time to assign.</param>
+        private void AssignSpellCooldown(Guid spellId, long cooldownTime)
+        {
+            // Do we already have a cooldown entry for this item?
+            if (SpellCooldowns.ContainsKey(spellId))
+            {
+                SpellCooldowns[spellId] = cooldownTime;
+            }
+            else
+            {
+                SpellCooldowns.Add(spellId, cooldownTime);
             }
         }
 

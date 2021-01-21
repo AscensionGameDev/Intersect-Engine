@@ -11,8 +11,6 @@ using Intersect.Network.Events;
 using Intersect.Network.Packets;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Lidgren.Network;
 
 namespace Intersect.Network.Lidgren
@@ -25,19 +23,21 @@ namespace Intersect.Network.Lidgren
 
         private static readonly IConnection[] EmptyConnections = { };
 
-        [NotNull] private readonly Ceras mCeras = new Ceras(true);
+        private Ceras mCeras { get; set; }
 
-        [NotNull] private readonly IDictionary<long, Guid> mGuidLookup;
+        private Ceras Ceras => (mCeras = (mCeras ?? new Ceras(true)));
 
-        [NotNull] private readonly INetwork mNetwork;
+        private readonly IDictionary<long, Guid> mGuidLookup;
 
-        [NotNull] private readonly NetPeer mPeer;
+        private readonly INetwork mNetwork;
 
-        [NotNull] private readonly NetPeerConfiguration mPeerConfiguration;
+        private readonly NetPeer mPeer;
 
-        [NotNull] private readonly RandomNumberGenerator mRng;
+        private readonly NetPeerConfiguration mPeerConfiguration;
 
-        [NotNull] private readonly RSACryptoServiceProvider mRsa;
+        private readonly RandomNumberGenerator mRng;
+
+        private readonly RSACryptoServiceProvider mRsa;
 
         public LidgrenInterface(INetwork network, Type peerType, RSAParameters rsaParameters)
         {
@@ -289,8 +289,7 @@ namespace Intersect.Network.Lidgren
                 return SendPacket(packet, EmptyConnections, transmissionMode);
             }
 
-            var lidgrenConnection = connection as LidgrenConnection;
-            if (lidgrenConnection == null)
+            if (!(connection is LidgrenConnection lidgrenConnection))
             {
                 Log.Diagnostic("Tried to send to a non-Lidgren connection.");
 
@@ -527,7 +526,7 @@ namespace Intersect.Network.Lidgren
 
                                 Debug.Assert(senderConnection != null, "connection != null");
                                 var approvalPacketData = senderConnection.RemoteHailMessage.Data;
-                                var approval = mCeras.Deserialize<ApprovalPacket>(approvalPacketData);
+                                var approval = Ceras.Deserialize<ApprovalPacket>(approvalPacketData);
 
                                 if (!(approval?.Decrypt(intersectConnection.Rsa) ?? false))
                                 {
@@ -704,7 +703,7 @@ namespace Intersect.Network.Lidgren
                 {
                     try
                     {
-                        var hail = mCeras.Deserialize<HailPacket>(message.Data);
+                        var hail = Ceras.Deserialize<HailPacket>(message.Data);
                         if (!(hail?.Decrypt(mRsa) ?? false))
                         {
                             Log.Warn($"Failed to read hail, denying connection [{lidgrenIdHex}].");
@@ -722,11 +721,19 @@ namespace Intersect.Network.Lidgren
 
                             break;
                         }
-
+                        
                         Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={(long)Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
                         Log.Debug($"real delta={(Timing.Global.TicksUTC - hail.UTC) / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"NCPing={(long)Math.Ceiling(senderConnection.AverageRoundtripTime * 1000)}");
+
+                        // Check if we've got more connections than we're allowed to handle!
+                        if (mNetwork.ConnectionCount >= Options.MaxConnections)
+                        {
+                            Log.Info($"Connection limit reached, denying connection [{lidgrenIdHex}].");
+                                senderConnection?.Deny(NetworkStatus.ServerFull.ToString());
+                            break;
+                        }
 
                         if (OnConnectionApproved == null)
                         {
@@ -842,8 +849,8 @@ namespace Intersect.Network.Lidgren
         private bool FireHandler(
             HandleConnectionEvent handler,
             string name,
-            [NotNull] INetworkLayerInterface sender,
-            [NotNull] ConnectionEventArgs connectionEventArgs
+            INetworkLayerInterface sender,
+            ConnectionEventArgs connectionEventArgs
         )
         {
             handler?.Invoke(sender, connectionEventArgs);

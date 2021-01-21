@@ -11,8 +11,6 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Maps;
 
-using JetBrains.Annotations;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -20,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace Intersect.Server.Database.GameData
 {
 
-    public class GameContext : IntersectDbContext<GameContext>
+    public class GameContext : IntersectDbContext<GameContext>, IGameContext
     {
 
         public GameContext() : base(DefaultConnectionStringBuilder)
@@ -29,7 +27,7 @@ namespace Intersect.Server.Database.GameData
         }
 
         public GameContext(
-            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
@@ -38,7 +36,6 @@ namespace Intersect.Server.Database.GameData
             Current = this;
         }
 
-        [NotNull]
         public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
             new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
 
@@ -105,19 +102,23 @@ namespace Intersect.Server.Database.GameData
             {
                 Beta6Migration.Run(this);
             }
+
+            if (migrations.IndexOf("20201004032158_EnablingCerasVersionTolerance") > -1)
+            {
+                CerasVersionToleranceMigration.Run(this);
+            }
         }
 
         internal static class Queries
         {
 
-            [NotNull] internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
+            internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
                 EF.CompileQuery(
                     (GameContext context, Guid id) =>
                         context.ServerVariables.FirstOrDefault(variable => variable.Id == id)
                 ) ??
                 throw new InvalidOperationException();
 
-            [NotNull]
             internal static readonly Func<GameContext, int, int, IEnumerable<ServerVariableBase>> ServerVariables =
                 EF.CompileQuery(
                     (GameContext context, int page, int count) => context.ServerVariables

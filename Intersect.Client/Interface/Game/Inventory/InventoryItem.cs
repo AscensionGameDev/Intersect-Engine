@@ -262,11 +262,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                         Pnl.Texture = itemTex;
                         if (Globals.Me.ItemOnCd(mMySlot))
                         {
-                            Pnl.RenderColor = new Color(100, 255, 255, 255);
+                            Pnl.RenderColor = new Color(100, item.Color.R, item.Color.G, item.Color.B);
                         }
                         else
                         {
-                            Pnl.RenderColor = new Color(255, 255, 255, 255);
+                            Pnl.RenderColor = item.Color;
                         }
                     }
                     else

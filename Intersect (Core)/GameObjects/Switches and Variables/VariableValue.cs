@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Logging;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -23,7 +21,6 @@ namespace Intersect.GameObjects.Switches_and_Variables
         public dynamic Value { get => mValue; set => SetValue(value); }
 
         [JsonIgnore]
-        [NotNull]
         public JObject Json
         {
             get => new JObject
@@ -218,7 +215,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             };
         }
 
-        public static implicit operator bool([NotNull] VariableValue variableValue)
+        public static implicit operator bool(VariableValue variableValue)
         {
             return variableValue.Boolean;
         }
@@ -232,7 +229,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             };
         }
 
-        public static implicit operator long([NotNull] VariableValue variableValue)
+        public static implicit operator long(VariableValue variableValue)
         {
             return variableValue.Integer;
         }
@@ -246,12 +243,12 @@ namespace Intersect.GameObjects.Switches_and_Variables
             };
         }
 
-        public static implicit operator double([NotNull] VariableValue variableValue)
+        public static implicit operator double(VariableValue variableValue)
         {
             return variableValue.Number;
         }
 
-        public static implicit operator VariableValue([CanBeNull] string value)
+        public static implicit operator VariableValue(string value)
         {
             return new VariableValue
             {
@@ -260,7 +257,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             };
         }
 
-        public static implicit operator string([NotNull] VariableValue variableValue)
+        public static implicit operator string(VariableValue variableValue)
         {
             return variableValue.String;
         }

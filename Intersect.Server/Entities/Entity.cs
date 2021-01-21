@@ -19,8 +19,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
@@ -72,6 +70,22 @@ namespace Intersect.Server.Entities
 
         public string Sprite { get; set; }
 
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [JsonIgnore, Column(nameof(Color))]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Entity.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         public string Face { get; set; }
 
         public int Level { get; set; }
@@ -87,7 +101,7 @@ namespace Intersect.Server.Entities
         public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [JsonIgnore, Column("BaseStats")]
+        [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
@@ -99,7 +113,7 @@ namespace Intersect.Server.Entities
             new int[(int) Enums.Stats
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [JsonIgnore, Column("StatPointAllocations")]
+        [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
@@ -110,14 +124,14 @@ namespace Intersect.Server.Entities
         public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stats.StatCount];
 
         //Inventory
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        [JsonIgnore, Column("NameColor")]
+        [JsonIgnore, Column(nameof(NameColor))]
         public string NameColorJson
         {
             get => DatabaseUtils.SaveColor(NameColor);
@@ -134,7 +148,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label HeaderLabel { get; set; }
 
-        [JsonIgnore, Column("HeaderLabel")]
+        [JsonIgnore, Column(nameof(HeaderLabel))]
         public string HeaderLabelJson
         {
             get => JsonConvert.SerializeObject(HeaderLabel);
@@ -144,7 +158,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label FooterLabel { get; set; }
 
-        [JsonIgnore, Column("FooterLabel")]
+        [JsonIgnore, Column(nameof(FooterLabel))]
         public string FooterLabelJson
         {
             get => JsonConvert.SerializeObject(FooterLabel);
@@ -206,7 +220,7 @@ namespace Intersect.Server.Entities
         public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
-        [NotMapped, JsonIgnore, NotNull]
+        [NotMapped, JsonIgnore]
         public Dictionary<SpellBase, Status> Statuses { get; } = new Dictionary<SpellBase, Status>();
 
         [NotMapped, JsonIgnore]
@@ -832,7 +846,7 @@ namespace Intersect.Server.Entities
                             var projectiles = map.MapProjectiles.ToArray();
                             foreach (var projectile in projectiles)
                             {
-                                var spawns = projectile.Spawns?.ToArray() ?? new ProjectileSpawn[0];
+                                var spawns = projectile.Spawns?.ToArray() ?? Array.Empty<ProjectileSpawn>();
                                 foreach (var spawn in spawns)
                                 {
                                     // TODO: Filter in Spawns variable, there should be no nulls. See #78 for evidence it is null.
@@ -1055,7 +1069,6 @@ namespace Intersect.Server.Entities
             return _vital[vital];
         }
 
-        [NotNull]
         public int[] GetVitals()
         {
             var vitals = new int[(int) Vitals.VitalCount];
@@ -1100,7 +1113,6 @@ namespace Intersect.Server.Entities
             return GetMaxVital((int) vital);
         }
 
-        [NotNull]
         public int[] GetMaxVitals()
         {
             var vitals = new int[(int) Vitals.VitalCount];
@@ -1207,7 +1219,7 @@ namespace Intersect.Server.Entities
             return stats;
         }
 
-        public virtual bool IsAllyOf([NotNull] Entity otherEntity)
+        public virtual bool IsAllyOf(Entity otherEntity)
         {
             return this == otherEntity;
         }
@@ -1559,7 +1571,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private void Animate([NotNull] Entity target, [NotNull] List<KeyValuePair<Guid, sbyte>> animations)
+        private void Animate(Entity target, List<KeyValuePair<Guid, sbyte>> animations)
         {
             foreach (var anim in animations)
             {
@@ -2096,21 +2108,21 @@ namespace Intersect.Server.Entities
 
             if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
             {
-                decimal cooldownReduction = 1;
-
-                var thisPlayer = this as Player;
-
-                if (thisPlayer != null) //Only apply cdr for players with equipment
+                // Player cooldown handling is done elsewhere!
+                if (this is Player player)
                 {
-                    cooldownReduction = 1 - thisPlayer.GetCooldownReduction() / 100;
+                    player.UpdateCooldown(spellBase);
+
+                    // Trigger the global cooldown, if we're allowed to.
+                    if (!spellBase.IgnoreGlobalCooldown)
+                    {
+                        player.UpdateGlobalCooldown();
+                    }
                 }
-
-                SpellCooldowns[Spells[spellSlot].SpellId] =
-                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration * cooldownReduction);
-
-                if (thisPlayer != null)
+                else
                 {
-                    PacketSender.SendSpellCooldown(thisPlayer, Spells[spellSlot].SpellId);
+                    SpellCooldowns[Spells[spellSlot].SpellId] =
+                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration);
                 }
             }
         }
@@ -2492,6 +2504,7 @@ namespace Intersect.Server.Entities
             packet.MapId = MapId;
             packet.Name = Name;
             packet.Sprite = Sprite;
+            packet.Color = Color;
             packet.Face = Face;
             packet.Level = Level;
             packet.X = (byte) X;

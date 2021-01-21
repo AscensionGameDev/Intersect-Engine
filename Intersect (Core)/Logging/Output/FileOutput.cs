@@ -4,8 +4,6 @@ using System.Text;
 
 using Intersect.IO.Files;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Logging.Output
 {
 
@@ -14,7 +12,7 @@ namespace Intersect.Logging.Output
 
         private static readonly string Spacer = Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
-        [NotNull] private string mFilename;
+        private string mFilename;
 
         private StreamWriter mWriter;
 
@@ -31,7 +29,6 @@ namespace Intersect.Logging.Output
 
         public bool Append { get; set; }
 
-        [NotNull]
         public string Filename
         {
             get => mFilename;
@@ -50,7 +47,6 @@ namespace Intersect.Logging.Output
             }
         }
 
-        [NotNull]
         private StreamWriter Writer
         {
             get
@@ -60,15 +56,17 @@ namespace Intersect.Logging.Output
                     return mWriter;
                 }
 
-                var directory = Path.IsPathRooted(mFilename) ? Path.GetDirectoryName(mFilename) : null;
-                directory = string.IsNullOrWhiteSpace(directory) ? "logs" : directory;
+                var directory = Path.GetDirectoryName(mFilename) ?? "";
+                directory = Path.Combine("logs", directory);
 
                 if (!FileSystemHelper.EnsureDirectoryExists(directory))
                 {
                     throw new InvalidOperationException("The logger directory could not be created or is a file.");
                 }
 
-                mWriter = new StreamWriter(Path.Combine(directory, mFilename), Append, Encoding.UTF8)
+                var filename = Path.GetFileName(mFilename);
+
+                mWriter = new StreamWriter(Path.Combine(directory, filename), Append, Encoding.UTF8)
                 {
                     AutoFlush = true
                 };
@@ -106,10 +104,10 @@ namespace Intersect.Logging.Output
         }
 
         private void InternalWrite(
-            [NotNull] LogConfiguration configuration,
+            LogConfiguration configuration,
             LogLevel logLevel,
             Exception exception,
-            [NotNull] string format,
+            string format,
             params object[] args
         )
         {

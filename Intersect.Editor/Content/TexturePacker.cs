@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-
+using Intersect.Compression;
 using Intersect.Editor.Content;
 
 using Newtonsoft.Json.Linq;
@@ -161,7 +161,12 @@ namespace Intersect.Editor.Classes.ContentManagement
                 var size = new JObject();
                 size["w"] = croppedImg.Width;
                 size["h"] = croppedImg.Height;
-                croppedImg.Save(Path.Combine("resources", "packs", index + ".png"), ImageFormat.Png);
+                
+                using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine("resources", "packs", "graphics" + index + ".asset")))
+                {
+                    croppedImg.Save(stream, ImageFormat.Png);
+                }
+
                 croppedImg.Dispose();
 
                 //Create Metadata
@@ -169,12 +174,12 @@ namespace Intersect.Editor.Classes.ContentManagement
                 jobj.Add(new JProperty("frames", frames));
 
                 var meta = new JObject();
-                meta["image"] = index + ".png";
+                meta["image"] = "graphics" + index + ".asset";
                 meta["size"] = size;
                 jobj.Add(new JProperty("meta", meta));
 
                 //Save Metadata
-                File.WriteAllText(Path.Combine("resources", "packs", index + ".json"), jobj.ToString());
+                GzipCompression.WriteCompressedString(Path.Combine("resources", "packs", "graphics" + index + ".meta"), jobj.ToString());
             }
 
             img.Dispose();

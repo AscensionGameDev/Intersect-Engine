@@ -9,8 +9,6 @@ using Intersect.Extensions;
 using Intersect.Logging;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
@@ -22,9 +20,9 @@ namespace Intersect.Core.ExperimentalFeatures
 
         private static readonly Guid NamespaceId = Guid.Parse("c68012b3-d666-4204-84eb-4976f2b570ab");
 
-        [NotNull] private readonly IDictionary<Guid, PropertyInfo> mFlagsById;
+        private readonly IDictionary<Guid, PropertyInfo> mFlagsById;
 
-        [NotNull] private readonly IDictionary<string, PropertyInfo> mFlagsByName;
+        private readonly IDictionary<string, PropertyInfo> mFlagsByName;
 
         protected CommonExperiments()
         {
@@ -135,12 +133,12 @@ namespace Intersect.Core.ExperimentalFeatures
             return TrySet(flagId, false);
         }
 
-        public bool Disable([NotNull] string flagName)
+        public bool Disable(string flagName)
         {
             return TrySet(flagName, false);
         }
 
-        public bool Enable([NotNull] IExperimentalFlag flag)
+        public bool Enable(IExperimentalFlag flag)
         {
             return TrySet(flag, true);
         }
@@ -150,7 +148,7 @@ namespace Intersect.Core.ExperimentalFeatures
             return TrySet(flagId, true);
         }
 
-        public bool Enable([NotNull] string flagName)
+        public bool Enable(string flagName)
         {
             return TrySet(flagName, true);
         }
@@ -165,13 +163,13 @@ namespace Intersect.Core.ExperimentalFeatures
             return mFlagsById.TryGetValue(flagId, out flagPropertyInfo);
         }
 
-        protected bool TryGetProperty([NotNull] string flagName, out PropertyInfo flagPropertyInfo)
+        protected bool TryGetProperty(string flagName, out PropertyInfo flagPropertyInfo)
         {
             return ValueUtils.SetDefault(!string.IsNullOrWhiteSpace(flagName), out flagPropertyInfo) &&
                    mFlagsByName.TryGetValue(flagName.ToLowerInvariant(), out flagPropertyInfo);
         }
 
-        private bool InternalTrySet(PropertyInfo property, [NotNull] IExperimentalFlag flag, bool enabled)
+        private bool InternalTrySet(PropertyInfo property, IExperimentalFlag flag, bool enabled)
         {
             /* Unwraps the flag */
             if (flag is ExperimentalFlagAlias && !TryGet(flag.Guid, out flag))
@@ -190,7 +188,7 @@ namespace Intersect.Core.ExperimentalFeatures
             return true;
         }
 
-        public bool TrySet([NotNull] IExperimentalFlag flag, bool enabled)
+        public bool TrySet(IExperimentalFlag flag, bool enabled)
         {
             return InternalTrySet(null, flag, enabled);
         }
@@ -202,7 +200,7 @@ namespace Intersect.Core.ExperimentalFeatures
                    InternalTrySet(property, flag, enabled);
         }
 
-        public bool TrySet([NotNull] string flagName, bool enabled)
+        public bool TrySet(string flagName, bool enabled)
         {
             return TryGetProperty(flagName, out var property) &&
                    property.GetValue(this) is IExperimentalFlag flag &&

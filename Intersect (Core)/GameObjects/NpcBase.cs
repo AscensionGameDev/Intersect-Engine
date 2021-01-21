@@ -8,8 +8,6 @@ using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -190,6 +188,23 @@ namespace Intersect.GameObjects
 
         public string Sprite { get; set; } = "";
 
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [Column("Color")]
+        [JsonIgnore]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Npc.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         [Column("Stats")]
         [JsonIgnore]
         public string JsonStat
@@ -210,7 +225,7 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        public SpellBase GetRandomSpell([NotNull] Random random)
+        public SpellBase GetRandomSpell(Random random)
         {
             if (Spells == null || Spells.Count == 0)
             {

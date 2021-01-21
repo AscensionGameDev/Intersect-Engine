@@ -5,9 +5,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
-using Intersect.Logging;
 using Intersect.Network.Packets.Client;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Networking
 {
@@ -113,9 +111,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CreateCharacterPacket(name, classId, sprite));
         }
 
-        public static void SendPickupItem(int index)
+        public static void SendPickupItem(Point location, Guid uniqueId)
         {
-            Network.SendPacket(new PickupItemPacket(index));
+            Network.SendPacket(new PickupItemPacket(location, uniqueId));
         }
 
         public static void SendSwapInvItems(int item1, int item2)

@@ -1,0 +1,30 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="FindIntersect.targets" />
+
+  <PropertyGroup>
+    <!-- include PDB file by default to enable line numbers in stack traces -->
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <!-- enable runtime debugging -->
+    <StartAction>Program</StartAction>
+    <StartProgram>$(IntersectClientExecutablePath)</StartProgram>
+    <StartWorkingDirectory>$(IntersectClientDirectoryPath)</StartWorkingDirectory>
+    <StartArguments>--plugin-directory $(TargetDir)</StartArguments>
+  </PropertyGroup>
+
+  <Target Name="BeforeBuild">
+    <Error Condition="!Exists('$(IntersectClientDirectoryPath)')" Text="Unable to find path working directory for the Intersect Client, '$(IntersectClientDirectoryPath)' does not exist." />
+    <Error Condition="!Exists('$(IntersectClientExecutablePath)')" Text="Unable to find path to Intersect Client, '$(IntersectClientExecutablePath)' does not exist." />
+  </Target>
+
+  <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild">
+    <ItemGroup>
+      <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="**/Ceras.*; **/CommandLine.*; **/Newtonsoft.Json.*; **/Semver.*; **/System.Runtime.CompilerServices.Unsafe.*; **/System.ValueTuple.*; **/Intersect Core.*; **/Intersect.*.Framework.*" />
+    </ItemGroup>
+
+    <Message Importance="High" Text="TargetDir=$(TargetDir)"/>
+    <Message Importance="High" Text="CopiedBinaries=@(CopiedBinaries)"/>
+    <Copy SourceFiles="@(CopiedBinaries)" DestinationFolder="$(TargetDir)\$(AssemblyName)" />
+  </Target>
+</Project>

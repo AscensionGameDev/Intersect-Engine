@@ -18,8 +18,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Entities
 {
 
@@ -71,7 +69,6 @@ namespace Intersect.Server.Entities
         public long FindTargetWaitTime;
         public int FindTargetDelay = 500;
 
-
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
@@ -92,10 +89,11 @@ namespace Intersect.Server.Entities
         /// </summary>
         public int AggroCenterZ;
 
-        public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
+        public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
+            Color = myBase.Color;
             Level = myBase.Level;
             Base = myBase;
             Despawnable = despawnable;
@@ -140,7 +138,6 @@ namespace Intersect.Server.Entities
             mPathFinder = new Pathfinder(this);
         }
 
-        [NotNull]
         public NpcBase Base { get; private set; }
 
         private bool IsStunnedOrSleeping => Statuses.Values.Any(PredicateStunnedOrSleeping);

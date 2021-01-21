@@ -18,7 +18,7 @@ using Intersect.GameObjects.Maps;
 namespace Intersect.Client.Core
 {
 
-    public static class Main
+    internal static class Main
     {
 
         private static long _animTimer;
@@ -27,7 +27,7 @@ namespace Intersect.Client.Core
 
         private static bool _loadedTilesets;
 
-        public static void Start()
+        internal static void Start(IClientContext context)
         {
             //Load Graphics
             Graphics.InitGraphics();
@@ -37,7 +37,7 @@ namespace Intersect.Client.Core
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
 
             //Init Network
-            Networking.Network.InitNetwork();
+            Networking.Network.InitNetwork(context);
             Fade.FadeIn();
 
             //Make Json.Net Familiar with Our Object Types

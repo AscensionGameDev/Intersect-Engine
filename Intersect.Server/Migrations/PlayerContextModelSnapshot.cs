@@ -349,6 +349,9 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("ItemCooldownsJson")
                         .HasColumnName("ItemCooldowns");
 
+                    b.Property<string>("JsonColor")
+                        .HasColumnName("Color");
+
                     b.Property<DateTime?>("LastOnline");
 
                     b.Property<int>("Level");

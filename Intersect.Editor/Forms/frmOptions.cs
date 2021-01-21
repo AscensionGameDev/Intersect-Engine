@@ -18,6 +18,12 @@ namespace Intersect.Editor.Forms
 
         private void InitForm()
         {
+
+            // Show only the General tab by default.
+            HidePanels();
+            pnlGeneral.Visible = true;
+
+            // Load settings for the General tab
             var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
             if (suppressTilesetWarning == "")
             {
@@ -29,21 +35,64 @@ namespace Intersect.Editor.Forms
             }
 
             txtGamePath.Text = Preferences.LoadPreference("ClientPath");
+
+            // Load settings for the Update tab
+            var packageUpdateAssets = Preferences.LoadPreference("PackageUpdateAssets");
+            if (packageUpdateAssets == "")
+            {
+                chkPackageAssets.Checked = false;
+            }
+            else
+            {
+                chkPackageAssets.Checked = Convert.ToBoolean(packageUpdateAssets);
+            }
+
+            var soundBatchSize = Preferences.LoadPreference("SoundBatchSize");
+            if (soundBatchSize != "")
+            {
+                nudSoundBatch.Value = Convert.ToInt32(soundBatchSize);
+            }
+
+            var musicBatchSize = Preferences.LoadPreference("MusicBatchSize");
+            if (musicBatchSize != "")
+            {
+                nudMusicBatch.Value = Convert.ToInt32(musicBatchSize);
+            }
+
+            var texturePackSize = Preferences.LoadPreference("TexturePackSize");
+            if (texturePackSize != "")
+            {
+                cmbTextureSize.SelectedIndex = cmbTextureSize.FindStringExact(texturePackSize);
+            }
+            else
+            {
+                cmbTextureSize.SelectedIndex = cmbTextureSize.FindStringExact("2048");
+            }
         }
 
         private void InitLocalization()
         {
             Text = Strings.Options.title;
-            btnTileHeader.Text = Strings.Options.generaltab.ToString(Application.ProductVersion);
+            btnGeneralOptions.Text = Strings.Options.generaltab.ToString(Application.ProductVersion);
             chkSuppressTilesetWarning.Text = Strings.Options.tilesetwarning;
             grpClientPath.Text = Strings.Options.pathgroup;
             btnBrowseClient.Text = Strings.Options.browsebtn;
+            btnUpdateOptions.Text = Strings.Options.UpdateTab;
+            grpAssetPackingOptions.Text = Strings.Options.PackageOptions;
+            lblMusicBatch.Text = Strings.Options.MusicBatch;
+            lblSoundBatch.Text = Strings.Options.SoundBatch;
+            lblTextureSize.Text = Strings.Options.TextureSize;
+
         }
 
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
             Preferences.SavePreference("ClientPath", txtGamePath.Text);
+            Preferences.SavePreference("PackageUpdateAssets", chkPackageAssets.Checked.ToString());
+            Preferences.SavePreference("SoundBatchSize", nudSoundBatch.Value.ToString());
+            Preferences.SavePreference("MusicBatchSize", nudMusicBatch.Value.ToString());
+            Preferences.SavePreference("TexturePackSize", cmbTextureSize.GetItemText(cmbTextureSize.SelectedItem));
         }
 
         private void btnBrowseClient_Click(object sender, EventArgs e)
@@ -66,10 +115,27 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        private void chkSuppressTilesetWarning_CheckedChanged(object sender, EventArgs e)
+        private void HidePanels()
         {
+            pnlGeneral.Visible = false;
+            pnlUpdate.Visible = false;
         }
 
+        private void btnGeneralOptions_Click(object sender, EventArgs e)
+        {
+            // Hide other panels.
+            HidePanels();
+
+            pnlGeneral.Visible = true;
+        }
+
+        private void btnUpdateOptions_Click(object sender, EventArgs e)
+        {
+            // Hide other panels.
+            HidePanels();
+
+            pnlUpdate.Visible = true;
+        }
     }
 
 }

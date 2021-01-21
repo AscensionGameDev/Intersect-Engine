@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Intersect.Enums;
 using Intersect.Localization;
-using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -457,7 +457,14 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString toofast = @"You are chatting too fast!";
 
-            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
+                { ChatboxTab.All, @"All" },
+                { ChatboxTab.Local, @"Local" },
+                { ChatboxTab.Party, @"Party" },
+                { ChatboxTab.Global, @"Global" },
+                { ChatboxTab.System, @"System" },
+            };
+
             public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
 
         }
@@ -783,6 +790,9 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString none = @"None";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapItemStackable = @"{01} {00}";
+
         }
 
         public struct InputBox
@@ -795,6 +805,16 @@ namespace Intersect.Client.Localization
             public static LocalizedString okay = @"Okay";
 
             public static LocalizedString yes = @"Yes";
+
+        }
+
+        public struct MapItemWindow
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Loot";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LootButton = @"Loot All";
 
         }
 
@@ -1149,6 +1169,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString musicvolume = @"Music Volume: {00}%";
 
             public static LocalizedString resolution = @"Resolution:";
+
+            public static LocalizedString ResolutionCustom = @"Custom Resolution";
 
             public static LocalizedString restore = @"Restore Defaults";
 
@@ -1535,6 +1557,12 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString Percent = @"{00}%";
 
+        }
+
+        public struct GameWindow
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EntityNameAndLevel = @"{00} [Lv. {01}]";
         }
 
     }

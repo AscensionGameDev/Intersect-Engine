@@ -8,20 +8,18 @@ using Intersect.Core;
 using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing.Arguments;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.CommandParsing.Commands
 {
 
     public abstract class Command<TContext> : ICommand where TContext : IApplicationContext
     {
 
-        protected Command([NotNull] LocaleCommand localization, [CanBeNull] params ICommandArgument[] arguments)
+        protected Command(LocaleCommand localization, params ICommandArgument[] arguments)
         {
             Localization = localization;
 
             var argumentList = new List<ICommandArgument>(
-                (arguments ?? new ICommandArgument[0]).Where(argument => argument != null)
+                (arguments ?? Array.Empty<ICommandArgument>()).Where(argument => argument != null)
             );
 
             UnsortedArguments = argumentList.ToImmutableList() ?? throw new InvalidOperationException();
@@ -77,7 +75,6 @@ namespace Intersect.Server.Core.CommandParsing.Commands
                 throw new InvalidOperationException();
         }
 
-        [NotNull]
         public LocaleCommand Localization { get; }
 
         public ImmutableList<ICommandArgument> Arguments { get; }
@@ -181,7 +178,6 @@ namespace Intersect.Server.Core.CommandParsing.Commands
             Handle((TContext) context, result);
         }
 
-        [CanBeNull]
         protected TArgument FindArgument<TArgument>(int index = 0)
         {
             return Arguments.Where(argument => argument?.GetType() == typeof(TArgument))
@@ -189,7 +185,6 @@ namespace Intersect.Server.Core.CommandParsing.Commands
                 .ElementAtOrDefault(index);
         }
 
-        [NotNull]
         protected TArgument FindArgumentOrThrow<TArgument>(int index = 0)
         {
             var argument = FindArgument<TArgument>(index);
@@ -202,7 +197,7 @@ namespace Intersect.Server.Core.CommandParsing.Commands
             return argument;
         }
 
-        protected abstract void Handle([NotNull] TContext context, [NotNull] ParserResult result);
+        protected abstract void Handle(TContext context, ParserResult result);
 
     }
 

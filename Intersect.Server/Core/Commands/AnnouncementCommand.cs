@@ -3,8 +3,6 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.Commands
 {
 
@@ -18,12 +16,16 @@ namespace Intersect.Server.Core.Commands
         {
         }
 
-        [NotNull]
         private VariableArgument<string> Message => FindArgumentOrThrow<VariableArgument<string>>();
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             PacketSender.SendGlobalMsg(result.Find(Message));
+
+            if (Options.Chat.ShowAnnouncementBanners)
+            {
+                PacketSender.SendGameAnnouncement(result.Find(Message), Options.Chat.AnnouncementDisplayDuration);
+            }
         }
 
     }

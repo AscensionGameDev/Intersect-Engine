@@ -2,12 +2,12 @@
 using System.IO;
 
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 
 namespace Intersect.Client.MonoGame.Audio
 {
@@ -61,23 +61,35 @@ namespace Intersect.Client.MonoGame.Audio
 
         private void LoadSound()
         {
-            using (var fileStream = new FileStream(mRealPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            try
             {
-                try
+                if (Globals.ContentManager.SoundPacks != null && Globals.ContentManager.SoundPacks.Contains(mRealPath))
                 {
-                    mSound = SoundEffect.FromStream(fileStream);
+                    using (var stream = Globals.ContentManager.SoundPacks.GetAsset(mRealPath))
+                    {
+                        mSound = SoundEffect.FromStream(stream);
+                    }
                 }
-                catch (Exception exception)
+                else
                 {
-                    Log.Error($"Error loading '{mPath}'.", exception);
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
-                            new Color(0xBF, 0x0, 0x0)
-                        )
-                    );
+                    using (var fileStream = new FileStream(mRealPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        mSound = SoundEffect.FromStream(fileStream);
+                    }  
+
                 }
             }
+            catch (Exception exception)
+            {
+                Log.Error($"Error loading '{mPath}'.", exception);
+                ChatboxMsg.AddMessage(
+                    new ChatboxMsg(
+                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
+                        new Color(0xBF, 0x0, 0x0),  Enums.ChatMessageType.Error
+                    )
+                );
+            }
+
         }
 
     }

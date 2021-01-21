@@ -1,0 +1,39 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- import custom targets -->
+  <Import Condition="$(OS) != 'Windows_NT' AND Exists('$(HOME)\intersect.developer.targets') AND '$(IntersectDeveloperTargetsImported)'== ''" Project="$(HOME)\intersect.developer.targets" />
+  <Import Condition="$(OS) == 'Windows_NT' AND Exists('$(USERPROFILE)\intersect.developer.targets') AND '$(IntersectDeveloperTargetsImported)'== ''" Project="$(USERPROFILE)\intersect.developer.targets" />
+
+  <!-- set intersect metadata -->
+  <PropertyGroup>
+    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(INTERSECT_REPO_PATH)</IntersectRepoPath>
+    <IntersectPath Condition="'$(IntersectPath)' == ''">$(INTERSECT_PATH)</IntersectPath>
+    <IntersectPath Condition="'$(IntersectPath)' == ''">$(IntersectRepoPath)</IntersectPath>
+
+    <IntersectIntermediatePath Condition="'$(IntersectIntermediatePath)' == ''">build\$(Configuration.ToLower())</IntersectIntermediatePath>
+    <_IntersectRootPath>$(IntersectPath)\$(IntersectIntermediatePath)</_IntersectRootPath>
+    <_IntersectRootPath Condition="'$(IntersectRepoPath)' == ''">$(IntersectPath)</_IntersectRootPath>
+
+    <IntersectClientDirectoryPath>$(_IntersectRootPath)\client</IntersectClientDirectoryPath>
+    <IntersectClientDirectoryPath Condition="'$(IntersectRepoPath)' == ''">$(_IntersectRootPath)</IntersectClientDirectoryPath>
+    <IntersectClientExecutableName Condition="'$(IntersectClientExecutableName)' == '' AND '$(INTERSECT_CLIENT_EXECUTABLE_NAME)' == ''">$(INTERSECT_CLIENT_EXECUTABLE_NAME)</IntersectClientExecutableName>
+    <IntersectClientExecutableName Condition="'$(IntersectClientExecutableName)' == ''">Intersect Client</IntersectClientExecutableName>
+    <IntersectClientExecutablePath>$(IntersectClientDirectoryPath)\$(IntersectClientExecutableName).exe</IntersectClientExecutablePath>
+
+    <IntersectEditorDirectoryPath>$(_IntersectRootPath)\editor</IntersectEditorDirectoryPath>
+    <IntersectEditorDirectoryPath Condition="'$(IntersectRepoPath)' == ''">$(_IntersectRootPath)</IntersectEditorDirectoryPath>
+    <IntersectEditorExecutableName Condition="'$(IntersectEditorExecutableName)' == '' AND '$(INTERSECT_EDITOR_EXECUTABLE_NAME)' == ''">$(INTERSECT_EDITOR_EXECUTABLE_NAME)</IntersectEditorExecutableName>
+    <IntersectEditorExecutableName Condition="'$(IntersectEditorExecutableName)' == ''">Intersect Editor</IntersectEditorExecutableName>
+    <IntersectEditorExecutablePath>$(IntersectEditorDirectoryPath)\$(IntersectEditorExecutableName).exe</IntersectEditorExecutablePath>
+
+    <IntersectServerDirectoryPath>$(_IntersectRootPath)\server</IntersectServerDirectoryPath>
+    <IntersectServerDirectoryPath Condition="'$(IntersectRepoPath)' == ''">$(_IntersectRootPath)</IntersectServerDirectoryPath>
+    <IntersectServerExecutableName Condition="'$(IntersectServerExecutableName)' == '' AND '$(INTERSECT_SERVER_EXECUTABLE_NAME)' == ''">$(INTERSECT_SERVER_EXECUTABLE_NAME)</IntersectServerExecutableName>
+    <IntersectServerExecutableName Condition="'$(IntersectServerExecutableName)' == ''">Intersect Server</IntersectServerExecutableName>
+    <IntersectServerExecutablePath>$(IntersectServerDirectoryPath)\$(IntersectServerExecutableName).exe</IntersectServerExecutablePath>
+  </PropertyGroup>
+
+  <Target Name="BeforeBuild">
+    <Error Condition="!Exists('$(IntersectPath)')" Text="Unable to find path to Intersect, '$(IntersectPath)' does not exist." />
+    <Error Condition="!Exists('$(_IntersectRootPath)')" Text="Unable to find path to Intersect, '$(_IntersectRootPath)' does not exist." />
+  </Target>
+</Project>

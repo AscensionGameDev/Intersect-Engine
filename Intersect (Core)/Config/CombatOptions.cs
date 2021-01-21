@@ -17,6 +17,36 @@
         //Combat
         public int RegenTime = 3000; //3 seconds
 
+        // Cooldowns
+
+        /// <summary>
+        /// Configures whether cooldowns within cooldown groups should match.
+        /// </summary>
+        public bool MatchGroupCooldowns = true;
+
+        /// <summary>
+        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+        /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item or spell being used when false.
+        /// </summary>
+        public bool MatchGroupCooldownHighest = true;
+
+        /// <summary>
+        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+        /// Configures whether cooldown groups between items and spells are shared.
+        /// </summary>
+        public bool LinkSpellAndItemCooldowns = true;
+
+        /// <summary>
+        /// Configures whether or not using a spell or item should trigger a global cooldown.
+        /// </summary>
+        public bool EnableGlobalCooldowns = false;
+
+        /// <summary>
+        /// Configures the duration (in milliseconds) which the global cooldown lasts after each ability.
+        /// Only used when <seealso cref="EnableGlobalCooldowns"/> is enabled!
+        /// </summary>
+        public int GlobalCooldownDuration = 1500;
+
     }
 
 }

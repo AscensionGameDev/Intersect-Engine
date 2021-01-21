@@ -4,8 +4,6 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Core.Commands
 {
 
@@ -13,9 +11,9 @@ namespace Intersect.Server.Core.Commands
     {
 
         protected TargetUserCommand(
-            [NotNull] LocaleCommand command,
-            [NotNull] LocaleArgument argument,
-            [NotNull] params ICommandArgument[] arguments
+            LocaleCommand command,
+            LocaleArgument argument,
+            params ICommandArgument[] arguments
         ) : base(command, argument, arguments)
         {
         }

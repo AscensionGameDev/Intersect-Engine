@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Intersect.Config;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -6,16 +11,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
-using Intersect.Config;
-
-using JetBrains.Annotations;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 namespace Intersect.Server.Database
 {
-
     /// <summary>
     /// Abstract DbContext class for all Intersect database contexts.
     /// </summary>
@@ -23,8 +20,7 @@ namespace Intersect.Server.Database
     /// <inheritdoc cref="ISeedableContext" />
     public abstract class IntersectDbContext<T> : DbContext, ISeedableContext where T : IntersectDbContext<T>
     {
-
-        [NotNull] private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
+        private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
             new ConcurrentDictionary<Type, ConstructorInfo>();
 
         private static DbConnectionStringBuilder configuredConnectionStringBuilder;
@@ -40,7 +36,7 @@ namespace Intersect.Server.Database
         /// <param name="databaseType"></param>
         /// <inheritdoc />
         protected IntersectDbContext(
-            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
             bool isTemporary = false,
             Intersect.Logging.Logger dbLogger = null,
@@ -58,34 +54,42 @@ namespace Intersect.Server.Database
                 {
                     case Intersect.Logging.LogLevel.None:
                         break;
+
                     case Intersect.Logging.LogLevel.Error:
                         efLogLevel = LogLevel.Error;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Warn:
                         efLogLevel = LogLevel.Warning;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Info:
                         efLogLevel = LogLevel.Information;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Trace:
                         efLogLevel = LogLevel.Trace;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Verbose:
                         efLogLevel = LogLevel.Trace;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Debug:
                         efLogLevel = LogLevel.Debug;
 
                         break;
+
                     case Intersect.Logging.LogLevel.Diagnostic:
                         efLogLevel = LogLevel.Trace;
 
                         break;
+
                     case Intersect.Logging.LogLevel.All:
                         efLogLevel = LogLevel.Trace;
 
@@ -119,10 +123,8 @@ namespace Intersect.Server.Database
         /// <summary>
         /// 
         /// </summary>
-        [NotNull]
         public DbConnectionStringBuilder ConnectionStringBuilder { get; }
 
-        [NotNull]
         public ICollection<string> PendingMigrations =>
             Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
 
@@ -145,7 +147,6 @@ namespace Intersect.Server.Database
             configuredConnectionStringBuilder = connectionStringBuilder;
         }
 
-        [NotNull]
         public static T Create(
             DatabaseOptions.DatabaseType? databaseType = null,
             DbConnectionStringBuilder connectionStringBuilder = null
@@ -180,7 +181,7 @@ namespace Intersect.Server.Database
             return contextInstance;
         }
 
-        protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
 
@@ -247,8 +248,6 @@ namespace Intersect.Server.Database
             }
         }
 
-        public virtual void MigrationsProcessed([NotNull] string[] migrations) { }
-
+        public virtual void MigrationsProcessed(string[] migrations) { }
     }
-
 }

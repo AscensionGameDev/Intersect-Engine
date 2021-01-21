@@ -5,8 +5,6 @@ using System.Web.Http.Routing;
 
 using Intersect.Enums;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Constraints
 {
 
@@ -17,8 +15,8 @@ namespace Intersect.Server.Web.RestApi.Constraints
         public bool Match(
             HttpRequestMessage request,
             IHttpRoute route,
-            [NotNull] string parameterName,
-            [NotNull] IDictionary<string, object> values,
+            string parameterName,
+            IDictionary<string, object> values,
             HttpRouteDirection routeDirection
         )
         {

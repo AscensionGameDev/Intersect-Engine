@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Api
@@ -42,7 +40,7 @@ namespace Intersect.Server.Database.PlayerData.Api
         public string Ticket { get; set; }
 
         public static async ValueTask<bool> Add(
-            [NotNull] RefreshToken token,
+            RefreshToken token,
             bool commit = false,
             bool checkForDuplicates = true
         )
@@ -86,7 +84,6 @@ namespace Intersect.Server.Database.PlayerData.Api
             return true;
         }
 
-        [CanBeNull]
         public static RefreshToken Find(Guid id)
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -95,7 +92,7 @@ namespace Intersect.Server.Database.PlayerData.Api
             }
         }
 
-        public static RefreshToken FindForTicket([CanBeNull] Guid ticketId)
+        public static RefreshToken FindForTicket(Guid ticketId)
         {
             if (ticketId == Guid.Empty)
             {
@@ -151,7 +148,7 @@ namespace Intersect.Server.Database.PlayerData.Api
             }
         }
 
-        public static IEnumerable<RefreshToken> FindForUser([NotNull] User user)
+        public static IEnumerable<RefreshToken> FindForUser(User user)
         {
             return FindForUser(user.Id);
         }
@@ -167,7 +164,7 @@ namespace Intersect.Server.Database.PlayerData.Api
             }
         }
 
-        public static RefreshToken FindOneForUser([NotNull] User user)
+        public static RefreshToken FindOneForUser(User user)
         {
             return FindOneForUser(user.Id);
         }
@@ -179,7 +176,7 @@ namespace Intersect.Server.Database.PlayerData.Api
             return token != null && Remove(token, commit);
         }
 
-        public static bool Remove([NotNull] RefreshToken token, bool commit = false)
+        public static bool Remove(RefreshToken token, bool commit = false)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
@@ -189,7 +186,7 @@ namespace Intersect.Server.Database.PlayerData.Api
             }
         }
 
-        public static bool RemoveAll([NotNull] IEnumerable<RefreshToken> tokens, bool commit = false)
+        public static bool RemoveAll(IEnumerable<RefreshToken> tokens, bool commit = false)
         {
             lock (DbInterface.GetPlayerContextLock())
             {

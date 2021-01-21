@@ -117,6 +117,7 @@ namespace Intersect.Client.Interface.Game.Character
                     {
                         ContentPanel.Show();
                         ContentPanel.Texture = itemTex;
+                        ContentPanel.RenderColor = item.Color;
                     }
                     else
                     {
