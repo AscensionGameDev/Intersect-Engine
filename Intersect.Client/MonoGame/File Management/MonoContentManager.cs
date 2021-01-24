@@ -213,22 +213,21 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadShaders()
         {
             mShaderDict.Clear();
-            var dir = Path.Combine("resources", "shaders");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
 
-            var items = Directory.GetFiles(dir, "*.xnb");
-            for (var i = 0; i < items.Length; i++)
+            const string shaderPrefix = "Intersect.Client.Resources.Shaders.";
+            var availableShaders = typeof(MonoContentManager).Assembly
+                .GetManifestResourceNames()
+                .Where(resourceName =>
+                    resourceName.StartsWith(shaderPrefix)
+                    && resourceName.EndsWith(".xnb")
+                ).ToArray();
+
+            for (var i = 0; i < availableShaders.Length; i++)
             {
-                var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                if (!filename.Contains("_editor"))
-                {
-                    mShaderDict.Add(
-                        filename.Replace(".xnb", ""), Core.Graphics.Renderer.LoadShader(Path.Combine(dir, filename))
-                    );
-                }
+                var resourceFullName = availableShaders[i];
+                var shaderNameWithoutExtension = resourceFullName.Substring(0, resourceFullName.Length - 4);
+                var shaderName = shaderNameWithoutExtension.Substring(shaderPrefix.Length);
+                mShaderDict.Add(shaderName, Core.Graphics.Renderer.LoadShader(resourceFullName));
             }
         }
 
