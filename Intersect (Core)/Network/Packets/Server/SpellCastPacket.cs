@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Server
 {
-
-    public class SpellCastPacket : CerasPacket
+    [MessagePackObject]
+    public class SpellCastPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public SpellCastPacket()
+        {
+        }
 
         public SpellCastPacket(Guid entityId, Guid spellId)
         {
@@ -12,8 +17,10 @@ namespace Intersect.Network.Packets.Server
             SpellId = spellId;
         }
 
+        [Key(0)]
         public Guid EntityId { get; set; }
 
+        [Key(1)]
         public Guid SpellId { get; set; }
 
     }

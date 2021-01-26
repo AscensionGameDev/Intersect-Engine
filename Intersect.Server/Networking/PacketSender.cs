@@ -1894,7 +1894,7 @@ namespace Intersect.Server.Networking
             player.SendPacket(new TargetOverridePacket(targetId));
         }
 
-        public static void SendDataToMap(Guid mapId, CerasPacket packet, Player except = null)
+        public static void SendDataToMap(Guid mapId, IPacket packet, Player except = null)
         {
             if (!MapInstance.Lookup.Keys.Contains(mapId))
             {
@@ -1911,7 +1911,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static bool SendDataToProximity(Guid mapId, CerasPacket packet, Player except = null)
+        public static bool SendDataToProximity(Guid mapId, IPacket packet, Player except = null)
         {
             if (!MapInstance.Lookup.Keys.Contains(mapId))
             {
@@ -1927,7 +1927,7 @@ namespace Intersect.Server.Networking
             return true;
         }
 
-        public static void SendDataToEditors(CerasPacket packet)
+        public static void SendDataToEditors(IPacket packet)
         {
             lock (Globals.ClientLock)
             {
@@ -1941,7 +1941,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendDataToAllPlayers(CerasPacket packet)
+        public static void SendDataToAllPlayers(IPacket packet)
         {
             lock (Globals.ClientLock)
             {
@@ -1955,7 +1955,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendDataToAll(CerasPacket packet)
+        public static void SendDataToAll(IPacket packet)
         {
             lock (Globals.ClientLock)
             {

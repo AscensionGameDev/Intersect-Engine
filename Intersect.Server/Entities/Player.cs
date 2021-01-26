@@ -199,7 +199,7 @@ namespace Intersect.Server.Entities
             OnlinePlayers[Id] = this;
         }
 
-        public void SendPacket(CerasPacket packet)
+        public void SendPacket(IPacket packet)
         {
             Client?.Send(packet);
         }

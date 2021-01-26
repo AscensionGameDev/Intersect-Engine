@@ -18,10 +18,7 @@ namespace Intersect.Network
 
             Guid = guid ?? Guid.NewGuid();
             Statistics = new ConnectionStatistics();
-            Ceras = new Ceras(true);
         }
-
-        public Ceras Ceras { get; }
 
         public virtual void Dispose()
         {

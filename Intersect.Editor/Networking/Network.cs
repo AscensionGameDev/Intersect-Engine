@@ -125,7 +125,7 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        public static void SendPacket(CerasPacket packet)
+        public static void SendPacket(IntersectPacket packet)
         {
             if (EditorLidgrenNetwork != null)
             {

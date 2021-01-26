@@ -1,16 +1,22 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class PartyKickPacket : CerasPacket
+    [MessagePackObject]
+    public class PartyKickPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public PartyKickPacket()
+        {
+        }
 
         public PartyKickPacket(Guid targetId)
         {
             TargetId = targetId;
         }
 
+        [Key(0)]
         public Guid TargetId { get; set; }
 
     }

@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Server
 {
-
-    public class EntityZDimensionPacket : CerasPacket
+    [MessagePackObject]
+    public class EntityZDimensionPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public EntityZDimensionPacket()
+        {
+        }
 
         public EntityZDimensionPacket(Guid entityId, byte level)
         {
@@ -12,8 +17,10 @@ namespace Intersect.Network.Packets.Server
             Level = level;
         }
 
+        [Key(0)]
         public Guid EntityId { get; set; }
 
+        [Key(1)]
         public byte Level { get; set; }
 
     }

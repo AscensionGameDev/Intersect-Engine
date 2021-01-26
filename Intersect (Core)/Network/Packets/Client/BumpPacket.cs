@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class BumpPacket : CerasPacket
+    [MessagePackObject]
+    public class BumpPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public BumpPacket()
+        {
+        }
 
         public BumpPacket(Guid mapId, Guid eventId)
         {
@@ -12,8 +17,10 @@ namespace Intersect.Network.Packets.Client
             EventId = eventId;
         }
 
+        [Key(0)]
         public Guid MapId { get; set; }
 
+        [Key(1)]
         public Guid EventId { get; set; }
 
     }

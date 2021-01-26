@@ -1,16 +1,22 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class SelectCharacterPacket : CerasPacket
+    [MessagePackObject]
+    public class SelectCharacterPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public SelectCharacterPacket()
+        {
+        }
 
         public SelectCharacterPacket(Guid charId)
         {
             CharacterId = charId;
         }
 
+        [Key(0)]
         public Guid CharacterId { get; set; }
 
     }

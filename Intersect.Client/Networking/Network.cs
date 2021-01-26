@@ -108,7 +108,7 @@ namespace Intersect.Client.Networking
             }
         }
 
-        public static void SendPacket(CerasPacket packet)
+        public static void SendPacket(IntersectPacket packet)
         {
             Socket?.SendPacket(packet);
         }

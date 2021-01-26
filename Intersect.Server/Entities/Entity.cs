@@ -2497,7 +2497,7 @@ namespace Intersect.Server.Entities
         {
             if (packet == null)
             {
-                packet = new EntityPacket();
+                throw new Exception("No packet to populate!");
             }
 
             packet.EntityId = Id;

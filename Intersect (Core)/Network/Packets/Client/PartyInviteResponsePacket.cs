@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class PartyInviteResponsePacket : CerasPacket
+    [MessagePackObject]
+    public class PartyInviteResponsePacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public PartyInviteResponsePacket()
+        {
+        }
 
         public PartyInviteResponsePacket(Guid partyId, bool accepting)
         {
@@ -12,8 +17,10 @@ namespace Intersect.Network.Packets.Client
             AcceptingInvite = accepting;
         }
 
+        [Key(0)]
         public Guid PartyId { get; set; }
 
+        [Key(1)]
         public bool AcceptingInvite { get; set; }
 
     }

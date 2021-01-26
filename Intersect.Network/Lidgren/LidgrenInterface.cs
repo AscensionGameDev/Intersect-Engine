@@ -23,10 +23,6 @@ namespace Intersect.Network.Lidgren
 
         private static readonly IConnection[] EmptyConnections = { };
 
-        private Ceras mCeras { get; set; }
-
-        private Ceras Ceras => (mCeras = (mCeras ?? new Ceras(true)));
-
         private readonly IDictionary<long, Guid> mGuidLookup;
 
         private readonly INetwork mNetwork;
@@ -526,7 +522,7 @@ namespace Intersect.Network.Lidgren
 
                                 Debug.Assert(senderConnection != null, "connection != null");
                                 var approvalPacketData = senderConnection.RemoteHailMessage.Data;
-                                var approval = Ceras.Deserialize<ApprovalPacket>(approvalPacketData);
+                                var approval = MessagePacker.Instance.Deserialize(approvalPacketData) as ApprovalPacket;
 
                                 if (!(approval?.Decrypt(intersectConnection.Rsa) ?? false))
                                 {
@@ -703,7 +699,7 @@ namespace Intersect.Network.Lidgren
                 {
                     try
                     {
-                        var hail = Ceras.Deserialize<HailPacket>(message.Data);
+                        var hail = MessagePacker.Instance.Deserialize(message.Data) as HailPacket;
                         if (!(hail?.Decrypt(mRsa) ?? false))
                         {
                             Log.Warn($"Failed to read hail, denying connection [{lidgrenIdHex}].");

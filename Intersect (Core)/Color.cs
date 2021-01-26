@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
 using Intersect.Localization;
+using MessagePack;
 
 namespace Intersect
 {
-
+    [MessagePackObject]
     public class Color
     {
 
@@ -57,12 +58,16 @@ namespace Intersect
             B = (byte) b;
         }
 
+        [Key(0)]
         public byte A { get; set; }
 
+        [Key(1)]
         public byte R { get; set; }
 
+        [Key(2)]
         public byte G { get; set; }
 
+        [Key(3)]
         public byte B { get; set; }
 
         //public float Hue
