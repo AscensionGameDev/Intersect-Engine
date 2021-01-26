@@ -1,7 +1,9 @@
-﻿namespace Intersect.Network.Packets.Server
-{
+﻿using MessagePack;
 
-    public class AdminPanelPacket : CerasPacket
+namespace Intersect.Network.Packets.Server
+{
+    [MessagePackObject]
+    public class AdminPanelPacket : IntersectPacket
     {
 
     }

@@ -41,9 +41,9 @@ namespace Intersect.Client.Networking
             /// <inheritdoc />
             public bool Send(IPacket packet)
             {
-                if (packet is CerasPacket cerasPacket)
+                if (packet is IntersectPacket intersectPacket)
                 {
-                    Network.SendPacket(cerasPacket);
+                    Network.SendPacket(intersectPacket);
                     return true;
                 }
 
@@ -85,7 +85,7 @@ namespace Intersect.Client.Networking
                 Timing.Global.Synchronize(timedPacket.UTC, timedPacket.Offset);
             }
 
-            if (!(packet is CerasPacket))
+            if (!(packet is IntersectPacket))
             {
                 return false;
             }

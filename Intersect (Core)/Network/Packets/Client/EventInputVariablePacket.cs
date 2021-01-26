@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class EventInputVariablePacket : CerasPacket
+    [MessagePackObject]
+    public class EventInputVariablePacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public EventInputVariablePacket()
+        {
+        }
 
         public EventInputVariablePacket(Guid eventId, int value, string stringValue = "", bool canceled = false)
         {
@@ -14,12 +19,16 @@ namespace Intersect.Network.Packets.Client
             Canceled = canceled;
         }
 
+        [Key(0)]
         public Guid EventId { get; set; }
 
+        [Key(1)]
         public int Value { get; set; }
 
+        [Key(2)]
         public string StringValue { get; set; }
 
+        [Key(3)]
         public bool Canceled { get; set; }
 
     }

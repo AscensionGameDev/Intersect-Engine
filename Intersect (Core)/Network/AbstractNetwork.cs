@@ -227,7 +227,7 @@ namespace Intersect.Network
 
             // Get Packet From Data using Ceras
             var sw = Stopwatch.StartNew();
-            var packet = (IPacket) connection.Ceras.Deserialize(data);
+            var packet = (IPacket) MessagePacker.Instance.Deserialize(data);
             if (sw.ElapsedMilliseconds > 10)
             {
                 Debug.WriteLine(

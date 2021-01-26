@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 
 using Intersect.Collections;
+using MessagePack;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class ForgetSpellPacket : CerasPacket
+    [MessagePackObject]
+    public class ForgetSpellPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public ForgetSpellPacket()
+        {
+        }
 
         public ForgetSpellPacket(int slot)
         {
             Slot = slot;
         }
 
+        [Key(0)]
         public int Slot { get; set; }
 
         public override Dictionary<string, SanitizedValue<object>> Sanitize()

@@ -32,9 +32,9 @@ namespace Intersect.Editor.Networking
             /// <inheritdoc />
             public bool Send(IPacket packet)
             {
-                if (packet is CerasPacket cerasPacket)
+                if (packet is IntersectPacket intersectPacket)
                 {
-                    Network.SendPacket(cerasPacket);
+                    Network.SendPacket(intersectPacket);
 
                     return true;
                 }
@@ -76,7 +76,7 @@ namespace Intersect.Editor.Networking
 
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
-            if (!(packet is CerasPacket))
+            if (!(packet is IntersectPacket))
             {
                 return false;
             }
@@ -425,7 +425,6 @@ namespace Intersect.Editor.Networking
                     }
 
                     break;
-
                 case GameObjectType.Npc:
                     if (deleted)
                     {

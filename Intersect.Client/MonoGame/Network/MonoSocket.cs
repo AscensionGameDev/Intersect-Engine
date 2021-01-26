@@ -9,6 +9,9 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
+using Intersect.Network.Packets;
+using Intersect.Utilities;
+using Intersect.Client.Networking;
 using Intersect.Client.Core;
 
 namespace Intersect.Client.MonoGame.Network
@@ -64,14 +67,19 @@ namespace Intersect.Client.MonoGame.Network
 
         public override void SendPacket(object packet)
         {
-            if (packet is CerasPacket && ClientLidgrenNetwork != null)
+            if (packet is IntersectPacket && ClientLidgrenNetwork != null)
             {
-                ClientLidgrenNetwork.Send((CerasPacket) packet);
+                ClientLidgrenNetwork.Send((IntersectPacket) packet);
             }
         }
 
         public static bool AddPacketToQueue(IConnection connection, IPacket packet)
         {
+            if (packet is AbstractTimedPacket timedPacket)
+            {
+                Timing.Global.Synchronize(timedPacket.UTC, timedPacket.Offset);
+            }
+
             PacketQueue.Enqueue(new KeyValuePair<IConnection, IPacket>(connection, packet));
 
             return true;
@@ -79,13 +87,15 @@ namespace Intersect.Client.MonoGame.Network
 
         public override void Update()
         {
-            var packetCount = PacketQueue.Count;
-            for (var i = 0; i < packetCount; i++)
+            while (PacketQueue.Count > 0)
             {
-                KeyValuePair<IConnection, IPacket> dequeued;
-                if (PacketQueue.TryDequeue(out dequeued))
+                if (PacketQueue.TryDequeue(out KeyValuePair<IConnection, IPacket> dequeued))
                 {
                     OnDataReceived(dequeued.Value);
+                }
+                else
+                {
+                    break;
                 }
             }
         }

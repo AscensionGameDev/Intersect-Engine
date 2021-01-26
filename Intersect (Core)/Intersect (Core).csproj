@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect</RootNamespace>
     <AssemblyName>Intersect Core</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -78,6 +78,12 @@
     </Reference>
     <Reference Include="MathNet.Numerics, Version=4.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.9.0\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="MessagePack, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
+      <HintPath>..\packages\MessagePack.2.2.85\lib\netstandard2.0\MessagePack.dll</HintPath>
+    </Reference>
+    <Reference Include="MessagePack.Annotations, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b4a0369545f0a1be, processorArchitecture=MSIL">
+      <HintPath>..\packages\MessagePack.Annotations.2.2.85\lib\netstandard2.0\MessagePack.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -335,6 +341,7 @@
     <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\ConnectionStatistics.cs" />
     <Compile Include="Network\Events\ConnectionEventArgs.cs" />
+    <Compile Include="Network\MessagePacker.cs" />
     <Compile Include="Network\IPacketHandler.cs" />
     <Compile Include="Network\IPacketSender.cs" />
     <Compile Include="Network\NetworkStatus.cs" />
@@ -387,7 +394,7 @@
     <Compile Include="Network\Packets\Client\PartyLeavePacket.cs" />
     <Compile Include="Network\Packets\Client\PickupItemPacket.cs" />
     <Compile Include="Network\Packets\Client\PingPacket.cs" />
-    <Compile Include="Network\CerasPacket.cs" />
+    <Compile Include="Network\IntersectPacket.cs" />
     <Compile Include="Network\Packets\Client\QuestResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\RequestFriendsPacket.cs" />
     <Compile Include="Network\Packets\Client\RequestPasswordResetPacket.cs" />
@@ -697,6 +704,7 @@
     <Compile Include="Plugins\Loaders\PluginLoader.Entry.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Analyzer Include="..\packages\MessagePackAnalyzer.2.2.85\analyzers\dotnet\MessagePackAnalyzer.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />

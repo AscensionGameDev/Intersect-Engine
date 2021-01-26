@@ -1,7 +1,10 @@
-﻿namespace Intersect.Network.Packets.Client
+﻿using MessagePack;
+
+namespace Intersect.Network.Packets.Client
 {
 
-    public class CloseBagPacket : CerasPacket
+    [MessagePackObject]
+    public class CloseBagPacket : IntersectPacket
     {
 
     }

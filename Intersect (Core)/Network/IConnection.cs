@@ -7,8 +7,6 @@ namespace Intersect.Network
     {
         Guid Guid { get; }
 
-        Ceras Ceras { get; }
-
         bool IsConnected { get; }
 
         string Ip { get; }
