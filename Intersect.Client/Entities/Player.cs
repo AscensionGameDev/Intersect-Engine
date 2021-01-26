@@ -61,6 +61,7 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public long CombatTimer { get; set; } = 0;
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -71,7 +72,6 @@ namespace Intersect.Client.Entities
             mRenderPriority = 2;
         }
 
-        public long CombatTimer { get; set; } = 0;
 
         public List<PartyMember> Party
         {
@@ -180,15 +180,17 @@ namespace Intersect.Client.Entities
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
-            if (((PlayerEntityPacket) packet).Equipment != null)
+            var playerPacket = (PlayerEntityPacket) packet;
+
+            if (playerPacket.Equipment != null)
             {
-                if (this == Globals.Me && ((PlayerEntityPacket) packet).Equipment.InventorySlots != null)
+                if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
-                    this.MyEquipment = ((PlayerEntityPacket) packet).Equipment.InventorySlots;
+                    this.MyEquipment = playerPacket.Equipment.InventorySlots;
                 }
-                else if (((PlayerEntityPacket) packet).Equipment.ItemIds != null)
+                else if (playerPacket.Equipment.ItemIds != null)
                 {
-                    this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
+                    this.Equipment = playerPacket.Equipment.ItemIds;
                 }
             }
         }
@@ -215,7 +217,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Inventory.dropitem,
                         Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -258,7 +260,8 @@ namespace Intersect.Client.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index))
+            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index) &&
+                index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
             }
@@ -423,7 +426,7 @@ namespace Intersect.Client.Entities
                         var iBox = new InputBox(
                             Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index
+                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
                         );
                     }
                     else
@@ -469,7 +472,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -517,21 +520,23 @@ namespace Intersect.Client.Entities
         }
 
         //Bag
-        public void TryStoreBagItem(int index)
+        public void TryStoreBagItem(int invSlot, int bagSlot)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[invSlot].ItemId) != null)
             {
-                if (Inventory[index].Quantity > 1)
+                if (Inventory[invSlot].Quantity > 1)
                 {
+                    int[] userData = new int[2] { invSlot, bagSlot };
+
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
-                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, index
+                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendStoreBagItem(index, 1);
+                    PacketSender.SendStoreBagItem(invSlot, 1, bagSlot);
                 }
             }
         }
@@ -541,35 +546,39 @@ namespace Intersect.Client.Entities
             var value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem((int) ((InputBox) sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
             }
         }
 
-        public void TryRetreiveBagItem(int index)
+        public void TryRetreiveBagItem(int bagSlot, int invSlot)
         {
-            if (Globals.Bag[index] != null && ItemBase.Get(Globals.Bag[index].ItemId) != null)
+            if (Globals.Bag[bagSlot] != null && ItemBase.Get(Globals.Bag[bagSlot].ItemId) != null)
             {
-                if (Globals.Bag[index].Quantity > 1)
+                int[] userData = new int[2] { bagSlot, invSlot };
+
+                if (Globals.Bag[bagSlot].Quantity > 1)
                 {
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
-                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, index
+                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData
                     );
                 }
                 else
                 {
-                    PacketSender.SendRetrieveBagItem(index, 1);
+                    PacketSender.SendRetrieveBagItem(bagSlot, 1, invSlot);
                 }
             }
         }
 
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int) ((InputBox) sender).Value;
+            var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetrieveBagItem((int) ((InputBox) sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
             }
         }
 
@@ -1240,21 +1249,16 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Attempts to pick up an item at the specified location.
         /// </summary>
+        /// <param name="mapId">The Id of the map we are trying to loot from.</param>
         /// <param name="x">The X location on the current map.</param>
         /// <param name="y">The Y location on the current map.</param>
         /// <param name="uniqueId">The Unique Id of the specific item we want to pick up, leave <see cref="Guid.Empty"/> to not specificy an item and pick up the first thing we can find.</param>
         /// <param name="firstOnly">Defines whether we only want to pick up the first item we can find when true, or all items when false.</param>
         /// <returns></returns>
-        public bool TryPickupItem(int x, int y, Guid uniqueId = new Guid(), bool firstOnly = false)
+        public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new Guid(), bool firstOnly = false)
         {
-            var map = MapInstance.Get(CurrentMap);
-            if (map == null)
-            {
-                return false;
-            }
-
-            var location = new Point(x, y);
-            if (!map.MapItems.ContainsKey(location) || map.MapItems[location].Count < 1)
+            var map = MapInstance.Get(mapId);
+            if (map == null || tileIndex < 0 || tileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return false;
             }
@@ -1262,22 +1266,20 @@ namespace Intersect.Client.Entities
             // Are we trying to pick up anything in particular, or everything?
             if (uniqueId != Guid.Empty || firstOnly)
             {
-                foreach (var item in map.MapItems[location])
+                if (!map.MapItems.ContainsKey(tileIndex) || map.MapItems[tileIndex].Count < 1)
                 {
-                    // Are we allowed to see and pick this item up?
-                    if (!item.VisibleToAll && item.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Owner))
-                    {
-                        // This item does not apply to us!
-                        continue;
-                    }
+                    return false;
+                }
 
+                foreach (var item in map.MapItems[tileIndex])
+                {
                     // Check if we are trying to pick up a specific item, and if this is the one.
                     if (uniqueId != Guid.Empty && item.UniqueId != uniqueId)
                     {
                         continue;
                     }
 
-                    PacketSender.SendPickupItem(location, item.UniqueId);
+                    PacketSender.SendPickupItem(mapId, tileIndex, item.UniqueId);
 
                     return true;
                 }
@@ -1285,7 +1287,7 @@ namespace Intersect.Client.Entities
             else
             {
                 // Let the server worry about what we can and can not pick up.
-                PacketSender.SendPickupItem(location, uniqueId);
+                PacketSender.SendPickupItem(mapId, tileIndex, uniqueId);
 
                 return true;
             }

@@ -37,5 +37,10 @@
         /// Configures the maximum amount of items to be displayed on the client's Loot Window.
         /// </summary>
         public byte MaximumLootWindowItems = 10;
+
+        /// <summary>
+        /// Configures the maximum amount of tiles around you to search for loot with the Loot Window.
+        /// </summary>
+        public byte MaximumLootWindowDistance = 3;
     }
 }

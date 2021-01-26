@@ -1503,94 +1503,110 @@ namespace Intersect.Server.Networking
         //PickupItemPacket
         public void HandlePacket(Client client, PickupItemPacket packet)
         {
-            var player = client?.Entity;
-            if (player == null)
+            var player = client.Entity;
+            if (player == null || packet.TileIndex < 0 || packet.TileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return;
             }
 
-            var map = MapInstance.Get(player.MapId);
+            var map = MapInstance.Get(packet.MapId);
+
+            // Is this a valid map?
             if (map == null)
             {
                 return;
             }
 
-            // Is our user on the location they're trying to pick stuff up on?
-            var itemLocation = packet.Location;
-            if (itemLocation.X != player.X && itemLocation.Y != player.Y)
+            // Is our user within range of the item they are trying to pick up?
+            if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > Options.Loot.MaximumLootWindowDistance)
             {
                 return;
             }
 
-            // Are we tracking any items for this location?
-            if (!map.MapItems.ContainsKey(itemLocation))
-            {
-                return;
-            }
-
-            var giveItems = new List<MapItem>();
-
+            var giveItems = new Dictionary<MapInstance, List<MapItem>>();
             // Are we trying to pick up everything on this location or one specific item?
             if (packet.UniqueId == Guid.Empty)
             {
-                // Everything.
-                giveItems = map.MapItems[itemLocation];
+                // GET IT ALL! BE GREEDY!
+                foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
+                {
+                    var tempMap = itemMap.Key;
+                    if (!giveItems.ContainsKey(itemMap.Key))
+                    {
+                        giveItems.Add(tempMap, new List<MapItem>());
+                    }
+
+                    foreach(var itemLoc in itemMap.Value)
+                    {
+                        giveItems[tempMap].AddRange(tempMap.FindItemsAt(itemLoc));
+                    }
+                }
             }
             else
             {
                 // One specific item.
-                giveItems.Add(map.FindItem(packet.UniqueId));
+                giveItems.Add(map, new List<MapItem>() { map.FindItem(packet.UniqueId) });
             }
 
             // Go through each item we're trying to give our player and see if we can do so.
-            var toRemove = new List<Guid>();
-            foreach (var mapItem in giveItems)
+            foreach (var itemMap in giveItems)
             {
-                if (mapItem == null)
+                var tempMap = itemMap.Key;
+                var toRemove = new List<MapItem>();
+                foreach (var mapItem in itemMap.Value)
                 {
-                    continue;
-                }
-
-                var canTake = false;
-
-                // Can we actually take this item?
-                if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
-                {
-                    // The ownership time has run out, or there's no owner!
-                    canTake = true;
-                }
-                else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
-                {
-                    // The current player is the owner, or one of their party members is.
-                    canTake = true;
-                }
-
-                if (canTake)
-                {
-                    // Try to give the item to our player.
-                    if (player.TryGiveItem(mapItem))
+                    if (mapItem == null)
                     {
-                        // Mark this item for map removal.
-                        // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
-                        toRemove.Add(mapItem.UniqueId);
+                        continue;
                     }
-                    else
-                    {
-                        // We couldn't give the player their item, notify them.
-                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Loot, CustomColors.Alerts.Error);
-                    }
-                }
-                else
-                {
-                    // Item does not belong to them.
-                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, ChatMessageType.Loot, CustomColors.Alerts.Error);
-                }
-            }
 
-            // Remove all items that were picked up.
-            foreach (var id in toRemove)
-            {
-                map.RemoveItem(id);
+                    var canTake = false;
+                    // Can we actually take this item?
+                    if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
+                    {
+                        // The ownership time has run out, or there's no owner!
+                        canTake = true;
+                    }
+                    else if (mapItem.Owner == player.Id)
+                    {
+                        // The current player is the owner.
+                        canTake = true;
+                    }
+
+                    // Does this item still exist, or did it somehow get picked up before we got there?
+                    if (tempMap.FindItem(mapItem.UniqueId) == null)
+                    {
+                        continue;
+                    }
+
+                    if (canTake)
+                    {
+                        // Try to give the item to our player.
+                        if (player.TryGiveItem(mapItem))
+                        {
+                            var item = ItemBase.Get(mapItem.ItemId);
+                            if (item != null)
+                            {
+                                PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
+                            }
+
+                            // Mark this item for map removal.
+                            // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
+                            toRemove.Add(mapItem);
+                        }
+                        else
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                        }
+                    }
+                }
+
+                // Remove all items that were picked up.
+                foreach (var item in toRemove)
+                {
+                    tempMap.RemoveItem(item);
+                }
             }
         }
 
@@ -2193,7 +2209,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.StoreBagItem(packet.Slot, packet.Quantity);
+            player?.StoreBagItem(packet.Slot, packet.Quantity, packet.BagSlot);
         }
 
         //RetrieveBagItemPacket
@@ -2205,7 +2221,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.RetrieveBagItem(packet.Slot, packet.Quantity);
+            player?.RetrieveBagItem(packet.Slot, packet.Quantity, packet.InventorySlot);
         }
 
         //SwapBagItemPacket

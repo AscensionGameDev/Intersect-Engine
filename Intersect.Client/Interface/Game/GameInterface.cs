@@ -210,6 +210,11 @@ namespace Intersect.Client.Interface.Game
             Globals.InBag = true;
         }
 
+        public BagWindow GetBag()
+        {
+            return mBagWindow;
+        }
+
         //Crafting
         public void NotifyOpenCraftingTable()
         {

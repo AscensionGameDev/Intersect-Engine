@@ -11,17 +11,21 @@ namespace Intersect.Network.Packets.Client
         {
         }
 
-        public PickupItemPacket(Point location, Guid uniqueId)
+        public PickupItemPacket(Guid mapId, int tileIndex, Guid uniqueId)
         {
+            MapId = mapId;
             UniqueId = uniqueId;
-            Location = location;
+            TileIndex = tileIndex;
         }
 
         [Key(0)]
         public Guid UniqueId { get; set; }
 
         [Key(1)]
-        public Point Location { get; set; }
+        public Guid MapId { get; set; }
+
+        [Key(2)]
+        public int TileIndex { get; set; }
 
     }
 

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 
@@ -17,6 +17,12 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] public long DespawnTime;
 
+        public int X { get; private set; }
+
+        public int Y { get; private set; } 
+
+        [JsonIgnore] public int TileIndex => Y * Options.MapWidth + X;
+
         /// <summary>
         /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
         /// </summary>
@@ -29,14 +35,18 @@ namespace Intersect.Server.Maps
         // We need this mostly for the client-side.. They can't keep track of our timer after all!
         public bool VisibleToAll = true;
 
-        public MapItem(Guid itemId, int quantity) : base(itemId, quantity, null, null)
+        public MapItem(Guid itemId, int quantity, int x, int y) : base(itemId, quantity, null, null)
         {
             UniqueId = Guid.NewGuid();
+            X = x;
+            Y = y;
         }
 
-        public MapItem(Guid itemId, int quantity, Guid? bagId, Bag bag) : base(itemId, quantity, bagId, bag)
+        public MapItem(Guid itemId, int quantity, int x, int y, Guid? bagId, Bag bag) : base(itemId, quantity, bagId, bag)
         {
             UniqueId = Guid.NewGuid();
+            X = x;
+            Y = y;
         }
 
         public string Data()

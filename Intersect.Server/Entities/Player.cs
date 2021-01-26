@@ -2017,7 +2017,7 @@ namespace Intersect.Server.Entities
             }
 
             // Figure out what we're dealing with here.
-            var itemDescriptor = ItemBase.Get(slot.ItemId);
+            var itemDescriptor = slot.Descriptor;
 
             // is this stackable? if so try to take as many as we can each time.
             if (itemDescriptor.Stackable)
@@ -2082,7 +2082,7 @@ namespace Intersect.Server.Entities
 
                     break;
 
-                    // Did you forget something? ;)
+                // Did you forget something? ;)
                 default:
                     throw new NotImplementedException();
             }
@@ -2447,7 +2447,7 @@ namespace Intersect.Server.Entities
             var shop = InShop;
             if (shop != null)
             {
-                var itemDescriptor = itemInSlot.Descriptor;
+                var itemDescriptor = Items[slot].Descriptor;
                 if (itemDescriptor != null)
                 {
                     if (itemDescriptor.Bound)
@@ -2819,7 +2819,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var itemBase = ItemBase.Get(Items[slot].ItemId);
+            var itemBase = Items[slot].Descriptor;
             if (itemBase != null)
             {
                 if (Items[slot].ItemId != Guid.Empty)
@@ -2987,7 +2987,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var itemBase = ItemBase.Get(bankSlotItem.ItemId);
+            var itemBase = bankSlotItem.Descriptor;
             var inventorySlot = -1;
             if (itemBase == null)
             {
@@ -3182,14 +3182,14 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void StoreBagItem(int slot, int amount)
+        public void StoreBagItem(int slot, int amount, int bagSlot)
         {
             if (InBag == null || !HasBag(InBag))
             {
                 return;
             }
 
-            var itemBase = ItemBase.Get(Items[slot].ItemId);
+            var itemBase = Items[slot].Descriptor;
             var bag = GetBag();
             if (itemBase != null && bag != null)
             {
@@ -3222,10 +3222,19 @@ namespace Intersect.Server.Entities
                         return;
                     }
 
+                    int currSlot = 0;
+                    int count = bag.SlotCount;
+
+                    if (bagSlot != -1)
+                    {
+                        currSlot = bagSlot;
+                        count = bagSlot + 1;
+                    }
+
                     //Find a spot in the bag for it!
                     if (itemBase.IsStackable)
                     {
-                        for (var i = 0; i < bag.SlotCount; i++)
+                        for (var i = currSlot; i < count; i++)
                         {
                             if (bag.Slots[i] != null && bag.Slots[i].ItemId == Items[slot].ItemId)
                             {
@@ -3253,7 +3262,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                    for (var i = 0; i < bag.SlotCount; i++)
+                    for (var i = currSlot; i < count; i++)
                     {
                         if (bag.Slots[i] == null || bag.Slots[i].ItemId == Guid.Empty)
                         {
@@ -3288,7 +3297,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void RetrieveBagItem(int slot, int amount)
+        public void RetrieveBagItem(int slot, int amount, int invSlot)
         {
             if (InBag == null || !HasBag(InBag))
             {
@@ -3301,7 +3310,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var itemBase = ItemBase.Get(bag.Slots[slot].ItemId);
+            var itemBase = bag.Slots[slot].Descriptor;
             var inventorySlot = -1;
             if (itemBase != null)
             {
@@ -3319,34 +3328,46 @@ namespace Intersect.Server.Entities
                         amount = 1;
                     }
 
-                    //Find a spot in the inventory for it!
-                    if (itemBase.IsStackable)
+                    if (invSlot != -1)
                     {
-                        /* Find an existing stack */
-                        for (var i = 0; i < Options.MaxInvItems; i++)
+                        if (itemBase.IsStackable && Items[invSlot] != null && Items[invSlot].ItemId == bag.Slots[slot].ItemId ||
+                            Items[invSlot] == null || Items[invSlot].ItemId == Guid.Empty)
                         {
-                            if (Items[i] != null && Items[i].ItemId == bag.Slots[slot].ItemId)
+                            inventorySlot = invSlot;
+                        }
+                    }
+                    else
+                    {
+                        //Find a spot in the inventory for it!
+                        if (itemBase.IsStackable)
+                        {
+                            /* Find an existing stack */
+                            for (var i = 0; i < Options.MaxInvItems; i++)
                             {
-                                inventorySlot = i;
+                                if (Items[i] != null && Items[i].ItemId == bag.Slots[slot].ItemId)
+                                {
+                                    inventorySlot = i;
 
-                                break;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (inventorySlot < 0)
+                        {
+                            /* Find a free slot if we don't have one already */
+                            for (var j = 0; j < Options.MaxInvItems; j++)
+                            {
+                                if (Items[j] == null || Items[j].ItemId == Guid.Empty)
+                                {
+                                    inventorySlot = j;
+
+                                    break;
+                                }
                             }
                         }
                     }
 
-                    if (inventorySlot < 0)
-                    {
-                        /* Find a free slot if we don't have one already */
-                        for (var j = 0; j < Options.MaxInvItems; j++)
-                        {
-                            if (Items[j] == null || Items[j].ItemId == Guid.Empty)
-                            {
-                                inventorySlot = j;
-
-                                break;
-                            }
-                        }
-                    }
 
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
@@ -3391,7 +3412,7 @@ namespace Intersect.Server.Entities
 
         public void SwapBagItems(int item1, int item2)
         {
-            if (InBag != null || !HasBag(InBag))
+            if (InBag == null || !HasBag(InBag))
             {
                 return;
             }
@@ -3524,7 +3545,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var itemBase = ItemBase.Get(Items[slot].ItemId);
+            var itemBase = Items[slot].Descriptor;
             if (itemBase != null)
             {
                 if (Items[slot].ItemId != Guid.Empty)
@@ -3640,7 +3661,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var itemBase = ItemBase.Get(Trading.Offer[slot].ItemId);
+            var itemBase = Trading.Offer[slot].Descriptor;
             if (itemBase == null)
             {
                 return;
@@ -4097,7 +4118,7 @@ namespace Intersect.Server.Entities
 
         public virtual bool IsAllyOf(Player otherPlayer)
         {
-            return base.IsAllyOf(otherPlayer) || this.InParty(otherPlayer);
+            return this.InParty(otherPlayer) || this == otherPlayer;
         }
 
         public bool CanSpellCast(SpellBase spell, Entity target, bool checkVitalReqs)

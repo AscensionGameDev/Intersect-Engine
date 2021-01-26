@@ -2246,7 +2246,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        protected int GetDistanceTo(Entity target)
+        public int GetDistanceTo(Entity target)
         {
             if (target != null)
             {
@@ -2256,7 +2256,7 @@ namespace Intersect.Server.Entities
             return 9999;
         }
 
-        protected int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
+        public int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
         {
             var myMap = MapInstance.Get(MapId);
             if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
@@ -2270,7 +2270,7 @@ namespace Intersect.Server.Entities
                 var x2 = targetX + targetMap.MapGridX * Options.MapWidth;
                 var y2 = targetY + targetMap.MapGridY * Options.MapHeight;
 
-                return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+                return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
             //Something is null.. return a value that is out of range :) 

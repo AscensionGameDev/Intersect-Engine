@@ -203,6 +203,10 @@ namespace Intersect.Client.Interface.Game
         {
             mInventoryWindow.Show();
         }
+        public InventoryWindow GetInventoryWindow()
+        {
+            return mInventoryWindow;
+        }
 
         public void TogglePartyWindow()
         {
