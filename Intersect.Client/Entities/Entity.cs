@@ -1433,6 +1433,18 @@ namespace Intersect.Client.Entities
 
             return y;
         }
+        public int GetShieldSize()
+        {
+            var shieldSize = 0;
+            foreach (var status in Status)
+            {
+                if (status.Type == StatusTypes.Shield)
+                {
+                    shieldSize += status.Shield[(int)Vitals.Health];
+                }
+            }
+            return shieldSize;
+        }
 
         public void DrawHpBar()
         {

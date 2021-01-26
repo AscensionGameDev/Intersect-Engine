@@ -1798,8 +1798,8 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, TargetOverridePacket packet)
         {
             if (Globals.Entities.ContainsKey(packet.TargetId))
-            {
-                Globals.Me.TargetIndex = packet.TargetId;
+            { 
+                Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
             }
         }
 

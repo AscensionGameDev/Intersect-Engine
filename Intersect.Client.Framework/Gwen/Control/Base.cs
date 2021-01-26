@@ -1212,14 +1212,18 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="text">Tooltip text.</param>
         public virtual void SetToolTipText(string text)
         {
-            if (mHideToolTip || text == null)
+            if (mHideToolTip || string.IsNullOrWhiteSpace(text))
             {
+                if (this.ToolTip != null && this.ToolTip.Parent != null)
+                {
+                    this.ToolTip?.Parent.RemoveChild(this.ToolTip, true);
+                }
                 this.ToolTip = null;
 
                 return;
             }
 
-            var tooltip = new Label(this);
+            var tooltip = this.ToolTip != null ? (Label)this.ToolTip : new Label(this);
             tooltip.Text = text;
             tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
             if (mToolTipFont != null)
@@ -1254,12 +1258,12 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="recursive">Determines whether the operation should be carried recursively.</param>
         protected virtual void InvalidateChildren(bool recursive = false)
         {
-            foreach (var child in mChildren)
+            for (int i = 0; i < mChildren.Count; i++)
             {
-                child.Invalidate();
+                mChildren[i].Invalidate();
                 if (recursive)
                 {
-                    child.InvalidateChildren(true);
+                    mChildren[i].InvalidateChildren(true);
                 }
             }
 
@@ -1738,9 +1742,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         protected virtual void OnScaleChanged()
         {
-            foreach (var child in mChildren)
+            for (int i = 0; i < mChildren.Count; i++)
             {
-                child.OnScaleChanged();
+                mChildren[i].OnScaleChanged();
             }
         }
 
@@ -1810,14 +1814,14 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (mChildren.Count > 0)
                 {
                     //Now render my kids
-                    foreach (var child in mChildren)
+                    for (int i = 0; i < mChildren.Count; i++)
                     {
-                        if (child.IsHidden)
+                        if (mChildren[i].IsHidden)
                         {
                             continue;
                         }
 
-                        child.DoCacheRender(skin, master);
+                        mChildren[i].DoCacheRender(skin, master);
                     }
                 }
 
@@ -1913,14 +1917,16 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (mChildren.Count > 0)
             {
                 //Now render my kids
-                foreach (var child in mChildren)
+                //For iteration prevents list size changed crash
+                for (int i = 0; i < mChildren.Count; i++)
                 {
-                    if (child.IsHidden)
+                    if (mChildren[i].IsHidden)
                     {
                         continue;
                     }
 
-                    child.DoRender(skin);
+                    mChildren[i].DoRender(skin);
+
                 }
             }
 
@@ -1957,9 +1963,9 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (doChildren)
             {
-                foreach (var child in mChildren)
+                for (int i = 0; i < mChildren.Count; i++)
                 {
-                    child.SetSkin(skin, true);
+                    mChildren[i].SetSkin(skin, true);
                 }
             }
         }
@@ -2331,14 +2337,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             bounds.Y += mPadding.Top;
             bounds.Height -= mPadding.Top + mPadding.Bottom;
 
-            foreach (var child in mChildren)
+            for (int i = 0; i < mChildren.Count; i++)
             {
-                if (child.IsHidden)
+                if (mChildren[i].IsHidden)
                 {
                     continue;
                 }
 
-                var dock = child.Dock;
+                var dock = mChildren[i].Dock;
 
                 if (0 != (dock & Pos.Fill))
                 {
@@ -2347,28 +2353,28 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 if (0 != (dock & Pos.Top))
                 {
-                    var margin = child.Margin;
+                    var margin = mChildren[i].Margin;
 
-                    child.SetBounds(
+                    mChildren[i].SetBounds(
                         bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
-                        child.Height
+                        mChildren[i].Height
                     );
 
-                    var height = margin.Top + margin.Bottom + child.Height;
+                    var height = margin.Top + margin.Bottom + mChildren[i].Height;
                     bounds.Y += height;
                     bounds.Height -= height;
                 }
 
                 if (0 != (dock & Pos.Left))
                 {
-                    var margin = child.Margin;
+                    var margin = mChildren[i].Margin;
 
-                    child.SetBounds(
-                        bounds.X + margin.Left, bounds.Y + margin.Top, child.Width,
+                    mChildren[i].SetBounds(
+                        bounds.X + margin.Left, bounds.Y + margin.Top, mChildren[i].Width,
                         bounds.Height - margin.Top - margin.Bottom
                     );
 
-                    var width = margin.Left + margin.Right + child.Width;
+                    var width = margin.Left + margin.Right + mChildren[i].Width;
                     bounds.X += width;
                     bounds.Width -= width;
                 }
@@ -2376,31 +2382,31 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (0 != (dock & Pos.Right))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                    var margin = child.Margin;
+                    var margin = mChildren[i].Margin;
 
-                    child.SetBounds(
-                        bounds.X + bounds.Width - child.Width - margin.Right, bounds.Y + margin.Top, child.Width,
+                    mChildren[i].SetBounds(
+                        bounds.X + bounds.Width - mChildren[i].Width - margin.Right, bounds.Y + margin.Top, mChildren[i].Width,
                         bounds.Height - margin.Top - margin.Bottom
                     );
 
-                    var width = margin.Left + margin.Right + child.Width;
+                    var width = margin.Left + margin.Right + mChildren[i].Width;
                     bounds.Width -= width;
                 }
 
                 if (0 != (dock & Pos.Bottom))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
-                    var margin = child.Margin;
+                    var margin = mChildren[i].Margin;
 
-                    child.SetBounds(
-                        bounds.X + margin.Left, bounds.Y + bounds.Height - child.Height - margin.Bottom,
-                        bounds.Width - margin.Left - margin.Right, child.Height
+                    mChildren[i].SetBounds(
+                        bounds.X + margin.Left, bounds.Y + bounds.Height - mChildren[i].Height - margin.Bottom,
+                        bounds.Width - margin.Left - margin.Right, mChildren[i].Height
                     );
 
-                    bounds.Height -= child.Height + margin.Bottom + margin.Top;
+                    bounds.Height -= mChildren[i].Height + margin.Bottom + margin.Top;
                 }
 
-                child.RecurseLayout(skin);
+                mChildren[i].RecurseLayout(skin);
             }
 
             mInnerBounds = bounds;
@@ -2408,23 +2414,23 @@ namespace Intersect.Client.Framework.Gwen.Control
             //
             // Fill uses the left over space, so do that now.
             //
-            foreach (var child in mChildren)
+            for (int i = 0; i < mChildren.Count; i++)
             {
-                var dock = child.Dock;
+                var dock = mChildren[i].Dock;
 
                 if (0 == (dock & Pos.Fill))
                 {
                     continue;
                 }
 
-                var margin = child.Margin;
+                var margin = mChildren[i].Margin;
 
-                child.SetBounds(
+                mChildren[i].SetBounds(
                     bounds.X + margin.Left, bounds.Y + margin.Top, bounds.Width - margin.Left - margin.Right,
                     bounds.Height - margin.Top - margin.Bottom
                 );
 
-                child.RecurseLayout(skin);
+                mChildren[i].RecurseLayout(skin);
             }
 
             PostLayout(skin);
@@ -2650,15 +2656,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             var size = Point.Empty;
 
-            foreach (var child in mChildren)
+            for (int i = 0; i < mChildren.Count; i++)
             {
-                if (child.IsHidden)
+                if (mChildren[i].IsHidden)
                 {
                     continue;
                 }
 
-                size.X = Math.Max(size.X, child.Right);
-                size.Y = Math.Max(size.Y, child.Bottom);
+                size.X = Math.Max(size.X, mChildren[i].Right);
+                size.Y = Math.Max(size.Y, mChildren[i].Bottom);
             }
 
             return size;
