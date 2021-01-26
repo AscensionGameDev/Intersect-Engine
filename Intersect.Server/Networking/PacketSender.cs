@@ -147,7 +147,8 @@ namespace Intersect.Server.Networking
         //MapPacket
         public static MapPacket GenerateMapPacket(Client client, Guid mapId)
         {
-            if (client == null)
+            var player = client?.Entity;
+            if (client == null || player == null)
             {
                 Log.Error("Attempted to send packet to null client.");
 
@@ -207,7 +208,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    mapPacket.MapItems = GenerateMapItemsPacket(mapId);
+                    mapPacket.MapItems = GenerateMapItemsPacket(player, mapId);
                     mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
 
                     return mapPacket;
@@ -949,61 +950,110 @@ namespace Intersect.Server.Networking
         }
 
         //MapItemsPacket
-        public static MapItemsPacket GenerateMapItemsPacket(Guid mapId)
+        public static MapItemsPacket GenerateMapItemsPacket(Player player, Guid mapId)
         {
             var map = MapInstance.Get(mapId);
+
+            //TODO Use ceras to serialize items instead of json.net...
+            var items = new List<MapItemUpdatePacket>();
+
             // Generate our data to be send to the client.
-            var itemData = new Dictionary<Point, List<string>>();
-            lock (map.MapItems)
+            foreach (var item in map.AllMapItems.Values)
             {
-                foreach (var location in map.MapItems)
+                if (item.VisibleToAll || item.Owner == player?.Id)
                 {
-                    itemData.Add(location.Key, new List<string>());
-                    foreach (var item in location.Value)
-                    {
-                        itemData[location.Key].Add(item.Data());
-                    }
+                    items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
                 }
             }
 
-            return new MapItemsPacket(mapId, itemData);
+            return new MapItemsPacket(mapId, items.ToArray());
         }
 
         //MapItemsPacket
         public static void SendMapItems(Player player, Guid mapId)
         {
-            player.SendPacket(GenerateMapItemsPacket(mapId));
+            player.SendPacket(GenerateMapItemsPacket(player, mapId));
         }
 
         //MapItemsPacket
         public static void SendMapItemsToProximity(Guid mapId)
         {
-            // Send our data to the client.
-            SendDataToProximity(mapId, GenerateMapItemsPacket(mapId));
+            var map = MapInstance.Get(mapId);
+            if (map == null)
+            {
+                return;
+            }
+
+            // Collect a list of all players in the surrounding.
+            var playerList = new List<Player>();
+            playerList.AddRange(map.GetPlayersOnMap());
+
+            foreach (var surrMap in map.SurroundingMaps)
+            {
+                var curMap = MapInstance.Get(surrMap);
+                playerList.AddRange(curMap.GetPlayersOnMap());
+            }
+
+            // Send them all a map item update.
+            foreach(var player in playerList)
+            {
+                player.SendPacket(GenerateMapItemsPacket(player, mapId));
+            }
         }
 
-        //MapItemUpdatePacket
-        public static void SendMapItemUpdate(Guid mapId, Guid uniqueId)
+        /// <summary>
+        /// Send a map item update to the relevant players.
+        /// </summary>
+        /// <param name="mapId">The Id of the <see cref="MapInstance"/> we are sending the item update for.</param>
+        /// <param name="uniqueId">The Id for the <see cref="MapItem"/> we are sending the item update for.</param>
+        /// <param name="itemRef">The map item that we are sending (or null if removing), passing this saves us a lookup for it.</param>
+        /// <param name="sendToAll">If we are removing the item from the map, do we send this data to everyone?</param>
+        /// <param name="owner">The previous owner of an item being removed when the data is not send to everyone.</param>
+        public static void SendMapItemUpdate(Guid mapId, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
         {
             var map = MapInstance.Get(mapId);
 
-            // Get our location and item
-            var location = map.FindItemLocation(uniqueId);
-            var item = map.FindItem(uniqueId);
-
             // Does the item exist? If not, send a delete notification. If it does, send an update.
-            if (item == null)
+            if (removing)
             {
-                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, uniqueId.ToString(), true));
+                // Are we to send the removal to all players?
+                if (sendToAll)
+                {
+                    SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                }
+                else
+                {
+                    // Nope, just to its owner!
+                    var player = Player.FindOnline(owner);
+                    if (player != null)
+                    {
+                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    }
+                    else
+                    {
+                        // Uh, our player doesn't exist.. send it to everyone anyway.
+                        SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    }
+                }
+                
             }
             else
             {
-                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, item.Data()));
+                // Is the item owned? If so, only send to that particular player.
+                if (!itemRef.VisibleToAll)
+                {
+                    var player = Player.FindOnline(itemRef.Owner);
+                    if (player != null)
+                    {
+                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                    }
+                }
+                else
+                {
+                    SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                }
             }
-
-
         }
-
 
         //InventoryPacket
         public static void SendInventory(Player player)
@@ -1079,6 +1129,7 @@ namespace Intersect.Server.Networking
             else
             {
                 var equipment = new Guid[Options.EquipmentSlots.Count];
+
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
@@ -1089,6 +1140,7 @@ namespace Intersect.Server.Networking
                     {
                         equipment[i] = en.Items[en.Equipment[i]].ItemId;
                     }
+
                 }
 
                 return new EquipmentPacket(en.Id, null, equipment);

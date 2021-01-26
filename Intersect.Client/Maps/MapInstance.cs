@@ -59,7 +59,7 @@ namespace Intersect.Client.Maps
         public List<Guid> LocalEntitiesToDispose = new List<Guid>();
 
         //Map Items
-        public Dictionary<Point, List<MapItemInstance>> MapItems = new Dictionary<Point, List<MapItemInstance>>();
+        public Dictionary<int, List<MapItemInstance>> MapItems = new Dictionary<int, List<MapItemInstance>>();
 
         //Map Attributes
         private Dictionary<MapAttribute, Animation> mAttributeAnimInstances =
@@ -653,14 +653,15 @@ namespace Intersect.Client.Maps
             // Draw map item icons.
             foreach (var itemCollection in MapItems)
             {
-                var location = itemCollection.Key;
+                var tileX = itemCollection.Key % Options.MapWidth;
+                var tileY = (int)Math.Floor(itemCollection.Key / (float)Options.MapWidth);
                 var tileItems = itemCollection.Value;
-
+                
                 // Loop through this in reverse to match client/server display and pick-up order.
                 for (var index = tileItems.Count -1; index >= 0; index--)
                 {
-                    var x = GetX() + location.X * Options.TileWidth;
-                    var y = GetY() + location.Y * Options.TileHeight;
+                    var x = GetX() + tileX * Options.TileWidth;
+                    var y = GetY() + tileY * Options.TileHeight;
 
                     // Set up all information we need to draw this name.
                     var itemBase = ItemBase.Get(tileItems[index].ItemId);
@@ -707,7 +708,7 @@ namespace Intersect.Client.Maps
             {
                 // Apparently it is! Do we have any items to render here?
                 var tileItems = new List<MapItemInstance>();
-                if (MapItems.TryGetValue(new Point(x, y), out tileItems))
+                if (MapItems.TryGetValue(y * Options.MapWidth + x, out tileItems))
                 {
                     var baseOffset = 0;
                     // Loop through this in reverse to match client/server display and pick-up order.
@@ -715,7 +716,7 @@ namespace Intersect.Client.Maps
                     {
                         // Set up all information we need to draw this name.
                         var itemBase = ItemBase.Get(tileItems[index].ItemId);
-                        var name = itemBase.Name;
+                        var name = tileItems[index].Base.Name;
                         var quantity = tileItems[index].Quantity;
                         var rarity = itemBase.Rarity;
                         if (tileItems[index].Quantity > 1)

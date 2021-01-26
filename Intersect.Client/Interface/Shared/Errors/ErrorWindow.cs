@@ -23,7 +23,7 @@ namespace Intersect.Client.Interface.Shared.Errors
         private void CreateErrorWindow(Canvas canvas, string error, string header, GameContentManager.UI stage)
         {
             var window = new InputBox(
-                header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, canvas, stage
+                header, error, false, InputBox.InputType.OkayOnly, OkayClicked, null, -1, 0, canvas, stage
             );
 
             mErrorWindows.Add(window);

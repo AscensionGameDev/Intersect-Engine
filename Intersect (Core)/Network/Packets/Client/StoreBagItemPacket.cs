@@ -9,10 +9,13 @@ namespace Intersect.Network.Packets.Client
         public StoreBagItemPacket() : base(0, 0)
         {
         }
-        public StoreBagItemPacket(int invSlot, int quantity) : base(invSlot, quantity)
+        public StoreBagItemPacket(int invSlot, int quantity, int bagSlot) : base(invSlot, quantity)
         {
-
+            BagSlot = bagSlot;
         }
+
+        [Key(0)]
+        public int BagSlot { get; set; }
 
 
     }
