@@ -17,6 +17,7 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
+using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities.Events;
@@ -5791,6 +5792,46 @@ namespace Intersect.Server.Entities
             {
                 SpellCooldowns.Add(spellId, cooldownTime);
             }
+        }
+
+        public bool TryChangeName(string newName)
+        {
+            // Is the name available?
+            if (!FieldChecking.IsValidUsername(newName, Strings.Regex.username))
+            {
+                return false;
+            }
+
+            if (DbInterface.GetPlayer(newName) != null)
+            {
+                return false;
+            }
+
+            // Change their name and force save it!
+            var oldName = Name;
+            Name = newName;
+            DbInterface.SavePlayerDatabaseAsync();
+
+            // Log the activity.
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.UserActivityHistory.Add(
+                    new UserActivityHistory {
+                        UserId = UserId,
+                        PlayerId = Id,
+                        Ip = Client.GetIp(),
+                        Peer = UserActivityHistory.PeerType.Client,
+                        Action = UserActivityHistory.UserAction.NameChange,
+                        Meta = $"Changing Character name from {oldName} to {newName}"
+                    }
+                );
+            }
+
+            // Send our data around!
+            PacketSender.SendEntityDataToProximity(this);
+            
+            return true;
+
         }
 
         //TODO: Clean all of this stuff up

@@ -77,6 +77,8 @@ namespace Intersect.GameObjects
 
         public bool FocusHighestDamageDealer { get; set; } = true;
 
+        public int ResetRadius { get; set; }
+
         //Conditions
         [Column("PlayerFriendConditions")]
         [JsonIgnore]

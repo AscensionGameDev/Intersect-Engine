@@ -218,6 +218,7 @@
         // Player Color
         ChangePlayerColor,
 
+        ChangeName,
     }
 
 }

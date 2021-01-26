@@ -295,6 +295,15 @@ namespace Intersect.Server.Entities
             var xOffset = 0;
             var yOffset = 0;
 
+            // If this is an Npc that has the Static behaviour, it can NEVER move.
+            if (this is Npc npc)
+            {
+                if (npc.Base.Movement == (byte)NpcMovement.Static)
+                {
+                    return -2;
+                }
+            }
+
             //if (MoveTimer > Globals.System.GetTimeMs()) return -5;
             var tile = new TileHelper(MapId, X, Y);
             switch (moveDir)
