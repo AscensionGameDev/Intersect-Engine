@@ -64,12 +64,52 @@ namespace Intersect.Server.Maps
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances =
             new Dictionary<ResourceSpawn, MapResourceSpawn>();
 
-        //Temporary Values
-        [JsonIgnore] [NotMapped] public List<Guid> SurroundingMaps = new List<Guid>();
-
         [JsonIgnore] [NotMapped] public long TileAccessTime;
 
         [JsonIgnore] [NotMapped] public long UpdateDelay = 75;
+
+        //Temporary Values
+        private Guid[] mSurroundingMapIds = new Guid[0];
+        private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
+        private MapInstance[] mSurroundingMaps = new MapInstance[0];
+        private MapInstance[] mSurroundingMapsWithSelf = new MapInstance[0];
+
+        [JsonIgnore]
+        [NotMapped]
+        public Guid[] SurroundingMapIds
+        {
+            get => mSurroundingMapIds;
+
+            set
+            {
+                lock (GetMapLock())
+                {
+                    mSurroundingMapIds = value;
+                    var surroundingMapsIdsWithSelf = new List<Guid>(value);
+                    surroundingMapsIdsWithSelf.Add(Id);
+                    mSurroundingMapsIdsWithSelf = surroundingMapsIdsWithSelf.ToArray();
+                }
+            }
+        }
+
+        [JsonIgnore]
+        [NotMapped]
+        public MapInstance[] SurroundingMaps
+        {
+            get => mSurroundingMaps;
+
+            set
+            {
+                lock (GetMapLock())
+                {
+                    mSurroundingMaps = value;
+                    var surroundingMapsWithSelf = new List<MapInstance>(value);
+                    surroundingMapsWithSelf.Add(this);
+                    mSurroundingMapsWithSelf = surroundingMapsWithSelf.ToArray();
+                }
+            }
+        }
+
 
         //EF
         public MapInstance() : base()
@@ -1000,36 +1040,14 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
+        public MapInstance[] GetSurroundingMaps(bool includingSelf = false)
         {
-            Debug.Assert(Lookup != null, "Lookup != null");
-            lock (GetMapLock())
-            {
-                var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum))
-                               .Where(map => map != null)
-                               .ToList() ??
-                           new List<MapInstance>();
-
-                if (includingSelf)
-                {
-                    maps.Add(this);
-                }
-
-                return maps;
-            }
+            return includingSelf ? mSurroundingMapsWithSelf : mSurroundingMaps;
         }
 
-        public List<Guid> GetSurroundingMapIds(bool includingSelf = false)
+        public Guid[] GetSurroundingMapIds(bool includingSelf = false)
         {
-            var maps = new List<Guid>();
-            if (includingSelf)
-            {
-                maps.Add(Id);
-            }
-
-            maps.AddRange(SurroundingMaps.ToArray());
-
-            return maps;
+            return includingSelf ? mSurroundingMapsIdsWithSelf : mSurroundingMapIds;
         }
 
         private bool CheckActive()
@@ -1040,7 +1058,7 @@ namespace Intersect.Server.Maps
             }
 
             var surroundingMaps = GetSurroundingMaps(true);
-            if (surroundingMaps?.Count > 0)
+            if (surroundingMaps.Length > 0)
             {
                 foreach (var t in surroundingMaps)
                 {
@@ -1118,16 +1136,15 @@ namespace Intersect.Server.Maps
                 PacketSender.SendMapItems(player, Id);
                 AddEntity(player);
                 player.LastMapEntered = Id;
-                if (SurroundingMaps.Count <= 0)
+                if (SurroundingMaps.Length <= 0)
                 {
                     return;
                 }
 
                 foreach (var t in SurroundingMaps)
                 {
-                    Lookup.Get<MapInstance>(t).Active = true;
-                    Lookup.Get<MapInstance>(t).SendMapEntitiesTo(player);
-                    PacketSender.SendMapItems(player, t);
+                    t.SendMapEntitiesTo(player);
+                    PacketSender.SendMapItems(player, t.Id);
                 }
 
                 PacketSender.SendEntityDataToProximity(player, player);
@@ -1168,7 +1185,7 @@ namespace Intersect.Server.Maps
                 Right = Guid.Empty;
             }
 
-            DbInterface.SaveGameDatabase();
+            DbInterface.SaveGameObject(this);
         }
 
         public bool TileBlocked(int x, int y)

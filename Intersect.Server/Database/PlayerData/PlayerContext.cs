@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,9 +25,10 @@ namespace Intersect.Server.Database.PlayerData
         public PlayerContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
+            bool readOnly = false,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, false, logger, logLevel)
+        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
         {
         }
 
@@ -122,13 +124,79 @@ namespace Intersect.Server.Database.PlayerData
         {
 #if DEBUG
             new SeedUsers().SeedIfEmpty(this);
-
+            ChangeTracker.DetectChanges();
             SaveChanges();
 #endif
         }
 
         public override void MigrationsProcessed(string[] migrations)
         {
+        }
+
+        public void StopTrackingExcept(object obj)
+        {
+            foreach (var trackingState in ChangeTracker.Entries().ToArray())
+            {
+                if (trackingState.Entity != obj)
+                {
+                    trackingState.State = EntityState.Detached;
+                }
+            }
+        }
+
+        public void StopTrackingUsersExcept(User user)
+        {
+            //We don't want to be saving this players friends or anything....
+            var otherUsers = ChangeTracker.Entries().Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted) && (e.Entity is User && e.Entity != user)).ToList();
+            foreach (var otherUser in otherUsers)
+            {
+                if (otherUser.Entity != null)
+                {
+                    Entry(otherUser.Entity).State = EntityState.Detached;
+                }
+            }
+
+            StopTrackingPlayersExcept(user.Players.ToArray());
+
+        }
+
+        public void StopTrackingPlayersExcept(Player[] players, bool trackUsers = true)
+        {
+            //We don't want to be saving this players friends or anything....
+            var otherPlayers = ChangeTracker.Entries().Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted) && (e.Entity is Player && !players.Contains(e.Entity))).ToList();
+            foreach (var otherPlayer in otherPlayers)
+            {
+                if (otherPlayer.Entity != null)
+                {
+                    DetachPlayer((Player)otherPlayer.Entity);
+                }
+            }
+        }
+
+        private void DetachPlayer(Player player)
+        {
+            Entry(player).State = EntityState.Detached;
+
+            foreach (var itm in player.Friends)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Spells)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Items)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Variables)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Hotbar)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Quests)
+                Entry(itm).State = EntityState.Detached;
+
+            foreach (var itm in player.Bank)
+                Entry(itm).State = EntityState.Detached;
         }
 
     }

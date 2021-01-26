@@ -60,6 +60,8 @@ namespace Intersect
 
         [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
 
+        public ProcessingOptions Processing = new ProcessingOptions();
+
         public SpriteOptions Sprites = new SpriteOptions();
 
         [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();

@@ -20,7 +20,7 @@ namespace Intersect.Server.Core.Commands
 
         protected override User FindTarget(ServerContext context, ParserResult result, string targetName)
         {
-            return string.IsNullOrWhiteSpace(targetName) ? null : DbInterface.GetUser(targetName);
+            return string.IsNullOrWhiteSpace(targetName) ? null : User.Find(targetName);
         }
 
     }

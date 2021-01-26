@@ -226,6 +226,9 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
 
+        [NotMapped, JsonIgnore]
+        public object EntityLock = new object();
+
         public virtual void Dispose()
         {
             if (!IsDisposed)
@@ -2457,8 +2460,10 @@ namespace Intersect.Server.Entities
             var currentMap = MapInstance.Get(MapId);
             if (currentMap != null)
             {
-                currentMap.ClearEntityTargetsOf(this);
-                currentMap.GetSurroundingMaps()?.ForEach(map => map?.ClearEntityTargetsOf(this));
+                foreach (var map in currentMap.GetSurroundingMaps(true))
+                {
+                    map.ClearEntityTargetsOf(this);
+                }
             }
 
             DoT?.Clear();

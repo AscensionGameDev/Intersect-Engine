@@ -737,22 +737,8 @@ namespace Intersect.Server.Entities
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
                     if (targetMap != MapId)
                     {
-                        if (MapInstance.Get(MapId).SurroundingMaps.Count > 0)
-                        {
-                            for (var x = 0; x < MapInstance.Get(MapId).SurroundingMaps.Count; x++)
-                            {
-                                if (MapInstance.Get(MapId).SurroundingMaps[x] == targetMap)
-                                {
-                                    break;
-                                }
-
-                                if (x == MapInstance.Get(MapId).SurroundingMaps.Count - 1)
-                                {
-                                    targetMap = Guid.Empty;
-                                }
-                            }
-                        }
-                        else
+                        var found = MapInstance.Get(MapId).SurroundingMapIds.Contains(targetMap);
+                        if (!found)
                         {
                             targetMap = Guid.Empty;
                         }

@@ -88,14 +88,18 @@ namespace Intersect.Server.Entities
         [JsonIgnore]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
-        //Friends
+        //Friends -- Not used outside of EF
         [JsonIgnore]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
+
+        //Local Friends
+        [NotMapped]
+        public virtual Dictionary<Guid, string> CachedFriends { get; set; } = new Dictionary<Guid, string>();
 
         //HotBar
         [JsonIgnore]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
-
+       
         //Quests
         [JsonIgnore]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
@@ -172,6 +176,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            LoadFriends();
+
             //Upon Sign In Remove Any Items/Spells that have been deleted
             foreach (var itm in Items)
             {
@@ -220,9 +226,9 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void TryLogout()
+        public void TryLogout(bool force = false)
         {
-            if (CombatTimer < Globals.Timing.Milliseconds)
+            if (CombatTimer < Globals.Timing.Milliseconds || force)
             {
                 Logout();
             }
@@ -307,6 +313,8 @@ namespace Intersect.Server.Entities
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Name, Options.Instance.GameName));
             }
 
+            User?.Save();
+
             Dispose();
         }
 
@@ -316,6 +324,7 @@ namespace Intersect.Server.Entities
             {
                 OnlinePlayers.Remove(Id);
             }
+            Dispose();
         }
 
         //Update
@@ -333,6 +342,14 @@ namespace Intersect.Server.Entities
                     Logout();
 
                     return;
+                }
+            }
+            else
+            {
+                if (SaveTimer < Globals.Timing.Milliseconds)
+                {
+                    ThreadPool.QueueUserWorkItem(o => User?.Save());
+                    SaveTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                 }
             }
 
@@ -427,46 +444,36 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var currentMap = MapInstance.Get(MapId);
-            if (currentMap != null)
+            var map = MapInstance.Get(MapId);
+            if (map != null)
             {
-                for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
+                foreach (var surrMap in map.GetSurroundingMaps(true))
                 {
-                    MapInstance map = null;
-                    if (i == currentMap.SurroundingMaps.Count)
-                    {
-                        map = currentMap;
-                    }
-                    else
-                    {
-                        map = MapInstance.Get(currentMap.SurroundingMaps[i]);
-                    }
-
-                    if (map == null)
+                    if (surrMap == null)
                     {
                         continue;
                     }
 
-                    if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
+                    if (Monitor.TryEnter(surrMap.GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
                     {
                         try
                         {
                             //Check to see if we can spawn events, if already spawned.. update them.
                             lock (mEventLock)
                             {
-                                foreach (var evtId in map.EventIds.ToArray())
+                                foreach (var evtId in surrMap.EventIds.ToArray())
                                 {
                                     var mapEvent = EventBase.Get(evtId);
                                     if (mapEvent != null)
                                     {
                                         //Look for event
-                                        var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
+                                        var foundEvent = EventExists(surrMap.Id, mapEvent.SpawnX, mapEvent.SpawnY);
                                         if (foundEvent == null)
                                         {
-                                            var tmpEvent = new Event(Guid.NewGuid(), map.Id, this, mapEvent)
+                                            var tmpEvent = new Event(Guid.NewGuid(), surrMap.Id, this, mapEvent)
                                             {
                                                 Global = mapEvent.Global,
-                                                MapId = map.Id,
+                                                MapId = surrMap.Id,
                                                 SpawnX = mapEvent.SpawnX,
                                                 SpawnY = mapEvent.SpawnY
                                             };
@@ -483,7 +490,7 @@ namespace Intersect.Server.Entities
                         }
                         finally
                         {
-                            Monitor.Exit(map.GetMapLock());
+                            Monitor.Exit(surrMap.GetMapLock());
                         }
                     }
                 }
@@ -511,7 +518,7 @@ namespace Intersect.Server.Entities
 
                     if (evt.Value.MapId != MapId)
                     {
-                        foreach (var t in MapInstance.Get(MapId).SurroundingMaps)
+                        foreach (var t in MapInstance.Get(MapId).SurroundingMapIds)
                         {
                             if (t == evt.Value.MapId)
                             {
@@ -1313,7 +1320,7 @@ namespace Intersect.Server.Entities
                 PacketSender.SendEntityPositionToAll(this);
 
                 //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMapId)))
+                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
                 {
                     PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
                 }
@@ -3472,32 +3479,19 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool HasFriend(Player character)
+        public bool HasFriend(string name)
         {
-            foreach (var friend in Friends)
-            {
-                if (friend.Target == character)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return CachedFriends.Values.Any(f => string.Equals(f, name,StringComparison.OrdinalIgnoreCase));
         }
 
-        public void AddFriend(Player character)
+        public Guid GetFriendId(string name)
         {
-            var friend = new Friend(this, character);
-            Friends.Add(friend);
-        }
-
-        public void RemoveFriend(Player character)
-        {
-            var friend = Friends.FirstOrDefault(f => f.Target == character);
-            if (friend != null)
+            var friend = CachedFriends.FirstOrDefault(f => string.Equals(f.Value, name, StringComparison.OrdinalIgnoreCase));
+            if (friend.Value != null)
             {
-                Friends.Remove(friend);
+                return friend.Key;
             }
+            return Guid.Empty;
         }
 
         //Trading
@@ -5802,7 +5796,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (DbInterface.GetPlayer(newName) != null)
+            if (PlayerExists(newName))
             {
                 return false;
             }
@@ -5810,7 +5804,7 @@ namespace Intersect.Server.Entities
             // Change their name and force save it!
             var oldName = Name;
             Name = newName;
-            DbInterface.SavePlayerDatabaseAsync();
+            User?.Save();
 
             // Log the activity.
             using (var logging = DbInterface.LoggingContext)

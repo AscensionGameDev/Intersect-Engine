@@ -60,7 +60,6 @@ namespace Intersect.Server.Core
                                 lastDbUpdate = DateTime.Now;
                             }
 
-                            DbInterface.SavePlayerDatabaseAsync();
                             minuteTimer = timeMs + 60000;
                         }
 
@@ -82,7 +81,6 @@ namespace Intersect.Server.Core
 
                         if (timeMs > lastGameSave)
                         {
-                            Task.Run(() => DbInterface.SaveGameDatabase());
                             lastGameSave = timeMs + 60000;
                         }
                     }
