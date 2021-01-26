@@ -129,7 +129,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid username '{user.Username}'.");
             }
 
-            if (DbInterface.AccountExists(user.Username))
+            if (Database.PlayerData.User.UserExists(user.Username))
             {
                 return Request.CreateErrorResponse(
                     HttpStatusCode.BadRequest, $@"Account already exists with username '{user.Username}'."
@@ -137,7 +137,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
             else
             {
-                if (DbInterface.EmailInUse(user.Email))
+                if (Database.PlayerData.User.UserExists(user.Email))
                 {
                     return Request.CreateErrorResponse(
                         HttpStatusCode.BadRequest, $@"Account already with email '{user.Email}'."
@@ -248,14 +248,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (DbInterface.EmailInUse(email))
+            if (Database.PlayerData.User.UserExists(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
-
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return user;
         }
@@ -284,14 +283,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
             }
 
-            if (DbInterface.EmailInUse(email))
+            if (Database.PlayerData.User.UserExists(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
-
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return user;
         }
@@ -324,14 +322,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            if (DbInterface.EmailInUse(email))
+            if (Database.PlayerData.User.UserExists(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
-
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return user;
         }
@@ -364,14 +361,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            if (DbInterface.EmailInUse(email))
+            if (Database.PlayerData.User.UserExists(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
-
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return user;
         }
@@ -464,7 +460,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return "Password updated.";
         }
@@ -491,7 +487,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Updated.");
         }
@@ -519,7 +515,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Updated.");
         }
@@ -547,7 +543,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            user.Save();
 
             return "Password updated.";
         }
@@ -791,7 +787,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminActions.Kill:
                     if (client != null && client.Entity != null)
                     {
-                        client.Entity.Die();
+                        lock (client.Entity.EntityLock)
+                        {
+                            client.Entity.Die();
+                        }
+                        
                         PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player?.Name));
 
                         return Request.CreateMessageResponse(

@@ -16,7 +16,7 @@ namespace Intersect.Server.Database.Logging
         public LoggingContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite
-        ) : base(connectionStringBuilder, databaseType, true)
+        ) : base(connectionStringBuilder, databaseType, null, Intersect.Logging.LogLevel.None, false, true)
         {
         }
 

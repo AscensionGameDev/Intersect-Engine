@@ -990,8 +990,7 @@ namespace Intersect.Server.Networking
 
             foreach (var surrMap in map.SurroundingMaps)
             {
-                var curMap = MapInstance.Get(surrMap);
-                playerList.AddRange(curMap.GetPlayersOnMap());
+                playerList.AddRange(surrMap.GetPlayersOnMap());
             }
 
             // Send them all a map item update.
@@ -1954,33 +1953,17 @@ namespace Intersect.Server.Networking
 
             var online = new Dictionary<string, string>();
             var offline = new List<string>();
-            var found = false;
 
-            foreach (var friend in player.Friends)
+            foreach (var friend in player.CachedFriends)
             {
-                if (friend.Target == null)
+                var plyr = Player.FindOnline(friend.Key);
+                if (plyr != null)
                 {
-                    continue;
+                    online.Add(plyr.Name, MapList.List.FindMap(plyr.MapId)?.Name ?? "");
                 }
-
-                found = false;
-                foreach (var c in Globals.Clients)
+                else
                 {
-                    if (c != null && c.Entity != null)
-                    {
-                        if (friend.Target?.Name.ToLower() == c.Entity?.Name.ToLower())
-                        {
-                            online.Add(friend.Target?.Name, MapList.List.FindMap(friend.Target.MapId)?.Name ?? "");
-                            found = true;
-
-                            break;
-                        }
-                    }
-                }
-
-                if (found == false)
-                {
-                    offline.Add(friend.Target.Name);
+                    offline.Add(friend.Value);
                 }
             }
 
@@ -2032,7 +2015,7 @@ namespace Intersect.Server.Networking
             
             SendDataToMap(mapId, packet, except, mode);
 
-            foreach (var surrMap in map.SurroundingMaps)
+            foreach (var surrMap in map.SurroundingMapIds)
             {
                 SendDataToMap(surrMap, packet, except, mode);
             }

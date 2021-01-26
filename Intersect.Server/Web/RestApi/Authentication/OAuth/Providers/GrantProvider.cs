@@ -86,7 +86,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             username = username.Trim();
 
-            var user = DbInterface.GetUser(username);
+            var user = User.Find(username);
             if (!user?.IsPasswordValid(password.ToUpper().Trim()) ?? true)
             {
                 context.SetError("credentials_invalid");

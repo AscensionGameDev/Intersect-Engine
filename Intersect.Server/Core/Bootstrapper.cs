@@ -13,6 +13,8 @@ using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Helpers;
 using Intersect.Server.Database;
+using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -257,7 +259,7 @@ namespace Intersect.Server.Core
 
             Console.WriteLine();
 
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString(DbInterface.RegisteredPlayers));
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(Player.Count()));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
 
             Time.Update();

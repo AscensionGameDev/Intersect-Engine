@@ -78,7 +78,6 @@ namespace Intersect.Client.Entities
         private Dictionary<int, long> mLastHotbarUseTime = new Dictionary<int, long>();
         private int mHotbarUseDelay = 150;
 
-
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
