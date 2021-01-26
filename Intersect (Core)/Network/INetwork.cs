@@ -27,15 +27,15 @@ namespace Intersect.Network
 
         bool Disconnect(ICollection<IConnection> connections, string message = "");
 
-        bool Send(IPacket packet);
+        bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        bool Send(Guid guid, IPacket packet);
+        bool Send(Guid guid, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        bool Send(IConnection connection, IPacket packet);
+        bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        bool Send(ICollection<Guid> guids, IPacket packet);
+        bool Send(ICollection<Guid> guids, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        bool Send(ICollection<IConnection> connections, IPacket packet);
+        bool Send(ICollection<IConnection> connections, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         bool AddConnection(IConnection connection);
 

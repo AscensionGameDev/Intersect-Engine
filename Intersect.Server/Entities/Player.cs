@@ -199,9 +199,9 @@ namespace Intersect.Server.Entities
             OnlinePlayers[Id] = this;
         }
 
-        public void SendPacket(IPacket packet)
+        public void SendPacket(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            Client?.Send(packet);
+            Client?.Send(packet, mode);
         }
 
         public override void Dispose()

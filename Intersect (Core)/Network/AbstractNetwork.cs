@@ -111,20 +111,20 @@ namespace Intersect.Network
             return true;
         }
 
-        public abstract bool Send(IPacket packet);
+        public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        public bool Send(Guid guid, IPacket packet)
+        public bool Send(Guid guid, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
             var connection = FindConnection(guid);
 
-            return connection != null && Send(connection, packet);
+            return connection != null && Send(connection, packet, mode);
         }
 
-        public abstract bool Send(IConnection connection, IPacket packet);
+        public abstract bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        public bool Send(ICollection<Guid> guids, IPacket packet) => Send(FindConnections(guids), packet);
+        public bool Send(ICollection<Guid> guids, IPacket packet, TransmissionMode mode = TransmissionMode.All) => Send(FindConnections(guids), packet, mode);
 
-        public abstract bool Send(ICollection<IConnection> connections, IPacket packet);
+        public abstract bool Send(ICollection<IConnection> connections, IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         public IConnection FindConnection(Guid guid)
         {
@@ -178,7 +178,7 @@ namespace Intersect.Network
 
             if (!sender.TryGetInboundBuffer(out var buffer, out var connection))
             {
-                Log.Error("Failed to obtain packet when told a packet was available.");
+                //Log.Error("Failed to obtain packet when told a packet was available.");
 
                 return;
             }

@@ -33,6 +33,8 @@ namespace Intersect.Server.Networking
 
         private int mPacketCount = 0;
 
+        public long LastPing { get; set; }
+
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         protected long mTimeout = 20000; //20 seconds
@@ -249,7 +251,9 @@ namespace Intersect.Server.Networking
         #region Implementation of IPacketSender
 
         /// <inheritdoc />
-        public bool Send(IPacket packet) => mConnection?.Send(packet) ?? false;
+        public bool Send(IPacket packet) => Send(packet, TransmissionMode.All);
+
+        public bool Send(IPacket packet, TransmissionMode mode) => mConnection?.Send(packet, mode) ?? false;
 
         #endregion
     }

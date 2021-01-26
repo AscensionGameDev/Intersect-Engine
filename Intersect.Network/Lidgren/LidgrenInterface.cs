@@ -83,6 +83,7 @@ namespace Intersect.Network.Lidgren
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.DebugMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.WarningMessage);
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.Error);
             }
             else
@@ -91,11 +92,13 @@ namespace Intersect.Network.Lidgren
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.ErrorMessage);
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.WarningMessage);
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.Error);
             }
 
             mPeerConfiguration.PingInterval = 2.5f;
             mPeerConfiguration.UseMessageRecycling = true;
+            mPeerConfiguration.AutoExpandMTU = true;
 
             var constructorInfo = peerType.GetConstructor(new[] {typeof(NetPeerConfiguration)});
             if (constructorInfo == null)
@@ -109,6 +112,7 @@ namespace Intersect.Network.Lidgren
             mGuidLookup = new Dictionary<long, Guid>();
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+            
             mPeer?.RegisterReceivedCallback(
                 peer =>
                 {
@@ -235,7 +239,7 @@ namespace Intersect.Network.Lidgren
             connection = FindConnection(message.SenderConnection);
             if (connection == null)
             {
-                Log.Error($"Received message from an unregistered endpoint.");
+                //Log.Error($"Received message from an unregistered endpoint.");
                 mPeer.Recycle(message);
 
                 return false;
@@ -260,7 +264,7 @@ namespace Intersect.Network.Lidgren
             }
             else
             {
-                Log.Warn($"Received message from an unregistered endpoint.");
+                //Log.Warn($"Received message from an unregistered endpoint.");
             }
 
             buffer = new LidgrenBuffer(message);
@@ -881,7 +885,10 @@ namespace Intersect.Network.Lidgren
                 throw new ArgumentNullException(nameof(connection.NetConnection));
             }
 
-            message.Encrypt(connection.Aes);
+            lock (connection.Aes)
+            {
+                message.Encrypt(connection.Aes);
+            }
             connection.NetConnection.SendMessage(message, deliveryMethod, sequenceChannel);
         }
 

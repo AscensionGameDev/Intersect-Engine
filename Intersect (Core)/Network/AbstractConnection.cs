@@ -43,7 +43,7 @@ namespace Intersect.Network
 
         public ConnectionStatistics Statistics { get; }
 
-        public abstract bool Send(IPacket packet);
+        public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         public virtual void HandleConnected()
         {
