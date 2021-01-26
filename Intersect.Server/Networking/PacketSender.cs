@@ -1055,6 +1055,7 @@ namespace Intersect.Server.Networking
             }
         }
 
+
         //InventoryPacket
         public static void SendInventory(Player player)
         {
