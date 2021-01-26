@@ -10,7 +10,7 @@ using Intersect.Client.Networking;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class EventWindow
+    public class EventWindow : Base
     {
 
         private ScrollControl mEventDialogArea;
@@ -72,10 +72,23 @@ namespace Intersect.Client.Interface.Game
         //Update
         public void Update()
         {
+            if (mEventDialogWindow.IsHidden)
+            {
+                Interface.InputBlockingElements.Remove(this);
+            }
+            else
+            {
+                if (!Interface.InputBlockingElements.Contains(this))
+                {
+                    Interface.InputBlockingElements.Add(this);
+                }
+            }
+
             if (Globals.EventDialogs.Count > 0)
             {
                 if (mEventDialogWindow.IsHidden)
                 {
+                    base.Show();
                     mEventDialogWindow.Show();
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();
@@ -265,6 +278,7 @@ namespace Intersect.Client.Interface.Game
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
+            base.Hide();
         }
 
         void EventResponse3_Clicked(Base sender, ClickedEventArgs arguments)
@@ -279,6 +293,7 @@ namespace Intersect.Client.Interface.Game
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
+            base.Hide();
         }
 
         void EventResponse2_Clicked(Base sender, ClickedEventArgs arguments)
@@ -293,9 +308,10 @@ namespace Intersect.Client.Interface.Game
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
+            base.Hide();
         }
 
-        void EventResponse1_Clicked(Base sender, ClickedEventArgs arguments)
+        public void EventResponse1_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var ed = Globals.EventDialogs[0];
             if (ed.ResponseSent != 0)
@@ -307,6 +323,7 @@ namespace Intersect.Client.Interface.Game
             mEventDialogWindow.RemoveModal();
             mEventDialogWindow.IsHidden = true;
             ed.ResponseSent = 1;
+            base.Hide();
         }
 
     }

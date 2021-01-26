@@ -146,7 +146,6 @@ namespace Intersect.Client.Interface.Menu
 
             TrySendCode();
 
-            Globals.WaitingOnServer = true;
             mSubmitBtn.Disable();
         }
 

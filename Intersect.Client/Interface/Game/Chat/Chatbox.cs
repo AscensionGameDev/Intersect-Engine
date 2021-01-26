@@ -230,10 +230,16 @@ namespace Intersect.Client.Interface.Game.Chat
         //Update
         public void Update()
         {
+            // TODO: Find a cleaner way to do this logic, right now this will only start working properly (ie not resetting scroll height) after a few chat messages.
+            // Can't seem to find a cleaner way yet. But works in longer chat convos.
+            var scrollAmount = mChatboxMessages.GetVerticalScrollBar().ScrollAmount;
+            var scrollToBottom = mChatboxMessages.GetVerticalScrollBar().ScrollAmount == 1 || (mChatboxMessages.RowCount <= 10 && mChatboxMessages.GetVerticalScrollBar().ScrollAmount <= 1);
+
             // Did the tab change recently? If so, we need to reset a few things to make it work...
             if (mLastTab != mCurrentTab)
             {
                 mChatboxMessages.Clear();
+                mChatboxMessages.GetHorizontalScrollBar().SetScrollAmount(0);
                 mMessageIndex = 0;
                 mReceivedMessage = true;
 
@@ -263,6 +269,7 @@ namespace Intersect.Client.Interface.Game.Chat
                     rw.ShouldDrawBackground = false;
                     rw.UserData = msg.Target;
                     rw.Clicked += ChatboxRow_Clicked;
+                    rw.RightClicked += ChatboxRow_RightClicked;
                     mReceivedMessage = true;
 
                     while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)
@@ -272,6 +279,25 @@ namespace Intersect.Client.Interface.Game.Chat
                 }
 
                 mMessageIndex++;
+            }
+
+            if (!scrollToBottom)
+            {
+                mChatboxMessages.GetVerticalScrollBar().SetScrollAmount(scrollAmount);
+            }
+            else
+            {
+                mChatboxMessages.GetVerticalScrollBar().SetScrollAmount(1);
+            }
+        }
+
+        private void ChatboxRow_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            var rw = (ListBoxRow)sender;
+            var target = (string)rw.UserData;
+            if (!string.IsNullOrWhiteSpace(target) && target != Globals.Me.Name)
+            {
+                SetChatboxText($"/pm {target} ");
             }
         }
 
@@ -285,7 +311,7 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             var rw = (ListBoxRow) sender;
             var target = (string) rw.UserData;
-            if (target != "")
+            if (!string.IsNullOrWhiteSpace(target))
             {
                 if (mGameUi.AdminWindowOpen())
                 {
@@ -299,8 +325,20 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             if (!mChatboxInput.HasFocus)
             {
+                mChatboxInput.Text = string.Empty;
                 mChatboxInput.Focus();
-                mChatboxInput.Text = "";
+            }
+        }
+
+        public bool HasFocus => mChatboxInput.HasFocus;
+
+        public void UnFocus()
+        {
+            // Just focus something else if we need to unfocus.
+            if (mChatboxInput.HasFocus)
+            {
+                mChatboxInput.Text = GetDefaultInputText();
+                mChatboxMessages.Focus();
             }
         }
 

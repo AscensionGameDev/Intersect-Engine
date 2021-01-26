@@ -1,4 +1,7 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+﻿using System;
+
+using Intersect.Client.Core;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
@@ -20,6 +23,10 @@ namespace Intersect.Client.Interface.Game
     {
 
         public bool FocusChat;
+
+        public bool UnfocusChat;
+
+        public bool ChatFocussed => mChatBox.HasFocus;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -479,6 +486,12 @@ namespace Intersect.Client.Interface.Game
                 FocusChat = false;
             }
 
+            if (UnfocusChat)
+            {
+                mChatBox.UnFocus();
+                UnfocusChat = false;
+            }
+
             GameCanvas.RenderCanvas();
         }
 
@@ -515,6 +528,53 @@ namespace Intersect.Client.Interface.Game
             mTradingWindow?.Close();
             mTradingWindow = null;
             Globals.InTrade = false;
+        }
+
+        public bool CloseAllWindows()
+        {
+            var closedWindows = false;
+            if (mBagWindow != null && mBagWindow.IsVisible())
+            {
+                PacketSender.SendCloseBag();
+                CloseBagWindow();
+                closedWindows = true;
+            }
+
+            if (mTradingWindow != null && mTradingWindow.IsVisible())
+            {
+                PacketSender.SendDeclineTrade();
+                CloseTrading();
+                closedWindows = true;
+            }
+
+            if (mBankWindow != null && mBankWindow.IsVisible())
+            {
+                PacketSender.SendCloseBank();
+                CloseBank();
+                closedWindows = true;
+            }
+
+            if (mCraftingWindow != null && mCraftingWindow.IsVisible())
+            {
+                PacketSender.SendCloseCrafting();
+                CloseCraftingTable();
+                closedWindows = true;
+            }
+
+            if (mShopWindow != null && mShopWindow.IsVisible())
+            {
+                PacketSender.SendCloseShop();
+                CloseShop();
+                closedWindows = true;
+            }
+
+            if (GameMenu != null && GameMenu.HasWindowsOpen())
+            {
+                GameMenu.CloseAllWindows();
+                closedWindows = true;
+            }
+
+            return closedWindows;
         }
 
         //Dispose

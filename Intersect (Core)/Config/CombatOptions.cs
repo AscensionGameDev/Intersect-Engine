@@ -47,6 +47,10 @@
         /// </summary>
         public int GlobalCooldownDuration = 1500;
 
+        /// <summary>
+        /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
+        /// </summary>
+        public int MaxPlayerAutoTargetRadius = 15;
     }
 
 }
