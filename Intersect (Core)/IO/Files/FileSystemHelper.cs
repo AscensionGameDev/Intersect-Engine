@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Abstractions;
+using System.Reflection;
 
 using Intersect.Extensions;
 using Intersect.Logging;
@@ -140,6 +141,29 @@ namespace Intersect.IO.Files
             {
                 return true;
             }
+        }
+
+        public static string WriteToTemporaryFolder(string name, Stream stream)
+        {
+            var temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), Assembly.GetEntryAssembly().GetName().Name);
+            if (!EnsureDirectoryExists(temporaryDirectoryPath))
+            {
+                throw new Exception();
+            }
+
+            var temporaryFilePath = Path.Combine(temporaryDirectoryPath, name);
+
+            var buffer = new byte[4096];
+            int read;
+            using (var temporaryFileStream = File.OpenWrite(temporaryFilePath))
+            {
+                while (0 != (read = stream.Read(buffer, 0, buffer.Length)))
+                {
+                    temporaryFileStream.Write(buffer, 0, read);
+                }
+            }
+            
+            return temporaryFilePath;
         }
     }
 }
