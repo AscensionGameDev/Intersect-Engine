@@ -11,5 +11,7 @@ namespace Intersect.Server.Database.Logging
         DbSet<RequestLog> RequestLogs { get; }
 
         DbSet<UserActivityHistory> UserActivityHistory { get; }
+
+        DbSet<ChatHistory> ChatHistory { get; }
     }
 }

@@ -565,6 +565,25 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            if (Options.Instance.ChatOpts.LogChatMessages)
+            {
+                using (var logging = DbInterface.LoggingContext)
+                {
+                    logging.ChatHistory.Add(
+                                new ChatHistory
+                                {
+                                    UserId = player.Client.User?.Id ?? Guid.Empty,
+                                    PlayerId = player.Client.Entity?.Id,
+                                    PlayerName = player.Client.Name,
+                                    Ip = player.Client.GetIp(),
+                                    MessageType = type,
+                                    MessageText = message
+                                }
+                            );
+                }
+            }
+
+
             player.SendPacket(new ChatMsgPacket(message, type, color, target));
         }
 

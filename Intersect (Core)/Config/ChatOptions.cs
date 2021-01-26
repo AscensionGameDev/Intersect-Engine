@@ -19,6 +19,11 @@
         /// </summary>
         public int AnnouncementDisplayDuration = 15000;
 
+        /// <summary>
+        /// Whether or not chat messages should be logged to the database.
+        /// </summary>
+        public bool LogChatMessages = false;
+
     }
 
 }
