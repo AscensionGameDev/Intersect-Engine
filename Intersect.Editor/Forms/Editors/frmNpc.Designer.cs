@@ -164,6 +164,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
+            this.nudResetRadius = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblResetRadius = new System.Windows.Forms.Label();
             this.grpNpcs.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).BeginInit();
@@ -204,6 +206,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcVsNpc.SuspendLayout();
             this.grpSpells.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).BeginInit();
             this.SuspendLayout();
             // 
             // grpNpcs
@@ -558,7 +561,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudSpawnDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpawnDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpawnDuration.Location = new System.Drawing.Point(122, 98);
+            this.nudSpawnDuration.Location = new System.Drawing.Point(122, 119);
             this.nudSpawnDuration.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -577,7 +580,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSpawnDuration
             // 
             this.lblSpawnDuration.AutoSize = true;
-            this.lblSpawnDuration.Location = new System.Drawing.Point(10, 101);
+            this.lblSpawnDuration.Location = new System.Drawing.Point(10, 121);
             this.lblSpawnDuration.Name = "lblSpawnDuration";
             this.lblSpawnDuration.Size = new System.Drawing.Size(86, 13);
             this.lblSpawnDuration.TabIndex = 7;
@@ -587,7 +590,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudSightRange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSightRange.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSightRange.Location = new System.Drawing.Point(90, 44);
+            this.nudSightRange.Location = new System.Drawing.Point(90, 40);
             this.nudSightRange.Maximum = new decimal(new int[] {
             20,
             0,
@@ -606,7 +609,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSightRange
             // 
             this.lblSightRange.AutoSize = true;
-            this.lblSightRange.Location = new System.Drawing.Point(10, 46);
+            this.lblSightRange.Location = new System.Drawing.Point(10, 42);
             this.lblSightRange.Name = "lblSightRange";
             this.lblSightRange.Size = new System.Drawing.Size(69, 13);
             this.lblSightRange.TabIndex = 12;
@@ -1299,6 +1302,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpBehavior.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpBehavior.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpBehavior.Controls.Add(this.nudResetRadius);
+            this.grpBehavior.Controls.Add(this.lblResetRadius);
             this.grpBehavior.Controls.Add(this.lblFocusDamageDealer);
             this.grpBehavior.Controls.Add(this.chkFocusDamageDealer);
             this.grpBehavior.Controls.Add(this.nudSpawnDuration);
@@ -1325,7 +1330,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFocusDamageDealer
             // 
             this.lblFocusDamageDealer.AutoSize = true;
-            this.lblFocusDamageDealer.Location = new System.Drawing.Point(10, 153);
+            this.lblFocusDamageDealer.Location = new System.Drawing.Point(10, 171);
             this.lblFocusDamageDealer.Name = "lblFocusDamageDealer";
             this.lblFocusDamageDealer.Size = new System.Drawing.Size(155, 13);
             this.lblFocusDamageDealer.TabIndex = 72;
@@ -1334,7 +1339,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkFocusDamageDealer
             // 
             this.chkFocusDamageDealer.AutoSize = true;
-            this.chkFocusDamageDealer.Location = new System.Drawing.Point(171, 153);
+            this.chkFocusDamageDealer.Location = new System.Drawing.Point(171, 171);
             this.chkFocusDamageDealer.Name = "chkFocusDamageDealer";
             this.chkFocusDamageDealer.Size = new System.Drawing.Size(15, 14);
             this.chkFocusDamageDealer.TabIndex = 71;
@@ -1344,7 +1349,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudFlee.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudFlee.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudFlee.Location = new System.Drawing.Point(90, 125);
+            this.nudFlee.Location = new System.Drawing.Point(91, 145);
             this.nudFlee.Name = "nudFlee";
             this.nudFlee.Size = new System.Drawing.Size(80, 20);
             this.nudFlee.TabIndex = 70;
@@ -1358,7 +1363,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFlee
             // 
             this.lblFlee.AutoSize = true;
-            this.lblFlee.Location = new System.Drawing.Point(10, 127);
+            this.lblFlee.Location = new System.Drawing.Point(9, 147);
             this.lblFlee.Name = "lblFlee";
             this.lblFlee.Size = new System.Drawing.Size(75, 13);
             this.lblFlee.TabIndex = 69;
@@ -1390,7 +1395,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpConditions.Controls.Add(this.btnPlayerCanAttackCond);
             this.grpConditions.Controls.Add(this.btnPlayerFriendProtectorCond);
             this.grpConditions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpConditions.Location = new System.Drawing.Point(13, 180);
+            this.grpConditions.Location = new System.Drawing.Point(13, 189);
             this.grpConditions.Name = "grpConditions";
             this.grpConditions.Size = new System.Drawing.Size(207, 108);
             this.grpConditions.TabIndex = 66;
@@ -1430,7 +1435,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblMovement
             // 
             this.lblMovement.AutoSize = true;
-            this.lblMovement.Location = new System.Drawing.Point(10, 73);
+            this.lblMovement.Location = new System.Drawing.Point(10, 95);
             this.lblMovement.Name = "lblMovement";
             this.lblMovement.Size = new System.Drawing.Size(60, 13);
             this.lblMovement.TabIndex = 65;
@@ -1454,7 +1459,7 @@ namespace Intersect.Editor.Forms.Editors
             "Move Randomly",
             "Turn Randomly",
             "No Movement"});
-            this.cmbMovement.Location = new System.Drawing.Point(90, 70);
+            this.cmbMovement.Location = new System.Drawing.Point(90, 92);
             this.cmbMovement.Name = "cmbMovement";
             this.cmbMovement.Size = new System.Drawing.Size(121, 21);
             this.cmbMovement.TabIndex = 64;
@@ -2076,6 +2081,34 @@ namespace Intersect.Editor.Forms.Editors
             this.searchableDarkTreeView1.TabIndex = 46;
             this.searchableDarkTreeView1.Visible = false;
             // 
+            // nudResetRadius
+            // 
+            this.nudResetRadius.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudResetRadius.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudResetRadius.Location = new System.Drawing.Point(90, 66);
+            this.nudResetRadius.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.nudResetRadius.Name = "nudResetRadius";
+            this.nudResetRadius.Size = new System.Drawing.Size(121, 20);
+            this.nudResetRadius.TabIndex = 76;
+            this.nudResetRadius.Value = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            // 
+            // lblResetRadius
+            // 
+            this.lblResetRadius.AutoSize = true;
+            this.lblResetRadius.Location = new System.Drawing.Point(10, 68);
+            this.lblResetRadius.Name = "lblResetRadius";
+            this.lblResetRadius.Size = new System.Drawing.Size(74, 13);
+            this.lblResetRadius.TabIndex = 75;
+            this.lblResetRadius.Text = "Reset Radius:";
+            // 
             // FrmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2152,6 +2185,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpells.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2289,5 +2323,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblBlue;
         private System.Windows.Forms.Label lblGreen;
         private System.Windows.Forms.Label lblRed;
+        private DarkNumericUpDown nudResetRadius;
+        private System.Windows.Forms.Label lblResetRadius;
     }
 }

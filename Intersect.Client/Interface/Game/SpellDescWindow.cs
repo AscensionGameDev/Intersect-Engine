@@ -208,7 +208,7 @@ namespace Intersect.Client.Interface.Game
 
                 if (spell.Combat.Duration > 0)
                 {
-                    for (var i = 0; i < Options.MaxStats; i++)
+                    for (var i = 0; i < (int)Stats.StatCount; i++)
                     {
                         if (spell.Combat.StatDiff[i] != 0)
                         {

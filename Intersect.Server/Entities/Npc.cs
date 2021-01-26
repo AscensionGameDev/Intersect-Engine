@@ -778,7 +778,7 @@ namespace Intersect.Server.Entities
 
                 }
 
-                if (mPathFinder.GetTarget() != null)
+                if (mPathFinder.GetTarget() != null && Base.Movement != (int)NpcMovement.Static)
                 {
                     TryCastSpells();
                     if (!IsOneBlockAway(
