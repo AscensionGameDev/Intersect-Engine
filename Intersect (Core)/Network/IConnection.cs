@@ -15,7 +15,7 @@ namespace Intersect.Network
 
         ConnectionStatistics Statistics { get; }
 
-        bool Send(IPacket packet);
+        bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         void HandleConnected();
 

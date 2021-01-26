@@ -96,7 +96,6 @@ namespace Intersect.Server.Networking.Lidgren
             }
             catch (Exception exception)
             {
-                Log.Error(exception);
             }
         }
 
@@ -111,19 +110,19 @@ namespace Intersect.Server.Networking.Lidgren
                    Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
         }
 
-        public override bool Send(IPacket packet)
+        public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(Connections, packet);
+            return Send(Connections, packet, mode);
         }
 
-        public override bool Send(IConnection connection, IPacket packet)
+        public override bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(new[] {connection}, packet);
+            return Send(new[] {connection}, packet, mode);
         }
 
-        public override bool Send(ICollection<IConnection> connections, IPacket packet)
+        public override bool Send(ICollection<IConnection> connections, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            SendPacket(packet, connections, TransmissionMode.All);
+            SendPacket(packet, connections, mode);
 
             return true;
         }
