@@ -8,7 +8,7 @@ namespace Intersect.Server.Database.Logging.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; private set; }
 
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
 
         public Guid? PlayerId { get; set; }
 
