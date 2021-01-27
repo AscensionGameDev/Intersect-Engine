@@ -147,8 +147,7 @@ namespace Intersect.Server.Networking
         //MapPacket
         public static MapPacket GenerateMapPacket(Client client, Guid mapId)
         {
-            var player = client?.Entity;
-            if (client == null || player == null)
+            if (client == null)
             {
                 Log.Error("Attempted to send packet to null client.");
 
@@ -208,7 +207,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    mapPacket.MapItems = GenerateMapItemsPacket(player, mapId);
+                    mapPacket.MapItems = GenerateMapItemsPacket(client.Entity, mapId);
                     mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
 
                     return mapPacket;
@@ -954,7 +953,6 @@ namespace Intersect.Server.Networking
         {
             var map = MapInstance.Get(mapId);
 
-            //TODO Use ceras to serialize items instead of json.net...
             var items = new List<MapItemUpdatePacket>();
 
             // Generate our data to be send to the client.
@@ -1325,6 +1323,17 @@ namespace Intersect.Server.Networking
         public static void SendEntityCastTime(Entity en, Guid spellId)
         {
             SendDataToProximity(en.MapId, new SpellCastPacket(en.Id, spellId), null, TransmissionMode.Any);
+        }
+
+        //CancelCastPacket
+        public static void SendEntityCancelCast(Entity en)
+        {
+            if (en == null || en is EventPageInstance || en is Projectile)
+            {
+                return;
+            }
+
+            SendDataToProximity(en.MapId, new CancelCastPacket(en.Id), null, TransmissionMode.Any);
         }
 
         //SpellCooldownPacket

@@ -658,7 +658,7 @@ namespace Intersect.Server.Networking
 
             //check if player is stunned or snared, if so don't let them move.
             var statuses = client.Entity.Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            foreach (var status in player.CachedStatuses)
             {
                 if (status.Type == StatusTypes.Stun ||
                     status.Type == StatusTypes.Snare ||
@@ -1048,7 +1048,10 @@ namespace Intersect.Server.Networking
 
             if (player.CastTime > Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                if (Options.Combat.EnableCombatChatMessages)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                }
 
                 return;
             }
@@ -1056,20 +1059,25 @@ namespace Intersect.Server.Networking
             var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
             var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
-            //check if player is blinded or stunned
-            var statuses = player.Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            //check if player is blinded or stunned or in stealth mode
+            foreach (var status in player.CachedStatuses)
             {
                 if (status.Type == StatusTypes.Stun)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
-
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
+                    }
+                    
                     return;
                 }
 
                 if (status.Type == StatusTypes.Sleep)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    }
 
                     return;
                 }
@@ -1079,6 +1087,12 @@ namespace Intersect.Server.Networking
                     PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
 
                     return;
+                }
+
+                //Remove stealth status.
+                if (status.Type == StatusTypes.Stealth)
+                {
+                    status.RemoveStatus();
                 }
             }
 
@@ -3504,6 +3518,8 @@ namespace Intersect.Server.Networking
                     }
 
                     obj.Load(packet.Data);
+
+                    DbInterface.SaveGameObject(obj);
 
                     if (type == GameObjectType.Quest)
                     {
