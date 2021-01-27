@@ -1,11 +1,13 @@
 ﻿using Intersect.Client.Entities;
 using Intersect.GameObjects;
+using System;
 
 namespace Intersect.Client.Maps
 {
 
     public class MapAnimation : Animation
     {
+        public Guid Id { get; } = Guid.NewGuid();
 
         private int mDir;
 
@@ -13,7 +15,8 @@ namespace Intersect.Client.Maps
 
         private int mTileY;
 
-        public MapAnimation(AnimationBase animBase, int tileX, int tileY, int dir) : base(animBase, false)
+
+        public MapAnimation(AnimationBase animBase, int tileX, int tileY, int dir, Entity owner = null) : base(animBase, false, false, -1, owner)
         {
             mTileX = tileX;
             mTileY = tileY;

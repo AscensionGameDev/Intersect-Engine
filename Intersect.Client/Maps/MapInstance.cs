@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Intersect.Client.Maps
         public List<MapSound> AttributeSounds = new List<MapSound>();
 
         //Map Animations
-        public List<MapAnimation> LocalAnimations = new List<MapAnimation>();
+        public ConcurrentDictionary<Guid, MapAnimation> LocalAnimations = new ConcurrentDictionary<Guid, MapAnimation>();
 
         public Dictionary<Guid, Entity> LocalEntities = new Dictionary<Guid, Entity>();
 
@@ -192,7 +193,14 @@ namespace Intersect.Client.Maps
 
                 foreach (var anim in LocalAnimations)
                 {
-                    anim.Update();
+                    if (anim.Value.Disposed())
+                    {
+                        LocalAnimations.TryRemove(anim.Key, out MapAnimation removed);
+                    }
+                    else
+                    {
+                        anim.Value.Update();
+                    }
                 }
 
                 foreach (var en in LocalEntities)
@@ -547,7 +555,7 @@ namespace Intersect.Client.Maps
         }
 
         //Animations
-        public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1)
+        public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1, Entity owner = null)
         {
             var animBase = AnimationBase.Get(animId);
             if (animBase == null)
@@ -555,8 +563,8 @@ namespace Intersect.Client.Maps
                 return;
             }
 
-            var anim = new MapAnimation(animBase, tileX, tileY, dir);
-            LocalAnimations.Add(anim);
+            var anim = new MapAnimation(animBase, tileX, tileY, dir, owner);
+            LocalAnimations.TryAdd(anim.Id, anim);
             anim.SetPosition(
                 GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                 GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY, Id, dir
@@ -566,7 +574,10 @@ namespace Intersect.Client.Maps
         private void HideActiveAnimations()
         {
             LocalEntities?.Values.ToList().ForEach(entity => entity?.ClearAnimations(null));
-            LocalAnimations?.ForEach(animation => animation?.Dispose());
+            foreach (var anim in LocalAnimations)
+            {
+                anim.Value?.Dispose();
+            }
             LocalAnimations?.Clear();
             ClearMapAttributes();
         }

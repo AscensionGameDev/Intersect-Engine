@@ -7,16 +7,19 @@ namespace Intersect.Server.Entities.Combat
     public class Buff
     {
 
-        public int BuffType;
+        public int FlatStatcount;
+
+        public int PercentageStatcount;
 
         public long Duration;
 
         public SpellBase Spell;
 
-        public Buff(SpellBase spell, int buff, int duration)
+        public Buff(SpellBase spell, int flatStats, int percentageStats, int duration)
         {
             Spell = spell;
-            BuffType = buff;
+            FlatStatcount = flatStats;
+            PercentageStatcount = percentageStats;
             Duration = Globals.Timing.Milliseconds + duration;
         }
 

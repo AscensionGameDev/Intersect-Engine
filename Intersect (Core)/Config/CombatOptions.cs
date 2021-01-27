@@ -17,6 +17,8 @@
         //Combat
         public int RegenTime = 3000; //3 seconds
 
+        public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
+        
         // Cooldowns
 
         /// <summary>

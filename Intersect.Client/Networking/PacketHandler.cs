@@ -19,6 +19,7 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -363,7 +364,7 @@ namespace Intersect.Client.Networking
                 {
                     if (entity.Value.CurrentMap == entities.Key && !entities.Value.Contains(entity.Key))
                     {
-                        if (!Globals.EntitiesToDispose.Contains(entity.Key) && entity.Value != Globals.Me)
+                        if (!Globals.EntitiesToDispose.Contains(entity.Key) && entity.Value != Globals.Me && !(entity.Value is Projectile))
                         {
                             Globals.EntitiesToDispose.Add(entity.Key);
                         }
@@ -559,6 +560,11 @@ namespace Intersect.Client.Networking
                 return;
             }
 
+            if (en is Player)
+            {
+                en.CastTime = 0;
+            }
+
             if (en.Dashing != null || en.DashQueue.Count > 0)
             {
                 return;
@@ -577,6 +583,10 @@ namespace Intersect.Client.Networking
                 en.X = x;
                 en.Y = y;
                 en.Dir = dir;
+                if (en is Player p)
+                {
+                    p.MoveDir = dir;
+                }
                 en.IsMoving = true;
 
                 switch (en.Dir)
@@ -673,7 +683,11 @@ namespace Intersect.Client.Networking
 
                 en.Status.Add(instance);
 
-                if (instance.Type == StatusTypes.Shield)
+                if (instance.Type == StatusTypes.Stun || instance.Type == StatusTypes.Silence)
+                {
+                    en.CastTime = 0;
+                }
+                else if (instance.Type == StatusTypes.Shield)
                 {
                     instance.Shield = status.VitalShields;
                 }
@@ -827,7 +841,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-
+            
             Entity en = null;
             if (type < EntityTypes.Event)
             {
@@ -835,7 +849,7 @@ namespace Intersect.Client.Networking
                 {
                     return;
                 }
-
+                
                 en = Globals.Entities[id];
             }
             else
@@ -1808,6 +1822,16 @@ namespace Intersect.Client.Networking
         {
             //Fade out, we're finally loading the game world!
             Fade.FadeOut();
+        }
+
+        //CancelCastPacket
+        public void HandlePacket(IPacketSender packetSender, CancelCastPacket packet)
+        {
+            if (Globals.Entities.ContainsKey(packet.EntityId))
+            {
+                Globals.Entities[packet.EntityId].CastTime = 0;
+                Globals.Entities[packet.EntityId].SpellCast = Guid.Empty;
+            }
         }
 
     }
