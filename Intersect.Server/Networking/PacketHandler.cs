@@ -21,6 +21,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
@@ -40,6 +41,8 @@ namespace Intersect.Server.Networking
 
         public PacketHandlerRegistry Registry { get; }
 
+        public static PacketHandler Instance { get; private set; }
+
         public PacketHandler(IServerContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
@@ -49,6 +52,8 @@ namespace Intersect.Server.Networking
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
             }
+
+            Instance = this;
         }
 
         public bool PreProcessPacket(IConnection connection, long pSize)
@@ -65,22 +70,8 @@ namespace Intersect.Server.Networking
             }
 
             var packetOptions = Options.Instance.SecurityOpts?.PacketOpts;
-            var thresholds = packetOptions?.Threshholds;
-            if (client.IsEditor)
-            {
-                //Is Editor
-                thresholds = packetOptions?.EditorThreshholds;
-            }
-            else if (client.User != null)
-            {
-                //Logged In
-                thresholds = packetOptions?.PlayerThreshholds;
-
-                if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
-                {
-                    thresholds = packetOptions?.ModAdminThreshholds;
-                }
-            }
+            var thresholds = client.PacketFloodingThreshholds;
+            
 
             if (pSize > thresholds.MaxPacketSize)
             {
@@ -120,12 +111,12 @@ namespace Intersect.Server.Networking
 
                     if (client.FloodDetects > 3)
                     {
-                        Log.Error(
-                            Strings.Errors.floodaverage.ToString(
-                                client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "",
-                                client.GetIp()
-                            )
-                        );
+                        //Log.Error(
+                        //    Strings.Errors.floodaverage.ToString(
+                        //        client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "",
+                        //        client.GetIp()
+                        //    )
+                        //);
 
                         client.FloodKicked = true;
                         client.Disconnect("Flooding detected.");
@@ -166,11 +157,21 @@ namespace Intersect.Server.Networking
 
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
+            packet.ReceiveTime = Globals.Timing.Milliseconds;
+
             var client = Client.FindBeta4Client(connection);
             if (client == null)
             {
-                throw new Exception("Client is null!");
+                Log.Error("Client was null when packet was being handled.");
+                return false;
             }
+
+            while (client.RecentPackets.Count > 75)
+            {
+                client.RecentPackets.TryDequeue(out IPacket pkt);
+            }
+
+            client.RecentPackets.Enqueue(packet);
 
             if (client.Banned)
             {
@@ -320,20 +321,20 @@ namespace Intersect.Server.Networking
 
                     if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
-                        if (!(packet is PingPacket))
-                        {
-                            Log.Error(
-                                "Dropping Packet. Time desync? Debug Info:\n\t" +
-                                $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                                $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
-                                $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
-                                $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                                $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                                $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                                $"Time Desync[{timeDesync}]\n\t" +
-                                $"Packet[{packet.ToString()}]"
-                            );
-                        }
+                        //if (!(packet is PingPacket))
+                        //{
+                        //    Log.Warn(
+                        //        "Dropping Packet. Time desync? Debug Info:\n\t" +
+                        //        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                        //        $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                        //        $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
+                        //        $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                        //        $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                        //        $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                        //        $"Time Desync[{timeDesync}]\n\t" +
+                        //        $"Packet[{packet}]"
+                        //    );
+                        //}
 
                         try
                         {
@@ -364,77 +365,64 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    ++client.TimedBufferPacketsRemaining;
-                    PacketSender.SendPing(client);
+                    client.TimedBufferPacketsRemaining = Math.Min(configurableAllowedSpikePackets, client.TimedBufferPacketsRemaining++);
                 }
             }
-
-            try
+            
+            client.HandlePacketQueue.Enqueue(packet);
+            lock (client.HandlePacketQueue)
             {
-                if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
+                if (!client.PacketHandlingQueued)
                 {
-                    Logger.Error($"No registered handler for {packet.GetType().FullName}!");
-
-                    return false;
-                }
-
-                if (Registry.TryGetPreprocessors(packet, out var preprocessors))
-                {
-                    if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
-                    {
-                        // Preprocessors are intended to be silent filter functions
-                        return false;
-                    }
-                }
-
-                if (Registry.TryGetPreHooks(packet, out var preHooks))
-                {
-                    if (!preHooks.All(hook => hook.Handle(client, packet)))
-                    {
-                        // Hooks should not fail, if they do that's an error
-                        Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
-                        return false;
-                    }
-                }
-
-                if (!handler(client, packet))
-                {
-                    return false;
-                }
-
-                if (Registry.TryGetPostHooks(packet, out var postHooks))
-                {
-                    if (!postHooks.All(hook => hook.Handle(client, packet)))
-                    {
-                        // Hooks should not fail, if they do that's an error
-                        Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
-                        return false;
-                    }
-                }
+                    client.PacketHandlingQueued = true;
+                    ServerNetwork.Pool.QueueWorkItem(client.HandlePackets);
+                } 
             }
-            catch (Exception exception)
+
+            return true;
+        }
+
+        public bool ProcessPacket(IPacket packet, Client client)
+        {
+            if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
             {
-                var packetType = packet.GetType().Name;
-                var packetMessage =
-                    $"Client Packet Error! [Packet: {packetType} | User: {client.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]";
+                Logger.Error($"No registered handler for {packet.GetType().FullName}!");
 
-                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                Log.Error(packetMessage);
-                Log.Error(new ExceptionInfo(exception));
-                if (exception.InnerException != null)
-                {
-                    Log.Error(new ExceptionInfo(exception.InnerException));
-                }
-
-                // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                Log.Error(exception, packetMessage);
-
-#if DIAGNOSTIC
-                client.Disconnect($"Error processing packet type '{packetType}'.");
-#else
-                client.Disconnect($"Error processing packet.");
-#endif
                 return false;
+            }
+
+            if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+            {
+                if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
+                {
+                    // Preprocessors are intended to be silent filter functions
+                    return false;
+                }
+            }
+
+            if (Registry.TryGetPreHooks(packet, out var preHooks))
+            {
+                if (!preHooks.All(hook => hook.Handle(client, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
+
+            if (!handler(client, packet))
+            {
+                return false;
+            }
+
+            if (Registry.TryGetPostHooks(packet, out var postHooks))
+            {
+                if (!postHooks.All(hook => hook.Handle(client, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
             }
 
             return true;
@@ -657,7 +645,6 @@ namespace Intersect.Server.Networking
             }
 
             //check if player is stunned or snared, if so don't let them move.
-            var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in player.CachedStatuses)
             {
                 if (status.Type == StatusTypes.Stun ||
@@ -686,7 +673,7 @@ namespace Intersect.Server.Networking
                     player.Move(packet.Dir, player, false);
                     var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
                     var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
-                    var currentMs = Globals.Timing.Milliseconds;
+                    var currentMs = packet.ReceiveTime;
                     if (player.MoveTimer > currentMs)
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long) (player.GetMovementTime() * .75f);
@@ -696,7 +683,6 @@ namespace Intersect.Server.Networking
                 else
                 {
                     PacketSender.SendEntityPositionTo(client, client.Entity);
-
                     return;
                 }
             }
@@ -770,6 +756,10 @@ namespace Intersect.Server.Networking
                         cmd = Strings.Chat.admincmd;
 
                         break;
+                    case 4: //private
+                        PacketSender.SendChatMsg(player, msg, ChatMessageType.Local);
+
+                        return;
                 }
             }
             else
@@ -1139,7 +1129,7 @@ namespace Intersect.Server.Networking
                     if (attackAnim != null && attackingTile.TryFix())
                     {
                         PacketSender.SendAnimationToProximity(
-                            attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
+                            attackAnim.Id, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
                             attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
@@ -1195,8 +1185,9 @@ namespace Intersect.Server.Networking
 #endif
                         MapInstance.Get(player.MapId)
                             .SpawnMapProjectile(
-                                player, projectileBase, null, weaponItem, player.MapId, (byte) player.X,
-                                (byte) player.Y, (byte) player.Z, (byte) player.Dir, null
+                                player, projectileBase, null, weaponItem, player.MapId,
+                                (byte)player.X, (byte)player.Y, (byte)player.Z,
+                                (byte)player.Dir, null
                             );
 
                         player.AttackTimer = Globals.Timing.Milliseconds +
@@ -1239,7 +1230,7 @@ namespace Intersect.Server.Networking
                     if (classBase.AttackAnimation != null)
                     {
                         PacketSender.SendAnimationToProximity(
-                            classBase.AttackAnimationId, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
+                            classBase.AttackAnimationId, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
                             attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
@@ -2491,7 +2482,7 @@ namespace Intersect.Server.Networking
         }
 
         //RequestPasswordResetPacket
-        public void HandlePacket(Client client, Player player, RequestPasswordResetPacket packet)
+        public void HandlePacket(Client client, RequestPasswordResetPacket packet)
         {
             if (client.TimeoutMs > Globals.Timing.Milliseconds)
             {
@@ -2522,7 +2513,7 @@ namespace Intersect.Server.Networking
         }
 
         //ResetPasswordPacket
-        public void HandlePacket(Client client, Player player, ResetPasswordPacket packet)
+        public void HandlePacket(Client client, ResetPasswordPacket packet)
         {
             //Find account with that name or email
 
@@ -2731,6 +2722,7 @@ namespace Intersect.Server.Networking
 
             lock (ServerContext.Instance.LogicService.LogicLock)
             {
+                ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                 var newMapId = Guid.Empty;
                 MapInstance newMap = null;
                 var tmpMap = new MapInstance(true);
@@ -2936,7 +2928,6 @@ namespace Intersect.Server.Networking
             {
                 case MapListUpdates.MoveItem:
                     MapList.List.HandleMove(packet.TargetType, packet.TargetId, packet.ParentType, packet.ParentId);
-
                     break;
 
                 case MapListUpdates.AddFolder:
@@ -3007,6 +2998,7 @@ namespace Intersect.Server.Networking
 
                         lock (ServerContext.Instance.LogicService.LogicLock)
                         {
+                            ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                             mapId = packet.TargetId;
                             var players = MapInstance.Get(mapId).GetPlayersOnMap();
                             MapList.List.DeleteMap(mapId);
@@ -3046,6 +3038,7 @@ namespace Intersect.Server.Networking
                 {
                     lock (ServerContext.Instance.LogicService.LogicLock)
                     {
+                        ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                         var map = MapInstance.Get(mapId);
                         if (map != null)
                         {
@@ -3111,6 +3104,7 @@ namespace Intersect.Server.Networking
 
             lock (ServerContext.Instance.LogicService.LogicLock)
             {
+                ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                 if (adjacentMap != null && linkMap != null)
                 {
                     //Clear to test if we can link.
@@ -3300,7 +3294,6 @@ namespace Intersect.Server.Networking
                     obj = ItemBase.Get(id);
 
                     break;
-
                 case GameObjectType.Npc:
                     obj = NpcBase.Get(id);
 
@@ -3503,6 +3496,7 @@ namespace Intersect.Server.Networking
             {
                 lock (ServerContext.Instance.LogicService.LogicLock)
                 {
+                    ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                     //if Item or Resource, kill all global entities of that kind
                     if (type == GameObjectType.Item)
                     {

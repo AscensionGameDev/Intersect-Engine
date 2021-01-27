@@ -24,8 +24,6 @@ namespace Intersect.Server.General
 
         public static long Cps = 0;
 
-        public static bool CpsLock = true;
-
         [Obsolete] public static Timing Timing => Timing.Global;
 
         public static List<Player> OnlineList => Clients.FindAll(client => client?.Entity != null)
