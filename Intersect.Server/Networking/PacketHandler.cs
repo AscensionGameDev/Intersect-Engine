@@ -776,6 +776,7 @@ namespace Intersect.Server.Networking
             {
                 cmd = msg.Split()[0].ToLower();
                 msg = msg.Remove(0, cmd.Length);
+                PacketSender.LogChatMsg(player, msg, ChatMessageType.Local);
             }
 
             var msgSplit = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
@@ -787,27 +788,22 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                Color chatColor = CustomColors.Chat.LocalChat;
                 if (client?.Power.IsAdmin ?? false)
                 {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.AdminLocalChat,
-                        player.Name
-                    );
+                    chatColor = CustomColors.Chat.AdminLocalChat;
                 }
                 else if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.ModLocalChat,
-                        player.Name
-                    );
+                    chatColor = CustomColors.Chat.ModLocalChat;
                 }
-                else
-                {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.LocalChat,
-                        player.Name
-                    );
-                }
+
+                PacketSender.LogChatMsg(player, msg, ChatMessageType.Local);
+                PacketSender.SendProximityMsg(
+                    Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, chatColor,
+                    player.Name
+                );
+
 
                 PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
             }
@@ -818,24 +814,20 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                Color chatColor = CustomColors.Chat.GlobalChat;
                 if (client?.Power.IsAdmin ?? false)
                 {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.AdminGlobalChat, player.Name
-                    );
+                    chatColor = CustomColors.Chat.AdminGlobalChat;
+
                 }
                 else if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.ModGlobalChat, player.Name
-                    );
+                    chatColor = CustomColors.Chat.ModGlobalChat;
                 }
-                else
-                {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.GlobalChat, player.Name
-                    );
-                }
+
+                PacketSender.LogChatMsg(player, msg, ChatMessageType.Global);
+                PacketSender.SendGlobalMsg( Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
+
             }
             else if (cmd == Strings.Chat.partycmd)
             {
@@ -864,6 +856,7 @@ namespace Intersect.Server.Networking
 
                 if (client?.Power.IsModerator ?? false)
                 {
+                    PacketSender.LogChatMsg(player, msg, ChatMessageType.Admin);
                     PacketSender.SendAdminMsg(
                         Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                     );
@@ -878,6 +871,7 @@ namespace Intersect.Server.Networking
 
                 if (client?.Power.IsModerator ?? false)
                 {
+                    PacketSender.LogChatMsg(player, msg, ChatMessageType.Notice);
                     PacketSender.SendGlobalMsg(
                         Strings.Chat.announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
                         player.Name
