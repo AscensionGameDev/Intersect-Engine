@@ -1,4 +1,5 @@
-﻿using Intersect.Core;
+﻿using Amib.Threading;
+using Intersect.Core;
 using Intersect.Server.Core.Services;
 
 using System.Threading;
@@ -18,6 +19,8 @@ namespace Intersect.Server.Core
         public Thread Thread { get; private set; }
 
         public object LogicLock => mLogicThread.LogicLock;
+
+        public SmartThreadPool LogicPool => mLogicThread.LogicPool;
 
         /// <inheritdoc />
         public override bool IsEnabled => true;

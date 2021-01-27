@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-
+using Amib.Threading;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
@@ -15,9 +15,14 @@ using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
 {
+
     // TODO: Migrate to a proper service
     internal class ServerNetwork : AbstractNetwork, IServer
     {
+        public static Logger PlayerNetworkLogger { get; set; }
+
+        public static SmartThreadPool Pool = new SmartThreadPool(20000, Options.Instance.Processing.MaxNetworkThreads, Options.Instance.Processing.MinNetworkThreads);
+
         internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
             networkHelper, configuration
         )
@@ -106,8 +111,7 @@ namespace Intersect.Server.Networking.Lidgren
                 return false;
             }
 
-            return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) &&
-                   Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
+            return true;
         }
 
         public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)
