@@ -116,6 +116,16 @@ namespace Intersect.Server.Networking
 
         public void SetUser(User user)
         {
+            if (user == null && User != null)
+            {
+                User.Logout(User);
+            }
+
+            if (user != null && user != User)
+            {
+                User.Login(user);
+            }
+
             User = user;
         }
 
@@ -143,12 +153,21 @@ namespace Intersect.Server.Networking
 
         public void Disconnect(string reason = "", bool shutdown = false)
         {
-            if (mConnection != null)
+            lock (Globals.ClientLock)
             {
-                Logout(shutdown);
-                mConnection.Dispose();
+                if (mConnection != null)
+                {
+                    Logout(shutdown);
+                        
+                    Globals.Clients.Remove(this);
+                    Globals.ClientArray = Globals.Clients.ToArray();
+                    Globals.ClientLookup.Remove(mConnection.Guid);
 
-                return;
+                    mConnection.Dispose();
+                    mConnection = null;
+
+                    return;
+                }
             }
         }
 
@@ -175,6 +194,7 @@ namespace Intersect.Server.Networking
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Add(client);
+                Globals.ClientArray = Globals.Clients.ToArray();
                 Globals.ClientLookup.Add(connection.Guid, client);
             }
 

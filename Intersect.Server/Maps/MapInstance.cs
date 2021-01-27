@@ -734,7 +734,7 @@ namespace Intersect.Server.Maps
                 var evt = EventBase.Get(id);
                 if (evt != null && evt.Global)
                 {
-                    GlobalEventInstances.TryAdd(evt, new Event(evt.Id, evt, this.Id));
+                    GlobalEventInstances.TryAdd(evt, new Event(evt.Id, evt, this));
                 }
             }
         }
@@ -1029,7 +1029,7 @@ namespace Intersect.Server.Maps
                         {
                             foreach (var player in map.GetPlayersOnMap())
                             {
-                                var eventInstance = player.FindEvent(evts[i].GlobalPageInstance[x]);
+                                var eventInstance = player.FindGlobalEventInstance(evts[i].GlobalPageInstance[x]);
                                 if (eventInstance != null && eventInstance.CallStack.Count > 0)
                                 {
                                     active = true;

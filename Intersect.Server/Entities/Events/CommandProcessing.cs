@@ -176,7 +176,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            var success = Conditions.MeetsCondition((dynamic) command.Condition, player, instance, null);
+            var success = Conditions.MeetsCondition(command.Condition, player, instance, null);
             if (command.Condition.Negated)
             {
                 success = !success;
@@ -298,7 +298,10 @@ namespace Intersect.Server.Entities.Events
                 player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                 if (player.GetVital(Vitals.Health) <= 0)
                 {
-                    player.Die(Options.ItemDropChance);
+                    lock (player.EntityLock)
+                    {
+                        player.Die(Options.ItemDropChance);
+                    }
                 }
             }
             else
@@ -832,7 +835,10 @@ namespace Intersect.Server.Entities.Events
                 {
                     if (((Npc) entities[i]).Despawnable == true)
                     {
-                        ((Npc) entities[i]).Die(100);
+                        lock (player.EntityLock)
+                        {
+                            ((Npc)entities[i]).Die(100);
+                        }
                     }
                 }
             }
@@ -1371,141 +1377,54 @@ namespace Intersect.Server.Entities.Events
                 input = "";
             }
 
-            if (player != null)
+            if (player != null && input.Contains("\\"))
             {
-                input = input.Replace(Strings.Events.playernamecommand, player.Name);
+                var sb = new StringBuilder(input);
+                var time = Time.GetTime();
+                var replacements = new Dictionary<string, string>()
+                {
+                    { Strings.Events.playernamecommand, player.Name },
+                    { Strings.Events.timehour, Time.Hour },
+                    { Strings.Events.militaryhour, Time.MilitaryHour },
+                    { Strings.Events.timeminute, Time.Minute },
+                    { Strings.Events.timesecond, Time.Second },
+                    { Strings.Events.timeperiod, time.Hour >= 12 ? Strings.Events.periodevening : Strings.Events.periodmorning },
+                    { Strings.Events.onlinecountcommand, Player.OnlineCount.ToString() },
+                    { Strings.Events.onlinelistcommand, input.Contains(Strings.Events.onlinelistcommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },
+                    { Strings.Events.eventnamecommand, instance?.PageInstance?.Name ?? "" },
+                    { Strings.Events.eventparam, instance?.PageInstance?.Param ?? "" },
+                    { Strings.Events.eventparams, (instance != null && input.Contains(Strings.Events.eventparams)) ? instance.FormatParameters(player) : "" },
+
+                };
+
+                foreach (var val in replacements)
+                {
+                    if (input.Contains(val.Key))
+                        sb.Replace(val.Key, val.Value);
+                }
+
+                foreach (var val in DbInterface.ServerVariableEventTextLookup)
+                {
+                    if (input.Contains(val.Key))
+                        sb.Replace(val.Key, (val.Value).Value.ToString((val.Value).Type));
+                }
+
+                foreach (var val in DbInterface.PlayerVariableEventTextLookup)
+                {
+                    if (input.Contains(val.Key))
+                        sb.Replace(val.Key, player.GetVariableValue(val.Value.Id).ToString((val.Value).Type));
+                }
+
                 if (instance != null)
                 {
-                    if (instance.PageInstance != null)
+                    var parms = instance.GetParams(player);
+                    foreach (var val in parms)
                     {
-                        input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
-                        input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
-                    }
-
-                    input = input.Replace(Strings.Events.eventparams, instance.FormatParameters(player));
-                }
-
-                if (input.Contains(Strings.Events.onlinelistcommand) ||
-                    input.Contains(Strings.Events.onlinecountcommand))
-                {
-                    var onlineList = Globals.OnlineList;
-                    input = input.Replace(Strings.Events.onlinecountcommand, onlineList.Count.ToString());
-                    var sb = new StringBuilder();
-                    for (var i = 0; i < onlineList.Count; i++)
-                    {
-                        sb.Append(onlineList[i].Name + (i != onlineList.Count - 1 ? ", " : ""));
-                    }
-
-                    input = input.Replace(Strings.Events.onlinelistcommand, sb.ToString());
-                }
-
-                //Time Stuff
-                input = input.Replace(Strings.Events.timehour, Time.GetTime().ToString("%h"));
-                input = input.Replace(Strings.Events.militaryhour, Time.GetTime().ToString("HH"));
-                input = input.Replace(Strings.Events.timeminute, Time.GetTime().ToString("mm"));
-                input = input.Replace(Strings.Events.timesecond, Time.GetTime().ToString("ss"));
-                if (Time.GetTime().Hour >= 12)
-                {
-                    input = input.Replace(Strings.Events.timeperiod, Strings.Events.periodevening);
-                }
-                else
-                {
-                    input = input.Replace(Strings.Events.timeperiod, Strings.Events.periodmorning);
-                }
-
-                //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
-                var matches = Regex.Matches(input, Regex.Escape(Strings.Events.playervar) + @"{([^}]*)}");
-                foreach (Match m in matches)
-                {
-                    if (m.Success)
-                    {
-                        var id = m.Groups[1].Value;
-                        foreach (var var in PlayerVariableBase.Lookup.Values)
-                        {
-                            if (id == ((PlayerVariableBase) var).TextId)
-                            {
-                                input = input.Replace(
-                                    Strings.Events.playervar + "{" + m.Groups[1].Value + "}",
-                                    player.GetVariableValue(var.Id).ToString(((PlayerVariableBase) var).Type)
-                                );
-                            }
-                        }
+                        sb.Replace(Strings.Events.eventparam + "{" + val.Key + "}", val.Value);
                     }
                 }
 
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.playerswitch) + @"{([^}]*)}");
-                foreach (Match m in matches)
-                {
-                    if (m.Success)
-                    {
-                        var id = m.Groups[1].Value;
-                        foreach (var var in PlayerVariableBase.Lookup.Values)
-                        {
-                            if (id == ((PlayerVariableBase) var).TextId)
-                            {
-                                input = input.Replace(
-                                    Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}",
-                                    player.GetVariableValue(var.Id).ToString(((PlayerVariableBase) var).Type)
-                                );
-                            }
-                        }
-                    }
-                }
-
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalvar) + @"{([^}]*)}");
-                foreach (Match m in matches)
-                {
-                    if (m.Success)
-                    {
-                        var id = m.Groups[1].Value;
-                        foreach (var var in ServerVariableBase.Lookup.Values)
-                        {
-                            if (id == ((ServerVariableBase) var).TextId)
-                            {
-                                input = input.Replace(
-                                    Strings.Events.globalvar + "{" + m.Groups[1].Value + "}",
-                                    ((ServerVariableBase) var).Value.ToString(((ServerVariableBase) var).Type)
-                                );
-                            }
-                        }
-                    }
-                }
-
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalswitch) + @"{([^}]*)}");
-                foreach (Match m in matches)
-                {
-                    if (m.Success)
-                    {
-                        var id = m.Groups[1].Value;
-                        foreach (var var in ServerVariableBase.Lookup.Values)
-                        {
-                            if (id == ((ServerVariableBase) var).TextId)
-                            {
-                                input = input.Replace(
-                                    Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}",
-                                    ((ServerVariableBase) var).Value.ToString(((ServerVariableBase) var).Type)
-                                );
-                            }
-                        }
-                    }
-                }
-
-                //Event Params
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.eventparam) + @"{([^}]*)}");
-                if (instance != null)
-                {
-                    foreach (Match m in matches)
-                    {
-                        if (m.Success)
-                        {
-                            var id = m.Groups[1].Value;
-                            input = input.Replace(
-                                Strings.Events.eventparam + "{" + m.Groups[1].Value + "}",
-                                instance.GetParam(player, id.ToLower())
-                            );
-                        }
-                    }
-                }
+                return sb.ToString();
             }
 
             return input;
@@ -1575,6 +1494,11 @@ namespace Intersect.Server.Entities.Events
                         }
                     }
                 }
+            }
+            else
+            {
+                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
+                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
             }
         }
 
@@ -1751,6 +1675,11 @@ namespace Intersect.Server.Entities.Events
                     }
                 }
             }
+            else
+            {
+                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
+                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+            }
         }
 
         private static void ProcessVariableModification(
@@ -1802,6 +1731,11 @@ namespace Intersect.Server.Entities.Events
                         }
                     }
                 }
+            }
+            else
+            {
+                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
+                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
             }
         }
 
