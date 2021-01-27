@@ -20,6 +20,8 @@ namespace Intersect.Server.General
 
         public static readonly List<Client> Clients = new List<Client>();
 
+        public static Client[] ClientArray = new Client[0];
+
         public static long Cps = 0;
 
         public static bool CpsLock = true;

@@ -337,8 +337,8 @@ namespace Intersect.Server.Entities.Events
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Player);
-                        MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                     }
+                    MoveTimer = Globals.Timing.Milliseconds + (long)GetMovementTime();
                 }
             }
         }
@@ -781,7 +781,7 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public bool ShouldDespawn()
+        public bool ShouldDespawn(MapInstance map)
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
             if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.Player, MyEventIndex))
@@ -789,14 +789,14 @@ namespace Intersect.Server.Entities.Events
                 return true;
             }
 
-            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.Player.Map))
+            if (map != null && !map.GetSurroundingMapIds(true).Contains(MyEventIndex.Player.MapId))
             {
                 return true;
             }
 
             for (var i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                if (Conditions.CanSpawnPage(BaseEvent.Pages[i], MyEventIndex.Player, MyEventIndex))
+                if (i != mPageNum && Conditions.CanSpawnPage(BaseEvent.Pages[i], MyEventIndex.Player, MyEventIndex))
                 {
                     if (i > mPageNum)
                     {
@@ -807,7 +807,8 @@ namespace Intersect.Server.Entities.Events
 
             if (GlobalClone != null)
             {
-                var map = MapInstance.Get(GlobalClone.MapId);
+                //Removing this line because the global clone MUST be on the same map and its hindering performance.
+                //var map = MapInstance.Get(GlobalClone.MapId);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone))
                 {
                     return true;

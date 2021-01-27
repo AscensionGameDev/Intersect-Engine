@@ -248,7 +248,10 @@ namespace Intersect.Server.Entities.Pathfinding
                                                                             mapY < Options.MapHeight;
                                                                             mapY++)
                                                                         {
-                                                                            var evt = player.EventExists(ev.MapId, mapX, mapY);
+                                                                            var evt = player.EventExists(new Player.MapTileLoc(
+                                                                                ev.MapId, mapX, mapY
+                                                                            ));
+
                                                                             if (evt != null)
                                                                             {
                                                                                 if (evt.PageInstance != null &&
