@@ -326,6 +326,11 @@ namespace Intersect.Client.Entities
 
         public void Update()
         {
+            if (disposed)
+            {
+                return;
+            }
+
             if (MyBase != null)
             {
                 if (mSound != null)

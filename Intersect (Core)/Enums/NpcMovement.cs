@@ -8,7 +8,9 @@
 
         TurnRandomly,
 
-        StandStill
+        StandStill,
+
+        Static
 
     }
 

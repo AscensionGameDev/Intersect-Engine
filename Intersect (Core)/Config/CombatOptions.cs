@@ -17,6 +17,8 @@
         //Combat
         public int RegenTime = 3000; //3 seconds
 
+        public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
+        
         // Cooldowns
 
         /// <summary>
@@ -47,6 +49,10 @@
         /// </summary>
         public int GlobalCooldownDuration = 1500;
 
+        /// <summary>
+        /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
+        /// </summary>
+        public int MaxPlayerAutoTargetRadius = 15;
     }
 
 }

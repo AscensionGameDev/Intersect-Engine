@@ -1,8 +1,11 @@
-﻿namespace Intersect.Server.Maps
+﻿using System;
+
+namespace Intersect.Server.Maps
 {
 
     public class MapItemSpawn
     {
+        public Guid Id { get; } = Guid.NewGuid();
 
         public int AttributeSpawnX = -1;
 

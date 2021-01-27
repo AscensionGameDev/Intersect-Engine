@@ -20,6 +20,7 @@ namespace Intersect.Server.Notifications
             Body = Body.Replace("{{expiration}}", Options.PasswordResetExpirationMinutes.ToString());
             user.PasswordResetCode = resetCode;
             user.PasswordResetTime = DateTime.UtcNow.AddMinutes(Options.PasswordResetExpirationMinutes);
+            user.Save();
         }
 
         private string GenerateResetCode(int length)

@@ -23,6 +23,10 @@ using System.Threading.Tasks;
 using Intersect.Factories;
 using Intersect.Plugins;
 using Intersect.Server.Plugins;
+using Intersect.Server.General;
+using Intersect.Logging.Output;
+using System.Collections.Immutable;
+using System.Collections.Generic;
 using Intersect.Plugins.Interfaces;
 
 #if WEBSOCKETS
@@ -107,10 +111,31 @@ namespace Intersect.Server.Core
                 Network.Dispose();
 
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
-                Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SavePlayerDatabase(Environment.StackTrace);
-                Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SaveGameDatabase();
+                Log.Info("Saving online users/players..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+
+                var savingTasks = new List<Task>();
+                foreach (var user in Database.PlayerData.User.OnlineList.ToArray())
+                {
+                    savingTasks.Add(Task.Run(() => user.Save()));
+                }
+
+                Task.WaitAll(savingTasks.ToArray());
+
+                // TODO: This probably also needs to not be a global, but will require more work to clean up.
+                Log.Info("Online users/players saved." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+
+
+                //Disconnect All Clients
+                //Will kill their packet handling threads so we have a clean shutdown
+                lock (Globals.ClientLock)
+                {
+                    var clients = Globals.Clients.ToArray();
+                    foreach (var client in clients)
+                    {
+                        client.Disconnect("Server Shutdown", true);
+                    }
+                }
+
 
                 // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
                 Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
@@ -157,6 +182,7 @@ namespace Intersect.Server.Core
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             Console.WriteLine(Strings.Commands.exited);
+            System.Environment.Exit(-1);
         }
 
         #endregion
@@ -249,6 +275,8 @@ namespace Intersect.Server.Core
             Console.WriteLine();
 
             Bootstrapper.CheckNetwork();
+
+            Console.WriteLine();
         }
 
         #endregion

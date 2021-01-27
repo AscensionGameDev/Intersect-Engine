@@ -1,6 +1,5 @@
 ﻿using MessagePack;
 using System;
-
 using System.Collections.Generic;
 
 namespace Intersect.Network.Packets.Server
@@ -13,17 +12,18 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
+
         [Key(0)]
         public Guid MapId;
 
-        public MapItemsPacket(Guid mapId, Dictionary<Point, List<string>> items)
+        public MapItemsPacket(Guid mapId, MapItemUpdatePacket[] items)
         {
             MapId = mapId;
             Items = items;
         }
 
         [Key(1)]
-        public Dictionary<Point, List<string>> Items { get; set; }
+        public MapItemUpdatePacket[] Items { get; set; }
 
     }
 

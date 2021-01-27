@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mDefenseLabel;
 
-        private int[] mEmptyStatBoost = new int[Options.MaxStats];
+        private int[] mEmptyStatBoost = new int[(int)Stats.StatCount];
 
         Label mMagicRstLabel;
 

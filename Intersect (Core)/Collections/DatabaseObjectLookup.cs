@@ -16,6 +16,10 @@ namespace Intersect.Collections
 
         private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
 
+        private Dictionary<Guid, IDatabaseObject> mCachedClone;
+
+        private bool mIsDirty = true;
+
         private readonly object mLock;
 
         public DatabaseObjectLookup(Type storedType)
@@ -91,10 +95,15 @@ namespace Intersect.Collections
         {
             get
             {
-                lock (mLock)
+                if (mIsDirty || mCachedClone == null)
                 {
-                    return mIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    lock (mLock)
+                    {
+                        mCachedClone = mIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
+                        mIsDirty = false;
+                    }
                 }
+                return mCachedClone;
             }
         }
 
@@ -200,6 +209,7 @@ namespace Intersect.Collections
 
             lock (mLock)
             {
+                mIsDirty = true;
                 return mIdMap.Remove(value.Id);
             }
         }
@@ -233,6 +243,7 @@ namespace Intersect.Collections
         {
             lock (mLock)
             {
+                mIsDirty = true;
                 mIdMap.Clear();
             }
         }
@@ -334,6 +345,7 @@ namespace Intersect.Collections
                     return false;
                 }
 
+                mIsDirty = true;
                 mIdMap[value.Id] = value;
 
                 return true;

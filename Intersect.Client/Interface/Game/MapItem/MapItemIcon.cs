@@ -19,6 +19,10 @@ namespace Intersect.Client.Interface.Game.Inventory
         public ImagePanel Container;
 
         public MapItemInstance MyItem;
+
+        public Guid MapId;
+
+        public int TileIndex;
     
         public ImagePanel Pnl;
 
@@ -41,12 +45,12 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (MyItem == null)
+            if (MyItem == null || TileIndex < 0 || TileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return;
             }
 
-            Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y, MyItem.UniqueId);
+            Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.UniqueId);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

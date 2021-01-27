@@ -69,7 +69,7 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            target.Save();
 
             Console.WriteLine(Strings.Commandoutput.apirolegranted.ToString(target.Name, role));
         }

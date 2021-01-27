@@ -415,7 +415,6 @@
     <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="WebApiThrottle, Version=1.5.4.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AscensionGameDev.WebApiThrottle.1.5.4.2\lib\net45\WebApiThrottle.dll</HintPath>
@@ -504,6 +503,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
+    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
+      <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
     <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.designer.cs">
       <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>

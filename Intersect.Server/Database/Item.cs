@@ -124,7 +124,7 @@ namespace Intersect.Server.Database
                 // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
                 if (descriptor?.ItemType == ItemTypes.Bag)
                 {
-                    bag = DbInterface.GetBag(BagId ?? Guid.Empty);
+                    bag = Bag.GetBag(BagId ?? Guid.Empty);
                     bag?.ValidateSlots();
                 }
             }

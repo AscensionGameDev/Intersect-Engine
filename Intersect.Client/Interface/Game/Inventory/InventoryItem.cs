@@ -103,7 +103,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             else if (Globals.InBag)
             {
-                Globals.Me.TryStoreBagItem(mMySlot);
+                Globals.Me.TryStoreBagItem(mMySlot, -1);
             }
             else if (Globals.InTrade)
             {
@@ -189,14 +189,13 @@ namespace Intersect.Client.Interface.Game.Inventory
                 }
                 else if (shopItem == null)
                 {
-                    var hoveredItem = ItemBase.Get(invItem.ItemId);
                     var costItem = Globals.GameShop.DefaultCurrency;
-                    if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
+                    if (invItem.Base != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
-                            Strings.Shop.sellsfor.ToString(hoveredItem.Price, costItem.Name)
+                            Strings.Shop.sellsfor.ToString(invItem.Base.Price.ToString(), costItem.Name)
                         );
                     }
                 }
@@ -433,6 +432,34 @@ namespace Intersect.Client.Interface.Game.Inventory
                         if (bestIntersectIndex > -1)
                         {
                             Globals.Me.AddToHotbar((byte) bestIntersectIndex, 0, mMySlot);
+                        }
+                    }
+                    else if (Globals.InBag)
+                    {
+                        var bagWindow = Interface.GameUi.GetBag();
+                        if (bagWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Bag.Length; i++)
+                            {
+                                if (bagWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(bagWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                            }
                         }
                     }
 

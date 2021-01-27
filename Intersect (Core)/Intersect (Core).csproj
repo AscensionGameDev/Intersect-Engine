@@ -219,6 +219,7 @@
     <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
+    <Compile Include="Config\ProcessingOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext`2.cs" />
     <Compile Include="Core\ApplicationService`2.cs" />
@@ -381,6 +382,7 @@
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\Server\AnnouncementPacket.cs" />
+    <Compile Include="Network\Packets\Server\CancelCastPacket.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />
