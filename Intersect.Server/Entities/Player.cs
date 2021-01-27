@@ -293,7 +293,7 @@ namespace Intersect.Server.Entities
             {
                 if (SpellCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
-                    SpellCooldowns.Remove(key);
+                    SpellCooldowns.TryRemove(key, out _);
                 }
             }
 
@@ -302,7 +302,7 @@ namespace Intersect.Server.Entities
             {
                 if (ItemCooldowns[key] < Globals.Timing.MillisecondsUTC)
                 {
-                    ItemCooldowns.Remove(key);
+                    ItemCooldowns.TryRemove(key, out _);
                 }
             }
 
@@ -972,7 +972,7 @@ namespace Intersect.Server.Entities
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (target is Resource resource)
             {
-                if (resource.IsDead)
+                if (resource.IsDead())
                 {
                     return;
                 }
@@ -1008,7 +1008,10 @@ namespace Intersect.Server.Entities
         {
             if (CastTime >= Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Error);
+                if (Options.Combat.EnableCombatChatMessages)
+                {
+                    PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                }
 
                 return;
             }
@@ -1044,7 +1047,7 @@ namespace Intersect.Server.Entities
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (target is Resource resource)
             {
-                if (resource.IsDead)
+                if (resource.IsDead())
                 {
                     return;
                 }
@@ -1182,9 +1185,15 @@ namespace Intersect.Server.Entities
                 60; //subtracting 60 to account for a moderate ping to the server so some attacks dont get cancelled.
         }
 
-        public override int GetStatBuffs(Stats statType)
+        /// <summary>
+        /// Get all StatBuffs for the relevant <see cref="Stats"/>
+        /// </summary>
+        /// <param name="statType">The <see cref="Stats"/> to retrieve the amounts for.</param>
+        /// <returns>Returns a <see cref="Tuple"/> containing the Flat stats on Item1, and Percentage stats on Item2</returns>
+        public Tuple<int, int> GetItemStatBuffs(Stats statType)
         {
-            var s = 0;
+            var flatStats = 0;
+            var percentageStats = 0;
 
             //Add up player equipment values
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -1193,20 +1202,17 @@ namespace Intersect.Server.Entities
                 {
                     if (Items[Equipment[i]].ItemId != Guid.Empty)
                     {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                        var item = Items[Equipment[i]].Descriptor;
                         if (item != null)
                         {
-                            s += Items[Equipment[i]].StatBuffs[(int) statType] +
-                                 item.StatsGiven[(int) statType] +
-                                 (int) ((Stat[(int) statType].BaseStat + StatPointAllocations[(int) statType]) *
-                                        item.PercentageStatsGiven[(int) statType] /
-                                        100f);
+                            flatStats += item.StatsGiven[(int)statType];
+                            percentageStats += item.PercentageStatsGiven[(int)statType];
                         }
                     }
                 }
             }
 
-            return s;
+            return new Tuple<int, int>(flatStats, percentageStats);
         }
 
         public void RecalculateStatsAndPoints()
@@ -1269,15 +1275,15 @@ namespace Intersect.Server.Entities
         }
 
         //Warping
-        public override void Warp(Guid newMapId, byte newX, byte newY, bool adminWarp = false)
+        public override void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false)
         {
             Warp(newMapId, newX, newY, (byte) Directions.Up, adminWarp, 0, false);
         }
 
         public override void Warp(
             Guid newMapId,
-            byte newX,
-            byte newY,
+            float newX,
+            float newY,
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
@@ -1292,8 +1298,8 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            X = newX;
-            Y = newY;
+            X = (int)newX;
+            Y = (int)newY;
             Z = zOverride;
             Dir = newDir;
             var newSurroundingMaps = map.GetSurroundingMapIds(true);
@@ -4133,21 +4139,30 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Silence)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
+                        if (Options.Combat.EnableCombatChatMessages)
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
+                        }
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
+                        if (Options.Combat.EnableCombatChatMessages)
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
+                        }
 
                         return false;
                     }
 
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
+                        if (Options.Combat.EnableCombatChatMessages)
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
+                        }
 
                         return false;
                     }
@@ -4220,14 +4235,20 @@ namespace Intersect.Server.Entities
             {
                 if (spell.VitalCost[(int) Vitals.Mana] > GetVital(Vitals.Mana))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
+                    }
 
                     return false;
                 }
 
                 if (spell.VitalCost[(int) Vitals.Health] > GetVital(Vitals.Health))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
+                    }
 
                     return false;
                 }
@@ -4316,12 +4337,18 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
+                    }
                 }
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                if (Options.Combat.EnableCombatChatMessages)
+                {
+                    PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                }
             }
         }
 
@@ -5765,7 +5792,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                ItemCooldowns.Add(itemId, cooldownTime);
+                ItemCooldowns.TryAdd(itemId, cooldownTime);
             }
         }
 
@@ -5784,7 +5811,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                SpellCooldowns.Add(spellId, cooldownTime);
+                SpellCooldowns.TryAdd(spellId, cooldownTime);
             }
         }
 
@@ -5925,10 +5952,10 @@ namespace Intersect.Server.Entities
         public string ItemCooldownsJson
         {
             get => JsonConvert.SerializeObject(ItemCooldowns);
-            set => ItemCooldowns = JsonConvert.DeserializeObject<Dictionary<Guid, long>>(value ?? "{}");
+            set => ItemCooldowns = JsonConvert.DeserializeObject<ConcurrentDictionary<Guid, long>>(value ?? "{}");
         }
 
-        [JsonIgnore] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        [JsonIgnore] public ConcurrentDictionary<Guid, long> ItemCooldowns = new ConcurrentDictionary<Guid, long>();
 
         #endregion
 
