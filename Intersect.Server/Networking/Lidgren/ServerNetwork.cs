@@ -19,9 +19,10 @@ namespace Intersect.Server.Networking.Lidgren
     // TODO: Migrate to a proper service
     internal class ServerNetwork : AbstractNetwork, IServer
     {
-        public static Logger PlayerNetworkLogger { get; set; }
-
-        public static SmartThreadPool Pool = new SmartThreadPool(20000, Options.Instance.Processing.MaxNetworkThreads, Options.Instance.Processing.MinNetworkThreads);
+        /// <summary>
+        /// This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of Threads & Idle Timeouts are set via server config.
+        /// </summary>
+        public static SmartThreadPool Pool = new SmartThreadPool(Options.Instance.Processing.NetworkThreadIdleTimeout, Options.Instance.Processing.MaxNetworkThreads, Options.Instance.Processing.MinNetworkThreads);
 
         internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
             networkHelper, configuration
