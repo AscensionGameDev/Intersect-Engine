@@ -21,59 +21,36 @@ namespace Intersect.Server.Core
 
         internal sealed class LogicThread : Threaded<ServerContext>
         {
+            /// <summary>
+            /// We lock on this in order to stop maps from entering the update queue. This is only done when the editor is saving/modifying game maps or the map grids are being rebuilt.
+            /// </summary>
             public readonly object LogicLock = new object();
 
-            public readonly SmartThreadPool LogicPool = new SmartThreadPool(20000, Options.Instance.Processing.MaxLogicThreads, Options.Instance.Processing.MinLogicThreads);
+            /// <summary>
+            /// This is our thread pool for handling server/game logic. This includes npcs, event processing, map updating, projectiles, spell casting, etc. 
+            /// Min/Max Number of Threads & Idle Timeouts are set via server config.
+            /// </summary>
+            public readonly SmartThreadPool LogicPool = new SmartThreadPool(Options.Instance.Processing.LogicThreadIdleTimeout, Options.Instance.Processing.MaxLogicThreads, Options.Instance.Processing.MinLogicThreads);
 
+            /// <summary>
+            /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again.
+            /// </summary>
             public readonly ConcurrentQueue<MapInstance> MapUpdateQueue = new ConcurrentQueue<MapInstance>();
 
+            /// <summary>
+            /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again. 
+            /// This queue is only used for projectile updates if the projectile update interval does not match the map update interval in the server config.
+            /// </summary>
             public readonly ConcurrentQueue<MapInstance> MapProjectileUpdateQueue = new ConcurrentQueue<MapInstance>();
 
+            /// <summary>
+            /// This is the set of maps determined to be 'active' based on player locations in the game. Our logic recalculates this hashset every 250ms.
+            /// When maps are updated they are not added back into the map update queues unless they exist in this hash set.
+            /// </summary>
             public readonly HashSet<Guid> ActiveMaps = new HashSet<Guid>();
 
             public LogicThread() : base("ServerLogic")
             {
-            }
-
-            private void AddToQueue(MapInstance map)
-            {
-                if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
-                {
-                    MapProjectileUpdateQueue.Enqueue(map);
-                }
-                MapUpdateQueue.Enqueue(map);
-                ActiveMaps.Add(map.Id);
-            }
-
-            private void UpdateMap(MapInstance map, bool onlyProjectiles)
-            {
-                try
-                {
-                    if (onlyProjectiles)
-                    {
-                        map.UpdateProjectiles(Globals.Timing.Milliseconds);
-                        if (ActiveMaps.Contains(map.Id))
-                        {
-                            MapProjectileUpdateQueue.Enqueue(map);
-                        }
-                    }
-                    else
-                    {
-                        map.Update(Globals.Timing.Milliseconds);
-                        if (ActiveMaps.Contains(map.Id))
-                        {
-                            MapUpdateQueue.Enqueue(map);
-                        }
-                    }
-                }
-                catch (ThreadAbortException)
-                {
-                    //Ignore if this pool is being shut down
-                }
-                catch (Exception exception)
-                {
-                    ServerContext.DispatchUnhandledException(exception);
-                }
             }
 
             protected override void ThreadStart(ServerContext serverContext)
@@ -98,9 +75,8 @@ namespace Intersect.Server.Core
                     while (ServerContext.Instance.IsRunning)
                     {
                         var startTime = sw.ElapsedMilliseconds;
-                        var timeMs = Globals.Timing.Milliseconds;
                         
-                        if (timeMs > updateTimer)
+                        if (startTime > updateTimer)
                         {
                             //Resync Active Maps By Scanning Players and Their Surrounding Maps
                             players = 0;
@@ -133,19 +109,6 @@ namespace Intersect.Server.Core
                                 }
                             }
 
-                            //Uncomment To Stress (Keep all maps active)
-                            //foreach (var map in MapInstance.Lookup)
-                            //{
-                            //    if (!processedMaps.Contains(map.Key))
-                            //    {
-                            //        processedMaps.Add(map.Key);
-                            //        if (!ActiveMaps.Contains(map.Key))
-                            //        {
-                            //            AddToQueue((MapInstance)map.Value);
-                            //        }
-                            //    }
-                            //}
-
                             //Remove any Active Maps that we didn't deem neccessarry of processing
                             foreach (var map in ActiveMaps.ToArray())
                             {
@@ -156,15 +119,15 @@ namespace Intersect.Server.Core
                             }
 
                             //End Resync of Active Maps
-
-                            updateTimer = timeMs + 250;
+                            updateTimer = startTime + 250;
                         }
 
+                        //Check our map update queues. If maps are ready to be updated based on our update intervals set in the server config then tell our thread pool to queue the map update as a work item.
                         lock (LogicLock)
                         {
                             if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
                             {
-                                while (MapProjectileUpdateQueue.TryPeek(out MapInstance result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval < timeMs)
+                                while (MapProjectileUpdateQueue.TryPeek(out MapInstance result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval < startTime)
                                 {
                                     if (MapProjectileUpdateQueue.TryDequeue(out MapInstance sameResult))
                                     {
@@ -173,7 +136,7 @@ namespace Intersect.Server.Core
                                 }
                             }
 
-                            while (MapUpdateQueue.TryPeek(out MapInstance result) && result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval < timeMs)
+                            while (MapUpdateQueue.TryPeek(out MapInstance result) && result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval < startTime)
                             {
                                 if (MapUpdateQueue.TryDequeue(out MapInstance sameResult))
                                 {
@@ -205,6 +168,56 @@ namespace Intersect.Server.Core
                 finally
                 {
                     ServerContext.Instance.RequestShutdown();
+                }
+            }
+
+            /// <summary>
+            /// Adds a map to the map update queues for our logic loop to start processing.
+            /// </summary>
+            /// <param name="map">The map in which we want to add to our update queues.</param>
+            private void AddToQueue(MapInstance map)
+            {
+                if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
+                {
+                    MapProjectileUpdateQueue.Enqueue(map);
+                }
+                MapUpdateQueue.Enqueue(map);
+                ActiveMaps.Add(map.Id);
+            }
+
+            /// <summary>
+            /// This function actually runs our map update function on the logic thread pool, and then re-queues our map for future updates if the map is still considered active.
+            /// </summary>
+            /// <param name="map">The map our thread updates.</param>
+            /// <param name="onlyProjectiles">If true only map projectiles are updated and not the entire map.</param>
+            private void UpdateMap(MapInstance map, bool onlyProjectiles)
+            {
+                try
+                {
+                    if (onlyProjectiles)
+                    {
+                        map.UpdateProjectiles(Globals.Timing.Milliseconds);
+                        if (ActiveMaps.Contains(map.Id))
+                        {
+                            MapProjectileUpdateQueue.Enqueue(map);
+                        }
+                    }
+                    else
+                    {
+                        map.Update(Globals.Timing.Milliseconds);
+                        if (ActiveMaps.Contains(map.Id))
+                        {
+                            MapUpdateQueue.Enqueue(map);
+                        }
+                    }
+                }
+                catch (ThreadAbortException)
+                {
+                    //Ignore if this pool is being shut down
+                }
+                catch (Exception exception)
+                {
+                    ServerContext.DispatchUnhandledException(exception);
                 }
             }
 

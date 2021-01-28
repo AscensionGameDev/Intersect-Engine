@@ -23,6 +23,11 @@ namespace Intersect.Config
         public int MaxLogicThreads { get; set; } = 4;
 
         /// <summary>
+        /// This is how long (in ms) a logic thread in our logic pool should be idle before it is considered unneeded and therefore disposed.
+        /// </summary>
+        public int LogicThreadIdleTimeout { get; set; } = 20000;
+
+        /// <summary>
         /// Minimum number of threads that will be used for packet processing which we don't want to slow down our game loop.
         /// </summary>
         public int MinNetworkThreads { get; set; } = 2;
@@ -31,6 +36,11 @@ namespace Intersect.Config
         /// Maximum number of threads that will be used for packet processing which we don't want to slow down our game loop.
         /// </summary>
         public int MaxNetworkThreads { get; set; } = 4;
+
+        /// <summary>
+        /// This is how long (in ms) a network thread in our network pool should be idle before it is considered unneeded and therefore disposed.
+        /// </summary>
+        public int NetworkThreadIdleTimeout { get; set; } = 20000;
 
         /// <summary>
         /// This controls how often maps/npcs should be updated in ms.
@@ -70,6 +80,11 @@ namespace Intersect.Config
                 throw new InvalidOperationException("The maximum number of logic threads should be greater than the minimum number of logic threads.");
             }
 
+            if (LogicThreadIdleTimeout < 1000)
+            {
+                throw new Exception("Logic thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+            }
+
             if (MinNetworkThreads < 1)
             {
                 throw new InvalidOperationException("Need at least 1 network thread.");
@@ -78,6 +93,11 @@ namespace Intersect.Config
             if (MaxNetworkThreads < MinNetworkThreads)
             {
                 throw new InvalidOperationException("The maximum number of network threads should be greater than the minimum number of network threads.");
+            }
+
+            if (NetworkThreadIdleTimeout < 1000)
+            {
+                throw new Exception("Network thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
             }
 
             if (MapUpdateInterval > 200)
