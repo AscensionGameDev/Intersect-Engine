@@ -72,7 +72,7 @@ namespace Intersect.Core
         #region Lifecycle Properties
 
         /// <summary>
-        /// If this is overridden to true, <see cref="StartServices" /> must be manually invoked from within <see cref="InternalStart" />.
+        /// If this is overridden to true, <see cref="PostStartup" /> must be manually invoked from within <see cref="InternalStart" />.
         /// </summary>
         protected virtual bool UsesMainThread => false;
 
@@ -178,23 +178,24 @@ namespace Intersect.Core
                     }
                 );
 
-        private void RunOnAllServices(Action<IApplicationService> action) =>
-            Services.Where(service => service?.IsEnabled ?? false).ToList().ForEach(action);
+        private void RunOnAllServices(Action<IApplicationService> action, bool isRunning, bool force = true) =>
+            Services.Where(service => (default != service) && service.IsEnabled && (force || (isRunning == service.IsRunning))).ToList().ForEach(action);
 
         /// <summary>
         /// Run the bootstrap lifecycle method on all enabled services.
         /// </summary>
-        protected virtual void BootstrapServices() => RunOnAllServices(service => service?.Bootstrap(this));
+        protected virtual void BootstrapServices() => RunOnAllServices(service => service?.Bootstrap(this), false);
 
         /// <summary>
         /// Run the startup lifecycle method on all enabled services.
         /// </summary>
-        protected virtual void StartServices() => RunOnAllServices(service => service?.Start(this));
+        protected virtual void StartServices() => RunOnAllServices(service => service?.Start(this), false);
 
         /// <summary>
         /// Run the shutdown lifecycle method on all enabled services.
         /// </summary>
-        protected virtual void StopServices() => RunOnAllServices(service => service?.Stop(this));
+        /// <param name="force">if the service should be forced to stop no matter its status</param>
+        protected virtual void StopServices(bool force = false) => RunOnAllServices(service => service?.Stop(this), true, force);
 
         #endregion Service
 
@@ -205,16 +206,22 @@ namespace Intersect.Core
         {
             IsStarted = true;
 
-            IsRunning = true;
-
             DiscoverServices();
 
             try
             {
                 BootstrapServices();
 
-                // If UsesMainThread is true, this does not return until shutdown.
-                InternalStart();
+                try
+                {
+                    // If UsesMainThread is true, this does not return until shutdown.
+                    InternalStart();
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error(exception);
+                    return;
+                }
 
                 // When UsesMainThread is true, we only reach this point until
                 // we are shutting down, so we should just short-circuit here.
@@ -223,8 +230,8 @@ namespace Intersect.Core
                     return;
                 }
 
-                // Is manually invoked if UsesMainThread is true.
-                StartServices();
+                // Must be manually invoked if UsesMainThread is true.
+                PostStartup();
             }
             catch (ServiceLifecycleFailureException serviceLifecycleFailureException)
             {
@@ -248,6 +255,13 @@ namespace Intersect.Core
             }
 
             #endregion Wait for application thread
+        }
+
+        protected virtual void PostStartup()
+        {
+            StartServices();
+
+            IsRunning = true;
         }
 
         /// <inheritdoc />
@@ -509,7 +523,7 @@ namespace Intersect.Core
         {
             try
             {
-                StopServices();
+                StopServices(IsRunning);
             }
             catch (ServiceLifecycleFailureException serviceLifecycleFailureException)
             {
