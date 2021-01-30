@@ -640,6 +640,7 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\Controls\LightEditorCtrl.resx">

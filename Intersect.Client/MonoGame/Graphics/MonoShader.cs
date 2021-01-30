@@ -1,10 +1,12 @@
-﻿using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.IO.Files;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
+using System.IO;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
@@ -16,9 +18,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private bool mValuesChanged = false;
 
-        public MonoShader(string shaderName, ContentManager content) : base(shaderName)
+        public MonoShader(string shaderName, ContentManager contentManager) : base(shaderName)
         {
-            mShader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));
+            using (var resourceStream = typeof(MonoShader).Assembly.GetManifestResourceStream(shaderName))
+            {
+                var extractedPath = FileSystemHelper.WriteToTemporaryFolder(shaderName, resourceStream);
+                mShader = contentManager.Load<Effect>(Path.ChangeExtension(extractedPath, null));
+            }
         }
 
         public override void SetFloat(string key, float val)
