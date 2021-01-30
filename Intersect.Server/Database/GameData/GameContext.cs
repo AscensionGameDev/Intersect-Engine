@@ -23,23 +23,22 @@ namespace Intersect.Server.Database.GameData
 
         public GameContext() : base(DefaultConnectionStringBuilder)
         {
-            Current = this;
+
         }
 
         public GameContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
+            bool readOnly = false,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, false, logger, logLevel)
+        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
         {
-            Current = this;
+
         }
 
         public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
             new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
-
-        public static GameContext Current { get; private set; }
 
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
@@ -112,21 +111,12 @@ namespace Intersect.Server.Database.GameData
         internal static class Queries
         {
 
-            internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
-                EF.CompileQuery(
-                    (GameContext context, Guid id) =>
-                        context.ServerVariables.FirstOrDefault(variable => variable.Id == id)
-                ) ??
-                throw new InvalidOperationException();
+            internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
+                (Guid id) => ServerVariableBase.Lookup.Where(variable => variable.Key == id).Any() ? (ServerVariableBase)ServerVariableBase.Lookup.Where(variable => variable.Key == id).First().Value : null;
 
-            internal static readonly Func<GameContext, int, int, IEnumerable<ServerVariableBase>> ServerVariables =
-                EF.CompileQuery(
-                    (GameContext context, int page, int count) => context.ServerVariables
-                        .OrderBy(variable => variable.Id.ToString())
-                        .Skip(page * count)
-                        .Take(count)
-                ) ??
-                throw new InvalidOperationException();
+
+            internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
+                (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
 
         }
 

@@ -1,21 +1,29 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 using System.Collections.Generic;
 
 namespace Intersect.Network.Packets.Server
 {
-
-    public class MapItemsPacket : CerasPacket
+    [MessagePackObject]
+    public class MapItemsPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public MapItemsPacket()
+        {
+        }
 
+
+        [Key(0)]
         public Guid MapId;
 
-        public MapItemsPacket(Guid mapId, Dictionary<Point, List<string>> items)
+        public MapItemsPacket(Guid mapId, MapItemUpdatePacket[] items)
         {
             MapId = mapId;
             Items = items;
         }
 
-        public Dictionary<Point, List<string>> Items { get; set; }
+        [Key(1)]
+        public MapItemUpdatePacket[] Items { get; set; }
 
     }
 

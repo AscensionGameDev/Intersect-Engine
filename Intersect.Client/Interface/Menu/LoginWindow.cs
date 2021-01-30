@@ -130,14 +130,13 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (Networking.Network.Connected)
+            if (!Networking.Network.Connected)
             {
+                Hide();
+                mMainMenu.Show();
+                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
                 return;
             }
-
-            Hide();
-            mMainMenu.Show();
-            Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
 
             // Re-Enable our buttons button if we're not waiting for the server anymore with it disabled.
             if (!Globals.WaitingOnServer && mLoginBtn.IsDisabled)

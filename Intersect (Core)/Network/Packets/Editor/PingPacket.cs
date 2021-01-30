@@ -1,7 +1,10 @@
-﻿namespace Intersect.Network.Packets.Editor
+﻿using MessagePack;
+
+namespace Intersect.Network.Packets.Editor
 {
 
-    public class PingPacket : CerasPacket
+    [MessagePackObject]
+    public class PingPacket : IntersectPacket
     {
 
     }

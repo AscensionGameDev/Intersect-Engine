@@ -1,20 +1,31 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Client
 {
-
-    public class PickupItemPacket : CerasPacket
+    [MessagePackObject]
+    public class PickupItemPacket : IntersectPacket
     {
-
-        public PickupItemPacket(Point location, Guid uniqueId)
+        //Parameterless Constructor for MessagePack
+        public PickupItemPacket()
         {
-            UniqueId = uniqueId;
-            Location = location;
         }
 
+        public PickupItemPacket(Guid mapId, int tileIndex, Guid uniqueId)
+        {
+            MapId = mapId;
+            UniqueId = uniqueId;
+            TileIndex = tileIndex;
+        }
+
+        [Key(0)]
         public Guid UniqueId { get; set; }
 
-        public Point Location { get; set; }
+        [Key(1)]
+        public Guid MapId { get; set; }
+
+        [Key(2)]
+        public int TileIndex { get; set; }
 
     }
 

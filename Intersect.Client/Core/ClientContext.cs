@@ -42,7 +42,7 @@ namespace Intersect.Client.Core
             Ceras.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
             Networking.Network.PacketHandler = new PacketHandler(this, NetworkHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
-            PlatformRunner.Start(this, StartServices);
+            PlatformRunner.Start(this, PostStartup);
         }
 
         #region Exception Handling

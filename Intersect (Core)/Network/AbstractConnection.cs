@@ -18,10 +18,7 @@ namespace Intersect.Network
 
             Guid = guid ?? Guid.NewGuid();
             Statistics = new ConnectionStatistics();
-            Ceras = new Ceras(true);
         }
-
-        public Ceras Ceras { get; }
 
         public virtual void Dispose()
         {
@@ -46,7 +43,7 @@ namespace Intersect.Network
 
         public ConnectionStatistics Statistics { get; }
 
-        public abstract bool Send(IPacket packet);
+        public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         public virtual void HandleConnected()
         {

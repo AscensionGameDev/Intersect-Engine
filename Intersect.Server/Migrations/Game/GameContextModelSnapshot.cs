@@ -393,6 +393,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("RegenJson")
                         .HasColumnName("VitalRegen");
 
+                    b.Property<int>("ResetRadius");
+
                     b.Property<int>("Scaling");
 
                     b.Property<int>("ScalingStat");

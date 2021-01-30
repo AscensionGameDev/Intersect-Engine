@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-
+using Amib.Threading;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
@@ -15,9 +15,15 @@ using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
 {
+
     // TODO: Migrate to a proper service
     internal class ServerNetwork : AbstractNetwork, IServer
     {
+        /// <summary>
+        /// This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of Threads & Idle Timeouts are set via server config.
+        /// </summary>
+        public static SmartThreadPool Pool = new SmartThreadPool(Options.Instance.Processing.NetworkThreadIdleTimeout, Options.Instance.Processing.MaxNetworkThreads, Options.Instance.Processing.MinNetworkThreads);
+
         internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
             networkHelper, configuration
         )
@@ -96,7 +102,6 @@ namespace Intersect.Server.Networking.Lidgren
             }
             catch (Exception exception)
             {
-                Log.Error(exception);
             }
         }
 
@@ -107,23 +112,22 @@ namespace Intersect.Server.Networking.Lidgren
                 return false;
             }
 
-            return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) &&
-                   Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
+            return true;
         }
 
-        public override bool Send(IPacket packet)
+        public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(Connections, packet);
+            return Send(Connections, packet, mode);
         }
 
-        public override bool Send(IConnection connection, IPacket packet)
+        public override bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(new[] {connection}, packet);
+            return Send(new[] {connection}, packet, mode);
         }
 
-        public override bool Send(ICollection<IConnection> connections, IPacket packet)
+        public override bool Send(ICollection<IConnection> connections, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            SendPacket(packet, connections, TransmissionMode.All);
+            SendPacket(packet, connections, mode);
 
             return true;
         }

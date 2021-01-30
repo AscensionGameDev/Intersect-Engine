@@ -7,8 +7,6 @@ namespace Intersect.Network
     {
         Guid Guid { get; }
 
-        Ceras Ceras { get; }
-
         bool IsConnected { get; }
 
         string Ip { get; }
@@ -17,7 +15,7 @@ namespace Intersect.Network
 
         ConnectionStatistics Statistics { get; }
 
-        bool Send(IPacket packet);
+        bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         void HandleConnected();
 

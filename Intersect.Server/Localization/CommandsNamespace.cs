@@ -65,7 +65,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"cps",
                 Description =
-                    @"Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.",
+                    @"Prints the current CPS.",
                 Help = @"prints the current server cps"
             };
 
@@ -217,18 +217,6 @@ namespace Intersect.Server.Localization
                     Name = @"role",
                     Description = @"role to grant or revoke (users.query or users.manage)"
                 };
-
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsLock = @"lock";
-
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument CpsOperation = new LocaleArgument
-                {
-                    Name = @"operation",
-                    Description = @"one of the following: status, lock, unlock"
-                };
-
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsStatus = @"status";
-
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsUnlock = @"unlock";
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument DurationBan = new LocaleArgument
                 {

@@ -19,6 +19,7 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -41,9 +42,9 @@ namespace Intersect.Client.Networking
             /// <inheritdoc />
             public bool Send(IPacket packet)
             {
-                if (packet is CerasPacket cerasPacket)
+                if (packet is IntersectPacket intersectPacket)
                 {
-                    Network.SendPacket(cerasPacket);
+                    Network.SendPacket(intersectPacket);
                     return true;
                 }
 
@@ -85,7 +86,7 @@ namespace Intersect.Client.Networking
                 Timing.Global.Synchronize(timedPacket.UTC, timedPacket.Offset);
             }
 
-            if (!(packet is CerasPacket))
+            if (!(packet is IntersectPacket))
             {
                 return false;
             }
@@ -363,7 +364,7 @@ namespace Intersect.Client.Networking
                 {
                     if (entity.Value.CurrentMap == entities.Key && !entities.Value.Contains(entity.Key))
                     {
-                        if (!Globals.EntitiesToDispose.Contains(entity.Key) && entity.Value != Globals.Me)
+                        if (!Globals.EntitiesToDispose.Contains(entity.Key) && entity.Value != Globals.Me && !(entity.Value is Projectile))
                         {
                             Globals.EntitiesToDispose.Add(entity.Key);
                         }
@@ -559,6 +560,11 @@ namespace Intersect.Client.Networking
                 return;
             }
 
+            if (en is Player)
+            {
+                en.CastTime = 0;
+            }
+
             if (en.Dashing != null || en.DashQueue.Count > 0)
             {
                 return;
@@ -577,6 +583,10 @@ namespace Intersect.Client.Networking
                 en.X = x;
                 en.Y = y;
                 en.Dir = dir;
+                if (en is Player p)
+                {
+                    p.MoveDir = dir;
+                }
                 en.IsMoving = true;
 
                 switch (en.Dir)
@@ -673,7 +683,11 @@ namespace Intersect.Client.Networking
 
                 en.Status.Add(instance);
 
-                if (instance.Type == StatusTypes.Shield)
+                if (instance.Type == StatusTypes.Stun || instance.Type == StatusTypes.Silence)
+                {
+                    en.CastTime = 0;
+                }
+                else if (instance.Type == StatusTypes.Shield)
                 {
                     instance.Shield = status.VitalShields;
                 }
@@ -827,7 +841,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-
+            
             Entity en = null;
             if (type < EntityTypes.Event)
             {
@@ -835,7 +849,7 @@ namespace Intersect.Client.Networking
                 {
                     return;
                 }
-
+                
                 en = Globals.Entities[id];
             }
             else
@@ -926,13 +940,16 @@ namespace Intersect.Client.Networking
             }
 
             map.MapItems.Clear();
-            foreach(var location in packet.Items)
+            foreach(var item in packet.Items)
             {
-                map.MapItems.Add(location.Key, new List<MapItemInstance>());
-                foreach (var item in location.Value)
+                var mapItem = new MapItemInstance(item.TileIndex,item.Id, item.ItemId, item.BagId, item.Quantity, item.StatBuffs);
+                
+                if (!map.MapItems.ContainsKey(mapItem.TileIndex))
                 {
-                    map.MapItems[location.Key].Add(new MapItemInstance(item));
+                    map.MapItems.Add(mapItem.TileIndex, new List<MapItemInstance>());
                 }
+
+                map.MapItems[mapItem.TileIndex].Add(mapItem);
             }
         }
 
@@ -946,13 +963,12 @@ namespace Intersect.Client.Networking
             }
 
             // Are we deleting this item?
-            if (packet.Remove)
+            if (packet.ItemId == Guid.Empty)
             {
                 // Find our item based on our unique Id and remove it.
-                var uniqueId = Guid.Parse(packet.ItemData);
                 foreach(var location in map.MapItems.Keys)
                 {
-                    var tempItem = map.MapItems[location].Where(item => item.UniqueId == uniqueId).SingleOrDefault();
+                    var tempItem = map.MapItems[location].Where(item => item.UniqueId == packet.Id).SingleOrDefault();
                     if (tempItem != null)
                     {
                         map.MapItems[location].Remove(tempItem);
@@ -961,27 +977,27 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                if (!map.MapItems.ContainsKey(packet.Location))
+                if (!map.MapItems.ContainsKey(packet.TileIndex))
                 {
-                    map.MapItems.Add(packet.Location, new List<MapItemInstance>());
+                    map.MapItems.Add(packet.TileIndex, new List<MapItemInstance>());
                 }
 
                 // Check if the item already exists, if it does replace it. Otherwise just add it.
-                var mapItem = new MapItemInstance(packet.ItemData);
-                if (map.MapItems[packet.Location].Any(item => item.UniqueId == mapItem.UniqueId))
+                var mapItem = new MapItemInstance(packet.TileIndex, packet.Id, packet.ItemId, packet.BagId, packet.Quantity, packet.StatBuffs);
+                if (map.MapItems[packet.TileIndex].Any(item => item.UniqueId == mapItem.UniqueId))
                 {
-                    for (var index = 0; index < map.MapItems[packet.Location].Count; index++)
+                    for (var index = 0; index < map.MapItems[packet.TileIndex].Count; index++)
                     {
-                        if (map.MapItems[packet.Location][index].UniqueId == mapItem.UniqueId)
+                        if (map.MapItems[packet.TileIndex][index].UniqueId == mapItem.UniqueId)
                         {
-                            map.MapItems[packet.Location][index] = mapItem;
+                            map.MapItems[packet.TileIndex][index] = mapItem;
                         }
                     }
                 }
                 else
                 {
                     // Reverse the array again to match server, add item.. then  reverse again to get the right render order.
-                    map.MapItems[packet.Location].Add(mapItem);
+                    map.MapItems[packet.TileIndex].Add(mapItem);
                 } 
             }
         }
@@ -1796,8 +1812,8 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, TargetOverridePacket packet)
         {
             if (Globals.Entities.ContainsKey(packet.TargetId))
-            {
-                Globals.Me.TargetIndex = packet.TargetId;
+            { 
+                Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
             }
         }
 
@@ -1806,6 +1822,16 @@ namespace Intersect.Client.Networking
         {
             //Fade out, we're finally loading the game world!
             Fade.FadeOut();
+        }
+
+        //CancelCastPacket
+        public void HandlePacket(IPacketSender packetSender, CancelCastPacket packet)
+        {
+            if (Globals.Entities.ContainsKey(packet.EntityId))
+            {
+                Globals.Entities[packet.EntityId].CastTime = 0;
+                Globals.Entities[packet.EntityId].SpellCast = Guid.Empty;
+            }
         }
 
     }

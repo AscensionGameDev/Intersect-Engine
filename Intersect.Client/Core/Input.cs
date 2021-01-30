@@ -5,6 +5,7 @@ using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Logging;
@@ -34,6 +35,7 @@ namespace Intersect.Client.Core
             }
 
             var consumeKey = false;
+            bool canFocusChat = true;
 
             KeyDown?.Invoke(key);
             switch (key)
@@ -48,6 +50,39 @@ namespace Intersect.Client.Core
                     Globals.GameState = GameStates.Menu;
 
                     return;
+
+                case Keys.Enter:
+
+                    for (int i = Interface.Interface.InputBlockingElements.Count - 1; i >= 0; i--)
+                    {
+                        try
+                        {
+                            var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
+                            if (iBox != null && !iBox.IsHidden)
+                            {
+                                iBox.okayBtn_Clicked(null, null);
+                                canFocusChat = false;
+
+                                break;
+                            }
+                        }
+                        catch { }
+
+                        try
+                        {
+                            var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
+                            if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
+                            {
+                                eventWindow.EventResponse1_Clicked(null, null);
+                                canFocusChat = false;
+
+                                break;
+                            }
+                        }
+                        catch { }
+                    }
+
+                    break;
             }
 
             if (Controls.Controls.ControlHasKey(Control.OpenMenu, key))
@@ -57,7 +92,24 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                // First try and unfocus chat then close all UI elements, then untarget our target.. and THEN open the escape menu.
+                // Most games do this, why not this?
+                if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.ChatFocussed)
+                {
+                    Interface.Interface.GameUi.UnfocusChat = true;
+                }
+                else if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.CloseAllWindows())
+                {
+                    // We've closed our windows, don't do anything else. :)
+                }
+                else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty)
+                {
+                    Globals.Me.ClearTarget();
+                }
+                else
+                {
+                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                }
             }
 
             if (Interface.Interface.HasInputFocus())
@@ -127,13 +179,16 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.PickUp:
-                                        Globals.Me?.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true);
+                                        Globals.Me?.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
 
                                         break;
 
                                     case Control.Enter:
-                                        Interface.Interface.GameUi.FocusChat = true;
-                                        consumeKey = true;
+                                        if (canFocusChat)
+                                        {
+                                            Interface.Interface.GameUi.FocusChat = true;
+                                            consumeKey = true;
+                                        }
 
                                         return;
 
@@ -147,20 +202,6 @@ namespace Intersect.Client.Core
                                     case Control.Hotkey8:
                                     case Control.Hotkey9:
                                     case Control.Hotkey0:
-                                        var index = control - Control.Hotkey1;
-                                        if (0 <= index && index < Interface.Interface.GameUi?.Hotbar?.Items?.Count)
-                                        {
-                                            Interface.Interface.GameUi?.Hotbar?.Items?[index]?.Activate();
-                                        }
-                                        else
-                                        {
-                                            Log.Warn(
-                                                Interface.Interface.GameUi?.Hotbar?.Items == null
-                                                    ? $"Tried to press Hotkey{(index + 1) % 10} but the hotbar items are null."
-                                                    : $"Tried to press Hotkey{(index + 1) % 10} which was out of bounds ({control})."
-                                            );
-                                        }
-
                                         break;
 
                                     case Control.OpenInventory:
@@ -294,7 +335,7 @@ namespace Intersect.Client.Core
 
             if (Controls.Controls.ControlHasKey(Control.PickUp, key))
             {
-                if (Globals.Me.TryPickupItem(Globals.Me.X, Globals.Me.Y, Guid.Empty, true))
+                if (Globals.Me.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true))
                 {
                     return;
                 }

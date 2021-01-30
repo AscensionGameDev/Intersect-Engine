@@ -81,19 +81,19 @@ namespace Intersect.Network
             return true;
         }
 
-        public override bool Send(IPacket packet)
+        public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return mLidgrenInterface?.SendPacket(packet) ?? false;
+            return mLidgrenInterface?.SendPacket(packet, (IConnection)null, mode) ?? false;
         }
 
-        public override bool Send(IConnection connection, IPacket packet)
+        public override bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(packet);
+            return Send(packet, mode);
         }
 
-        public override bool Send(ICollection<IConnection> connections, IPacket packet)
+        public override bool Send(ICollection<IConnection> connections, IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return Send(packet);
+            return Send(packet, mode);
         }
 
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)

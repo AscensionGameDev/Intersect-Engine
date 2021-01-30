@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Intersect.GameObjects;
 using Intersect.Server.Entities.Combat;
@@ -24,11 +25,13 @@ namespace Intersect.Server.Entities
 
         public long TransmittionTimer = Globals.Timing.Milliseconds;
 
-        public byte X;
+        public float X;
 
-        public byte Y;
+        public float Y;
 
         public byte Z;
+
+        private List<Guid> mEntitiesCollided = new List<Guid>();
 
         public ProjectileSpawn(
             byte dir,
@@ -60,8 +63,35 @@ namespace Intersect.Server.Entities
         {
             var targetEntity = en;
             if (targetEntity is EventPageInstance) return false;
+
+            var scalingStat = Enums.Stats.StatCount;
+
+            if (Parent.Spell != null && Parent.Spell.Combat != null)
+            {
+                scalingStat = (Enums.Stats) Parent.Spell.Combat.ScalingStat;
+            }
+            if (Parent.Item != null)
+            {
+                scalingStat = (Enums.Stats) Parent.Item.ScalingStat;
+            }
+
             if (targetEntity != null && targetEntity != Parent.Owner)
             {
+
+                // Have we collided with this entity before? If so, cancel out.
+                if (mEntitiesCollided.Contains(en.Id))
+                {
+                    if (!Parent.Base.PierceTarget)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                mEntitiesCollided.Add(en.Id);
+
                 if (targetEntity.GetType() == typeof(Player)) //Player
                 {
                     if (Parent.Owner != Parent.Target)
@@ -87,10 +117,10 @@ namespace Intersect.Server.Entities
                 }
                 else if (targetEntity.GetType() == typeof(Resource))
                 {
-                    if (((Resource) targetEntity).IsDead && !ProjectileBase.IgnoreExhaustedResources ||
-                        !((Resource) targetEntity).IsDead && !ProjectileBase.IgnoreActiveResources)
+                    if (((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreExhaustedResources ||
+                        !((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreActiveResources)
                     {
-                        if (Parent.Owner.GetType() == typeof(Player) && !((Resource) targetEntity).IsDead)
+                        if (Parent.Owner.GetType() == typeof(Player) && !((Resource) targetEntity).IsDead())
                         {
                             Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
                             if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled

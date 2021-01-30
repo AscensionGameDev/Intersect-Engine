@@ -21,6 +21,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
@@ -40,6 +41,8 @@ namespace Intersect.Server.Networking
 
         public PacketHandlerRegistry Registry { get; }
 
+        public static PacketHandler Instance { get; private set; }
+
         public PacketHandler(IServerContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
@@ -49,6 +52,8 @@ namespace Intersect.Server.Networking
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
             }
+
+            Instance = this;
         }
 
         public bool PreProcessPacket(IConnection connection, long pSize)
@@ -65,22 +70,8 @@ namespace Intersect.Server.Networking
             }
 
             var packetOptions = Options.Instance.SecurityOpts?.PacketOpts;
-            var thresholds = packetOptions?.Threshholds;
-            if (client.IsEditor)
-            {
-                //Is Editor
-                thresholds = packetOptions?.EditorThreshholds;
-            }
-            else if (client.User != null)
-            {
-                //Logged In
-                thresholds = packetOptions?.PlayerThreshholds;
-
-                if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
-                {
-                    thresholds = packetOptions?.ModAdminThreshholds;
-                }
-            }
+            var thresholds = client.PacketFloodingThreshholds;
+            
 
             if (pSize > thresholds.MaxPacketSize)
             {
@@ -120,12 +111,12 @@ namespace Intersect.Server.Networking
 
                     if (client.FloodDetects > 3)
                     {
-                        Log.Error(
-                            Strings.Errors.floodaverage.ToString(
-                                client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "",
-                                client.GetIp()
-                            )
-                        );
+                        //Log.Error(
+                        //    Strings.Errors.floodaverage.ToString(
+                        //        client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "",
+                        //        client.GetIp()
+                        //    )
+                        //);
 
                         client.FloodKicked = true;
                         client.Disconnect("Flooding detected.");
@@ -166,11 +157,21 @@ namespace Intersect.Server.Networking
 
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
+            packet.ReceiveTime = Globals.Timing.Milliseconds;
+
             var client = Client.FindBeta4Client(connection);
             if (client == null)
             {
-                throw new Exception("Client is null!");
+                Log.Error("Client was null when packet was being handled.");
+                return false;
             }
+
+            while (client.RecentPackets.Count > 75)
+            {
+                client.RecentPackets.TryDequeue(out IPacket pkt);
+            }
+
+            client.RecentPackets.Enqueue(packet);
 
             if (client.Banned)
             {
@@ -320,20 +321,20 @@ namespace Intersect.Server.Networking
 
                     if (client.TimedBufferPacketsRemaining-- < 1 || timeDesync)
                     {
-                        if (!(packet is PingPacket))
-                        {
-                            Log.Error(
-                                "Dropping Packet. Time desync? Debug Info:\n\t" +
-                                $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                                $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
-                                $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
-                                $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
-                                $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
-                                $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
-                                $"Time Desync[{timeDesync}]\n\t" +
-                                $"Packet[{packet.ToString()}]"
-                            );
-                        }
+                        //if (!(packet is PingPacket))
+                        //{
+                        //    Log.Warn(
+                        //        "Dropping Packet. Time desync? Debug Info:\n\t" +
+                        //        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                        //        $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                        //        $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
+                        //        $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
+                        //        $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
+                        //        $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
+                        //        $"Time Desync[{timeDesync}]\n\t" +
+                        //        $"Packet[{packet}]"
+                        //    );
+                        //}
 
                         try
                         {
@@ -364,77 +365,64 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    ++client.TimedBufferPacketsRemaining;
-                    PacketSender.SendPing(client);
+                    client.TimedBufferPacketsRemaining = Math.Min(configurableAllowedSpikePackets, client.TimedBufferPacketsRemaining++);
                 }
             }
-
-            try
+            
+            client.HandlePacketQueue.Enqueue(packet);
+            lock (client.HandlePacketQueue)
             {
-                if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
+                if (!client.PacketHandlingQueued)
                 {
-                    Logger.Error($"No registered handler for {packet.GetType().FullName}!");
-
-                    return false;
-                }
-
-                if (Registry.TryGetPreprocessors(packet, out var preprocessors))
-                {
-                    if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
-                    {
-                        // Preprocessors are intended to be silent filter functions
-                        return false;
-                    }
-                }
-
-                if (Registry.TryGetPreHooks(packet, out var preHooks))
-                {
-                    if (!preHooks.All(hook => hook.Handle(client, packet)))
-                    {
-                        // Hooks should not fail, if they do that's an error
-                        Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
-                        return false;
-                    }
-                }
-
-                if (!handler(client, packet))
-                {
-                    return false;
-                }
-
-                if (Registry.TryGetPostHooks(packet, out var postHooks))
-                {
-                    if (!postHooks.All(hook => hook.Handle(client, packet)))
-                    {
-                        // Hooks should not fail, if they do that's an error
-                        Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
-                        return false;
-                    }
-                }
+                    client.PacketHandlingQueued = true;
+                    ServerNetwork.Pool.QueueWorkItem(client.HandlePackets);
+                } 
             }
-            catch (Exception exception)
+
+            return true;
+        }
+
+        public bool ProcessPacket(IPacket packet, Client client)
+        {
+            if (!Registry.TryGetHandler(packet, out HandlePacketGeneric handler))
             {
-                var packetType = packet.GetType().Name;
-                var packetMessage =
-                    $"Client Packet Error! [Packet: {packetType} | User: {client.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]";
+                Logger.Error($"No registered handler for {packet.GetType().FullName}!");
 
-                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                Log.Error(packetMessage);
-                Log.Error(new ExceptionInfo(exception));
-                if (exception.InnerException != null)
-                {
-                    Log.Error(new ExceptionInfo(exception.InnerException));
-                }
-
-                // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                Log.Error(exception, packetMessage);
-
-#if DIAGNOSTIC
-                client.Disconnect($"Error processing packet type '{packetType}'.");
-#else
-                client.Disconnect($"Error processing packet.");
-#endif
                 return false;
+            }
+
+            if (Registry.TryGetPreprocessors(packet, out var preprocessors))
+            {
+                if (!preprocessors.All(preprocessor => preprocessor.Handle(client, packet)))
+                {
+                    // Preprocessors are intended to be silent filter functions
+                    return false;
+                }
+            }
+
+            if (Registry.TryGetPreHooks(packet, out var preHooks))
+            {
+                if (!preHooks.All(hook => hook.Handle(client, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
+            }
+
+            if (!handler(client, packet))
+            {
+                return false;
+            }
+
+            if (Registry.TryGetPostHooks(packet, out var postHooks))
+            {
+                if (!postHooks.All(hook => hook.Handle(client, packet)))
+                {
+                    // Hooks should not fail, if they do that's an error
+                    Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
+                    return false;
+                }
             }
 
             return true;
@@ -484,14 +472,15 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (!DbInterface.TryLogin(packet.Username, packet.Password, out var userId))
+            var user = User.TryLogin(packet.Username, packet.Password);
+            if (user == null)
             {
                 using (var logging = DbInterface.LoggingContext)
                 {
                     logging.UserActivityHistory.Add(
                         new UserActivityHistory
                         {
-                            UserId = userId,
+                            UserId = Guid.Empty,
                             Ip = client.GetIp(),
                             Peer = UserActivityHistory.PeerType.Client,
                             Action = UserActivityHistory.UserAction.FailedLogin,
@@ -508,40 +497,39 @@ namespace Intersect.Server.Networking
 
             lock (Globals.ClientLock)
             {
-                Globals.Clients.ForEach(
-                    user =>
+                foreach (var cli in Globals.Clients.ToArray())
+                {
+                    if (cli == client)
                     {
-                        if (user == client)
-                        {
-                            return;
-                        }
-
-                        if (user?.IsEditor ?? false)
-                        {
-                            return;
-                        }
-
-                        if (!string.Equals(user?.Name, packet.Username, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            return;
-                        }
-
-                        user?.Disconnect();
+                        continue;
                     }
-                );
+
+                    if (cli?.IsEditor ?? false)
+                    {
+                        continue;
+                    }
+
+                    if (!string.Equals(cli?.Name, packet.Username, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    cli?.Disconnect();
+                }
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
-            if (!DbInterface.LoadUser(client, packet.Username))
+            client.SetUser(user);
+
+            if (client.User != null)
             {
-                PacketSender.SendError(client, Strings.Account.loadfail);
+                //Logged In
+                client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.PlayerThreshholds;
 
-                return;
+                if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
+                {
+                    client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.ModAdminThreshholds;
+                }
             }
-
-            sw.Stop();
-            Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load user and characters from db!");
 
             //Check for ban
             var isBanned = Ban.CheckBan(client.User, client.GetIp());
@@ -573,7 +561,7 @@ namespace Intersect.Server.Networking
                 logging.UserActivityHistory.Add(
                     new UserActivityHistory
                     {
-                        UserId = userId,
+                        UserId = user.Id,
                         Ip = client.GetIp(),
                         Peer = UserActivityHistory.PeerType.Client,
                         Action = UserActivityHistory.UserAction.Login
@@ -623,7 +611,7 @@ namespace Intersect.Server.Networking
                     );
                 }
 
-                client.Logout();
+                client?.Logout();
             }
 
             if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
@@ -657,8 +645,7 @@ namespace Intersect.Server.Networking
             }
 
             //check if player is stunned or snared, if so don't let them move.
-            var statuses = client.Entity.Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            foreach (var status in player.CachedStatuses)
             {
                 if (status.Type == StatusTypes.Stun ||
                     status.Type == StatusTypes.Snare ||
@@ -686,7 +673,7 @@ namespace Intersect.Server.Networking
                     player.Move(packet.Dir, player, false);
                     var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
                     var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
-                    var currentMs = Globals.Timing.Milliseconds;
+                    var currentMs = packet.ReceiveTime;
                     if (player.MoveTimer > currentMs)
                     {
                         player.MoveTimer = currentMs + latencyAdjustmentMs + (long) (player.GetMovementTime() * .75f);
@@ -696,7 +683,6 @@ namespace Intersect.Server.Networking
                 else
                 {
                     PacketSender.SendEntityPositionTo(client, client.Entity);
-
                     return;
                 }
             }
@@ -770,6 +756,10 @@ namespace Intersect.Server.Networking
                         cmd = Strings.Chat.admincmd;
 
                         break;
+                    case 4: //private
+                        PacketSender.SendChatMsg(player, msg, ChatMessageType.Local);
+
+                        return;
                 }
             }
             else
@@ -1048,7 +1038,10 @@ namespace Intersect.Server.Networking
 
             if (player.CastTime > Globals.Timing.Milliseconds)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                if (Options.Combat.EnableCombatChatMessages)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                }
 
                 return;
             }
@@ -1056,20 +1049,25 @@ namespace Intersect.Server.Networking
             var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
             var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
-            //check if player is blinded or stunned
-            var statuses = player.Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            //check if player is blinded or stunned or in stealth mode
+            foreach (var status in player.CachedStatuses)
             {
                 if (status.Type == StatusTypes.Stun)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
-
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
+                    }
+                    
                     return;
                 }
 
                 if (status.Type == StatusTypes.Sleep)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    }
 
                     return;
                 }
@@ -1079,6 +1077,12 @@ namespace Intersect.Server.Networking
                     PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
 
                     return;
+                }
+
+                //Remove stealth status.
+                if (status.Type == StatusTypes.Stealth)
+                {
+                    status.RemoveStatus();
                 }
             }
 
@@ -1125,7 +1129,7 @@ namespace Intersect.Server.Networking
                     if (attackAnim != null && attackingTile.TryFix())
                     {
                         PacketSender.SendAnimationToProximity(
-                            attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
+                            attackAnim.Id, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
                             attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
@@ -1181,8 +1185,9 @@ namespace Intersect.Server.Networking
 #endif
                         MapInstance.Get(player.MapId)
                             .SpawnMapProjectile(
-                                player, projectileBase, null, weaponItem, player.MapId, (byte) player.X,
-                                (byte) player.Y, (byte) player.Z, (byte) player.Dir, null
+                                player, projectileBase, null, weaponItem, player.MapId,
+                                (byte)player.X, (byte)player.Y, (byte)player.Z,
+                                (byte)player.Dir, null
                             );
 
                         player.AttackTimer = Globals.Timing.Milliseconds +
@@ -1225,7 +1230,7 @@ namespace Intersect.Server.Networking
                     if (classBase.AttackAnimation != null)
                     {
                         PacketSender.SendAnimationToProximity(
-                            classBase.AttackAnimationId, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(),
+                            classBase.AttackAnimationId, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
                             attackingTile.GetY(), (sbyte) player.Dir
                         );
                     }
@@ -1320,15 +1325,6 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            //Check for ban
-            var isBanned = Ban.CheckBan(client.GetIp());
-            if (isBanned != null)
-            {
-                PacketSender.SendError(client, isBanned);
-
-                return;
-            }
-
             if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
             {
                 PacketSender.SendError(client, Strings.Account.invalidname);
@@ -1343,13 +1339,22 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (DbInterface.AccountExists(packet.Username))
+            //Check for ban
+            var isBanned = Ban.CheckBan(client.GetIp());
+            if (isBanned != null)
+            {
+                PacketSender.SendError(client, isBanned);
+
+                return;
+            }
+
+            if (User.UserExists(packet.Username))
             {
                 PacketSender.SendError(client, Strings.Account.exists);
             }
             else
             {
-                if (DbInterface.EmailInUse(packet.Email))
+                if (User.UserExists(packet.Email))
                 {
                     PacketSender.SendError(client, Strings.Account.emailexists);
                 }
@@ -1370,6 +1375,18 @@ namespace Intersect.Server.Networking
                     }
 
                     DbInterface.CreateAccount(client, packet.Username, packet.Password, packet.Email);
+
+                    if (client.User != null)
+                    {
+                        //Logged In
+                        client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.PlayerThreshholds;
+
+                        if (client.User.Power.IsAdmin || client.User.Power.IsModerator)
+                        {
+                            client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.ModAdminThreshholds;
+                        }
+                    }
+
                     PacketSender.SendServerConfig(client);
 
                     //Check that server is in admin only mode
@@ -1421,16 +1438,14 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (DbInterface.CharacterNameInUse(packet.Name))
+            if (Player.PlayerExists(packet.Name))
             {
                 PacketSender.SendError(client, Strings.Account.characterexists);
-
                 return;
             }
 
             var newChar = new Player();
             newChar.Id = Guid.NewGuid();
-            DbInterface.AddCharacter(client.User, newChar);
             newChar.ValidateLists();
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
@@ -1494,103 +1509,119 @@ namespace Intersect.Server.Networking
                 );
             }
 
-            PacketSender.SendJoinGame(client);
+            client.User.AddCharacter(newChar);
             newChar.SetOnline();
 
-            DbInterface.SavePlayerDatabaseAsync();
+            PacketSender.SendJoinGame(client);
         }
 
         //PickupItemPacket
         public void HandlePacket(Client client, PickupItemPacket packet)
         {
-            var player = client?.Entity;
-            if (player == null)
+            var player = client.Entity;
+            if (player == null || packet.TileIndex < 0 || packet.TileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return;
             }
 
-            var map = MapInstance.Get(player.MapId);
+            var map = MapInstance.Get(packet.MapId);
+
+            // Is this a valid map?
             if (map == null)
             {
                 return;
             }
 
-            // Is our user on the location they're trying to pick stuff up on?
-            var itemLocation = packet.Location;
-            if (itemLocation.X != player.X && itemLocation.Y != player.Y)
+            // Is our user within range of the item they are trying to pick up?
+            if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > Options.Loot.MaximumLootWindowDistance)
             {
                 return;
             }
 
-            // Are we tracking any items for this location?
-            if (!map.MapItems.ContainsKey(itemLocation))
-            {
-                return;
-            }
-
-            var giveItems = new List<MapItem>();
-
+            var giveItems = new Dictionary<MapInstance, List<MapItem>>();
             // Are we trying to pick up everything on this location or one specific item?
             if (packet.UniqueId == Guid.Empty)
             {
-                // Everything.
-                giveItems = map.MapItems[itemLocation];
+                // GET IT ALL! BE GREEDY!
+                foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
+                {
+                    var tempMap = itemMap.Key;
+                    if (!giveItems.ContainsKey(itemMap.Key))
+                    {
+                        giveItems.Add(tempMap, new List<MapItem>());
+                    }
+
+                    foreach(var itemLoc in itemMap.Value)
+                    {
+                        giveItems[tempMap].AddRange(tempMap.FindItemsAt(itemLoc));
+                    }
+                }
             }
             else
             {
                 // One specific item.
-                giveItems.Add(map.FindItem(packet.UniqueId));
+                giveItems.Add(map, new List<MapItem>() { map.FindItem(packet.UniqueId) });
             }
 
             // Go through each item we're trying to give our player and see if we can do so.
-            var toRemove = new List<Guid>();
-            foreach (var mapItem in giveItems)
+            foreach (var itemMap in giveItems)
             {
-                if (mapItem == null)
+                var tempMap = itemMap.Key;
+                var toRemove = new List<MapItem>();
+                foreach (var mapItem in itemMap.Value)
                 {
-                    continue;
-                }
-
-                var canTake = false;
-
-                // Can we actually take this item?
-                if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
-                {
-                    // The ownership time has run out, or there's no owner!
-                    canTake = true;
-                }
-                else if (mapItem.Owner == player.Id || player.Party.Any(p => p.Id == mapItem.Owner))
-                {
-                    // The current player is the owner, or one of their party members is.
-                    canTake = true;
-                }
-
-                if (canTake)
-                {
-                    // Try to give the item to our player.
-                    if (player.TryGiveItem(mapItem))
+                    if (mapItem == null)
                     {
-                        // Mark this item for map removal.
-                        // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
-                        toRemove.Add(mapItem.UniqueId);
+                        continue;
                     }
-                    else
-                    {
-                        // We couldn't give the player their item, notify them.
-                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Loot, CustomColors.Alerts.Error);
-                    }
-                }
-                else
-                {
-                    // Item does not belong to them.
-                    PacketSender.SendChatMsg(player, Strings.Items.NotYours, ChatMessageType.Loot, CustomColors.Alerts.Error);
-                }
-            }
 
-            // Remove all items that were picked up.
-            foreach (var id in toRemove)
-            {
-                map.RemoveItem(id);
+                    var canTake = false;
+                    // Can we actually take this item?
+                    if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
+                    {
+                        // The ownership time has run out, or there's no owner!
+                        canTake = true;
+                    }
+                    else if (mapItem.Owner == player.Id)
+                    {
+                        // The current player is the owner.
+                        canTake = true;
+                    }
+
+                    // Does this item still exist, or did it somehow get picked up before we got there?
+                    if (tempMap.FindItem(mapItem.UniqueId) == null)
+                    {
+                        continue;
+                    }
+
+                    if (canTake)
+                    {
+                        // Try to give the item to our player.
+                        if (player.TryGiveItem(mapItem))
+                        {
+                            var item = ItemBase.Get(mapItem.ItemId);
+                            if (item != null)
+                            {
+                                PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
+                            }
+
+                            // Mark this item for map removal.
+                            // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
+                            toRemove.Add(mapItem);
+                        }
+                        else
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                        }
+                    }
+                }
+
+                // Remove all items that were picked up.
+                foreach (var item in toRemove)
+                {
+                    tempMap.RemoveItem(item);
+                }
             }
         }
 
@@ -2193,7 +2224,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.StoreBagItem(packet.Slot, packet.Quantity);
+            player?.StoreBagItem(packet.Slot, packet.Quantity, packet.BagSlot);
         }
 
         //RetrieveBagItemPacket
@@ -2205,7 +2236,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.RetrieveBagItem(packet.Slot, packet.Quantity);
+            player?.RetrieveBagItem(packet.Slot, packet.Quantity, packet.InventorySlot);
         }
 
         //SwapBagItemPacket
@@ -2249,47 +2280,50 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                var character = DbInterface.GetPlayer(packet.Name);
-                if (character != null)
+                if (client.Entity.GetFriendId(packet.Name) == Guid.Empty)
                 {
-                    if (!client.Entity.HasFriend(character))
+                    var target = Player.FindOnline(packet.Name);
+                    if (target != null)
                     {
-                        var target = Player.FindOnline(packet.Name);
-                        if (target != null)
+                        if (target.CombatTimer < Globals.Timing.Milliseconds)
                         {
                             target.FriendRequest(client.Entity);
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
+                            PacketSender.SendChatMsg(player, Strings.Friends.busy.ToString(target.Name), ChatMessageType.Friend);
                         }
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(
-                            player, Strings.Friends.alreadyfriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
-                        );
+                        PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Friend, CustomColors.Alerts.Error);
                     }
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(
+                        player, Strings.Friends.alreadyfriends.ToString(packet.Name), ChatMessageType.Friend, CustomColors.Alerts.Info
+                    );
                 }
             }
             else
             {
-                var charId = DbInterface.GetCharacterId(packet.Name);
-
-                if (charId != null)
+                //Check if we have this friend
+                var friendId = player.GetFriendId(packet.Name);
+                if (friendId != Guid.Empty)
                 {
-                    var character = DbInterface.GetPlayer((Guid) charId);
-                    if (character != null && client.Entity.HasFriend(character))
+                    var otherPlayer = Player.FindOnline(friendId);
+                    player.CachedFriends.Remove(friendId);
+                    PacketSender.SendFriends(player);
+                    PacketSender.SendChatMsg(player, Strings.Friends.remove, ChatMessageType.Friend, CustomColors.Alerts.Declined);
+
+                    if (otherPlayer?.CachedFriends.ContainsKey(player.Id) ?? false)
                     {
-                        player.RemoveFriend(character);
-                        character.RemoveFriend(player);
-                        PacketSender.SendChatMsg(player, Strings.Friends.remove, ChatMessageType.Friend, CustomColors.Alerts.Declined);
-                        PacketSender.SendFriends(player);
-                        if (character.Client != null)
-                        {
-                            PacketSender.SendFriends(character);
-                        }
+                        otherPlayer.CachedFriends.Remove(player.Id);
+                        PacketSender.SendFriends(otherPlayer);
                     }
+
+                    Player.RemoveFriendship(player.Id, friendId);
                 }
             }
         }
@@ -2312,7 +2346,7 @@ namespace Intersect.Server.Networking
 
             if (packet.AcceptingRequest)
             {
-                if (!player.HasFriend(target)) // Incase one user deleted friend then re-requested
+                if (!player.CachedFriends.ContainsKey(target.Id)) // Incase one user deleted friend then re-requested
                 {
                     player.AddFriend(target);
                     PacketSender.SendChatMsg(
@@ -2322,7 +2356,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendFriends(player);
                 }
 
-                if (!target.HasFriend(player)) // Incase one user deleted friend then re-requested
+                if (!target.CachedFriends.ContainsKey(player.Id)) // Incase one user deleted friend then re-requested
                 {
                     target.AddFriend(player);
                     PacketSender.SendChatMsg(
@@ -2424,7 +2458,7 @@ namespace Intersect.Server.Networking
                             );
                         }
 
-                        DbInterface.DeleteCharacter(client.User, chr);
+                        client.User.DeleteCharacter(chr);
                     }
                 }
             }
@@ -2461,16 +2495,9 @@ namespace Intersect.Server.Networking
             if (Options.Instance.SmtpValid)
             {
                 //Find account with that name or email
-                var userName = DbInterface.UsernameFromEmail(packet.NameOrEmail);
-                if (string.IsNullOrEmpty(userName))
+                var user = User.FindFromNameOrEmail(packet.NameOrEmail.Trim());
+                if (user != null)
                 {
-                    userName = packet.NameOrEmail;
-                }
-
-                if (DbInterface.AccountExists(userName))
-                {
-                    //Send reset email
-                    var user = DbInterface.GetUser(userName);
                     var email = new PasswordResetEmail(user);
                     email.Send();
                 }
@@ -2489,17 +2516,19 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, ResetPasswordPacket packet)
         {
             //Find account with that name or email
-            var success = false;
-            var userName = DbInterface.UsernameFromEmail(packet.NameOrEmail);
-            if (string.IsNullOrEmpty(userName))
+
+            if (client.TimeoutMs > Globals.Timing.Milliseconds)
             {
-                userName = packet.NameOrEmail;
+                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                client.ResetTimeout();
+
+                return;
             }
 
-            if (DbInterface.AccountExists(userName))
+            var success = false;
+            var user = User.FindFromNameOrEmail(packet.NameOrEmail.Trim());
+            if (user != null)
             {
-                //Reset Password
-                var user = DbInterface.GetUser(userName);
                 if (user.PasswordResetCode.ToLower().Trim() == packet.ResetCode.ToLower().Trim() &&
                     user.PasswordResetTime > DateTime.UtcNow)
                 {
@@ -2535,14 +2564,15 @@ namespace Intersect.Server.Networking
 
             client.ResetTimeout();
 
-            if (!DbInterface.TryLogin(packet.Username, packet.Password, out var userId))
+            var user = User.TryLogin(packet.Username, packet.Password);
+            if (user == null)
             {
                 using (var logging = DbInterface.LoggingContext)
                 {
                     logging.UserActivityHistory.Add(
                         new UserActivityHistory
                         {
-                            UserId = userId,
+                            UserId = Guid.Empty,
                             Ip = client.GetIp(),
                             Peer = UserActivityHistory.PeerType.Editor,
                             Action = UserActivityHistory.UserAction.FailedLogin,
@@ -2557,7 +2587,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (!DbInterface.CheckAccess(packet.Username).Editor)
+            if (!user.Power.Editor)
             {
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badaccess);
@@ -2566,28 +2596,35 @@ namespace Intersect.Server.Networking
             }
 
             client.IsEditor = true;
-            var sw = new Stopwatch();
-            sw.Start();
-            DbInterface.LoadUser(client, packet.Username);
-            sw.Stop();
-            Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load player from db!");
+            if (client.IsEditor)
+            {
+                //Is Editor
+                client.PacketFloodingThreshholds = Options.Instance.SecurityOpts.PacketOpts.EditorThreshholds;
+            }
+
+
+            client.SetUser(user);
+
             lock (Globals.ClientLock)
             {
                 var clients = Globals.Clients.ToArray();
-                foreach (var user in clients)
+                foreach (var cli in clients)
                 {
-                    if (user.Name != null &&
-                        user.Name.ToLower() == packet.Username.ToLower() &&
-                        user != client &&
-                        user.IsEditor)
+                    if (cli.Name != null &&
+                        cli.Name.ToLower() == packet.Username.ToLower() &&
+                        cli != client &&
+                        cli.IsEditor)
                     {
-                        user.Disconnect();
+                        cli.Disconnect();
                     }
                 }
             }
 
             PacketSender.SendServerConfig(client);
+
+            //Editor doesn't receive packet before login
             PacketSender.SendJoinGame(client);
+
             PacketSender.SendTimeBaseTo(client);
             PacketSender.SendMapList(client);
         }
@@ -2636,10 +2673,11 @@ namespace Intersect.Server.Networking
                 var dbObj = EventBase.Get(evt.Key);
                 if (dbObj == null)
                 {
-                    dbObj = (EventBase) DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                    dbObj = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
                 }
 
                 dbObj.Load(evt.Value.JsonData);
+                DbInterface.SaveGameObject(dbObj);
                 if (!map.EventIds.Contains(evt.Key))
                 {
                     map.EventIds.Add(evt.Key);
@@ -2655,7 +2693,8 @@ namespace Intersect.Server.Networking
 
             map.AttributeData = packet.AttributeData;
 
-            DbInterface.SaveGameDatabase();
+            DbInterface.SaveGameObject(map);
+
             map.Initialize();
             var players = new List<Player>();
             foreach (var surrMap in map.GetSurroundingMaps(true))
@@ -2683,25 +2722,29 @@ namespace Intersect.Server.Networking
 
             lock (ServerContext.Instance.LogicService.LogicLock)
             {
-                var newMap = Guid.Empty;
+                ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
+                var newMapId = Guid.Empty;
+                MapInstance newMap = null;
                 var tmpMap = new MapInstance(true);
                 if (!packet.AttachedToMap)
                 {
-                    var destType = (int) packet.MapListParentType;
-                    newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                    tmpMap = MapInstance.Get(newMap);
+                    var destType = (int)packet.MapListParentType;
+                    newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                    newMapId = newMap.Id;
+                    tmpMap = MapInstance.Get(newMapId);
                     DbInterface.GenerateMapGrids();
-                    PacketSender.SendMap(client, newMap, true);
+                    PacketSender.SendMap(client, newMapId, true);
                     PacketSender.SendMapGridToAll(tmpMap.MapGrid);
 
                     //FolderDirectory parent = null;
                     destType = -1;
                     if (destType == -1)
                     {
-                        MapList.List.AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
+                        MapList.List.AddMap(newMapId, tmpMap.TimeCreated, MapBase.Lookup);
                     }
 
-                    DbInterface.SaveGameDatabase();
+                    DbInterface.SaveMapList();
+
                     PacketSender.SendMapListToAll();
                     /*else if (destType == 0)
                     {
@@ -2737,12 +2780,14 @@ namespace Intersect.Server.Networking
                         case 0:
                             if (MapInstance.Get(MapInstance.Get(relativeMap).Up) == null)
                             {
-                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                                tmpMap = MapInstance.Get(newMap);
+                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMapId = newMap.Id;
+                                tmpMap = MapInstance.Get(newMapId);
                                 tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
                                 tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
                                 tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY - 1;
-                                MapInstance.Get(relativeMap).Up = newMap;
+                                MapInstance.Get(relativeMap).Up = newMapId;
+                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
                             }
 
                             break;
@@ -2750,12 +2795,14 @@ namespace Intersect.Server.Networking
                         case 1:
                             if (MapInstance.Get(MapInstance.Get(relativeMap).Down) == null)
                             {
-                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                                tmpMap = MapInstance.Get(newMap);
+                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMapId = newMap.Id;
+                                tmpMap = MapInstance.Get(newMapId);
                                 tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
                                 tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
                                 tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY + 1;
-                                MapInstance.Get(relativeMap).Down = newMap;
+                                MapInstance.Get(relativeMap).Down = newMapId;
+                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
                             }
 
                             break;
@@ -2763,12 +2810,14 @@ namespace Intersect.Server.Networking
                         case 2:
                             if (MapInstance.Get(MapInstance.Get(relativeMap).Left) == null)
                             {
-                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                                tmpMap = MapInstance.Get(newMap);
+                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMapId = newMap.Id;
+                                tmpMap = MapInstance.Get(newMapId);
                                 tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
                                 tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX - 1;
                                 tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                                MapInstance.Get(relativeMap).Left = newMap;
+                                MapInstance.Get(relativeMap).Left = newMapId;
+                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
                             }
 
                             break;
@@ -2776,18 +2825,20 @@ namespace Intersect.Server.Networking
                         case 3:
                             if (MapInstance.Get(MapInstance.Get(relativeMap).Right) == null)
                             {
-                                newMap = DbInterface.AddGameObject(GameObjectType.Map).Id;
-                                tmpMap = MapInstance.Get(newMap);
+                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMapId = newMap.Id;
+                                tmpMap = MapInstance.Get(newMapId);
                                 tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
                                 tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX + 1;
                                 tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                                MapInstance.Get(relativeMap).Right = newMap;
+                                MapInstance.Get(relativeMap).Right = newMapId;
+                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
                             }
 
                             break;
                     }
 
-                    if (newMap != Guid.Empty)
+                    if (newMapId != Guid.Empty)
                     {
                         var grid = DbInterface.GetGrid(tmpMap.MapGrid);
                         if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < grid.Width)
@@ -2798,7 +2849,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Down != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Down).Up = newMap;
+                                    MapInstance.Get(tmpMap.Down).Up = newMapId;
+                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Down));
                                 }
                             }
 
@@ -2808,7 +2860,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Up != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Up).Down = newMap;
+                                    MapInstance.Get(tmpMap.Up).Down = newMapId;
+                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Up));
                                 }
                             }
                         }
@@ -2821,7 +2874,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Left != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Left).Right = newMap;
+                                    MapInstance.Get(tmpMap.Left).Right = newMapId;
+                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Left));
                                 }
                             }
 
@@ -2831,27 +2885,29 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Right != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Right).Left = newMap;
+                                    MapInstance.Get(tmpMap.Right).Left = newMapId;
+                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Right));
                                 }
                             }
                         }
 
-                        DbInterface.SaveGameDatabase();
+                        DbInterface.SaveGameObject(newMap);
+                            
                         DbInterface.GenerateMapGrids();
-                        PacketSender.SendMap(client, newMap, true);
-                        PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
-                        PacketSender.SendEnterMap(client, newMap);
+                        PacketSender.SendMap(client, newMapId, true);
+                        PacketSender.SendMapGridToAll(MapInstance.Get(newMapId).MapGrid);
+                        PacketSender.SendEnterMap(client, newMapId);
                         var folderDir = MapList.List.FindMapParent(relativeMap, null);
                         if (folderDir != null)
                         {
-                            folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                            folderDir.Children.AddMap(newMapId, MapInstance.Get(newMapId).TimeCreated, MapBase.Lookup);
                         }
                         else
                         {
-                            MapList.List.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                            MapList.List.AddMap(newMapId, MapInstance.Get(newMapId).TimeCreated, MapBase.Lookup);
                         }
 
-                        DbInterface.SaveGameDatabase();
+                        DbInterface.SaveMapList();
                         PacketSender.SendMapListToAll();
                     }
                 }
@@ -2872,7 +2928,6 @@ namespace Intersect.Server.Networking
             {
                 case MapListUpdates.MoveItem:
                     MapList.List.HandleMove(packet.TargetType, packet.TargetId, packet.ParentType, packet.ParentId);
-
                     break;
 
                 case MapListUpdates.AddFolder:
@@ -2920,7 +2975,7 @@ namespace Intersect.Server.Networking
                         var mapListMap = MapList.List.FindMap(packet.TargetId);
                         mapListMap.Name = packet.Name;
                         MapInstance.Get(packet.TargetId).Name = packet.Name;
-                        DbInterface.SaveGameDatabase();
+                        DbInterface.SaveGameObject(MapInstance.Get(packet.TargetId));
                         PacketSender.SendMapListToAll();
                     }
 
@@ -2943,11 +2998,11 @@ namespace Intersect.Server.Networking
 
                         lock (ServerContext.Instance.LogicService.LogicLock)
                         {
+                            ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                             mapId = packet.TargetId;
                             var players = MapInstance.Get(mapId).GetPlayersOnMap();
                             MapList.List.DeleteMap(mapId);
                             DbInterface.DeleteGameObject(MapInstance.Get(mapId));
-                            DbInterface.SaveGameDatabase();
                             DbInterface.GenerateMapGrids();
                             PacketSender.SendMapListToAll();
                             foreach (var plyr in players)
@@ -2962,8 +3017,8 @@ namespace Intersect.Server.Networking
                     break;
             }
 
+            DbInterface.SaveMapList();
             PacketSender.SendMapListToAll();
-            DbInterface.SaveGameDatabase();
         }
 
         //UnlinkMapPacket
@@ -2983,6 +3038,7 @@ namespace Intersect.Server.Networking
                 {
                     lock (ServerContext.Instance.LogicService.LogicLock)
                     {
+                        ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                         var map = MapInstance.Get(mapId);
                         if (map != null)
                         {
@@ -3048,6 +3104,7 @@ namespace Intersect.Server.Networking
 
             lock (ServerContext.Instance.LogicService.LogicLock)
             {
+                ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                 if (adjacentMap != null && linkMap != null)
                 {
                     //Clear to test if we can link.
@@ -3087,6 +3144,7 @@ namespace Intersect.Server.Networking
 
                         if (canLink)
                         {
+                            var updatedMaps = new HashSet<MapInstance>();
                             for (var x = -1; x < adjacentGrid.Width + 1; x++)
                             {
                                 for (var y = -1; y < adjacentGrid.Height + 1; y++)
@@ -3107,49 +3165,53 @@ namespace Intersect.Server.Networking
 
                                             if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up =
-                                                    adjacentGrid.MyGrid[x, y - 1];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
+                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down =
-                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]));
                                             }
 
                                             if (inXBounds &&
                                                 y + 1 < adjacentGrid.Height &&
                                                 adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down =
-                                                    adjacentGrid.MyGrid[x, y + 1];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
+                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up =
-                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]));
                                             }
 
                                             if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left =
-                                                    adjacentGrid.MyGrid[x - 1, y];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
+                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right =
-                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]));
                                             }
 
                                             if (inYBounds &&
                                                 x + 1 < adjacentGrid.Width &&
                                                 adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right =
-                                                    adjacentGrid.MyGrid[x + 1, y];
+                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
+                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left =
-                                                    linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]));
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            DbInterface.SaveGameDatabase();
+                            foreach (var map in updatedMaps)
+                            {
+                                DbInterface.SaveGameObject(map);
+                            }
+
                             DbInterface.GenerateMapGrids();
                             PacketSender.SendMapGridToAll(adjacentMap.MapGrid);
                         }
@@ -3170,11 +3232,16 @@ namespace Intersect.Server.Networking
             var obj = DbInterface.AddGameObject(type);
             if (type == GameObjectType.Event)
             {
-                ((EventBase) obj).CommonEvent = true;
-                DbInterface.SaveGameDatabase();
+                ((EventBase)obj).CommonEvent = true;
+                DbInterface.SaveGameObject(obj);
             }
 
-            PacketSender.CacheGameDataPacket();
+            var copyCachedGameData = PacketSender.CachedGameDataPacket.GameObjects.ToList();
+            copyCachedGameData.Add(new Network.Packets.Server.GameObjectPacket(obj.Id, obj.Type, obj.JsonData, false, false));
+
+            PacketSender.CachedGameDataPacket.GameObjects = copyCachedGameData.ToArray();
+            PacketSender.CachedGameDataPacket.ClearCachedData();
+
             PacketSender.SendGameObjectToAll(obj);
         }
 
@@ -3227,7 +3294,6 @@ namespace Intersect.Server.Networking
                     obj = ItemBase.Get(id);
 
                     break;
-
                 case GameObjectType.Npc:
                     obj = NpcBase.Get(id);
 
@@ -3313,8 +3379,20 @@ namespace Intersect.Server.Networking
                 }
 
                 DbInterface.DeleteGameObject(obj);
-                DbInterface.SaveGameDatabase();
-                PacketSender.CacheGameDataPacket();
+
+                var copyCachedGameData = PacketSender.CachedGameDataPacket.GameObjects.ToList();
+                //Only replace the modified object
+                for (int i = copyCachedGameData.Count - 1; i >= 0; i--)
+                {
+                    if (copyCachedGameData[i].Id == obj.Id)
+                    {
+                        copyCachedGameData.RemoveAt(i);
+                    }
+                }
+
+                PacketSender.CachedGameDataPacket.GameObjects = copyCachedGameData.ToArray();
+                PacketSender.CachedGameDataPacket.ClearCachedData();
+
                 PacketSender.SendGameObjectToAll(obj, true);
             }
         }
@@ -3346,7 +3424,6 @@ namespace Intersect.Server.Networking
                     obj = ItemBase.Get(id);
 
                     break;
-
                 case GameObjectType.Npc:
                     obj = NpcBase.Get(id);
 
@@ -3419,6 +3496,7 @@ namespace Intersect.Server.Networking
             {
                 lock (ServerContext.Instance.LogicService.LogicLock)
                 {
+                    ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                     //if Item or Resource, kill all global entities of that kind
                     if (type == GameObjectType.Item)
                     {
@@ -3435,9 +3513,11 @@ namespace Intersect.Server.Networking
 
                     obj.Load(packet.Data);
 
+                    DbInterface.SaveGameObject(obj);
+
                     if (type == GameObjectType.Quest)
                     {
-                        var qst = (QuestBase) obj;
+                        var qst = (QuestBase)obj;
                         foreach (var evt in qst.RemoveEvents)
                         {
                             var evtb = EventBase.Get(evt);
@@ -3449,7 +3529,7 @@ namespace Intersect.Server.Networking
 
                         foreach (var evt in qst.AddEvents)
                         {
-                            var evtb = (EventBase) DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
                             evtb.CommonEvent = false;
                             foreach (var tsk in qst.Tasks)
                             {
@@ -3460,17 +3540,35 @@ namespace Intersect.Server.Networking
                             }
 
                             evtb.Load(evt.Value.JsonData);
+                            DbInterface.SaveGameObject(evtb);
                         }
 
                         qst.AddEvents.Clear();
                         qst.RemoveEvents.Clear();
                     }
+                    else if (type == GameObjectType.PlayerVariable)
+                    {
+                        DbInterface.CachePlayerVariableEventTextLookups();
+                    }
+                    else if (type == GameObjectType.ServerVariable)
+                    {
+                        DbInterface.CacheServerVariableEventTextLookups();
+                    }
 
-                    PacketSender.CacheGameDataPacket();
+                    // Only replace the modified object
+                    for (int i = 0; i < PacketSender.CachedGameDataPacket.GameObjects.Length; i++)
+                    {
+                        if (PacketSender.CachedGameDataPacket.GameObjects[i].Id == obj.Id)
+                        {
+                            PacketSender.CachedGameDataPacket.GameObjects[i] =
+                                new Network.Packets.Server.GameObjectPacket(obj.Id, obj.Type, obj.JsonData, false, false);
+                            PacketSender.CachedGameDataPacket.ClearCachedData();
+
+                        }
+                    }
+
                     PacketSender.SendGameObjectToAll(obj, false);
                 }
-
-                DbInterface.SaveGameDatabase();
             }
         }
 
@@ -3483,7 +3581,7 @@ namespace Intersect.Server.Networking
             }
 
             TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
-            DbInterface.SaveGameDatabase();
+            DbInterface.SaveTime();
             Time.Init();
             PacketSender.SendTimeBaseToAllEditors();
         }
@@ -3511,8 +3609,8 @@ namespace Intersect.Server.Networking
                 if (!found)
                 {
                     var obj = DbInterface.AddGameObject(GameObjectType.Tileset);
-                    ((TilesetBase) obj).Name = value;
-                    DbInterface.SaveGameDatabase();
+                    ((TilesetBase)obj).Name = value;
+                    DbInterface.SaveGameObject(obj);
                     PacketSender.CacheGameDataPacket();
                     PacketSender.SendGameObjectToAll(obj);
                 }

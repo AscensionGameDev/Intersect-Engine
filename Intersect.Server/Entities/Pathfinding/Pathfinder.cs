@@ -38,6 +38,8 @@ namespace Intersect.Server.Entities.Pathfinding
 
         private long mWaitTime;
 
+        private PathNode[,] mGrid = new PathNode[Options.MapWidth * 3, Options.MapHeight * 3];
+
         public Pathfinder(Entity parent)
         {
             mEntity = parent;
@@ -122,17 +124,26 @@ namespace Intersect.Server.Entities.Pathfinding
                                 if (Math.Abs(sourceX - targetX) + Math.Abs(sourceY - targetY) < pathfindingRange)
                                 {
                                     //Doing good...
-                                    mapGrid = new PathNode[Options.MapWidth * 3, Options.MapHeight * 3];
+                                    mapGrid = mGrid;
 
                                     for (var x = 0; x < Options.MapWidth * 3; x++)
                                     {
                                         for (var y = 0; y < Options.MapHeight * 3; y++)
                                         {
-                                            mapGrid[x, y] = new PathNode(x, y, false);
+                                            if (mapGrid[x, y] == null)
+                                            {
+                                                mapGrid[x, y] = new PathNode(x, y, false);
+                                                
+                                            }
+                                            else
+                                            {
+                                                mapGrid[x, y].Reset();
+                                            }
+
                                             if (x < sourceX - pathfindingRange ||
-                                                x > sourceX + pathfindingRange ||
-                                                y < sourceY - pathfindingRange ||
-                                                y > sourceY + pathfindingRange)
+                                                    x > sourceX + pathfindingRange ||
+                                                    y < sourceY - pathfindingRange ||
+                                                    y > sourceY + pathfindingRange)
                                             {
                                                 mapGrid[x, y].IsWall = true;
                                             }
@@ -219,10 +230,10 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     //If this is a local event then we gotta loop through all other local events for the player
                                                     if (mEntity.GetType() == typeof(EventPageInstance))
                                                     {
-                                                        var ev = (EventPageInstance) mEntity;
+                                                        var ev = (EventPageInstance)mEntity;
                                                         if (!ev.Passable && ev.Player != null)
 
-                                                            //Make sure this is a local event
+                                                        //Make sure this is a local event
                                                         {
                                                             var player = ev.Player;
                                                             if (player != null)
@@ -237,9 +248,9 @@ namespace Intersect.Server.Entities.Pathfinding
                                                                             mapY < Options.MapHeight;
                                                                             mapY++)
                                                                         {
-                                                                            var evt = player.EventExists(
+                                                                            var evt = player.EventExists(new Player.MapTileLoc(
                                                                                 ev.MapId, mapX, mapY
-                                                                            );
+                                                                            ));
 
                                                                             if (evt != null)
                                                                             {

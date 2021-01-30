@@ -20,9 +20,9 @@ namespace Intersect.Server.General
 
         public static readonly List<Client> Clients = new List<Client>();
 
-        public static long Cps = 0;
+        public static Client[] ClientArray = new Client[0];
 
-        public static bool CpsLock = true;
+        public static long Cps = 0;
 
         [Obsolete] public static Timing Timing => Timing.Global;
 

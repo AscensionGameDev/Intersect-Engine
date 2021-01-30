@@ -78,7 +78,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
             mMyCommand.VariableType = rdoPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
             mMyCommand.UseVariable = !rdoManual.Checked;
-            mMyCommand.VariableId = rdoPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex) : ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            mMyCommand.VariableId = rdoPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer) : ServerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
 
             mMyCommand.Quantity = (int) nudGiveTakeAmount.Value;
             mMyCommand.ItemHandling = (ItemHandling) cmbMethod.SelectedIndex;

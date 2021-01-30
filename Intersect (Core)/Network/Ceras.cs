@@ -12,6 +12,19 @@ using K4os.Compression.LZ4;
 namespace Intersect.Network
 {
 
+    public sealed class CerasDefaultBufferPool : ICerasBufferPool
+    {
+        public byte[] RentBuffer(int minimumSize)
+        {
+            return System.Buffers.ArrayPool<byte>.Shared.Rent(minimumSize);
+        }
+
+        public void Return(byte[] buffer)
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(buffer, false);
+        }
+    }
+
     public class Ceras
     {
         private static readonly string[] BuiltInPacketNamespaces = new[]
@@ -31,9 +44,13 @@ namespace Intersect.Network
 
         public Ceras(bool forNetworking = true)
         {
+            if (CerasBufferPool.Pool == null)
+                CerasBufferPool.Pool = new CerasDefaultBufferPool();
+
             mSerializerConfig = new SerializerConfig
             {
                 PreserveReferences = false
+
             };
 
             mSerializerConfig.Advanced.SealTypesWhenUsingKnownTypes = forNetworking;
@@ -125,7 +142,7 @@ namespace Intersect.Network
 
         public byte[] Compress(object obj)
         {
-            return LZ4Pickler.Pickle(Serialize(obj), LZ4Level.L12_MAX);
+            return LZ4Pickler.Pickle(Serialize(obj), LZ4Level.L00_FAST);
         }
 
         public object Decompress(byte[] data)

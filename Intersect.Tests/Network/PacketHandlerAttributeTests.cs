@@ -354,6 +354,12 @@ namespace Intersect.Network
         public bool IsValid { get; }
 
         /// <inheritdoc />
+        public long ReceiveTime { get; set; }
+
+        /// <inheritdoc />
+        public long ProcessTime { get; set; }
+
+        /// <inheritdoc />
         public Dictionary<string, SanitizedValue<object>> Sanitize() => throw new NotImplementedException();
 
         #endregion
@@ -375,6 +381,12 @@ namespace Intersect.Network
 
         /// <inheritdoc />
         public bool IsValid { get; }
+
+        /// <inheritdoc />
+        public long ReceiveTime { get; set; }
+
+        /// <inheritdoc />
+        public long ProcessTime { get; set; }
 
         /// <inheritdoc />
         public Dictionary<string, SanitizedValue<object>> Sanitize() => throw new NotImplementedException();

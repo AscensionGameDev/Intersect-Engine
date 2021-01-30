@@ -17,7 +17,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Intersect.Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -334,6 +334,9 @@
     <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="SmartThreadPool, Version=2.2.6.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
+      <HintPath>..\packages\SmartThreadPool.dll.2.2.6\lib\net46\SmartThreadPool.dll</HintPath>
+    </Reference>
     <Reference Include="SQLitePCLRaw.batteries_green, Version=1.1.11.121, Culture=neutral, PublicKeyToken=a84b7dcfb1391f7f, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.11\lib\net45\SQLitePCLRaw.batteries_green.dll</HintPath>
     </Reference>
@@ -415,7 +418,6 @@
     <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="WebApiThrottle, Version=1.5.4.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AscensionGameDev.WebApiThrottle.1.5.4.2\lib\net45\WebApiThrottle.dll</HintPath>
@@ -468,6 +470,9 @@
     <Compile Include="Entities\Combat\Buff.cs" />
     <Compile Include="Entities\Combat\Dash.cs" />
     <Compile Include="Entities\Combat\DoT.cs" />
+    <Compile Include="Entities\Events\ConditionHandlerRegistry.cs" />
+    <Compile Include="Entities\Events\Conditions.cs" />
+    <Compile Include="Entities\Events\VariableCheckHandlerRegistry.cs" />
     <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\Player.Database.cs" />
     <Compile Include="Database\Spell.cs" />
@@ -487,7 +492,6 @@
     <Compile Include="Entities\Trading.cs" />
     <Compile Include="Entities\Events\CommandInstance.cs" />
     <Compile Include="Entities\Events\CommandProcessing.cs" />
-    <Compile Include="Entities\Events\Conditions.cs" />
     <Compile Include="General\Formulas.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="Localization\CommandsNamespace.cs" />
@@ -503,6 +507,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
+    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
+      <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
     <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.designer.cs">
       <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>

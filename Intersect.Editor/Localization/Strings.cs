@@ -1354,6 +1354,19 @@ Tick timer saved in server config.json.";
 
         }
 
+        public struct EventChangeName
+        {
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Change Name";
+
+            public static LocalizedString variable = @"Player Variable:";
+
+        }
+
         public struct EventChangeSpells
         {
 
@@ -1460,6 +1473,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString animationrotatedir = @"Rotate Relative To Direction";
 
+            public static LocalizedString changename = @"Change Name to Variable: {00}";
+
             public static LocalizedString changeitems = @"Change Player Items [{00}]";
 
             public static LocalizedString equipitem = @"Equip Player Item [{00}]";
@@ -1525,6 +1540,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString endquest = @"End Quest [{00}, {01}]";
 
             public static LocalizedString endspell = @"End Spell Change";
+
+            public static LocalizedString endname = @"End Name Change";
 
             public static LocalizedString endstartquest = @"End Start Quest";
 
@@ -1684,6 +1701,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString spellsucceeded = @"Spell Taught/Removed Successfully";
 
+            public static LocalizedString namesucceeded = @"Name Changed Successfully";
+
+            public static LocalizedString namefailed = @"Name Not Changed (Taken, Invalid etc.)";
+
             public static LocalizedString startquest = @"Start Quest [{00}, {01}]";
 
             public static LocalizedString stopsounds = @"Stop Sounds";
@@ -1806,6 +1827,7 @@ Tick timer saved in server config.json.";
                 {"inputvariable", @"Input Variable"},
                 {"changeplayerlabel", @"Change Player Label"},
                 {"changeplayercolor", @"Change Player Color" },
+                {"changename", @"Change Player Name" },
             };
 
         }
@@ -3605,11 +3627,14 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString movement = @"Movement";
 
+            public static LocalizedString resetradius = @"Reset Radius:";
+
             public static Dictionary<int, LocalizedString> movements = new Dictionary<int, LocalizedString>
             {
                 {0, @"Move Randomly"},
                 {1, @"Turn Randomly"},
                 {2, @"Stand Still"},
+                {3, @"Static"},
             };
 
             public static LocalizedString mpregen = @"MP (%):";

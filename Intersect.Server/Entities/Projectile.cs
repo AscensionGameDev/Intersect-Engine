@@ -297,8 +297,11 @@ namespace Intersect.Server.Entities
                     var spawn = Spawns[i];
                     if (spawn != null && Globals.Timing.Milliseconds > spawn.TransmittionTimer)
                     {
+                        var x = spawn.X;
+                        var y = spawn.Y;
+                        var map = spawn.MapId;
                         var killSpawn = MoveFragment(spawn);
-                        if (!killSpawn)
+                        if (!killSpawn && (x != spawn.X || y != spawn.Y || map != spawn.MapId))
                         {
                             killSpawn = CheckForCollision(spawn);
                         }
@@ -316,7 +319,10 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                Die(0, null);
+                lock (EntityLock)
+                {
+                    Die(0, null);
+                }
             }
         }
 
@@ -344,7 +350,7 @@ namespace Intersect.Server.Entities
             var map = MapInstance.Get(spawn.MapId);
             if (!killSpawn && map != null)
             {
-                var attribute = map.Attributes[spawn.X, spawn.Y];
+                var attribute = map.Attributes[(int)spawn.X, (int)spawn.Y];
 
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
@@ -396,11 +402,15 @@ namespace Intersect.Server.Entities
                 for (var z = 0; z < entities.Count; z++)
                 {
                     if (entities[z] != null &&
-                        entities[z].X == spawn.X &&
-                        entities[z].Y == spawn.Y &&
+                        (entities[z].X == Math.Round(spawn.X) || entities[z].X == Math.Ceiling(spawn.X) || entities[z].X == Math.Floor(spawn.X)) &&
+                        (entities[z].Y == Math.Round(spawn.Y) || entities[z].Y == Math.Ceiling(spawn.Y) || entities[z].Y == Math.Floor(spawn.Y)) &&
                         entities[z].Z == spawn.Z)
                     {
                         killSpawn = spawn.HitEntity(entities[z]);
+                        if (killSpawn && !spawn.ProjectileBase.PierceTarget)
+                        {
+                            return killSpawn;
+                        }
                     }
                     else
                     {
@@ -423,9 +433,10 @@ namespace Intersect.Server.Entities
 
         public bool MoveFragment(ProjectileSpawn spawn, bool move = true)
         {
-            int newx = spawn.X;
-            int newy = spawn.Y;
+            float newx = spawn.X;
+            float newy = spawn.Y;
             var newMapId = spawn.MapId;
+
             if (move)
             {
                 spawn.Distance++;
@@ -436,7 +447,7 @@ namespace Intersect.Server.Entities
             var killSpawn = false;
             var map = MapInstance.Get(spawn.MapId);
 
-            if (newx < 0)
+            if (Math.Round(newx) < 0)
             {
                 if (MapInstance.Get(map.Left) != null)
                 {
@@ -449,7 +460,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (newx > Options.MapWidth - 1)
+            if (Math.Round(newx) > Options.MapWidth - 1)
             {
                 if (MapInstance.Get(map.Right) != null)
                 {
@@ -462,7 +473,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (newy < 0)
+            if (Math.Round(newy) < 0)
             {
                 if (MapInstance.Get(map.Up) != null)
                 {
@@ -475,7 +486,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (newy > Options.MapHeight - 1)
+            if (Math.Round(newy) > Options.MapHeight - 1)
             {
                 if (MapInstance.Get(map.Down) != null)
                 {
@@ -488,8 +499,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            spawn.X = (byte) newx;
-            spawn.Y = (byte) newy;
+            spawn.X = newx;
+            spawn.Y = newy;
             spawn.MapId = newMapId;
 
             return killSpawn;

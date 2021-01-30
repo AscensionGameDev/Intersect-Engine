@@ -9,6 +9,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Extensions;
 using Intersect.Server.General;
@@ -381,7 +382,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid bag id.");
             }
 
-            var bag = DbInterface.GetBag(bagId);
+            var bag = Bag.GetBag(bagId);
 
             if (bag == null)
             {
@@ -794,7 +795,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminActions.Kill:
                     if (client != null && client.Entity != null)
                     {
-                        client.Entity.Die();
+                        lock (client.Entity.EntityLock)
+                        {
+                            client.Entity.Die();
+                        }
+                        
                         PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
 
                         return Request.CreateMessageResponse(

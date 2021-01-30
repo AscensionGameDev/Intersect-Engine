@@ -1,12 +1,18 @@
 ﻿using System;
 
 using Intersect.Enums;
+using MessagePack;
 
 namespace Intersect.Network.Packets.Server
 {
-
-    public class GameObjectPacket : CerasPacket
+    [MessagePackObject]
+    public class GameObjectPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public GameObjectPacket()
+        {
+
+        }
 
         public GameObjectPacket(Guid id, GameObjectType type, string data, bool deleted, bool another)
         {
@@ -17,14 +23,19 @@ namespace Intersect.Network.Packets.Server
             AnotherFollowing = another;
         }
 
+        [Key(0)]
         public Guid Id { get; set; }
 
+        [Key(1)]
         public GameObjectType Type { get; set; }
 
+        [Key(2)]
         public bool AnotherFollowing { get; set; }
 
+        [Key(3)]
         public bool Deleted { get; set; }
 
+        [Key(4)]
         public string Data { get; set; }
 
     }

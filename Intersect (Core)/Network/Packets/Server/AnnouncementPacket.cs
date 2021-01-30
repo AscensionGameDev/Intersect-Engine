@@ -1,19 +1,30 @@
-﻿namespace Intersect.Network.Packets.Server
+﻿using MessagePack;
+
+namespace Intersect.Network.Packets.Server
+
+
 {
     /// <summary>
     /// Defines the layout for an AnnouncementPacket.
     /// </summary>
-    public class AnnouncementPacket : CerasPacket
+    [MessagePackObject]
+    public class AnnouncementPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public AnnouncementPacket()
+        {
+        }
 
         /// <summary>
         /// The announcement message to send.
         /// </summary>
+        [Key(0)]
         public string Message { get; set; }
 
         /// <summary>
         /// The time (in milliseconds) for the announcement to display.
         /// </summary>
+        [Key(1)]
         public long Duration { get; set; }
 
         /// <summary>

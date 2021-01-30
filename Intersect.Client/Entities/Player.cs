@@ -20,6 +20,7 @@ using Intersect.Network.Packets.Server;
 using Newtonsoft.Json;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Utilities;
+using Intersect.Client.Items;
 
 namespace Intersect.Client.Entities
 {
@@ -61,6 +62,22 @@ namespace Intersect.Client.Entities
 
         public int TargetType;
 
+        public long CombatTimer { get; set; } = 0;
+
+        // Target data
+        private long mlastTargetScanTime = 0;
+
+        Guid mlastTargetScanMap = Guid.Empty;
+
+        Point mlastTargetScanLocation = new Point(-1, -1);
+
+        Dictionary<Entity, TargetInfo> mlastTargetList = new Dictionary<Entity, TargetInfo>(); // Entity, Last Time Selected
+
+        Entity mLastEntitySelected = null;
+
+        private Dictionary<int, long> mLastHotbarUseTime = new Dictionary<int, long>();
+        private int mHotbarUseDelay = 150;
+
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (var i = 0; i < Options.MaxHotbar; i++)
@@ -71,7 +88,6 @@ namespace Intersect.Client.Entities
             mRenderPriority = 2;
         }
 
-        public long CombatTimer { get; set; } = 0;
 
         public List<PartyMember> Party
         {
@@ -164,6 +180,12 @@ namespace Intersect.Client.Entities
             {
                 TargetBox.Update();
             }
+            else if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+            {
+                // If for WHATEVER reason the box hasn't been created, create it.
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox.Hide();
+            }
 
             var returnval = base.Update();
 
@@ -180,16 +202,24 @@ namespace Intersect.Client.Entities
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
-            if (((PlayerEntityPacket) packet).Equipment != null)
+            var playerPacket = (PlayerEntityPacket) packet;
+
+            if (playerPacket.Equipment != null)
             {
-                if (this == Globals.Me && ((PlayerEntityPacket) packet).Equipment.InventorySlots != null)
+                if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
-                    this.MyEquipment = ((PlayerEntityPacket) packet).Equipment.InventorySlots;
+                    this.MyEquipment = playerPacket.Equipment.InventorySlots;
                 }
-                else if (((PlayerEntityPacket) packet).Equipment.ItemIds != null)
+                else if (playerPacket.Equipment.ItemIds != null)
                 {
-                    this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
+                    this.Equipment = playerPacket.Equipment.ItemIds;
                 }
+            }
+
+            if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+            {
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox.Hide();
             }
         }
 
@@ -215,7 +245,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Inventory.dropitem,
                         Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -258,7 +288,8 @@ namespace Intersect.Client.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index))
+            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index) &&
+                index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
             }
@@ -423,7 +454,7 @@ namespace Intersect.Client.Entities
                         var iBox = new InputBox(
                             Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index
+                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
                         );
                     }
                     else
@@ -469,7 +500,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -517,59 +548,65 @@ namespace Intersect.Client.Entities
         }
 
         //Bag
-        public void TryStoreBagItem(int index)
+        public void TryStoreBagItem(int invSlot, int bagSlot)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[invSlot].ItemId) != null)
             {
-                if (Inventory[index].Quantity > 1)
+                if (Inventory[invSlot].Quantity > 1)
                 {
+                    int[] userData = new int[2] { invSlot, bagSlot };
+
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
-                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, index
+                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendStoreBagItem(index, 1);
+                    PacketSender.SendStoreBagItem(invSlot, 1, bagSlot);
                 }
             }
         }
 
         private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int) ((InputBox) sender).Value;
+            var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem((int) ((InputBox) sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
             }
         }
 
-        public void TryRetreiveBagItem(int index)
+        public void TryRetreiveBagItem(int bagSlot, int invSlot)
         {
-            if (Globals.Bag[index] != null && ItemBase.Get(Globals.Bag[index].ItemId) != null)
+            if (Globals.Bag[bagSlot] != null && ItemBase.Get(Globals.Bag[bagSlot].ItemId) != null)
             {
-                if (Globals.Bag[index].Quantity > 1)
+                int[] userData = new int[2] { bagSlot, invSlot };
+
+                if (Globals.Bag[bagSlot].Quantity > 1)
                 {
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
-                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, index
+                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
+                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData
                     );
                 }
                 else
                 {
-                    PacketSender.SendRetrieveBagItem(index, 1);
+                    PacketSender.SendRetrieveBagItem(bagSlot, 1, invSlot);
                 }
             }
         }
 
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int) ((InputBox) sender).Value;
+            var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetrieveBagItem((int) ((InputBox) sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
             }
         }
 
@@ -583,7 +620,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -661,6 +698,13 @@ namespace Intersect.Client.Entities
                 (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].SpellId) ||
                  Globals.Me.SpellCooldowns[Spells[index].SpellId] < Globals.System.GetTimeMs()))
             {
+                var spellBase = SpellBase.Get(Spells[index].SpellId);
+
+                if (spellBase.CastDuration > 0 && Globals.Me.IsMoving)
+                {
+                    return;
+                }
+
                 PacketSender.SendUseSpell(index, TargetIndex);
             }
         }
@@ -805,6 +849,7 @@ namespace Intersect.Client.Entities
                 movex = 1;
             }
 
+
             Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
@@ -828,6 +873,29 @@ namespace Intersect.Client.Entities
                     Globals.Me.MoveDir = 3;
                 }
             }
+
+            var castInput = -1;
+            for (var barSlot = 0; barSlot < Options.MaxHotbar; barSlot++)
+            {
+                if (!mLastHotbarUseTime.ContainsKey(barSlot))
+                {
+                    mLastHotbarUseTime.Add(barSlot, 0);
+                }
+
+                if (Controls.KeyDown((Control)barSlot + 9))
+                {
+                    castInput = barSlot;
+                }
+            }
+
+            if (castInput != -1)
+            {
+                if (0 <= castInput && castInput < Interface.Interface.GameUi?.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
+                {
+                    Interface.Interface.GameUi?.Hotbar?.Items?[castInput]?.Activate();
+                    mLastHotbarUseTime[castInput] = Timing.Global.Milliseconds + mHotbarUseDelay;
+                }
+            }  
         }
 
         protected int GetDistanceTo(Entity target)
@@ -856,8 +924,6 @@ namespace Intersect.Client.Entities
 
         public void AutoTarget()
         {
-            Entity closestEntity = null;
-
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
@@ -867,56 +933,212 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            foreach (var en in Globals.Entities)
+            // Do we need to account for players?
+            // Depends on what type of map we're currently on.
+            if (Globals.Me.MapInstance == null)
             {
-                if (en.Value == null)
+                return;
+            }
+            var canTargetPlayers = Globals.Me.MapInstance.ZoneType == MapZones.Safe ? false : true;
+
+            // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
+            if (
+                mlastTargetScanTime < Timing.Global.Milliseconds ||
+                mlastTargetScanMap != Globals.Me.CurrentMap ||
+                mlastTargetScanLocation != new Point(X, Y)
+                )
+            {
+                // Add new items to our list!
+                foreach (var en in Globals.Entities)
+                {
+                    // Check if this is a valid entity.
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
+                    // Don't allow us to auto target ourselves.
+                    if (en.Value == Globals.Me)
+                    {
+                        continue;
+                    }
+
+                    // Check if the entity has stealth status
+                    if (en.Value.IsStealthed() && !Globals.Me.IsInMyParty(en.Value.Id))
+                    {
+                        continue;
+                    }
+
+                    // Check if we are allowed to target players here, if we're not and this is a player then skip!
+                    // If we are, check to see if they're our party or nation member, then exclude them. We're friendly happy people here.
+                    if (!canTargetPlayers && en.Value.GetEntityType() == EntityTypes.Player)
+                    {
+                        continue;
+                    }
+                    else if (canTargetPlayers && en.Value.GetEntityType() == EntityTypes.Player)
+                    {
+                        var player = en.Value as Player;
+                        if (IsInMyParty(player))
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (en.Value.GetEntityType() == EntityTypes.GlobalEntity || en.Value.GetEntityType() == EntityTypes.Player)
+                    {
+                        // Already in our list?
+                        if (mlastTargetList.ContainsKey(en.Value))
+                        {
+                            mlastTargetList[en.Value].DistanceTo = GetDistanceTo(en.Value);
+                        }
+                        else
+                        {
+                            // Add entity with blank time. Never been selected.
+                            mlastTargetList.Add(en.Value, new TargetInfo() { DistanceTo = GetDistanceTo(en.Value), LastTimeSelected = 0 });
+                        }
+                    }
+                }
+
+                // Remove old items.
+                var toRemove = mlastTargetList.Where(en => !Globals.Entities.ContainsValue(en.Key)).ToArray();
+                foreach(var en in toRemove)
+                {
+                    mlastTargetList.Remove(en.Key);
+                }
+
+                // Skip scanning for another second or so.. And set up other values.
+                mlastTargetScanTime = Timing.Global.Milliseconds + 300;
+                mlastTargetScanMap = CurrentMap;
+                mlastTargetScanLocation = new Point(X, Y);
+            }
+
+            // Find all valid entities in the direction we are facing.
+            var validEntities = Array.Empty<KeyValuePair<Entity, TargetInfo>>(); 
+
+            // TODO: Expose option to users
+            if (Globals.Database.TargetAccountDirection)
+            {
+                switch (Dir)
+                {
+                    case (byte)Directions.Up:
+                        validEntities = mlastTargetList.Where(en =>
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Left || en.Key.CurrentMap == MapInstance.Right) && en.Key.Y < Y) || en.Key.CurrentMap == MapInstance.Down)
+                            .ToArray();
+                        break;
+
+                    case (byte)Directions.Down:
+                        validEntities = mlastTargetList.Where(en =>
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Left || en.Key.CurrentMap == MapInstance.Right) && en.Key.Y > Y) || en.Key.CurrentMap == MapInstance.Up)
+                            .ToArray();
+                        break;
+
+                    case (byte)Directions.Left:
+                        validEntities = mlastTargetList.Where(en =>
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Up || en.Key.CurrentMap == MapInstance.Down) && en.Key.X < X) || en.Key.CurrentMap == MapInstance.Left)
+                            .ToArray();
+                        break;
+
+                    case (byte)Directions.Right:
+                        validEntities = mlastTargetList.Where(en =>
+                                    ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Up || en.Key.CurrentMap == MapInstance.Down) && en.Key.X > X) || en.Key.CurrentMap == MapInstance.Right)
+                                    .ToArray();
+                        break;
+                }
+            }
+            else
+            {
+                validEntities = mlastTargetList.ToArray();
+            }
+
+            // Reduce the number of targets down to what is in our allowed range.
+            validEntities = validEntities.Where(en => en.Value.DistanceTo <= Options.Combat.MaxPlayerAutoTargetRadius).ToArray();
+
+            int currentDistance = 9999;
+            long currentTime = Timing.Global.Milliseconds;
+            Entity currentEntity = mLastEntitySelected;
+            foreach(var entity in validEntities)
+            {
+                if (currentEntity == entity.Key)
                 {
                     continue;
                 }
 
-                if (Globals.GridMaps.Contains(en.Value.CurrentMap))
+                // if distance is the same
+                if (entity.Value.DistanceTo == currentDistance)
                 {
-                    if (en.Value.GetEntityType() == EntityTypes.GlobalEntity ||
-                        en.Value.GetEntityType() == EntityTypes.Player)
+                    if (entity.Value.LastTimeSelected < currentTime)
                     {
-                        if (en.Value != Globals.Me && !(en.Value is Player player && Globals.Me.IsInMyParty(player)))
-                        {
-                            if (GetDistanceTo(en.Value) < GetDistanceTo(closestEntity))
-                            {
-                                closestEntity = en.Value;
-                            }
-                        }
+                        currentTime = entity.Value.LastTimeSelected;
+                        currentDistance = entity.Value.DistanceTo;
+                        currentEntity = entity.Key;
+                    }
+                }
+                else if (entity.Value.DistanceTo < currentDistance)
+                {
+                    if (entity.Value.LastTimeSelected < currentTime || entity.Value.LastTimeSelected == currentTime)
+                    {
+                        currentTime = entity.Value.LastTimeSelected;
+                        currentDistance = entity.Value.DistanceTo;
+                        currentEntity = entity.Key;
                     }
                 }
             }
 
-            if (TargetBox != null && closestEntity != TargetBox.MyEntity)
+            // We didn't target anything? Can we default to closest?
+            if (currentEntity == null)
             {
-                TargetBox.Dispose();
-                TargetBox = null;
+                currentEntity = validEntities.Where(x => x.Value.DistanceTo == validEntities.Min(y => y.Value.DistanceTo)).FirstOrDefault().Key;
+
+                // Also reset our target times so we can start auto targetting again.
+                foreach(var entity in mlastTargetList)
+                {
+                    entity.Value.LastTimeSelected = 0;
+                }
             }
 
-            if (closestEntity == null)
+            if (currentEntity == null)
             {
+                mLastEntitySelected = null;
                 return;
             }
 
-            if (TargetBox == null)
+            if (mlastTargetList.ContainsKey(currentEntity))
             {
-                if (closestEntity.GetType() == typeof(Player))
-                {
-                    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
-                }
-                else
-                {
-                    TargetBox = new EntityBox(
-                        Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity
-                    );
-                }
+                mlastTargetList[currentEntity].LastTimeSelected = Timing.Global.Milliseconds;
+            }
+            mLastEntitySelected = currentEntity;
+
+            if (TargetIndex != currentEntity.Id)
+            {
+                SetTargetBox(currentEntity);
+                TargetIndex = currentEntity.Id;
+                TargetType = 0;
+            } 
+        }
+
+        private void SetTargetBox(Entity en)
+        {
+            if (en == null)
+            {
+                TargetBox?.SetEntity(null);
+                TargetBox?.Hide();
+                return;
             }
 
-            TargetIndex = closestEntity.Id;
-            TargetType = 0;
+            if (en is Player)
+            {
+                TargetBox?.SetEntity(en, EntityTypes.Player);
+            }
+            else if (en is Event)
+            {
+                TargetBox?.SetEntity(en, EntityTypes.Event);
+            }
+            else
+            {
+                TargetBox?.SetEntity(en, EntityTypes.GlobalEntity);
+            }
+
+            TargetBox?.Show();
         }
 
         public bool TryBlock()
@@ -1125,7 +1347,7 @@ namespace Intersect.Client.Entities
                         {
                             foreach (var en in Globals.Entities)
                             {
-                                if (en.Value == null || en.Value.CurrentMap != mapId || en.Value is Projectile || en.Value is Resource || (en.Value.IsStealthed() && (!(en.Value is Player player) || Globals.Me.IsInMyParty(player))))
+                                if (en.Value == null || en.Value.CurrentMap != mapId || en.Value is Projectile || en.Value is Resource || (en.Value.IsStealthed() && !Globals.Me.IsInMyParty(en.Value.Id)))
                                 {
                                     continue;
                                 }
@@ -1156,47 +1378,14 @@ namespace Intersect.Client.Entities
                                 }
                             }
 
-                            if (bestMatch != null)
+                            if (bestMatch != null && bestMatch.Id != TargetIndex)
                             {
-                                if (TargetBox != null)
-                                {
-                                    TargetBox.Dispose();
-                                    TargetBox = null;
-                                }
-
                                 var targetType = bestMatch is Event ? 1 : 0;
 
-                                if (bestMatch != Globals.Me)
-                                {
-                                    if (bestMatch is Player)
-                                    {
-                                        TargetBox = new EntityBox(
-                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, bestMatch
-                                        );
-                                    }
-                                    else if (bestMatch is Event)
-                                    {
-                                        TargetBox = new EntityBox(
-                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.Event, bestMatch
-                                        );
-                                    }
-                                    else
-                                    {
-                                        TargetBox = new EntityBox(
-                                            Interface.Interface.GameUi.GameCanvas, EntityTypes.GlobalEntity,
-                                            bestMatch
-                                        );
-                                    }
-                                }
 
-                                if (TargetType == targetType && TargetIndex == bestMatch.Id)
-                                {
-                                    ClearTarget();
+                                SetTargetBox(bestMatch);
 
-                                    return true;
-                                }
-
-                                if (bestMatch.GetType() == typeof(Player))
+                                if (bestMatch is Player)
                                 {
                                     //Select in admin window if open
                                     if (Interface.Interface.GameUi.AdminWindowOpen())
@@ -1210,6 +1399,12 @@ namespace Intersect.Client.Entities
 
                                 return true;
                             }
+                            else if (!Globals.Database.StickyTarget)
+                            {
+                                // We've clicked off of our target and are allowed to clear it!
+                                ClearTarget();
+                                return true;
+                            }
                         }
 
                         return false;
@@ -1220,13 +1415,53 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        private void ClearTarget()
+        public bool TryTarget(Entity entity, bool force = false)
         {
-            if (TargetBox != null)
+            //Check for taunt status if so don't allow to change target
+            for (var i = 0; i < Status.Count; i++)
             {
-                TargetBox.Dispose();
-                TargetBox = null;
+                if (Status[i].Type == StatusTypes.Taunt && !force)
+                {
+                    return false;
+                }
             }
+
+            if (entity == null)
+            {
+                return false;
+            }
+
+            // Are we already targetting this?
+            if (TargetBox != null && TargetBox.MyEntity == entity )
+            {
+                return true;
+            }
+
+            var targetType = entity is Event ? 1 : 0;
+
+            if (entity.GetType() == typeof(Player))
+            {
+                //Select in admin window if open
+                if (Interface.Interface.GameUi.AdminWindowOpen())
+                {
+                    Interface.Interface.GameUi.AdminWindowSelectName(entity.Name);
+                }
+            }
+
+            if (TargetIndex != entity.Id)
+            {
+                SetTargetBox(entity);
+                TargetType = targetType;
+                TargetIndex = entity.Id;
+            }
+
+            return true;
+
+        }
+
+        public void ClearTarget()
+        {
+            SetTargetBox(null);
 
             TargetIndex = Guid.Empty;
             TargetType = -1;
@@ -1240,44 +1475,37 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Attempts to pick up an item at the specified location.
         /// </summary>
+        /// <param name="mapId">The Id of the map we are trying to loot from.</param>
         /// <param name="x">The X location on the current map.</param>
         /// <param name="y">The Y location on the current map.</param>
         /// <param name="uniqueId">The Unique Id of the specific item we want to pick up, leave <see cref="Guid.Empty"/> to not specificy an item and pick up the first thing we can find.</param>
         /// <param name="firstOnly">Defines whether we only want to pick up the first item we can find when true, or all items when false.</param>
         /// <returns></returns>
-        public bool TryPickupItem(int x, int y, Guid uniqueId = new Guid(), bool firstOnly = false)
+        public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new Guid(), bool firstOnly = false)
         {
-            var map = MapInstance.Get(CurrentMap);
-            if (map == null)
+            var map = MapInstance.Get(mapId);
+            if (map == null || tileIndex < 0 || tileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return false;
             }
-
-            var location = new Point(x, y);
-            if (!map.MapItems.ContainsKey(location) || map.MapItems[location].Count < 1)
-            {
-                return false;
-            }
-
+            
             // Are we trying to pick up anything in particular, or everything?
             if (uniqueId != Guid.Empty || firstOnly)
             {
-                foreach (var item in map.MapItems[location])
+                if (!map.MapItems.ContainsKey(tileIndex) || map.MapItems[tileIndex].Count < 1)
                 {
-                    // Are we allowed to see and pick this item up?
-                    if (!item.VisibleToAll && item.Owner != Globals.Me.Id && !Globals.Me.IsInMyParty(item.Owner))
-                    {
-                        // This item does not apply to us!
-                        continue;
-                    }
+                    return false;
+                }
 
+                foreach (var item in map.MapItems[tileIndex])
+                {
                     // Check if we are trying to pick up a specific item, and if this is the one.
                     if (uniqueId != Guid.Empty && item.UniqueId != uniqueId)
                     {
                         continue;
                     }
 
-                    PacketSender.SendPickupItem(location, item.UniqueId);
+                    PacketSender.SendPickupItem(mapId, tileIndex, item.UniqueId);
 
                     return true;
                 }
@@ -1285,7 +1513,7 @@ namespace Intersect.Client.Entities
             else
             {
                 // Let the server worry about what we can and can not pick up.
-                PacketSender.SendPickupItem(location, uniqueId);
+                PacketSender.SendPickupItem(mapId, tileIndex, uniqueId);
 
                 return true;
             }
@@ -1382,49 +1610,51 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && CastTime < Globals.System.GetTimeMs())
+                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
                 {
+                    CastTime = 0;
+
                     switch (MoveDir)
                     {
-                        case 0:
+                        case 0: // Up
                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY--;
-                                Dir = 0;
                                 IsMoving = true;
+                                Dir = 0;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 1:
+                        case 1: // Down
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY++;
-                                Dir = 1;
                                 IsMoving = true;
+                                Dir = 1;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 2:
+                        case 2: // Left
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX--;
-                                Dir = 2;
                                 IsMoving = true;
+                                Dir = 2;
                                 OffsetY = 0;
                                 OffsetX = Options.TileWidth;
                             }
 
                             break;
-                        case 3:
+                        case 3: // Right
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX++;
-                                Dir = 3;
                                 IsMoving = true;
+                                Dir = 3;
                                 OffsetY = 0;
                                 OffsetX = -Options.TileWidth;
                             }
@@ -1882,6 +2112,13 @@ namespace Intersect.Client.Entities
                     }
                 }
             }
+        }
+
+        private class TargetInfo
+        {
+            public long LastTimeSelected;
+
+            public int DistanceTo;
         }
 
     }

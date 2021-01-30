@@ -42,7 +42,7 @@ namespace Intersect.Server.Core.Commands
                 target.Power.ApiRoles = new Database.PlayerData.Security.ApiRoles();
             }
 
-            DbInterface.SavePlayerDatabaseAsync();
+            target.Save();
 
             Console.WriteLine(
                 access

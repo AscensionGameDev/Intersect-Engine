@@ -1,10 +1,15 @@
-﻿using System;
+﻿using MessagePack;
+using System;
 
 namespace Intersect.Network.Packets.Server
 {
-
-    public class ProjectileDeadPacket : CerasPacket
+    [MessagePackObject]
+    public class ProjectileDeadPacket : IntersectPacket
     {
+        //Parameterless Constructor for MessagePack
+        public ProjectileDeadPacket()
+        {
+        }
 
         public ProjectileDeadPacket(Guid projectileId, int spawnId)
         {
@@ -12,8 +17,10 @@ namespace Intersect.Network.Packets.Server
             SpawnId = spawnId;
         }
 
+        [Key(0)]
         public Guid ProjectileId { get; set; }
 
+        [Key(1)]
         public int SpawnId { get; set; }
 
     }

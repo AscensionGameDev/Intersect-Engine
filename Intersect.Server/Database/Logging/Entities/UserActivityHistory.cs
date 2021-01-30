@@ -75,7 +75,9 @@ namespace Intersect.Server.Database.Logging.Entities
 
             SelectPlayer,
 
-            SwitchPlayer
+            SwitchPlayer,
+
+            NameChange,
         }
     }
 }
