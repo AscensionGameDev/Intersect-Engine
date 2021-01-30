@@ -346,6 +346,7 @@
     <Compile Include="Network\IPacketHandler.cs" />
     <Compile Include="Network\IPacketSender.cs" />
     <Compile Include="Network\NetworkStatus.cs" />
+    <Compile Include="Network\PackedIntersectPacket.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
     <Compile Include="Network\PacketHandlerAttribute.cs" />
     <Compile Include="Network\PacketHandlerRegistry.cs" />
