@@ -551,34 +551,6 @@ namespace Intersect.Server.Networking
         }
 
         /// <summary>
-        /// Logs a chat message if chat message logging is enabled
-        /// </summary>
-        /// <param name="player">The player to which to send a message.</param>
-        /// <param name="message">The message to send.</param>
-        /// <param name="type">The type of message we are sending.</param>
-        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
-        public static void LogChatMsg(Player player, string msg, ChatMessageType type)
-        {
-            if (Options.Instance.ChatOpts.LogChatMessages)
-            {
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.ChatHistory.Add(
-                                new ChatHistory
-                                {
-                                    UserId = player.Client.User?.Id ?? Guid.Empty,
-                                    PlayerId = player.Client.Entity?.Id,
-                                    PlayerName = player.Client.Name,
-                                    Ip = player.Client.GetIp(),
-                                    MessageType = type,
-                                    MessageText = msg
-                                }
-                            );
-                }
-            }
-        }
-
-        /// <summary>
         /// Sends a chat message to the specified player.
         /// </summary>
         /// <param name="player">The player to which to send a message.</param>
@@ -593,8 +565,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            PacketSender.LogChatMsg(player, message, type);
             player.SendPacket(new ChatMsgPacket(message, type, color, target));
+            ChatHistory.LogMessage(player, message, type);
         }
 
         //GameDataPacket
@@ -742,7 +714,6 @@ namespace Intersect.Server.Networking
         /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
         public static void SendPartyMsg(Player player, string message, Color color, string target = "")
         {
-            LogChatMsg(player, message, ChatMessageType.Party);
             foreach (var p in player.Party)
             {
                 if (p != null)
@@ -750,6 +721,7 @@ namespace Intersect.Server.Networking
                     SendChatMsg(p, message, ChatMessageType.Party , color, target);
                 }
             }
+            ChatHistory.LogMessage(player, message, ChatMessageType.Party);
         }
 
         //ProjectileDeadPacket

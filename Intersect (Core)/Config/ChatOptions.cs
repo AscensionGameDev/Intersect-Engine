@@ -22,7 +22,7 @@
         /// <summary>
         /// Whether or not chat messages should be logged to the database.
         /// </summary>
-        public bool LogChatMessages = false;
+        public bool LogChatMessagesToDatabase = false;
 
     }
 

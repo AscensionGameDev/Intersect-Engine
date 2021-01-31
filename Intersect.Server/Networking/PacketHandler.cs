@@ -774,9 +774,9 @@ namespace Intersect.Server.Networking
             }
             else
             {
+                ChatHistory.LogMessage(player, msg, ChatMessageType.Local);
                 cmd = msg.Split()[0].ToLower();
                 msg = msg.Remove(0, cmd.Length);
-                PacketSender.LogChatMsg(player, msg, ChatMessageType.Local);
             }
 
             var msgSplit = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
@@ -788,7 +788,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                Color chatColor = CustomColors.Chat.LocalChat;
+                var chatColor = CustomColors.Chat.LocalChat;
                 if (client?.Power.IsAdmin ?? false)
                 {
                     chatColor = CustomColors.Chat.AdminLocalChat;
@@ -798,12 +798,11 @@ namespace Intersect.Server.Networking
                     chatColor = CustomColors.Chat.ModLocalChat;
                 }
 
-                PacketSender.LogChatMsg(player, msg, ChatMessageType.Local);
                 PacketSender.SendProximityMsg(
                     Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, chatColor,
                     player.Name
                 );
-
+                ChatHistory.LogMessage(player, msg, ChatMessageType.Local);
 
                 PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
             }
@@ -814,7 +813,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                Color chatColor = CustomColors.Chat.GlobalChat;
+                var chatColor = CustomColors.Chat.GlobalChat;
                 if (client?.Power.IsAdmin ?? false)
                 {
                     chatColor = CustomColors.Chat.AdminGlobalChat;
@@ -824,9 +823,9 @@ namespace Intersect.Server.Networking
                 {
                     chatColor = CustomColors.Chat.ModGlobalChat;
                 }
-
-                PacketSender.LogChatMsg(player, msg, ChatMessageType.Global);
+               
                 PacketSender.SendGlobalMsg( Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
+                ChatHistory.LogMessage(player, msg, ChatMessageType.Global);
 
             }
             else if (cmd == Strings.Chat.partycmd)
@@ -856,10 +855,10 @@ namespace Intersect.Server.Networking
 
                 if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.LogChatMsg(player, msg, ChatMessageType.Admin);
                     PacketSender.SendAdminMsg(
                         Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                     );
+                    ChatHistory.LogMessage(player, msg, ChatMessageType.Admin);
                 }
             }
             else if (cmd == Strings.Chat.announcementcmd)
@@ -871,11 +870,11 @@ namespace Intersect.Server.Networking
 
                 if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.LogChatMsg(player, msg, ChatMessageType.Notice);
                     PacketSender.SendGlobalMsg(
                         Strings.Chat.announcement.ToString(player.Name, msg), CustomColors.Chat.AnnouncementChat,
                         player.Name
                     );
+                    ChatHistory.LogMessage(player, msg, ChatMessageType.Notice);
 
                     // Show an announcement banner if configured to do so as well!
                     if (Options.Chat.ShowAnnouncementBanners)

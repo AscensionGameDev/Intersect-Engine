@@ -92,7 +92,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\debug\server\</OutputPath>
+    <OutputPath>..\..\..\Intersect Engine 0.6.2.455-beta Full\Server\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -523,6 +523,10 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210131200819_ChatLogging.cs" />
+    <Compile Include="Migrations\Logging\20210131200819_ChatLogging.designer.cs">
+      <DependentUpon>20210131200819_ChatLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
