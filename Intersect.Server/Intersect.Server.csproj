@@ -527,10 +527,6 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Logging\20210131200819_ChatLogging.cs" />
-    <Compile Include="Migrations\Logging\20210131200819_ChatLogging.designer.cs">
-      <DependentUpon>20210131200819_ChatLogging.cs</DependentUpon>
-    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
     <Compile Include="Networking\Helpers\NetDebug.cs" />

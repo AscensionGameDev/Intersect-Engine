@@ -16,30 +16,6 @@ namespace Intersect.Server.Migrations.Logging
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
 
-            modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.ChatHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Ip");
-
-                    b.Property<string>("MessageText");
-
-                    b.Property<int>("MessageType");
-
-                    b.Property<Guid>("PlayerId");
-
-                    b.Property<string>("PlayerName");
-
-                    b.Property<DateTime>("TimeStamp");
-
-                    b.Property<Guid>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatHistory");
-                });
-
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.UserActivityHistory", b =>
                 {
                     b.Property<Guid>("Id")
