@@ -628,38 +628,28 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (!client.IsEditor)
+            //If this is an editor, send the shops, events, variables, etc
+            if (client.IsEditor)
             {
-                var sw = new Stopwatch();
-                sw.Start();
-                client.Send(CachedGameDataPacket);
-                SendGameObject(client, ClassBase.Get(client.Entity.ClassId));
-                Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to send game data to client!");
-
-                return;
-            }
-
-            var gameObjects = new List<GameObjectPacket>();
-
-            //Send massive amounts of game data
-            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
-            {
-                if ((GameObjectType) val == GameObjectType.Map)
+                foreach (var val in Enum.GetValues(typeof(GameObjectType)))
                 {
-                    continue;
-                }
+                    if ((GameObjectType)val == GameObjectType.Map)
+                    {
+                        continue;
+                    }
 
-                if ((GameObjectType)val == GameObjectType.Shop ||
-                    (GameObjectType)val == GameObjectType.Event ||
-                    (GameObjectType)val == GameObjectType.PlayerVariable ||
-                    (GameObjectType)val == GameObjectType.ServerVariable)
-                {
-                    SendGameObjects(client, (GameObjectType)val, gameObjects);
+                    if (((GameObjectType)val == GameObjectType.Shop ||
+                         (GameObjectType)val == GameObjectType.Event ||
+                         (GameObjectType)val == GameObjectType.PlayerVariable ||
+                         (GameObjectType)val == GameObjectType.ServerVariable))
+                    {
+                        SendGameObjects(client, (GameObjectType)val, null);
+                    }
                 }
             }
 
-            //Let the client/editor know they have everything now
-            client.Send(new GameDataPacket(gameObjects.ToArray(), CustomColors.Json()));
+            //Now send the cached game data that we send to all clients
+            client.Send(CachedGameDataPacket);
         }
 
         //GameDataPacket
