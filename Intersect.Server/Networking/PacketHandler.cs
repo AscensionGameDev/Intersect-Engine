@@ -3236,11 +3236,7 @@ namespace Intersect.Server.Networking
                 DbInterface.SaveGameObject(obj);
             }
 
-            var copyCachedGameData = PacketSender.CachedGameDataPacket.GameObjects.ToList();
-            copyCachedGameData.Add(new Network.Packets.Server.GameObjectPacket(obj.Id, obj.Type, obj.JsonData, false, false));
-
-            PacketSender.CachedGameDataPacket.GameObjects = copyCachedGameData.ToArray();
-            PacketSender.CachedGameDataPacket.ClearCachedData();
+            PacketSender.CacheGameDataPacket();
 
             PacketSender.SendGameObjectToAll(obj);
         }
@@ -3380,18 +3376,7 @@ namespace Intersect.Server.Networking
 
                 DbInterface.DeleteGameObject(obj);
 
-                var copyCachedGameData = PacketSender.CachedGameDataPacket.GameObjects.ToList();
-                //Only replace the modified object
-                for (int i = copyCachedGameData.Count - 1; i >= 0; i--)
-                {
-                    if (copyCachedGameData[i].Id == obj.Id)
-                    {
-                        copyCachedGameData.RemoveAt(i);
-                    }
-                }
-
-                PacketSender.CachedGameDataPacket.GameObjects = copyCachedGameData.ToArray();
-                PacketSender.CachedGameDataPacket.ClearCachedData();
+                PacketSender.CacheGameDataPacket();
 
                 PacketSender.SendGameObjectToAll(obj, true);
             }
@@ -3556,16 +3541,7 @@ namespace Intersect.Server.Networking
                     }
 
                     // Only replace the modified object
-                    for (int i = 0; i < PacketSender.CachedGameDataPacket.GameObjects.Length; i++)
-                    {
-                        if (PacketSender.CachedGameDataPacket.GameObjects[i].Id == obj.Id)
-                        {
-                            PacketSender.CachedGameDataPacket.GameObjects[i] =
-                                new Network.Packets.Server.GameObjectPacket(obj.Id, obj.Type, obj.JsonData, false, false);
-                            PacketSender.CachedGameDataPacket.ClearCachedData();
-
-                        }
-                    }
+                    PacketSender.CacheGameDataPacket();
 
                     PacketSender.SendGameObjectToAll(obj, false);
                 }
