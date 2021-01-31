@@ -33,6 +33,10 @@ namespace Intersect.Server.Networking
 
         private int mPacketCount = 0;
 
+        public Config.FloodThreshholds PacketFloodingThreshholds { get; set; } = Options.Instance.SecurityOpts?.PacketOpts.Threshholds;
+
+        public long LastPing { get; set; }
+
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         protected long mTimeout = 20000; //20 seconds
@@ -137,11 +141,11 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public void Disconnect(string reason = "")
+        public void Disconnect(string reason = "", bool shutdown = false)
         {
             if (mConnection != null)
             {
-                Logout();
+                Logout(shutdown);
                 mConnection.Dispose();
 
                 return;
@@ -151,6 +155,7 @@ namespace Intersect.Server.Networking
         public bool IsConnected()
         {
             return mConnection.IsConnected;
+            return mConnection?.IsConnected ?? false;
         }
 
         public string GetIp()
@@ -161,6 +166,7 @@ namespace Intersect.Server.Networking
             }
 
             return mConnection.Ip;
+            return mConnection?.Ip ?? "";
         }
 
         public static Client CreateBeta4Client(IApplicationContext context, IConnection connection)
@@ -175,21 +181,25 @@ namespace Intersect.Server.Networking
             return client;
         }
 
-        public void Logout()
+        public void Logout(bool force = false)
         {
-            if (Entity == null)
+            var entity = Entity;
+            if (entity != null)
             {
-                return;
+                entity.LastOnline = DateTime.Now;
+
+                entity.TryLogout(force);
+
+                entity.Client = null;
+                Entity = null;
             }
 
-            Entity.LastOnline = DateTime.Now;
+            if (!force)
+            {
+                User?.Save();
+            }
 
-            DbInterface.SavePlayerDatabaseAsync();
-
-            Entity.TryLogout();
-
-            Entity.Client = null;
-            Entity = null;
+            SetUser(null);
         }
 
         public static void RemoveBeta4Client(IConnection connection)
@@ -220,7 +230,7 @@ namespace Intersect.Server.Networking
                     : $"Client disconnected ({client.Name}->{client.Entity?.Name ?? "[editor]"})"
             );
 
-            client.Logout();
+            client.Disconnect();
         }
 
         public static Client FindBeta4Client(IConnection connection)
@@ -249,7 +259,9 @@ namespace Intersect.Server.Networking
         #region Implementation of IPacketSender
 
         /// <inheritdoc />
-        public bool Send(IPacket packet) => mConnection?.Send(packet) ?? false;
+        public bool Send(IPacket packet) => Send(packet, TransmissionMode.All);
+
+        public bool Send(IPacket packet, TransmissionMode mode) => mConnection?.Send(packet, mode) ?? false;
 
         #endregion
     }

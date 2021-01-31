@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Intersect.Client.Maps
         public List<MapSound> AttributeSounds = new List<MapSound>();
 
         //Map Animations
-        public List<MapAnimation> LocalAnimations = new List<MapAnimation>();
+        public ConcurrentDictionary<Guid, MapAnimation> LocalAnimations = new ConcurrentDictionary<Guid, MapAnimation>();
 
         public Dictionary<Guid, Entity> LocalEntities = new Dictionary<Guid, Entity>();
 
@@ -59,7 +60,7 @@ namespace Intersect.Client.Maps
         public List<Guid> LocalEntitiesToDispose = new List<Guid>();
 
         //Map Items
-        public Dictionary<Point, List<MapItemInstance>> MapItems = new Dictionary<Point, List<MapItemInstance>>();
+        public Dictionary<int, List<MapItemInstance>> MapItems = new Dictionary<int, List<MapItemInstance>>();
 
         //Map Attributes
         private Dictionary<MapAttribute, Animation> mAttributeAnimInstances =
@@ -192,7 +193,14 @@ namespace Intersect.Client.Maps
 
                 foreach (var anim in LocalAnimations)
                 {
-                    anim.Update();
+                    if (anim.Value.Disposed())
+                    {
+                        LocalAnimations.TryRemove(anim.Key, out MapAnimation removed);
+                    }
+                    else
+                    {
+                        anim.Value.Update();
+                    }
                 }
 
                 foreach (var en in LocalEntities)
@@ -547,7 +555,7 @@ namespace Intersect.Client.Maps
         }
 
         //Animations
-        public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1)
+        public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1, Entity owner = null)
         {
             var animBase = AnimationBase.Get(animId);
             if (animBase == null)
@@ -555,8 +563,8 @@ namespace Intersect.Client.Maps
                 return;
             }
 
-            var anim = new MapAnimation(animBase, tileX, tileY, dir);
-            LocalAnimations.Add(anim);
+            var anim = new MapAnimation(animBase, tileX, tileY, dir, owner);
+            LocalAnimations.TryAdd(anim.Id, anim);
             anim.SetPosition(
                 GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                 GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY, Id, dir
@@ -566,7 +574,10 @@ namespace Intersect.Client.Maps
         private void HideActiveAnimations()
         {
             LocalEntities?.Values.ToList().ForEach(entity => entity?.ClearAnimations(null));
-            LocalAnimations?.ForEach(animation => animation?.Dispose());
+            foreach (var anim in LocalAnimations)
+            {
+                anim.Value?.Dispose();
+            }
             LocalAnimations?.Clear();
             ClearMapAttributes();
         }
@@ -653,14 +664,15 @@ namespace Intersect.Client.Maps
             // Draw map item icons.
             foreach (var itemCollection in MapItems)
             {
-                var location = itemCollection.Key;
+                var tileX = itemCollection.Key % Options.MapWidth;
+                var tileY = (int)Math.Floor(itemCollection.Key / (float)Options.MapWidth);
                 var tileItems = itemCollection.Value;
-
+                
                 // Loop through this in reverse to match client/server display and pick-up order.
                 for (var index = tileItems.Count -1; index >= 0; index--)
                 {
-                    var x = GetX() + location.X * Options.TileWidth;
-                    var y = GetY() + location.Y * Options.TileHeight;
+                    var x = GetX() + tileX * Options.TileWidth;
+                    var y = GetY() + tileY * Options.TileHeight;
 
                     // Set up all information we need to draw this name.
                     var itemBase = ItemBase.Get(tileItems[index].ItemId);
@@ -707,7 +719,7 @@ namespace Intersect.Client.Maps
             {
                 // Apparently it is! Do we have any items to render here?
                 var tileItems = new List<MapItemInstance>();
-                if (MapItems.TryGetValue(new Point(x, y), out tileItems))
+                if (MapItems.TryGetValue(y * Options.MapWidth + x, out tileItems))
                 {
                     var baseOffset = 0;
                     // Loop through this in reverse to match client/server display and pick-up order.
@@ -715,7 +727,7 @@ namespace Intersect.Client.Maps
                     {
                         // Set up all information we need to draw this name.
                         var itemBase = ItemBase.Get(tileItems[index].ItemId);
-                        var name = itemBase.Name;
+                        var name = tileItems[index].Base.Name;
                         var quantity = tileItems[index].Quantity;
                         var rarity = itemBase.Rarity;
                         if (tileItems[index].Quantity > 1)

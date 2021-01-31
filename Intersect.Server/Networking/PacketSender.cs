@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -13,6 +12,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
+using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData.Players;
@@ -22,6 +22,8 @@ using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Networking
 {
@@ -35,9 +37,10 @@ namespace Intersect.Server.Networking
         //PingPacket
         public static void SendPing(Client client, bool request = true)
         {
-            if (client != null)
+            if (client != null && client.LastPing + 250 < Globals.Timing.Milliseconds)
             {
-                client.Send(new PingPacket(request));
+                client.Send(new PingPacket(request), TransmissionMode.Any);
+                client.LastPing = Globals.Timing.Milliseconds;
             }
         }
 
@@ -204,7 +207,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    mapPacket.MapItems = GenerateMapItemsPacket(mapId);
+                    mapPacket.MapItems = GenerateMapItemsPacket(client.Entity, mapId);
                     mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
 
                     return mapPacket;
@@ -215,16 +218,20 @@ namespace Intersect.Server.Networking
         //MapPacket
         public static void SendMap(Client client, Guid mapId, bool allEditors = false)
         {
-            if (client == null)
+            var sentMaps = client?.SentMaps;
+            if (sentMaps == null)
             {
                 return;
             }
 
             var map = MapInstance.Get(mapId);
 
+            if (map == null)
+                return;
+
             if (!client.IsEditor)
             {
-                if (client.SentMaps.TryGetValue(mapId, out var sentMap))
+                if (sentMaps.TryGetValue(mapId, out var sentMap))
                 {
                     if (sentMap.Item1 > Globals.Timing.Milliseconds && sentMap.Item2 == map.Revision)
                     {
@@ -236,12 +243,12 @@ namespace Intersect.Server.Networking
 
                 try
                 {
-                    client.SentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.Milliseconds + 5000, map.Revision));
+                    sentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.Milliseconds + 5000, map.Revision));
                 }
                 catch (Exception exception)
                 {
                     Log.Error($"Current Map #: {mapId}");
-                    Log.Error($"# Sent maps: {client.SentMaps.Count}");
+                    Log.Error($"# Sent maps: {sentMaps.Count}");
                     Log.Error($"# Maps: {MapInstance.Lookup.Count}");
                     Log.Error(exception);
 
@@ -426,7 +433,52 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            foreach (var map in en.Map.GetSurroundingMaps(true))
+            if (en is Projectile)
+            {
+                SendDataToProximity(en.MapId, en.EntityPacket(null, null), null, TransmissionMode.All);
+            }
+            else
+            {
+                foreach (var map in en.Map.GetSurroundingMaps(true))
+                {
+                    foreach (var player in map.GetPlayersOnMap())
+                    {
+                        if (player != except)
+                        {
+                            SendEntityDataTo(player, en);
+                        }
+                    }
+                }
+            }
+
+            SendEntityVitals(en);
+            SendEntityStats(en);
+
+            //If a player, send equipment to all (for paperdolls)
+            if (en.GetType() == typeof(Player))
+            {
+                SendPlayerEquipmentToProximity((Player) en);
+            }
+
+            if (en.GetType() == typeof(Npc))
+            {
+                SendNpcAggressionToProximity((Npc) en);
+            }
+        }
+
+        //EntityDataPacket
+        public static void SendEntityDataToMap(Entity en, MapInstance map, Player except = null)
+        {
+            if (en == null)
+            {
+                return;
+            }
+
+            if (en is Projectile)
+            {
+                SendDataToMap(map.Id, en.EntityPacket(null, null), null, TransmissionMode.All);
+            }
+            else
             {
                 foreach (var player in map.GetPlayersOnMap())
                 {
@@ -511,7 +563,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.SendPacket(new NpcAggressionPacket(npc.Id, npc.GetAggression(player)));
+            player.SendPacket(new NpcAggressionPacket(npc.Id, npc.GetAggression(player)), TransmissionMode.Any);
         }
 
         //EntityLeftArea
@@ -565,13 +617,18 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.SendPacket(new ChatMsgPacket(message, type, color, target));
+            player.SendPacket(new ChatMsgPacket(message, type, color, target), TransmissionMode.All);
             ChatHistory.LogMessage(player, message, type);
         }
 
         //GameDataPacket
         public static void SendGameData(Client client)
         {
+            if (client == null)
+            {
+                return;
+            }
+
             if (!client.IsEditor)
             {
                 var sw = new Stopwatch();
@@ -593,16 +650,13 @@ namespace Intersect.Server.Networking
                     continue;
                 }
 
-                if (((GameObjectType) val == GameObjectType.Shop ||
-                     (GameObjectType) val == GameObjectType.Event ||
-                     (GameObjectType) val == GameObjectType.PlayerVariable ||
-                     (GameObjectType) val == GameObjectType.ServerVariable) &&
-                    !client.IsEditor)
+                if ((GameObjectType)val == GameObjectType.Shop ||
+                    (GameObjectType)val == GameObjectType.Event ||
+                    (GameObjectType)val == GameObjectType.PlayerVariable ||
+                    (GameObjectType)val == GameObjectType.ServerVariable)
                 {
-                    continue;
+                    SendGameObjects(client, (GameObjectType)val, gameObjects);
                 }
-
-                SendGameObjects(client, (GameObjectType) val, gameObjects);
             }
 
             //Let the client/editor know they have everything now
@@ -737,7 +791,7 @@ namespace Intersect.Server.Networking
                 en.MapId,
                 new EntityMovePacket(
                     en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-                )
+                ), null, TransmissionMode.Any
             );
         }
 
@@ -754,8 +808,6 @@ namespace Intersect.Server.Networking
         //EntityVitalsPacket
         public static EntityVitalsPacket GenerateEntityVitalsPacket(Entity en)
         {
-            var statuses = en.Statuses.Values.ToArray();
-
             return new EntityVitalsPacket(
                 en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets(),
                 en.CombatTimer - Globals.Timing.Milliseconds
@@ -765,7 +817,7 @@ namespace Intersect.Server.Networking
         //EntityVitalsPacket
         public static void SendEntityVitals(Entity en)
         {
-            if (en == null)
+            if (en == null || en is EventPageInstance || en is Projectile)
             {
                 return;
             }
@@ -779,29 +831,29 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            SendDataToProximity(en.MapId, GenerateEntityVitalsPacket(en));
+            SendDataToProximity(en.MapId, GenerateEntityVitalsPacket(en), null, TransmissionMode.Any);
         }
 
         //EntityStatsPacket
         public static void SendEntityStats(Entity en)
         {
-            if (en == null)
+            if (en == null || en is EventPageInstance || en is Projectile || en is Resource)
             {
                 return;
             }
 
-            SendDataToProximity(en.MapId, GenerateEntityStatsPacket(en));
+            SendDataToProximity(en.MapId, GenerateEntityStatsPacket(en), null, TransmissionMode.Any);
         }
 
         //EntityVitalsPacket
         public static void SendEntityVitalsTo(Client client, Entity en)
         {
-            if (en == null)
+            if (en == null || en is EventPageInstance || en is Projectile)
             {
                 return;
             }
 
-            client.Send(GenerateEntityVitalsPacket(en));
+            client.Send(GenerateEntityVitalsPacket(en), TransmissionMode.Any);
         }
 
         //EntityStatsPacket
@@ -819,21 +871,21 @@ namespace Intersect.Server.Networking
         //EntityStatsPacket
         public static void SendEntityStatsTo(Client client, Entity en)
         {
-            client.Send(GenerateEntityStatsPacket(en));
+            client.Send(GenerateEntityStatsPacket(en), TransmissionMode.Any);
         }
 
         //EntityDirectionPacket
         public static void SendEntityDir(Entity en)
         {
             SendDataToProximity(
-                en.MapId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir)
+                en.MapId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir), null, TransmissionMode.Any
             );
         }
 
         //EntityAttackPacket
         public static void SendEntityAttack(Entity en, int attackTime)
         {
-            SendDataToProximity(en.MapId, new EntityAttackPacket(en.Id, en.GetEntityType(), en.MapId, attackTime));
+            SendDataToProximity(en.MapId, new EntityAttackPacket(en.Id, en.GetEntityType(), en.MapId, attackTime), null, TransmissionMode.Any);
         }
 
         //EntityDiePacket
@@ -845,7 +897,7 @@ namespace Intersect.Server.Networking
         //EntityDirectionPacket
         public static void SendEntityDirTo(Player player, Entity en)
         {
-            player.SendPacket(new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir));
+            player.SendPacket(new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir), TransmissionMode.Any);
         }
 
         //EventDialogPacket
@@ -899,60 +951,109 @@ namespace Intersect.Server.Networking
         }
 
         //MapItemsPacket
-        public static MapItemsPacket GenerateMapItemsPacket(Guid mapId)
+        public static MapItemsPacket GenerateMapItemsPacket(Player player, Guid mapId)
         {
             var map = MapInstance.Get(mapId);
+
+            var items = new List<MapItemUpdatePacket>();
+
             // Generate our data to be send to the client.
-            var itemData = new Dictionary<Point, List<string>>();
-            lock (map.MapItems)
+            foreach (var item in map.AllMapItems.Values)
             {
-                foreach (var location in map.MapItems)
+                if (item.VisibleToAll || item.Owner == player?.Id)
                 {
-                    itemData.Add(location.Key, new List<string>());
-                    foreach (var item in location.Value)
-                    {
-                        itemData[location.Key].Add(item.Data());
-                    }
+                    items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
                 }
             }
 
-            return new MapItemsPacket(mapId, itemData);
+            return new MapItemsPacket(mapId, items.ToArray());
         }
 
         //MapItemsPacket
         public static void SendMapItems(Player player, Guid mapId)
         {
-            player.SendPacket(GenerateMapItemsPacket(mapId));
+            player.SendPacket(GenerateMapItemsPacket(player, mapId));
         }
 
         //MapItemsPacket
         public static void SendMapItemsToProximity(Guid mapId)
         {
-            // Send our data to the client.
-            SendDataToProximity(mapId, GenerateMapItemsPacket(mapId));
+            var map = MapInstance.Get(mapId);
+            if (map == null)
+            {
+                return;
+            }
+
+            // Collect a list of all players in the surrounding.
+            var playerList = new List<Player>();
+            playerList.AddRange(map.GetPlayersOnMap());
+
+            foreach (var surrMap in map.SurroundingMaps)
+            {
+                playerList.AddRange(surrMap.GetPlayersOnMap());
+            }
+
+            // Send them all a map item update.
+            foreach(var player in playerList)
+            {
+                player.SendPacket(GenerateMapItemsPacket(player, mapId));
+            }
         }
 
-        //MapItemUpdatePacket
-        public static void SendMapItemUpdate(Guid mapId, Guid uniqueId)
+        /// <summary>
+        /// Send a map item update to the relevant players.
+        /// </summary>
+        /// <param name="mapId">The Id of the <see cref="MapInstance"/> we are sending the item update for.</param>
+        /// <param name="uniqueId">The Id for the <see cref="MapItem"/> we are sending the item update for.</param>
+        /// <param name="itemRef">The map item that we are sending (or null if removing), passing this saves us a lookup for it.</param>
+        /// <param name="sendToAll">If we are removing the item from the map, do we send this data to everyone?</param>
+        /// <param name="owner">The previous owner of an item being removed when the data is not send to everyone.</param>
+        public static void SendMapItemUpdate(Guid mapId, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
         {
             var map = MapInstance.Get(mapId);
-            
-            // Get our location and item
-            var location = map.FindItemLocation(uniqueId);
-            var item = map.FindItem(uniqueId);
-            
+
             // Does the item exist? If not, send a delete notification. If it does, send an update.
-            if (item == null)
+            if (removing)
             {
-                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, uniqueId.ToString(), true));
+                // Are we to send the removal to all players?
+                if (sendToAll)
+                {
+                    SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                }
+                else
+                {
+                    // Nope, just to its owner!
+                    var player = Player.FindOnline(owner);
+                    if (player != null)
+                    {
+                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    }
+                    else
+                    {
+                        // Uh, our player doesn't exist.. send it to everyone anyway.
+                        SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    }
+                }
+                
             }
             else
             {
-                SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, location, item.Data()));
+                // Is the item owned? If so, only send to that particular player.
+                if (!itemRef.VisibleToAll)
+                {
+                    var player = Player.FindOnline(itemRef.Owner);
+                    if (player != null)
+                    {
+                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                    }
+                }
+                else
+                {
+                    SendDataToProximity(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                }
             }
-
-            
         }
+
 
         //InventoryPacket
         public static void SendInventory(Player player)
@@ -1028,6 +1129,7 @@ namespace Intersect.Server.Networking
             else
             {
                 var equipment = new Guid[Options.EquipmentSlots.Count];
+
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
@@ -1038,6 +1140,7 @@ namespace Intersect.Server.Networking
                     {
                         equipment[i] = en.Items[en.Equipment[i]].ItemId;
                     }
+
                 }
 
                 return new EquipmentPacket(en.Id, null, equipment);
@@ -1047,20 +1150,20 @@ namespace Intersect.Server.Networking
         //EquipmentPacket
         public static void SendPlayerEquipmentTo(Player forPlayer, Player en)
         {
-            forPlayer.SendPacket(GenerateEquipmentPacket(forPlayer, en));
+            forPlayer.SendPacket(GenerateEquipmentPacket(forPlayer, en), TransmissionMode.Any);
         }
 
         //EquipmentPacket
         public static void SendPlayerEquipmentToProximity(Player en)
         {
-            SendDataToProximity(en.MapId, GenerateEquipmentPacket(null, en));
+            SendDataToProximity(en.MapId, GenerateEquipmentPacket(null, en), null, TransmissionMode.Any);
             SendPlayerEquipmentTo(en, en);
         }
 
         //StatPointsPacket
         public static void SendPointsTo(Player player)
         {
-            player.SendPacket(new StatPointsPacket(player.StatPoints));
+            player.SendPacket(new StatPointsPacket(player.StatPoints), TransmissionMode.Any);
         }
 
         //HotbarPacket
@@ -1150,7 +1253,7 @@ namespace Intersect.Server.Networking
         //AdminPanelPacket
         public static void SendOpenAdminWindow(Client client)
         {
-            client.Send(new AdminPanelPacket());
+            client.Send(new AdminPanelPacket(), TransmissionMode.Any);
         }
 
         //MapGridPacket
@@ -1221,7 +1324,18 @@ namespace Intersect.Server.Networking
         //SpellCastPacket
         public static void SendEntityCastTime(Entity en, Guid spellId)
         {
-            SendDataToProximity(en.MapId, new SpellCastPacket(en.Id, spellId));
+            SendDataToProximity(en.MapId, new SpellCastPacket(en.Id, spellId), null, TransmissionMode.Any);
+        }
+
+        //CancelCastPacket
+        public static void SendEntityCancelCast(Entity en)
+        {
+            if (en == null || en is EventPageInstance || en is Projectile)
+            {
+                return;
+            }
+
+            SendDataToProximity(en.MapId, new CancelCastPacket(en.Id), null, TransmissionMode.Any);
         }
 
         //SpellCooldownPacket
@@ -1231,7 +1345,7 @@ namespace Intersect.Server.Networking
             {
                 var cds = new Dictionary<Guid, long>();
                 cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUTC);
-                player.SendPacket(new SpellCooldownPacket(cds));
+                player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
             }
         }
 
@@ -1245,7 +1359,7 @@ namespace Intersect.Server.Networking
                     cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
-                player.SendPacket(new SpellCooldownPacket(cds));
+                player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
             }
         }
 
@@ -1256,7 +1370,7 @@ namespace Intersect.Server.Networking
             {
                 var cds = new Dictionary<Guid, long>();
                 cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUTC);
-                player.SendPacket(new ItemCooldownPacket(cds));
+                player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);
             }
         }
 
@@ -1270,14 +1384,14 @@ namespace Intersect.Server.Networking
                     cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
                 }
 
-                player.SendPacket(new ItemCooldownPacket(cds));
+                player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);
             }
         }
 
         //ExperiencePacket
         public static void SendExperience(Player player)
         {
-            player.SendPacket(new ExperiencePacket(player.Exp, player.ExperienceToNextLevel));
+            player.SendPacket(new ExperiencePacket(player.Exp, player.ExperienceToNextLevel), TransmissionMode.Any);
         }
 
         //PlayAnimationPacket
@@ -1291,7 +1405,7 @@ namespace Intersect.Server.Networking
             sbyte direction
         )
         {
-            SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+            SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
         }
 
         //HoldPlayerPacket
@@ -1620,6 +1734,11 @@ namespace Intersect.Server.Networking
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {
+            if (en == null || en.Map == null)
+            {
+                return;
+            }
+
             SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
         }
 
@@ -1698,7 +1817,7 @@ namespace Intersect.Server.Networking
                         new PartyMemberPacket(
                             member.Id, member.Name, member.GetVitals(), member.GetMaxVitals(), member.Level
                         )
-                    )
+                    ), TransmissionMode.Any
                 );
             }
         }
@@ -1712,7 +1831,7 @@ namespace Intersect.Server.Networking
         //ChatBubblePacket
         public static void SendChatBubble(Guid entityId, EntityTypes type, string text, Guid mapId)
         {
-            SendDataToProximity(mapId, new ChatBubblePacket(entityId, type, mapId, text));
+            SendDataToProximity(mapId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }
 
         //QuestOfferPacket
@@ -1845,33 +1964,17 @@ namespace Intersect.Server.Networking
 
             var online = new Dictionary<string, string>();
             var offline = new List<string>();
-            var found = false;
 
-            foreach (var friend in player.Friends)
+            foreach (var friend in player.CachedFriends)
             {
-                if (friend.Target == null)
+                var plyr = Player.FindOnline(friend.Key);
+                if (plyr != null)
                 {
-                    continue;
+                    online.Add(plyr.Name, MapList.List.FindMap(plyr.MapId)?.Name ?? "");
                 }
-
-                found = false;
-                foreach (var c in Globals.Clients)
+                else
                 {
-                    if (c != null && c.Entity != null)
-                    {
-                        if (friend.Target?.Name.ToLower() == c.Entity?.Name.ToLower())
-                        {
-                            online.Add(friend.Target?.Name, MapList.List.FindMap(friend.Target.MapId)?.Name ?? "");
-                            found = true;
-
-                            break;
-                        }
-                    }
-                }
-
-                if (found == false)
-                {
-                    offline.Add(friend.Target.Name);
+                    offline.Add(friend.Value);
                 }
             }
 
@@ -1896,7 +1999,7 @@ namespace Intersect.Server.Networking
             player.SendPacket(new TargetOverridePacket(targetId));
         }
 
-        public static void SendDataToMap(Guid mapId, IPacket packet, Player except = null)
+        public static void SendDataToMap(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)
         {
             if (!MapInstance.Lookup.Keys.Contains(mapId))
             {
@@ -1908,25 +2011,35 @@ namespace Intersect.Server.Networking
             {
                 if (player != null && player != except)
                 {
-                    player.SendPacket(packet);
+                    player.SendPacket(packet, mode);
                 }
             }
         }
 
-        public static bool SendDataToProximity(Guid mapId, IPacket packet, Player except = null)
+        public static bool SendDataToProximity(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)
         {
-            if (!MapInstance.Lookup.Keys.Contains(mapId))
+            var map = MapInstance.Get(mapId);
+            if (map == null)
             {
                 return false;
             }
+            
+            SendDataToMap(mapId, packet, except, mode);
 
-            SendDataToMap(mapId, packet, except);
-            for (var i = 0; i < MapInstance.Get(mapId).SurroundingMaps.Count; i++)
+            foreach (var surrMap in map.SurroundingMapIds)
             {
-                SendDataToMap(MapInstance.Get(mapId).SurroundingMaps[i], packet, except);
+                SendDataToMap(surrMap, packet, except, mode);
             }
 
             return true;
+        }
+
+        public static void SendDataToPlayers(IPacket packet, IEnumerable<Player> players, TransmissionMode mode = TransmissionMode.All)
+        {
+            foreach (var player in players)
+            {
+                player.SendPacket(packet, mode);
+            }
         }
 
         public static void SendDataToEditors(IPacket packet)
@@ -1943,7 +2056,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendDataToAllPlayers(IPacket packet)
+        public static void SendDataToAllPlayers(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
             lock (Globals.ClientLock)
             {
@@ -1951,13 +2064,13 @@ namespace Intersect.Server.Networking
                 {
                     if (client?.Entity != null)
                     {
-                        client.Send(packet);
+                        client.Send(packet, mode);
                     }
                 }
             }
         }
 
-        public static void SendDataToAll(IPacket packet)
+        public static void SendDataToAll(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
             lock (Globals.ClientLock)
             {
@@ -1965,7 +2078,7 @@ namespace Intersect.Server.Networking
                 {
                     if ((client?.IsEditor ?? false) || client?.Entity != null)
                     {
-                        client.Send(packet);
+                        client.Send(packet, mode);
                     }
                 }
             }

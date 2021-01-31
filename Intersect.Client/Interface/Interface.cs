@@ -137,6 +137,15 @@ namespace Intersect.Client.Interface
             sMenuCanvas?.Dispose();
             sGameCanvas?.Dispose();
             GameUi?.Dispose();
+
+            // Destroy our target UI as well! Above code does NOT appear to clear this properly.
+            if (Globals.Me != null)
+            {
+                Globals.Me.ClearTarget();
+                Globals.Me.TargetBox?.Dispose();
+                Globals.Me.TargetBox = null;
+            }
+            
             GwenInitialized = false;
         }
 
@@ -147,7 +156,7 @@ namespace Intersect.Client.Interface
                 return false;
             }
 
-            return FocusElements.Any(t => t?.HasFocus ?? false) || InputBlockingElements.Any(t => t?.IsHidden == false);
+            return FocusElements.Any(t => t.MouseInputEnabled && (t?.HasFocus ?? false)) || InputBlockingElements.Any(t => t?.IsHidden == false);
         }
 
         #endregion
@@ -197,6 +206,19 @@ namespace Intersect.Client.Interface
         {
             if (obj.IsHidden == true)
             {
+                return false;
+            }
+            else if (!obj.MouseInputEnabled)
+            {
+                // Check if we're hitting a child element.
+                for (var i = 0; i < obj.Children.Count; i++)
+                {
+                    if (MouseHitBase(obj.Children[i]))
+                    {
+                        return true;
+                    }
+                }
+
                 return false;
             }
             else

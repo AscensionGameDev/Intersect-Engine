@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-
+using System.Threading;
 using Intersect.Logging;
+using Intersect.Logging.Output;
 using Intersect.Security;
+using Intersect.Server.Core;
 using Intersect.Server.Database.PlayerData.Api;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -25,6 +30,40 @@ namespace Intersect.Server.Database.PlayerData
     [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
     public class User
     {
+        private static readonly ConcurrentDictionary<Guid, User> OnlineUsers = new ConcurrentDictionary<Guid, User>();
+
+        public static int OnlineCount => OnlineUsers.Count;
+
+        public static List<User> OnlineList => OnlineUsers.Values.ToList();
+
+        public static User FindOnline(Guid id)
+        {
+            return OnlineUsers.ContainsKey(id) ? OnlineUsers[id] : null;
+        }
+
+        public static User FindOnline(string username)
+        {
+            return OnlineUsers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == username.ToLower().Trim());
+        }
+
+        public static User FindOnlineFromEmail(string email)
+        {
+            return OnlineUsers.Values.FirstOrDefault(s => s.Email.ToLower().Trim() == email.ToLower().Trim());
+        }
+
+        public static void Login(User user)
+        {
+            if (!OnlineUsers.ContainsKey(user.Id))
+                OnlineUsers.TryAdd(user.Id, user);
+        }
+
+        public static void Logout (User user)
+        {
+            if(OnlineUsers.ContainsKey(user.Id))
+            {
+                OnlineUsers.TryRemove(user.Id, out User removed);
+            }
+        }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
@@ -64,19 +103,9 @@ namespace Intersect.Server.Database.PlayerData
         [JsonIgnore]
         public DateTime? PasswordResetTime { get; set; }
 
-        public User Load()
-        {
-            // ReSharper disable once InvertIf
-            if (Players != null)
-            {
-                foreach (var player in Players)
-                {
-                    Player.Load(player);
-                }
-            }
-
-            return this;
-        }
+        [JsonIgnore]
+        [NotMapped]
+        private object mSavingLock = new object();
 
         public static string SaltPasswordHash(string passwordHash, string salt)
         {
@@ -121,70 +150,406 @@ namespace Intersect.Server.Database.PlayerData
                     Salt = salt;
                     Password = SaltPasswordHash(passwordHash, salt);
 
+                    Save();
+
                     return true;
                 }
             }
         }
 
-        public static Tuple<Client, User> Fetch(Guid userId, PlayerContext playerContext = null)
+        public void AddCharacter(Player newCharacter)
         {
-            var client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
-
-            return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
-        }
-
-        public static Tuple<Client, User> Fetch(
-            string userName,
-            PlayerContext playerContext = null
-        )
-        {
-            var client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
-
-            return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
-        }
-
-        public static User Find(Guid userId, PlayerContext playerContext = null)
-        {
-            if (playerContext == null)
+            if (newCharacter == null)
             {
-                lock (DbInterface.GetPlayerContextLock())
-                {
-                    var context = DbInterface.GetPlayerContext();
-
-                    return userId == Guid.Empty ? null : QueryUserById(context, userId);
-                }
+                return;
             }
-            else
-            {
-                return userId == Guid.Empty ? null : QueryUserById(playerContext, userId);
-            }
-        }
 
-        public static User Find(string username, PlayerContext playerContext = null)
-        {
+            //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
+            //The cost of making a new context is almost nil.
             try
             {
-                if (playerContext == null)
+                lock (mSavingLock)
                 {
-                    lock (DbInterface.GetPlayerContextLock())
+                    using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                     {
-                        var context = DbInterface.GetPlayerContext();
+                        context.Users.Update(this);
 
-                        return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                        this.Players.Add(newCharacter);
+
+                        Player.Load(newCharacter);
+
+                        context.ChangeTracker.DetectChanges();
+
+                        context.StopTrackingUsersExcept(this);
+
+                        //If we have a new character, intersect already generated the id.. which means the change tracker is gonna see them as modified and not added.. we need to manually set their state
+                        context.Entry(newCharacter).State = EntityState.Added;
+
+                        context.SaveChanges();
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to save user while adding character: " + Name);
+                ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+        }
+
+        public void DeleteCharacter(Player deleteCharacter)
+        {
+            if (deleteCharacter == null)
+            {
+                return;
+            }
+
+            //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
+            //The cost of making a new context is almost nil.
+            try
+            {
+                lock (mSavingLock)
+                {
+                    using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                    {
+                        context.Users.Update(this);
+
+                        context.ChangeTracker.DetectChanges();
+
+                        context.StopTrackingUsersExcept(this);
+
+                        context.Entry(deleteCharacter).State = EntityState.Deleted;
+
+                        this.Players.Remove(deleteCharacter);
+
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to save user while deleting character: " + Name);
+                ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+        }
+
+        public void Save(bool force = false)
+        {
+            //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
+            //The cost of making a new context is almost nil.
+            var lockTaken = false;
+            PlayerContext context = null;
+            try
+            {
+                if (force)
+                {
+                    Monitor.Enter(mSavingLock);
+                    lockTaken = true;
                 }
                 else
                 {
-                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
+                    Monitor.TryEnter(mSavingLock, 0, ref lockTaken);
+                }
+
+                if (lockTaken)
+                {
+                    context = DbInterface.CreatePlayerContext(readOnly: false);
+
+                    context.Users.Update(this);
+
+                    context.ChangeTracker.DetectChanges();
+
+                    context.StopTrackingUsersExcept(this);
+
+                    if (this.UserBan != null)
+                    {
+                        context.Entry(this.UserBan).State = EntityState.Detached;
+                    }
+
+                    if (this.UserMute != null)
+                    {
+                        context.Entry(this.UserMute).State = EntityState.Detached;
+                    }
+
+                    context.SaveChanges();
                 }
             }
-            catch (Exception exception)
+            catch (DbUpdateConcurrencyException ex)
             {
-                Log.Error(exception);
+                var concurrencyErrors = new StringBuilder();
+                foreach (var entry in ex.Entries)
+                {
+                    var type = entry.GetType().FullName.ToString();
+                    concurrencyErrors.AppendLine($"Entry Type [{type}]");
+                    concurrencyErrors.AppendLine("--------------------");
 
-                throw;
+                    var proposedValues = entry.CurrentValues;
+                    var databaseValues = entry.GetDatabaseValues();
+
+                    foreach (var property in proposedValues.Properties)
+                    {
+                        concurrencyErrors.AppendLine($"{property.Name} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}");
+                    }
+
+                    concurrencyErrors.AppendLine("");
+                    concurrencyErrors.AppendLine("");
+                }
+                Log.Error(ex, "Jackpot! Concurrency Bug For " + Name);
+                Log.Error(concurrencyErrors.ToString());
+                ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to save user: " + Name);
+                ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+            finally
+            {
+                if (lockTaken)
+                {
+                    context?.Dispose();
+                    Monitor.Exit(mSavingLock);
+                }
             }
         }
+
+        public static User PostLoad(User user)
+        {
+            if (user != null)
+            {
+                foreach (var player in user.Players)
+                {
+                    Player.Load(player);
+                }
+            }
+            return user;
+        }
+
+        public static Tuple<Client, User> Fetch(Guid userId)
+        {
+            var client = Globals.Clients.Find(queryClient => userId == queryClient?.User?.Id);
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userId));
+        }
+
+        public static Tuple<Client, User> Fetch(string userName)
+        {
+            var client = Globals.Clients.Find(queryClient => Entity.CompareName(userName, queryClient?.User?.Name));
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userName));
+        }
+
+        public static User TryLogin(string username, string ptPassword)
+        {
+            var user = FindOnline(username);
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    if (user != null)
+                    {
+                        var pass = SaltPasswordHash(ptPassword, user.Salt);
+                        if (pass == user.Password)
+                        {
+                            return PostLoad(user);
+                        }
+                    }
+                    else
+                    {
+                        var salt = GetUserSalt(username);
+                        if (!string.IsNullOrWhiteSpace(salt))
+                        {
+                            var pass = SaltPasswordHash(ptPassword, salt);
+                            return PostLoad(QueryUserByNameAndPassword(context, username, pass));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+            return null;
+        }
+
+        public static User Find(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            var user = FindOnline(userId);
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return User.PostLoad(QueryUserById(context, userId));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static User Find(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return null;
+            }
+
+            var user = FindOnline(username);
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return User.PostLoad(QueryUserByName(context, username));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static User FindFromNameOrEmail(string nameOrEmail)
+        {
+            if (string.IsNullOrWhiteSpace(nameOrEmail))
+            {
+                return null;
+            }
+
+            var user = FindOnlineFromEmail(nameOrEmail);
+            if (user != null)
+            {
+                return user;
+            }
+
+            user = FindOnline(nameOrEmail);
+            if (user != null)
+            {
+                return user;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return User.PostLoad(QueryUserByName(context, nameOrEmail));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static User FindFromEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return null;
+            }
+
+            var user = FindOnlineFromEmail(email);
+
+            if (user != null)
+            {
+                return user;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return User.PostLoad(QueryUserByEmail(context, email));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static string GetUserSalt(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return null;
+            }
+
+            var user = FindOnline(userName);
+            if (user != null)
+            {
+                return user.Salt;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return SaltByName(context, userName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static bool UserExists(string nameOrEmail)
+        {
+            if (string.IsNullOrWhiteSpace(nameOrEmail))
+            {
+                return false;
+            }
+
+            var user = FindOnlineFromEmail(nameOrEmail);
+            if (user != null)
+            {
+                return true;
+            }
+
+            user = FindOnline(nameOrEmail);
+            if (user != null)
+            {
+                return true;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return AnyUserByNameOrEmail(context, nameOrEmail);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return false;
+            }
+        }
+
+
 
         #region Instance Variables
 
@@ -226,36 +591,31 @@ namespace Intersect.Server.Database.PlayerData
 
         public static int Count()
         {
-            lock (DbInterface.GetPlayerContextLock())
+            try
             {
-                var context = DbInterface.GetPlayerContext();
-
-                return context.Users.Count();
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return context.Users.Count();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
-        public static IEnumerable<User> List(int page, int count, PlayerContext playerContext = null)
+        public static IEnumerable<User> List(int page, int count)
         {
-            if (playerContext == null)
+            try
             {
-                lock (DbInterface.GetPlayerContextLock())
-                {
-                    var context = DbInterface.GetPlayerContext();
-                    try
-                    {
-                        return QueryUsers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
-                    }
-                    catch (Exception exception)
-                    {
-                        exception.ToString();
-
-                        throw;
-                    }
-                }
+                using (var context = DbInterface.CreatePlayerContext()) {
+                    return QueryUsers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
+                }          
             }
-            else
+            catch (Exception ex)
             {
-                return QueryUsers(playerContext, page, count)?.ToList() ?? throw new InvalidOperationException();
+                Log.Error(ex);
+                return null;
             }
         }
 
@@ -276,16 +636,39 @@ namespace Intersect.Server.Database.PlayerData
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery(
                 // ReSharper disable once SpecifyStringComparison
-                (PlayerContext context, string username) => context.Users.Where(u => u.Name.ToLower() == username.ToLower())
+                (PlayerContext context, string username) => context.Users.Where(u => u.Name == username)
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
                     .Include(p => p.Players)
-                    .ThenInclude(c => c.Friends)
-                    .ThenInclude(c => c.Target)
+                    .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Quests)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Variables)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Spells)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, string, User> QueryUserByNameAndPassword =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string username, string password) => context.Users.Where(u => u.Name == username && u.Password == password)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Quests)
                     .Include(p => p.Players)
@@ -308,10 +691,8 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
                     .Include(p => p.Players)
-                    .ThenInclude(c => c.Friends)
-                    .ThenInclude(c => c.Target)
-                    .Include(p => p.Players)
                     .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Quests)
                     .Include(p => p.Players)
@@ -326,8 +707,64 @@ namespace Intersect.Server.Database.PlayerData
             ) ??
             throw new InvalidOperationException();
 
-        #endregion
+        private static readonly Func<PlayerContext, string, User> QueryUserByNameOrEmail =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string nameOrEmail) => context.Users.Where(u => u.Name == nameOrEmail || u.Email == nameOrEmail)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Quests)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Variables)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Spells)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+                ) ?? throw new InvalidOperationException();
 
-    }
+        private static readonly Func<PlayerContext, string, bool> AnyUserByNameOrEmail =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string nameOrEmail) => context.Users.Where(u => u.Name == nameOrEmail || u.Email == nameOrEmail).Any());
+
+        private static readonly Func<PlayerContext, string, string> SaltByName =
+                EF.CompileQuery(
+                    // ReSharper disable once SpecifyStringComparison
+                    (PlayerContext context, string userName) => context.Users.Where(u => u.Name == userName).Select(u => u.Salt).FirstOrDefault());
+
+        private static readonly Func<PlayerContext, string, User> QueryUserByEmail =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string email) => context.Users.Where(u => u.Email == email)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Quests)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Variables)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Spells)
+                    .Include(p => p.Players)
+                    .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+                ) ?? throw new InvalidOperationException();
+
+                #endregion
+
+            }
 
 }

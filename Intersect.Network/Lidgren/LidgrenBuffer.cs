@@ -30,7 +30,7 @@ namespace Intersect.Network.Lidgren
 
         public byte[] ToBytes()
         {
-            return Buffer?.Data;
+            return Buffer?.ReadBytes((int)Length);
         }
 
         public bool Has(long bytes)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -10,6 +11,7 @@ namespace Intersect.Server.Entities.Combat
 
     public class DoT
     {
+        public Guid Id = Guid.NewGuid();
 
         public Entity Attacker;
 
@@ -31,18 +33,41 @@ namespace Intersect.Server.Entities.Combat
                 return;
             }
 
+            // Does target have a cleanse buff? If so, do not allow this DoT when spell is unfriendly.
+            if (!SpellBase.Combat.Friendly)
+            {
+                foreach (var status in Target.CachedStatuses)
+                {
+                    if (status.Type == StatusTypes.Cleanse)
+                    {
+                        return;
+                    }
+                }
+            }
+            
+
             mInterval = Globals.Timing.Milliseconds + SpellBase.Combat.HotDotInterval;
             Count = SpellBase.Combat.Duration / SpellBase.Combat.HotDotInterval - 1;
-            target.DoT.Add(this);
+            target.DoT.TryAdd(Id, this);
+            target.CachedDots = target.DoT.Values.ToArray();
 
             //Subtract 1 since the first tick always occurs when the spell is cast.
         }
 
         public Entity Target { get; }
 
+        public void Expire()
+        {
+            if (Target != null)
+            {
+                Target.DoT?.TryRemove(Id, out DoT val);
+                Target.CachedDots = Target.DoT?.Values.ToArray() ?? new DoT[0];
+            }
+        }
+
         public bool CheckExpired()
         {
-            if (Target != null && !Target.DoT.Contains(this))
+            if (Target != null && !Target.DoT.ContainsKey(Id))
             {
                 return false;
             }
@@ -52,7 +77,7 @@ namespace Intersect.Server.Entities.Combat
                 return false;
             }
 
-            Target?.DoT?.Remove(this);
+            Expire();
 
             return true;
         }
@@ -77,11 +102,14 @@ namespace Intersect.Server.Entities.Combat
                 aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte) Directions.Up));
             }
 
+            var damageHealth = SpellBase.Combat.VitalDiff[(int)Vitals.Health];
+            var damageMana = SpellBase.Combat.VitalDiff[(int)Vitals.Mana];
+
             Attacker?.Attack(
-                Target, SpellBase.Combat.VitalDiff[0], SpellBase.Combat.VitalDiff[1],
+                Target, damageHealth, damageMana,
                 (DamageType) SpellBase.Combat.DamageType, (Stats) SpellBase.Combat.ScalingStat,
                 SpellBase.Combat.Scaling, SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations,
-                aliveAnimations
+                aliveAnimations, false
             );
 
             mInterval = Globals.Timing.Milliseconds + SpellBase.Combat.HotDotInterval;

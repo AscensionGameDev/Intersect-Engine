@@ -630,6 +630,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString z = @"Z: {00}";
 
+            public static LocalizedString interfaceobjects = @"Interface Objects: {00}";
+
         }
 
         public struct EntityBox
@@ -753,6 +755,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString addfriendtitle = @"Add Friend";
 
             public static LocalizedString addfriendprompt = @"Who would you like to add as a friend?";
+
+            public static LocalizedString infight = @"You are currently fighting!";
 
             public static LocalizedString removefriend = @"Remove Friend";
 
@@ -1188,6 +1192,7 @@ namespace Intersect.Client.Localization
 
         public struct Parties
         {
+            public static LocalizedString infight = @"You are currently fighting!";
 
             public static LocalizedString inviteprompt = @"{00} has invited you to their party. Do you accept?";
 
@@ -1480,6 +1485,8 @@ namespace Intersect.Client.Localization
         {
 
             public static LocalizedString accept = @"Accept";
+
+            public static LocalizedString infight = @"You are currently fighting!";
 
             public static LocalizedString offeritem = @"Offer Item";
 

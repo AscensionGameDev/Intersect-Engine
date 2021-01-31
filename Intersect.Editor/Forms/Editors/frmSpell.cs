@@ -969,7 +969,7 @@ namespace Intersect.Editor.Forms.Editors
             lstSpells.Nodes.Clear();
 
             cmbScalingStat.Items.Clear();
-            for (var i = 0; i < Options.MaxStats; i++)
+            for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(i));
             }

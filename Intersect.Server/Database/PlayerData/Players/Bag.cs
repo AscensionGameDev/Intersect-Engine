@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 using Intersect.GameObjects;
-
+using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -87,15 +87,44 @@ namespace Intersect.Server.Database.PlayerData.Players
             Slots = slots;
         }
 
-        public static Bag GetBag(PlayerContext context, Guid id)
+        public static Bag GetBag(Guid id)
         {
-            var bag = context.Bags.Where(p => p.Id == id).Include(p => p.Slots).SingleOrDefault();
-            if (bag != null)
+            try
             {
-                bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
-            }
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    var bag = context.Bags.Where(p => p.Id == id).Include(p => p.Slots).SingleOrDefault();
+                    if (bag != null)
+                    {
+                        bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
+                        bag.ValidateSlots();
+                    }
 
-            return bag;
+                    return bag;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public void Save ()
+        {
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                {
+                    context.Bags.Update(this);
+                    context.ChangeTracker.DetectChanges();
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
         }
 
     }

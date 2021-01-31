@@ -51,6 +51,14 @@ namespace Intersect.Server.Entities.Pathfinding
 
         public int Index { get; set; }
 
+        public void Reset()
+        {
+            G = 0.0;
+            H = 0.0;
+            F = 0.0;
+            IsWall = false;
+        }
+
     }
 
     /// <summary>

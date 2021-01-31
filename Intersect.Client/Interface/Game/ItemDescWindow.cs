@@ -159,7 +159,7 @@ namespace Intersect.Client.Interface.Game
 
                     if (statBuffs != null)
                     {
-                        for (var i = 0; i < Options.MaxStats; i++)
+                        for (var i = 0; i < (int)Stats.StatCount; i++)
                         {
                             var flatStat = item.StatsGiven[i] + statBuffs[i];
                             var bonus = flatStat.ToString();

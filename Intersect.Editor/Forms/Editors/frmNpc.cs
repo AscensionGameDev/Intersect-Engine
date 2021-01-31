@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbOnDeathEventParty.Items.Add(Strings.General.none);
             cmbOnDeathEventParty.Items.AddRange(EventBase.Names);
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < Options.MaxStats; x++)
+            for (var x = 0; x < (int)Stats.StatCount; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -145,6 +145,7 @@ namespace Intersect.Editor.Forms.Editors
             lblAggressive.Text = Strings.NpcEditor.aggressive;
             lblSightRange.Text = Strings.NpcEditor.sightrange;
             lblMovement.Text = Strings.NpcEditor.movement;
+            lblResetRadius.Text = Strings.NpcEditor.resetradius;
             cmbMovement.Items.Clear();
             for (var i = 0; i < Strings.NpcEditor.movements.Count; i++)
             {
@@ -269,6 +270,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkSwarm.Checked = mEditorItem.Swarm;
                 nudFlee.Value = mEditorItem.FleeHealthPercentage;
                 chkFocusDamageDealer.Checked = mEditorItem.FocusHighestDamageDealer;
+                nudResetRadius.Value = mEditorItem.ResetRadius;
 
                 //Common Events
                 cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
@@ -928,6 +930,13 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Color.A = (byte)nudRgbaA.Value;
             DrawNpcSprite();
+        }
+
+        private void nudResetRadius_ValueChanged(object sender, EventArgs e)
+        {
+            // Set to either default or higher.
+            nudResetRadius.Value = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
+            mEditorItem.ResetRadius = (int)nudResetRadius.Value;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

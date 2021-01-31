@@ -725,6 +725,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ChangePlayerColorCommand();
 
                     break;
+
+                case EventCommandType.ChangeName:
+                    tmpCommand = new ChangeNameCommand(CurrentPage.CommandLists);
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1305,6 +1310,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangePlayerColor:
                     cmdWindow = new EventCommandChangePlayerColor((ChangePlayerColorCommand)command, this);
+
+                    break;
+                case EventCommandType.ChangeName:
+                    cmdWindow = new EventCommandChangeName((ChangeNameCommand)command, CurrentPage, this);
 
                     break;
                 default:

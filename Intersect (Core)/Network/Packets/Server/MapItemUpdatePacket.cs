@@ -11,26 +11,46 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        //Item data implies item added or updated
-        public MapItemUpdatePacket(Guid mapId, Point location, string itemData, bool remove = false)
+        //No item data implies removal...
+        public MapItemUpdatePacket(Guid mapId, int tileIndex, Guid uniqueId)
         {
             MapId = mapId;
-            Location = location;
-            ItemData = itemData;
-            Remove = remove;
+            TileIndex = tileIndex;
+            Id = uniqueId;
+        }
+
+        //Item data implies item added or updated
+        public MapItemUpdatePacket(Guid mapId, int tileIndex, Guid uniqueId, Guid itemId, Guid? bagId, int quantity, int[] statbuffs)
+        {
+            MapId = mapId;
+            TileIndex = tileIndex;
+            Id = uniqueId;
+            ItemId = itemId;
+            BagId = bagId;
+            Quantity = quantity;
+            StatBuffs = statbuffs;
         }
 
         [Key(0)]
         public Guid MapId { get; set; }
 
         [Key(1)]
-        public bool Remove { get; set; }
+        public int TileIndex { get; set; }
 
         [Key(2)]
-        public Point Location { get; set; }
+        public Guid Id { get; set; }
 
         [Key(3)]
-        public string ItemData { get; set; }
+        public Guid ItemId { get; set; }
+
+        [Key(4)]
+        public Guid? BagId { get; set; }
+
+        [Key(5)]
+        public int Quantity { get; set; }
+
+        [Key(6)]
+        public int[] StatBuffs { get; set; }
 
     }
 

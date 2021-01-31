@@ -60,6 +60,8 @@ namespace Intersect
 
         [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
 
+        public ProcessingOptions Processing = new ProcessingOptions();
+
         public SpriteOptions Sprites = new SpriteOptions();
 
         [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();
@@ -283,8 +285,6 @@ namespace Intersect
 
         // TODO: Clean these up
         //Values that cannot easily be changed:
-
-        public const int MaxStats = 5;
 
         public const int MaxHotbar = 10;
 

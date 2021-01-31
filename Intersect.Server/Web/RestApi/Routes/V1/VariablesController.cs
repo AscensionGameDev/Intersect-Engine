@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-
+using Intersect.GameObjects;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
@@ -23,12 +23,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
-            var context = GameContext.Current;
-            var entries = GameContext.Queries.ServerVariables(context, pageInfo.Page, pageInfo.Count)?.ToList();
+            var entries = GameContext.Queries.ServerVariables(pageInfo.Page, pageInfo.Count)?.ToList();
 
             return new
             {
-                total = context.ServerVariables?.Count() ?? 0,
+                total = ServerVariableBase.Lookup.Count(),
                 pageInfo.Page,
                 count = entries?.Count ?? 0,
                 entries
@@ -44,8 +43,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            var context = GameContext.Current;
-            var variable = GameContext.Queries.ServerVariableById(context, guid);
+            var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {
@@ -64,8 +62,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            var context = GameContext.Current;
-            var variable = GameContext.Queries.ServerVariableById(context, guid);
+            var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {
@@ -87,8 +84,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            var context = GameContext.Current;
-            var variable = GameContext.Queries.ServerVariableById(context, guid);
+            var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {

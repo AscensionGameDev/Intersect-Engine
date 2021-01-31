@@ -17,7 +17,7 @@ namespace Intersect.Server.Admin.Actions
         //BanAction
         public static void ProcessAction(Client client, Player player, BanAction action)
         {
-            var target = DbInterface.GetPlayer(action.Name);
+            var target = Player.Find(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Ban.CheckBan(target.User, "")))
@@ -40,10 +40,10 @@ namespace Intersect.Server.Admin.Actions
                             {
                                 UserId = target.UserId,
                                 PlayerId = target.Id,
-                                Ip = target.Client.GetIp(),
+                                Ip = target.Client?.GetIp(),
                                 Peer = UserActivityHistory.PeerType.Client,
                                 Action = UserActivityHistory.UserAction.DisconnectBan,
-                                Meta = $"{target.Client.Name},{target.Name}"
+                                Meta = $"{target.User?.Name},{target.Name}"
                             }
                         );
                     }
@@ -98,7 +98,11 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                target.Die(); //Kill em'
+                lock (target.EntityLock)
+                {
+                    target.Die(); //Kill em'
+                }
+                
                 PacketSender.SendGlobalMsg(Strings.Player.killed.ToString(target.Name, player.Name));
             }
             else
@@ -110,7 +114,7 @@ namespace Intersect.Server.Admin.Actions
         //MuteAction
         public static void ProcessAction(Client client, Player player, MuteAction action)
         {
-            var target = DbInterface.GetPlayer(action.Name);
+            var target = Player.Find(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Mute.FindMuteReason(target.UserId, "")))
@@ -223,7 +227,7 @@ namespace Intersect.Server.Admin.Actions
         //UnbanAction
         public static void ProcessAction(Client client, Player player, UnbanAction action)
         {
-            var unbannedUser = DbInterface.GetUser(action.Name);
+            var unbannedUser = User.Find(action.Name);
             if (unbannedUser != null)
             {
                 Ban.Remove(unbannedUser);
@@ -238,7 +242,7 @@ namespace Intersect.Server.Admin.Actions
         //UnmuteAction
         public static void ProcessAction(Client client, Player player, UnmuteAction action)
         {
-            var unmutedUser = DbInterface.GetUser(action.Name);
+            var unmutedUser = User.Find(action.Name);
             if (unmutedUser != null)
             {
                 Mute.Remove(unmutedUser);

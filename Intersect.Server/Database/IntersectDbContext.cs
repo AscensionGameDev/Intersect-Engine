@@ -10,6 +10,8 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Intersect.Server.Database
 {
@@ -38,16 +40,16 @@ namespace Intersect.Server.Database
         protected IntersectDbContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            bool isTemporary = false,
             Intersect.Logging.Logger dbLogger = null,
-            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None,
+            bool asReadOnly = false, bool autoDetectChanges = true
         )
         {
             ConnectionStringBuilder = connectionStringBuilder;
             DatabaseType = databaseType;
 
             //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
-            if (dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
+            if (loggerFactory == null && dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
             {
                 var efLogLevel = LogLevel.None;
                 switch (logLevel)
@@ -104,13 +106,16 @@ namespace Intersect.Server.Database
                 );
             }
 
-            if (!isTemporary)
+            ReadOnly = asReadOnly;
+
+            ChangeTracker.AutoDetectChangesEnabled = autoDetectChanges || ReadOnly;
+
+            if (ReadOnly)
             {
-                Current = this as T;
+                ChangeTracker.LazyLoadingEnabled = false;
+                ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             }
         }
-
-        public static T Current { get; private set; }
 
         private static ILoggerFactory MsExtLoggerFactory { get; } =
             LoggerFactory.Create(builder => builder.AddConsole());
@@ -119,6 +124,11 @@ namespace Intersect.Server.Database
         /// 
         /// </summary>
         public DatabaseOptions.DatabaseType DatabaseType { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool ReadOnly { get; }
 
         /// <summary>
         /// 
@@ -193,12 +203,12 @@ namespace Intersect.Server.Database
             switch (DatabaseType)
             {
                 case DatabaseOptions.DatabaseType.SQLite:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString);
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
 
                     break;
 
                 case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString);
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString, options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
 
                     break;
 
@@ -249,5 +259,36 @@ namespace Intersect.Server.Database
         }
 
         public virtual void MigrationsProcessed(string[] migrations) { }
+
+        public override int SaveChanges()
+        {
+            if (ReadOnly)
+                throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+            return base.SaveChanges();
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            if (ReadOnly)
+                throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            if (ReadOnly)
+                throw new InvalidOperationException("Cannot save changes on a read only context!");
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            if (ReadOnly)
+                throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

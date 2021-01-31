@@ -434,6 +434,68 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
 
                             break;
+                        case EventCommandType.ChangeName:
+                            var chna = (ChangeNameCommand)commandList[i];
+                            lstEventCommands.Items.Add(
+                                indent +
+                                Strings.EventCommandList.linestart +
+                                GetCommandText((dynamic)commandList[i], map)
+                            );
+
+                            clp = new CommandListProperties {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            //When the name was successfully changed:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.namesucceeded);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[chna.BranchIds[0]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            //When the name failed to change:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.namefailed);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(
+                                page, page.CommandLists[chna.BranchIds[1]], indent + "          ", lstEventCommands,
+                                mCommandProperties, map
+                            );
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endname);
+                            clp = new CommandListProperties {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+
+                            break;
                         default:
                             lstEventCommands.Items.Add(
                                 indent +
@@ -961,6 +1023,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(ShowPictureCommand command, MapInstance map)
         {
             return Strings.EventCommandList.showpicture;
+        }
+
+        private static string GetCommandText(ChangeNameCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.changename.ToString(PlayerVariableBase.GetName(command.VariableId));
         }
 
         private static string GetCommandText(HidePictureCommmand command, MapInstance map)
