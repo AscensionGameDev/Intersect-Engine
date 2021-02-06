@@ -721,12 +721,14 @@ namespace Intersect.Server.Entities
                         //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
                         if (tempTarget != null && Timing.Global.Milliseconds > CombatTimer)
                         {
-                            CheckForResetLocation(true);
-                            if (Target != tempTarget)
+                            if (CheckForResetLocation(true))
                             {
-                                PacketSender.SendNpcAggressionToProximity(this);
+                                if (Target != tempTarget)
+                                {
+                                    PacketSender.SendNpcAggressionToProximity(this);
+                                }
+                                return;
                             }
-                            return;
                         }
 
                         // Are we resetting? If so, regenerate completely!
@@ -1110,7 +1112,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private void CheckForResetLocation(bool forceDistance = false)
+        private bool CheckForResetLocation(bool forceDistance = false)
         {
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
@@ -1124,7 +1126,9 @@ namespace Intersect.Server.Entities
                 // Try and move back to where we came from before we started chasing something.
                 mResetting = true;
                 mPathFinder.SetTarget(new PathfinderTarget(AggroCenterMap.Id, AggroCenterX, AggroCenterY, AggroCenterZ));
+                return true;
             }
+            return false;
         }
 
         private void ResetNpc(bool resetVitals = true, bool clearLocation = false)
