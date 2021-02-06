@@ -309,7 +309,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         //Update
         public void Update()
         {
-            if (MyEntity == null)
+            if (MyEntity == null || MyEntity.IsDisposed())
             {
                 if (!EntityWindow.IsHidden)
                 {

@@ -99,15 +99,15 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(_vital, (int) Enums.Vitals.VitalCount);
-            set => _vital = DatabaseUtils.LoadIntArray(value, (int) Enums.Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(mVitals, (int) Enums.Vitals.VitalCount);
+            set => mVitals = DatabaseUtils.LoadIntArray(value, (int) Enums.Vitals.VitalCount);
         }
 
         [JsonProperty("Vitals"), NotMapped]
-        public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
+        private int[] mVitals { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
         [JsonIgnore, NotMapped]
-        public int[] _oldvital { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
@@ -239,13 +239,41 @@ namespace Intersect.Server.Entities
         public Status[] CachedStatuses = new Status[0];
 
         [JsonIgnore, NotMapped]
-        public Status[] OldCachedStatuses = new Status[0];
+        private Status[] mOldStatuses = new Status[0];
 
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
 
         [NotMapped, JsonIgnore]
         public object EntityLock = new object();
+
+        [NotMapped, JsonIgnore]
+        public bool VitalsUpdated
+        {
+            get => GetVitals().SequenceEqual(mOldVitals);
+
+            set
+            {
+                if (value == false)
+                {
+                    mOldVitals = GetVitals();
+                }
+            }
+        }
+
+        [NotMapped, JsonIgnore]
+        public bool StatusesUpdated
+        {
+            get => CachedStatuses.SequenceEqual(mOldStatuses);
+
+            set
+            {
+                if (value == false)
+                {
+                    mOldStatuses = CachedStatuses;
+                }
+            }
+        }
 
         public virtual void Dispose()
         {
@@ -1113,13 +1141,13 @@ namespace Intersect.Server.Entities
 
         public int GetVital(int vital)
         {
-            return _vital[vital];
+            return mVitals[vital];
         }
 
         public int[] GetVitals()
         {
             var vitals = new int[(int) Vitals.VitalCount];
-            Array.Copy(_vital, 0, vitals, 0, (int) Vitals.VitalCount);
+            Array.Copy(mVitals, 0, vitals, 0, (int) Vitals.VitalCount);
 
             return vitals;
         }
@@ -1141,7 +1169,7 @@ namespace Intersect.Server.Entities
                 value = GetMaxVital(vital);
             }
 
-            _vital[vital] = value;
+            mVitals[vital] = value;
         }
 
         public void SetVital(Vitals vital, int value)
