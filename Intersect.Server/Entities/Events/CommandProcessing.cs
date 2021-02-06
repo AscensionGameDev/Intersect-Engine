@@ -1141,6 +1141,7 @@ namespace Intersect.Server.Entities.Events
             {
                 player.ClassId = command.ClassId;
                 player.RecalculateStatsAndPoints();
+                player.UnequipInvalidItems();
             }
 
             PacketSender.SendEntityDataToProximity(player);

@@ -821,6 +821,7 @@ namespace Intersect.Server.Entities
             }
 
             RecalculateStatsAndPoints();
+            UnequipInvalidItems();
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendExperience(this);
         }
@@ -874,6 +875,7 @@ namespace Intersect.Server.Entities
             }
 
             RecalculateStatsAndPoints();
+            UnequipInvalidItems();
             PacketSender.SendExperience(this);
             PacketSender.SendPointsTo(this);
             PacketSender.SendEntityDataToProximity(this);
@@ -4617,6 +4619,32 @@ namespace Intersect.Server.Entities
             FixVitals();
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
+        }
+
+        /// <summary>
+        /// Unequips any items that the player is currently wearing in which they no longer meet the conditions for
+        /// Also unequips any items that are not actually equipment anymore
+        /// </summary>
+        public void UnequipInvalidItems()
+        {
+            var updated = false;
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                var itemSlot = Equipment[i];
+                if (itemSlot > -1)
+                {
+                    if (Items[itemSlot] == null || Items[itemSlot].ItemId == Guid.Empty || Items[itemSlot].Descriptor == null || Items[itemSlot].Descriptor.ItemType != ItemTypes.Equipment || !Conditions.MeetsConditionLists(Items[itemSlot].Descriptor.UsageRequirements, this, null)) {
+                        Equipment[i] = -1;
+                        updated = true;
+                    }
+                }
+            }
+            if (updated)
+            {
+                FixVitals();
+                PacketSender.SendPlayerEquipmentToProximity(this);
+                PacketSender.SendEntityStats(this);
+            }
         }
 
         //Stats
