@@ -4654,13 +4654,21 @@ namespace Intersect.Server.Entities
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 var itemSlot = Equipment[i];
-                if (itemSlot > -1)
+                if (itemSlot < 0)
                 {
-                    if (Items[itemSlot] == null || Items[itemSlot].ItemId == Guid.Empty || Items[itemSlot].Descriptor == null || Items[itemSlot].Descriptor.ItemType != ItemTypes.Equipment || !Conditions.MeetsConditionLists(Items[itemSlot].Descriptor.UsageRequirements, this, null)) {
-                        Equipment[i] = -1;
-                        updated = true;
-                    }
+                    continue;
                 }
+
+                var item = Items[itemSlot];
+                var descriptor = item?.Descriptor;
+
+                if (descriptor == default || 
+                    descriptor.ItemType != ItemTypes.Equipment || 
+                    !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
+                {
+                    Equipment[i] = -1;
+                    updated = true;
+                }                
             }
             if (updated)
             {
