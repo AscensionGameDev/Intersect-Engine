@@ -147,9 +147,6 @@ namespace Intersect.Server.Entities.Combat
                 en.CachedStatuses = en.Statuses.Values.ToArray();
             }
 
-            // Send our data around!
-            PacketSender.SendEntityVitals(en);
-
             // If this is a taunt, force the target properly for players and NPCs
             if (Type == StatusTypes.Taunt)
             {
@@ -223,8 +220,6 @@ namespace Intersect.Server.Entities.Combat
             {
                 npc.TryFindNewTarget(0, Guid.Empty, true);
             }
-
-            PacketSender.SendEntityVitals(mEntity);
         }
 
         public void DamageShield(Vitals vital, ref int amount)

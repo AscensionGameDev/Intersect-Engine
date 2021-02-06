@@ -106,6 +106,9 @@ namespace Intersect.Server.Entities
         [JsonProperty("Vitals"), NotMapped]
         public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
+        [JsonIgnore, NotMapped]
+        public int[] _oldvital { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
@@ -232,7 +235,11 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public ConcurrentDictionary<SpellBase, Status> Statuses { get; } = new ConcurrentDictionary<SpellBase, Status>();
 
+        [JsonIgnore, NotMapped]
         public Status[] CachedStatuses = new Status[0];
+
+        [JsonIgnore, NotMapped]
+        public Status[] OldCachedStatuses = new Status[0];
 
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
@@ -293,12 +300,6 @@ namespace Intersect.Server.Entities
                     foreach (var status in statusArray)
                     {
                         status.TryRemoveStatus();
-                    }
-
-                    //If there is a removal of a status, update it client sided.
-                    if (Statuses.Count != statusArray.Count())
-                    {
-                        PacketSender.SendEntityVitals(this);
                     }
                 }
             }
@@ -1141,7 +1142,6 @@ namespace Intersect.Server.Entities
             }
 
             _vital[vital] = value;
-            PacketSender.SendEntityVitals(this);
         }
 
         public void SetVital(Vitals vital, int value)
@@ -1187,8 +1187,6 @@ namespace Intersect.Server.Entities
             {
                 SetVital(vital, value);
             }
-
-            PacketSender.SendEntityVitals(this);
         }
 
         public void SetMaxVital(Vitals vital, int value)
@@ -1989,8 +1987,6 @@ namespace Intersect.Server.Entities
                 AddVital(Vitals.Health, -spellBase.VitalCost[(int)Vitals.Health]);
             }
 
-            PacketSender.SendEntityVitals(this);
-
             switch (spellBase.SpellType)
             {
                 case SpellTypes.CombatSpell:
@@ -2511,7 +2507,6 @@ namespace Intersect.Server.Entities
             CachedStatuses = new Status[0];
             Stat?.ToList().ForEach(stat => stat?.Reset());
 
-            PacketSender.SendEntityVitals(this);
             Dead = true;
         }
 
@@ -2604,7 +2599,6 @@ namespace Intersect.Server.Entities
                 RestoreVital((Vitals) i);
             }
 
-            PacketSender.SendEntityVitals(this);
             Dead = false;
         }
 

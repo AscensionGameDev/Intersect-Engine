@@ -452,7 +452,6 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            SendEntityVitals(en);
             SendEntityStats(en);
 
             //If a player, send equipment to all (for paperdolls)
@@ -490,7 +489,6 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            SendEntityVitals(en);
             SendEntityStats(en);
 
             //If a player, send equipment to all (for paperdolls)
@@ -804,23 +802,42 @@ namespace Intersect.Server.Networking
         }
 
         //EntityVitalsPacket
-        public static void SendEntityVitals(Entity en)
+        public static void SendMapEntityVitalUpdate(MapInstance map, Entity[] entities)
         {
-            if (en == null || en is EventPageInstance || en is Projectile)
+            // Generate a list of vitals to send to our users!
+            var data = new List<EntityVitalData>();
+            foreach (var entity in entities)
             {
-                return;
-            }
-
-            //If player and in party send vitals to party just in case party members are not in the proximity
-            if (en.GetType() == typeof(Player))
-            {
-                for (var i = 0; i < ((Player) en).Party.Count; i++)
+                data.Add(new EntityVitalData()
                 {
-                    SendPartyUpdateTo(((Player) en).Party[i], (Player) en);
-                }
+                    Id = entity.Id,
+                    Type = entity.GetEntityType(),
+                    Vitals = entity.GetVitals(),
+                    MaxVitals = entity.GetMaxVitals(),
+                    CombatTimeRemaining = entity.CombatTimer - Timing.Global.Milliseconds
+                });
             }
 
-            SendDataToProximity(en.MapId, GenerateEntityVitalsPacket(en), null, TransmissionMode.Any);
+            // Send the data to the surroundings!
+            SendDataToProximity(map.Id, new MapEntityVitalsPacket(map.Id, data.ToArray()));
+        }
+
+        public static void SendMapEntityStatusUpdate(MapInstance map, Entity[] entities)
+        {
+            // Generate a list of statuses to send to our users!
+            var data = new List<EntityStatusData>();
+            foreach (var entity in entities)
+            {
+                data.Add(new EntityStatusData()
+                {
+                    Id = entity.Id,
+                    Type = entity.GetEntityType(),
+                    Statuses = entity.StatusPackets()
+                });
+            }
+
+            // Send the data to the surroundings!
+            SendDataToProximity(map.Id, new MapEntityStatusPacket(map.Id, data.ToArray()));
         }
 
         //EntityStatsPacket
