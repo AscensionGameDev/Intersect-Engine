@@ -30,7 +30,7 @@ namespace Intersect.Network
         {
             var packedPacket = new PackedIntersectPacket(pkt)
             {
-                PacketData = MessagePackSerializer.Serialize((object)pkt, mOptions)
+                Data = MessagePackSerializer.Serialize((object)pkt, mOptions)
             };
 
             return MessagePackSerializer.Serialize((object)packedPacket, mCompressedOptions);
@@ -41,7 +41,7 @@ namespace Intersect.Network
             try
             {
                 var packedPacket = MessagePackSerializer.Deserialize<PackedIntersectPacket>(data, mCompressedOptions);
-                var intersectPacket = MessagePackSerializer.Deserialize(packedPacket.PacketType, packedPacket.PacketData, mOptions);
+                var intersectPacket = MessagePackSerializer.Deserialize(packedPacket.PacketType, packedPacket.Data, mOptions);
                 return intersectPacket;
             }
             catch (Exception exception)

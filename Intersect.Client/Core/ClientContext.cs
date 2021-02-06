@@ -39,7 +39,6 @@ namespace Intersect.Client.Core
         /// <inheritdoc />
         protected override void InternalStart()
         {
-            PackedIntersectPacket.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
             Networking.Network.PacketHandler = new PacketHandler(this, NetworkHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
             PlatformRunner.Start(this, PostStartup);
