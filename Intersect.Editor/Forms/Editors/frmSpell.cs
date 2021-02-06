@@ -267,7 +267,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
-                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
+                cmbCooldownGroup.SelectedItem = mEditorItem.CooldownGroup;
                 chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
