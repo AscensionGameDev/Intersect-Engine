@@ -501,6 +501,7 @@
     <Compile Include="Maps\MapItemSpawn.cs" />
     <Compile Include="Maps\MapNpcSpawn.cs" />
     <Compile Include="Maps\MapResourceSpawn.cs" />
+    <Compile Include="Maps\MapTileLoc.cs" />
     <Compile Include="Maps\MapTrapInstance.cs" />
     <Compile Include="Maps\TileHelper.cs" />
     <Compile Include="Entities\Pathfinding\Pathfinder.cs" />
