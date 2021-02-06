@@ -253,6 +253,7 @@
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll">
