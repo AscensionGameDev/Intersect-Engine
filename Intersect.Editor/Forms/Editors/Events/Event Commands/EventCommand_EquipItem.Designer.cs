@@ -36,6 +36,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblItem = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.chkUnequip = new DarkUI.Controls.DarkCheckBox();
             this.grpEquipItem.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,6 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpEquipItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpEquipItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEquipItem.Controls.Add(this.chkUnequip);
             this.grpEquipItem.Controls.Add(this.cmbItem);
             this.grpEquipItem.Controls.Add(this.lblItem);
             this.grpEquipItem.Controls.Add(this.btnCancel);
@@ -50,10 +52,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquipItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEquipItem.Location = new System.Drawing.Point(3, 3);
             this.grpEquipItem.Name = "grpEquipItem";
-            this.grpEquipItem.Size = new System.Drawing.Size(193, 93);
+            this.grpEquipItem.Size = new System.Drawing.Size(193, 111);
             this.grpEquipItem.TabIndex = 17;
             this.grpEquipItem.TabStop = false;
-            this.grpEquipItem.Text = "Equip Player Items:";
+            this.grpEquipItem.Text = "Equip/Unequip Player Items:";
             // 
             // cmbItem
             // 
@@ -87,7 +89,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(105, 60);
+            this.btnCancel.Location = new System.Drawing.Point(105, 78);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -97,13 +99,24 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(9, 60);
+            this.btnSave.Location = new System.Drawing.Point(9, 78);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // chkUnequip
+            // 
+            this.chkUnequip.AutoSize = true;
+            this.chkUnequip.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkUnequip.Location = new System.Drawing.Point(6, 50);
+            this.chkUnequip.Name = "chkUnequip";
+            this.chkUnequip.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkUnequip.Size = new System.Drawing.Size(72, 17);
+            this.chkUnequip.TabIndex = 57;
+            this.chkUnequip.Text = "Unequip?";
             // 
             // EventCommandEquipItems
             // 
@@ -113,7 +126,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpEquipItem);
             this.Name = "EventCommandEquipItems";
-            this.Size = new System.Drawing.Size(205, 105);
+            this.Size = new System.Drawing.Size(205, 124);
             this.grpEquipItem.ResumeLayout(false);
             this.grpEquipItem.PerformLayout();
             this.ResumeLayout(false);
@@ -127,5 +140,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkButton btnSave;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
+        private DarkCheckBox chkUnequip;
     }
 }

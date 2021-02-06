@@ -512,6 +512,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Guid ItemId { get; set; }
 
+        public bool Unequip { get; set; }
+
     }
 
     public class ChangeSpriteCommand : EventCommand
