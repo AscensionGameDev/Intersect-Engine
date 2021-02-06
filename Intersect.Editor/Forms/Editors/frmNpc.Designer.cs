@@ -104,6 +104,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbOnDeathEventKiller = new DarkUI.Controls.DarkComboBox();
             this.lblOnDeathEventKiller = new System.Windows.Forms.Label();
             this.grpBehavior = new DarkUI.Controls.DarkGroupBox();
+            this.nudResetRadius = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblResetRadius = new System.Windows.Forms.Label();
             this.lblFocusDamageDealer = new System.Windows.Forms.Label();
             this.chkFocusDamageDealer = new DarkUI.Controls.DarkCheckBox();
             this.nudFlee = new DarkUI.Controls.DarkNumericUpDown();
@@ -164,8 +166,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
-            this.nudResetRadius = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblResetRadius = new System.Windows.Forms.Label();
             this.grpNpcs.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).BeginInit();
@@ -195,6 +195,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudCritChance)).BeginInit();
             this.grpCommonEvents.SuspendLayout();
             this.grpBehavior.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFlee)).BeginInit();
             this.grpConditions.SuspendLayout();
             this.grpRegen.SuspendLayout();
@@ -206,7 +207,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcVsNpc.SuspendLayout();
             this.grpSpells.SuspendLayout();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).BeginInit();
             this.SuspendLayout();
             // 
             // grpNpcs
@@ -1327,6 +1327,35 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBehavior.TabStop = false;
             this.grpBehavior.Text = "Behavior:";
             // 
+            // nudResetRadius
+            // 
+            this.nudResetRadius.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudResetRadius.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudResetRadius.Location = new System.Drawing.Point(90, 66);
+            this.nudResetRadius.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.nudResetRadius.Name = "nudResetRadius";
+            this.nudResetRadius.Size = new System.Drawing.Size(121, 20);
+            this.nudResetRadius.TabIndex = 76;
+            this.nudResetRadius.Value = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.nudResetRadius.ValueChanged += new System.EventHandler(this.nudResetRadius_ValueChanged);
+            // 
+            // lblResetRadius
+            // 
+            this.lblResetRadius.AutoSize = true;
+            this.lblResetRadius.Location = new System.Drawing.Point(10, 68);
+            this.lblResetRadius.Name = "lblResetRadius";
+            this.lblResetRadius.Size = new System.Drawing.Size(74, 13);
+            this.lblResetRadius.TabIndex = 75;
+            this.lblResetRadius.Text = "Reset Radius:";
+            // 
             // lblFocusDamageDealer
             // 
             this.lblFocusDamageDealer.AutoSize = true;
@@ -2081,34 +2110,6 @@ namespace Intersect.Editor.Forms.Editors
             this.searchableDarkTreeView1.TabIndex = 46;
             this.searchableDarkTreeView1.Visible = false;
             // 
-            // nudResetRadius
-            // 
-            this.nudResetRadius.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudResetRadius.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudResetRadius.Location = new System.Drawing.Point(90, 66);
-            this.nudResetRadius.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.nudResetRadius.Name = "nudResetRadius";
-            this.nudResetRadius.Size = new System.Drawing.Size(121, 20);
-            this.nudResetRadius.TabIndex = 76;
-            this.nudResetRadius.Value = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            // 
-            // lblResetRadius
-            // 
-            this.lblResetRadius.AutoSize = true;
-            this.lblResetRadius.Location = new System.Drawing.Point(10, 68);
-            this.lblResetRadius.Name = "lblResetRadius";
-            this.lblResetRadius.Size = new System.Drawing.Size(74, 13);
-            this.lblResetRadius.TabIndex = 75;
-            this.lblResetRadius.Text = "Reset Radius:";
-            // 
             // FrmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2169,6 +2170,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCommonEvents.PerformLayout();
             this.grpBehavior.ResumeLayout(false);
             this.grpBehavior.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFlee)).EndInit();
             this.grpConditions.ResumeLayout(false);
             this.grpRegen.ResumeLayout(false);
@@ -2185,7 +2187,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpells.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudResetRadius)).EndInit();
             this.ResumeLayout(false);
 
         }
