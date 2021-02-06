@@ -19,27 +19,31 @@ namespace Intersect.Network
             "Intersect.Admin.Actions"
         };
 
-        public static Dictionary<Type, Int32> KnownTypes { get; set; } = new Dictionary<Type, Int32>();
+        public static Dictionary<Type, short> KnownTypes { get; set; } = new Dictionary<Type, short>();
 
-        public static Dictionary<Int32, Type> KnownKeys { get; set; } = new Dictionary<Int32, Type>();
+        public static Dictionary<short, Type> KnownKeys { get; set; } = new Dictionary<short, Type>();
 
         private static IEnumerable<Type> FindTypes(IEnumerable<string> nameSpaces) => nameSpaces.SelectMany(FindTypes);
 
         private static IEnumerable<Type> FindTypes(string nameSpace) =>
             typeof(Ceras).Assembly.GetTypes().Where(type => type.Namespace == nameSpace);
 
-        static PackedIntersectPacket()
+        public static void AddKnownTypes(IReadOnlyList<Type> types)
         {
-            var i = 0;
-            foreach (var type in FindTypes(BuiltInPacketNamespaces))
-            {
+            short i = (short)KnownKeys.Count;
+            foreach (var type in types.Where(type => !KnownTypes.ContainsKey(type))) {
                 KnownKeys.Add(i, type);
                 KnownTypes.Add(type, i++);
             }
         }
 
+        static PackedIntersectPacket()
+        {
+            AddKnownTypes(FindTypes(BuiltInPacketNamespaces).ToList());
+        }
+
         [Key(0)]
-        public Int32 PacketKey { get; set; } = -1;
+        public short PacketKey { get; set; } = -1;
 
         [Key(1)]
         public byte[] PacketData { get; set; }

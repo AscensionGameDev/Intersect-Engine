@@ -71,7 +71,7 @@ namespace Intersect.Server.Core
         {
             try
             {
-                Ceras.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
+                PackedIntersectPacket.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
                 InternalStartNetworking();
             }
             catch (Exception exception)
