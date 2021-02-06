@@ -11,6 +11,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
@@ -920,6 +921,10 @@ namespace Intersect.Server.Maps
                     }
                 }
 
+                // Keep a list of all entities with changed vitals and statusses.
+                var vitalUpdates = new List<Entity>();
+                var statusUpdates = new List<Entity>();
+
                 //Process All Entites
                 foreach (var en in mEntities)
                 {
@@ -945,6 +950,40 @@ namespace Intersect.Server.Maps
                     }
 
                     en.Value.Update(timeMs);
+
+                    // Check to see if we need to send any entity vital and status updates for this entity.
+                    if (!en.Value.GetVitals().SequenceEqual(en.Value._oldvital))
+                    {
+                        vitalUpdates.Add(en.Value);
+
+                        // Send a party update if we're a player with a party.
+                        if (en.Value is Player player)
+                        {
+                            for (var i = 0; i < player.Party.Count; i++)
+                            {
+                                PacketSender.SendPartyUpdateTo(player.Party[i], player);
+                            }
+                        }
+                        
+                        en.Value._oldvital = en.Value.GetVitals();
+                    }
+
+                    if (!en.Value.CachedStatuses.SequenceEqual(en.Value.OldCachedStatuses))
+                    {
+                        statusUpdates.Add(en.Value);
+
+                        en.Value.OldCachedStatuses = en.Value.CachedStatuses;
+                    }
+                }
+
+                if (vitalUpdates.Count > 0)
+                {
+                    PacketSender.SendMapEntityVitalUpdate(this, vitalUpdates.ToArray());
+                }
+
+                if (statusUpdates.Count > 0)
+                {
+                    PacketSender.SendMapEntityStatusUpdate(this, statusUpdates.ToArray());
                 }
 
                 //Process NPC Respawns

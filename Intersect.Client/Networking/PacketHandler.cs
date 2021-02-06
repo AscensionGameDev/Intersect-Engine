@@ -625,6 +625,130 @@ namespace Intersect.Client.Networking
             }
         }
 
+        public void HandlePacket(IPacketSender packetSender, MapEntityVitalsPacket packet)
+        {
+            // Get our map, cancel out if it doesn't exist.
+            var map = MapInstance.Get(packet.MapId);
+            if (map == null)
+            {
+                return;
+            }
+
+            foreach (var en in packet.EntityUpdates)
+            {
+                Entity entity = null;
+
+                if (en.Type < EntityTypes.Event)
+                {
+                    if (!Globals.Entities.ContainsKey(en.Id))
+                    {
+                        return;
+                    }
+
+                    entity = Globals.Entities[en.Id];
+                }
+                else
+                {
+                    if (!map.LocalEntities.ContainsKey(en.Id))
+                    {
+                        return;
+                    }
+
+                    entity = map.LocalEntities[en.Id];
+                }
+
+                if (entity == null)
+                {
+                    return;
+                }
+
+                entity.Vital = en.Vitals;
+                entity.MaxVital = en.MaxVitals;
+
+                if (entity == Globals.Me)
+                {
+                    if (en.CombatTimeRemaining > 0)
+                    {
+                        Globals.Me.CombatTimer = Globals.System.GetTimeMs() + en.CombatTimeRemaining;
+                    }
+                }
+            }
+        }
+
+        public void HandlePacket(IPacketSender packetSender, MapEntityStatusPacket packet)
+        {
+            // Get our map, cancel out if it doesn't exist.
+            var map = MapInstance.Get(packet.MapId);
+            if (map == null)
+            {
+                return;
+            }
+
+            foreach (var en in packet.EntityUpdates)
+            {
+                Entity entity = null;
+
+                if (en.Type < EntityTypes.Event)
+                {
+                    if (!Globals.Entities.ContainsKey(en.Id))
+                    {
+                        return;
+                    }
+
+                    entity = Globals.Entities[en.Id];
+                }
+                else
+                {
+                    if (!map.LocalEntities.ContainsKey(en.Id))
+                    {
+                        return;
+                    }
+
+                    entity = map.LocalEntities[en.Id];
+                }
+
+                if (entity == null)
+                {
+                    return;
+                }
+
+                //Update status effects
+                entity.Status.Clear();
+                foreach (var status in en.Statuses)
+                {
+                    var instance = new Status(
+                        status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration
+                    );
+
+                    entity.Status.Add(instance);
+
+                    if (instance.Type == StatusTypes.Stun || instance.Type == StatusTypes.Silence)
+                    {
+                        entity.CastTime = 0;
+                    }
+                    else if (instance.Type == StatusTypes.Shield)
+                    {
+                        instance.Shield = status.VitalShields;
+                    }
+                }
+
+                entity.SortStatuses();
+
+                if (Interface.Interface.GameUi != null)
+                {
+                    //If its you or your target, update the entity box.
+                    if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
+                    {
+                        Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                    }
+                    else if (en.Id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
+                    {
+                        Globals.Me.TargetBox.UpdateStatuses = true;
+                    }
+                }
+            }
+        }
+
         //EntityVitalsPacket
         public void HandlePacket(IPacketSender packetSender, EntityVitalsPacket packet)
         {

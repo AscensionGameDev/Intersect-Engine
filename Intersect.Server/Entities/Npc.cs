@@ -675,7 +675,6 @@ namespace Intersect.Server.Entities
                 //Target Type 1 will be global entity
             }
 
-            PacketSender.SendEntityVitals(this);
             PacketSender.SendEntityCastTime(this, spellId);
         }
 
@@ -1462,7 +1461,6 @@ namespace Intersect.Server.Entities
             else
             {
                 PacketSender.SendEntityPositionToAll(this);
-                PacketSender.SendEntityVitals(this);
                 PacketSender.SendEntityStats(this);
             }
         }
