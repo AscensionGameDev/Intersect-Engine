@@ -88,6 +88,7 @@ namespace Intersect.Server.Networking
             {
                 var player = client.Entity;
                 player.RecalculateStatsAndPoints();
+                player.UnequipInvalidItems();
                 player.InGame = true;
 
                 SendTimeTo(client);
