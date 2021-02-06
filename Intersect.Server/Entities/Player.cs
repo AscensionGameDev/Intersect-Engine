@@ -4573,6 +4573,29 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void UnequipItem(Guid itemId, bool sendUpdate = true)
+        {
+            var updated = false;
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                var itemSlot = Equipment[i];
+                if (itemSlot > -1 && Items[itemSlot]?.ItemId == itemId)
+                {
+                    Equipment[i] = -1;
+                    updated = true;
+                }
+            }
+            if (updated)
+            {
+                FixVitals();
+                if (sendUpdate)
+                {
+                    PacketSender.SendPlayerEquipmentToProximity(this);
+                    PacketSender.SendEntityStats(this);
+                }
+            }
+        }
+
         public void UnequipItem(int slot, bool sendUpdate = true)
         {
             Equipment[slot] = -1;

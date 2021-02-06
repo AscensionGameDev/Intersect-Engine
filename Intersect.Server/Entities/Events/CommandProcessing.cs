@@ -517,7 +517,14 @@ namespace Intersect.Server.Entities.Events
                 return;
             }
 
-            player.EquipItem(ItemBase.Get(command.ItemId));
+            if (command.Unequip)
+            {
+                player.UnequipItem(command.ItemId);
+            }
+            else
+            {
+                player.EquipItem(ItemBase.Get(command.ItemId));
+            }
         }
 
         //Change Sprite Command

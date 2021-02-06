@@ -1305,7 +1305,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString okay = @"Ok";
 
-            public static LocalizedString title = @"Equip Player Items";
+            public static LocalizedString title = @"Equip/Unequip Player Items";
+
+            public static LocalizedString unequip = @"Unequip?";
 
         }
 
@@ -1478,6 +1480,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString changeitems = @"Change Player Items [{00}]";
 
             public static LocalizedString equipitem = @"Equip Player Item [{00}]";
+
+            public static LocalizedString unequipitem = @"Unequip Player Item [{00}]";
 
             public static LocalizedString changespells = @"Change Player Spells [{00}]";
 
@@ -1822,7 +1826,7 @@ Tick timer saved in server config.json.";
                 {"warpplayer", @"Warp Player"},
                 {"hideplayer", @"Hide Player"},
                 {"showplayer", @"Show Player"},
-                {"equipitem", @"Equip Item"},
+                {"equipitem", @"Equip/Unequip Item"},
                 {"changenamecolor", @"Change Name Color"},
                 {"inputvariable", @"Input Variable"},
                 {"changeplayerlabel", @"Change Player Label"},
