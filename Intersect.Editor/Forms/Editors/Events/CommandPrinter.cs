@@ -720,7 +720,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(EquipItemCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
+            return command.Unequip ? Strings.EventCommandList.unequipitem.ToString(ItemBase.GetName(command.ItemId)) : Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
         }
 
         private static string GetCommandText(ChangeSpriteCommand command, MapInstance map)

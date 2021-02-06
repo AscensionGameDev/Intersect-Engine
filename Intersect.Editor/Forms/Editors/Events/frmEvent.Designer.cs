@@ -71,7 +71,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Change Gender");
             System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Set Access");
             System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Change Class");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Equip Item");
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Equip/Unequip Item");
             System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Change Name Color");
             System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Change Player Label");
             System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Change Player Name");
@@ -880,7 +880,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode26.Text = "Change Class";
             treeNode27.Name = "equipitem";
             treeNode27.Tag = "47";
-            treeNode27.Text = "Equip Item";
+            treeNode27.Text = "Equip/Unequip Item";
             treeNode28.Name = "changenamecolor";
             treeNode28.Tag = "48";
             treeNode28.Text = "Change Name Color";

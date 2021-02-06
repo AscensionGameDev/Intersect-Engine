@@ -25,11 +25,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbItem.Items.Clear();
             cmbItem.Items.AddRange(ItemBase.Names);
             cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
+            chkUnequip.Checked = mMyCommand.Unequip;
         }
 
         private void InitLocalization()
         {
             grpEquipItem.Text = Strings.EventEquipItems.title;
+            chkUnequip.Text = Strings.EventEquipItems.unequip;
             btnSave.Text = Strings.EventEquipItems.okay;
             btnCancel.Text = Strings.EventEquipItems.cancel;
         }
@@ -37,6 +39,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
+            mMyCommand.Unequip = chkUnequip.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
