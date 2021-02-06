@@ -71,7 +71,6 @@ namespace Intersect.Server.Core
         {
             try
             {
-                PackedIntersectPacket.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
                 InternalStartNetworking();
             }
             catch (Exception exception)

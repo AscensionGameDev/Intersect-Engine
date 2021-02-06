@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 using Intersect.Properties;
 using Intersect.Plugins.Interfaces;
+using Intersect.Network;
 
 namespace Intersect.Core
 {
@@ -211,6 +212,8 @@ namespace Intersect.Core
             try
             {
                 BootstrapServices();
+
+                PackedIntersectPacket.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
 
                 try
                 {
