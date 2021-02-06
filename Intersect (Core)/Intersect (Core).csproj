@@ -380,6 +380,8 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+	<Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
+	<Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\Server\AnnouncementPacket.cs" />
     <Compile Include="Network\Packets\Server\CancelCastPacket.cs" />

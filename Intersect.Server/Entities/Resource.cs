@@ -99,7 +99,6 @@ namespace Intersect.Server.Entities
             Dead = false;
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendEntityPositionToAll(this);
-            PacketSender.SendEntityVitals(this);
         }
 
         public void SpawnResourceItems(Entity killer)
