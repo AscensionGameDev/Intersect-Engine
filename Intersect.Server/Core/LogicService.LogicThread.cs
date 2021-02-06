@@ -62,8 +62,7 @@ namespace Intersect.Server.Core
 
                 try
                 {
-                    var sw = Stopwatch.StartNew();
-                    var swCpsTimer = sw.ElapsedMilliseconds + 1000;
+                    var swCpsTimer = Globals.Timing.Milliseconds + 1000;
                     long swCps = 0;
 
                     long updateTimer = 0;
@@ -74,8 +73,9 @@ namespace Intersect.Server.Core
 
                     while (ServerContext.Instance.IsRunning)
                     {
-                        var startTime = sw.ElapsedMilliseconds;
-                        
+                        var startTime = Globals.Timing.Milliseconds;
+
+
                         if (startTime > updateTimer)
                         {
                             //Resync Active Maps By Scanning Players and Their Surrounding Maps
@@ -148,12 +148,12 @@ namespace Intersect.Server.Core
                         Time.Update();
                         swCps++;
 
-                        var endTime = sw.ElapsedMilliseconds;
-                        if (sw.ElapsedMilliseconds > swCpsTimer)
+                        var endTime = Globals.Timing.Milliseconds;
+                        if (Globals.Timing.Milliseconds > swCpsTimer)
                         {
                             Globals.Cps = swCps;
                             swCps = 0;
-                            swCpsTimer = sw.ElapsedMilliseconds + 1000;
+                            swCpsTimer = Globals.Timing.Milliseconds + 1000 + 1000;
                             Console.Title = $"Intersect Server - CPS: {Globals.Cps}, Players: {players}, Active Maps: {ActiveMaps.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
                         }
 
