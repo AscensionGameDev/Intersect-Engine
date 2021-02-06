@@ -44,11 +44,6 @@ namespace Intersect.Network
             }
         }
 
-        static PackedIntersectPacket()
-        {
-            AddKnownTypes(FindTypes(BuiltInPacketNamespaces).ToList());
-        }
-
         [Key(0)]
         public short Key { get; set; } = -1;
 
