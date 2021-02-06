@@ -952,7 +952,7 @@ namespace Intersect.Server.Maps
                     en.Value.Update(timeMs);
 
                     // Check to see if we need to send any entity vital and status updates for this entity.
-                    if (!en.Value.GetVitals().SequenceEqual(en.Value._oldvital))
+                    if (!en.Value.VitalsUpdated)
                     {
                         vitalUpdates.Add(en.Value);
 
@@ -964,15 +964,15 @@ namespace Intersect.Server.Maps
                                 PacketSender.SendPartyUpdateTo(player.Party[i], player);
                             }
                         }
-                        
-                        en.Value._oldvital = en.Value.GetVitals();
+
+                        en.Value.VitalsUpdated = false;
                     }
 
-                    if (!en.Value.CachedStatuses.SequenceEqual(en.Value.OldCachedStatuses))
+                    if (en.Value.StatusesUpdated)
                     {
                         statusUpdates.Add(en.Value);
 
-                        en.Value.OldCachedStatuses = en.Value.CachedStatuses;
+                        en.Value.StatusesUpdated = false;
                     }
                 }
 
