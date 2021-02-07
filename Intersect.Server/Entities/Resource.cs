@@ -64,6 +64,12 @@ namespace Intersect.Server.Entities
             if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
+                if (Base.AnimationId != Guid.Empty)
+                {
+                    PacketSender.SendAnimationToProximity(
+                        Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, (int)Directions.Up
+                    );
+                }
             }
 
             PacketSender.SendEntityDataToProximity(this);
