@@ -352,6 +352,13 @@ namespace Intersect.Editor.Forms.DockingElements
                     mMapLayers[i].BackgroundImage = DrawLayerImage(i, i == index, !LayerVisibility[Options.Instance.MapOpts.Layers.All[i]]);
                 }
             }
+            else
+            {
+                if (cmbMapLayer.Items.IndexOf(name) > -1)
+                {
+                    cmbMapLayer.SelectedIndex = cmbMapLayer.Items.IndexOf(name);
+                }
+            }
 
             mLastTileLayer = name;
 

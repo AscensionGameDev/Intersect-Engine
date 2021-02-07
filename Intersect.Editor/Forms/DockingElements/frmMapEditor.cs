@@ -236,28 +236,6 @@ namespace Intersect.Editor.Forms.DockingElements
                                 break;
                             }
                         }
-
-                        if (Globals.CurrentTool == (int) EditingTool.Droppler)
-                        {
-                            //Could not find a tile from the selected level downward, maybe they didnt opt for a specific layer?
-                            foreach (var layer in Enumerable.Reverse(Options.Instance.MapOpts.Layers.All))
-                            { 
-                                if (tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId != Guid.Empty)
-                                {
-                                    Globals.MapLayersWindow.SetTileset(TilesetBase.GetName(tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].TilesetId));
-
-                                    Globals.MapLayersWindow.SetAutoTile(tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].Autotile);
-
-                                    Globals.CurSelX = tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].X;
-                                    Globals.CurSelY = tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].Y;
-                                    Globals.CurrentTool = (int) EditingTool.Pen;
-                                    Globals.MapLayersWindow.SetLayer(layer);
-
-                                    break;
-                                }
-                            }
-                        }
-
                         return;
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Selection)
