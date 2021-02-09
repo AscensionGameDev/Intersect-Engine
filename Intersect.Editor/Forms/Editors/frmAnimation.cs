@@ -711,19 +711,28 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
+        private void CheckFrameCounts()
+        {
+            nudLowerFrameCount.Value = Math.Min(mEditorItem.Lower.FrameCount, mEditorItem.Lower.XFrames * mEditorItem.Lower.YFrames);
+            nudUpperFrameCount.Value = Math.Min(mEditorItem.Upper.FrameCount, mEditorItem.Upper.XFrames * mEditorItem.Upper.YFrames);
+        }
+
         private void nudLowerHorizontalFrames_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Lower.XFrames = (int) nudLowerHorizontalFrames.Value;
+            CheckFrameCounts();
         }
 
         private void nudLowerVerticalFrames_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Lower.YFrames = (int) nudLowerVerticalFrames.Value;
+            CheckFrameCounts();
         }
 
         private void nudLowerFrameCount_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Lower.FrameCount = (int) nudLowerFrameCount.Value;
+            CheckFrameCounts();
             UpdateLowerFrames();
         }
 
@@ -741,16 +750,19 @@ namespace Intersect.Editor.Forms.Editors
         private void nudUpperHorizontalFrames_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Upper.XFrames = (int) nudUpperHorizontalFrames.Value;
+            CheckFrameCounts();
         }
 
         private void nudUpperVerticalFrames_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Upper.YFrames = (int) nudUpperVerticalFrames.Value;
+            CheckFrameCounts();
         }
 
         private void nudUpperFrameCount_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Upper.FrameCount = (int) nudUpperFrameCount.Value;
+            CheckFrameCounts();
             UpdateUpperFrames();
         }
 
