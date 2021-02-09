@@ -734,7 +734,9 @@ namespace Intersect.Client.Maps
                         {
                             name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                         }
-                        var color = CustomColors.Items.MapRarities[rarity];
+                        var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
+                            ? CustomColors.Items.MapRarities[rarity]
+                            : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
                         var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                         var offsetY = (baseOffset * textSize.Y);
                         var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
