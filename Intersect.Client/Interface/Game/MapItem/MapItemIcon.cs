@@ -116,6 +116,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
+                    Pnl.RenderColor = item.Color;
                     Pnl.Texture = itemTex;
                 }
                 else
