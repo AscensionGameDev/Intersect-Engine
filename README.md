@@ -65,7 +65,7 @@ Getting started with Intersect couldn't be easier. Make sure you have Visual Stu
  * Restore Nuget packages
  * Build
 
-We have [documentation here](https://docs.freemmorpgmaker.com/en-US/developer/start/vs.html) tailored towards new developers that will guide you through installing visual studio, cloning the source, and getting started if you need more information.
+We have [documentation here](https://docs.freemmorpgmaker.com/developer/start/vs.html) tailored towards new developers that will guide you through installing visual studio, cloning the source, and getting started if you need more information.
 
 
 ## Licensing
