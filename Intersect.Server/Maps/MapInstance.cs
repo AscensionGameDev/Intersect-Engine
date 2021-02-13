@@ -398,11 +398,6 @@ namespace Intersect.Server.Maps
                 if (item.ItemType == ItemTypes.Equipment)
                 {
                     mapItem.Quantity = 1;
-                    var r = new Random();
-                    for (var i = 0; i < (int) Stats.StatCount; i++)
-                    {
-                        mapItem.StatBuffs[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
-                    }
                 }
                 AddItem(mapItem);
                 PacketSender.SendMapItemUpdate(Id, mapItem, false);
