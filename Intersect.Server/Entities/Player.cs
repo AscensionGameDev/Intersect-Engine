@@ -1291,7 +1291,7 @@ namespace Intersect.Server.Entities
                         var item = Items[Equipment[i]].Descriptor;
                         if (item != null)
                         {
-                            flatStats += item.StatsGiven[(int)statType];
+                            flatStats += item.StatsGiven[(int)statType] + Items[Equipment[i]].StatBuffs[(int)statType];
                             percentageStats += item.PercentageStatsGiven[(int)statType];
                         }
                     }
