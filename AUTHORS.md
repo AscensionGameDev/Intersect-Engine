@@ -13,4 +13,6 @@
 
 [Dog from the Kash Shop](#)
 
+[Fernando Arzola Lagos](https://github.com/Arufonsu)
+
 [Jocelyn Cobb](https://github.com/Cheshire92)
