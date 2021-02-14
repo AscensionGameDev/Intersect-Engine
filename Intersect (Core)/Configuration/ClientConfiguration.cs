@@ -51,6 +51,8 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
+        public const long DEFAULT_DISCORD = 835321270840459264;
+
         #endregion
 
         #region Static Properties and Methods
@@ -61,7 +63,7 @@ namespace Intersect.Configuration
         public void Validate()
         {
             Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
-            Port = Math.Min(Math.Max(Port, (ushort) 1), ushort.MaxValue);
+            Port = Math.Min(Math.Max(Port, (ushort)1), ushort.MaxValue);
             GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
             UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
@@ -126,6 +128,8 @@ namespace Intersect.Configuration
         public List<string> IntroImages { get; set; } = new List<string>();
 
         public string UpdateUrl { get; set; } = "";
+
+        public long DiscordID { get; set; } = DEFAULT_DISCORD;
 
         #endregion
 

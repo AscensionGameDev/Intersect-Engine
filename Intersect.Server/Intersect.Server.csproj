@@ -92,6 +92,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>false</Optimize>
     <DocumentationFile>..\build\debug\server\Intersect Server.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>

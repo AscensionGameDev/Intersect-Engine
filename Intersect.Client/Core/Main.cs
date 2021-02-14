@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using DiscordRPC;
+using DiscordRPC.Logging;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
@@ -27,6 +28,8 @@ namespace Intersect.Client.Core
 
         private static bool _loadedTilesets;
 
+        public static DiscordRpcClient client;
+
         public static void Start()
         {
             //Load Graphics
@@ -40,11 +43,41 @@ namespace Intersect.Client.Core
             Networking.Network.InitNetwork();
             Fade.FadeIn();
 
+            client = new DiscordRpcClient(ClientConfiguration.Instance.DiscordID.ToString());
+            client.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
+
+            client.OnReady += (sender, e) =>
+            {
+                Console.WriteLine("Received Ready from user {0}", e.User.Username);
+            };
+
+            client.OnPresenceUpdate += (sender, e) =>
+            {
+                Console.WriteLine("Received Update! {0}", e.Presence);
+            };
+
+            client.Initialize();
+
+            //Set the rich presence
+            //Call this as many times as you want and anywhere in your code.
+            client.SetPresence(new RichPresence()
+            {
+                Details = "In Menu",
+                Assets = new Assets()
+                {
+                    LargeImageKey = "imagelarge",
+                    LargeImageText = "In Menu",
+                    SmallImageKey = "imagesmall"
+                }
+            });
+
+            client.Invoke();
+
             //Make Json.Net Familiar with Our Object Types
             var id = Guid.NewGuid();
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                var type = ((GameObjectType) val);
+                var type = ((GameObjectType)val);
                 if (type != GameObjectType.Event && type != GameObjectType.Time)
                 {
                     var lookup = type.GetLookup();
@@ -62,6 +95,7 @@ namespace Intersect.Client.Core
             //Network.Close();
             Interface.Interface.DestroyGwen();
             Graphics.Renderer.Close();
+            client.Dispose();
         }
 
         public static void Update()
@@ -187,6 +221,18 @@ namespace Intersect.Client.Core
             Audio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             Fade.FadeIn();
+
+            client.SetPresence(new RichPresence()
+            {
+                Details = "Level " + Globals.Me.Level + " " + ClassBase.GetName(Globals.Me.Class),
+                State = "Adventuring " + MapInstance.GetName(Globals.Me.CurrentMap),
+                Assets = new Assets()
+                {
+                    LargeImageKey = "imagelarge",
+                    LargeImageText = Globals.Me.Name,
+                    SmallImageKey = "imagesmall"
+                }
+            });
         }
 
         private static void ProcessGame()
@@ -372,7 +418,7 @@ namespace Intersect.Client.Core
             Globals.HasGameData = false;
             foreach (var map in MapInstance.Lookup)
             {
-                var mp = (MapInstance) map.Value;
+                var mp = (MapInstance)map.Value;
                 mp.Dispose(false, true);
             }
 
@@ -393,6 +439,17 @@ namespace Intersect.Client.Core
 
             Interface.Interface.InitGwen();
             Fade.FadeIn();
+
+            client.SetPresence(new RichPresence()
+            {
+                Details = "In Menu",
+                Assets = new Assets()
+                {
+                    LargeImageKey = "imagelarge",
+                    LargeImageText = "In Menu",
+                    SmallImageKey = "imagesmall"
+                }
+            });
         }
 
     }
