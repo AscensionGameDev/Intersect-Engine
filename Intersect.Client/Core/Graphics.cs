@@ -364,6 +364,11 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
+                            // NpcTags
+                            if (Options.Npc.ShowNpcTags && entity.GetType() != typeof(Player))
+                            {
+                                entity.DrawNpcTag();
+                            }							
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
@@ -382,6 +387,11 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
+                            // NpcTags
+                            if (Options.Npc.ShowNpcTags && entity.GetType() != typeof(Player))
+                            {
+                                entity.DrawNpcTag();
+                            }							
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }

@@ -1384,41 +1384,65 @@ namespace Intersect.Client.Entities
                 name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
-            
-            // NpcTags
-            if (!(this is Player) && Options.Npc.ShowNpcTags)
-            {
-                string NpcTagFile;
-                switch (Type)
+        }
+
+        // NpcTags
+        public virtual void DrawNpcTag()
+        {
+            // Lets grab the size of the Npc's name, we will use both, X and Y for this.
+            var textSize = Graphics.Renderer.MeasureText(this.Name, Graphics.EntityNameFont, 1);
+            // String that will be used with the switch cases.
+            string NpcTagFile;
+            switch (Type)
                 {
-                    case -1: //When entity has a target (showing aggression)
-                        NpcTagFile = "NpcTag_Aggressive.png";
+                    case -1: //When entity has a target (showing aggression).
+                        NpcTagFile = Options.Npc.AggressiveNpcTag;
 
                         break;
-                    case 0: //Attack when attacked
-                        NpcTagFile = "NpcTag_AttackWhenAttacked.png";
+                    case 0: //Attack when attacked.
+                        NpcTagFile = Options.Npc.AttackWhenAttackedNpcTag;
 
                         break;
-                    case 1: //Attack on sight
-                        NpcTagFile = "NpcTag_AttackOnSight.png";
+                    case 1: //Attack on sight.
+                        NpcTagFile = Options.Npc.AttackOnSightNpcTag;
 
                         break;
-                    case 3: //Guard
-                        NpcTagFile = "NpcTag_Guard.png";
+                    case 3: //Guard.
+                        NpcTagFile = Options.Npc.GuardNpcTag;
 
                         break;
-                    case 2: //Neutral
+                    case 2: //Neutral.
                     default:
-                        NpcTagFile = "NpcTag_Neutral.png";
+                        NpcTagFile = Options.Npc.NeutralNpcTag;
 
                         break;
                 }
-                var NpcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, NpcTagFile);
-                if (NpcTagTex != null)
+            // Grab the sprite and it's name depending on the switch case.
+            var npcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, NpcTagFile);
+            if (npcTagTex != null)
+            {
+                //Tag Position - Horizonally Centered and slightly positioned over the Npc's Name Label.
+                if (Options.Npc.NpcTagsOnTop)
                 {
-                    Graphics.DrawGameTexture(
-                        NpcTagTex, new FloatRect(0, 0, NpcTagTex.GetWidth(), NpcTagTex.GetHeight()), new FloatRect((x - NpcTagTex.GetWidth() / 2), (y - 20), NpcTagTex.GetWidth(), NpcTagTex.GetHeight()), Color.White);
+                    var x = (int)Math.Ceiling(GetCenterPos().X) - npcTagTex.GetWidth() / 2;
+                    var y = GetLabelLocation(LabelType.Name) - textSize.Y - 8;
+                    Graphics.DrawGameTexture(npcTagTex, new FloatRect(0, 0, npcTagTex.GetWidth(), npcTagTex.GetHeight()), new FloatRect(x, y, npcTagTex.GetWidth(), npcTagTex.GetHeight()), Color.White);
                 }
+                //Tag Position - Horizonally Centered and slightly positioned under the Npc's Name Label.
+                else if (Options.Npc.NpcTagsOnBottom)
+                {
+                    var x = (int)Math.Ceiling(GetCenterPos().X) - npcTagTex.GetWidth() / 2;
+                    var y = GetLabelLocation(LabelType.Name) + textSize.Y + 3;
+                    Graphics.DrawGameTexture(npcTagTex, new FloatRect(0, 0, npcTagTex.GetWidth(), npcTagTex.GetHeight()), new FloatRect(x, y, npcTagTex.GetWidth(), npcTagTex.GetHeight()), Color.White);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                return;
             }
         }
 

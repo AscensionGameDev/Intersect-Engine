@@ -36,14 +36,46 @@
 
         /// <summary>
         /// Configures whether or not the type of Npc is displayed adove to their name as a sprite tag.
-        /// This requires the following 5 sprites in the misc resources folder (rec size 32x20):
-        /// "NpcTag_Aggressive.png"
-        /// "NpcTag_AttackWhenAttacked.png"
-        /// "NpcTag_AttackOnSight.png"
-        /// "NpcTag_Guard.png"
-        /// "NpcTag_Neutral.png"
+        /// [ Default is false ]
         /// </summary>
         public bool ShowNpcTags = false;
+
+        /// <summary>
+        /// NpcTags above the Npc's Name Labels, only works if ShowNpcTags = true
+        /// [ Default is true ]
+        /// </summary> 
+        public bool NpcTagsOnTop = true;
+
+        /// <summary>
+        /// NpcTags under the Npc's Name Labels, only works if ShowNpcTags = true
+        /// [ Default is false ]
+        /// </summary>
+        public bool NpcTagsOnBottom = false;
+
+        /// <summary>
+        /// Configures the AggressiveNpcTag sprite loaded from the misc resources folder (rec size 32x20):
+        /// </summary>
+        public string AggressiveNpcTag = "NpcTag_Aggressive.png";
+
+        /// <summary>
+        /// Configures the AttackWhenAttackedNpcTag sprite loaded from the misc resources folder (rec size 32x20):
+        /// </summary>
+        public string AttackWhenAttackedNpcTag = "NpcTag_AttackWhenAttacked.png";
+
+        /// <summary>
+        /// Configures the AttackOnSightNpcTag sprite loaded from the misc resources folder (rec size 32x20):
+        /// </summary>
+        public string AttackOnSightNpcTag = "NpcTag_AttackOnSight.png";
+
+        /// <summary>
+        /// Configures the GuardNpcTag sprite loaded from the misc resources folder (rec size 32x20):
+        /// </summary>
+        public string GuardNpcTag = "NpcTag_Guard.png";
+
+        /// <summary>
+        /// Configures the NeutralNpcTag sprite loaded from the misc resources folder (rec size 32x20):
+        /// </summary>
+        public string NeutralNpcTag = "NpcTag_Neutral.png";
     }
 
 }
