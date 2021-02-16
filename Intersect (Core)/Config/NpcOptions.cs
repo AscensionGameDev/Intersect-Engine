@@ -33,7 +33,17 @@
         /// Configures whether or not the level of an Npc is shown next to their name.
         /// </summary>
         public bool ShowLevelByName = false;
-
+        
+        /// <summary>
+        /// Configures whether or not the type of Npc is displayed adove to their name as a sprite tag.
+        /// This requires 5 sprites in the entitytag resources folder:
+        /// "Aggressive.png"
+        /// "AttackWhenAttacked.png"
+        /// "AttackOnSight.png"
+        /// "Guard.png"
+        /// "Neutral.png"
+        /// </summary>
+        public bool ShowTagByType = false;
     }
 
 }
