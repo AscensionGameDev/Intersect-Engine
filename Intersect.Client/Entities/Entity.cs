@@ -1384,6 +1384,42 @@ namespace Intersect.Client.Entities
                 name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
+            
+            // NpcTags
+            if (!(this is Player) && Options.Npc.ShowNpcTags)
+            {
+                string NpcTagFile;
+                switch (Type)
+                {
+                    case -1: //When entity has a target (showing aggression)
+                        NpcTagFile = "NpcTag_Aggressive.png";
+
+                        break;
+                    case 0: //Attack when attacked
+                        NpcTagFile = "NpcTag_AttackWhenAttacked.png";
+
+                        break;
+                    case 1: //Attack on sight
+                        NpcTagFile = "NpcTag_AttackOnSight.png";
+
+                        break;
+                    case 3: //Guard
+                        NpcTagFile = "NpcTag_Guard.png";
+
+                        break;
+                    case 2: //Neutral
+                    default:
+                        NpcTagFile = "NpcTag_Neutral.png";
+
+                        break;
+                }
+                var NpcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, NpcTagFile);
+                if (NpcTagTex != null)
+                {
+                    Graphics.DrawGameTexture(
+                        NpcTagTex, new FloatRect(0, 0, NpcTagTex.GetWidth(), NpcTagTex.GetHeight()), new FloatRect((x - NpcTagTex.GetWidth() / 2), (y - 20), NpcTagTex.GetWidth(), NpcTagTex.GetHeight()), Color.White);
+                }
+            }
         }
 
         public float GetLabelLocation(LabelType type)
