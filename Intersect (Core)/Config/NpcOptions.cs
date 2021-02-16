@@ -34,6 +34,16 @@
         /// </summary>
         public bool ShowLevelByName = false;
 
+        /// <summary>
+        /// Configures whether or not the type of Npc is displayed adove to their name as a sprite tag.
+        /// This requires the following 5 sprites in the misc resources folder (rec size 32x20):
+        /// "NpcTag_Aggressive.png"
+        /// "NpcTag_AttackWhenAttacked.png"
+        /// "NpcTag_AttackOnSight.png"
+        /// "NpcTag_Guard.png"
+        /// "NpcTag_Neutral.png"
+        /// </summary>
+        public bool ShowNpcTags = false;
     }
 
 }
