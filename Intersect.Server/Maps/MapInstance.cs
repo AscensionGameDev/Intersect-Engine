@@ -831,7 +831,7 @@ namespace Intersect.Server.Maps
         //Entity Processing
         public void AddEntity(Entity en)
         {
-            if (en != null)
+            if (en != null && !en.IsDead())
             {
                 if (!mEntities.ContainsKey(en.Id))
                 {
