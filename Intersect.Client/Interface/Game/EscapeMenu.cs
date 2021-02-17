@@ -114,6 +114,8 @@ namespace Intersect.Client.Interface.Game
             {
                 BringToFront();
             }
+
+            mGoToCharacterSelect.IsDisabled = Globals.Me?.CombatTimer > Globals.System.GetTimeMs();
         }
 
         private void Options_Clicked(Base sender, ClickedEventArgs arguments)
