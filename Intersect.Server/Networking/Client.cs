@@ -212,15 +212,8 @@ namespace Intersect.Server.Networking
         public void Logout(bool force = false)
         {
             var entity = Entity;
-            if (entity != null)
-            {
-                entity.LastOnline = DateTime.Now;
-
-                entity.TryLogout(force);
-
-                entity.Client = null;
-                Entity = null;
-            }
+            entity?.TryLogout();
+            Entity = null;
 
             if (!force)
             {

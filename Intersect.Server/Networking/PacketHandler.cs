@@ -611,12 +611,16 @@ namespace Intersect.Server.Networking
                     );
                 }
 
-                client?.Logout();
-            }
-
-            if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
-            {
-                PacketSender.SendPlayerCharacters(client);
+                if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
+                {
+                    client.Entity.TryLogout();
+                    client.Entity = null;
+                    PacketSender.SendPlayerCharacters(client);
+                }
+                else
+                {
+                    client?.Logout();
+                }
             }
         }
 

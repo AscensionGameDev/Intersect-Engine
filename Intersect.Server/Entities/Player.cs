@@ -236,6 +236,9 @@ namespace Intersect.Server.Entities
 
         public void TryLogout(bool force = false)
         {
+            LastOnline = DateTime.Now;
+            Client = null;
+
             if (CombatTimer < Globals.Timing.Milliseconds || force)
             {
                 Logout();
