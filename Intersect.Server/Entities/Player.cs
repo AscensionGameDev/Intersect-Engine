@@ -4352,12 +4352,16 @@ namespace Intersect.Server.Entities
             }
 
             //Check for range of a single target spell
-            if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                spell.Combat.TargetType == SpellTargetTypes.Single &&
+            if ((spell.SpellType == SpellTypes.CombatSpell &&
+                spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo &&
                 target != this)
             {
                 if (!InRangeOf(target, spell.Combat.CastRange))
                 {
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
+                    }
                     return false;
                 }
             }
