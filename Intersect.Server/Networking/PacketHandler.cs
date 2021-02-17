@@ -571,7 +571,21 @@ namespace Intersect.Server.Networking
 
             PacketSender.SendServerConfig(client);
 
-            //Character selection if more than one.
+            //Check if we already have a player online/stuck in combat.. if so we will login straight to him
+            foreach (var chr in client.Characters)
+            {
+                var plyr = Player.FindOnline(chr.Id);
+                if (plyr != null)
+                {
+                    client.LoadCharacter(plyr);
+                    client.Entity.SetOnline();
+
+                    PacketSender.SendJoinGame(client);
+                    return;
+                }
+            }
+
+            //Otherwise proceed with login normally...
             if (Options.MaxCharacters > 1)
             {
                 PacketSender.SendPlayerCharacters(client);
