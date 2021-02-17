@@ -40,6 +40,10 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deleted = @"Delete Character";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deletecharerror = @"This character cannot be deleted, they may be stuck online in combat.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deletederror = @"Error Deleting Error";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString doesnotexist = @"Account does not exist.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString emailexists = @"An account with this email address already exists.";

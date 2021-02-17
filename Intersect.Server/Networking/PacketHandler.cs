@@ -2436,6 +2436,13 @@ namespace Intersect.Server.Networking
             if (client.User == null)
                 return;
 
+            if (Player.FindOnline(packet.CharacterId) != null)
+            {
+                PacketSender.SendError(client, Strings.Account.deletecharerror, Strings.Account.deletederror);
+                PacketSender.SendPlayerCharacters(client);
+                return;
+            }
+
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
