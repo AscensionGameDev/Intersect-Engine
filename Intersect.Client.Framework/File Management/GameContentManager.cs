@@ -44,6 +44,8 @@ namespace Intersect.Client.Framework.File_Management
 
             Misc,
 
+            Tag
+
         }
 
         public enum UI
@@ -74,6 +76,8 @@ namespace Intersect.Client.Framework.File_Management
         protected Dictionary<string, IAsset> mItemDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, IAsset> mMiscDict = new Dictionary<string, IAsset>();
+
+        protected Dictionary<string, IAsset> mTagDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, GameAudioSource> mMusicDict = new Dictionary<string, GameAudioSource>();
 
@@ -123,6 +127,7 @@ namespace Intersect.Client.Framework.File_Management
             LoadResources();
             LoadPaperdolls();
             LoadMisc();
+            LoadTags();
             LoadGui();
             LoadFonts();
             LoadShaders();
@@ -153,6 +158,8 @@ namespace Intersect.Client.Framework.File_Management
         public abstract void LoadGui();
 
         public abstract void LoadMisc();
+
+        public abstract void LoadTags();
 
         public abstract void LoadFonts();
 
@@ -219,6 +226,9 @@ namespace Intersect.Client.Framework.File_Management
 
                 case TextureType.Misc:
                     return mMiscDict.Keys.ToArray();
+
+                case TextureType.Tag:
+                    return mTagDict.Keys.ToArray();
             }
 
             return null;
@@ -293,6 +303,11 @@ namespace Intersect.Client.Framework.File_Management
                 case TextureType.Misc:
                     textureDict = mMiscDict;
 
+                    break;
+                
+                case TextureType.Tag:
+                    textureDict = mTagDict;
+                    
                     break;
 
                 default:
