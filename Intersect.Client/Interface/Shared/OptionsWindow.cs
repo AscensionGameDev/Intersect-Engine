@@ -217,21 +217,21 @@ namespace Intersect.Client.Interface.Shared
                 {
                     Text = "",
                     AutoSizeToContents = false,
-                    UserData = control,
+                    UserData = new KeyValuePair<Control, int>(control, 1),
                     Font = defaultFont
                 };
 
-                key1.Clicked += Key1_Clicked;
+                key1.Clicked += Key_Clicked;
 
                 var key2 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Control), control)}Button2")
                 {
                     Text = "",
                     AutoSizeToContents = false,
-                    UserData = control,
+                    UserData = new KeyValuePair<Control, int>(control, 2),
                     Font = defaultFont
                 };
 
-                key2.Clicked += Key2_Clicked;
+                key2.Clicked += Key_Clicked;
 
                 mKeyButtons.Add(control, new[] {key1, key2});
 
@@ -259,26 +259,21 @@ namespace Intersect.Client.Interface.Shared
             CloseKeybindings();
         }
 
-        private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
+        private void Key_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            EditKeyPressed((Button) sender, 2);
+            EditKeyPressed((Button) sender);
         }
 
-        private void Key1_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            EditKeyPressed((Button) sender, 1);
-        }
-
-        private void EditKeyPressed(Button sender, int keyNum)
+        private void EditKeyPressed(Button sender)
         {
             if (mEdittingButton == null)
             {
                 sender.Text = Strings.Controls.listening;
-                mEdittingKey = keyNum;
-                mEdittingControl = (Control) sender.UserData;
+                mEdittingKey = ((KeyValuePair<Control, int>)sender.UserData).Value;
+                mEdittingControl = ((KeyValuePair<Control, int>) sender.UserData).Key;
                 mEdittingButton = sender;
                 Interface.GwenInput.HandleInput = false;
-                mListeningTimer = Globals.System.GetTimeMs() + 5000;
+                mListeningTimer = Globals.System.GetTimeMs() + 3000;
             }
         }
 
@@ -362,6 +357,31 @@ namespace Intersect.Client.Interface.Shared
                         Strings.Keys.keydict[
                             Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2)
                                 .ToLower()];
+                }
+
+                if (key != Keys.None) {
+                    foreach (var control in mEdittingControls.ControlMapping)
+                    {
+                        if (control.Key != mEdittingControl)
+                        {
+                            if (control.Value.Key1 == key)
+                            {
+                                //Remove this mapping
+                                mEdittingControls.UpdateControl(control.Key, 1, Keys.None);
+
+                                //Update UI
+                                mKeyButtons[control.Key][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
+                            }
+                            if (control.Value.Key2 == key)
+                            {
+                                //Remove this mapping
+                                mEdittingControls.UpdateControl(control.Key, 2, Keys.None);
+
+                                //Update UI
+                                mKeyButtons[control.Key][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
+                            }
+                        }
+                    }
                 }
 
                 mEdittingButton.PlayHoverSound();
