@@ -1384,7 +1384,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (targetPlayer == null && !(target is Npc))
+            if (targetPlayer == null && !(target is Npc) || target.IsDead())
             {
                 return;
             }
