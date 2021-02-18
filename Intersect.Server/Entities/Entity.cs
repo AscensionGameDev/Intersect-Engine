@@ -1708,23 +1708,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            //Check for enemy statuses
-            foreach (var status in enemy.CachedStatuses)
-            {
-                //Invulnerability ignore
-                if (status.Type == StatusTypes.Invulnerable)
-                {
-                    PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Combat.Invulnerable);
-
-                    // Add a timer before able to make the next move.
-                    if (this is Npc npc)
-                    {
-                        npc.MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
-                    }
-
-                    return;
-                }
-            }
+            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusTypes.Invulnerable);
 
             bool isCrit = false;
             //Is this a critical hit?
@@ -1757,7 +1741,7 @@ namespace Intersect.Server.Entities
                     baseDamage = 0;
                 }
 
-                if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
+                if (baseDamage > 0 && enemy.HasVital(Vitals.Health) && !invulnerable)
                 {
                     if (isCrit)
                     {
@@ -1832,7 +1816,7 @@ namespace Intersect.Server.Entities
                     secondaryDamage = 0;
                 }
 
-                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
+                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana) && !invulnerable)
                 {
                     //If we took damage lets reset our combat timer
                     enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
