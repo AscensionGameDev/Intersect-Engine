@@ -226,12 +226,6 @@ namespace Intersect.Server.Entities
             }
 
             base.Dispose();
-
-            if (OnlinePlayers?.ContainsKey(Id) ?? false)
-            {
-                OnlinePlayers.TryRemove(Id, out Player me);
-                OnlineList = OnlinePlayers.Values.ToArray();
-            }
         }
 
         public void TryLogout(bool force = false)
@@ -328,6 +322,19 @@ namespace Intersect.Server.Entities
             if (!string.IsNullOrWhiteSpace(Strings.Player.left.ToString()))
             {
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Name, Options.Instance.GameName));
+            }
+
+            //Remvoe this player from the online list
+            if (OnlinePlayers?.ContainsKey(Id) ?? false)
+            {
+                OnlinePlayers.TryRemove(Id, out Player me);
+                OnlineList = OnlinePlayers.Values.ToArray();
+            }
+
+            //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
+            if (Client == null)
+            {
+                User?.TryLogout();
             }
 
             User?.Save();

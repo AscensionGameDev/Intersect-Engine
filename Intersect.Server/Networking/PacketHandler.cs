@@ -574,10 +574,9 @@ namespace Intersect.Server.Networking
             //Check if we already have a player online/stuck in combat.. if so we will login straight to him
             foreach (var chr in client.Characters)
             {
-                var plyr = Player.FindOnline(chr.Id);
-                if (plyr != null)
+                if (Player.FindOnline(chr.Id) != null)
                 {
-                    client.LoadCharacter(plyr);
+                    client.LoadCharacter(chr);
                     client.Entity.SetOnline();
 
                     PacketSender.SendJoinGame(client);
