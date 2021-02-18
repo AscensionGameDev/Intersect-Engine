@@ -804,14 +804,14 @@ namespace Intersect.Server.Entities
 
         public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            if (Globals.Timing.Milliseconds < MoveTimer)
+            if (Globals.Timing.Milliseconds < MoveTimer || (!Options.Combat.MovementCancelsCast && CastTime > 0))
             {
                 return;
             }
 
             lock (EntityLock)
             {
-                if (this is Player && CastTime > 0)
+                if (this is Player && CastTime > 0 && Options.Combat.MovementCancelsCast)
                 {
                     CastTime = 0;
                     CastTarget = null;

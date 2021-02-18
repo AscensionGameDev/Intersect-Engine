@@ -560,7 +560,7 @@ namespace Intersect.Client.Networking
                 return;
             }
 
-            if (en is Player)
+            if (en is Player && Options.Combat.MovementCancelsCast)
             {
                 en.CastTime = 0;
             }
