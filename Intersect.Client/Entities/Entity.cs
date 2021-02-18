@@ -1390,7 +1390,7 @@ namespace Intersect.Client.Entities
         public virtual void DrawTag()
         {
             // We make sure that the entity isn't a Player nor an Event.
-            if (Options.Npc.Tags_Enable && this.GetType() != typeof(Player) && this.GetType() != typeof(Event))
+            if (Options.Npc.Tags_Enable && this.GetType() != typeof(Player))
             {
                 // Sprite string names.
                 string npcName = this.Name;
