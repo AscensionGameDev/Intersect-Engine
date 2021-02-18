@@ -4330,34 +4330,35 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var singleTargetCombatSpell = spell.SpellType == SpellTypes.CombatSpell &&
-                                          spell.Combat.TargetType == SpellTargetTypes.Single;
+            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
 
-            if (target == null && (spell.SpellType == SpellTypes.WarpTo || singleTargetCombatSpell))
+            if (target == null && singleTargetSpell)
             {
                 return false;
             }
 
-            if (target != null && singleTargetCombatSpell)
+            if (target == this && spell.SpellType == SpellTypes.WarpTo)
             {
-                if (spell.Combat.Friendly && !IsAllyOf(target))
-                {
-                    return false;
-                }
+                return false;
+            }
 
-                if (!spell.Combat.Friendly && IsAllyOf(target))
+            if (target != null && singleTargetSpell)
+            {
+                if (spell.Combat.Friendly != IsAllyOf(target))
                 {
                     return false;
                 }
             }
 
             //Check for range of a single target spell
-            if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                spell.Combat.TargetType == SpellTargetTypes.Single &&
-                target != this)
+            if (singleTargetSpell && target != this)
             {
                 if (!InRangeOf(target, spell.Combat.CastRange))
                 {
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
+                    }
                     return false;
                 }
             }
