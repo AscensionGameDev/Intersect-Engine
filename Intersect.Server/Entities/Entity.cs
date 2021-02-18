@@ -250,7 +250,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool VitalsUpdated
         {
-            get => GetVitals().SequenceEqual(mOldVitals);
+            get => !GetVitals().SequenceEqual(mOldVitals);
 
             set
             {
@@ -264,7 +264,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool StatusesUpdated
         {
-            get => CachedStatuses.SequenceEqual(mOldStatuses);
+            get => CachedStatuses != mOldStatuses; //The whole CachedStatuses assignment gets changed when a status is added, removed, or updated (time remaining changes, so we only check for reference equivity here)
 
             set
             {
