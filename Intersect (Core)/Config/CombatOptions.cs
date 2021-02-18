@@ -18,6 +18,13 @@
         public int RegenTime = 3000; //3 seconds
 
         public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
+
+        //Spells
+
+        /// <summary>
+        /// If enabled this allows spell casts to stop/be canceled if the player tries to move around (WASD)
+        /// </summary>
+        public bool MovementCancelsCast = false;
         
         // Cooldowns
 
