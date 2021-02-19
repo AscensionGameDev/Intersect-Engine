@@ -398,11 +398,6 @@ namespace Intersect.Server.Maps
                 if (item.ItemType == ItemTypes.Equipment)
                 {
                     mapItem.Quantity = 1;
-                    var r = new Random();
-                    for (var i = 0; i < (int) Stats.StatCount; i++)
-                    {
-                        mapItem.StatBuffs[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
-                    }
                 }
                 AddItem(mapItem);
                 PacketSender.SendMapItemUpdate(Id, mapItem, false);
@@ -836,7 +831,7 @@ namespace Intersect.Server.Maps
         //Entity Processing
         public void AddEntity(Entity en)
         {
-            if (en != null)
+            if (en != null && !en.IsDead())
             {
                 if (!mEntities.ContainsKey(en.Id))
                 {
@@ -952,8 +947,7 @@ namespace Intersect.Server.Maps
                     en.Value.Update(timeMs);
 
                     // Check to see if we need to send any entity vital and status updates for this entity.
-                    if (!en.Value.VitalsUpdated)
-                    {
+                    if (en.Value.VitalsUpdated)
                         vitalUpdates.Add(en.Value);
 
                         // Send a party update if we're a player with a party.

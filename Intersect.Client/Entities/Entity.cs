@@ -1717,7 +1717,6 @@ namespace Intersect.Client.Entities
                 if (AnimatedTextures[SpriteAnimations.Attack] != null)
                 {
                     SpriteAnimation = SpriteAnimations.Attack;
-                    SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / (float)SpriteFrames)));
                 }
 
                 if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length)
@@ -1754,6 +1753,11 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
+
+                if (SpriteAnimation != SpriteAnimations.Normal && SpriteAnimation != SpriteAnimations.Idle)
+                {
+                    SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / (float)SpriteFrames)));
+                }
             }
             else if (CastTime > Globals.System.GetTimeMs())
             {
@@ -1762,7 +1766,6 @@ namespace Intersect.Client.Entities
                 {
                     var duration = spell.CastDuration;
                     var timeIn = duration - (CastTime - Globals.System.GetTimeMs());
-                    SpriteFrame = (int)Math.Floor((timeIn / (duration / (float)SpriteFrames)));
 
                     if (AnimatedTextures[SpriteAnimations.Cast] != null)
                     {
@@ -1774,6 +1777,8 @@ namespace Intersect.Client.Entities
                     {
                         SpriteAnimation = SpriteAnimations.Shoot;
                     }
+
+                    SpriteFrame = (int)Math.Floor((timeIn / (duration / (float)SpriteFrames)));
                 }
                 LastActionTime = Globals.System.GetTimeMs();
             }

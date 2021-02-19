@@ -1610,9 +1610,12 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
+                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || CastTime < Globals.System.GetTimeMs())) 
                 {
-                    CastTime = 0;
+                    if (Options.Combat.MovementCancelsCast)
+                    {
+                        CastTime = 0;
+                    }
 
                     switch (MoveDir)
                     {

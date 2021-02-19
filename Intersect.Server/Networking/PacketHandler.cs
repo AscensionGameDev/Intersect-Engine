@@ -571,7 +571,20 @@ namespace Intersect.Server.Networking
 
             PacketSender.SendServerConfig(client);
 
-            //Character selection if more than one.
+            //Check if we already have a player online/stuck in combat.. if so we will login straight to him
+            foreach (var chr in client.Characters)
+            {
+                if (Player.FindOnline(chr.Id) != null)
+                {
+                    client.LoadCharacter(chr);
+                    client.Entity.SetOnline();
+
+                    PacketSender.SendJoinGame(client);
+                    return;
+                }
+            }
+
+            //Otherwise proceed with login normally...
             if (Options.MaxCharacters > 1)
             {
                 PacketSender.SendPlayerCharacters(client);
@@ -611,12 +624,16 @@ namespace Intersect.Server.Networking
                     );
                 }
 
-                client?.Logout();
-            }
-
-            if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
-            {
-                PacketSender.SendPlayerCharacters(client);
+                if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
+                {
+                    client.Entity?.TryLogout();
+                    client.Entity = null;
+                    PacketSender.SendPlayerCharacters(client);
+                }
+                else
+                {
+                    client?.Logout();
+                }
             }
         }
 
@@ -2435,6 +2452,13 @@ namespace Intersect.Server.Networking
         {
             if (client.User == null)
                 return;
+
+            if (Player.FindOnline(packet.CharacterId) != null)
+            {
+                PacketSender.SendError(client, Strings.Account.deletecharerror, Strings.Account.deletederror);
+                PacketSender.SendPlayerCharacters(client);
+                return;
+            }
 
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)

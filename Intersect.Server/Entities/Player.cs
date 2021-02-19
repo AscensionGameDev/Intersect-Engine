@@ -226,16 +226,13 @@ namespace Intersect.Server.Entities
             }
 
             base.Dispose();
-
-            if (OnlinePlayers?.ContainsKey(Id) ?? false)
-            {
-                OnlinePlayers.TryRemove(Id, out Player me);
-                OnlineList = OnlinePlayers.Values.ToArray();
-            }
         }
 
         public void TryLogout(bool force = false)
         {
+            LastOnline = DateTime.Now;
+            Client = null;
+
             if (CombatTimer < Globals.Timing.Milliseconds || force)
             {
                 Logout();
@@ -325,6 +322,19 @@ namespace Intersect.Server.Entities
             if (!string.IsNullOrWhiteSpace(Strings.Player.left.ToString()))
             {
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Name, Options.Instance.GameName));
+            }
+
+            //Remvoe this player from the online list
+            if (OnlinePlayers?.ContainsKey(Id) ?? false)
+            {
+                OnlinePlayers.TryRemove(Id, out Player me);
+                OnlineList = OnlinePlayers.Values.ToArray();
+            }
+
+            //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
+            if (Client == null)
+            {
+                User?.TryLogout();
             }
 
             User?.Save();
@@ -1291,7 +1301,7 @@ namespace Intersect.Server.Entities
                         var item = Items[Equipment[i]].Descriptor;
                         if (item != null)
                         {
-                            flatStats += item.StatsGiven[(int)statType];
+                            flatStats += item.StatsGiven[(int)statType] + Items[Equipment[i]].StatBuffs[(int)statType];
                             percentageStats += item.PercentageStatsGiven[(int)statType];
                         }
                     }
@@ -4330,34 +4340,35 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var singleTargetCombatSpell = spell.SpellType == SpellTypes.CombatSpell &&
-                                          spell.Combat.TargetType == SpellTargetTypes.Single;
+            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
 
-            if (target == null && (spell.SpellType == SpellTypes.WarpTo || singleTargetCombatSpell))
+            if (target == null && singleTargetSpell)
             {
                 return false;
             }
 
-            if (target != null && singleTargetCombatSpell)
+            if (target == this && spell.SpellType == SpellTypes.WarpTo)
             {
-                if (spell.Combat.Friendly && !IsAllyOf(target))
-                {
-                    return false;
-                }
+                return false;
+            }
 
-                if (!spell.Combat.Friendly && IsAllyOf(target))
+            if (target != null && singleTargetSpell)
+            {
+                if (spell.Combat.Friendly != IsAllyOf(target))
                 {
                     return false;
                 }
             }
 
             //Check for range of a single target spell
-            if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                spell.Combat.TargetType == SpellTargetTypes.Single &&
-                target != this)
+            if (singleTargetSpell && target != this)
             {
                 if (!InRangeOf(target, spell.Combat.CastRange))
                 {
+                    if (Options.Combat.EnableCombatChatMessages)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
+                    }
                     return false;
                 }
             }

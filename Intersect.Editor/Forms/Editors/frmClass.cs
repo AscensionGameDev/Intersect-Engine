@@ -488,9 +488,6 @@ namespace Intersect.Editor.Forms.Editors
                 cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
             }
 
-            cmbWarpMap.SelectedIndex = 0;
-            cmbDirection.SelectedIndex = 0;
-
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in ClassBase.Lookup)

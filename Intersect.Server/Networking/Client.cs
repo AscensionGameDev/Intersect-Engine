@@ -125,9 +125,9 @@ namespace Intersect.Server.Networking
 
         public void SetUser(User user)
         {
-            if (user == null && User != null)
+            if (user == null)
             {
-                User.Logout(User);
+                User?.TryLogout();
             }
 
             if (user != null && user != User)
@@ -212,15 +212,8 @@ namespace Intersect.Server.Networking
         public void Logout(bool force = false)
         {
             var entity = Entity;
-            if (entity != null)
-            {
-                entity.LastOnline = DateTime.Now;
-
-                entity.TryLogout(force);
-
-                entity.Client = null;
-                Entity = null;
-            }
+            entity?.TryLogout();
+            Entity = null;
 
             if (!force)
             {

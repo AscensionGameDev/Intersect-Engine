@@ -188,7 +188,7 @@ namespace Intersect.Client.Maps
                 UpdateMapAttributes();
                 if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
-                    BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 10);
+                    BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 0, 10);
                 }
 
                 foreach (var anim in LocalAnimations)
@@ -540,7 +540,7 @@ namespace Intersect.Client.Maps
                     }
 
                     var sound = Audio.AddMapSound(
-                        ((MapSoundAttribute) attribute).File, x, y, Id, true, ((MapSoundAttribute) attribute).Distance
+                        ((MapSoundAttribute) attribute).File, x, y, Id, true, ((MapSoundAttribute)attribute).LoopInterval, ((MapSoundAttribute) attribute).Distance
                     );
 
                     AttributeSounds?.Add(sound);
@@ -734,7 +734,9 @@ namespace Intersect.Client.Maps
                         {
                             name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                         }
-                        var color = CustomColors.Items.MapRarities[rarity];
+                        var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
+                            ? CustomColors.Items.MapRarities[rarity]
+                            : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
                         var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                         var offsetY = (baseOffset * textSize.Y);
                         var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));

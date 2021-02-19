@@ -57,6 +57,8 @@ namespace Intersect.Server.Database
             {
                 StatBuffs[i] = item.StatBuffs[i];
             }
+
+            DropChance = item.DropChance;
         }
         
         // TODO: THIS SHOULD NOT BE A NULLABLE. This needs to be fixed.

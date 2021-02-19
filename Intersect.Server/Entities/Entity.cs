@@ -250,7 +250,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool VitalsUpdated
         {
-            get => GetVitals().SequenceEqual(mOldVitals);
+            get => !GetVitals().SequenceEqual(mOldVitals);
 
             set
             {
@@ -264,7 +264,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool StatusesUpdated
         {
-            get => CachedStatuses.SequenceEqual(mOldStatuses);
+            get => CachedStatuses != mOldStatuses; //The whole CachedStatuses assignment gets changed when a status is added, removed, or updated (time remaining changes, so we only check for reference equivity here)
 
             set
             {
@@ -804,14 +804,14 @@ namespace Intersect.Server.Entities
 
         public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            if (Globals.Timing.Milliseconds < MoveTimer)
+            if (Globals.Timing.Milliseconds < MoveTimer || (!Options.Combat.MovementCancelsCast && CastTime > 0))
             {
                 return;
             }
 
             lock (EntityLock)
             {
-                if (this is Player && CastTime > 0)
+                if (this is Player && CastTime > 0 && Options.Combat.MovementCancelsCast)
                 {
                     CastTime = 0;
                     CastTarget = null;
@@ -1384,7 +1384,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (targetPlayer == null && !(target is Npc))
+            if (targetPlayer == null && !(target is Npc) || target.IsDead())
             {
                 return;
             }
@@ -1708,23 +1708,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            //Check for enemy statuses
-            foreach (var status in enemy.CachedStatuses)
-            {
-                //Invulnerability ignore
-                if (status.Type == StatusTypes.Invulnerable)
-                {
-                    PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Combat.Invulnerable);
-
-                    // Add a timer before able to make the next move.
-                    if (this is Npc npc)
-                    {
-                        npc.MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
-                    }
-
-                    return;
-                }
-            }
+            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusTypes.Invulnerable);
 
             bool isCrit = false;
             //Is this a critical hit?
@@ -1757,7 +1741,7 @@ namespace Intersect.Server.Entities
                     baseDamage = 0;
                 }
 
-                if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
+                if (baseDamage > 0 && enemy.HasVital(Vitals.Health) && !invulnerable)
                 {
                     if (isCrit)
                     {
@@ -1832,7 +1816,7 @@ namespace Intersect.Server.Entities
                     secondaryDamage = 0;
                 }
 
-                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
+                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana) && !invulnerable)
                 {
                     //If we took damage lets reset our combat timer
                     enemy.SubVital(Vitals.Mana, (int) secondaryDamage);

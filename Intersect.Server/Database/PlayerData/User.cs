@@ -57,11 +57,20 @@ namespace Intersect.Server.Database.PlayerData
                 OnlineUsers.TryAdd(user.Id, user);
         }
 
-        public static void Logout (User user)
+        public void TryLogout ()
         {
-            if(OnlineUsers.ContainsKey(user.Id))
+            //If we still have a character online (probably being held up in combat) then don't logout yet.
+            foreach (var chr in Players)
             {
-                OnlineUsers.TryRemove(user.Id, out User removed);
+                if (Player.FindOnline(chr.Id) != null)
+                {
+                    return;
+                }
+            }
+
+            if (OnlineUsers.ContainsKey(this.Id))
+            {
+                OnlineUsers.TryRemove(this.Id, out User removed);
             }
         }
 

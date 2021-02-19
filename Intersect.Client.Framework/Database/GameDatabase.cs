@@ -49,7 +49,7 @@ namespace Intersect.Client.Framework.Database
             FullScreen = LoadPreference("Fullscreen", false);
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
             TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
-            StickyTarget = LoadPreference("StickyTarget", false);
+            StickyTarget = LoadPreference("StickyTarget", true);
         }
 
         public virtual void SavePreferences()
