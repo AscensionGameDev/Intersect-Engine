@@ -125,9 +125,9 @@ namespace Intersect.Server.Networking
 
         public void SetUser(User user)
         {
-            if (user == null && User != null)
+            if (user == null)
             {
-                User.TryLogout();
+                User?.TryLogout();
             }
 
             if (user != null && user != User)
