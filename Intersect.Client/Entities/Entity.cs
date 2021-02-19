@@ -1389,25 +1389,25 @@ namespace Intersect.Client.Entities
         // NpcTags
         public virtual void DrawTag()
         {
-            // We make sure that the entity isn't a Player nor an Event.
-            if (Options.Npc.Tags_Enable && this.GetType() != typeof(Player))
+            // We make sure that the entity isn't a Player.
+            if (Options.Npc.ShowTags && this.GetType() != typeof(Player))
             {
-                // Sprite string names.
+                // strings used for the sprites file names.
                 string npcName = this.Name;
                 string npcTagFile;
-                // Position variables for the tag.
+                // variables used for the position of the tag.
                 var npcNameSize = Graphics.Renderer.MeasureText(npcName, Graphics.EntityNameFont, 1);
-                int npcTagPos = Options.Npc.Tags_Position;
+                int npcTagPos = Options.Npc.TagsPosition;
                 float x;
                 float y;
-                // Switch for custom and default tags.
+                // switch for custom / default tags.
                 switch (Options.Npc.CustomTagIcons.Contains(npcName))
                 {
-                    // If the custom tag list contains this Npc's name.
+                    // if the custom tag list contains this Npc's name.
                     case true:
                         npcTagFile = $@"{npcName}.png";
                         break;
-                    // Else, load the default tags depending in the Npc type.
+                    // else, load the default tags.
                     case false:
                     default:
                         switch (Type)
@@ -1436,9 +1436,9 @@ namespace Intersect.Client.Entities
                         }
                         break;
                 }
-                // Once we have the sprite file name we want to use, load the tag texture.
+                // once we have the sprite file name we want to use, we can handle the tag texture to be drawn.
                 GameTexture npcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, npcTagFile);
-                // Before we draw the sprite, lets have it's position set.
+                // before we draw the sprite, lets have it's position set.
                 switch (npcTagPos)
                 {
                     case 0: // Position the tag above the Npc's name label.
@@ -1463,7 +1463,7 @@ namespace Intersect.Client.Entities
 
                         break;
                 }
-                // And finally, we draw the tag.
+                // and finally, we draw the tag.
                 if (npcTagTex != null)
                 {
                     Graphics.DrawGameTexture(npcTagTex, x, y, Intersect.Color.White);
@@ -1473,7 +1473,7 @@ namespace Intersect.Client.Entities
                     return;
                 }
             }
-            else
+            if (!Options.Npc.ShowTags || this.GetType() == typeof(Player))
             {
                 return;
             }

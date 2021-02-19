@@ -35,7 +35,7 @@
         /// Configures whether or not to display Npc's Tags.
         /// NOTE: Npc Tag Sprites are always loaded from the "tags" resource folder (rec size 32x20).
         /// </summary>
-        public bool Tags_Enable { get; set; } = false;
+        public bool ShowTags { get; set; } = false;
 
         /// <summary>
         /// Configures the position of the Npc Tags. Only works if ShowNpcTags = true.
@@ -44,7 +44,7 @@
         /// 2: NpcTags as prefix (left) of the Npc's Name Label.
         /// 3: NpcTags as suffix (right) of the Npc's Name Label.
         /// </summary>
-        public int Tags_Position { get; set; } = 0;
+        public int TagsPosition { get; set; } = 0;
 
         /// <summary>
         /// Configures the default tag icon sprite for AggressiveNpcTag.
@@ -70,11 +70,12 @@
         /// Configures default tag icon sprite for NeutralNpcTag.
         /// </summary>
         public string NeutralTagIcon { get; set; } = "Neutral.png";
-
+        
         /// <summary>
         /// Configures which Npcs should have a Custom Npc Tag. Only works if ShowNpcTags = true.
-        /// In order to change the default tag for a specific Npc, lets say, one named "Doe", add it's name to this string list
-        /// then create a custom tag named "Doe.png" and place it inside the "tags" resource folder.
+        /// In order to set a custom tag for a specific Npc, lets say, one named "Doe",
+        /// add it's name to this string list, create a custom tag named "Doe.png" and place it inside
+        /// the "tags" resource folder.
         /// </summary> 
         public string[] CustomTagIcons { get; set; } = { "Doe", "Monster", "Boss" };
     }
