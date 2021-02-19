@@ -626,7 +626,7 @@ namespace Intersect.Server.Networking
 
                 if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
                 {
-                    client.Entity.TryLogout();
+                    client.Entity?.TryLogout();
                     client.Entity = null;
                     PacketSender.SendPlayerCharacters(client);
                 }
