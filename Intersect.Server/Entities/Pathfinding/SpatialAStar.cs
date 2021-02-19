@@ -169,6 +169,7 @@ namespace Intersect.Server.Entities.Pathfinding
             mRuntimeGrid.Add(startNode);
 
             var nodes = 0;
+            PathNode closestNode = null;
 
             while (!mOpenSet.IsEmpty)
             {
@@ -253,8 +254,20 @@ namespace Intersect.Server.Entities.Pathfinding
                         {
                             mOrderedOpenSet.Update(y);
                         }
+
+                        if (closestNode == null || closestNode.H > y.H)
+                        {
+                            closestNode = y;
+                        }
                     }
                 }
+            }
+
+            if (closestNode != null && closestNode.H < startNode.H)
+            {
+                var result = ReconstructPath(mCameFrom, mCameFrom[closestNode.X, closestNode.Y]);
+                result.AddLast(closestNode);
+                return result;
             }
 
             return null;
