@@ -694,6 +694,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     var soundAttribute = attribute as MapSoundAttribute;
                     soundAttribute.Distance = (byte)nudSoundDistance.Value;
                     soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                    soundAttribute.LoopInterval = (int)nudSoundLoopInterval.Value;
                     break;
 
                 case MapAttributes.Resource:
