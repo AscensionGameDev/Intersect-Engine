@@ -948,6 +948,7 @@ namespace Intersect.Server.Maps
 
                     // Check to see if we need to send any entity vital and status updates for this entity.
                     if (en.Value.VitalsUpdated)
+                    { 
                         vitalUpdates.Add(en.Value);
 
                         // Send a party update if we're a player with a party.
