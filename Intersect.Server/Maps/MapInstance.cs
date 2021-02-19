@@ -947,7 +947,7 @@ namespace Intersect.Server.Maps
                     en.Value.Update(timeMs);
 
                     // Check to see if we need to send any entity vital and status updates for this entity.
-                    if (!en.Value.VitalsUpdated)
+                    if (en.Value.VitalsUpdated)
                     {
                         vitalUpdates.Add(en.Value);
 
