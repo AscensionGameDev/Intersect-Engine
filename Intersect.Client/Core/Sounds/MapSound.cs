@@ -27,9 +27,10 @@ namespace Intersect.Client.Core.Sounds
             int y,
             Guid mapId,
             bool loop,
+            int loopInterval,
             int distance,
             Entity parent = null
-        ) : base(filename, loop)
+        ) : base(filename, loop, loopInterval)
         {
             if (string.IsNullOrEmpty(filename) || mSound == null)
             {

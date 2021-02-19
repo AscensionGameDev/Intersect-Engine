@@ -188,7 +188,7 @@ namespace Intersect.Client.Maps
                 UpdateMapAttributes();
                 if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
-                    BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 10);
+                    BackgroundSound = Audio.AddMapSound(Sound, -1, -1, Id, true, 0, 10);
                 }
 
                 foreach (var anim in LocalAnimations)
@@ -540,7 +540,7 @@ namespace Intersect.Client.Maps
                     }
 
                     var sound = Audio.AddMapSound(
-                        ((MapSoundAttribute) attribute).File, x, y, Id, true, ((MapSoundAttribute) attribute).Distance
+                        ((MapSoundAttribute) attribute).File, x, y, Id, true, ((MapSoundAttribute)attribute).LoopInterval, ((MapSoundAttribute) attribute).Distance
                     );
 
                     AttributeSounds?.Add(sound);
