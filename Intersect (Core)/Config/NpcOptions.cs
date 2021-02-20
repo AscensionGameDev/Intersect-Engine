@@ -39,12 +39,23 @@
 
         /// <summary>
         /// Configures the position of the Npc Tags. Only works if ShowNpcTags = true.
-        /// 0: NpcTags above the Npc's Name Label.
-        /// 1: NpcTags under the Npc's Name Label.
-        /// 2: NpcTags as prefix (left) of the Npc's Name Label.
-        /// 3: NpcTags as suffix (right) of the Npc's Name Label.
+        /// 0: Tags Above the Npc's Name Label.
+        /// 1: Tags Under the Npc's Name Label.
+        /// 2: Tags as Prefix (left) of the Npc's Name Label.
+        /// 3: Tags as Suffix (right) of the Npc's Name Label.
         /// </summary>
-        public int TagsPosition { get; set; } = 0;
+        public NpcOptions.TagPositionOption TagPosition { get; set; } = TagPositionOption.Above;
+
+        /// <summary>
+        /// Enum used for switching TagPosition.
+        /// </summary>
+        public enum TagPositionOption
+        {
+            Above,
+            Under,
+            Prefix,
+            Suffix
+        }
 
         /// <summary>
         /// Configures the default tag icon sprite for AggressiveNpcTag.
@@ -70,12 +81,12 @@
         /// Configures default tag icon sprite for NeutralNpcTag.
         /// </summary>
         public string NeutralTagIcon { get; set; } = "Neutral.png";
-        
+
         /// <summary>
         /// Configures which Npcs should have a Custom Npc Tag. Only works if ShowNpcTags = true.
         /// In order to set a custom tag for a specific Npc, lets say, one named "Doe",
-        /// add it's name to this string list, create a custom tag named "Doe.png" and place it inside
-        /// the "tags" resource folder.
+        /// add it's name to this string list, then create a custom tag named "Doe.png"
+        /// and place it inside the "tags" resource folder.
         /// </summary> 
         public string[] CustomTagIcons { get; set; } = { "Doe", "Monster", "Boss" };
     }

@@ -19,6 +19,7 @@ using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using NpcTagPos = Intersect.Config.NpcOptions.TagPositionOption;
 
 namespace Intersect.Client.Entities
 {
@@ -1387,95 +1388,86 @@ namespace Intersect.Client.Entities
         }
 
         // NpcTags
-        public virtual void DrawTag()
+        public virtual void DrawTag(NpcTagPos tagPos)
         {
-            // We make sure that the entity isn't a Player.
-            if (Options.Npc.ShowTags && this.GetType() != typeof(Player))
-            {
-                // strings used for the sprites file names.
-                string npcName = this.Name;
-                string npcTagFile;
-                // variables used for the position of the tag.
-                var npcNameSize = Graphics.Renderer.MeasureText(npcName, Graphics.EntityNameFont, 1);
-                int npcTagPos = Options.Npc.TagsPosition;
-                float x;
-                float y;
-                // switch for custom / default tags.
-                switch (Options.Npc.CustomTagIcons.Contains(npcName))
-                {
-                    // if the custom tag list contains this Npc's name.
-                    case true:
-                        npcTagFile = $@"{npcName}.png";
-                        break;
-                    // else, load the default tags.
-                    case false:
-                    default:
-                        switch (Type)
-                        {
-                            case -1: // When entity has aggression towards a target.
-                                npcTagFile = Options.Npc.AggressiveTagIcon;
-
-                                break;
-                            case 0: // Attack when attacked.
-                                npcTagFile = Options.Npc.AttackWhenAttackedTagIcon;
-
-                                break;
-                            case 1: // Attack on sight.
-                                npcTagFile = Options.Npc.AttackOnSightTagIcon;
-
-                                break;
-                            case 3: // Guard.
-                                npcTagFile = Options.Npc.GuardTagIcon;
-
-                                break;
-                            case 2: // Neutral.
-                            default:
-                                npcTagFile = Options.Npc.NeutralTagIcon;
-
-                                break;
-                        }
-                        break;
-                }
-                // once we have the sprite file name we want to use, we can handle the tag texture to be drawn.
-                GameTexture npcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, npcTagFile);
-                // before we draw the sprite, lets have it's position set.
-                switch (npcTagPos)
-                {
-                    case 0: // Position the tag above the Npc's name label.
-                    default:
-                        x = (int)Math.Ceiling(GetCenterPos().X) - npcTagTex.GetWidth() / 2;
-                        y = GetLabelLocation(LabelType.Name) - (npcNameSize.Y) - (npcTagTex.GetHeight() / 3);
-
-                        break;
-                    case 1: // Position the tag under the Npc's name label.
-                        x = (int)Math.Ceiling(GetCenterPos().X) - npcTagTex.GetWidth() / 2;
-                        y = GetLabelLocation(LabelType.Name) + (npcNameSize.Y) + 3;
-
-                        break;
-                    case 2: // Position the tag as prefix (left) of the Npc's name label.
-                        x = (int)Math.Ceiling(GetCenterPos().X) - (npcNameSize.X / 2) - (npcTagTex.GetWidth()) - 6;
-                        y = GetLabelLocation(LabelType.Name);
-
-                        break;
-                    case 3: // Position the tag as prefix (left) of the Npc's name label.
-                        x = (int)Math.Ceiling(GetCenterPos().X) + (npcNameSize.X / 2) + 6;
-                        y = GetLabelLocation(LabelType.Name);
-
-                        break;
-                }
-                // and finally, we draw the tag.
-                if (npcTagTex != null)
-                {
-                    Graphics.DrawGameTexture(npcTagTex, x, y, Intersect.Color.White);
-                }
-                if (npcTagTex == null)
-                {
-                    return;
-                }
-            }
-            if (!Options.Npc.ShowTags || this.GetType() == typeof(Player))
+            // Variables
+            string npcName = this.Name;
+            string npcTagFile = "";
+            var npcNameSize = Graphics.Renderer.MeasureText(npcName, Graphics.EntityNameFont, 1);
+            var npcCenterHorPos = (int)Math.Ceiling(GetCenterPos().X);
+            bool CustomTag = Options.Npc.CustomTagIcons.Contains(npcName);
+            float x;
+            float y;
+            // Feature check and Entity type check.
+            if (!Options.Npc.ShowTags || this is Player)
             {
                 return;
+            }
+            if (Options.Npc.ShowTags && !(this is Player))
+            {
+                if (CustomTag) // if the custom tag list contains this Npc's name.
+                {
+                    npcTagFile = $@"{npcName}.png";
+                }
+                if (!CustomTag) // if the custom tag list doesn't contains this Npc's name.
+                {
+                    switch (Type) // then we load the default tags.
+                    {
+                        case -1: // Default tag when entity has aggression towards a target.
+                            npcTagFile = Options.Npc.AggressiveTagIcon;
+
+                            break;
+                        case 0: // Default tag when entity Attacks when attacked.
+                            npcTagFile = Options.Npc.AttackWhenAttackedTagIcon;
+
+                            break;
+                        case 1: // Default tag when entity Attacks on sight.
+                            npcTagFile = Options.Npc.AttackOnSightTagIcon;
+
+                            break;
+                        case 3: // Default tag when entity is Guard.
+                            npcTagFile = Options.Npc.GuardTagIcon;
+
+                            break;
+                        case 2: // Default tag when entity is Neutral.
+                        default:
+                            npcTagFile = Options.Npc.NeutralTagIcon;
+                            
+                            break;
+                    }
+                }
+                // Now that we have the name of the sprite file, we load it as a texture.
+                GameTexture npcTagTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, npcTagFile);
+                // Before we draw the sprite, lets have it's position set.
+                switch (tagPos)
+                {
+                    case NpcTagPos.Above: // Position the tag above the Npc's name label.
+                    default:
+                        x = npcCenterHorPos - (npcTagTex.GetWidth() / 2);
+                        y = GetLabelLocation(LabelType.Name) - npcNameSize.Y - (npcTagTex.GetHeight() / 2);
+                        
+                        break;
+                    case NpcTagPos.Under: // Position the tag under the Npc's name label.
+                        x = npcCenterHorPos - (npcTagTex.GetWidth() / 2);
+                        y = GetLabelLocation(LabelType.Name) + npcNameSize.Y + 3;
+                        
+                        break;
+                    case NpcTagPos.Prefix: // Position the tag as prefix (left) of the Npc's name label.
+                        x = npcCenterHorPos - (npcNameSize.X / 2) - npcTagTex.GetWidth() - 6;
+                        y = GetLabelLocation(LabelType.Name);
+                        
+                        break;
+                    case NpcTagPos.Suffix: // Position the tag as suffix (right) of the Npc's name label.
+                        x = npcCenterHorPos + (npcNameSize.X / 2) + 6;
+                        y = GetLabelLocation(LabelType.Name);
+                        
+                        break;
+                }
+                // And finally, we draw the tag.
+                if (npcTagTex != null)
+                {
+                    Graphics.DrawGameTexture(npcTagTex, x, y);
+                }
             }
         }
 
