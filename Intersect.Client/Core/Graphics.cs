@@ -362,7 +362,7 @@ namespace Intersect.Client.Core
                     foreach (var entity in RenderingEntities[x, y])
                     {
                         entity.DrawName(null);
-                        if (entity.GetType() != typeof(Event))
+                        if (!(entity is Event))
                         {
                             entity.DrawTag(Options.Npc.TagPosition);
                             entity.DrawHpBar();
@@ -381,7 +381,7 @@ namespace Intersect.Client.Core
                     foreach (var entity in RenderingEntities[x, y])
                     {
                         entity.DrawName(null);
-                        if (entity.GetType() != typeof(Event))
+                        if (!(entity is Event))
                         {
                             entity.DrawTag(Options.Npc.TagPosition);
                             entity.DrawHpBar();
