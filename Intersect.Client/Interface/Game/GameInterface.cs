@@ -373,7 +373,6 @@ namespace Intersect.Client.Interface.Game
 
             if (mShopWindow != null && (!mShopWindow.IsVisible() || mShouldCloseShop))
             {
-                PacketSender.SendCloseShop();
                 CloseShop();
             }
 
@@ -390,7 +389,6 @@ namespace Intersect.Client.Interface.Game
             {
                 if (!mBankWindow.IsVisible() || mShouldCloseBank)
                 {
-                    PacketSender.SendCloseBank();
                     CloseBank();
                 }
                 else
@@ -411,7 +409,6 @@ namespace Intersect.Client.Interface.Game
             {
                 if (!mBagWindow.IsVisible() || mShouldCloseBag)
                 {
-                    PacketSender.SendCloseBag();
                     CloseBagWindow();
                 }
                 else
@@ -433,7 +430,6 @@ namespace Intersect.Client.Interface.Game
             {
                 if (!mCraftingWindow.IsVisible() || mShouldCloseCraftingTable)
                 {
-                    PacketSender.SendCloseCrafting();
                     CloseCraftingTable();
                 }
                 else
@@ -462,7 +458,6 @@ namespace Intersect.Client.Interface.Game
                 {
                     if (!mTradingWindow.IsVisible())
                     {
-                        PacketSender.SendDeclineTrade();
                         CloseTrading();
                     }
                     else
@@ -500,6 +495,7 @@ namespace Intersect.Client.Interface.Game
             Globals.GameShop = null;
             mShopWindow?.Close();
             mShopWindow = null;
+            PacketSender.SendCloseShop();
         }
 
         private void CloseBank()
@@ -507,6 +503,7 @@ namespace Intersect.Client.Interface.Game
             mBankWindow?.Close();
             mBankWindow = null;
             Globals.InBank = false;
+            PacketSender.SendCloseBank();
         }
 
         private void CloseBagWindow()
@@ -514,6 +511,7 @@ namespace Intersect.Client.Interface.Game
             mBagWindow?.Close();
             mBagWindow = null;
             Globals.InBag = false;
+            PacketSender.SendCloseBag();
         }
 
         private void CloseCraftingTable()
@@ -521,6 +519,7 @@ namespace Intersect.Client.Interface.Game
             mCraftingWindow?.Close();
             mCraftingWindow = null;
             Globals.InCraft = false;
+            PacketSender.SendCloseCrafting();
         }
 
         private void CloseTrading()
@@ -528,6 +527,7 @@ namespace Intersect.Client.Interface.Game
             mTradingWindow?.Close();
             mTradingWindow = null;
             Globals.InTrade = false;
+            PacketSender.SendDeclineTrade();
         }
 
         public bool CloseAllWindows()
@@ -535,35 +535,30 @@ namespace Intersect.Client.Interface.Game
             var closedWindows = false;
             if (mBagWindow != null && mBagWindow.IsVisible())
             {
-                PacketSender.SendCloseBag();
                 CloseBagWindow();
                 closedWindows = true;
             }
 
             if (mTradingWindow != null && mTradingWindow.IsVisible())
             {
-                PacketSender.SendDeclineTrade();
                 CloseTrading();
                 closedWindows = true;
             }
 
             if (mBankWindow != null && mBankWindow.IsVisible())
             {
-                PacketSender.SendCloseBank();
                 CloseBank();
                 closedWindows = true;
             }
 
             if (mCraftingWindow != null && mCraftingWindow.IsVisible())
             {
-                PacketSender.SendCloseCrafting();
                 CloseCraftingTable();
                 closedWindows = true;
             }
 
             if (mShopWindow != null && mShopWindow.IsVisible())
             {
-                PacketSender.SendCloseShop();
                 CloseShop();
                 closedWindows = true;
             }
