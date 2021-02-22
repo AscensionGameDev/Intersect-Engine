@@ -5063,6 +5063,7 @@ namespace Intersect.Server.Entities
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
                         PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
                     }
+                    PacketSender.SendQuestProgress(this, questId);
                 }
             }
         }
