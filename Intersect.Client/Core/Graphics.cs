@@ -364,8 +364,7 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
-                            entity.DrawTag(Options.Player.TagPosition); // Player Tags
-                            entity.DrawTag(Options.Npc.TagPosition); // Npc Tags
+                            entity.DrawTag(Options.Npc.TagPosition, Options.Player.TagPosition);
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
@@ -384,8 +383,7 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
-                            entity.DrawTag(Options.Player.TagPosition); // Player Tags
-                            entity.DrawTag(Options.Npc.TagPosition); // Npc Tags
+                            entity.DrawTag(Options.Npc.TagPosition, Options.Player.TagPosition);
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
