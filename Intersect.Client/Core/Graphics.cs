@@ -364,7 +364,8 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (!(entity is Event))
                         {
-                            entity.DrawTag(Options.Npc.TagPosition);
+                            entity.DrawTag(Options.Npc.TagPosition); // Npc Tags
+                            entity.DrawTag(Options.Player.TagPosition); // Player Tags
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
@@ -383,7 +384,8 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (!(entity is Event))
                         {
-                            entity.DrawTag(Options.Npc.TagPosition);
+                            entity.DrawTag(Options.Npc.TagPosition); // Npc Tags
+                            entity.DrawTag(Options.Player.TagPosition); // Player Tags
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
