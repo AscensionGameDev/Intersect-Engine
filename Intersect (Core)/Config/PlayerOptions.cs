@@ -1,9 +1,9 @@
-﻿namespace Intersect.Config
-{
+﻿using Intersect.Enums;
 
+namespace Intersect.Config
+{
 	public class PlayerOptions
 	{
-
 		/// <summary>
 		/// A percentage between 0 and 100 which determines the chance in which they will lose any given item in their inventory when killed.
 		/// </summary>
@@ -116,16 +116,12 @@
 
 		/// <summary>
 		/// Configures the position of the Tags. Only works if ShowTags = true.
-		/// 0: Positions the tag 2 pixels above the name label.
-		/// 1: Positions the tag 2 pixels under the name label.
-		/// 2: Positions the tag as prefix (2 pixels left from the name label).
-		/// 3: Positions the tag as suffix (2 pixels right from the name label).
 		/// </summary>
-		public Enums.PlayerTagPos TagPosition
+		public TagPosition TagPosition
 		{
 			get;
 			set;
-		} = Enums.PlayerTagPos.Above;
+		} = TagPosition.Above;
 
 		/// <summary>
 		/// Configures which Players should have a custom Tag. Only works if ShowTags = true.
@@ -144,5 +140,4 @@
 		};
 
 	}
-
 }

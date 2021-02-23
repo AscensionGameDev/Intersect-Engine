@@ -1,4 +1,6 @@
-﻿namespace Intersect.Config
+﻿using Intersect.Enums;
+
+namespace Intersect.Config
 {
 
 	/// <summary>
@@ -75,16 +77,12 @@
 
 		/// <summary>
 		/// Configures the position of the Tags. Only works if ShowTags = true.
-		/// 0: Positions the tag 2 pixels above the name label.
-		/// 1: Positions the tag 2 pixels under the name label.
-		/// 2: Positions the tag as prefix (2 pixels left from the name label).
-		/// 3: Positions the tag as suffix (2 pixels right from the name label).
 		/// </summary>
-		public Enums.NpcTagPos TagPosition
+		public TagPosition TagPosition
 		{
 			get;
 			set;
-		} = Enums.NpcTagPos.Above;
+		} = TagPosition.Above;
 
 		/// <summary>
 		/// Configures the default tag sprite for Aggressive Npcs.
