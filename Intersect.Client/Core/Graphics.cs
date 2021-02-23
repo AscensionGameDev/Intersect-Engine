@@ -364,6 +364,7 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
+                            entity.DrawTag();
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }
@@ -382,6 +383,7 @@ namespace Intersect.Client.Core
                         entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
+                            entity.DrawTag();
                             entity.DrawHpBar();
                             entity.DrawCastingBar();
                         }

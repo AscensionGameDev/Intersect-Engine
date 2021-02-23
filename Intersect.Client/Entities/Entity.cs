@@ -1386,6 +1386,102 @@ namespace Intersect.Client.Entities
             );
         }
 
+        // Tags
+        public virtual void DrawTag()
+        {
+            // Variables
+            string tagFileName = string.Empty;
+            string entityName = this.Name;
+            bool customNpcTag = Options.Npc.CustomTagIcons.Contains(entityName);
+            bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
+            var nameSize = Graphics.Renderer.MeasureText(entityName, Graphics.EntityNameFont, 1);
+            var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
+            var nameVertPos = GetLabelLocation(LabelType.Name);
+            var tagPos = Options.Npc.TagPosition;
+            float x, y;
+            // Feature and Entity check
+            if (!Options.Npc.ShowTags || this is Player)
+            {
+                return;
+            }
+            // Custom Npc Tag
+            if (customNpcTag)
+            {
+                tagFileName = $@"Npc_{entityName}.png";
+            }
+            // Default Npc Tags.
+            else if (!customNpcTagOnly)
+            {
+                switch (Type)
+                {
+                    case -1:
+                        // Default Tag when entity has aggression towards a target.
+                        tagFileName = Options.Npc.AggressiveTagIcon;
+
+                        break;
+                    case 0:
+                        // Default Tag when entity Attacks when attacked.
+                        tagFileName = Options.Npc.AttackWhenAttackedTagIcon;
+
+                        break;
+                    case 1:
+                        // Default Tag when entity Attacks on sight.
+                        tagFileName = Options.Npc.AttackOnSightTagIcon;
+
+                        break;
+                    case 3:
+                        // Default Tag when entity is Guard.
+                        tagFileName = Options.Npc.GuardTagIcon;
+
+                        break;
+                    case 2:
+                    default:
+                        // Default Tag when entity is Neutral.
+                        tagFileName = Options.Npc.NeutralTagIcon;
+
+                        break;
+                }
+            }
+            // Now that we have the name of the sprite file, we load it as a texture.
+            var tagTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, tagFileName);
+            // If the texture is null, we do nothing.
+            if (tagTexture == null)
+            {
+                return;
+            }
+            // Before we draw the sprite, lets have it's position set.
+            switch (tagPos)
+            {
+                case TagPosition.Above:
+                default:
+                    // Position the tag 2 pixels above the name label.
+                    x = nameCentHorPos - (tagTexture.GetWidth() / 2);
+                    y = nameVertPos - tagTexture.GetHeight() - 2;
+
+                    break;
+                case TagPosition.Under:
+                    // Position the tag 2 pixels under the name label.
+                    x = nameCentHorPos - (tagTexture.GetWidth() / 2);
+                    y = nameVertPos + nameSize.Y + 2;
+
+                    break;
+                case TagPosition.Prefix:
+                    // Position the tag as prefix (2 pixels left from the name label).
+                    x = nameCentHorPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
+                    y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+
+                    break;
+                case TagPosition.Suffix:
+                    // Position the tag as suffix (2 pixels right from the name label).
+                    x = nameCentHorPos + (nameSize.X / 2) + 6;
+                    y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+
+                    break;
+            }
+            // And finally, we draw the tag.
+            Graphics.DrawGameTexture(tagTexture, x, y);
+        }
+
         public float GetLabelLocation(LabelType type)
         {
             var y = GetTopPos() - 4;
