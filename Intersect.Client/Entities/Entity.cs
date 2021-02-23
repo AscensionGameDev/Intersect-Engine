@@ -1479,10 +1479,7 @@ namespace Intersect.Client.Entities
                     break;
             }
             // And finally, we draw the tag.
-            if (tagTexture != null)
-            {
-                Graphics.DrawGameTexture(tagTexture, x, y);
-            }
+            Graphics.DrawGameTexture(tagTexture, x, y);
         }
 
         public float GetLabelLocation(LabelType type)
