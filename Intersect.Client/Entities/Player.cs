@@ -2069,6 +2069,7 @@ namespace Intersect.Client.Entities
                 }
                 // And finally, we draw the tag.
                 Graphics.DrawGameTexture(tagTexture, x, y);
+            }
         }
 
         public void DrawTargets()
