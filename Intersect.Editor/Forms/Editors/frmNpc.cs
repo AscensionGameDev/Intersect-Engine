@@ -381,6 +381,7 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbTag_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Tag = TextUtils.SanitizeNone(cmbTag.Text);
+            DrawTagSprite();
         }
 
         private void DrawNpcSprite()
@@ -391,6 +392,8 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbSprite.SelectedIndex > 0)
             {
                 var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
+                var picSpriteW = img.Width / Options.Instance.Sprites.NormalFrames;
+                var picSpriteH = img.Height / Options.Instance.Sprites.Directions;
                 var imgAttributes = new ImageAttributes();
 
                 // Microsoft, what the heck is this crap?
@@ -408,8 +411,8 @@ namespace Intersect.Editor.Forms.Editors
                 );
 
                 gfx.DrawImage(
-                    img, new Rectangle(0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions),
-                    0, 0, img.Width / Options.Instance.Sprites.NormalFrames, img.Height / Options.Instance.Sprites.Directions, GraphicsUnit.Pixel, imgAttributes
+                    img, new Rectangle(0, 0, picSpriteW, picSpriteH),
+                    0, 0, picSpriteW, picSpriteH, GraphicsUnit.Pixel, imgAttributes
                 );
                 
                 img.Dispose();
@@ -419,6 +422,27 @@ namespace Intersect.Editor.Forms.Editors
             gfx.Dispose();
 
             picNpc.BackgroundImage = picSpriteBmp;
+        }
+
+        private void DrawTagSprite()
+        {
+            var picSpriteBmp = new Bitmap(picTag.Width, picTag.Height);
+            var gfx = Graphics.FromImage(picSpriteBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picTag.Width, picTag.Height));
+            if (cmbTag.SelectedIndex > 0)
+            {
+                var img = Image.FromFile("resources/tags/" + cmbTag.Text);
+
+                gfx.DrawImage(
+                    img, new Rectangle(img.Width / 2, img.Height / 2, img.Width, img.Height),
+                    0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+
+                img.Dispose();
+            }
+
+            gfx.Dispose();
+
+            picTag.BackgroundImage = picSpriteBmp;
         }
 
         private void UpdateDropValues(bool keepIndex = false)
