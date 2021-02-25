@@ -72,6 +72,8 @@ namespace Intersect.Server.Entities
 
         public Gender Gender { get; set; }
 
+        public string Tag { get; set; }
+
         public long Exp { get; set; }
 
         public int StatPoints { get; set; }
@@ -613,6 +615,7 @@ namespace Intersect.Server.Entities
             pkt.Gender = Gender;
             pkt.ClassId = ClassId;
             pkt.Stats = GetStatValues();
+            pkt.Tag = Tag;
 
             if (Power.IsAdmin)
             {

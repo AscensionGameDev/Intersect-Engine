@@ -33,6 +33,9 @@ namespace Intersect.Network.Packets.Server
         [Key(28)]
         public long CombatTimeRemaining { get; set; }
 
+        [Key(29)]
+        public string Tag { get; set; }
+
     }
 
 }

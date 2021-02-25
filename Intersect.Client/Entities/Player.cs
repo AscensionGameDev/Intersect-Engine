@@ -198,6 +198,7 @@ namespace Intersect.Client.Entities
             base.Load(packet);
             var pkt = (PlayerEntityPacket) packet;
             Gender = pkt.Gender;
+            Tag = pkt.Tag;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
