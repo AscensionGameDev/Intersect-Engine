@@ -263,6 +263,7 @@
     <Compile Include="Enums\ChatboxTab.cs" />
     <Compile Include="Enums\ChatMessageType.cs" />
     <Compile Include="Enums\ItemHandling.cs" />
+    <Compile Include="Enums\TagsPosition.cs" />
     <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -381,8 +382,8 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
-	<Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
-	<Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
+    <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
+    <Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\Server\AnnouncementPacket.cs" />
     <Compile Include="Network\Packets\Server\CancelCastPacket.cs" />
