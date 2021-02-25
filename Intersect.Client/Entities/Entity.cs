@@ -303,6 +303,7 @@ namespace Intersect.Client.Entities
             NameColor = packet.NameColor;
             HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
             FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
+            Tag = packet.Tag;
 
             var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();

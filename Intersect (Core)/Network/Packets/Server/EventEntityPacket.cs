@@ -12,27 +12,27 @@ namespace Intersect.Network.Packets.Server
         }
 
 
-        [Key(24)]
+        [Key(25)]
         public bool DirectionFix { get; set; }
 
 
-        [Key(25)]
+        [Key(26)]
         public bool WalkingAnim { get; set; }
 
 
-        [Key(26)]
+        [Key(27)]
         public bool DisablePreview { get; set; }
 
 
-        [Key(27)]
+        [Key(28)]
         public string Description { get; set; }
 
 
-        [Key(28)]
+        [Key(29)]
         public EventGraphic Graphic { get; set; }
 
 
-        [Key(29)]
+        [Key(30)]
         public byte RenderLayer { get; set; }
 
     }
