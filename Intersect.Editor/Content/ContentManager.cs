@@ -49,6 +49,8 @@ namespace Intersect.Editor.Content
 
             Misc,
 
+            Tag
+
         }
 
         //Game Content
@@ -76,6 +78,8 @@ namespace Intersect.Editor.Content
         static IDictionary<string, Texture> sItemDict = new Dictionary<string, Texture>();
 
         static IDictionary<string, Texture> sMiscDict = new Dictionary<string, Texture>();
+
+        static IDictionary<string, Texture> sTagDict = new Dictionary<string, Texture>();
 
         static IDictionary<string, object> sMusicDict = new Dictionary<string, object>();
 
@@ -136,6 +140,7 @@ namespace Intersect.Editor.Content
             LoadFaces();
             LoadItems();
             LoadMisc();
+            LoadTags();
             LoadShaders();
             LoadSounds();
             LoadMusic();
@@ -324,6 +329,11 @@ namespace Intersect.Editor.Content
             LoadTextureGroup("misc", sMiscDict);
         }
 
+        private static void LoadTags()
+        {
+            LoadTextureGroup("tags", sTagDict);
+        }
+
         public static void LoadShaders()
         {
             sShaderDict.Clear();
@@ -453,6 +463,10 @@ namespace Intersect.Editor.Content
                     textureDict = sMiscDict;
 
                     break;
+                case TextureType.Tag:
+                    textureDict = sTagDict;
+
+                    break;
                 default:
                     return null;
             }
@@ -579,6 +593,10 @@ namespace Intersect.Editor.Content
                     break;
                 case TextureType.Misc:
                     textureDict = sMiscDict;
+
+                    break;
+                case TextureType.Tag:
+                    textureDict = sTagDict;
 
                     break;
                 default:
