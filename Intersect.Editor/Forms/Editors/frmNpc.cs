@@ -86,7 +86,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbSprite.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
             );
-
+            cmbTag.Items.Clear();
+            cmbTag.Items.Add(Strings.General.none);
+            cmbTag.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tag)
+            );
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(SpellBase.Names);
             cmbHostileNPC.Items.Clear();
@@ -246,6 +250,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
+                cmbTag.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Tag));
                 nudRgbaR.Value = mEditorItem.Color.R;
                 nudRgbaG.Value = mEditorItem.Color.G;
                 nudRgbaB.Value = mEditorItem.Color.B;
@@ -371,6 +376,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Sprite = TextUtils.SanitizeNone(cmbSprite.Text);
             DrawNpcSprite();
+        }
+
+        private void cmbTag_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Tag = TextUtils.SanitizeNone(cmbTag.Text);
         }
 
         private void DrawNpcSprite()

@@ -82,6 +82,9 @@ namespace Intersect.Client.Entities
 
         public bool HideName;
 
+        // TODO : this.Tag
+        //public string Tag = "";
+
         //Core Values
         public Guid Id;
 
@@ -1386,14 +1389,15 @@ namespace Intersect.Client.Entities
             );
         }
 
-        // Tags
+        // Tags /// TODO: llamar info de tag de entity desde sucolumna "Tag".
         public virtual void DrawTag()
         {
             // Variables
             string tagFileName = string.Empty;
-            string entityName = this.Name;
-            bool customNpcTag = Options.Npc.CustomTagIcons.Contains(entityName);
-            bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
+            string entityName = Name;
+            string entityTag = this.Name; // TODO : this.Tag
+            ///bool customNpcTag = Options.Npc.CustomTagIcons.Contains(entityName);
+            ///bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
             var nameSize = Graphics.Renderer.MeasureText(entityName, Graphics.EntityNameFont, 1);
             var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
             var nameVertPos = GetLabelLocation(LabelType.Name);
@@ -1405,12 +1409,15 @@ namespace Intersect.Client.Entities
                 return;
             }
             // Custom Npc Tag
-            if (customNpcTag)
+            ///if (customNpcTag)
+            if (entityTag != null)
             {
-                tagFileName = $@"Npc_{entityName}.png";
+                //tagFileName = $@"Npc_{entityName}.png";
+                tagFileName = entityTag;
             }
             // Default Npc Tags.
-            else if (!customNpcTagOnly)
+            ///else if (!customNpcTagOnly)
+            else if (entityTag == null)
             {
                 switch (Type)
                 {

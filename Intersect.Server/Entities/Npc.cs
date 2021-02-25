@@ -106,6 +106,7 @@ namespace Intersect.Server.Entities
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
+            Tag = myBase.Tag;
             Color = myBase.Color;
             Level = myBase.Level;
             Base = myBase;

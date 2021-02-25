@@ -190,6 +190,9 @@ namespace Intersect.GameObjects
 
         public string Sprite { get; set; } = "";
 
+        // Tag
+        public string Tag { get; set; } = "";
+
         /// <summary>
         /// The database compatible version of <see cref="Color"/>
         /// </summary>
