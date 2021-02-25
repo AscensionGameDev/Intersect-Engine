@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -2022,7 +2022,7 @@ namespace Intersect.Client.Entities
             var tagPos = Options.Player.TagPosition;
             float x, y;
             // Feature Check
-            if (!Options.Player.ShowTags || Tag == null || Tag == "None")
+            if (!Options.Player.ShowTags || Tag == null)
             {
                 return;
             }

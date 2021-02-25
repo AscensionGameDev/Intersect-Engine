@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1411,7 +1411,7 @@ namespace Intersect.Client.Entities
                 tagFileName = Tag;
             }
             // Default Npc Tags.
-            else if (Tag == null || Tag == "None" || !customNpcTagOnly)
+            else if (Tag == null || !customNpcTagOnly)
             {
                 switch (Type)
                 {
