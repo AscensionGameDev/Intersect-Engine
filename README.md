@@ -58,14 +58,14 @@ If you'd like to help the project by supporting us financially we accept and gre
 
 ## Source Code
 
-Getting started with Intersect couldn't be easier. Make sure you have Visual Studio 2017 Community (or later) installed. 
+Getting started with Intersect couldn't be easier. Make sure you have Visual Studio 2019 Community installed. 
 
  * Clone the source: `git clone https://github.com/AscensionGameDev/Intersect-Engine.git`
  * Open Intersect.sln
  * Restore Nuget packages
  * Build
 
-We have [documentation here](https://docs.freemmorpgmaker.com/dev/start/vs.html) tailored towards new developers that will guide you through installing visual studio, cloning the source, and getting started if you need more information.
+We have [documentation here](https://docs.freemmorpgmaker.com/developer/start/vs.html) tailored towards new developers that will guide you through installing visual studio, cloning the source, and getting started if you need more information.
 
 
 ## Licensing
