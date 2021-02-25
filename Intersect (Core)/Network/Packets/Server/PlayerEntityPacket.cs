@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using Intersect.Enums;
 using MessagePack;
 
@@ -32,9 +31,6 @@ namespace Intersect.Network.Packets.Server
 
         [Key(29)]
         public long CombatTimeRemaining { get; set; }
-
-        // [Key(29)]
-        // public string Tag { get; set; }
 
     }
 

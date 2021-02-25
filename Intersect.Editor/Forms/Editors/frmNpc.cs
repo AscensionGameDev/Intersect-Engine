@@ -250,7 +250,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
-                cmbTag.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Tag));
+                cmbTag.SelectedIndex = cmbTag.FindString(TextUtils.NullToNone(mEditorItem.Tag));
                 nudRgbaR.Value = mEditorItem.Color.R;
                 nudRgbaG.Value = mEditorItem.Color.G;
                 nudRgbaB.Value = mEditorItem.Color.B;

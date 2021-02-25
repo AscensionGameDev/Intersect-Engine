@@ -123,21 +123,5 @@ namespace Intersect.Config
 			set;
 		} = TagPosition.Above;
 
-		/// <summary>
-		/// Configures which Players should have a custom Tag. Only works if ShowTags = true.
-		/// In order to set a custom tag for a specific Player, lets say, one named "Rick",
-		/// add it's name to this string list, then create a custom tag named "Player_Rick.png"
-		/// and place it inside the "tags" resource folder.
-		/// </summary>
-		public string[] CustomTagIcons
-		{
-			get;
-			set;
-		} = {
-			"Aru",
-			"Bobby",
-			"Rick"
-		};
-
 	}
 }

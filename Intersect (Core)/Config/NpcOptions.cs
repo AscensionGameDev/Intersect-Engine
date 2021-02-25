@@ -129,21 +129,5 @@ namespace Intersect.Config
 			set;
 		} = "Neutral.png";
 
-		/// <summary>
-		/// Configures which Npcs should have a custom Tag. Only works if ShowTags = true.
-		/// In order to set a custom tag for a specific Npc, lets say, one named "Doe",
-		/// add it's name to this string list, then create a custom tag named "Npc_Doe.png"
-		/// and place it inside the "tags" resource folder.
-		/// </summary>
-		public string[] CustomTagIcons
-		{
-			get;
-			set;
-		} = {
-			"Doe",
-			"Monster",
-			"Boss"
-		};
-
 	}
 }

@@ -1389,16 +1389,13 @@ namespace Intersect.Client.Entities
             );
         }
 
-        // Tags /// TODO: llamar info de tag de entity desde sucolumna "Tag".
+        // Tags
         public virtual void DrawTag()
         {
             // Variables
             string tagFileName = string.Empty;
-            string entityName = Name;
-            string entityTag = this.Name; // TODO : this.Tag
-            ///bool customNpcTag = Options.Npc.CustomTagIcons.Contains(entityName);
-            ///bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
-            var nameSize = Graphics.Renderer.MeasureText(entityName, Graphics.EntityNameFont, 1);
+            bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
+            var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
             var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
             var nameVertPos = GetLabelLocation(LabelType.Name);
             var tagPos = Options.Npc.TagPosition;
@@ -1408,16 +1405,13 @@ namespace Intersect.Client.Entities
             {
                 return;
             }
-            // Custom Npc Tag
-            ///if (customNpcTag)
-            if (entityTag != null)
+            // Custom Npc Tag.
+            if (Tag != null)
             {
-                //tagFileName = $@"Npc_{entityName}.png";
-                tagFileName = entityTag;
+                tagFileName = Tag;
             }
             // Default Npc Tags.
-            ///else if (!customNpcTagOnly)
-            else if (entityTag == null)
+            else if (Tag == null || Tag == "None" || !customNpcTagOnly)
             {
                 switch (Type)
                 {
@@ -1461,25 +1455,21 @@ namespace Intersect.Client.Entities
             {
                 case TagPosition.Above:
                 default:
-                    // Position the tag 2 pixels above the name label.
                     x = nameCentHorPos - (tagTexture.GetWidth() / 2);
                     y = nameVertPos - tagTexture.GetHeight() - 2;
 
                     break;
                 case TagPosition.Under:
-                    // Position the tag 2 pixels under the name label.
                     x = nameCentHorPos - (tagTexture.GetWidth() / 2);
                     y = nameVertPos + nameSize.Y + 2;
 
                     break;
                 case TagPosition.Prefix:
-                    // Position the tag as prefix (2 pixels left from the name label).
                     x = nameCentHorPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
                     y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
 
                     break;
                 case TagPosition.Suffix:
-                    // Position the tag as suffix (2 pixels right from the name label).
                     x = nameCentHorPos + (nameSize.X / 2) + 6;
                     y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
 
