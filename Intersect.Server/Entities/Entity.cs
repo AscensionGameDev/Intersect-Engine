@@ -2646,8 +2646,6 @@ namespace Intersect.Server.Entities
             packet.MapId = MapId;
             packet.Name = Name;
             packet.Sprite = Sprite;
-            // TODO: Tags
-            //packet.Tag = Tag;
             packet.Color = Color;
             packet.Face = Face;
             packet.Level = Level;

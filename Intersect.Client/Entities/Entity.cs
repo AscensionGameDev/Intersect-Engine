@@ -82,8 +82,7 @@ namespace Intersect.Client.Entities
 
         public bool HideName;
 
-        // TODO : this.Tag
-        //public string Tag = "";
+        public string Tag = "";
 
         //Core Values
         public Guid Id;
@@ -304,6 +303,7 @@ namespace Intersect.Client.Entities
             NameColor = packet.NameColor;
             HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
             FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
+            Tag = packet.Tag;
 
             var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();
