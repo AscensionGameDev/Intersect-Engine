@@ -130,7 +130,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 return;
             }
 
-            commandMenu.Show((ListBox) sender, e.Location);
+            commandMenu.Show((ListBox)sender, e.Location);
             btnEdit.Enabled = mCommandProperties[mCurrentCommand].Editable;
             if (mCommandProperties[mCurrentCommand].MyIndex < 0 ||
                 mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
@@ -216,7 +216,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                         sourceBitmap,
                         new Rectangle(
                             pnlPreview.Width / 2 - sourceBitmap.Width / Options.Instance.Sprites.NormalFrames / 2,
-                            pnlPreview.Height / 2 - sourceBitmap.Height / Options.Instance.Sprites .Directions / 2, sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
+                            pnlPreview.Height / 2 - sourceBitmap.Height / Options.Instance.Sprites.Directions / 2, sourceBitmap.Width / Options.Instance.Sprites.NormalFrames,
                             sourceBitmap.Height / Options.Instance.Sprites.Directions
                         ),
                         new Rectangle(
@@ -313,7 +313,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void TabBtn_Click(object sender, EventArgs e)
         {
-            LoadPage(mPageTabs.IndexOf((DarkButton) sender));
+            LoadPage(mPageTabs.IndexOf((DarkButton)sender));
         }
 
         private void EnableButtons()
@@ -502,7 +502,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 return;
             }
 
-            var type = (EventCommandType) int.Parse(e.Node.Tag.ToString());
+            var type = (EventCommandType)int.Parse(e.Node.Tag.ToString());
 
             if ((type == EventCommandType.SetMoveRoute || type == EventCommandType.WaitForRouteCompletion) &&
                 MyEvent.CommonEvent)
@@ -545,7 +545,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                     break;
                 case EventCommandType.SetSelfSwitch:
-                    tmpCommand = new SetSelfSwitchCommand() {Value = true};
+                    tmpCommand = new SetSelfSwitchCommand() { Value = true };
 
                     break;
                 case EventCommandType.ConditionalBranch:
@@ -728,6 +728,11 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                 case EventCommandType.ChangeName:
                     tmpCommand = new ChangeNameCommand(CurrentPage.CommandLists);
+
+                    break;
+
+                case EventCommandType.ChangeTag:
+                    tmpCommand = new ChangeTagCommand();
 
                     break;
                 default:
@@ -991,7 +996,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            cmbMoveType.SelectedIndex = (int) CurrentPage.Movement.Type;
+            cmbMoveType.SelectedIndex = (int)CurrentPage.Movement.Type;
             if (CurrentPage.Movement.Type == EventMovementType.MoveRoute)
             {
                 btnSetRoute.Enabled = true;
@@ -1001,24 +1006,24 @@ namespace Intersect.Editor.Forms.Editors.Events
                 btnSetRoute.Enabled = false;
             }
 
-            cmbEventSpeed.SelectedIndex = (int) CurrentPage.Movement.Speed;
-            cmbEventFreq.SelectedIndex = (int) CurrentPage.Movement.Frequency;
+            cmbEventSpeed.SelectedIndex = (int)CurrentPage.Movement.Speed;
+            cmbEventFreq.SelectedIndex = (int)CurrentPage.Movement.Frequency;
             chkWalkThrough.Checked = Convert.ToBoolean(CurrentPage.Passable);
-            cmbLayering.SelectedIndex = (int) CurrentPage.Layer;
+            cmbLayering.SelectedIndex = (int)CurrentPage.Layer;
             if (MyEvent.CommonEvent)
             {
-                cmbTrigger.SelectedIndex = (int) CurrentPage.CommonTrigger;
+                cmbTrigger.SelectedIndex = (int)CurrentPage.CommonTrigger;
             }
             else
             {
-                cmbTrigger.SelectedIndex = (int) CurrentPage.Trigger;
+                cmbTrigger.SelectedIndex = (int)CurrentPage.Trigger;
             }
 
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
             if (MyEvent.CommonEvent)
             {
-                if (cmbTrigger.SelectedIndex == (int) CommonEventTrigger.SlashCommand)
+                if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.SlashCommand)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
@@ -1098,7 +1103,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             );
 
             // Reset our view to roughly where the user left off.
-            if (mOldSelectedCommand > (lstEventCommands.Items.Count -1))
+            if (mOldSelectedCommand > (lstEventCommands.Items.Count - 1))
             {
                 lstEventCommands.SelectedIndex = lstEventCommands.Items.Count - 1;
             }
@@ -1120,33 +1125,33 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.Null:
                     break;
                 case EventCommandType.ShowText:
-                    cmdWindow = new EventCommandText((ShowTextCommand) command, this);
+                    cmdWindow = new EventCommandText((ShowTextCommand)command, this);
 
                     break;
                 case EventCommandType.ShowOptions:
-                    cmdWindow = new EventCommandOptions((ShowOptionsCommand) command, CurrentPage, this);
+                    cmdWindow = new EventCommandOptions((ShowOptionsCommand)command, CurrentPage, this);
 
                     break;
                 case EventCommandType.InputVariable:
-                    cmdWindow = new EventCommandInput((InputVariableCommand) command, this);
+                    cmdWindow = new EventCommandInput((InputVariableCommand)command, this);
 
                     break;
                 case EventCommandType.AddChatboxText:
-                    cmdWindow = new EventCommandChatboxText((AddChatboxTextCommand) command, this);
+                    cmdWindow = new EventCommandChatboxText((AddChatboxTextCommand)command, this);
 
                     break;
                 case EventCommandType.SetVariable:
-                    cmdWindow = new EventCommandVariable((SetVariableCommand) command, this);
+                    cmdWindow = new EventCommandVariable((SetVariableCommand)command, this);
 
                     break;
                 case EventCommandType.SetSelfSwitch:
-                    cmdWindow = new EventCommandSelfSwitch((SetSelfSwitchCommand) command, this);
+                    cmdWindow = new EventCommandSelfSwitch((SetSelfSwitchCommand)command, this);
 
                     break;
                 case EventCommandType.ConditionalBranch:
                     cmdWindow = new EventCommandConditionalBranch(
-                        ((ConditionalBranchCommand) command).Condition, CurrentPage, this,
-                        (ConditionalBranchCommand) command
+                        ((ConditionalBranchCommand)command).Condition, CurrentPage, this,
+                        (ConditionalBranchCommand)command
                     );
 
                     break;
@@ -1154,78 +1159,78 @@ namespace Intersect.Editor.Forms.Editors.Events
                     //No editor
                     break;
                 case EventCommandType.Label:
-                    cmdWindow = new EventCommandLabel((LabelCommand) command, this);
+                    cmdWindow = new EventCommandLabel((LabelCommand)command, this);
 
                     break;
                 case EventCommandType.GoToLabel:
-                    cmdWindow = new EventCommandGotoLabel((GoToLabelCommand) command, this);
+                    cmdWindow = new EventCommandGotoLabel((GoToLabelCommand)command, this);
 
                     break;
                 case EventCommandType.StartCommonEvent:
-                    cmdWindow = new EventCommandStartCommonEvent((StartCommmonEventCommand) command, this);
+                    cmdWindow = new EventCommandStartCommonEvent((StartCommmonEventCommand)command, this);
 
                     break;
                 case EventCommandType.RestoreHp:
-                    cmdWindow = new EventCommandChangeVital((RestoreHpCommand) command, this);
+                    cmdWindow = new EventCommandChangeVital((RestoreHpCommand)command, this);
 
                     break;
                 case EventCommandType.RestoreMp:
-                    cmdWindow = new EventCommandChangeVital((RestoreMpCommand) command, this);
+                    cmdWindow = new EventCommandChangeVital((RestoreMpCommand)command, this);
 
                     break;
                 case EventCommandType.LevelUp:
                     //No editor
                     break;
                 case EventCommandType.GiveExperience:
-                    cmdWindow = new EventCommandGiveExperience((GiveExperienceCommand) command, this);
+                    cmdWindow = new EventCommandGiveExperience((GiveExperienceCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeLevel:
-                    cmdWindow = new EventCommandChangeLevel((ChangeLevelCommand) command, this);
+                    cmdWindow = new EventCommandChangeLevel((ChangeLevelCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeSpells:
-                    cmdWindow = new EventCommandChangeSpells((ChangeSpellsCommand) command, CurrentPage, this);
+                    cmdWindow = new EventCommandChangeSpells((ChangeSpellsCommand)command, CurrentPage, this);
 
                     break;
                 case EventCommandType.ChangeItems:
-                    cmdWindow = new EventCommandChangeItems((ChangeItemsCommand) command, CurrentPage, this);
+                    cmdWindow = new EventCommandChangeItems((ChangeItemsCommand)command, CurrentPage, this);
 
                     break;
                 case EventCommandType.EquipItem:
-                    cmdWindow = new EventCommandEquipItems((EquipItemCommand) command, this);
+                    cmdWindow = new EventCommandEquipItems((EquipItemCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeSprite:
-                    cmdWindow = new EventCommandChangeSprite((ChangeSpriteCommand) command, this);
+                    cmdWindow = new EventCommandChangeSprite((ChangeSpriteCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeFace:
-                    cmdWindow = new EventCommandChangeFace((ChangeFaceCommand) command, this);
+                    cmdWindow = new EventCommandChangeFace((ChangeFaceCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeGender:
-                    cmdWindow = new EventCommandChangeGender((ChangeGenderCommand) command, this);
+                    cmdWindow = new EventCommandChangeGender((ChangeGenderCommand)command, this);
 
                     break;
                 case EventCommandType.ChangeNameColor:
-                    cmdWindow = new EventCommandChangeNameColor((ChangeNameColorCommand) command, this);
+                    cmdWindow = new EventCommandChangeNameColor((ChangeNameColorCommand)command, this);
 
                     break;
                 case EventCommandType.PlayerLabel:
-                    cmdWindow = new EventCommandChangePlayerLabel((ChangePlayerLabelCommand) command, this);
+                    cmdWindow = new EventCommandChangePlayerLabel((ChangePlayerLabelCommand)command, this);
 
                     break;
                 case EventCommandType.SetAccess:
-                    cmdWindow = new EventCommandSetAccess((SetAccessCommand) command, this);
+                    cmdWindow = new EventCommandSetAccess((SetAccessCommand)command, this);
 
                     break;
                 case EventCommandType.WarpPlayer:
-                    cmdWindow = new EventCommandWarp((WarpCommand) command, this);
+                    cmdWindow = new EventCommandWarp((WarpCommand)command, this);
 
                     break;
                 case EventCommandType.SetMoveRoute:
-                    var cmd = (SetMoveRouteCommand) command;
+                    var cmd = (SetMoveRouteCommand)command;
                     if (cmd.Route == null)
                     {
                         cmd.Route = new EventMoveRoute();
@@ -1236,7 +1241,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.WaitForRouteCompletion:
                     cmdWindow = new EventCommandWaitForRouteCompletion(
-                        (WaitForRouteCommand) command, this, mCurrentMap, MyEvent
+                        (WaitForRouteCommand)command, this, mCurrentMap, MyEvent
                     );
 
                     break;
@@ -1249,63 +1254,63 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ShowPlayer:
                     break;
                 case EventCommandType.SpawnNpc:
-                    cmdWindow = new EventCommandSpawnNpc(this, mCurrentMap, MyEvent, (SpawnNpcCommand) command);
+                    cmdWindow = new EventCommandSpawnNpc(this, mCurrentMap, MyEvent, (SpawnNpcCommand)command);
 
                     break;
                 case EventCommandType.DespawnNpc:
                     break;
                 case EventCommandType.PlayAnimation:
                     cmdWindow = new EventCommandPlayAnimation(
-                        this, mCurrentMap, MyEvent, (PlayAnimationCommand) command
+                        this, mCurrentMap, MyEvent, (PlayAnimationCommand)command
                     );
 
                     break;
                 case EventCommandType.PlayBgm:
-                    cmdWindow = new EventCommandPlayBgm((PlayBgmCommand) command, this);
+                    cmdWindow = new EventCommandPlayBgm((PlayBgmCommand)command, this);
 
                     break;
                 case EventCommandType.FadeoutBgm:
                     break;
                 case EventCommandType.PlaySound:
-                    cmdWindow = new EventCommandPlayBgs((PlaySoundCommand) command, this);
+                    cmdWindow = new EventCommandPlayBgs((PlaySoundCommand)command, this);
 
                     break;
                 case EventCommandType.StopSounds:
                     break;
                 case EventCommandType.ShowPicture:
-                    cmdWindow = new EventCommand_ShowPicture((ShowPictureCommand) command, this);
+                    cmdWindow = new EventCommand_ShowPicture((ShowPictureCommand)command, this);
 
                     break;
                 case EventCommandType.HidePicture:
                     break;
                 case EventCommandType.Wait:
-                    cmdWindow = new EventCommandWait((WaitCommand) command, this);
+                    cmdWindow = new EventCommandWait((WaitCommand)command, this);
 
                     break;
                 case EventCommandType.OpenBank:
                     break;
                 case EventCommandType.OpenShop:
-                    cmdWindow = new EventCommandOpenShop((OpenShopCommand) command, this);
+                    cmdWindow = new EventCommandOpenShop((OpenShopCommand)command, this);
 
                     break;
                 case EventCommandType.OpenCraftingTable:
-                    cmdWindow = new EventCommandOpenCraftingTable((OpenCraftingTableCommand) command, this);
+                    cmdWindow = new EventCommandOpenCraftingTable((OpenCraftingTableCommand)command, this);
 
                     break;
                 case EventCommandType.SetClass:
-                    cmdWindow = new EventCommandSetClass((SetClassCommand) command, this);
+                    cmdWindow = new EventCommandSetClass((SetClassCommand)command, this);
 
                     break;
                 case EventCommandType.StartQuest:
-                    cmdWindow = new EventCommandStartQuest((StartQuestCommand) command, CurrentPage, this);
+                    cmdWindow = new EventCommandStartQuest((StartQuestCommand)command, CurrentPage, this);
 
                     break;
                 case EventCommandType.CompleteQuestTask:
-                    cmdWindow = new EventCommandCompleteQuestTask((CompleteQuestTaskCommand) command, this);
+                    cmdWindow = new EventCommandCompleteQuestTask((CompleteQuestTaskCommand)command, this);
 
                     break;
                 case EventCommandType.EndQuest:
-                    cmdWindow = new EventCommandEndQuest((EndQuestCommand) command, this);
+                    cmdWindow = new EventCommandEndQuest((EndQuestCommand)command, this);
 
                     break;
                 case EventCommandType.ChangePlayerColor:
@@ -1314,6 +1319,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangeName:
                     cmdWindow = new EventCommandChangeName((ChangeNameCommand)command, CurrentPage, this);
+
+                    break;
+
+                case EventCommandType.ChangeTag:
+                    cmdWindow = new EventCommandChangeTag((ChangeTagCommand)command, this);
 
                     break;
                 default:
@@ -1420,27 +1430,27 @@ namespace Intersect.Editor.Forms.Editors.Events
             switch (cmd.Type)
             {
                 case EventCommandType.ShowOptions:
-                    branchesToRemove.AddRange(((ShowOptionsCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((ShowOptionsCommand)cmd).BranchIds);
 
                     break;
                 case EventCommandType.InputVariable:
-                    branchesToRemove.AddRange(((InputVariableCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((InputVariableCommand)cmd).BranchIds);
 
                     break;
                 case EventCommandType.ConditionalBranch:
-                    branchesToRemove.AddRange(((ConditionalBranchCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((ConditionalBranchCommand)cmd).BranchIds);
 
                     break;
                 case EventCommandType.ChangeItems:
-                    branchesToRemove.AddRange(((ChangeItemsCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((ChangeItemsCommand)cmd).BranchIds);
 
                     break;
                 case EventCommandType.ChangeSpells:
-                    branchesToRemove.AddRange(((ChangeSpellsCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((ChangeSpellsCommand)cmd).BranchIds);
 
                     break;
                 case EventCommandType.StartQuest:
-                    branchesToRemove.AddRange(((StartQuestCommand) cmd).BranchIds);
+                    branchesToRemove.AddRange(((StartQuestCommand)cmd).BranchIds);
 
                     break;
             }
@@ -1578,7 +1588,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 copyLists,
                 new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }
@@ -1603,7 +1614,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     mCopyData,
                     new JsonSerializerSettings()
                     {
-                        Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                        Formatting = Formatting.None,
+                        TypeNameHandling = TypeNameHandling.Auto,
                         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                         ObjectCreationHandling = ObjectCreationHandling.Replace
                     }
@@ -1613,7 +1625,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     mCopyLists,
                     new JsonSerializerSettings()
                     {
-                        Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                        Formatting = Formatting.None,
+                        TypeNameHandling = TypeNameHandling.Auto,
                         DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                         ObjectCreationHandling = ObjectCreationHandling.Replace
                     }
@@ -1662,7 +1675,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void cmbMoveType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Movement.Type = (EventMovementType) cmbMoveType.SelectedIndex;
+            CurrentPage.Movement.Type = (EventMovementType)cmbMoveType.SelectedIndex;
             if (CurrentPage.Movement.Type == EventMovementType.MoveRoute)
             {
                 btnSetRoute.Enabled = true;
@@ -1675,12 +1688,12 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void cmbEventSpeed_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Movement.Speed = (EventMovementSpeed) cmbEventSpeed.SelectedIndex;
+            CurrentPage.Movement.Speed = (EventMovementSpeed)cmbEventSpeed.SelectedIndex;
         }
 
         private void cmbEventFreq_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Movement.Frequency = (EventMovementFrequency) cmbEventFreq.SelectedIndex;
+            CurrentPage.Movement.Frequency = (EventMovementFrequency)cmbEventFreq.SelectedIndex;
         }
 
         private void btnSetRoute_Click(object sender, EventArgs e)
@@ -1702,18 +1715,18 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void cmbLayering_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Layer = (EventRenderLayer) cmbLayering.SelectedIndex;
+            CurrentPage.Layer = (EventRenderLayer)cmbLayering.SelectedIndex;
         }
 
         private void cmbTrigger_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (MyEvent.CommonEvent)
             {
-                CurrentPage.CommonTrigger = (CommonEventTrigger) cmbTrigger.SelectedIndex;
+                CurrentPage.CommonTrigger = (CommonEventTrigger)cmbTrigger.SelectedIndex;
             }
             else
             {
-                CurrentPage.Trigger = (EventTrigger) cmbTrigger.SelectedIndex;
+                CurrentPage.Trigger = (EventTrigger)cmbTrigger.SelectedIndex;
             }
 
             cmbTriggerVal.Hide();
@@ -1723,7 +1736,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             if (MyEvent.CommonEvent)
             {
-                if (cmbTrigger.SelectedIndex == (int) CommonEventTrigger.SlashCommand)
+                if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.SlashCommand)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
