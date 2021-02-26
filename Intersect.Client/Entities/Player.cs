@@ -2020,6 +2020,8 @@ namespace Intersect.Client.Entities
             var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
             var nameVertPos = GetLabelLocation(LabelType.Name);
             var tagPos = Options.Player.TagPosition;
+            var headerSize = Pointf.Empty;
+            var footerSize = Pointf.Empty;
             float x, y;
             // Feature Check
             if (!Options.Player.ShowTags || Tag == null)
@@ -2036,18 +2038,30 @@ namespace Intersect.Client.Entities
                 {
                     return;
                 }
+                // Check if HeaderLabel has text.
+                if (HeaderLabel.Text != String.Empty)
+                {
+                    // if header text exists, lets measure it for later.
+                    headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+                }
+                // Check if FooterLabel has text.
+                if (FooterLabel.Text != String.Empty)
+                {
+                    // if footer text exists, lets measure it for later.
+                    footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+                }
                 // Before we draw the sprite, lets have it's position set.
                 switch (tagPos)
                 {
                     case TagPosition.Above:
                     default:
                         x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                        y = nameVertPos - tagTexture.GetHeight() - 2;
+                        y = nameVertPos - tagTexture.GetHeight() - 2 - headerSize.Y;
 
                         break;
                     case TagPosition.Under:
                         x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                        y = nameVertPos + nameSize.Y + 2;
+                        y = nameVertPos + nameSize.Y + 2 + footerSize.Y;
 
                         break;
                     case TagPosition.Prefix:
