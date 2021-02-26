@@ -106,7 +106,9 @@
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.Designer.cs">
       <DependentUpon>EventCommand_ChangeName.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeTag.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeTag.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeTag.Designer.cs">
       <DependentUpon>EventCommand_ChangeTag.cs</DependentUpon>
     </Compile>
