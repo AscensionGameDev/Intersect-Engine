@@ -143,6 +143,8 @@
 
         ChangeFace,
 
+        ChangeTag,
+
         ChangeGender,
 
         SetAccess,

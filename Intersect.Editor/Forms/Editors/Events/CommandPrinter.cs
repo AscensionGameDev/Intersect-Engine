@@ -733,6 +733,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.setface.ToString(command.Face);
         }
 
+        private static string GetCommandText(ChangeTagCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.settag.ToString(command.Tag);
+        }
+
         private static string GetCommandText(ChangeNameColorCommand command, MapInstance map)
         {
             if (command.Remove)
