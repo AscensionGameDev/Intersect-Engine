@@ -562,6 +562,15 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+    public class ChangeTagCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeTag;
+
+        public string Tag { get; set; } = "";
+
+    }
+
     public class ChangeGenderCommand : EventCommand
     {
 

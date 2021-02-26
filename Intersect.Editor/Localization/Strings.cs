@@ -1203,6 +1203,19 @@ Tick timer saved in server config.json.";
 
         }
 
+        public struct EventChangeTag
+        {
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString label = @"Tag:";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Change Tag";
+
+        }
+
         public struct EventShowPicture
         {
 
@@ -1664,6 +1677,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString setface = @"Set Player Face to {00}";
 
+            public static LocalizedString settag = @"Set Player Tag to {00}";
+
             public static LocalizedString setnamecolor = @"Set Player Name Color";
 
             public static LocalizedString removenamecolor = @"Remove Player Name Color";
@@ -1832,6 +1847,7 @@ Tick timer saved in server config.json.";
                 {"changeplayerlabel", @"Change Player Label"},
                 {"changeplayercolor", @"Change Player Color" },
                 {"changename", @"Change Player Name" },
+                {"changetag", @"Change Player Tag" }
             };
 
         }
