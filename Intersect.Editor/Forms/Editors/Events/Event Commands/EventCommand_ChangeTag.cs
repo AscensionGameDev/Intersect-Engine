@@ -23,6 +23,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             cmbTag.Items.Clear();
+            cmbTag.Items.Add(Strings.General.none);
             cmbTag.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tag));
             if (cmbTag.Items.IndexOf(mMyCommand.Tag) > -1)
             {

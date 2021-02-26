@@ -24,6 +24,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
+            cmbSprite.Items.Add(Strings.General.none);
             cmbSprite.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
             );
