@@ -1,4 +1,4 @@
-﻿namespace Intersect.GameObjects.Events
+namespace Intersect.GameObjects.Events
 {
 
     public enum MoveRouteEnum
@@ -143,8 +143,6 @@
 
         ChangeFace,
 
-        ChangeTag,
-
         ChangeGender,
 
         SetAccess,
@@ -221,6 +219,10 @@
         ChangePlayerColor,
 
         ChangeName,
+
+        // Player Tags
+        ChangeTag,
+
     }
 
 }
