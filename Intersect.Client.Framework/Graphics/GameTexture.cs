@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Graphics
 {
@@ -9,6 +10,18 @@ namespace Intersect.Client.Framework.Graphics
     {
 
         public string Name => GetName() ?? throw new ArgumentNullException(nameof(GetName));
+
+        public int Width => GetWidth();
+
+        public int Height => GetHeight();
+
+        public Pointf Dimensions => new Pointf(Width, Height);
+
+        public Pointf Center => Dimensions / 2;
+
+        public object PlatformTextureObject => GetTexture();
+
+        public GameTexturePackFrame TexturePackFrame => GetTexturePackFrame();
 
         public abstract string GetName();
 
