@@ -553,6 +553,19 @@ namespace Intersect.Server.Entities.Events
             PacketSender.SendEntityDataToProximity(player);
         }
 
+        //Change Tag Command
+        private static void ProcessCommand(
+            ChangeTagCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.Tag = command.Tag;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         //Change Gender Command
         private static void ProcessCommand(
             ChangeGenderCommand command,
