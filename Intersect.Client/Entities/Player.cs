@@ -2039,13 +2039,13 @@ namespace Intersect.Client.Entities
                     return;
                 }
                 // Check if HeaderLabel has text.
-                if (HeaderLabel.Text != String.Empty)
+                if (!string.IsNullOrWhiteSpace(HeaderLabel.Text))
                 {
                     // if header text exists, lets measure it for later.
                     headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
                 }
                 // Check if FooterLabel has text.
-                if (FooterLabel.Text != String.Empty)
+                if (!string.IsNullOrWhiteSpace(FooterLabel.Text))
                 {
                     // if footer text exists, lets measure it for later.
                     footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
