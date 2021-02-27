@@ -11,6 +11,8 @@
 
 [A. I. Robin](https://github.com/alloin)
 
+[Bryan Martinez](https://github.com/blinkuz)
+
 [Dog from the Kash Shop](#)
 
 [Fernando Arzola Lagos](https://github.com/Arufonsu)
