@@ -613,7 +613,6 @@ namespace Intersect.Server.Entities
             pkt.Gender = Gender;
             pkt.ClassId = ClassId;
             pkt.Stats = GetStatValues();
-            pkt.Tag = Tag;
 
             if (Power.IsAdmin)
             {

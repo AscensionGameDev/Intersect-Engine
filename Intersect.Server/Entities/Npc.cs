@@ -1521,7 +1521,6 @@ namespace Intersect.Server.Entities
 
             var pkt = (NpcEntityPacket) packet;
             pkt.Aggression = GetAggression(forPlayer);
-            pkt.Tag = Tag;
 
             return pkt;
         }

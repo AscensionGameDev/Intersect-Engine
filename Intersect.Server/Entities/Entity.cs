@@ -2664,6 +2664,7 @@ namespace Intersect.Server.Entities
             packet.NameColor = NameColor;
             packet.HeaderLabel = new LabelPacket(HeaderLabel.Text, HeaderLabel.Color);
             packet.FooterLabel = new LabelPacket(FooterLabel.Text, FooterLabel.Color);
+            packet.Tag = Tag;
 
             return packet;
         }
