@@ -417,6 +417,9 @@ namespace Intersect.Server.Localization
                 apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString globalexpmodified = @"Global EXP Rate has been Modified too: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

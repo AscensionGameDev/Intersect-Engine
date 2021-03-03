@@ -31,6 +31,9 @@ namespace Intersect
         [JsonProperty("OpenPortChecker", Order = 0)]
         protected bool _portChecker = true;
 
+        [JsonProperty("GlobalEXPModifier", Order = -4)]
+        public float _GlobalEXPModifier = 1.0f;
+
         [JsonProperty("UPnP", Order = -1)] protected bool _upnp = true;
 
         [JsonProperty("Chat")] public ChatOptions ChatOpts = new ChatOptions();
@@ -71,6 +74,7 @@ namespace Intersect
         //Public Getters
         public static ushort ServerPort { get => Instance._serverPort; set => Instance._serverPort = value; }
 
+        public static float GlobalEXPModifier { get => Instance._GlobalEXPModifier; set => Instance._GlobalEXPModifier = value; }
         public static int MaxStatValue => Instance.PlayerOpts.MaxStat;
 
         public static int MaxLevel => Instance.PlayerOpts.MaxLevel;
