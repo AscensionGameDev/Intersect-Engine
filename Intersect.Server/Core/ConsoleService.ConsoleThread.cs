@@ -29,6 +29,7 @@ namespace Intersect.Server.Core
                 Parser = new CommandParser(new ParserSettings(localization: Strings.Commands.Parsing));
 
                 Parser.Register<AnnouncementCommand>();
+                Parser.Register<ExpModifierCommand>();
                 Parser.Register<ApiCommand>();
                 Parser.Register<ApiGrantCommand>();
                 Parser.Register<ApiRevokeCommand>();

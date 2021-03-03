@@ -17,6 +17,9 @@ namespace Intersect
         [JsonProperty("AdminOnly", Order = -3)]
         protected bool _adminOnly = false;
 
+        [JsonProperty("GlobalEXPModifier", Order = -4)]
+        public float _GlobalEXPModifier = 1.0f;
+
         //Constantly Animated Sprites
         [JsonProperty("AnimatedSprites")] protected List<string> _animatedSprites = new List<string>();
 
@@ -85,6 +88,11 @@ namespace Intersect
         /// Defines the maximum amount of logged in users our server is allowed to handle.
         /// </summary>
         public static int MaxLoggedinUsers => Instance._maxUsers;
+
+        /// <summary>
+        ///  Defines the Global Server EXP Gain Modifier.
+        /// </summary>
+        public static float GlobalEXPModifier { get => Instance._GlobalEXPModifier; set => Instance._GlobalEXPModifier = value; }
 
         public static int MaxStatValue => Instance.PlayerOpts.MaxStat;
 

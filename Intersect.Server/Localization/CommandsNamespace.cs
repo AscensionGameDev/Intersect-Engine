@@ -27,6 +27,14 @@ namespace Intersect.Server.Localization
                 Help = @"enables or disables api access for an account"
             };
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand GlobalExpModifier = new LocaleCommand
+            {
+                Name = @"expmodifier",
+                Description = @"Changes the EXP Modifier for the Whole Server.",
+                Help = @"changes the Global EXP Modifier for the server."
+            };
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocaleCommand ApiGrant = new LocaleCommand
             {
                 Name = @"apigrant",
@@ -277,6 +285,13 @@ namespace Intersect.Server.Localization
                 {
                     Name = @"account-name",
                     Description = @"the name of the acount to change the API access of"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument RateFloat = new LocaleArgument
+                {
+                    Name = @"rate",
+                    Description = @"float e.g. 2.0"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument TargetBan = new LocaleArgument
