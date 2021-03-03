@@ -902,7 +902,7 @@ namespace Intersect.Server.Entities
 
         public void GiveExperience(long amount)
         {
-            Exp += (int) (amount * GetExpMultiplier() / 100);
+            Exp += (int) ((amount * Options.GlobalEXPModifier) * GetExpMultiplier() / 100);
             if (Exp < 0)
             {
                 Exp = 0;
