@@ -12,8 +12,8 @@ namespace Intersect.Server.Core.Commands
     {
 
         public ExpModifierCommand() : base(
-            Strings.Commands.Announcement,
-            new VariableArgument<string>(Strings.Commands.Arguments.AnnouncementMessage, RequiredIfNotHelp, true)
+            Strings.Commands.GlobalExpModifier,
+            new VariableArgument<string>(Strings.Commands.Arguments.RateFloat, RequiredIfNotHelp, true)
         )
         {
         }
@@ -24,9 +24,16 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             //globalexpmodified
-            Console.WriteLine($@"    {Strings.Commandoutput.globalexpmodified.ToString(Rate.ToString())}");
-            Options.GlobalEXPModifier = float.Parse(result.Find(Rate));
-            Options.SaveToDisk();
+            float _rate = 1.0f;
+            if (float.TryParse(result.Find(Rate), out _rate))
+            {
+                Console.WriteLine($@"    {Strings.Commandoutput.globalexpmodified.ToString(result.Find(Rate))}");
+                Options.GlobalEXPModifier = _rate;
+                Options.SaveToDisk();
+            } else
+            {
+                Console.WriteLine($@"    {Strings.Commandoutput.globalexpmodifiedinvalid.ToString(result.Find(Rate))}");
+            }
         }
 
     }

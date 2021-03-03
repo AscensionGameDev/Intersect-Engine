@@ -420,6 +420,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString globalexpmodified = @"Global EXP Rate has been Modified too: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString globalexpmodifiedinvalid = @"Invalid EXP Rate: ({00}) use a Float e.g. 2.0";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

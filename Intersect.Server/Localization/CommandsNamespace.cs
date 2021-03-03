@@ -22,6 +22,15 @@ namespace Intersect.Server.Localization
                 Help = @"sends a global message to all players"
             };
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocaleCommand GlobalExpModifier = new LocaleCommand
+            {
+                Name = @"expmodifier",
+                Description = @"Changes the EXP Modifier for the Whole Server.",
+                Help = @"changes the Global EXP Modifier for the server."
+            };
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocaleCommand Api = new LocaleCommand
             {
@@ -249,6 +258,14 @@ namespace Intersect.Server.Localization
                 {
                     Name = @"message",
                     Description = @"the message to send"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument RateFloat = new LocaleArgument
+                {
+                    Name = @"rate",
+                    Description = @"float e.g. 2.0"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
