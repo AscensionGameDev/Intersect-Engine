@@ -17,7 +17,7 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-
+using Intersect.Server.Web.RestApi.Payloads;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -613,12 +613,21 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<User> List(int page, int count)
+        public static IEnumerable<User> List(string query, string sortBy, SortDirection sortDirection)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext()) {
-                    return QueryUsers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryUsers(context) : SearchUsers(context, query);
+
+                    switch (sortBy.ToLower())
+                    {
+                        case "email":
+                            return sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());
+                        case "name":
+                        default:
+                            return sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                    }
                 }          
             }
             catch (Exception ex)
@@ -632,11 +641,17 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Compiled Queries
 
-        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
+        private static readonly Func<PlayerContext, IEnumerable<User>> QueryUsers =
             EF.CompileQuery(
-                (PlayerContext context, int offset, int count) => context.Users.OrderBy(user => user.Id.ToString())
-                    .Skip(offset)
-                    .Take(count)
+                (PlayerContext context) => context.Users.OrderBy(user => user.Name.ToUpper())
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, IEnumerable<User>> SearchUsers =
+            EF.CompileQuery(
+                (PlayerContext context, string query) => context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"))
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
             ) ??

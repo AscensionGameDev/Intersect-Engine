@@ -35,7 +35,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), 5);
 
-            var entries = Database.PlayerData.User.List(pageInfo.Page, pageInfo.Count).ToList();
+            var entries = Database.PlayerData.User.List(null, null, SortDirection.Ascending).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count).ToList();
 
             return new
             {
@@ -51,17 +51,21 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public DataPage<User> List(
             [FromUri] int page = 0,
             [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX //,
-            //[FromUri] string[] sortBy = null, [FromUri] SortDirection[] sortDirection = null
+            [FromUri] int limit = PAGE_SIZE_MAX,
+            [FromUri] string sortBy = null,
+            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
+            [FromUri] string search = null
         )
         {
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            //var sort = Sort.From(sortBy, sortDirection);
-            //var values = Database.PlayerData.User.List(page, pageSize, sort).ToList();
-            var values = Database.PlayerData.User.List(page, pageSize).ToList();
+
+            var query = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection);
+            var total = query.Count();
+            var values = query.Skip(page * pageSize).Take(pageSize).ToList();
+
             if (limit != pageSize)
             {
                 values = values.Take(limit).ToList();
@@ -69,7 +73,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return new DataPage<User>
             {
-                Total = Database.PlayerData.User.Count(),
+                Total = total,
                 Page = page,
                 PageSize = pageSize,
                 Count = values.Count,
