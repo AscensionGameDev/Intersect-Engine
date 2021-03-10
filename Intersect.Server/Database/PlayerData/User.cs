@@ -613,7 +613,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<User> List(string query, string sortBy, SortDirection sortDirection)
+        public static IList<User> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
         {
             try
             {
@@ -623,16 +623,21 @@ namespace Intersect.Server.Database.PlayerData
                     switch (sortBy.ToLower())
                     {
                         case "email":
-                            return sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());
+                            compiledQuery= sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());
+                            break;
                         case "name":
                         default:
-                            return sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                            break;
                     }
+                    total = compiledQuery.Count();
+                    return compiledQuery.Skip(skip).Take(take).ToList();
                 }          
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
+                total = 0;
                 return null;
             }
         }
@@ -643,9 +648,7 @@ namespace Intersect.Server.Database.PlayerData
 
         private static readonly Func<PlayerContext, IEnumerable<User>> QueryUsers =
             EF.CompileQuery(
-                (PlayerContext context) => context.Users.OrderBy(user => user.Name.ToUpper())
-                    .Include(p => p.Ban)
-                    .Include(p => p.Mute)
+                (PlayerContext context) => context.Users.Include(p => p.Ban).Include(p => p.Mute)
             ) ??
             throw new InvalidOperationException();
 
