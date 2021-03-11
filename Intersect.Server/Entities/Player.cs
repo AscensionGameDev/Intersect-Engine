@@ -778,7 +778,7 @@ namespace Intersect.Server.Entities
             // Loop through equipment and see if any items grant vital buffs
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems && Equipment[i] < Items.Count)
                 {
                     if (Items[Equipment[i]].ItemId != Guid.Empty)
                     {

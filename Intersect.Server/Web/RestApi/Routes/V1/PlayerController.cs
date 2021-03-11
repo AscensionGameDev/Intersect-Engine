@@ -55,7 +55,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
             int entryTotal = 0;
-            var entries = Player.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
+            var entries = Player.List(null, false, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
 
             return new
             {
@@ -72,6 +72,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromUri] int page = 0,
             [FromUri] int pageSize = 0,
             [FromUri] int limit = PAGE_SIZE_MAX,
+            [FromUri] bool slim = false,
             [FromUri] string sortBy = null,
             [FromUri] SortDirection sortDirection = SortDirection.Ascending,
             [FromUri] string search = null
@@ -82,7 +83,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             int total = 0;
-            var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out total);
+            var values = Player.List(search?.Length > 2 ? search : null, slim, sortBy, sortDirection, page * pageSize, pageSize, out total);
 
             if (limit != pageSize)
             {
@@ -156,8 +157,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromUri] int page = 0,
             [FromUri] int pageSize = 0,
             [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string[] sortBy = null,
-            [FromUri] SortDirection[] sortDirection = null
+            [FromUri] string sortBy = null,
+            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
+            [FromUri] string search = null
         )
         {
             page = Math.Max(page, 0);
@@ -165,7 +167,25 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             var sort = Sort.From(sortBy, sortDirection);
-            var values = Globals.OnlineList?.Sort(sort)?.Skip(page * pageSize).ToList() ?? new List<Player>();
+            IEnumerable<Player> enumerable = Globals.OnlineList ?? new List<Player>();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                enumerable = enumerable.Where(p => p.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            var total = enumerable.Count();
+
+            switch (sortBy.ToLower())
+            {
+                case "name":
+                default:
+                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Name.ToUpper()) : enumerable.OrderByDescending(u => u.Name.ToUpper());
+                    break;
+            }
+
+            var values = enumerable.Skip(page * pageSize).ToList() ?? new List<Player>();
+
             if (limit != pageSize)
             {
                 values = values.Take(limit).ToList();
@@ -173,12 +193,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return new DataPage<Player>
             {
-                Total = Globals.OnlineList?.Count ?? 0,
+                Total = total,
                 Page = page,
                 PageSize = pageSize,
                 Count = values.Count,
-                Values = values,
-                Sort = sort
+                Values = values
             };
         }
 

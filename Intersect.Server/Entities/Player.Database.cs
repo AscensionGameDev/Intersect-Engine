@@ -286,13 +286,16 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public static IList<Player> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
+        public static IList<Player> List(string query, bool slim, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryPlayers(context) : SearchPlayers(context, query);
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? (slim ? QueryPlayersSlim(context) : QueryPlayers(context)) : (slim ? SearchPlayersSlim(context, query) : SearchPlayers(context, query));
+
+                    total = string.IsNullOrWhiteSpace(query) ? Count() : SearchPlayersCount(context, query);
+
                     switch (sortBy.ToLower())
                     {
                         case "name":
@@ -300,7 +303,7 @@ namespace Intersect.Server.Entities
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
                             break;
                     }
-                    total = compiledQuery.Count();
+                    
                     return compiledQuery.Skip(skip).Take(take).ToList();
                 }
             }
@@ -352,6 +355,12 @@ namespace Intersect.Server.Entities
             ) ??
             throw new InvalidOperationException();
 
+        private static readonly Func<PlayerContext, IEnumerable<Player>> QueryPlayersSlim =
+            EF.CompileQuery(
+                (PlayerContext context) => context.Players
+            ) ??
+            throw new InvalidOperationException();
+
         private static readonly Func<PlayerContext,string, IEnumerable<Player>> SearchPlayers =
             EF.CompileQuery(
                 (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"))
@@ -361,6 +370,18 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, IEnumerable<Player>> SearchPlayersSlim =
+            EF.CompileQuery(
+                (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"))
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, int> SearchPlayersCount =
+            EF.CompileQuery(
+                (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%")).Count()
             ) ??
             throw new InvalidOperationException();
 

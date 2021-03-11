@@ -619,6 +619,8 @@ namespace Intersect.Server.Database.PlayerData
             {
                 using (var context = DbInterface.CreatePlayerContext()) {
                     var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryUsers(context) : SearchUsers(context, query);
+                    
+                    total = compiledQuery.Count();
 
                     switch (sortBy.ToLower())
                     {
@@ -630,7 +632,7 @@ namespace Intersect.Server.Database.PlayerData
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
                             break;
                     }
-                    total = compiledQuery.Count();
+
                     return compiledQuery.Skip(skip).Take(take).ToList();
                 }          
             }
