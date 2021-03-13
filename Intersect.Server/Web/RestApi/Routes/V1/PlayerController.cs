@@ -176,7 +176,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var total = enumerable.Count();
 
-            switch (sortBy.ToLower())
+            switch (sortBy?.ToLower() ?? "")
             {
                 case "name":
                 default:

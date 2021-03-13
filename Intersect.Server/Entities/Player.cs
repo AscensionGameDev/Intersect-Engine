@@ -70,6 +70,9 @@ namespace Intersect.Server.Entities
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
 
+        [NotMapped]
+        public string ClassName => ClassBase.GetName(ClassId);
+
         public Gender Gender { get; set; }
 
         public long Exp { get; set; }

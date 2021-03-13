@@ -622,7 +622,7 @@ namespace Intersect.Server.Database.PlayerData
                     
                     total = compiledQuery.Count();
 
-                    switch (sortBy.ToLower())
+                    switch (sortBy?.ToLower() ?? "")
                     {
                         case "email":
                             compiledQuery= sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());

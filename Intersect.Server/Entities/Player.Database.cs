@@ -286,17 +286,17 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public static IList<Player> List(string query, bool slim, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
+        public static IList<Player> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? (slim ? QueryPlayersSlim(context) : QueryPlayers(context)) : (slim ? SearchPlayersSlim(context, query) : SearchPlayers(context, query));
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryPlayers(context) : SearchPlayers(context, query);
 
                     total = string.IsNullOrWhiteSpace(query) ? Count() : SearchPlayersCount(context, query);
 
-                    switch (sortBy.ToLower())
+                    switch (sortBy?.ToLower() ?? "")
                     {
                         case "name":
                         default:
@@ -346,34 +346,10 @@ namespace Intersect.Server.Entities
         private static readonly Func<PlayerContext, IEnumerable<Player>> QueryPlayers =
             EF.CompileQuery(
                 (PlayerContext context) => context.Players
-                    .Include(p => p.Bank)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
             ) ??
             throw new InvalidOperationException();
 
-        private static readonly Func<PlayerContext, IEnumerable<Player>> QueryPlayersSlim =
-            EF.CompileQuery(
-                (PlayerContext context) => context.Players
-            ) ??
-            throw new InvalidOperationException();
-
-        private static readonly Func<PlayerContext,string, IEnumerable<Player>> SearchPlayers =
-            EF.CompileQuery(
-                (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"))
-                    .Include(p => p.Bank)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-            ) ??
-            throw new InvalidOperationException();
-
-        private static readonly Func<PlayerContext, string, IEnumerable<Player>> SearchPlayersSlim =
+        private static readonly Func<PlayerContext, string, IEnumerable<Player>> SearchPlayers =
             EF.CompileQuery(
                 (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"))
             ) ??

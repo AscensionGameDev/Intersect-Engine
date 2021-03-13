@@ -62,6 +62,9 @@ namespace Intersect.Server.Entities
 
         public Guid MapId { get; set; }
 
+        [NotMapped]
+        public string MapName => MapInstance.GetName(MapId);
+
         [JsonIgnore]
         [NotMapped]
         public MapInstance Map => MapInstance.Get(MapId);
