@@ -55,7 +55,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
             int entryTotal = 0;
-            var entries = Player.List(null, false, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
+            var entries = Player.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out entryTotal);
 
             return new
             {
@@ -72,7 +72,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromUri] int page = 0,
             [FromUri] int pageSize = 0,
             [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] bool slim = false,
             [FromUri] string sortBy = null,
             [FromUri] SortDirection sortDirection = SortDirection.Ascending,
             [FromUri] string search = null
@@ -83,7 +82,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
             int total = 0;
-            var values = Player.List(search?.Length > 2 ? search : null, slim, sortBy, sortDirection, page * pageSize, pageSize, out total);
+            var values = Player.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out total);
 
             if (limit != pageSize)
             {
