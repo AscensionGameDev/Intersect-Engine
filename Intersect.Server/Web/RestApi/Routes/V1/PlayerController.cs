@@ -177,6 +177,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             switch (sortBy?.ToLower() ?? "")
             {
+                case "level":
+                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Level).ThenBy(u => u.Exp) : enumerable.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
+                    break;
                 case "name":
                 default:
                     enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Name.ToUpper()) : enumerable.OrderByDescending(u => u.Name.ToUpper());
@@ -355,6 +358,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 variable.Value.Value = value.Value;
             }
 
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                context.Update(player);
+                context.SaveChanges();
+            }
+
             return variable;
         }
 
@@ -482,6 +491,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
+            using (var context = DbInterface.CreatePlayerContext(false))
+            {
+                context.Update(player);
+                context.SaveChanges();
+            }
+
             var quantityBank = player.CountItems(itemInfo.ItemId, false, true);
             var quantityInventory = player.CountItems(itemInfo.ItemId, true, false);
 
@@ -528,6 +543,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
             {
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
                 return new
                 {
                     itemInfo.ItemId,
@@ -595,6 +616,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (player.TryTeachSpell(new Spell(spell.SpellId), true))
             {
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
                 return spell;
             }
 
@@ -633,6 +660,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (player.TryForgetSpell(new Spell(spell.SpellId), true))
             {
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
                 return spell;
             }
 

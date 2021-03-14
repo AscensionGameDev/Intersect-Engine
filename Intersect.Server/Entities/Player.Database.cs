@@ -80,7 +80,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return QueryPlayerById(context, playerId);
+                    return Load(QueryPlayerById(context, playerId));
                 }
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return QueryPlayerByName(context, playerName);
+                    return Load(QueryPlayerByName(context, playerName));
                 }
             }
             catch (Exception ex)
@@ -298,6 +298,9 @@ namespace Intersect.Server.Entities
 
                     switch (sortBy?.ToLower() ?? "")
                     {
+                        case "level":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Level).ThenBy(u => u.Exp) : compiledQuery.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
+                            break;
                         case "name":
                         default:
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());

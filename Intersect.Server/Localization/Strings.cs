@@ -77,6 +77,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString unmuted = @"{00} has been unmuted!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
         }
 
         public sealed class BagsNamespace : LocaleNamespace

@@ -569,9 +569,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (Options.Smtp.IsValid())
             {
                 var email = new PasswordResetEmail(user);
-                email.Send();
+                if (email.Send())
+                {
+                    return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
+                }
 
-                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
+                return Request.CreateMessageResponse(HttpStatusCode.InternalServerError, "Failed to send reset email.");
             }
             else
             {
@@ -596,9 +599,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             if (Options.Smtp.IsValid())
             {
                 var email = new PasswordResetEmail(user);
-                email.Send();
+                if (email.Send())
+                {
+                    return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
+                }
 
-                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
+                return Request.CreateMessageResponse(HttpStatusCode.InternalServerError, "Failed to send reset email.");
             }
             else
             {
@@ -711,7 +717,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
 
                 case AdminActions.UnBan:
-                    Ban.Remove(user.Id);
+                    Ban.Remove(user.Id, false);
                     PacketSender.SendGlobalMsg(Strings.Account.unbanned.ToString(user.Name));
 
                     return Request.CreateMessageResponse(

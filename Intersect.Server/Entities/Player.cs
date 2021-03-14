@@ -42,6 +42,9 @@ namespace Intersect.Server.Entities
 
         public static Player[] OnlineList { get; private set; } = new Player[0];
 
+        [NotMapped]
+        public bool Online => OnlinePlayers.ContainsKey(Id);
+
         #region Chat
 
         [JsonIgnore] [NotMapped] public Player ChatTarget = null;
