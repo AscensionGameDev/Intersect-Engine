@@ -461,6 +461,83 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return variable;
         }
 
+        [Route("{lookupKey:LookupKey}/class")]
+        [HttpPost]
+        public object PlayerClassSet(LookupKey lookupKey, [FromBody] ClassChange change)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
+                );
+            }
+
+            if (change.ClassId == Guid.Empty || ClassBase.Get(change.ClassId) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid class id ${change.ClassId}.");
+            }
+
+            var (client, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                player.ClassId = change.ClassId;
+                player.RecalculateStatsAndPoints();
+                player.UnequipInvalidItems();
+                if (player.Online)
+                {
+                    PacketSender.SendEntityDataToProximity(player);
+                }
+
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
+                return player;
+            }
+
+            return Request.CreateErrorResponse(
+                HttpStatusCode.NotFound,
+                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
+            );
+        }
+
+        [Route("{lookupKey:LookupKey}/level")]
+        [HttpPost]
+        public object PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChange change)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
+                );
+            }
+
+            var (client, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                player.SetLevel(change.Level, true);
+                if (player.Online)
+                {
+                    PacketSender.SendEntityDataToProximity(player);
+                }
+
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
+                return player;
+            }
+
+            return Request.CreateErrorResponse(
+                HttpStatusCode.NotFound,
+                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
+            );
+        }
+
         [Route("{lookupKey:LookupKey}/items")]
         [HttpGet]
         public object ItemsList(LookupKey lookupKey)

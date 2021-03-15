@@ -723,6 +723,8 @@
     <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
+    <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\LevelChange.cs" />
     <Compile Include="Web\RestApi\Payloads\NameChange.cs" />
     <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
