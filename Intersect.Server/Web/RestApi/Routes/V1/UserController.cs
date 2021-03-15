@@ -159,6 +159,120 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
+        [Route("{username}")]
+        [HttpDelete]
+        public object DeleteUserByUsername(string userName)
+        {
+            var user = Database.PlayerData.User.Find(userName);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+            }
+
+            foreach (var plyr in user.Players)
+            {
+                if (Player.FindOnline(plyr.Id) != null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Cannot delete a user is currently online.");
+                }
+            }
+
+            user.Delete();
+
+            return user;
+        }
+
+        [Route("{userId:guid}")]
+        [HttpDelete]
+        public object DeleteUserById(Guid userId)
+        {
+            var user = Database.PlayerData.User.Find(userId);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
+            }
+
+            foreach (var plyr in user.Players)
+            {
+                if (Player.FindOnline(plyr.Id) != null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Cannot delete a user is currently online.");
+                }
+            }
+
+            user.Delete();
+
+            return user;
+        }
+
+        [Route("{username}/name")]
+        [HttpPost]
+        public object ChangeNameByUsername(string userName, [FromBody] NameChange change)
+        {
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Invalid name."
+                );
+            }
+
+            if (Database.PlayerData.User.UserExists(change.Name))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Name already taken."
+                );
+            }
+
+            var user = Database.PlayerData.User.Find(userName);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+            }
+
+            user.Name = change.Name;
+            user.Save();
+
+            return user;
+        }
+
+        [Route("{userId:guid}/name")]
+        [HttpPost]
+        public object ChangeNameById(Guid userId, [FromBody] NameChange change)
+        {
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Invalid name."
+                );
+            }
+
+            if (Database.PlayerData.User.UserExists(change.Name))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Name already taken."
+                );
+            }
+
+            var user = Database.PlayerData.User.Find(userId);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
+            }
+
+            user.Name = change.Name;
+            user.Save();
+
+            return user;
+        }
+
         [Route("{userName}/players")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]

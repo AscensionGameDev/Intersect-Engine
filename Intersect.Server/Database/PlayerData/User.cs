@@ -241,6 +241,35 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
+        public void Delete()
+        {
+            //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
+            //The cost of making a new context is almost nil.
+            try
+            {
+                lock (mSavingLock)
+                {
+                    using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                    {
+                        context.Users.Remove(this);
+
+                        context.ChangeTracker.DetectChanges();
+
+                        context.StopTrackingUsersExcept(this);
+
+                        context.Entry(this).State = EntityState.Deleted;
+
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete user: " + Name);
+                ServerContext.DispatchUnhandledException(new Exception("Failed to delete user, shutting down to prevent rollbacks!"), true);
+            }
+        }
+
         public void Save(bool force = false)
         {
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.

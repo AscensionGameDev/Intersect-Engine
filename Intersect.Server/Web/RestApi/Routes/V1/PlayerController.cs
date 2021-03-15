@@ -19,6 +19,7 @@ using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -227,6 +228,99 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var (client, player) = Player.Fetch(lookupKey);
             if (player != null)
             {
+                return player;
+            }
+
+            return Request.CreateErrorResponse(
+                HttpStatusCode.NotFound,
+                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
+            );
+        }
+
+        [Route("{lookupKey:LookupKey}")]
+        [HttpDelete]
+        public object DeletePlayer(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
+                );
+            }
+
+            var (client, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                if (Player.FindOnline(player.Id) != null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.InternalServerError,
+                        "Failed to delete player because they are online!"
+                    );
+                }
+
+                var user = Database.PlayerData.User.Find(player.UserId);
+                if (user == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.BadRequest,
+                        $@"Failed to load user for {player.Name}!"
+                    );
+                }
+
+                user.DeleteCharacter(user.Players.FirstOrDefault(p => p.Id == player.Id));
+
+                return player;
+            }
+
+            return Request.CreateErrorResponse(
+                HttpStatusCode.NotFound,
+                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
+            );
+        }
+
+        [Route("{lookupKey:LookupKey}/name")]
+        [HttpPost]
+        public object ChangeName(LookupKey lookupKey, [FromBody] NameChange change)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
+                );
+            }
+
+            if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Invalid name."
+                );
+            }
+
+            if (Player.PlayerExists(change.Name))
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Name already taken."
+                );
+            }
+
+            var (client, player) = Player.Fetch(lookupKey);
+            if (player != null)
+            {
+                player.Name = change.Name;
+                if (player.Online)
+                {
+                    PacketSender.SendEntityDataToProximity(player);
+                }
+
+                using (var context = DbInterface.CreatePlayerContext(false))
+                {
+                    context.Update(player);
+                    context.SaveChanges();
+                }
+
                 return player;
             }
 
