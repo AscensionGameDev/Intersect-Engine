@@ -647,7 +647,7 @@ namespace Intersect.Server.Database.PlayerData
             try
             {
                 using (var context = DbInterface.CreatePlayerContext()) {
-                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryUsers(context) : SearchUsers(context, query);
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Users.Include(p => p.Ban).Include(p => p.Mute) : context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"));
                     
                     total = compiledQuery.Count();
 
@@ -676,20 +676,6 @@ namespace Intersect.Server.Database.PlayerData
         #endregion
 
         #region Compiled Queries
-
-        private static readonly Func<PlayerContext, IEnumerable<User>> QueryUsers =
-            EF.CompileQuery(
-                (PlayerContext context) => context.Users.Include(p => p.Ban).Include(p => p.Mute)
-            ) ??
-            throw new InvalidOperationException();
-
-        private static readonly Func<PlayerContext, string, IEnumerable<User>> SearchUsers =
-            EF.CompileQuery(
-                (PlayerContext context, string query) => context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"))
-                    .Include(p => p.Ban)
-                    .Include(p => p.Mute)
-            ) ??
-            throw new InvalidOperationException();
 
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery(

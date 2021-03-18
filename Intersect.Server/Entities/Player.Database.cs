@@ -292,9 +292,9 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? QueryPlayers(context) : SearchPlayers(context, query);
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Players : context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
 
-                    total = string.IsNullOrWhiteSpace(query) ? Count() : SearchPlayersCount(context, query);
+                    total = compiledQuery.Count();
 
                     switch (sortBy?.ToLower() ?? "")
                     {
@@ -345,24 +345,6 @@ namespace Intersect.Server.Entities
         #endregion
 
         #region Compiled Queries
-
-        private static readonly Func<PlayerContext, IEnumerable<Player>> QueryPlayers =
-            EF.CompileQuery(
-                (PlayerContext context) => context.Players
-            ) ??
-            throw new InvalidOperationException();
-
-        private static readonly Func<PlayerContext, string, IEnumerable<Player>> SearchPlayers =
-            EF.CompileQuery(
-                (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"))
-            ) ??
-            throw new InvalidOperationException();
-
-        private static readonly Func<PlayerContext, string, int> SearchPlayersCount =
-            EF.CompileQuery(
-                (PlayerContext context, string query) => context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%")).Count()
-            ) ??
-            throw new InvalidOperationException();
 
         private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
             EF.CompileQuery(
