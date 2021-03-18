@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 
 using Intersect.Server.General;
 using Intersect.Server.Web.RestApi.Attributes;
@@ -38,6 +39,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object Config()
         {
             return Options.Instance;
+        }
+
+        [Route("config/stats")]
+        [HttpGet]
+        public object CombatStats()
+        {
+            return Enum.GetNames(typeof(Enums.Stats));
         }
 
         [Route("stats")]
