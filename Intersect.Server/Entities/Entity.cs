@@ -1872,17 +1872,14 @@ namespace Intersect.Server.Entities
                 else
                 {
                     //PVP Kill common events
-                    if (!enemy.Dead && enemy is Player && this is Player)
+                    if (!enemy.Dead && enemy is Player enemyPlayer && this is Player thisPlayer)
                     {
-                        if (MapInstance.Get(MapId).ZoneType != MapZones.Arena)
+                        foreach (EventBase evt in EventBase.Lookup.Values)
                         {
-                            foreach (EventBase evt in EventBase.Lookup.Values)
+                            if (evt != null)
                             {
-                                if (evt != null)
-                                {
-                                    ((Player) this).StartCommonEvent(evt, CommonEventTrigger.PVPKill, "", enemy.Name);
-                                    ((Player) enemy).StartCommonEvent(evt, CommonEventTrigger.PVPDeath, "", this.Name);
-                                }
+                                thisPlayer.StartCommonEvent(evt, CommonEventTrigger.PVPKill, "", enemy.Name);
+                                enemyPlayer.StartCommonEvent(evt, CommonEventTrigger.PVPDeath, "", this.Name);
                             }
                         }
                     }

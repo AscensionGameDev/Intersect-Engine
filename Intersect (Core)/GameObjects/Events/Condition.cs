@@ -40,6 +40,8 @@ namespace Intersect.GameObjects.Events
 
         HasFreeInventorySlots,
 
+        MapZoneTypeIs,
+
     }
 
     public class Condition
@@ -254,6 +256,19 @@ namespace Intersect.GameObjects.Events
         /// </summary>
         public Guid VariableId { get; set; }
 
+    }
+
+    public class MapZoneTypeIs : Condition
+    {
+        /// <summary>
+        /// Defines the type of condition.
+        /// </summary>
+        public override ConditionTypes Type { get; } = ConditionTypes.MapZoneTypeIs;
+
+        /// <summary>
+        /// Defines the map Zone Type to compare to.
+        /// </summary>
+        public MapZones ZoneType { get; set; }
     }
 
     public class VariableCompaison
