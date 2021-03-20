@@ -69,6 +69,9 @@ namespace Intersect.Server.Database
 
         public Guid ItemId { get; set; } = Guid.Empty;
 
+        [NotMapped]
+        public string ItemName => ItemBase.GetName(ItemId);
+
         public int Quantity { get; set; }
 
         [Column("StatBuffs")]

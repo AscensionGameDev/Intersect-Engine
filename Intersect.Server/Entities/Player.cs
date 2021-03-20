@@ -42,6 +42,9 @@ namespace Intersect.Server.Entities
 
         public static Player[] OnlineList { get; private set; } = new Player[0];
 
+        [NotMapped]
+        public bool Online => OnlinePlayers.ContainsKey(Id);
+
         #region Chat
 
         [JsonIgnore] [NotMapped] public Player ChatTarget = null;
@@ -69,6 +72,9 @@ namespace Intersect.Server.Entities
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
+
+        [NotMapped]
+        public string ClassName => ClassBase.GetName(ClassId);
 
         public Gender Gender { get; set; }
 
@@ -778,7 +784,7 @@ namespace Intersect.Server.Entities
             // Loop through equipment and see if any items grant vital buffs
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems && Equipment[i] < Items.Count)
                 {
                     if (Items[Equipment[i]].ItemId != Guid.Empty)
                     {

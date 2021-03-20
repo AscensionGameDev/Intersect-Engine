@@ -59,6 +59,32 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return null;
         }
 
+        [Route("{objType}/names")]
+        [HttpPost]
+        public object Names(string objType)
+        {
+            GameObjectType gameObjectType;
+            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
+                gameObjectType == GameObjectType.Time)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
+            }
+
+            var lookup = GameObjectTypeExtensions.GetLookup(gameObjectType);
+
+            if (lookup != null)
+            {
+                
+                var entries = gameObjectType == GameObjectType.Event
+                    ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name)
+                    : lookup.Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name);
+
+                return entries;
+            }
+
+            return null;
+        }
+
         [Route("{objType}/{objId:guid}")]
         [HttpGet]
         public object GameObjectById(string objType, Guid objId)
