@@ -13,6 +13,11 @@ namespace Intersect.Config
     public class ProcessingOptions
     {
         /// <summary>
+        /// Determined whether or not the server logic thread sleeps after each sloop by default
+        /// </summary>
+        public bool CpsLock { get; set; } = true;
+
+        /// <summary>
         /// Minimum of threads that will be created process map logic, npc/event updates, hots/dots/status effects, projectiles and more.
         /// </summary>
         public int MinLogicThreads { get; set; } = 2;

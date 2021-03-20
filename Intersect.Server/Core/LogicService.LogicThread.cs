@@ -157,7 +157,7 @@ namespace Intersect.Server.Core
                             Console.Title = $"Intersect Server - CPS: {Globals.Cps}, Players: {players}, Active Maps: {ActiveMaps.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
                         }
 
-                        if (Globals.CpsLock)
+                        if (Options.Instance.Processing.CpsLock)
                         {
                             Thread.Sleep(1);
                         }
