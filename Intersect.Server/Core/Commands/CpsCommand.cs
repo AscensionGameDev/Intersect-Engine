@@ -10,13 +10,30 @@ namespace Intersect.Server.Core.Commands
     {
 
         public CpsCommand() : base(
-            Strings.Commands.Cps
+            Strings.Commands.Cps,
+            new EnumArgument<string>(
+                Strings.Commands.Arguments.CpsOperation, RequiredIfNotHelp, true,
+                Strings.Commands.Arguments.CpsLock.ToString(), Strings.Commands.Arguments.CpsStatus.ToString(),
+                Strings.Commands.Arguments.CpsUnlock.ToString()
+            )
         )
         {
         }
 
+        private EnumArgument<string> Operation => FindArgumentOrThrow<EnumArgument<string>>();
+
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
+            var operation = result.Find(Operation);
+            if (operation == Strings.Commands.Arguments.CpsLock)
+            {
+                Globals.CpsLock = true;
+            }
+            else if (operation == Strings.Commands.Arguments.CpsUnlock)
+            {
+                Globals.CpsLock = false;
+            }
+
             //else if (operation == Strings.Commands.Arguments.CpsStatus)
             //{
             //    Console.WriteLine(Globals.CpsLock
@@ -24,7 +41,7 @@ namespace Intersect.Server.Core.Commands
             //        : Strings.Commandoutput.cpsunlocked);
             //}
             // TODO: Rethink what messages we want to display here. Confirmation of the change is ideal. To reuse code we effectively don't need to really handle status.
-            Console.WriteLine(Globals.Cps);
+            Console.WriteLine(Globals.CpsLock ? (Strings.Commandoutput.cpslocked.ToString() + " (" + Globals.Cps + ")") : Strings.Commandoutput.cpsunlocked.ToString() + " (" + Globals.Cps + ")");
         }
 
     }
