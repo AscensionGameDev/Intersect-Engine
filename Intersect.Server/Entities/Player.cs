@@ -103,7 +103,7 @@ namespace Intersect.Server.Entities
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //Local Friends
-        [NotMapped]
+        [NotMapped, JsonProperty("Friends")]
         public virtual Dictionary<Guid, string> CachedFriends { get; set; } = new Dictionary<Guid, string>();
 
         //HotBar
