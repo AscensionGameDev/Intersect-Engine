@@ -128,6 +128,7 @@ namespace Intersect.Server.Database
                 {
                     bag = Bag.GetBag(BagId ?? Guid.Empty);
                     bag?.ValidateSlots();
+                    Bag = bag;
                 }
             }
 
