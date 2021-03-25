@@ -7,24 +7,21 @@ namespace Intersect.Admin.Actions
     public class SetSpriteAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public SetSpriteAction()
+        public SetSpriteAction() : base(AdminActions.SetSprite)
         {
 
         }
 
-        public SetSpriteAction(string name, string sprite)
+        public SetSpriteAction(string name, string sprite) : base(AdminActions.SetSprite)
         {
             Name = name;
             Sprite = sprite;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.SetSprite;
-
-        [Key(2)]
         public string Name { get; set; }
 
-        [Key(3)]
+        [Key(2)]
         public string Sprite { get; set; }
 
     }

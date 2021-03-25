@@ -9,12 +9,12 @@ namespace Intersect.Admin.Actions
     public class WarpToLocationAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public WarpToLocationAction()
+        public WarpToLocationAction() : base(AdminActions.WarpTo)
         {
 
         }
 
-        public WarpToLocationAction(Guid mapId, byte x, byte y)
+        public WarpToLocationAction(Guid mapId, byte x, byte y) : base(AdminActions.WarpTo)
         {
             MapId = mapId;
             X = x;
@@ -22,15 +22,12 @@ namespace Intersect.Admin.Actions
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.WarpTo;
-
-        [Key(2)]
         public Guid MapId { get; set; }
 
-        [Key(3)]
+        [Key(2)]
         public byte X { get; set; }
 
-        [Key(4)]
+        [Key(3)]
         public byte Y { get; set; }
 
     }

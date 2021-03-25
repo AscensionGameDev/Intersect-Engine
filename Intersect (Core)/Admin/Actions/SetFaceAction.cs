@@ -7,24 +7,21 @@ namespace Intersect.Admin.Actions
     public class SetFaceAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public SetFaceAction()
+        public SetFaceAction() : base(AdminActions.SetFace)
         {
 
         }
 
-        public SetFaceAction(string name, string face)
+        public SetFaceAction(string name, string face) : base(AdminActions.SetFace)
         {
             Name = name;
             Face = face;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.SetFace;
-
-        [Key(2)]
         public string Name { get; set; }
 
-        [Key(3)]
+        [Key(2)]
         public string Face { get; set; }
 
     }

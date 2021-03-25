@@ -7,12 +7,12 @@ namespace Intersect.Admin.Actions
     public class MuteAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public MuteAction()
+        public MuteAction() : base(AdminActions.Mute)
         {
 
         }
 
-        public MuteAction(string name, int durationDays, string reason, bool banIp)
+        public MuteAction(string name, int durationDays, string reason, bool banIp) : base(AdminActions.Mute)
         {
             Name = name;
             DurationDays = durationDays;
@@ -21,18 +21,15 @@ namespace Intersect.Admin.Actions
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.Mute;
-
-        [Key(2)]
         public string Name { get; set; }
 
-        [Key(3)]
+        [Key(2)]
         public int DurationDays { get; set; }
 
-        [Key(4)]
+        [Key(3)]
         public string Reason { get; set; }
 
-        [Key(5)]
+        [Key(4)]
         public bool BanIp { get; set; }
 
     }

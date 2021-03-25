@@ -7,20 +7,17 @@ namespace Intersect.Admin.Actions
     public class UnmuteAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public UnmuteAction()
+        public UnmuteAction() : base(AdminActions.UnMute)
         {
 
         }
 
-        public UnmuteAction(string name)
+        public UnmuteAction(string name) : base(AdminActions.UnMute)
         {
             Name = name;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.UnMute;
-
-        [Key(2)]
         public string Name { get; set; }
 
     }

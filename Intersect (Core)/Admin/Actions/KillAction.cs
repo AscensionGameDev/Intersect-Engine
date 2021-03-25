@@ -7,20 +7,17 @@ namespace Intersect.Admin.Actions
     public class KillAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public KillAction()
+        public KillAction() : base(AdminActions.Kill)
         {
 
         }
 
-        public KillAction(string name)
+        public KillAction(string name) : base(AdminActions.Kill)
         {
             Name = name;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.Kill;
-
-        [Key(2)]
         public string Name { get; set; }
 
     }

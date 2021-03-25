@@ -7,20 +7,17 @@ namespace Intersect.Admin.Actions
     public class WarpMeToAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public WarpMeToAction()
+        public WarpMeToAction() : base(AdminActions.WarpMeTo)
         {
 
         }
 
-        public WarpMeToAction(string name)
+        public WarpMeToAction(string name) : base(AdminActions.WarpMeTo)
         {
             Name = name;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.WarpMeTo;
-
-        [Key(2)]
         public string Name { get; set; }
 
     }

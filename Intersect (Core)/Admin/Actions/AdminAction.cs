@@ -3,7 +3,6 @@ using MessagePack;
 
 namespace Intersect.Admin.Actions
 {
-    [MessagePackObject]
     [Union(0, typeof(BanAction))]
     [Union(1, typeof(KickAction))]
     [Union(2, typeof(KillAction))]
@@ -17,10 +16,18 @@ namespace Intersect.Admin.Actions
     [Union(10, typeof(WarpToLocationAction))]
     [Union(11, typeof(WarpToMapAction))]
     [Union(12, typeof(WarpToMeAction))]
+    [MessagePackObject]
     public abstract class AdminAction
     {
+        protected AdminAction(AdminActions action)
+        {
+            Action = action;
+        }
+
         [Key(0)]
-        public abstract AdminActions Action { get; }
+        public AdminActions Action { get; }
+
+
 
     }
 

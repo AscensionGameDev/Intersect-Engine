@@ -9,20 +9,17 @@ namespace Intersect.Admin.Actions
     public class WarpToMapAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
-        public WarpToMapAction()
+        public WarpToMapAction() : base(AdminActions.WarpTo)
         {
 
         }
 
-        public WarpToMapAction(Guid mapId)
+        public WarpToMapAction(Guid mapId) : base(AdminActions.WarpTo)
         {
             MapId = mapId;
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.WarpTo;
-
-        [Key(2)]
         public Guid MapId { get; set; }
 
     }
