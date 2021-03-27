@@ -34,6 +34,16 @@ namespace Intersect.Server.Networking
         //Cached GameDataPacket that gets sent to clients
         public static GameDataPacket CachedGameDataPacket = null;
 
+        public static long SentPackets { get; set; }
+
+        public static long SentBytes { get; set; }
+
+        public static void ResetMetrics()
+        {
+            SentPackets = 0;
+            SentBytes = 0;
+        }
+
         //PingPacket
         public static void SendPing(Client client, bool request = true)
         {

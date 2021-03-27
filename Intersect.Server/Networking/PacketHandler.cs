@@ -43,6 +43,26 @@ namespace Intersect.Server.Networking
 
         public static PacketHandler Instance { get; private set; }
 
+        public static long ReceivedBytes => AcceptedBytes + DroppedBytes;
+
+        public static long ReceivedPackets => AcceptedPackets + DroppedPackets;
+
+        public static long AcceptedBytes { get; set; }
+
+        public static long DroppedBytes { get; set; }
+
+        public static long AcceptedPackets { get; set; }
+
+        public static long DroppedPackets { get; set; }
+
+        public static void ResetMetrics()
+        {
+            AcceptedBytes = 0;
+            AcceptedPackets = 0;
+            DroppedBytes = 0;
+            DroppedPackets = 0;
+        }
+
         public PacketHandler(IServerContext context, PacketHandlerRegistry packetHandlerRegistry)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
@@ -57,6 +77,19 @@ namespace Intersect.Server.Networking
         }
 
         public bool PreProcessPacket(IConnection connection, long pSize)
+        {
+            if (ShouldAcceptPacket(connection, pSize))
+            {
+                AcceptedPackets++;
+                AcceptedBytes += pSize;
+                return true;
+            }
+            DroppedPackets++;
+            DroppedBytes += pSize;
+            return false;
+        }
+
+        public bool ShouldAcceptPacket(IConnection connection, long pSize)
         {
             var client = Client.FindBeta4Client(connection);
             if (client == null)
@@ -725,6 +758,8 @@ namespace Intersect.Server.Networking
             {
                 return;
             }
+
+            Console.WriteLine(Metrics.MetricsRoot.Instance.Metrics);
 
             var msg = packet.Message;
             var channel = packet.Channel;

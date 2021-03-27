@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-
+using App.Metrics;
 using CommandLine;
 
 using Intersect.Factories;
@@ -17,6 +17,7 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
+using Intersect.Server.Metrics;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
@@ -239,6 +240,11 @@ namespace Intersect.Server.Core
             Formulas.LoadFormulas();
 
             CustomColors.Load();
+
+            if (Options.Instance.Metrics.Enable)
+            {
+                MetricsRoot.Init();
+            }
 
             return true;
         }
