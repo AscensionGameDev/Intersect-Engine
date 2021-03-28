@@ -759,8 +759,6 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            Console.WriteLine(Metrics.MetricsRoot.Instance.Metrics);
-
             var msg = packet.Message;
             var channel = packet.Channel;
             if (client?.User.IsMuted ?? false) //Don't let the tongueless toxic kids speak.

@@ -155,6 +155,12 @@ namespace Intersect.Server.Entities
 
         private long mAutorunCommonEventTimer { get; set; }
 
+        [NotMapped, JsonIgnore]
+        public int CommonAutorunEvents { get; private set; }
+
+        [NotMapped, JsonIgnore]
+        public int MapAutorunEvents { get; private set; }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -446,17 +452,20 @@ namespace Intersect.Server.Entities
 
                     if (mAutorunCommonEventTimer < Globals.Timing.Milliseconds)
                     {
+                        var autorunEvents = 0;
                         //Check for autorun common events and run them
                         foreach (var obj in EventBase.Lookup)
                         {
                             var evt = obj.Value as EventBase;
                             if (evt != null && evt.CommonEvent)
                             {
+                                autorunEvents += evt.Pages.Count(p => p.CommonTrigger == CommonEventTrigger.Autorun);
                                 StartCommonEvent(evt, CommonEventTrigger.Autorun);
                             }
                         }
 
                         mAutorunCommonEventTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.CommonEventAutorunStartInterval;
+                        CommonAutorunEvents = autorunEvents;
                     }
 
                     //If we have a move route then let's process it....

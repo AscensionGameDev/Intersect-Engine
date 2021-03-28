@@ -101,7 +101,7 @@ namespace Intersect.Server.Core
                                     players++;
                                     events += player.EventLookup.Count;
                                     eventsProcessing += player.EventLookup.Values.Where(e => e.CallStack?.Count > 0).Count();
-                                    autorunEvents += player.EventLookup.Values.Where(e => e.PageInstance?.Trigger == Enums.EventTrigger.Autorun).Count();
+                                    autorunEvents += player.CommonAutorunEvents + player.MapAutorunEvents;
                                 }
 
                                 var plyrMap = player?.MapId ?? Guid.Empty;
