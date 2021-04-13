@@ -33,15 +33,7 @@ namespace Intersect.Server.Metrics.Controllers
 
         private readonly HistogramOptions mDroppedPackets = new HistogramOptions() { Name = "DroppedPackets", Context = CONTEXT };
 
-        private readonly HistogramOptions mReceivedPacketQueueTime = new HistogramOptions() { Name = "ReceivedPacketQueueTime", Context = CONTEXT };
-
-        private readonly HistogramOptions mReceivedPacketProcessingTime = new HistogramOptions() { Name = "ReceivedPacketProcessingTime", Context = CONTEXT };
-
         private readonly HistogramOptions mTotalReceivedPacketHandlingTime = new HistogramOptions() { Name = "TotalReceivedPacketHandlingTime", Context = CONTEXT };
-
-        private readonly HistogramOptions mSentPacketQueueTime = new HistogramOptions() { Name = "SentPacketQueueTime", Context = CONTEXT };
-
-        private readonly HistogramOptions mSentPacketProcessingTime = new HistogramOptions() { Name = "SentPacketProcessingTime", Context = CONTEXT };
 
         private readonly HistogramOptions mTotalSentPacketHandlingTime = new HistogramOptions() { Name = "TotalSentPacketHandlingTime", Context = CONTEXT };
 
@@ -104,34 +96,10 @@ namespace Intersect.Server.Metrics.Controllers
                 mAppMetricsRoot.Measure.Histogram.Update(mDroppedPackets, packets);
         }
 
-        public void UpdateReceivedPacketQueueTime(long time)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mReceivedPacketQueueTime, time);
-        }
-
-        public void UpdateReceivedPacketProcessingTime(long time)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mReceivedPacketProcessingTime, time);
-        }
-
         public void UpdateTotalReceivedPacketHandlingTime(long time)
         {
             if (Options.Instance.Metrics.Enable)
                 mAppMetricsRoot.Measure.Histogram.Update(mTotalReceivedPacketHandlingTime, time);
-        }
-
-        public void UpdateSentPacketQueueTime(long time)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSentPacketQueueTime, time);
-        }
-
-        public void UpdateSentPacketProcessingTime(long time)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSentPacketProcessingTime, time);
         }
 
         public void UpdateTotalSentPacketHandlingTime(long time)

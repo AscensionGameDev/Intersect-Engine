@@ -289,7 +289,6 @@ namespace Intersect.Server.Networking
 
                     try
                     {
-                        var processTime = Globals.Timing.Milliseconds;
                         if (packet is AbstractTimedPacket timedPacket)
                         {
                             timedPacket.UpdateTiming();
@@ -297,8 +296,6 @@ namespace Intersect.Server.Networking
                         mConnection.Send(packet, mode);
                         PacketSender.SentPackets++;
                         PacketSender.SentBytes += packet.Data.Length;
-                        MetricsRoot.Instance.Network.UpdateSentPacketQueueTime(processTime - tuple.Item3);
-                        MetricsRoot.Instance.Network.UpdateSentPacketProcessingTime(Globals.Timing.Milliseconds - processTime);
                         MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);
                     }
                     catch (Exception exception)
@@ -363,12 +360,8 @@ namespace Intersect.Server.Networking
                         {
                             try
                             {
-                                packet.ProcessTime = Globals.Timing.Milliseconds;
                                 PacketHandler.Instance.ProcessPacket(packet, this);
                                 MetricsRoot.Instance.Network.UpdateTotalReceivedPacketHandlingTime(Globals.Timing.Milliseconds - packet.ReceiveTime);
-                                MetricsRoot.Instance.Network.UpdateReceivedPacketQueueTime(packet.ProcessTime - packet.ReceiveTime);
-                                MetricsRoot.Instance.Network.UpdateReceivedPacketProcessingTime(Globals.Timing.Milliseconds - packet.ProcessTime);
-
                             }
                             catch (Exception exception)
                             {

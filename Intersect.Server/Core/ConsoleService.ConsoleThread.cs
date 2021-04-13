@@ -40,6 +40,7 @@ namespace Intersect.Server.Core
                 Parser.Register<HelpCommand>(Parser.Settings);
                 Parser.Register<KickCommand>();
                 Parser.Register<KillCommand>();
+                Parser.Register<MetricsCommand>();
                 Parser.Register<MakePrivateCommand>();
                 Parser.Register<MakePublicCommand>();
                 Parser.Register<MigrateCommand>();
