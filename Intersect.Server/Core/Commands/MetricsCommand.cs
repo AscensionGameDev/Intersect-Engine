@@ -25,10 +25,15 @@ namespace Intersect.Server.Core.Commands
             if (operation == Strings.Commands.Arguments.MetricsDisable)
             {
                 Options.Instance.Metrics.Enable = false;
+                Metrics.MetricsRoot.Instance.Disable();
                 Options.SaveToDisk();
             }
             else if (operation == Strings.Commands.Arguments.MetricsEnable)
             {
+                if (Metrics.MetricsRoot.Instance == null)
+                {
+                    Metrics.MetricsRoot.Init();
+                }
                 Options.Instance.Metrics.Enable = true;
                 Options.SaveToDisk();
             }

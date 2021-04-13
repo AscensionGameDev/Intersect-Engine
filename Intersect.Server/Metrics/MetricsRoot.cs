@@ -50,6 +50,14 @@ namespace Intersect.Server.Metrics
             Instance = new MetricsRoot();
         }
 
+        /// <summary>
+        /// Clears our cached metrics dump so that the api returns an empty object while metrics are disabled.
+        /// </summary>
+        public void Disable()
+        {
+            mLatestSnapshot = new JObject();
+        }
+
         public void Capture()
         {
             mLatestSnapshot = JObject.FromObject(Data(mAppMetricsRoot.Snapshot.Get()));
