@@ -1,5 +1,8 @@
 ﻿using App.Metrics;
 using App.Metrics.Histogram;
+using Intersect.Server.Networking;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect.Server.Metrics.Controllers
 {
@@ -106,6 +109,15 @@ namespace Intersect.Server.Metrics.Controllers
         {
             if (Options.Instance.Metrics.Enable)
                 mAppMetricsRoot.Measure.Histogram.Update(mTotalSentPacketHandlingTime, time);
+        }
+        public override IDictionary<string, object> Data(MetricsDataValueSource snapshot)
+        {
+            var res = base.Data(snapshot);
+            var top10Sent = PacketSender.SentPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
+            var top10Received = PacketHandler.AcceptedPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
+            res.Add("MostSentPackets", top10Sent);
+            res.Add("MostReceivedPackets", top10Received);
+            return res;
         }
     }
 }

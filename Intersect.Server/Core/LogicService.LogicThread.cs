@@ -232,6 +232,17 @@ namespace Intersect.Server.Core
                         if (Options.Instance.Metrics.Enable && Globals.Timing.Milliseconds > metricsTimer)
                         {
                             MetricsRoot.Instance.Capture();
+
+                            foreach (var key in PacketSender.SentPacketTypes.Keys)
+                            {
+                                PacketSender.SentPacketTypes[key] = 0;
+                            }
+
+                            foreach (var key in PacketHandler.AcceptedPacketTypes.Keys)
+                            {
+                                PacketHandler.AcceptedPacketTypes[key] = 0;
+                            }
+
                             metricsTimer = Globals.Timing.Milliseconds + 5000;
                         }
 

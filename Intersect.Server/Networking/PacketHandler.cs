@@ -26,6 +26,7 @@ using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -46,6 +47,8 @@ namespace Intersect.Server.Networking
         public static long ReceivedBytes => AcceptedBytes + DroppedBytes;
 
         public static long ReceivedPackets => AcceptedPackets + DroppedPackets;
+
+        public static ConcurrentDictionary<string, long> AcceptedPacketTypes = new ConcurrentDictionary<string, long>();
 
         public static long AcceptedBytes { get; set; }
 
@@ -401,7 +404,13 @@ namespace Intersect.Server.Networking
                     client.TimedBufferPacketsRemaining = Math.Min(configurableAllowedSpikePackets, client.TimedBufferPacketsRemaining++);
                 }
             }
-            
+
+            if (!AcceptedPacketTypes.ContainsKey(packet.GetType().Name))
+            {
+                AcceptedPacketTypes.TryAdd(packet.GetType().Name, 0);
+            }
+            AcceptedPacketTypes[packet.GetType().Name]++;
+
             client.HandlePacketQueue.Enqueue(packet);
             lock (client.HandlePacketQueue)
             {

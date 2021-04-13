@@ -296,6 +296,11 @@ namespace Intersect.Server.Networking
                         mConnection.Send(packet, mode);
                         if (Options.Instance.Metrics.Enable)
                         {
+                            if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
+                            {
+                                PacketSender.SentPacketTypes.TryAdd(packet.GetType().Name, 0);
+                            }
+                            PacketSender.SentPacketTypes[packet.GetType().Name]++;
                             PacketSender.SentPackets++;
                             PacketSender.SentBytes += packet.Data.Length;
                             MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);

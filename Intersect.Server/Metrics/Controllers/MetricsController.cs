@@ -14,7 +14,7 @@ namespace Intersect.Server.Metrics.Controllers
 
         protected virtual IMetricsRoot mAppMetricsRoot { get; set; }
 
-        public virtual object Data(MetricsDataValueSource snapshot)
+        public virtual IDictionary<string, object> Data(MetricsDataValueSource snapshot)
         {
             var ctx = snapshot.Contexts.FirstOrDefault(c => c.Context == Context);
             var result = new ExpandoObject() as IDictionary<string, object>;
