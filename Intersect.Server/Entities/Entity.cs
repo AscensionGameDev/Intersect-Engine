@@ -306,9 +306,10 @@ namespace Intersect.Server.Entities
                     }
 
                     var statsUpdated = false;
+                    var statTime = Globals.Timing.Milliseconds;
                     for (var i = 0; i < (int)Stats.StatCount; i++)
                     {
-                        statsUpdated = statsUpdated || Stat[i].Update();
+                        statsUpdated |= Stat[i].Update(statTime);
                     }
 
                     if (statsUpdated)
@@ -1502,11 +1503,12 @@ namespace Intersect.Server.Entities
             }
 
             var statBuffTime = -1;
+            var expireTime = Globals.Timing.Milliseconds + spellBase.Combat.Duration;
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 target.Stat[i]
                     .AddBuff(
-                        new Buff(spellBase, spellBase.Combat.StatDiff[i], spellBase.Combat.PercentageStatDiff[i], spellBase.Combat.Duration)
+                        new Buff(spellBase, spellBase.Combat.StatDiff[i], spellBase.Combat.PercentageStatDiff[i], expireTime)
                     );
 
                 if (spellBase.Combat.StatDiff[i] != 0 || spellBase.Combat.PercentageStatDiff[i] != 0)
