@@ -459,7 +459,10 @@ namespace Intersect.Server.Entities
                             var evt = obj.Value as EventBase;
                             if (evt != null && evt.CommonEvent)
                             {
-                                autorunEvents += evt.Pages.Count(p => p.CommonTrigger == CommonEventTrigger.Autorun);
+                                if (Options.Instance.Metrics.Enable)
+                                {
+                                    autorunEvents += evt.Pages.Count(p => p.CommonTrigger == CommonEventTrigger.Autorun);
+                                }
                                 StartCommonEvent(evt, CommonEventTrigger.Autorun);
                             }
                         }
@@ -568,7 +571,10 @@ namespace Intersect.Server.Entities
                                     {
                                         foundEvent.Update(timeMs, foundEvent.MapInstance);
                                     }
-                                    autorunEvents += mapEvent.Pages.Count(p => p.Trigger == EventTrigger.Autorun);
+                                    if (Options.Instance.Metrics.Enable)
+                                    {
+                                        autorunEvents += mapEvent.Pages.Count(p => p.Trigger == EventTrigger.Autorun);
+                                    }
                                 }
                             }
                             MapAutorunEvents = autorunEvents;

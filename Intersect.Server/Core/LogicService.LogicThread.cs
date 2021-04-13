@@ -99,9 +99,12 @@ namespace Intersect.Server.Core
                                 if (player != null)
                                 {
                                     players++;
-                                    events += player.EventLookup.Count;
-                                    eventsProcessing += player.EventLookup.Values.Where(e => e.CallStack?.Count > 0).Count();
-                                    autorunEvents += player.CommonAutorunEvents + player.MapAutorunEvents;
+                                    if (Options.Instance.Metrics.Enable)
+                                    {
+                                        events += player.EventLookup.Count;
+                                        eventsProcessing += player.EventLookup.Values.Where(e => e.CallStack?.Count > 0).Count();
+                                        autorunEvents += player.CommonAutorunEvents + player.MapAutorunEvents;
+                                    }
                                 }
 
                                 var plyrMap = player?.MapId ?? Guid.Empty;
@@ -138,14 +141,16 @@ namespace Intersect.Server.Core
                                 }
                             }
 
-
-                            MetricsRoot.Instance.Game.UpdateActiveEntityCount(globalEntities);
-                            MetricsRoot.Instance.Game.UpdateActiveEventCount(events);
-                            MetricsRoot.Instance.Game.UpdateProcessingEventsCount(eventsProcessing);
-                            MetricsRoot.Instance.Game.UpdateAutorunEventCount(autorunEvents);
-                            MetricsRoot.Instance.Game.UpdateActiveMapCount(ActiveMaps.Count);
-                            MetricsRoot.Instance.Game.UpdatePlayerCount(players);
-                            MetricsRoot.Instance.Network.UpdateClientCount(Globals.Clients?.Count ?? 0);
+                            if (Options.Instance.Metrics.Enable)
+                            {
+                                MetricsRoot.Instance.Game.UpdateActiveEntityCount(globalEntities);
+                                MetricsRoot.Instance.Game.UpdateActiveEventCount(events);
+                                MetricsRoot.Instance.Game.UpdateProcessingEventsCount(eventsProcessing);
+                                MetricsRoot.Instance.Game.UpdateAutorunEventCount(autorunEvents);
+                                MetricsRoot.Instance.Game.UpdateActiveMapCount(ActiveMaps.Count);
+                                MetricsRoot.Instance.Game.UpdatePlayerCount(players);
+                                MetricsRoot.Instance.Network.UpdateClientCount(Globals.Clients?.Count ?? 0);
+                            }
 
                             //End Resync of Active Maps
                             updateTimer = startTime + 250;
@@ -169,9 +174,12 @@ namespace Intersect.Server.Core
                             {
                                 if (MapUpdateQueue.TryDequeue(out MapInstance sameResult))
                                 {
-                                    var delay = Globals.Timing.Milliseconds - (result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval);
-                                    MetricsRoot.Instance.Game.UpdateMapQueueUpdateOffset(delay);
-                                    result.UpdateQueueStart = Globals.Timing.Milliseconds;
+                                    if (Options.Instance.Metrics.Enable)
+                                    {
+                                        var delay = Globals.Timing.Milliseconds - (result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval);
+                                        MetricsRoot.Instance.Game.UpdateMapQueueUpdateOffset(delay);
+                                        result.UpdateQueueStart = Globals.Timing.Milliseconds;
+                                    }
                                     LogicPool.QueueWorkItem(UpdateMap, sameResult, false);
                                 }
                             }                            
@@ -278,15 +286,22 @@ namespace Intersect.Server.Core
                     }
                     else
                     {
-                        var timeBeforeUpdate = Globals.Timing.Milliseconds;
-                        var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
-                        MetricsRoot.Instance.Game.UpdateMapUpdateQueuedTime(timeBeforeUpdate - map.UpdateQueueStart);
-                        map.Update(Globals.Timing.Milliseconds);
-                        MetricsRoot.Instance.Game.UpdateMapUpdateProcessingTime(Globals.Timing.Milliseconds - timeBeforeUpdate);
-                        MetricsRoot.Instance.Game.UpdateMapTotalUpdateTime(Globals.Timing.Milliseconds - desiredMapUpdateTime);
-                        if (ActiveMaps.Contains(map.Id))
+                        if (Options.Instance.Metrics.Enable)
                         {
-                            MapUpdateQueue.Enqueue(map);
+                            var timeBeforeUpdate = Globals.Timing.Milliseconds;
+                            var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
+                            MetricsRoot.Instance.Game.UpdateMapUpdateQueuedTime(timeBeforeUpdate - map.UpdateQueueStart);
+                            map.Update(Globals.Timing.Milliseconds);
+                            MetricsRoot.Instance.Game.UpdateMapUpdateProcessingTime(Globals.Timing.Milliseconds - timeBeforeUpdate);
+                            MetricsRoot.Instance.Game.UpdateMapTotalUpdateTime(Globals.Timing.Milliseconds - desiredMapUpdateTime);
+                            if (ActiveMaps.Contains(map.Id))
+                            {
+                                MapUpdateQueue.Enqueue(map);
+                            }
+                        }
+                        else
+                        {
+                            map.Update(Globals.Timing.Milliseconds);
                         }
                     }
                 }

@@ -294,9 +294,12 @@ namespace Intersect.Server.Networking
                             timedPacket.UpdateTiming();
                         }
                         mConnection.Send(packet, mode);
-                        PacketSender.SentPackets++;
-                        PacketSender.SentBytes += packet.Data.Length;
-                        MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);
+                        if (Options.Instance.Metrics.Enable)
+                        {
+                            PacketSender.SentPackets++;
+                            PacketSender.SentBytes += packet.Data.Length;
+                            MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);
+                        }
                     }
                     catch (Exception exception)
                     {
@@ -361,7 +364,10 @@ namespace Intersect.Server.Networking
                             try
                             {
                                 PacketHandler.Instance.ProcessPacket(packet, this);
-                                MetricsRoot.Instance.Network.UpdateTotalReceivedPacketHandlingTime(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                if (Options.Instance.Metrics.Enable)
+                                {
+                                    MetricsRoot.Instance.Network.UpdateTotalReceivedPacketHandlingTime(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                }
                             }
                             catch (Exception exception)
                             {
