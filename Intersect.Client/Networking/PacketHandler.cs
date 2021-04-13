@@ -1289,10 +1289,26 @@ namespace Intersect.Client.Networking
         //ProjectileDeadPacket
         public void HandlePacket(IPacketSender packetSender, ProjectileDeadPacket packet)
         {
-            var entityId = packet.ProjectileId;
-            if (Globals.Entities.ContainsKey(entityId) && Globals.Entities[entityId].GetType() == typeof(Projectile))
+            if (packet.ProjectileDeaths != null)
             {
-                ((Projectile) Globals.Entities[entityId]).SpawnDead(packet.SpawnId);
+                foreach (var projDeath in packet.ProjectileDeaths)
+                {
+                    if (Globals.Entities.ContainsKey(projDeath) && Globals.Entities[projDeath].GetType() == typeof(Projectile))
+                    {
+                        Globals.Entities[projDeath]?.Dispose();
+                        Globals.EntitiesToDispose?.Add(projDeath);
+                    }
+                }
+            }
+            if (packet.SpawnDeaths != null)
+            {
+                foreach (var spawnDeath in packet.SpawnDeaths)
+                {
+                    if (Globals.Entities.ContainsKey(spawnDeath.Key) && Globals.Entities[spawnDeath.Key].GetType() == typeof(Projectile))
+                    {
+                        ((Projectile)Globals.Entities[spawnDeath.Key]).SpawnDead(spawnDeath.Value);
+                    }
+                }
             }
         }
 

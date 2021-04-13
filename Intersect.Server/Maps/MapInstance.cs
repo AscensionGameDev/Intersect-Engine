@@ -504,16 +504,19 @@ namespace Intersect.Server.Maps
 
         public void DespawnProjectilesOf(ProjectileBase projectileBase)
         {
+            var guids = new List<Guid>();
             foreach (var entity in mEntities)
             {
                 if (entity.Value is Projectile proj && proj.Base == projectileBase)
                 {
                     lock (proj.EntityLock)
                     {
+                        guids.Add(proj.Id);
                         proj.Die(0);
                     }
                 }
             }
+            PacketSender.SendRemoveProjectileSpawns(Id, guids.ToArray(), null);
         }
 
         public void DespawnItemsOf(ItemBase itemBase)
@@ -804,13 +807,16 @@ namespace Intersect.Server.Maps
 
         public void DespawnProjectiles()
         {
+            var guids = new List<Guid>();
             foreach (var proj in MapProjectiles)
             {
                 if (proj.Value != null)
                 {
+                    guids.Add(proj.Value.Id);
                     proj.Value.Die();
                 }
             }
+            PacketSender.SendRemoveProjectileSpawns(Id, guids.ToArray(), null);
             MapProjectiles.Clear();
             MapProjectilesCached = new Projectile[0];
         }
@@ -1081,10 +1087,18 @@ namespace Intersect.Server.Maps
 
         public void UpdateProjectiles(long timeMs)
         {
+            var spawnDeaths = new List<KeyValuePair<Guid, int>>();
+            var projDeaths = new List<Guid>();
+
             //Process all of the projectiles
             foreach (var proj in MapProjectilesCached)
             {
-                proj.Update();
+                proj.Update(projDeaths, spawnDeaths);
+            }
+
+            if (projDeaths.Count > 0 || spawnDeaths.Count > 0)
+            {
+                PacketSender.SendRemoveProjectileSpawns(Id, projDeaths.ToArray(), spawnDeaths.ToArray());
             }
 
             //Process all of the traps

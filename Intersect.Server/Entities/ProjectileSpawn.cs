@@ -31,6 +31,8 @@ namespace Intersect.Server.Entities
 
         public byte Z;
 
+        public bool Dead;
+
         private List<Guid> mEntitiesCollided = new List<Guid>();
 
         public ProjectileSpawn(
@@ -167,11 +169,6 @@ namespace Intersect.Server.Entities
             }
 
             return false;
-        }
-
-        public void Dispose(int spawnIndex)
-        {
-            PacketSender.SendRemoveProjectileSpawn(MapId, Parent.Id, spawnIndex);
         }
 
     }
