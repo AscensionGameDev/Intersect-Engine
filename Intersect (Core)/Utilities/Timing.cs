@@ -8,6 +8,11 @@ namespace Intersect.Utilities
     /// </summary>
     public sealed class Timing
     {
+        private static int lastTicks = -1;
+        private static DateTime lastDateTime = DateTime.MinValue;
+        public static long Hits = 0;
+        public static long Misses = 0;
+
         /// <summary>
         /// The global <see cref="Timing"/> instance.
         /// </summary>
@@ -52,7 +57,21 @@ namespace Intersect.Utilities
         /// </summary>
         public long TicksUTC
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => DateTime.UtcNow.Ticks;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                int tickCount = Environment.TickCount;
+                if (tickCount == lastTicks)
+                {
+                    Hits++;
+                    return lastDateTime.Ticks;
+                }
+                Misses++;
+                DateTime dt = DateTime.UtcNow;
+                lastTicks = tickCount;
+                lastDateTime = dt;
+                return dt.Ticks;
+            }
         }
 
         /// <summary>
