@@ -51,10 +51,12 @@ namespace Intersect.Server.Database.PlayerData
             return OnlineUsers.Values.FirstOrDefault(s => s.Email.ToLower().Trim() == email.ToLower().Trim());
         }
 
-        public static void Login(User user)
+        public static void Login(User user, string ip)
         {
             if (!OnlineUsers.ContainsKey(user.Id))
                 OnlineUsers.TryAdd(user.Id, user);
+
+            user.LastIp = ip;
         }
 
         public void TryLogout ()
@@ -111,6 +113,28 @@ namespace Intersect.Server.Database.PlayerData
 
         [JsonIgnore]
         public DateTime? PasswordResetTime { get; set; }
+
+        public DateTime? RegistrationDate { get; set; } = DateTime.UtcNow;
+
+        private TimeSpan mLoadedPlaytime { get; set; } = TimeSpan.Zero;
+
+        public TimeSpan PlayTime
+        {
+            get
+            {
+                return mLoadedPlaytime + ( LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero);
+            }
+
+            set
+            {
+                mLoadedPlaytime = value;
+            }
+        }
+
+        [NotMapped]
+        public DateTime? LoginTime { get; set; }
+
+        public string LastIp { get; set; }
 
         [JsonIgnore]
         [NotMapped]

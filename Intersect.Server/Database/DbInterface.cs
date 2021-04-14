@@ -427,19 +427,6 @@ namespace Intersect.Server.Database
             user.Save();
         }
 
-        public static bool LoadUser(Client client, string username)
-        {
-            var user = User.Find(username.Trim());
-            if (user != null)
-            {
-                client.SetUser(user);
-
-                return true;
-            }
-
-            return false;
-        }
-
         public static bool BagEmpty(Bag bag)
         {
             for (var i = 0; i < bag.Slots.Count; i++)

@@ -132,7 +132,7 @@ namespace Intersect.Server.Networking
 
             if (user != null && user != User)
             {
-                User.Login(user);
+                User.Login(user, mConnection.Ip);
             }
 
             User = user;
@@ -214,6 +214,12 @@ namespace Intersect.Server.Networking
             var entity = Entity;
             entity?.TryLogout();
             Entity = null;
+
+            if (User.LoginTime != null && User != null)
+            {
+                User.PlayTime += DateTime.UtcNow - (DateTime)User.LoginTime;
+                User.LoginTime = null;
+            }
 
             if (!force)
             {
