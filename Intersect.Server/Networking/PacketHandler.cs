@@ -728,7 +728,7 @@ namespace Intersect.Server.Networking
 
             var msg = packet.Message;
             var channel = packet.Channel;
-            if (client?.User.IsMuted ?? false) //Don't let the toungless toxic kids speak.
+            if (client?.User.IsMuted ?? false) //Don't let the tongueless toxic kids speak.
             {
                 PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason, ChatMessageType.Notice);
 
@@ -794,29 +794,23 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                var chatColor = CustomColors.Chat.LocalChat;
+
                 if (client?.Power.IsAdmin ?? false)
                 {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.AdminLocalChat,
-                        player.Name
-                    );
+                    chatColor = CustomColors.Chat.AdminLocalChat;
                 }
                 else if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.ModLocalChat,
-                        player.Name
-                    );
-                }
-                else
-                {
-                    PacketSender.SendProximityMsg(
-                        Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, CustomColors.Chat.LocalChat,
-                        player.Name
-                    );
+                    chatColor = CustomColors.Chat.ModLocalChat;
                 }
 
+                PacketSender.SendProximityMsg(
+                    Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, chatColor,
+                    player.Name
+                );
                 PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, null);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
             {
@@ -825,24 +819,18 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                var chatColor = CustomColors.Chat.GlobalChat;
                 if (client?.Power.IsAdmin ?? false)
                 {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.AdminGlobalChat, player.Name
-                    );
+                    chatColor = CustomColors.Chat.AdminGlobalChat;
                 }
                 else if (client?.Power.IsModerator ?? false)
                 {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.ModGlobalChat, player.Name
-                    );
+                    chatColor = CustomColors.Chat.ModGlobalChat;
                 }
-                else
-                {
-                    PacketSender.SendGlobalMsg(
-                        Strings.Chat.Global.ToString(player.Name, msg), CustomColors.Chat.GlobalChat, player.Name
-                    );
-                }
+
+                PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, null);
             }
             else if (cmd == Strings.Chat.partycmd)
             {
@@ -856,6 +844,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendPartyMsg(
                         player, Strings.Chat.party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
                     );
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, null);
                 }
                 else
                 {
@@ -874,6 +863,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendAdminMsg(
                         Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                     );
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, null);
                 }
             }
             else if (cmd == Strings.Chat.announcementcmd)
@@ -896,6 +886,8 @@ namespace Intersect.Server.Networking
                         // TODO: Make the duration configurable through chat?
                         PacketSender.SendGameAnnouncement(msg, Options.Chat.AnnouncementDisplayDuration);
                     }
+
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, null);
                 }
             }
             else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
@@ -912,31 +904,27 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                for (var i = 0; i < Globals.Clients.Count; i++)
+                var target = Player.FindOnline(msgSplit[0].ToLower());
+                if (target != null)
                 {
-                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                    {
-                        if (msgSplit[0].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                        {
-                            PacketSender.SendChatMsg(
-                                player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
-                                player.Name
-                            );
+                    PacketSender.SendChatMsg(
+                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player.Name
+                    );
 
-                            PacketSender.SendChatMsg(
-                                Globals.Clients[i].Entity, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
-                                CustomColors.Chat.PrivateChat, player.Name
-                            );
+                    PacketSender.SendChatMsg(
+                        target, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
+                        CustomColors.Chat.PrivateChat, player.Name
+                    );
 
-                            Globals.Clients[i].Entity.ChatTarget = player;
-                            player.ChatTarget = Globals.Clients[i].Entity;
-
-                            return;
-                        }
-                    }
+                    target.ChatTarget = player;
+                    player.ChatTarget = target;
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, target);
                 }
-
-                PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                else
+                {
+                    PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
+                }
             }
             else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
             {
@@ -945,7 +933,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                if (player.ChatTarget != null)
+                if (player.ChatTarget != null && Player.FindOnline(player.ChatTarget.Id) != null)
                 {
                     PacketSender.SendChatMsg(
                         player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
@@ -958,6 +946,7 @@ namespace Intersect.Server.Networking
                     );
 
                     player.ChatTarget.ChatTarget = player;
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, player.ChatTarget);
                 }
                 else
                 {

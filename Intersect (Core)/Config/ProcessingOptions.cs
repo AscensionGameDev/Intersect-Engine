@@ -43,6 +43,21 @@ namespace Intersect.Config
         public int NetworkThreadIdleTimeout { get; set; } = 20000;
 
         /// <summary>
+        /// Minimum number of threads that will be used for packet processing which we don't want to slow down our game loop.
+        /// </summary>
+        public int MinPlayerSaveThreads { get; set; } = 2;
+
+        /// <summary>
+        /// Maximum number of threads that will be used for packet processing which we don't want to slow down our game loop.
+        /// </summary>
+        public int MaxPlayerSaveThreads { get; set; } = 4;
+
+        /// <summary>
+        /// This is how long (in ms) a network thread in our network pool should be idle before it is considered unneeded and therefore disposed.
+        /// </summary>
+        public int PlayerSaveThreadIdleTimeout { get; set; } = 20000;
+
+        /// <summary>
         /// This controls how often maps/npcs should be updated in ms.
         /// </summary>
         public int MapUpdateInterval { get; set; } = 50;
@@ -98,6 +113,21 @@ namespace Intersect.Config
             if (NetworkThreadIdleTimeout < 1000)
             {
                 throw new Exception("Network thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+            }
+
+            if (MinPlayerSaveThreads < 1)
+            {
+                throw new InvalidOperationException("Need at least 1 player saving thread.");
+            }
+
+            if (MaxPlayerSaveThreads < MinPlayerSaveThreads)
+            {
+                throw new InvalidOperationException("The maximum number of player saving threads should be greater than the minimum number of player saving threads.");
+            }
+
+            if (PlayerSaveThreadIdleTimeout < 1000)
+            {
+                throw new Exception("Player saving thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
             }
 
             if (MapUpdateInterval > 200)

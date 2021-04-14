@@ -447,6 +447,7 @@
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
+    <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
@@ -531,6 +532,10 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.cs" />
+    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.designer.cs">
+      <DependentUpon>20210414222302_AddedChatLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
