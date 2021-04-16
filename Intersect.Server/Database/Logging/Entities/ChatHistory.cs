@@ -1,5 +1,6 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.Entities;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,11 +19,24 @@ namespace Intersect.Server.Database.Logging.Entities
 
         public DateTime TimeStamp { get; set; }
 
+        [JsonIgnore]
         public ChatMessageType MessageType { get; set; }
+
+        [JsonProperty("MessageType")]
+        public string MessageTypeName => Enum.GetName(typeof(ChatMessageType), MessageType);
 
         public string MessageText { get; set; }
 
         public Guid TargetId { get; set; }
+
+        [NotMapped]
+        public string Username { get; set; }
+
+        [NotMapped]
+        public string PlayerName { get; set; }
+
+        [NotMapped]
+        public string TargetName { get; set; }
 
         public ChatHistory()
         {
@@ -43,16 +57,16 @@ namespace Intersect.Server.Database.Logging.Entities
                 using (var logging = DbInterface.LoggingContext)
                 {
                     logging.ChatHistory.Add(
-                                new ChatHistory
-                                {
-                                    UserId = player?.Client?.User?.Id ?? Guid.Empty,
-                                    PlayerId = player?.Id ?? Guid.Empty,
-                                    Ip = player?.Client?.GetIp(),
-                                    MessageType = type,
-                                    MessageText = message,
-                                    TargetId = target?.Id ?? Guid.Empty
-                                }
-                            );
+                        new ChatHistory
+                        {
+                            UserId = player?.Client?.User?.Id ?? Guid.Empty,
+                            PlayerId = player?.Id ?? Guid.Empty,
+                            Ip = player?.Client?.GetIp(),
+                            MessageType = type,
+                            MessageText = message,
+                            TargetId = target?.Id ?? Guid.Empty
+                        }
+                    );
                 }
             }
         }
