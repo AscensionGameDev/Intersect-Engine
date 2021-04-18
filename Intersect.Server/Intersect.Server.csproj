@@ -508,6 +508,10 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.cs" />
+    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.designer.cs">
+      <DependentUpon>20210414121435_TrackUserPlayerStats.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
       <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>

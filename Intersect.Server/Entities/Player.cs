@@ -94,6 +94,26 @@ namespace Intersect.Server.Entities
 
         public DateTime? LastOnline { get; set; }
 
+        public DateTime? CreationDate { get; set; } = DateTime.UtcNow;
+
+        private TimeSpan mLoadedPlaytime { get; set; } = TimeSpan.Zero;
+
+        public TimeSpan PlayTime
+        {
+            get
+            {
+                return mLoadedPlaytime + (LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero);
+            }
+
+            set
+            {
+                mLoadedPlaytime = value;
+            }
+        }
+
+        [NotMapped]
+        public DateTime? LoginTime { get; set; }
+
         //Bank
         [JsonIgnore]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
@@ -188,6 +208,16 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            if (LoginTime == null)
+            {
+                LoginTime = DateTime.UtcNow;
+            }
+
+            if (User != null && User.LoginTime == null)
+            {
+                User.LoginTime = DateTime.UtcNow;
+            }
+
             LoadFriends();
 
             //Upon Sign In Remove Any Items/Spells that have been deleted
@@ -238,6 +268,12 @@ namespace Intersect.Server.Entities
         {
             LastOnline = DateTime.Now;
             Client = null;
+
+            if (LoginTime != null)
+            {
+                PlayTime += DateTime.UtcNow - (DateTime)LoginTime;
+                LoginTime = null;
+            }
 
             if (CombatTimer < Globals.Timing.Milliseconds || force)
             {
