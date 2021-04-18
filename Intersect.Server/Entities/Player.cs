@@ -112,6 +112,9 @@ namespace Intersect.Server.Entities
         }
 
         [NotMapped]
+        public TimeSpan OnlineTime => LoginTime != null ? DateTime.UtcNow - (DateTime)LoginTime : TimeSpan.Zero;
+
+        [NotMapped]
         public DateTime? LoginTime { get; set; }
 
         //Bank

@@ -181,6 +181,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case "level":
                     enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Level).ThenBy(u => u.Exp) : enumerable.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
                     break;
+                case "onlinetime":
+                    enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.OnlineTime) : enumerable.OrderByDescending(u => u.OnlineTime);
+                    break;
                 case "name":
                 default:
                     enumerable = sortDirection == SortDirection.Ascending ? enumerable.OrderBy(u => u.Name.ToUpper()) : enumerable.OrderByDescending(u => u.Name.ToUpper());
