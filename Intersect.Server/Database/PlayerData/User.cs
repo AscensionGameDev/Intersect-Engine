@@ -680,6 +680,12 @@ namespace Intersect.Server.Database.PlayerData
                         case "email":
                             compiledQuery= sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());
                             break;
+                        case "registrationdate":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.RegistrationDate) : compiledQuery.OrderByDescending(u => u.RegistrationDate);
+                            break;
+                        case "playtime":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTime) : compiledQuery.OrderByDescending(u => u.PlayTime);
+                            break;
                         case "name":
                         default:
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());

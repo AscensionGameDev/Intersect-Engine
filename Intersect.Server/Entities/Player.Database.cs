@@ -301,6 +301,12 @@ namespace Intersect.Server.Entities
                         case "level":
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Level).ThenBy(u => u.Exp) : compiledQuery.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
                             break;
+                        case "creationdate":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.CreationDate) : compiledQuery.OrderByDescending(u => u.CreationDate);
+                            break;
+                        case "playtime":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTime) : compiledQuery.OrderByDescending(u => u.PlayTime);
+                            break;
                         case "name":
                         default:
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
