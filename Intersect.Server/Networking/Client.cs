@@ -215,7 +215,7 @@ namespace Intersect.Server.Networking
             entity?.TryLogout();
             Entity = null;
 
-            if (User.LoginTime != null && User != null)
+            if (User != null && User.LoginTime != null)
             {
                 User.PlayTime += DateTime.UtcNow - (DateTime)User.LoginTime;
                 User.LoginTime = null;
