@@ -27,7 +27,7 @@ namespace Intersect.Server.Notifications
 
         public bool IsHtml { get; set; } = false;
 
-        public void Send()
+        public bool Send()
         {
             //Check and see if smtp is even setup
             if (Options.Smtp.IsValid())
@@ -60,6 +60,8 @@ namespace Intersect.Server.Notifications
                         {
                             smtp.Send(message);
                         }
+
+                        return true;
                     }
                     catch (Exception ex)
                     {
@@ -72,6 +74,7 @@ namespace Intersect.Server.Notifications
                             Environment.NewLine +
                             ex.ToString()
                         );
+                        return false;
                     }
                 }
                 else
@@ -83,6 +86,7 @@ namespace Intersect.Server.Notifications
                         ToAddress +
                         ". Reason: SMTP not configured!"
                     );
+                    return false;
                 }
             }
             else
@@ -90,6 +94,7 @@ namespace Intersect.Server.Notifications
                 Log.Warn(
                     "Failed to send email (Subject: " + Subject + ") to " + ToAddress + ". Reason: SMTP not configured!"
                 );
+                return false;
             }
         }
 

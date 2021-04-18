@@ -2523,7 +2523,10 @@ namespace Intersect.Server.Networking
                 if (user != null)
                 {
                     var email = new PasswordResetEmail(user);
-                    email.Send();
+                    if (!email.Send())
+                    {
+                        PacketSender.SendError(client, Strings.Account.emailfail);
+                    }
                 }
                 else
                 {

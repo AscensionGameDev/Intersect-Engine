@@ -17,7 +17,7 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-
+using Intersect.Server.Web.RestApi.Payloads;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -238,6 +238,35 @@ namespace Intersect.Server.Database.PlayerData
             {
                 Log.Error(ex, "Failed to save user while deleting character: " + Name);
                 ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+        }
+
+        public void Delete()
+        {
+            //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
+            //The cost of making a new context is almost nil.
+            try
+            {
+                lock (mSavingLock)
+                {
+                    using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                    {
+                        context.Users.Remove(this);
+
+                        context.ChangeTracker.DetectChanges();
+
+                        context.StopTrackingUsersExcept(this);
+
+                        context.Entry(this).State = EntityState.Deleted;
+
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete user: " + Name);
+                ServerContext.DispatchUnhandledException(new Exception("Failed to delete user, shutting down to prevent rollbacks!"), true);
             }
         }
 
@@ -613,17 +642,33 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<User> List(int page, int count)
+        public static IList<User> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext()) {
-                    return QueryUsers(context, page * count, count)?.ToList() ?? throw new InvalidOperationException();
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Users.Include(p => p.Ban).Include(p => p.Mute) : context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"));
+                    
+                    total = compiledQuery.Count();
+
+                    switch (sortBy?.ToLower() ?? "")
+                    {
+                        case "email":
+                            compiledQuery= sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Email.ToUpper()) : compiledQuery.OrderByDescending(u => u.Email.ToUpper());
+                            break;
+                        case "name":
+                        default:
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                            break;
+                    }
+
+                    return compiledQuery.Skip(skip).Take(take).ToList();
                 }          
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
+                total = 0;
                 return null;
             }
         }
@@ -631,16 +676,6 @@ namespace Intersect.Server.Database.PlayerData
         #endregion
 
         #region Compiled Queries
-
-        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
-            EF.CompileQuery(
-                (PlayerContext context, int offset, int count) => context.Users.OrderBy(user => user.Id.ToString())
-                    .Skip(offset)
-                    .Take(count)
-                    .Include(p => p.Ban)
-                    .Include(p => p.Mute)
-            ) ??
-            throw new InvalidOperationException();
 
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery(

@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.GameObjects;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Database
@@ -18,6 +19,9 @@ namespace Intersect.Server.Database
         }
 
         public Guid SpellId { get; set; }
+
+        [NotMapped]
+        public string SpellName => SpellBase.GetName(SpellId);
 
         //SpellCD NO LONGER USED
         //CAN'T REMOVE VIA EF UNTIL SQLITE ALLOWS ALTER TABLE DROP COLUMN

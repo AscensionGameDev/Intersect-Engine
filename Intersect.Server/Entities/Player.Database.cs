@@ -80,7 +80,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return QueryPlayerById(context, playerId);
+                    return Load(QueryPlayerById(context, playerId));
                 }
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return QueryPlayerByName(context, playerName);
+                    return Load(QueryPlayerByName(context, playerName));
                 }
             }
             catch (Exception ex)
@@ -286,19 +286,34 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public static IList<Player> List(int page, int count)
+        public static IList<Player> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return QueryPlayers(context, page * count, count)?.ToList();
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Players : context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
 
+                    total = compiledQuery.Count();
+
+                    switch (sortBy?.ToLower() ?? "")
+                    {
+                        case "level":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Level).ThenBy(u => u.Exp) : compiledQuery.OrderByDescending(u => u.Level).ThenByDescending(u => u.Exp);
+                            break;
+                        case "name":
+                        default:
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                            break;
+                    }
+                    
+                    return compiledQuery.Skip(skip).Take(take).ToList();
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
+                total = 0;
                 return null;
             }
         }
@@ -330,21 +345,6 @@ namespace Intersect.Server.Entities
         #endregion
 
         #region Compiled Queries
-
-        private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
-            EF.CompileQuery(
-                (PlayerContext context, int offset, int count) => context.Players
-                    .OrderBy(player => player.Id.ToString())
-                    .Skip(offset)
-                    .Take(count)
-                    .Include(p => p.Bank)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-            ) ??
-            throw new InvalidOperationException();
 
         private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
             EF.CompileQuery(
