@@ -447,6 +447,7 @@
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
+    <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
@@ -535,6 +536,10 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.cs" />
+    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.designer.cs">
+      <DependentUpon>20210414222302_AddedChatLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
@@ -726,6 +731,7 @@
     <Compile Include="Web\RestApi\Middleware\IntersectThrottlingMiddleware.cs" />
     <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\IpAddress.cs" />
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
     <Compile Include="Web\RestApi\Payloads\LevelChange.cs" />
@@ -765,6 +771,7 @@
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\LogsController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
     <Compile Include="Web\RestApi\Serialization\ApiVisibilityContractResolver.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
