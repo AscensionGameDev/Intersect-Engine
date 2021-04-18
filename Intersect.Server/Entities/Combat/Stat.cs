@@ -66,12 +66,13 @@ namespace Intersect.Server.Entities.Combat
             return finalStat;
         }
 
-        public bool Update()
+        public bool Update(long time)
         {
+            var origVal = Value();
             var changed = false;
             foreach (var buff in mBuff)
             {
-                if (buff.Value.Duration <= Globals.Timing.Milliseconds)
+                if (buff.Value.ExpireTime <= time)
                 {
                     changed |= mBuff.TryRemove(buff.Key, out Buff result);
                 }
@@ -82,6 +83,7 @@ namespace Intersect.Server.Entities.Combat
                 mCachedBuffs = mBuff.Values.ToArray();
             }
 
+            changed |= Value() != origVal;
             changed |= mChanged;
             mChanged = false;
 
@@ -90,9 +92,10 @@ namespace Intersect.Server.Entities.Combat
 
         public void AddBuff(Buff buff)
         {
+            var origVal = Value();
             mBuff.AddOrUpdate(buff.Spell, buff, (key, val) => buff);
             mCachedBuffs = mBuff.Values.ToArray();
-            mChanged = true;
+            mChanged = Value() != origVal;
         }
 
         public void Reset()
