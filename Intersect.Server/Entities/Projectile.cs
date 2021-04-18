@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Enums;
@@ -88,7 +89,7 @@ namespace Intersect.Server.Entities
             Spawns = new ProjectileSpawn[mTotalSpawns];
         }
 
-        private void AddProjectileSpawns()
+        private void AddProjectileSpawns(List<KeyValuePair<Guid, int>> spawnDeaths)
         {
             for (byte x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
@@ -109,7 +110,7 @@ namespace Intersect.Server.Entities
                             mSpawnCount++;
                             if (CheckForCollision(s))
                             {
-                                KillSpawn(s);
+                                s.Dead = true;
                             }
                         }
                     }
@@ -231,14 +232,14 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void Update()
+        public void Update(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
         {
             if (mQuantity < Base.Quantity && Globals.Timing.Milliseconds > mSpawnTime)
             {
-                AddProjectileSpawns();
+                AddProjectileSpawns(spawnDeaths);
             }
 
-            ProcessFragments();
+            ProcessFragments(projDeaths, spawnDeaths);
         }
 
         private int GetRangeX(int direction, int range)
@@ -283,7 +284,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void ProcessFragments()
+        public void ProcessFragments(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
         {
             if (Base == null)
             {
@@ -300,15 +301,19 @@ namespace Intersect.Server.Entities
                         var x = spawn.X;
                         var y = spawn.Y;
                         var map = spawn.MapId;
-                        var killSpawn = MoveFragment(spawn);
-                        if (!killSpawn && (x != spawn.X || y != spawn.Y || map != spawn.MapId))
+                        var killSpawn = false;
+                        if (!spawn.Dead)
                         {
-                            killSpawn = CheckForCollision(spawn);
+                            killSpawn = MoveFragment(spawn);
+                            if (!killSpawn && (x != spawn.X || y != spawn.Y || map != spawn.MapId))
+                            {
+                                killSpawn = CheckForCollision(spawn);
+                            }
                         }
 
-                        if (killSpawn)
+                        if (killSpawn || spawn.Dead)
                         {
-                            spawn.Dispose(i);
+                            spawnDeaths.Add(new KeyValuePair<Guid, int>(Id, i));
                             Spawns[i] = null;
                             mSpawnCount--;
 
@@ -321,23 +326,8 @@ namespace Intersect.Server.Entities
             {
                 lock (EntityLock)
                 {
+                    projDeaths.Add(Id);
                     Die(0, null);
-                }
-            }
-        }
-
-        public void KillSpawn(ProjectileSpawn spawn)
-        {
-            if (spawn != null && Spawns.Contains(spawn))
-            {
-                for (var i = 0; i < Spawns.Length; i++)
-                {
-                    if (spawn == Spawns[i])
-                    {
-                        Spawns[i]?.Dispose(i);
-                        Spawns[i] = null;
-                        mSpawnCount--;
-                    }
                 }
             }
         }
@@ -510,13 +500,10 @@ namespace Intersect.Server.Entities
         {
             for (var i = 0; i < Spawns.Length; i++)
             {
-                Spawns[i]?.Dispose(i);
                 Spawns[i] = null;
             }
 
             MapInstance.Get(MapId).RemoveProjectile(this);
-            PacketSender.SendEntityDie(this);
-            PacketSender.SendEntityLeave(this);
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

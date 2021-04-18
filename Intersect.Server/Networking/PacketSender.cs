@@ -766,9 +766,9 @@ namespace Intersect.Server.Networking
         }
 
         //ProjectileDeadPacket
-        public static void SendRemoveProjectileSpawn(Guid mapId, Guid baseEntityId, int spawnIndex)
+        public static void SendRemoveProjectileSpawns(Guid mapId, Guid[] projDeaths, KeyValuePair<Guid, int>[] spawnDeaths)
         {
-            SendDataToProximity(mapId, new ProjectileDeadPacket(baseEntityId, spawnIndex));
+            SendDataToProximity(mapId, new ProjectileDeadPacket(projDeaths, spawnDeaths));
         }
 
         //EntityMovePacket

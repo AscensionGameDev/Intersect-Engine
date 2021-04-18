@@ -935,7 +935,7 @@ namespace Intersect.Server.Entities
 
                                         if (spawn.IsAtLocation(MapId, X, Y, Z) && spawn.HitEntity(this))
                                         {
-                                            projectile.KillSpawn(spawn);
+                                            spawn.Dead = true;
                                         }
                                     }
                                 }

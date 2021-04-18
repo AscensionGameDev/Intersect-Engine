@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using System;
+using System.Collections.Generic;
 
 namespace Intersect.Network.Packets.Server
 {
@@ -11,17 +12,16 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public ProjectileDeadPacket(Guid projectileId, int spawnId)
+        public ProjectileDeadPacket(Guid[] projectileDeaths, KeyValuePair<Guid, int>[] spawnIndices)
         {
-            ProjectileId = projectileId;
-            SpawnId = spawnId;
+            ProjectileDeaths = projectileDeaths;
+            SpawnDeaths = spawnIndices;
         }
 
         [Key(0)]
-        public Guid ProjectileId { get; set; }
-
+        public Guid[] ProjectileDeaths { get; set; }
         [Key(1)]
-        public int SpawnId { get; set; }
+        public KeyValuePair<Guid, int>[] SpawnDeaths { get; set; }
 
     }
 
