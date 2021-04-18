@@ -218,6 +218,18 @@ namespace Intersect.Server.Localization
                     Description = @"role to grant or revoke (users.query or users.manage)"
                 };
 
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsLock = @"lock";
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument CpsOperation = new LocaleArgument
+                {
+                    Name = @"operation",
+                    Description = @"one of the following: status, lock, unlock"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsStatus = @"status";
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString CpsUnlock = @"unlock";
+
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument DurationBan = new LocaleArgument
                 {
                     Name = @"duration",
