@@ -1392,7 +1392,6 @@ namespace Intersect.Server.Entities
                 if (mTargetFailCounter > mTargetFailMax)
                 {
                     CheckForResetLocation(true);
-                    PacketSender.SendNpcAggressionToProximity(this);
                 }
             }
 
