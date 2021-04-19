@@ -72,6 +72,7 @@ namespace Intersect.Server.Metrics
             result.Add(Game.Context, Game.Data(snapshot));
             result.Add(Application.Context, Application.Data(snapshot));
             result.Add(Network.Context, Network.Data(snapshot));
+            result.Add(Threading.Context, Threading.Data(snapshot));
             return new
             {
                 uptime = Globals.Timing.Milliseconds,
