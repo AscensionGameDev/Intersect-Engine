@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using Intersect.Server.Metrics;
 using Newtonsoft.Json;
 using Intersect.Server.Networking;
+using Intersect.Server.Networking.Lidgren;
 
 namespace Intersect.Server.Core
 {
@@ -33,7 +34,15 @@ namespace Intersect.Server.Core
             /// This is our thread pool for handling server/game logic. This includes npcs, event processing, map updating, projectiles, spell casting, etc. 
             /// Min/Max Number of Threads & Idle Timeouts are set via server config.
             /// </summary>
-            public readonly SmartThreadPool LogicPool = new SmartThreadPool(Options.Instance.Processing.LogicThreadIdleTimeout, Options.Instance.Processing.MaxLogicThreads, Options.Instance.Processing.MinLogicThreads);
+            public readonly SmartThreadPool LogicPool = new SmartThreadPool(
+                new STPStartInfo()
+                {
+                    ThreadPoolName = "LogicPool",
+                    IdleTimeout = 20000,
+                    MinWorkerThreads = Options.Instance.Processing.MinLogicThreads,
+                    MaxWorkerThreads = Options.Instance.Processing.MaxLogicThreads
+                }
+            );
 
             /// <summary>
             /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again.
@@ -229,21 +238,40 @@ namespace Intersect.Server.Core
                             swCpsTimer = Globals.Timing.Milliseconds + 1000;
                         }
 
-                        if (Options.Instance.Metrics.Enable && Globals.Timing.Milliseconds > metricsTimer)
+                        if (Options.Instance.Metrics.Enable)
                         {
-                            MetricsRoot.Instance.Capture();
+                            //Record how our Thread Pools are Operating
+                            MetricsRoot.Instance.Threading.UpdateLogicPoolActiveThreads(LogicPool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.UpdateLogicPoolInUseThreads(LogicPool.InUseThreads);
+                            MetricsRoot.Instance.Threading.UpdateLogicPoolWorkItemsCount(LogicPool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.UpdateNetworkPoolActiveThreads(ServerNetwork.Pool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.UpdateNetworkPoolInUseThreads(ServerNetwork.Pool.InUseThreads);
+                            MetricsRoot.Instance.Threading.UpdateNetworkPoolWorkItemsCount(ServerNetwork.Pool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.UpdateSavingPoolActiveThreads(Player.PlayerSavingPool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.UpdateSavingPoolInUseThreads(Player.PlayerSavingPool.InUseThreads);
+                            MetricsRoot.Instance.Threading.UpdateSavingPoolWorkItemsCount(Player.PlayerSavingPool.CurrentWorkItemsCount);
 
-                            foreach (var key in PacketSender.SentPacketTypes.Keys)
+                            ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxIOThreads);
+                            ThreadPool.GetAvailableThreads(out int availableWorkerThreads, out int availableIOThreads);
+                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseWorkerThreads(maxWorkerThreads - availableWorkerThreads);
+                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseIOThreads(maxIOThreads - availableIOThreads);
+
+                            if (Globals.Timing.Milliseconds > metricsTimer)
                             {
-                                PacketSender.SentPacketTypes[key] = 0;
-                            }
+                                MetricsRoot.Instance.Capture();
 
-                            foreach (var key in PacketHandler.AcceptedPacketTypes.Keys)
-                            {
-                                PacketHandler.AcceptedPacketTypes[key] = 0;
-                            }
+                                foreach (var key in PacketSender.SentPacketTypes.Keys)
+                                {
+                                    PacketSender.SentPacketTypes[key] = 0;
+                                }
 
-                            metricsTimer = Globals.Timing.Milliseconds + 5000;
+                                foreach (var key in PacketHandler.AcceptedPacketTypes.Keys)
+                                {
+                                    PacketHandler.AcceptedPacketTypes[key] = 0;
+                                }
+
+                                metricsTimer = Globals.Timing.Milliseconds + 5000;
+                            }
                         }
 
                         if (Options.Instance.Processing.CpsLock)

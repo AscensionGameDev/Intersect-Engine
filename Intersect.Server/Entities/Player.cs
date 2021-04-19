@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amib.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -36,6 +37,19 @@ namespace Intersect.Server.Entities
 
     public partial class Player : Entity
     {
+        /// <summary>
+        /// This is our thread pool for handling player saving/logouts.
+        /// Min/Max Number of Threads & Idle Timeouts are set via server config.
+        /// </summary>
+        public static SmartThreadPool PlayerSavingPool = new SmartThreadPool(
+                new STPStartInfo()
+                {
+                    ThreadPoolName = "PlayerSaving",
+                    IdleTimeout = Options.Instance.Processing.PlayerSaveThreadIdleTimeout,
+                    MinWorkerThreads = Options.Instance.Processing.MinPlayerSaveThreads,
+                    MaxWorkerThreads = Options.Instance.Processing.MaxPlayerSaveThreads
+                }
+            );
 
         //Online Players List
         private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
@@ -388,6 +402,11 @@ namespace Intersect.Server.Entities
                 User?.TryLogout();
             }
 
+            PlayerSavingPool.QueueWorkItem(CompleteLogout);
+        }
+
+        public void CompleteLogout()
+        { 
             User?.Save();
 
             Dispose();
@@ -420,7 +439,11 @@ namespace Intersect.Server.Entities
                     {
                         if (SaveTimer < Globals.Timing.Milliseconds)
                         {
-                            ThreadPool.QueueUserWorkItem(o => User?.Save());
+                            var user = User;
+                            if (user != null)
+                            {
+                                PlayerSavingPool.QueueWorkItem(user.Save, false);
+                            }
                             SaveTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                         }
                     }

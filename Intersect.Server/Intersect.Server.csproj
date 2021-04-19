@@ -542,6 +542,7 @@
     <Compile Include="Metrics\Controllers\GameMetricsController.cs" />
     <Compile Include="Metrics\Controllers\MetricsController.cs" />
     <Compile Include="Metrics\Controllers\NetworkMetricsController.cs" />
+    <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
     <Compile Include="Metrics\MetricsRoot.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">

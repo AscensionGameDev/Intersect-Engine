@@ -18,11 +18,13 @@ namespace Intersect.Server.Metrics
 
         private static readonly IMetricsRoot mAppMetricsRoot = AppMetrics.CreateDefaultBuilder().Build();
 
-        public GameMetricsController Game => new GameMetricsController(mAppMetricsRoot);
+        public GameMetricsController Game { get; private set; } = new GameMetricsController(mAppMetricsRoot);
 
-        public ApplicationMetricsController Application => new ApplicationMetricsController(mAppMetricsRoot);
+        public ApplicationMetricsController Application { get; private set; } = new ApplicationMetricsController(mAppMetricsRoot);
 
-        public NetworkMetricsController Network => new NetworkMetricsController(mAppMetricsRoot);
+        public NetworkMetricsController Network { get; private set; } = new NetworkMetricsController(mAppMetricsRoot);
+
+        public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController(mAppMetricsRoot);
 
         public JObject Metrics => mLatestSnapshot;
 

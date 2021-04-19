@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using App.Metrics;
 using CommandLine;
 
@@ -255,6 +256,28 @@ namespace Intersect.Server.Core
             {
                 throw new ArgumentNullException(nameof(Context));
             }
+
+            //Configure System Threadpool
+            ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxCompletionPortThreads);
+            ThreadPool.GetMinThreads(out int minWorkerThreads, out int minCompletionPortThreads);
+            if (Options.Instance.Processing.MaxSystemThreadpoolWorkerThreads >= Environment.ProcessorCount)
+            {
+                maxWorkerThreads = Options.Instance.Processing.MaxSystemThreadpoolWorkerThreads;
+            }
+            if (Options.Instance.Processing.MaxSystemThreadpoolIOThreads >= Environment.ProcessorCount)
+            {
+                maxCompletionPortThreads = Options.Instance.Processing.MaxSystemThreadpoolIOThreads;
+            }
+            ThreadPool.SetMaxThreads(maxWorkerThreads, maxCompletionPortThreads);
+            if (Options.Instance.Processing.MinSystemThreadpoolWorkerThreads >= Environment.ProcessorCount)
+            {
+                minWorkerThreads = Options.Instance.Processing.MinSystemThreadpoolWorkerThreads;
+            }
+            if (Options.Instance.Processing.MinSystemThreadpoolIOThreads >= Environment.ProcessorCount)
+            {
+                minCompletionPortThreads = Options.Instance.Processing.MinSystemThreadpoolIOThreads;
+            }
+            ThreadPool.SetMinThreads(minWorkerThreads, minCompletionPortThreads);
 
             if (!DbInterface.InitDatabase(Context))
             {
