@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Web.Http;
 
 using Intersect.Server.General;
@@ -66,7 +67,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object StatsMetrics()
         {
-            return MetricsRoot.Instance.Metrics;
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(MetricsRoot.Instance.Metrics, System.Text.Encoding.UTF8, "application/json")
+            };
         }
     }
 

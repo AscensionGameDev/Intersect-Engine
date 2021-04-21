@@ -1,8 +1,4 @@
-﻿using App.Metrics;
-using App.Metrics.Histogram;
-using App.Metrics.ReservoirSampling.SlidingWindow;
-using App.Metrics.Scheduling;
-using Intersect.Server.General;
+﻿using Intersect.Server.General;
 using Intersect.Server.Metrics.Controllers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,19 +12,19 @@ namespace Intersect.Server.Metrics
     public class MetricsRoot
     {
 
-        private static readonly IMetricsRoot mAppMetricsRoot = AppMetrics.CreateDefaultBuilder().Build();
+        private List<MetricsController> MetricsControllers = new List<MetricsController>();
 
-        public GameMetricsController Game { get; private set; } = new GameMetricsController(mAppMetricsRoot);
+        public GameMetricsController Game { get; private set; } = new GameMetricsController();
 
-        public ApplicationMetricsController Application { get; private set; } = new ApplicationMetricsController(mAppMetricsRoot);
+        public ApplicationMetricsController Application { get; private set; } = new ApplicationMetricsController();
 
-        public NetworkMetricsController Network { get; private set; } = new NetworkMetricsController(mAppMetricsRoot);
+        public NetworkMetricsController Network { get; private set; } = new NetworkMetricsController();
 
-        public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController(mAppMetricsRoot);
+        public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController();
 
-        public JObject Metrics => mLatestSnapshot;
+        public string Metrics => mLatestSnapshot;
 
-        private JObject mLatestSnapshot = new JObject();
+        private string mLatestSnapshot = "{}";
 
         /// <summary>
         /// Creates and configures metric tracking for our various controllers
@@ -37,6 +33,11 @@ namespace Intersect.Server.Metrics
         {
             if (Instance == null)
                 Instance = this;
+
+            MetricsControllers.Add(Application);
+            MetricsControllers.Add(Game);
+            MetricsControllers.Add(Network);
+            MetricsControllers.Add(Threading);
         }
 
         /// <summary>
@@ -57,22 +58,28 @@ namespace Intersect.Server.Metrics
         /// </summary>
         public void Disable()
         {
-            mLatestSnapshot = new JObject();
+            mLatestSnapshot = "{}";
         }
 
         public void Capture()
         {
-            mLatestSnapshot = JObject.FromObject(Data(mAppMetricsRoot.Snapshot.Get()));
-            mAppMetricsRoot.Manage.Reset();
+            var data = Data();
+            mLatestSnapshot = JsonConvert.SerializeObject(data);
+            Clear();
         }
 
-        private object Data(MetricsDataValueSource snapshot)
+        public void Clear()
+        {
+            MetricsControllers.ForEach(m => m.Clear());
+        }
+
+        private object Data()
         {
             var result = new ExpandoObject() as IDictionary<string, object>;
-            result.Add(Game.Context, Game.Data(snapshot));
-            result.Add(Application.Context, Application.Data(snapshot));
-            result.Add(Network.Context, Network.Data(snapshot));
-            result.Add(Threading.Context, Threading.Data(snapshot));
+            foreach (var controller in MetricsControllers)
+            {
+                result.Add(controller.Context, controller.Data());
+            }
             return new
             {
                 uptime = Globals.Timing.Milliseconds,

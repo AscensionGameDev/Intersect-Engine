@@ -303,7 +303,7 @@ namespace Intersect.Server.Networking
                             PacketSender.SentPacketTypes[packet.GetType().Name]++;
                             PacketSender.SentPackets++;
                             PacketSender.SentBytes += packet.Data.Length;
-                            MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);
+                            MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Globals.Timing.Milliseconds - tuple.Item3);
                         }
                     }
                     catch (Exception exception)
@@ -371,7 +371,7 @@ namespace Intersect.Server.Networking
                                 PacketHandler.Instance.ProcessPacket(packet, this);
                                 if (Options.Instance.Metrics.Enable)
                                 {
-                                    MetricsRoot.Instance.Network.UpdateTotalReceivedPacketHandlingTime(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Globals.Timing.Milliseconds - packet.ReceiveTime);
                                 }
                             }
                             catch (Exception exception)

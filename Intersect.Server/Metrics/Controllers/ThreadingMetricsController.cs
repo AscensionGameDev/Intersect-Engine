@@ -1,6 +1,4 @@
-﻿using App.Metrics;
-using App.Metrics.Histogram;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,107 +16,53 @@ namespace Intersect.Server.Metrics.Controllers
         private int mMinSystemThreadPoolThreads = 0;
         private int mMinSystemThreadPoolIOThreads = 0;
 
+        public Histogram LogicPoolActiveThreads { get; private set; }
 
-        public ThreadingMetricsController(IMetricsRoot root)
+        public Histogram LogicPoolInUseThreads { get; private set; }
+
+        public Histogram LogicPoolWorkItemsCount { get; private set; }
+
+        public Histogram NetworkPoolActiveThreads { get; private set; }
+
+        public Histogram NetworkPoolInUseThreads { get; private set; }
+
+        public Histogram NetworkPoolWorkItemsCount { get; private set; }
+
+        public Histogram SavingPoolActiveThreads { get; private set; }
+
+        public Histogram SavingPoolInUseThreads { get; private set; }
+
+        public Histogram SavingPoolWorkItemsCount { get; private set; }
+
+        public Histogram SystemPoolInUseWorkerThreads { get; private set; }
+
+        public Histogram SystemPoolInUseIOThreads { get; private set; }
+
+
+        public ThreadingMetricsController()
         {
             Context = CONTEXT;
-            mAppMetricsRoot = root;
 
             ThreadPool.GetMaxThreads(out mMaxSystemThreadPoolThreads, out mMaxSystemThreadPoolIOThreads);
             ThreadPool.GetMinThreads(out mMinSystemThreadPoolThreads, out mMinSystemThreadPoolIOThreads);
+
+            LogicPoolActiveThreads = new Histogram(nameof(LogicPoolActiveThreads), this);
+            LogicPoolInUseThreads = new Histogram(nameof(LogicPoolInUseThreads), this);
+            LogicPoolWorkItemsCount = new Histogram(nameof(LogicPoolWorkItemsCount), this);
+            NetworkPoolActiveThreads = new Histogram(nameof(NetworkPoolActiveThreads), this);
+            NetworkPoolInUseThreads = new Histogram(nameof(NetworkPoolInUseThreads), this);
+            NetworkPoolWorkItemsCount = new Histogram(nameof(NetworkPoolWorkItemsCount), this);
+            SavingPoolActiveThreads = new Histogram(nameof(SavingPoolActiveThreads), this);
+            SavingPoolInUseThreads = new Histogram(nameof(SavingPoolInUseThreads), this);
+            SavingPoolWorkItemsCount = new Histogram(nameof(SavingPoolWorkItemsCount), this);
+            SystemPoolInUseWorkerThreads = new Histogram(nameof(SystemPoolInUseWorkerThreads), this);
+            SystemPoolInUseIOThreads = new Histogram(nameof(SystemPoolInUseIOThreads), this);
         }
 
-        private HistogramOptions mLogicPoolActiveThreads => new HistogramOptions() { Name = "LogicPoolActiveThreads", Context = CONTEXT };
 
-        private HistogramOptions mLogicPoolInUseThreads => new HistogramOptions() { Name = "LogicPoolInUseThreads", Context = CONTEXT };
-
-        private HistogramOptions mLogicPoolWorkItemsCount => new HistogramOptions() { Name = "LogicPoolWorkItemsCount", Context = CONTEXT };
-
-        private HistogramOptions mNetworkPoolActiveThreads => new HistogramOptions() { Name = "NetworkPoolActiveThreads", Context = CONTEXT };
-
-        private HistogramOptions mNetworkPoolInUseThreads => new HistogramOptions() { Name = "NetworkPoolInUseThreads", Context = CONTEXT };
-
-        private HistogramOptions mNetworkPoolWorkItemsCount => new HistogramOptions() { Name = "NetworkPoolWorkItemsCount", Context = CONTEXT };
-
-        private HistogramOptions mSavingPoolActiveThreads => new HistogramOptions() { Name = "SavingPoolActiveThreads", Context = CONTEXT };
-
-        private HistogramOptions mSavingPoolInUseThreads => new HistogramOptions() { Name = "SavingPoolInUseThreads", Context = CONTEXT };
-
-        private HistogramOptions mSavingPoolWorkItemsCount => new HistogramOptions() { Name = "SavingPoolWorkItemsCount", Context = CONTEXT };
-
-        private HistogramOptions mSystemPoolInUseWorkerThreads => new HistogramOptions() { Name = "SystemPoolInUseWorkerThreads", Context = CONTEXT };
-
-        private HistogramOptions mSystemPoolInUseIOThreads => new HistogramOptions() { Name = "SystemPoolInUseIOThreads", Context = CONTEXT };
-
-        public void UpdateLogicPoolActiveThreads(int threads)
+        public override IDictionary<string, object> Data()
         {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolActiveThreads, threads);
-        }
-
-        public void UpdateLogicPoolInUseThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolInUseThreads, threads);
-        }
-
-        public void UpdateLogicPoolWorkItemsCount(int count)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolWorkItemsCount, count);
-        }
-
-        public void UpdateNetworkPoolActiveThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolActiveThreads, threads);
-        }
-
-        public void UpdateNetworkPoolInUseThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolInUseThreads, threads);
-        }
-
-        public void UpdateNetworkPoolWorkItemsCount(int count)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolWorkItemsCount, count);
-        }
-
-        public void UpdateSavingPoolActiveThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolActiveThreads, threads);
-        }
-
-        public void UpdateSavingPoolInUseThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolInUseThreads, threads);
-        }
-
-        public void UpdateSavingPoolWorkItemsCount(int count)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolWorkItemsCount, count);
-        }
-
-        public void UpdateSystemPoolInUseWorkerThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSystemPoolInUseWorkerThreads, threads);
-        }
-
-        public void UpdateSystemPoolInUseIOThreads(int threads)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mSystemPoolInUseIOThreads, threads);
-        }
-
-        public override IDictionary<string, object> Data(MetricsDataValueSource snapshot)
-        {
-            var res = base.Data(snapshot);
+            var res = base.Data();
 
             res.Add("LogicPoolMaxThreads", Options.Instance.Processing.MaxLogicThreads);
             res.Add("LogicPoolMinThreads", Options.Instance.Processing.MinLogicThreads);

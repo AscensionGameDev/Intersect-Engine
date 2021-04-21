@@ -206,24 +206,6 @@
     <ExternalConsole>false</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="App.Metrics, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.4.1.0\lib\net461\App.Metrics.dll</HintPath>
-    </Reference>
-    <Reference Include="App.Metrics.Abstractions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.Abstractions.4.1.0\lib\net461\App.Metrics.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="App.Metrics.Concurrency, Version=2.0.1.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.Concurrency.2.0.1\lib\net45\App.Metrics.Concurrency.dll</HintPath>
-    </Reference>
-    <Reference Include="App.Metrics.Core, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.Core.4.1.0\lib\net461\App.Metrics.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="App.Metrics.Formatters.Ascii, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.Formatters.Ascii.4.1.0\lib\net461\App.Metrics.Formatters.Ascii.dll</HintPath>
-    </Reference>
-    <Reference Include="App.Metrics.Formatters.Json, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
-      <HintPath>..\packages\App.Metrics.Formatters.Json.4.1.0\lib\net461\App.Metrics.Formatters.Json.dll</HintPath>
-    </Reference>
     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
     </Reference>
@@ -543,6 +525,7 @@
     <Compile Include="Metrics\Controllers\MetricsController.cs" />
     <Compile Include="Metrics\Controllers\NetworkMetricsController.cs" />
     <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
+    <Compile Include="Metrics\Histogram.cs" />
     <Compile Include="Metrics\MetricsRoot.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">

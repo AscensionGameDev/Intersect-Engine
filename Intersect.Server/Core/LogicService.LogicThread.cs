@@ -152,13 +152,13 @@ namespace Intersect.Server.Core
 
                             if (Options.Instance.Metrics.Enable)
                             {
-                                MetricsRoot.Instance.Game.UpdateActiveEntityCount(globalEntities);
-                                MetricsRoot.Instance.Game.UpdateActiveEventCount(events);
-                                MetricsRoot.Instance.Game.UpdateProcessingEventsCount(eventsProcessing);
-                                MetricsRoot.Instance.Game.UpdateAutorunEventCount(autorunEvents);
-                                MetricsRoot.Instance.Game.UpdateActiveMapCount(ActiveMaps.Count);
-                                MetricsRoot.Instance.Game.UpdatePlayerCount(players);
-                                MetricsRoot.Instance.Network.UpdateClientCount(Globals.Clients?.Count ?? 0);
+                                MetricsRoot.Instance.Game.ActiveEntities.Record(globalEntities);
+                                MetricsRoot.Instance.Game.ActiveEvents.Record(events);
+                                MetricsRoot.Instance.Game.ProcessingEvents.Record(eventsProcessing);
+                                MetricsRoot.Instance.Game.AutorunEvents.Record(autorunEvents);
+                                MetricsRoot.Instance.Game.ActiveMaps.Record(ActiveMaps.Count);
+                                MetricsRoot.Instance.Game.Players.Record(players);
+                                MetricsRoot.Instance.Network.Clients.Record(Globals.Clients?.Count ?? 0);
                             }
 
                             //End Resync of Active Maps
@@ -186,7 +186,7 @@ namespace Intersect.Server.Core
                                     if (Options.Instance.Metrics.Enable)
                                     {
                                         var delay = Globals.Timing.Milliseconds - (result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval);
-                                        MetricsRoot.Instance.Game.UpdateMapQueueUpdateOffset(delay);
+                                        MetricsRoot.Instance.Game.MapQueueUpdateOffset.Record(delay);
                                         result.UpdateQueueStart = Globals.Timing.Milliseconds;
                                     }
                                     LogicPool.QueueWorkItem(UpdateMap, sameResult, false);
@@ -214,22 +214,22 @@ namespace Intersect.Server.Core
                                 var cpuUsageTotal = (cpuUsedMs / (Environment.ProcessorCount * totalMsPassed)) * 100f;
                                 lastCpuTime = currentCpuTime;
 
-                                MetricsRoot.Instance.Application.UpdateCpuUsage(cpuUsageTotal);
-                                MetricsRoot.Instance.Application.UpdateMemoryUsage(Process.GetCurrentProcess().PrivateMemorySize64);
+                                MetricsRoot.Instance.Application.Cpu.Record((int)cpuUsageTotal);
+                                MetricsRoot.Instance.Application.Memory.Record(Process.GetCurrentProcess().PrivateMemorySize64);
 
-                                MetricsRoot.Instance.Game.UpdateCps(Globals.Cps);
+                                MetricsRoot.Instance.Game.Cps.Record(Globals.Cps);
 
 
                                 //Also Update Networking Metrics
-                                MetricsRoot.Instance.Network.UpdateBandwidth(PacketHandler.ReceivedBytes + PacketSender.SentBytes);
-                                MetricsRoot.Instance.Network.UpdateSentBytes(PacketSender.SentBytes);
-                                MetricsRoot.Instance.Network.UpdateSentPackets(PacketSender.SentPackets);
-                                MetricsRoot.Instance.Network.UpdateReceivedBytes(PacketHandler.ReceivedBytes);
-                                MetricsRoot.Instance.Network.UpdateReceivedPackets(PacketHandler.ReceivedPackets);
-                                MetricsRoot.Instance.Network.UpdateAcceptedBytes(PacketHandler.AcceptedBytes);
-                                MetricsRoot.Instance.Network.UpdateAcceptedPackets(PacketHandler.AcceptedPackets);
-                                MetricsRoot.Instance.Network.UpdateDroppedBytes(PacketHandler.DroppedBytes);
-                                MetricsRoot.Instance.Network.UpdateDroppedPackets(PacketHandler.DroppedPackets);
+                                MetricsRoot.Instance.Network.TotalBandwidth.Record(PacketHandler.ReceivedBytes + PacketSender.SentBytes);
+                                MetricsRoot.Instance.Network.SentBytes.Record(PacketSender.SentBytes);
+                                MetricsRoot.Instance.Network.SentPackets.Record(PacketSender.SentPackets);
+                                MetricsRoot.Instance.Network.ReceivedBytes.Record(PacketHandler.ReceivedBytes);
+                                MetricsRoot.Instance.Network.ReceivedPackets.Record(PacketHandler.ReceivedPackets);
+                                MetricsRoot.Instance.Network.AcceptedBytes.Record(PacketHandler.AcceptedBytes);
+                                MetricsRoot.Instance.Network.AcceptedPackets.Record(PacketHandler.AcceptedPackets);
+                                MetricsRoot.Instance.Network.DroppedBytes.Record(PacketHandler.DroppedBytes);
+                                MetricsRoot.Instance.Network.DroppedPackets.Record(PacketHandler.DroppedPackets);
 
                                 PacketSender.ResetMetrics();
                                 PacketHandler.ResetMetrics();
@@ -241,20 +241,20 @@ namespace Intersect.Server.Core
                         if (Options.Instance.Metrics.Enable)
                         {
                             //Record how our Thread Pools are Operating
-                            MetricsRoot.Instance.Threading.UpdateLogicPoolActiveThreads(LogicPool.ActiveThreads);
-                            MetricsRoot.Instance.Threading.UpdateLogicPoolInUseThreads(LogicPool.InUseThreads);
-                            MetricsRoot.Instance.Threading.UpdateLogicPoolWorkItemsCount(LogicPool.CurrentWorkItemsCount);
-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolActiveThreads(ServerNetwork.Pool.ActiveThreads);
-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolInUseThreads(ServerNetwork.Pool.InUseThreads);
-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolWorkItemsCount(ServerNetwork.Pool.CurrentWorkItemsCount);
-                            MetricsRoot.Instance.Threading.UpdateSavingPoolActiveThreads(Player.PlayerSavingPool.ActiveThreads);
-                            MetricsRoot.Instance.Threading.UpdateSavingPoolInUseThreads(Player.PlayerSavingPool.InUseThreads);
-                            MetricsRoot.Instance.Threading.UpdateSavingPoolWorkItemsCount(Player.PlayerSavingPool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.LogicPoolActiveThreads.Record(LogicPool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.LogicPoolInUseThreads.Record(LogicPool.InUseThreads);
+                            MetricsRoot.Instance.Threading.LogicPoolWorkItemsCount.Record(LogicPool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.NetworkPoolActiveThreads.Record(ServerNetwork.Pool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.NetworkPoolInUseThreads.Record(ServerNetwork.Pool.InUseThreads);
+                            MetricsRoot.Instance.Threading.NetworkPoolWorkItemsCount.Record(ServerNetwork.Pool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.SavingPoolActiveThreads.Record(Player.PlayerSavingPool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.SavingPoolInUseThreads.Record(Player.PlayerSavingPool.InUseThreads);
+                            MetricsRoot.Instance.Threading.SavingPoolWorkItemsCount.Record(Player.PlayerSavingPool.CurrentWorkItemsCount);
 
                             ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxIOThreads);
                             ThreadPool.GetAvailableThreads(out int availableWorkerThreads, out int availableIOThreads);
-                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseWorkerThreads(maxWorkerThreads - availableWorkerThreads);
-                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseIOThreads(maxIOThreads - availableIOThreads);
+                            MetricsRoot.Instance.Threading.SystemPoolInUseWorkerThreads.Record(maxWorkerThreads - availableWorkerThreads);
+                            MetricsRoot.Instance.Threading.SystemPoolInUseIOThreads.Record(maxIOThreads - availableIOThreads);
 
                             if (Globals.Timing.Milliseconds > metricsTimer)
                             {
@@ -329,10 +329,14 @@ namespace Intersect.Server.Core
                         {
                             var timeBeforeUpdate = Globals.Timing.Milliseconds;
                             var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
-                            MetricsRoot.Instance.Game.UpdateMapUpdateQueuedTime(timeBeforeUpdate - map.UpdateQueueStart);
+                            MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - map.UpdateQueueStart);
+
                             map.Update(Globals.Timing.Milliseconds);
-                            MetricsRoot.Instance.Game.UpdateMapUpdateProcessingTime(Globals.Timing.Milliseconds - timeBeforeUpdate);
-                            MetricsRoot.Instance.Game.UpdateMapTotalUpdateTime(Globals.Timing.Milliseconds - desiredMapUpdateTime);
+
+                            var timeAfterUpdate = Globals.Timing.Milliseconds;
+                            MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
+                            MetricsRoot.Instance.Game.MapTotalUpdateTime.Record(timeAfterUpdate - desiredMapUpdateTime);
+
                             if (ActiveMaps.Contains(map.Id))
                             {
                                 MapUpdateQueue.Enqueue(map);

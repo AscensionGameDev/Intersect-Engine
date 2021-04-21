@@ -1,0 +1,873 @@
+commit cbf3720522749690bee3035eb1552c8a0697a77b
+Author: JC Snider <jcsnider3@gmail.com>
+Date:   Wed Apr 21 19:01:40 2021 -0400
+
+    Removed AppMetrics, doing own tracking of game performance with custom histogram class.
+
+diff --git a/Intersect.Server/Core/LogicService.LogicThread.cs b/Intersect.Server/Core/LogicService.LogicThread.cs
+index 0d3f9d8f..c98156b4 100644
+--- a/Intersect.Server/Core/LogicService.LogicThread.cs
++++ b/Intersect.Server/Core/LogicService.LogicThread.cs
+@@ -80,10 +80,12 @@ private void UpdateMap(MapInstance map, bool onlyProjectiles)
+                         {
+                             var timeBeforeUpdate = Globals.Timing.Milliseconds;
+                             var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
+-                            MetricsRoot.Instance.Game.UpdateMapUpdateQueuedTime(timeBeforeUpdate - map.UpdateQueueStart);
++                            MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - map.UpdateQueueStart);
+                             map.Update(Globals.Timing.Milliseconds);
+-                            MetricsRoot.Instance.Game.UpdateMapUpdateProcessingTime(Globals.Timing.Milliseconds - timeBeforeUpdate);
+-                            MetricsRoot.Instance.Game.UpdateMapTotalUpdateTime(Globals.Timing.Milliseconds - desiredMapUpdateTime);
++
++                            var timeAfterUpdate = Globals.Timing.Milliseconds;
++                            MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
++                            MetricsRoot.Instance.Game.MapTotalUpdateTime.Record(timeAfterUpdate - desiredMapUpdateTime);
+                         }
+                         else
+                         {
+@@ -218,13 +220,13 @@ protected override void ThreadStart(ServerContext serverContext)
+ 
+                             if (Options.Instance.Metrics.Enable)
+                             {
+-                                MetricsRoot.Instance.Game.UpdateActiveEntityCount(globalEntities);
+-                                MetricsRoot.Instance.Game.UpdateActiveEventCount(events);
+-                                MetricsRoot.Instance.Game.UpdateProcessingEventsCount(eventsProcessing);
+-                                MetricsRoot.Instance.Game.UpdateAutorunEventCount(autorunEvents);
+-                                MetricsRoot.Instance.Game.UpdateActiveMapCount(ActiveMaps.Count);
+-                                MetricsRoot.Instance.Game.UpdatePlayerCount(players);
+-                                MetricsRoot.Instance.Network.UpdateClientCount(Globals.Clients?.Count ?? 0);
++                                MetricsRoot.Instance.Game.ActiveEntities.Record(globalEntities);
++                                MetricsRoot.Instance.Game.ActiveEvents.Record(events);
++                                MetricsRoot.Instance.Game.ProcessingEvents.Record(eventsProcessing);
++                                MetricsRoot.Instance.Game.AutorunEvents.Record(autorunEvents);
++                                MetricsRoot.Instance.Game.ActiveMaps.Record(ActiveMaps.Count);
++                                MetricsRoot.Instance.Game.Players.Record(players);
++                                MetricsRoot.Instance.Network.Clients.Record(Globals.Clients?.Count ?? 0);
+                             }
+ 
+                             //End Resync of Active Maps
+@@ -251,7 +253,7 @@ protected override void ThreadStart(ServerContext serverContext)
+                                     if (Options.Instance.Metrics.Enable)
+                                     {
+                                         var delay = Globals.Timing.Milliseconds - (result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval);
+-                                        MetricsRoot.Instance.Game.UpdateMapQueueUpdateOffset(delay);
++                                        MetricsRoot.Instance.Game.MapQueueUpdateOffset.Record(delay);
+                                         result.UpdateQueueStart = Globals.Timing.Milliseconds;
+                                     }
+                                     LogicPool.QueueWorkItem(UpdateMap, sameResult, false);
+@@ -294,22 +296,22 @@ protected override void ThreadStart(ServerContext serverContext)
+                                 var cpuUsageTotal = (cpuUsedMs / (Environment.ProcessorCount * totalMsPassed)) * 100f;
+                                 lastCpuTime = currentCpuTime;
+ 
+-                                MetricsRoot.Instance.Application.UpdateCpuUsage(cpuUsageTotal);
+-                                MetricsRoot.Instance.Application.UpdateMemoryUsage(Process.GetCurrentProcess().PrivateMemorySize64);
++                                MetricsRoot.Instance.Application.Cpu.Record((int)cpuUsageTotal);
++                                MetricsRoot.Instance.Application.Memory.Record(Process.GetCurrentProcess().PrivateMemorySize64);
+ 
+-                                MetricsRoot.Instance.Game.UpdateCps(Globals.Cps);
++                                MetricsRoot.Instance.Game.Cps.Record(Globals.Cps);
+ 
+ 
+                                 //Also Update Networking Metrics
+-                                MetricsRoot.Instance.Network.UpdateBandwidth(PacketHandler.ReceivedBytes + PacketSender.SentBytes);
+-                                MetricsRoot.Instance.Network.UpdateSentBytes(PacketSender.SentBytes);
+-                                MetricsRoot.Instance.Network.UpdateSentPackets(PacketSender.SentPackets);
+-                                MetricsRoot.Instance.Network.UpdateReceivedBytes(PacketHandler.ReceivedBytes);
+-                                MetricsRoot.Instance.Network.UpdateReceivedPackets(PacketHandler.ReceivedPackets);
+-                                MetricsRoot.Instance.Network.UpdateAcceptedBytes(PacketHandler.AcceptedBytes);
+-                                MetricsRoot.Instance.Network.UpdateAcceptedPackets(PacketHandler.AcceptedPackets);
+-                                MetricsRoot.Instance.Network.UpdateDroppedBytes(PacketHandler.DroppedBytes);
+-                                MetricsRoot.Instance.Network.UpdateDroppedPackets(PacketHandler.DroppedPackets);
++                                MetricsRoot.Instance.Network.TotalBandwidth.Record(PacketHandler.ReceivedBytes + PacketSender.SentBytes);
++                                MetricsRoot.Instance.Network.SentBytes.Record(PacketSender.SentBytes);
++                                MetricsRoot.Instance.Network.SentPackets.Record(PacketSender.SentPackets);
++                                MetricsRoot.Instance.Network.ReceivedBytes.Record(PacketHandler.ReceivedBytes);
++                                MetricsRoot.Instance.Network.ReceivedPackets.Record(PacketHandler.ReceivedPackets);
++                                MetricsRoot.Instance.Network.AcceptedBytes.Record(PacketHandler.AcceptedBytes);
++                                MetricsRoot.Instance.Network.AcceptedPackets.Record(PacketHandler.AcceptedPackets);
++                                MetricsRoot.Instance.Network.DroppedBytes.Record(PacketHandler.DroppedBytes);
++                                MetricsRoot.Instance.Network.DroppedPackets.Record(PacketHandler.DroppedPackets);
+ 
+                                 PacketSender.ResetMetrics();
+                                 PacketHandler.ResetMetrics();
+@@ -321,23 +323,23 @@ protected override void ThreadStart(ServerContext serverContext)
+                         if (Options.Instance.Metrics.Enable)
+                         {
+                             //Record how our Thread Pools are Operating
+-                            MetricsRoot.Instance.Threading.UpdateLogicPoolActiveThreads(LogicPool.ActiveThreads);
+-                            MetricsRoot.Instance.Threading.UpdateLogicPoolInUseThreads(LogicPool.InUseThreads);
+-                            MetricsRoot.Instance.Threading.UpdateLogicPoolWorkItemsCount(LogicPool.CurrentWorkItemsCount);
++                            MetricsRoot.Instance.Threading.LogicPoolActiveThreads.Record(LogicPool.ActiveThreads);
++                            MetricsRoot.Instance.Threading.LogicPoolInUseThreads.Record(LogicPool.InUseThreads);
++                            MetricsRoot.Instance.Threading.LogicPoolWorkItemsCount.Record(LogicPool.CurrentWorkItemsCount);
+ 
+-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolActiveThreads(ServerNetwork.Pool.ActiveThreads);
+-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolInUseThreads(ServerNetwork.Pool.InUseThreads);
+-                            MetricsRoot.Instance.Threading.UpdateNetworkPoolWorkItemsCount(ServerNetwork.Pool.CurrentWorkItemsCount);
++                            MetricsRoot.Instance.Threading.NetworkPoolActiveThreads.Record(ServerNetwork.Pool.ActiveThreads);
++                            MetricsRoot.Instance.Threading.NetworkPoolInUseThreads.Record(ServerNetwork.Pool.InUseThreads);
++                            MetricsRoot.Instance.Threading.NetworkPoolWorkItemsCount.Record(ServerNetwork.Pool.CurrentWorkItemsCount);
+ 
+-                            MetricsRoot.Instance.Threading.UpdateSavingPoolActiveThreads(Player.PlayerSavingPool.ActiveThreads);
+-                            MetricsRoot.Instance.Threading.UpdateSavingPoolInUseThreads(Player.PlayerSavingPool.InUseThreads);
+-                            MetricsRoot.Instance.Threading.UpdateSavingPoolWorkItemsCount(Player.PlayerSavingPool.CurrentWorkItemsCount);
++                            MetricsRoot.Instance.Threading.SavingPoolActiveThreads.Record(Player.PlayerSavingPool.ActiveThreads);
++                            MetricsRoot.Instance.Threading.SavingPoolInUseThreads.Record(Player.PlayerSavingPool.InUseThreads);
++                            MetricsRoot.Instance.Threading.SavingPoolWorkItemsCount.Record(Player.PlayerSavingPool.CurrentWorkItemsCount);
+ 
+                             ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxIOThreads);
+                             ThreadPool.GetAvailableThreads(out int availableWorkerThreads, out int availableIOThreads);
+ 
+-                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseWorkerThreads(maxWorkerThreads - availableWorkerThreads);
+-                            MetricsRoot.Instance.Threading.UpdateSystemPoolInUseIOThreads(maxIOThreads - availableIOThreads);
++                            MetricsRoot.Instance.Threading.SystemPoolInUseWorkerThreads.Record(maxWorkerThreads - availableWorkerThreads);
++                            MetricsRoot.Instance.Threading.SystemPoolInUseIOThreads.Record(maxIOThreads - availableIOThreads);
+ 
+ 
+                             if (Globals.Timing.Milliseconds > metricsTimer)
+diff --git a/Intersect.Server/Intersect.Server.csproj b/Intersect.Server/Intersect.Server.csproj
+index 34e52a74..cb6b6cff 100644
+--- a/Intersect.Server/Intersect.Server.csproj
++++ b/Intersect.Server/Intersect.Server.csproj
+@@ -206,24 +206,6 @@
+     <ExternalConsole>false</ExternalConsole>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="App.Metrics, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.4.1.0\lib\net461\App.Metrics.dll</HintPath>
+-    </Reference>
+-    <Reference Include="App.Metrics.Abstractions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.Abstractions.4.1.0\lib\net461\App.Metrics.Abstractions.dll</HintPath>
+-    </Reference>
+-    <Reference Include="App.Metrics.Concurrency, Version=2.0.1.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.Concurrency.2.0.1\lib\net45\App.Metrics.Concurrency.dll</HintPath>
+-    </Reference>
+-    <Reference Include="App.Metrics.Core, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.Core.4.1.0\lib\net461\App.Metrics.Core.dll</HintPath>
+-    </Reference>
+-    <Reference Include="App.Metrics.Formatters.Ascii, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.Formatters.Ascii.4.1.0\lib\net461\App.Metrics.Formatters.Ascii.dll</HintPath>
+-    </Reference>
+-    <Reference Include="App.Metrics.Formatters.Json, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d5193a913d1b812, processorArchitecture=MSIL">
+-      <HintPath>..\packages\App.Metrics.Formatters.Json.4.1.0\lib\net461\App.Metrics.Formatters.Json.dll</HintPath>
+-    </Reference>
+     <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+       <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
+     </Reference>
+@@ -498,6 +480,7 @@
+     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
+     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+     <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
++    <Compile Include="Metrics\Histogram.cs" />
+     <Compile Include="Migrations\20210323162757_AddCharacterDeletionTimers.cs" />
+     <Compile Include="Migrations\20210323162757_AddCharacterDeletionTimers.designer.cs">
+       <DependentUpon>20210323162757_AddCharacterDeletionTimers.cs</DependentUpon>
+diff --git a/Intersect.Server/Metrics/Controllers/ApplicationMetricsController.cs b/Intersect.Server/Metrics/Controllers/ApplicationMetricsController.cs
+index 4a1ff7ff..d7d46f95 100644
+--- a/Intersect.Server/Metrics/Controllers/ApplicationMetricsController.cs
++++ b/Intersect.Server/Metrics/Controllers/ApplicationMetricsController.cs
+@@ -1,32 +1,19 @@
+-﻿using App.Metrics;
+-using App.Metrics.Histogram;
+-
+-namespace Intersect.Server.Metrics.Controllers
++﻿namespace Intersect.Server.Metrics.Controllers
+ {
+     public class ApplicationMetricsController : MetricsController
+     {
+         private const string CONTEXT = "Application";
+ 
+-        public ApplicationMetricsController(IMetricsRoot root)
+-        {
+-            Context = CONTEXT;
+-            mAppMetricsRoot = root;
+-        }
+-
+-        private HistogramOptions mCpuUsage => new HistogramOptions() { Name = "Cpu", Context = CONTEXT };
++        public Histogram Cpu { get; private set; }
+ 
+-        private HistogramOptions mMemoryUsage => new HistogramOptions() { Name = "Memory", Context = CONTEXT };
++        public Histogram Memory { get; private set; }
+ 
+-        public void UpdateCpuUsage(double cpu)
++        public ApplicationMetricsController()
+         {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mCpuUsage, (long)cpu);
+-        }
++            Context = CONTEXT;
+ 
+-        public void UpdateMemoryUsage(long memory)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mMemoryUsage, memory);
++            Cpu = new Histogram(nameof(Cpu), this);
++            Memory = new Histogram(nameof(Memory), this);
+         }
+     }
+ }
+diff --git a/Intersect.Server/Metrics/Controllers/GameMetricsController.cs b/Intersect.Server/Metrics/Controllers/GameMetricsController.cs
+index 17932ec6..f9fcc4ca 100644
+--- a/Intersect.Server/Metrics/Controllers/GameMetricsController.cs
++++ b/Intersect.Server/Metrics/Controllers/GameMetricsController.cs
+@@ -1,104 +1,46 @@
+-﻿using App.Metrics;
+-using App.Metrics.Histogram;
+-
+-namespace Intersect.Server.Metrics.Controllers
++﻿namespace Intersect.Server.Metrics.Controllers
+ {
+     public class GameMetricsController : MetricsController
+     {
+         private const string CONTEXT = "Game";
+ 
+-        public GameMetricsController(IMetricsRoot root)
+-        {
+-            Context = CONTEXT;
+-            mAppMetricsRoot = root;
+-        }
+-
+-        private readonly HistogramOptions mCps = new HistogramOptions() { Name = "Cps", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mPlayerCount = new HistogramOptions() { Name = "Players", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mActiveMapCount = new HistogramOptions() { Name = "ActiveMaps", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mActiveEntityCount = new HistogramOptions() { Name = "ActiveEntities", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mActiveEventCount = new HistogramOptions() { Name = "ActiveEvents", Context = CONTEXT };
++        public Histogram Cps { get; private set; }
+ 
+-        private readonly HistogramOptions mAutorunEventCount = new HistogramOptions() { Name = "AutorunEvents", Context = CONTEXT };
++        public Histogram Players { get; private set; }
+ 
+-        private readonly HistogramOptions mProcessingEventsCount = new HistogramOptions() { Name = "ProcessingEvents", Context = CONTEXT };
++        public Histogram ActiveMaps { get; private set; }
+ 
+-        private readonly HistogramOptions mMapQueueUpdateOffset = new HistogramOptions() { Name = "MapQueueUpdateOffset", Context = CONTEXT };
++        public Histogram ActiveEntities { get; private set; }
+ 
+-        private readonly HistogramOptions mMapUpdateQueuedTime = new HistogramOptions() { Name = "MapUpdateQueuedTime", Context = CONTEXT };
++        public Histogram ActiveEvents { get; private set; }
+ 
+-        private readonly HistogramOptions mMapUpdateProcessingTime = new HistogramOptions() { Name = "MapUpdateProcessingTime", Context = CONTEXT };
++        public Histogram AutorunEvents { get; private set; }
+ 
+-        private readonly HistogramOptions mMapTotalUpdateTime = new HistogramOptions() { Name = "MapTotalUpdateTime", Context = CONTEXT };
++        public Histogram ProcessingEvents { get; private set; }
+ 
+-        public void UpdateCps(long cps)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mCps, cps);
+-        }
++        public Histogram MapQueueUpdateOffset { get; private set; }
+ 
+-        public void UpdatePlayerCount(long players)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mPlayerCount, players);
+-        }
++        public Histogram MapUpdateQueuedTime { get; private set; }
+ 
+-        public void UpdateActiveMapCount(long activeMaps)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mActiveMapCount, activeMaps);
+-        }
++        public Histogram MapUpdateProcessingTime { get; private set; }
+ 
+-        public void UpdateActiveEntityCount(long activeEntities)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mActiveEntityCount, activeEntities);
+-        }
++        public Histogram MapTotalUpdateTime { get; private set; }
+ 
+-        public void UpdateActiveEventCount(long activeEvents)
++        public GameMetricsController()
+         {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mActiveEventCount, activeEvents);
+-        }
+-
+-        public void UpdateAutorunEventCount(long autorunEvents)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mAutorunEventCount, autorunEvents);
+-        }
+-
+-        public void UpdateProcessingEventsCount(long processingEvents)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mProcessingEventsCount, processingEvents);
+-        }
+-
+-        public void UpdateMapQueueUpdateOffset(long offset)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mMapQueueUpdateOffset, offset);
+-        }
+-
+-        public void UpdateMapUpdateQueuedTime(long time)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mMapUpdateQueuedTime, time);
+-        }
+-
+-        public void UpdateMapUpdateProcessingTime(long time)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mMapUpdateProcessingTime, time);
+-        }
++            Context = CONTEXT;
+ 
+-        public void UpdateMapTotalUpdateTime(long time)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mMapTotalUpdateTime, time);
++            Cps = new Histogram(nameof(Cps), this);
++            Players = new Histogram(nameof(Players), this);
++            ActiveMaps = new Histogram(nameof(ActiveMaps), this);
++            ActiveEntities = new Histogram(nameof(ActiveEntities), this);
++            ActiveEvents = new Histogram(nameof(ActiveEvents), this);
++            AutorunEvents = new Histogram(nameof(AutorunEvents), this);
++            ProcessingEvents = new Histogram(nameof(ProcessingEvents), this);
++            MapQueueUpdateOffset = new Histogram(nameof(MapQueueUpdateOffset), this);
++            MapUpdateQueuedTime = new Histogram(nameof(MapUpdateQueuedTime), this);
++            MapUpdateProcessingTime = new Histogram(nameof(MapUpdateProcessingTime), this);
++            MapTotalUpdateTime = new Histogram(nameof(MapTotalUpdateTime), this);
+         }
+     }
+ }
+diff --git a/Intersect.Server/Metrics/Controllers/MetricsController.cs b/Intersect.Server/Metrics/Controllers/MetricsController.cs
+index 665a6ed7..6eb99001 100644
+--- a/Intersect.Server/Metrics/Controllers/MetricsController.cs
++++ b/Intersect.Server/Metrics/Controllers/MetricsController.cs
+@@ -1,5 +1,4 @@
+-﻿using App.Metrics;
+-using System;
++﻿using System;
+ using System.Collections.Generic;
+ using System.Dynamic;
+ using System.Linq;
+@@ -12,22 +11,19 @@ public class MetricsController
+     {
+         public virtual string Context { get; set; }
+ 
+-        protected virtual IMetricsRoot mAppMetricsRoot { get; set; }
++        public virtual List<Histogram> Measurements { get; set; } = new List<Histogram>();
+ 
+-        public virtual IDictionary<string, object> Data(MetricsDataValueSource snapshot)
++        public virtual void Clear()
++        {
++            Measurements.ForEach(m => m.Clear());
++        }
++
++        public virtual IDictionary<string, object> Data()
+         {
+-            var ctx = snapshot.Contexts.FirstOrDefault(c => c.Context == Context);
+             var result = new ExpandoObject() as IDictionary<string, object>;
+-            if (ctx != null)
++            foreach (var hist in Measurements)
+             {
+-                foreach (var hist in ctx.Histograms)
+-                {
+-                    result.Add(hist.Name.Split('|')[0], hist.Value);
+-                }
+-                foreach (var counter in ctx.Counters)
+-                {
+-                    result.Add(counter.Name.Split('|')[0], counter.Value);
+-                }
++                result.Add(hist.Name, hist);
+             }
+             return result;
+         }
+diff --git a/Intersect.Server/Metrics/Controllers/NetworkMetricsController.cs b/Intersect.Server/Metrics/Controllers/NetworkMetricsController.cs
+index f2b41a83..47f87a1e 100644
+--- a/Intersect.Server/Metrics/Controllers/NetworkMetricsController.cs
++++ b/Intersect.Server/Metrics/Controllers/NetworkMetricsController.cs
+@@ -1,6 +1,4 @@
+-﻿using App.Metrics;
+-using App.Metrics.Histogram;
+-using Intersect.Server.Networking;
++﻿using Intersect.Server.Networking;
+ using System.Collections.Generic;
+ using System.Linq;
+ 
+@@ -10,110 +8,53 @@ public class NetworkMetricsController : MetricsController
+     {
+         private const string CONTEXT = "Network";
+ 
+-        public NetworkMetricsController(IMetricsRoot root)
+-        {
+-            Context = CONTEXT;
+-            mAppMetricsRoot = root;
+-        }
+-
+-        private readonly HistogramOptions mClientCount = new HistogramOptions() { Name = "Clients", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mBandwidth = new HistogramOptions() { Name = "TotalBandwidth", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mSentBytes = new HistogramOptions() { Name = "SentBytes", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mSentPackets = new HistogramOptions() { Name = "SentPackets", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mReceivedBytes = new HistogramOptions() { Name = "ReceivedBytes", Context = CONTEXT };
+-
+-        private readonly HistogramOptions mReceivedPackets = new HistogramOptions() { Name = "ReceivedPackets", Context = CONTEXT };
++        public Histogram Clients { get; private set; }
+ 
+-        private readonly HistogramOptions mAcceptedBytes = new HistogramOptions() { Name = "AcceptedBytes", Context = CONTEXT };
++        public Histogram TotalBandwidth { get; private set; }
+ 
+-        private readonly HistogramOptions mAcceptedPackets = new HistogramOptions() { Name = "AcceptedPackets", Context = CONTEXT };
++        public Histogram SentBytes { get; private set; }
+ 
+-        private readonly HistogramOptions mDroppedBytes = new HistogramOptions() { Name = "DroppedBytes", Context = CONTEXT };
++        public Histogram SentPackets { get; private set; }
+ 
+-        private readonly HistogramOptions mDroppedPackets = new HistogramOptions() { Name = "DroppedPackets", Context = CONTEXT };
++        public Histogram ReceivedBytes { get; private set; }
+ 
+-        private readonly HistogramOptions mTotalReceivedPacketHandlingTime = new HistogramOptions() { Name = "TotalReceivedPacketHandlingTime", Context = CONTEXT };
++        public Histogram ReceivedPackets { get; private set; }
+ 
+-        private readonly HistogramOptions mTotalSentPacketHandlingTime = new HistogramOptions() { Name = "TotalSentPacketHandlingTime", Context = CONTEXT };
+-
+-        public void UpdateClientCount(long count)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mClientCount, count);
+-        }
+-        public void UpdateBandwidth(long bytes)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mBandwidth, bytes);
+-        }
+-
+-        public void UpdateSentBytes(long bytes)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSentBytes, bytes);
+-        }
++        public Histogram AcceptedBytes { get; private set; }
+ 
+-        public void UpdateSentPackets(long packets)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSentPackets, packets);
+-        }
++        public Histogram AcceptedPackets { get; private set; }
+ 
+-        public void UpdateReceivedBytes(long bytes)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mReceivedBytes, bytes);
+-        }
++        public Histogram DroppedBytes { get; private set; }
+ 
+-        public void UpdateReceivedPackets(long packets)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mReceivedPackets, packets);
+-        }
++        public Histogram DroppedPackets { get; private set; }
+ 
+-        public void UpdateAcceptedBytes(long bytes)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mAcceptedBytes, bytes);
+-        }
++        public Histogram TotalReceivedPacketHandlingTime { get; private set; }
+ 
+-        public void UpdateAcceptedPackets(long packets)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mAcceptedPackets, packets);
+-        }
++        public Histogram TotalSentPacketProcessingTime { get; private set; }
+ 
+-        public void UpdateDroppedBytes(long bytes)
++        public NetworkMetricsController()
+         {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mDroppedBytes, bytes);
+-        }
++            Context = CONTEXT;
+ 
+-        public void UpdateDroppedPackets(long packets)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mDroppedPackets, packets);
+-        }
++            Clients = new Histogram(nameof(Clients), this);
++            TotalBandwidth = new Histogram(nameof(TotalBandwidth), this);
++            SentBytes = new Histogram(nameof(SentBytes), this);
++            SentPackets = new Histogram(nameof(SentPackets), this);
++            ReceivedBytes = new Histogram(nameof(ReceivedBytes), this);
++            ReceivedPackets = new Histogram(nameof(ReceivedPackets), this);
++            AcceptedBytes = new Histogram(nameof(AcceptedBytes), this);
++            AcceptedPackets = new Histogram(nameof(AcceptedPackets), this);
++            DroppedBytes = new Histogram(nameof(DroppedBytes), this);
++            DroppedPackets = new Histogram(nameof(DroppedPackets), this);
++            TotalReceivedPacketHandlingTime = new Histogram(nameof(TotalReceivedPacketHandlingTime), this);
++            TotalSentPacketProcessingTime = new Histogram(nameof(TotalSentPacketProcessingTime), this);
+ 
+-        public void UpdateTotalReceivedPacketHandlingTime(long time)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mTotalReceivedPacketHandlingTime, time);
+         }
+ 
+-        public void UpdateTotalSentPacketHandlingTime(long time)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mTotalSentPacketHandlingTime, time);
+-        }
+ 
+-        public override IDictionary<string, object> Data(MetricsDataValueSource snapshot)
++        public override IDictionary<string, object> Data()
+         {
+-            var res = base.Data(snapshot);
++            var res = base.Data();
+ 
+             var top10Sent = PacketSender.SentPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
+             var top10Received = PacketHandler.AcceptedPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
+diff --git a/Intersect.Server/Metrics/Controllers/ThreadingMetricsController.cs b/Intersect.Server/Metrics/Controllers/ThreadingMetricsController.cs
+index 043840d4..0648b662 100644
+--- a/Intersect.Server/Metrics/Controllers/ThreadingMetricsController.cs
++++ b/Intersect.Server/Metrics/Controllers/ThreadingMetricsController.cs
+@@ -1,6 +1,4 @@
+-﻿using App.Metrics;
+-using App.Metrics.Histogram;
+-using System;
++﻿using System;
+ using System.Collections.Generic;
+ using System.Linq;
+ using System.Text;
+@@ -18,107 +16,53 @@ public class ThreadingMetricsController : MetricsController
+         private int mMinSystemThreadPoolThreads = 0;
+         private int mMinSystemThreadPoolIOThreads = 0;
+ 
++        public Histogram LogicPoolActiveThreads { get; private set; }
+ 
+-        public ThreadingMetricsController(IMetricsRoot root)
+-        {
+-            Context = CONTEXT;
+-            mAppMetricsRoot = root;
+-
+-            ThreadPool.GetMaxThreads(out mMaxSystemThreadPoolThreads, out mMaxSystemThreadPoolIOThreads);
+-            ThreadPool.GetMinThreads(out mMinSystemThreadPoolThreads, out mMinSystemThreadPoolIOThreads);
+-        }
+-
+-        private HistogramOptions mLogicPoolActiveThreads => new HistogramOptions() { Name = "LogicPoolActiveThreads", Context = CONTEXT };
+-
+-        private HistogramOptions mLogicPoolInUseThreads => new HistogramOptions() { Name = "LogicPoolInUseThreads", Context = CONTEXT };
++        public Histogram LogicPoolInUseThreads { get; private set; }
+ 
+-        private HistogramOptions mLogicPoolWorkItemsCount => new HistogramOptions() { Name = "LogicPoolWorkItemsCount", Context = CONTEXT };
++        public Histogram LogicPoolWorkItemsCount { get; private set; }
+ 
+-        private HistogramOptions mNetworkPoolActiveThreads => new HistogramOptions() { Name = "NetworkPoolActiveThreads", Context = CONTEXT };
++        public Histogram NetworkPoolActiveThreads { get; private set; }
+ 
+-        private HistogramOptions mNetworkPoolInUseThreads => new HistogramOptions() { Name = "NetworkPoolInUseThreads", Context = CONTEXT };
++        public Histogram NetworkPoolInUseThreads { get; private set; }
+ 
+-        private HistogramOptions mNetworkPoolWorkItemsCount => new HistogramOptions() { Name = "NetworkPoolWorkItemsCount", Context = CONTEXT };
++        public Histogram NetworkPoolWorkItemsCount { get; private set; }
+ 
+-        private HistogramOptions mSavingPoolActiveThreads => new HistogramOptions() { Name = "SavingPoolActiveThreads", Context = CONTEXT };
++        public Histogram SavingPoolActiveThreads { get; private set; }
+ 
+-        private HistogramOptions mSavingPoolInUseThreads => new HistogramOptions() { Name = "SavingPoolInUseThreads", Context = CONTEXT };
++        public Histogram SavingPoolInUseThreads { get; private set; }
+ 
+-        private HistogramOptions mSavingPoolWorkItemsCount => new HistogramOptions() { Name = "SavingPoolWorkItemsCount", Context = CONTEXT };
++        public Histogram SavingPoolWorkItemsCount { get; private set; }
+ 
+-        private HistogramOptions mSystemPoolInUseWorkerThreads => new HistogramOptions() { Name = "SystemPoolInUseWorkerThreads", Context = CONTEXT };
++        public Histogram SystemPoolInUseWorkerThreads { get; private set; }
+ 
+-        private HistogramOptions mSystemPoolInUseIOThreads => new HistogramOptions() { Name = "SystemPoolInUseIOThreads", Context = CONTEXT };
++        public Histogram SystemPoolInUseIOThreads { get; private set; }
+ 
+-        public void UpdateLogicPoolActiveThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolActiveThreads, threads);
+-        }
+-
+-        public void UpdateLogicPoolInUseThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolInUseThreads, threads);
+-        }
+-
+-        public void UpdateLogicPoolWorkItemsCount(int count)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mLogicPoolWorkItemsCount, count);
+-        }
+-
+-        public void UpdateNetworkPoolActiveThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolActiveThreads, threads);
+-        }
+ 
+-        public void UpdateNetworkPoolInUseThreads(int threads)
++        public ThreadingMetricsController()
+         {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolInUseThreads, threads);
+-        }
+-
+-        public void UpdateNetworkPoolWorkItemsCount(int count)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mNetworkPoolWorkItemsCount, count);
+-        }
+-
+-        public void UpdateSavingPoolActiveThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolActiveThreads, threads);
+-        }
+-
+-        public void UpdateSavingPoolInUseThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolInUseThreads, threads);
+-        }
++            Context = CONTEXT;
+ 
+-        public void UpdateSavingPoolWorkItemsCount(int count)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSavingPoolWorkItemsCount, count);
+-        }
++            ThreadPool.GetMaxThreads(out mMaxSystemThreadPoolThreads, out mMaxSystemThreadPoolIOThreads);
++            ThreadPool.GetMinThreads(out mMinSystemThreadPoolThreads, out mMinSystemThreadPoolIOThreads);
+ 
+-        public void UpdateSystemPoolInUseWorkerThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSystemPoolInUseWorkerThreads, threads);
++            LogicPoolActiveThreads = new Histogram(nameof(LogicPoolActiveThreads), this);
++            LogicPoolInUseThreads = new Histogram(nameof(LogicPoolInUseThreads), this);
++            LogicPoolWorkItemsCount = new Histogram(nameof(LogicPoolWorkItemsCount), this);
++            NetworkPoolActiveThreads = new Histogram(nameof(NetworkPoolActiveThreads), this);
++            NetworkPoolInUseThreads = new Histogram(nameof(NetworkPoolInUseThreads), this);
++            NetworkPoolWorkItemsCount = new Histogram(nameof(NetworkPoolWorkItemsCount), this);
++            SavingPoolActiveThreads = new Histogram(nameof(SavingPoolActiveThreads), this);
++            SavingPoolInUseThreads = new Histogram(nameof(SavingPoolInUseThreads), this);
++            SavingPoolWorkItemsCount = new Histogram(nameof(SavingPoolWorkItemsCount), this);
++            SystemPoolInUseWorkerThreads = new Histogram(nameof(SystemPoolInUseWorkerThreads), this);
++            SystemPoolInUseIOThreads = new Histogram(nameof(SystemPoolInUseIOThreads), this);
+         }
+ 
+-        public void UpdateSystemPoolInUseIOThreads(int threads)
+-        {
+-            if (Options.Instance.Metrics.Enable)
+-                mAppMetricsRoot.Measure.Histogram.Update(mSystemPoolInUseIOThreads, threads);
+-        }
+ 
+-        public override IDictionary<string, object> Data(MetricsDataValueSource snapshot)
++        public override IDictionary<string, object> Data()
+         {
+-            var res = base.Data(snapshot);
++            var res = base.Data();
+ 
+             res.Add("LogicPoolMaxThreads", Options.Instance.Processing.MaxLogicThreads);
+             res.Add("LogicPoolMinThreads", Options.Instance.Processing.MinLogicThreads);
+diff --git a/Intersect.Server/Metrics/Histogram.cs b/Intersect.Server/Metrics/Histogram.cs
+new file mode 100644
+index 00000000..353fc63a
+--- /dev/null
++++ b/Intersect.Server/Metrics/Histogram.cs
+@@ -0,0 +1,56 @@
++﻿using Intersect.Server.Metrics.Controllers;
++using Newtonsoft.Json;
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading;
++using System.Threading.Tasks;
++
++namespace Intersect.Server.Metrics
++{
++    public class Histogram
++    {
++        [JsonIgnore]
++        public string Name { get; private set; }
++
++        public long Min { get; private set; }
++
++        public long Max { get; private set; }
++
++        public long Count { get; private set; }
++
++        public long Sum { get; private set; }
++
++        public double Mean => Count > 0 ? Sum / (double)Count : 0;
++
++        public Histogram(string name, MetricsController controller)
++        {
++            Name = name;
++            controller.Measurements.Add(this);
++        }
++
++        public void Record(long val)
++        {
++            if (val < Min || Count == 0)
++            {
++                Min = val;
++            }
++
++            if (val > Max || Count == 0)
++            {
++                Max = val;
++            }
++            Sum += val;
++            Count++;
++        }
++
++        public void Clear()
++        {
++            Min = 0;
++            Max = 0;
++            Sum = 0;
++            Count = 0;
++        }
++    }
++}
+diff --git a/Intersect.Server/Metrics/MetricsRoot.cs b/Intersect.Server/Metrics/MetricsRoot.cs
+index 2b3b8bfb..e5a063d8 100644
+--- a/Intersect.Server/Metrics/MetricsRoot.cs
++++ b/Intersect.Server/Metrics/MetricsRoot.cs
+@@ -1,8 +1,4 @@
+-﻿using App.Metrics;
+-using App.Metrics.Histogram;
+-using App.Metrics.ReservoirSampling.SlidingWindow;
+-using App.Metrics.Scheduling;
+-using Intersect.Server.General;
++﻿using Intersect.Server.General;
+ using Intersect.Server.Metrics.Controllers;
+ using Newtonsoft.Json;
+ using Newtonsoft.Json.Linq;
+@@ -16,19 +12,19 @@ namespace Intersect.Server.Metrics
+     public class MetricsRoot
+     {
+ 
+-        private static readonly IMetricsRoot mAppMetricsRoot = AppMetrics.CreateDefaultBuilder().Build();
++        private List<MetricsController> MetricsControllers = new List<MetricsController>();
+ 
+-        public GameMetricsController Game { get; private set; } = new GameMetricsController(mAppMetricsRoot);
++        public GameMetricsController Game { get; private set; } = new GameMetricsController();
+ 
+-        public ApplicationMetricsController Application { get; private set; } = new ApplicationMetricsController(mAppMetricsRoot);
++        public ApplicationMetricsController Application { get; private set; } = new ApplicationMetricsController();
+ 
+-        public NetworkMetricsController Network { get; private set; } = new NetworkMetricsController(mAppMetricsRoot);
++        public NetworkMetricsController Network { get; private set; } = new NetworkMetricsController();
+ 
+-        public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController(mAppMetricsRoot);
++        public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController();
+ 
+-        public JObject Metrics => mLatestSnapshot;
++        public string Metrics => mLatestSnapshot;
+ 
+-        private JObject mLatestSnapshot = new JObject();
++        private string mLatestSnapshot = "{}";
+ 
+         /// <summary>
+         /// Creates and configures metric tracking for our various controllers
+@@ -37,6 +33,11 @@ public MetricsRoot()
+         {
+             if (Instance == null)
+                 Instance = this;
++
++            MetricsControllers.Add(Application);
++            MetricsControllers.Add(Game);
++            MetricsControllers.Add(Network);
++            MetricsControllers.Add(Threading);
+         }
+ 
+         /// <summary>
+@@ -57,22 +58,28 @@ public static void Init()
+         /// </summary>
+         public void Disable()
+         {
+-            mLatestSnapshot = new JObject();
++            mLatestSnapshot = "{}";
+         }
+ 
+         public void Capture()
+         {
+-            mLatestSnapshot = JObject.FromObject(Data(mAppMetricsRoot.Snapshot.Get()));
+-            mAppMetricsRoot.Manage.Reset();
++            var data = Data();
++            mLatestSnapshot = JsonConvert.SerializeObject(data);
++            Clear();
+         }
+ 
+-        private object Data(MetricsDataValueSource snapshot)
++        public void Clear()
++        {
++            MetricsControllers.ForEach(m => m.Clear());
++        }
++
++        private object Data()
+         {
+             var result = new ExpandoObject() as IDictionary<string, object>;
+-            result.Add(Game.Context, Game.Data(snapshot));
+-            result.Add(Application.Context, Application.Data(snapshot));
+-            result.Add(Network.Context, Network.Data(snapshot));
+-            result.Add(Threading.Context, Threading.Data(snapshot));
++            foreach (var controller in MetricsControllers)
++            {
++                result.Add(controller.Context, controller.Data());
++            }
+             return new
+             {
+                 uptime = Globals.Timing.Milliseconds,
+diff --git a/Intersect.Server/Networking/Client.cs b/Intersect.Server/Networking/Client.cs
+index 9b80c26a..ac885f5d 100644
+--- a/Intersect.Server/Networking/Client.cs
++++ b/Intersect.Server/Networking/Client.cs
+@@ -323,7 +323,7 @@ public void SendPackets()
+                             PacketSender.SentPacketTypes[packet.GetType().Name]++;
+                             PacketSender.SentPackets++;
+                             PacketSender.SentBytes += packet.Data.Length;
+-                            MetricsRoot.Instance.Network.UpdateTotalSentPacketHandlingTime(Globals.Timing.Milliseconds - tuple.Item3);
++                            MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Globals.Timing.Milliseconds - tuple.Item3);
+                         }
+                     }
+                     catch (Exception exception)
+@@ -391,7 +391,7 @@ public void HandlePackets()
+                                 mPacketHandler.HandlePacket(this, this.Entity, (dynamic)packet);
+                                 if (Options.Instance.Metrics.Enable)
+                                 {
+-                                    MetricsRoot.Instance.Network.UpdateTotalReceivedPacketHandlingTime(Globals.Timing.Milliseconds - packet.ReceiveTime);
++                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                 }
+                             }
+                             catch (Exception exception)
+diff --git a/Intersect.Server/packages.config b/Intersect.Server/packages.config
+index 6d8c7935..c56349f6 100644
+--- a/Intersect.Server/packages.config
++++ b/Intersect.Server/packages.config
+@@ -1,11 +1,5 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <packages>
+-  <package id="App.Metrics" version="4.1.0" targetFramework="net462" />
+-  <package id="App.Metrics.Abstractions" version="4.1.0" targetFramework="net462" />
+-  <package id="App.Metrics.Concurrency" version="2.0.1" targetFramework="net462" />
+-  <package id="App.Metrics.Core" version="4.1.0" targetFramework="net462" />
+-  <package id="App.Metrics.Formatters.Ascii" version="4.1.0" targetFramework="net462" />
+-  <package id="App.Metrics.Formatters.Json" version="4.1.0" targetFramework="net462" />
+   <package id="AscensionGameDev.Lidgren.Network" version="1.7.4.9" targetFramework="net462" />
+   <package id="AscensionGameDev.Open.NAT" version="2.1.1" targetFramework="net461" />
+   <package id="AscensionGameDev.WebApiThrottle" version="1.5.4.2" targetFramework="net461" />

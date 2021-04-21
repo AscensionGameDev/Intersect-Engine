@@ -1,5 +1,4 @@
-﻿using App.Metrics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -12,22 +11,19 @@ namespace Intersect.Server.Metrics.Controllers
     {
         public virtual string Context { get; set; }
 
-        protected virtual IMetricsRoot mAppMetricsRoot { get; set; }
+        public virtual List<Histogram> Measurements { get; set; } = new List<Histogram>();
 
-        public virtual IDictionary<string, object> Data(MetricsDataValueSource snapshot)
+        public virtual void Clear()
         {
-            var ctx = snapshot.Contexts.FirstOrDefault(c => c.Context == Context);
+            Measurements.ForEach(m => m.Clear());
+        }
+
+        public virtual IDictionary<string, object> Data()
+        {
             var result = new ExpandoObject() as IDictionary<string, object>;
-            if (ctx != null)
+            foreach (var hist in Measurements)
             {
-                foreach (var hist in ctx.Histograms)
-                {
-                    result.Add(hist.Name.Split('|')[0], hist.Value);
-                }
-                foreach (var counter in ctx.Counters)
-                {
-                    result.Add(counter.Name.Split('|')[0], counter.Value);
-                }
+                result.Add(hist.Name, hist);
             }
             return result;
         }

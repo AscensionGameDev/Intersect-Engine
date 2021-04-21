@@ -1,32 +1,19 @@
-﻿using App.Metrics;
-using App.Metrics.Histogram;
-
-namespace Intersect.Server.Metrics.Controllers
+﻿namespace Intersect.Server.Metrics.Controllers
 {
     public class ApplicationMetricsController : MetricsController
     {
         private const string CONTEXT = "Application";
 
-        public ApplicationMetricsController(IMetricsRoot root)
+        public Histogram Cpu { get; private set; }
+
+        public Histogram Memory { get; private set; }
+
+        public ApplicationMetricsController()
         {
             Context = CONTEXT;
-            mAppMetricsRoot = root;
-        }
 
-        private HistogramOptions mCpuUsage => new HistogramOptions() { Name = "Cpu", Context = CONTEXT };
-
-        private HistogramOptions mMemoryUsage => new HistogramOptions() { Name = "Memory", Context = CONTEXT };
-
-        public void UpdateCpuUsage(double cpu)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mCpuUsage, (long)cpu);
-        }
-
-        public void UpdateMemoryUsage(long memory)
-        {
-            if (Options.Instance.Metrics.Enable)
-                mAppMetricsRoot.Measure.Histogram.Update(mMemoryUsage, memory);
+            Cpu = new Histogram(nameof(Cpu), this);
+            Memory = new Histogram(nameof(Memory), this);
         }
     }
 }
