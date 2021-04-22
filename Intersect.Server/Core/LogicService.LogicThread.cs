@@ -171,7 +171,7 @@ namespace Intersect.Server.Core
                         {
                             if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
                             {
-                                while (MapProjectileUpdateQueue.TryPeek(out MapInstance result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval < startTime)
+                                while (MapProjectileUpdateQueue.TryPeek(out MapInstance result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval <= startTime)
                                 {
                                     if (MapProjectileUpdateQueue.TryDequeue(out MapInstance sameResult))
                                     {
@@ -180,7 +180,7 @@ namespace Intersect.Server.Core
                                 }
                             }
 
-                            while (MapUpdateQueue.TryPeek(out MapInstance result) && result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval < startTime)
+                            while (MapUpdateQueue.TryPeek(out MapInstance result) && result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval <= startTime)
                             {
                                 if (MapUpdateQueue.TryDequeue(out MapInstance sameResult))
                                 {
