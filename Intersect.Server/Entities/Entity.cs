@@ -112,6 +112,9 @@ namespace Intersect.Server.Entities
         [JsonIgnore, NotMapped]
         private int[] mOldVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
 
+        [JsonIgnore, NotMapped]
+        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
@@ -253,13 +256,14 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool VitalsUpdated
         {
-            get => !GetVitals().SequenceEqual(mOldVitals);
+            get => !GetVitals().SequenceEqual(mOldVitals) || !GetMaxVitals().SequenceEqual(mOldMaxVitals);
 
             set
             {
                 if (value == false)
                 {
                     mOldVitals = GetVitals();
+                    mOldMaxVitals = GetMaxVitals();
                 }
             }
         }
