@@ -116,7 +116,7 @@ namespace Intersect.Server.Database.Logging.Entities
         {
             using (var logging = DbInterface.LoggingContext)
             {
-                logging.UserActivityHistory.Add(activity));
+                logging.UserActivityHistory.Add(activity);
             }
         }
     }
