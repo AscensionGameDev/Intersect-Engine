@@ -71,20 +71,7 @@ namespace Intersect.Server.Networking
         //JoinGamePacket
         public static void SendJoinGame(Client client)
         {
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(
-                    new UserActivityHistory
-                    {
-                        UserId = client.User.Id,
-                        Ip = client.GetIp(),
-                        Peer = client.IsEditor ? UserActivityHistory.PeerType.Editor : UserActivityHistory.PeerType.Client,
-                        PlayerId = client.Entity?.Id,
-                        Action = UserActivityHistory.UserAction.SelectPlayer,
-                        Meta = $"{client.Name},{client.Entity?.Name}"
-                    }
-                );
-            }
+            UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
 
             if (!client.IsEditor)
             {

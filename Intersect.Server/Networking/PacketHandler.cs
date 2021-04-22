@@ -517,19 +517,7 @@ namespace Intersect.Server.Networking
             var user = User.TryLogin(packet.Username, packet.Password);
             if (user == null)
             {
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.UserActivityHistory.Add(
-                        new UserActivityHistory
-                        {
-                            UserId = Guid.Empty,
-                            Ip = client.GetIp(),
-                            Peer = UserActivityHistory.PeerType.Client,
-                            Action = UserActivityHistory.UserAction.FailedLogin,
-                            Meta = packet.Username
-                        }
-                    );
-                }
+                UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
@@ -598,18 +586,7 @@ namespace Intersect.Server.Networking
             //Check Mute Status and Load into user property
             Mute.FindMuteReason(client.User, client.GetIp());
 
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(
-                    new UserActivityHistory
-                    {
-                        UserId = user.Id,
-                        Ip = client.GetIp(),
-                        Peer = UserActivityHistory.PeerType.Client,
-                        Action = UserActivityHistory.UserAction.Login
-                    }
-                );
-            }
+            UserActivityHistory.LogActivity(user?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.Login, null);
 
             PacketSender.SendServerConfig(client);
 
@@ -650,21 +627,7 @@ namespace Intersect.Server.Networking
         {
             if (client != null)
             {
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.UserActivityHistory.Add(
-                        new UserActivityHistory
-                        {
-                            UserId = client.User?.Id ?? Guid.Empty,
-                            Ip = client.GetIp(),
-                            Peer = UserActivityHistory.PeerType.Client,
-                            Action = packet.ReturningToCharSelect
-                                ? UserActivityHistory.UserAction.SwitchPlayer
-                                : UserActivityHistory.UserAction.DisconnectLogout,
-                            Meta = $"{client.Name},{client.Entity?.Name}"
-                        }
-                    );
-                }
+                UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, packet.ReturningToCharSelect ? UserActivityHistory.UserAction.SwitchPlayer : UserActivityHistory.UserAction.DisconnectLogout, $"{client?.Name},{client?.Entity?.Name}");
 
                 if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
                 {
@@ -1408,19 +1371,8 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    using (var logging = DbInterface.LoggingContext)
-                    {
-                        logging.UserActivityHistory.Add(
-                            new UserActivityHistory
-                            {
-                                UserId = client.User?.Id ?? Guid.Empty,
-                                Ip = client.GetIp(),
-                                Peer = UserActivityHistory.PeerType.Client,
-                                Action = UserActivityHistory.UserAction.Create,
-                                Meta = client.Name
-                            }
-                        );
-                    }
+
+                    UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.Create, client?.Name);
 
                     DbInterface.CreateAccount(client, packet.Username, packet.Password, packet.Email);
 
@@ -1542,20 +1494,7 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(
-                    new UserActivityHistory
-                    {
-                        UserId = client.User?.Id ?? Guid.Empty,
-                        PlayerId = client.Entity?.Id,
-                        Ip = client.GetIp(),
-                        Peer = UserActivityHistory.PeerType.Client,
-                        Action = UserActivityHistory.UserAction.CreatePlayer,
-                        Meta = $"{client.Name},{client.Entity?.Name}"
-                    }
-                );
-            }
+            UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.CreatePlayer, $"{client?.Name},{client?.Entity?.Name}");
 
             client.User.AddCharacter(newChar);
             newChar.SetOnline();
@@ -2449,20 +2388,7 @@ namespace Intersect.Server.Networking
             {
                 client.LoadCharacter(character);
 
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.UserActivityHistory.Add(
-                        new UserActivityHistory
-                        {
-                            UserId = client.User?.Id ?? Guid.Empty,
-                            PlayerId = client.Entity?.Id,
-                            Ip = client.GetIp(),
-                            Peer = UserActivityHistory.PeerType.Client,
-                            Action = UserActivityHistory.UserAction.SelectPlayer,
-                            Meta = $"{client.Name},{client.Entity?.Name}"
-                        }
-                    );
-                }
+                UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
 
                 try
                 {
@@ -2498,20 +2424,7 @@ namespace Intersect.Server.Networking
                 {
                     if (chr.Id == packet.CharacterId)
                     {
-                        using (var logging = DbInterface.LoggingContext)
-                        {
-                            logging.UserActivityHistory.Add(
-                                new UserActivityHistory
-                                {
-                                    UserId = client.User?.Id ?? Guid.Empty,
-                                    PlayerId = client.Entity?.Id,
-                                    Ip = client.GetIp(),
-                                    Peer = UserActivityHistory.PeerType.Client,
-                                    Action = UserActivityHistory.UserAction.DeletePlayer,
-                                    Meta = $"{client.Name},{client.Entity?.Name}"
-                                }
-                            );
-                        }
+                        UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DeletePlayer, $"{client?.Name},{client?.Entity?.Name}");
 
                         client.User.DeleteCharacter(chr);
                     }
@@ -2625,19 +2538,7 @@ namespace Intersect.Server.Networking
             var user = User.TryLogin(packet.Username, packet.Password);
             if (user == null)
             {
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.UserActivityHistory.Add(
-                        new UserActivityHistory
-                        {
-                            UserId = Guid.Empty,
-                            Ip = client.GetIp(),
-                            Peer = UserActivityHistory.PeerType.Editor,
-                            Action = UserActivityHistory.UserAction.FailedLogin,
-                            Meta = packet.Username
-                        }
-                    );
-                }
+                UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Editor, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);

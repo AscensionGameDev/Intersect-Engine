@@ -76,6 +76,7 @@ namespace Intersect.Server.Core
                 {
                     var swCpsTimer = Globals.Timing.Milliseconds + 1000;
                     var lastCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                    var saveServerVariablesTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.DatabaseSaveServerVariablesInterval;
                     var metricsTimer = 0l;
                     long swCps = 0;
 
@@ -247,9 +248,9 @@ namespace Intersect.Server.Core
                             MetricsRoot.Instance.Threading.NetworkPoolActiveThreads.Record(ServerNetwork.Pool.ActiveThreads);
                             MetricsRoot.Instance.Threading.NetworkPoolInUseThreads.Record(ServerNetwork.Pool.InUseThreads);
                             MetricsRoot.Instance.Threading.NetworkPoolWorkItemsCount.Record(ServerNetwork.Pool.CurrentWorkItemsCount);
-                            MetricsRoot.Instance.Threading.SavingPoolActiveThreads.Record(Player.PlayerSavingPool.ActiveThreads);
-                            MetricsRoot.Instance.Threading.SavingPoolInUseThreads.Record(Player.PlayerSavingPool.InUseThreads);
-                            MetricsRoot.Instance.Threading.SavingPoolWorkItemsCount.Record(Player.PlayerSavingPool.CurrentWorkItemsCount);
+                            MetricsRoot.Instance.Threading.DatabasePoolActiveThreads.Record(DbInterface.Pool.ActiveThreads);
+                            MetricsRoot.Instance.Threading.DatabasePoolInUseThreads.Record(DbInterface.Pool.InUseThreads);
+                            MetricsRoot.Instance.Threading.DatabasePoolWorkItemsCount.Record(DbInterface.Pool.CurrentWorkItemsCount);
 
                             ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxIOThreads);
                             ThreadPool.GetAvailableThreads(out int availableWorkerThreads, out int availableIOThreads);
@@ -274,10 +275,17 @@ namespace Intersect.Server.Core
                             }
                         }
 
+                        if (saveServerVariablesTimer < endTime)
+                        {
+                            DbInterface.Pool.QueueWorkItem(DbInterface.SaveUpdatedServerVariables);
+                            saveServerVariablesTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.DatabaseSaveServerVariablesInterval;
+                        }
+
                         if (Options.Instance.Processing.CpsLock)
                         {
                             Thread.Sleep(1);
                         }
+            
                     }
                     LogicPool.Shutdown();
                 }

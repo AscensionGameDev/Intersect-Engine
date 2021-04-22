@@ -109,6 +109,9 @@ namespace Intersect.Server.Core
                 Log.Info("Disposing network..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 Network.Dispose();
 
+                Log.Info("Saving updated server variable values");
+                DbInterface.SaveUpdatedServerVariables();
+
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
                 Log.Info("Saving online users/players..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
 

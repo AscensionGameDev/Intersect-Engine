@@ -48,17 +48,23 @@ namespace Intersect.Config
         public int NetworkThreadIdleTimeout { get; set; } = 20000;
 
         /// <summary>
-        /// Minimum number of threads that will be used for packet processing which we don't want to slow down our game loop.
+        /// Minimum number of threads that will be used for database interactions like player or variable saving
         /// </summary>
-        public int MinPlayerSaveThreads { get; set; } = 2;
+        public int MinDatabaseThreads { get; set; } = 2;
         /// <summary>
-        /// Maximum number of threads that will be used for packet processing which we don't want to slow down our game loop.
+        /// Maximum number of threads that will be used for database interactions like player or variable saving
         /// </summary>
-        public int MaxPlayerSaveThreads { get; set; } = 4;
+        public int MaxDatabaseThreads { get; set; } = 4;
+
         /// <summary>
-        /// This is how long (in ms) a network thread in our network pool should be idle before it is considered unneeded and therefore disposed.
+        /// This is how long (in ms) a database thread should be idle before it is considered unneeded and therefore disposed.
         /// </summary>
-        public int PlayerSaveThreadIdleTimeout { get; set; } = 20000;
+        public int DatabaseThreadIdleTimeout { get; set; } = 20000;
+
+        /// <summary>
+        /// How often should the server save changes to server variable values?
+        /// </summary>
+        public int DatabaseSaveServerVariablesInterval { get; set; } = 60000;
 
         /// <summary>
         /// Minimum number of worker threads that will be used in the system managed threadpool (-1 for default)
@@ -135,17 +141,24 @@ namespace Intersect.Config
                 throw new Exception("Network thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
             }
 
-            if (MinPlayerSaveThreads < 1)
+            if (MinDatabaseThreads < 1)
             {
-                throw new InvalidOperationException("Need at least 1 player saving thread.");
+                throw new InvalidOperationException("Need at least 1 database io thread.");
             }
-            if (MaxPlayerSaveThreads < MinPlayerSaveThreads)
+
+            if (MaxDatabaseThreads < MinDatabaseThreads)
             {
-                throw new InvalidOperationException("The maximum number of player saving threads should be greater than the minimum number of player saving threads.");
+                throw new InvalidOperationException("The maximum number of database io threads should be greater than the minimum number of database io threads.");
             }
-            if (PlayerSaveThreadIdleTimeout < 1000)
+
+            if (DatabaseThreadIdleTimeout < 1000)
             {
-                throw new Exception("Player saving thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+                throw new Exception("Database thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+            }
+
+            if (DatabaseSaveServerVariablesInterval < 5000)
+            {
+                throw new Exception("Server variables should not be saved more often than once per every 5 seconds, extra db writes will hinder performance.");
             }
 
             if (MapUpdateInterval > 200)

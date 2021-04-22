@@ -37,20 +37,6 @@ namespace Intersect.Server.Entities
 
     public partial class Player : Entity
     {
-        /// <summary>
-        /// This is our thread pool for handling player saving/logouts.
-        /// Min/Max Number of Threads & Idle Timeouts are set via server config.
-        /// </summary>
-        public static SmartThreadPool PlayerSavingPool = new SmartThreadPool(
-                new STPStartInfo()
-                {
-                    ThreadPoolName = "PlayerSaving",
-                    IdleTimeout = Options.Instance.Processing.PlayerSaveThreadIdleTimeout,
-                    MinWorkerThreads = Options.Instance.Processing.MinPlayerSaveThreads,
-                    MaxWorkerThreads = Options.Instance.Processing.MaxPlayerSaveThreads
-                }
-            );
-
         //Online Players List
         private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
 
@@ -402,7 +388,7 @@ namespace Intersect.Server.Entities
                 User?.TryLogout();
             }
 
-            PlayerSavingPool.QueueWorkItem(CompleteLogout);
+            DbInterface.Pool.QueueWorkItem(CompleteLogout);
         }
 
         public void CompleteLogout()
@@ -442,7 +428,7 @@ namespace Intersect.Server.Entities
                             var user = User;
                             if (user != null)
                             {
-                                PlayerSavingPool.QueueWorkItem(user.Save, false);
+                                DbInterface.Pool.QueueWorkItem(user.Save, false);
                             }
                             SaveTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                         }
@@ -6117,19 +6103,7 @@ namespace Intersect.Server.Entities
             User?.Save();
 
             // Log the activity.
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(
-                    new UserActivityHistory {
-                        UserId = UserId,
-                        PlayerId = Id,
-                        Ip = Client.GetIp(),
-                        Peer = UserActivityHistory.PeerType.Client,
-                        Action = UserActivityHistory.UserAction.NameChange,
-                        Meta = $"Changing Character name from {oldName} to {newName}"
-                    }
-                );
-            }
+            UserActivityHistory.LogActivity(UserId, Id, Client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.NameChange, $"Changing Character name from {oldName} to {newName}");
 
             // Send our data around!
             PacketSender.SendEntityDataToProximity(this);

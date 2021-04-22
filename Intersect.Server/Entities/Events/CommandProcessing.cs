@@ -1505,8 +1505,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 
@@ -1685,8 +1684,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 
@@ -1742,8 +1740,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 
