@@ -225,20 +225,25 @@ namespace Intersect.Network
             // Incorporate Ceras
             var data = buffer.ToBytes();
 
-            // Get Packet From Data using Ceras
-            var sw = Stopwatch.StartNew();
+            // Get Packet From Data using MessagePack
             var packet = (IPacket) MessagePacker.Instance.Deserialize(data);
-            if (sw.ElapsedMilliseconds > 10)
+            if (packet != null)
             {
-                Debug.WriteLine(
-                    "Took " + sw.ElapsedMilliseconds + "ms to deserialize packet: " + packet.GetType().Name
-                );
+                if (Handler != null)
+                {
+                    // Pass packet to handler.
+                    Handler(connection, packet);
+                }
+                else
+                {
+                    Log.Error("Handler == null, this shouldn't happen! Tell JC");
+                    Disconnect(connection, NetworkStatus.Unknown.ToString());
+                }
             }
-
-            // Handle any packet identification errors
-
-            // Pass packet to handler.
-            Handler(connection, packet);
+            else
+            {
+                Disconnect(connection, NetworkStatus.VersionMismatch.ToString());
+            }
         }
 
         protected abstract IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>();
