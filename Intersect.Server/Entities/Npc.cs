@@ -603,7 +603,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!InRangeOf(target, range) && targetType == SpellTargetTypes.Self)
+            if (!InRangeOf(target, range) && targetType == SpellTargetTypes.Single)
             {
                 // ReSharper disable once SwitchStatementMissingSomeCases
                 return;
