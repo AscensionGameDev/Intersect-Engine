@@ -110,7 +110,6 @@ namespace Intersect.Editor.Forms.Editors
             this.chkFocusDamageDealer = new DarkUI.Controls.DarkCheckBox();
             this.nudFlee = new DarkUI.Controls.DarkNumericUpDown();
             this.lblFlee = new System.Windows.Forms.Label();
-            this.lblSwarm = new System.Windows.Forms.Label();
             this.chkSwarm = new DarkUI.Controls.DarkCheckBox();
             this.grpConditions = new DarkUI.Controls.DarkGroupBox();
             this.btnAttackOnSightCond = new DarkUI.Controls.DarkButton();
@@ -118,7 +117,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnPlayerFriendProtectorCond = new DarkUI.Controls.DarkButton();
             this.lblMovement = new System.Windows.Forms.Label();
             this.cmbMovement = new DarkUI.Controls.DarkComboBox();
-            this.lblAggressive = new System.Windows.Forms.Label();
             this.chkAggressive = new DarkUI.Controls.DarkCheckBox();
             this.grpRegen = new DarkUI.Controls.DarkGroupBox();
             this.nudMpRegen = new DarkUI.Controls.DarkNumericUpDown();
@@ -166,6 +164,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
+            this.chkIndividualLoot = new DarkUI.Controls.DarkCheckBox();
             this.grpNpcs.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).BeginInit();
@@ -1227,7 +1226,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCommonEvents.Controls.Add(this.cmbOnDeathEventKiller);
             this.grpCommonEvents.Controls.Add(this.lblOnDeathEventKiller);
             this.grpCommonEvents.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCommonEvents.Location = new System.Drawing.Point(215, 998);
+            this.grpCommonEvents.Location = new System.Drawing.Point(215, 1018);
             this.grpCommonEvents.Margin = new System.Windows.Forms.Padding(2);
             this.grpCommonEvents.Name = "grpCommonEvents";
             this.grpCommonEvents.Padding = new System.Windows.Forms.Padding(2);
@@ -1310,12 +1309,10 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBehavior.Controls.Add(this.lblSpawnDuration);
             this.grpBehavior.Controls.Add(this.nudFlee);
             this.grpBehavior.Controls.Add(this.lblFlee);
-            this.grpBehavior.Controls.Add(this.lblSwarm);
             this.grpBehavior.Controls.Add(this.chkSwarm);
             this.grpBehavior.Controls.Add(this.grpConditions);
             this.grpBehavior.Controls.Add(this.lblMovement);
             this.grpBehavior.Controls.Add(this.cmbMovement);
-            this.grpBehavior.Controls.Add(this.lblAggressive);
             this.grpBehavior.Controls.Add(this.chkAggressive);
             this.grpBehavior.Controls.Add(this.nudSightRange);
             this.grpBehavior.Controls.Add(this.lblSightRange);
@@ -1398,22 +1395,14 @@ namespace Intersect.Editor.Forms.Editors
             this.lblFlee.TabIndex = 69;
             this.lblFlee.Text = "Flee Health %:";
             // 
-            // lblSwarm
-            // 
-            this.lblSwarm.AutoSize = true;
-            this.lblSwarm.Location = new System.Drawing.Point(115, 20);
-            this.lblSwarm.Name = "lblSwarm";
-            this.lblSwarm.Size = new System.Drawing.Size(39, 13);
-            this.lblSwarm.TabIndex = 68;
-            this.lblSwarm.Text = "Swarm";
-            // 
             // chkSwarm
             // 
             this.chkSwarm.AutoSize = true;
-            this.chkSwarm.Location = new System.Drawing.Point(160, 20);
+            this.chkSwarm.Location = new System.Drawing.Point(93, 16);
             this.chkSwarm.Name = "chkSwarm";
-            this.chkSwarm.Size = new System.Drawing.Size(15, 14);
+            this.chkSwarm.Size = new System.Drawing.Size(58, 17);
             this.chkSwarm.TabIndex = 67;
+            this.chkSwarm.Text = "Swarm";
             this.chkSwarm.CheckedChanged += new System.EventHandler(this.chkSwarm_CheckedChanged);
             // 
             // grpConditions
@@ -1496,22 +1485,14 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbMovement.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbMovement.SelectedIndexChanged += new System.EventHandler(this.cmbMovement_SelectedIndexChanged);
             // 
-            // lblAggressive
-            // 
-            this.lblAggressive.AutoSize = true;
-            this.lblAggressive.Location = new System.Drawing.Point(10, 20);
-            this.lblAggressive.Name = "lblAggressive";
-            this.lblAggressive.Size = new System.Drawing.Size(59, 13);
-            this.lblAggressive.TabIndex = 63;
-            this.lblAggressive.Text = "Aggressive";
-            // 
             // chkAggressive
             // 
             this.chkAggressive.AutoSize = true;
-            this.chkAggressive.Location = new System.Drawing.Point(78, 19);
+            this.chkAggressive.Location = new System.Drawing.Point(9, 16);
             this.chkAggressive.Name = "chkAggressive";
-            this.chkAggressive.Size = new System.Drawing.Size(15, 14);
+            this.chkAggressive.Size = new System.Drawing.Size(78, 17);
             this.chkAggressive.TabIndex = 1;
+            this.chkAggressive.Text = "Aggressive";
             this.chkAggressive.CheckedChanged += new System.EventHandler(this.chkAggressive_CheckedChanged);
             // 
             // grpRegen
@@ -1595,6 +1576,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpDrops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpDrops.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpDrops.Controls.Add(this.chkIndividualLoot);
             this.grpDrops.Controls.Add(this.btnDropRemove);
             this.grpDrops.Controls.Add(this.btnDropAdd);
             this.grpDrops.Controls.Add(this.lstDrops);
@@ -1607,7 +1589,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpDrops.Location = new System.Drawing.Point(218, 728);
             this.grpDrops.Name = "grpDrops";
-            this.grpDrops.Size = new System.Drawing.Size(226, 266);
+            this.grpDrops.Size = new System.Drawing.Size(226, 285);
             this.grpDrops.TabIndex = 30;
             this.grpDrops.TabStop = false;
             this.grpDrops.Text = "Drops";
@@ -2110,6 +2092,16 @@ namespace Intersect.Editor.Forms.Editors
             this.searchableDarkTreeView1.TabIndex = 46;
             this.searchableDarkTreeView1.Visible = false;
             // 
+            // chkIndividualLoot
+            // 
+            this.chkIndividualLoot.AutoSize = true;
+            this.chkIndividualLoot.Location = new System.Drawing.Point(6, 262);
+            this.chkIndividualLoot.Name = "chkIndividualLoot";
+            this.chkIndividualLoot.Size = new System.Drawing.Size(165, 17);
+            this.chkIndividualLoot.TabIndex = 78;
+            this.chkIndividualLoot.Text = "Spawn Loot for all Attackers?";
+            this.chkIndividualLoot.CheckedChanged += new System.EventHandler(this.chkIndividualLoot_CheckedChanged);
+            // 
             // FrmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2281,7 +2273,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblRegenHint;
         private DarkGroupBox grpCommonEvents;
         private DarkGroupBox grpBehavior;
-        private System.Windows.Forms.Label lblSwarm;
         private DarkCheckBox chkSwarm;
         private DarkGroupBox grpConditions;
         private DarkButton btnAttackOnSightCond;
@@ -2289,7 +2280,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnPlayerFriendProtectorCond;
         private System.Windows.Forms.Label lblMovement;
         private DarkComboBox cmbMovement;
-        private System.Windows.Forms.Label lblAggressive;
         private DarkCheckBox chkAggressive;
         private DarkComboBox cmbOnDeathEventParty;
         private System.Windows.Forms.Label lblOnDeathEventParty;
@@ -2326,5 +2316,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblRed;
         private DarkNumericUpDown nudResetRadius;
         private System.Windows.Forms.Label lblResetRadius;
+        private DarkCheckBox chkIndividualLoot;
     }
 }

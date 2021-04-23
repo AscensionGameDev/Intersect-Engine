@@ -2463,7 +2463,7 @@ namespace Intersect.Server.Entities
             if (dropitems > 0)
             {
                 // If this is an NPC, drop loot for every single player that participated in the fight.
-                if (this is Npc npc)
+                if (this is Npc npc && npc.Base.IndividualizedLoot)
                 {
                     // Generate loot for every player that has helped damage this monster, as well as their party members.
                     // Keep track of who already got loot generated for them though, or this gets messy!
@@ -2473,7 +2473,7 @@ namespace Intersect.Server.Entities
                         if (player != null)
                         {
                             // is this player in a party?
-                            if (player.Party.Count > 0)
+                            if (player.Party.Count > 0 && Options.Instance.LootOpts.IndividualizedLootAutoIncludePartyMembers)
                             {
                                 // They are, so check for all party members and drop if still eligible!
                                 foreach (var partyMember in player.Party)

@@ -42,5 +42,10 @@
         /// Configures the maximum amount of tiles around you to search for loot with the Loot Window.
         /// </summary>
         public byte MaximumLootWindowDistance = 3;
+
+        /// <summary>
+        /// When killing an npc which spawns individualized loot for all of it's attackers, include loot for all their party members, even if they didn't participate (deal damage) to the npc
+        /// </summary>
+        public bool IndividualizedLootAutoIncludePartyMembers { get; set; } = false;
     }
 }

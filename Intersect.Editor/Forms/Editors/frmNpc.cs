@@ -142,7 +142,7 @@ namespace Intersect.Editor.Forms.Editors
             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
 
             //Behavior
-            lblAggressive.Text = Strings.NpcEditor.aggressive;
+            chkAggressive.Text = Strings.NpcEditor.aggressive;
             lblSightRange.Text = Strings.NpcEditor.sightrange;
             lblMovement.Text = Strings.NpcEditor.movement;
             lblResetRadius.Text = Strings.NpcEditor.resetradius;
@@ -152,7 +152,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbMovement.Items.Add(Strings.NpcEditor.movements[i]);
             }
 
-            lblSwarm.Text = Strings.NpcEditor.swarm;
+            chkSwarm.Text = Strings.NpcEditor.swarm;
             lblFlee.Text = Strings.NpcEditor.flee;
             grpConditions.Text = Strings.NpcEditor.conditions;
             btnPlayerFriendProtectorCond.Text = Strings.NpcEditor.playerfriendprotectorconditions;
@@ -212,6 +212,7 @@ namespace Intersect.Editor.Forms.Editors
             lblDropChance.Text = Strings.NpcEditor.dropchance;
             btnDropAdd.Text = Strings.NpcEditor.dropadd;
             btnDropRemove.Text = Strings.NpcEditor.dropremove;
+            chkIndividualLoot.Text = Strings.NpcEditor.individualizedloot;
 
             grpCombat.Text = Strings.NpcEditor.combat;
             lblDamage.Text = Strings.NpcEditor.basedamage;
@@ -339,6 +340,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 UpdateDropValues();
+                chkIndividualLoot.Checked = mEditorItem.IndividualizedLoot;
 
                 DrawNpcSprite();
                 if (mChanged.IndexOf(mEditorItem) == -1)
@@ -795,6 +797,11 @@ namespace Intersect.Editor.Forms.Editors
             UpdateDropValues(true);
         }
 
+        private void chkIndividualLoot_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IndividualizedLoot = chkIndividualLoot.Checked
+        }
+
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Level = (int) nudLevel.Value;
@@ -1173,7 +1180,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }
