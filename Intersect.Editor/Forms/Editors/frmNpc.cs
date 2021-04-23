@@ -799,7 +799,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkIndividualLoot_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.IndividualizedLoot = chkIndividualLoot.Checked
+            mEditorItem.IndividualizedLoot = chkIndividualLoot.Checked;
         }
 
         private void nudLevel_ValueChanged(object sender, EventArgs e)
