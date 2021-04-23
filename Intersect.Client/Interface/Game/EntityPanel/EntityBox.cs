@@ -82,8 +82,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private string mCurrentSprite = "";
 
-        private bool mInitialized;
-
         private long mLastUpdateTime;
 
         public ImagePanel MpBackground;
@@ -224,6 +222,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
+                UpdateSpellStatus();
+                if (EntityType == EntityTypes.Event)
+                {
+                    EventDesc.ClearText();
+                    EventDesc.AddText(((Event)MyEntity).Desc, Color.White);
+                    EventDesc.SizeToChildren(false, true);
+                }
             }
         }
 
@@ -234,11 +239,41 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
+                UpdateSpellStatus();
+                if (EntityType == EntityTypes.Event)
+                {
+                    EventDesc.ClearText();
+                    EventDesc.AddText(((Event)MyEntity).Desc, Color.White);
+                    EventDesc.SizeToChildren(false, true);
+                }
             }
+        }
+
+        public void ShowAllElements()
+        {
+            TradeLabel.Show();
+            PartyLabel.Show();
+            FriendLabel.Show();
+            ExpBackground.Show();
+            ExpBar.Show();
+            ExpLbl.Show();
+            ExpTitle.Show();
+            EntityMap.Show();
+            EventDesc.Show();
+            MpBackground.Show();
+            MpBar.Show();
+            MpTitle.Show();
+            MpLbl.Show();
+            HpBackground.Show();
+            HpBar.Show();
+            HpLbl.Show();
+            HpTitle.Show();
         }
 
         public void SetupEntityElements()
         {
+            ShowAllElements();
+
             switch (EntityType)
             {
                 case EntityTypes.Player:
@@ -282,6 +317,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     break;
                 case EntityTypes.Event:
+                    EventDesc.Show();
                     ExpBackground.Hide();
                     ExpBar.Hide();
                     ExpLbl.Hide();
@@ -339,18 +375,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
 
-            if (!mInitialized)
-            {
-                SetupEntityElements();
-                UpdateSpellStatus();
-                if (EntityType == EntityTypes.Event)
-                {
-                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
-                    EventDesc.SizeToChildren(false, true);
-                }
-
-                mInitialized = true;
-            }
+            SetupEntityElements();
+            UpdateSpellStatus();
 
             //Time since this window was last updated (for bar animations)
             var elapsedTime = (Globals.System.GetTimeMs() - mLastUpdateTime) / 1000.0f;
@@ -712,6 +738,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 EntityFace.Texture = faceTex;
                 EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
                 EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+                EntityFace.SizeToContents();
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
