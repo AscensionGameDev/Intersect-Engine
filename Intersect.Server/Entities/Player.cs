@@ -5843,13 +5843,13 @@ namespace Intersect.Server.Entities
             if (item.CooldownGroup.Trim().Length > 0)
             {
                 // Yes, so handle it!
-                UpdateCooldownGroup(GameObjectType.Item, item.CooldownGroup, item.Cooldown);
+                UpdateCooldownGroup(GameObjectType.Item, item.CooldownGroup, item.Cooldown, item.IgnoreCooldownReduction);
             }
             else
             {
                 // No, handle singular cooldown as normal.
-                
-                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+
+                var cooldownReduction = 1 - (item.IgnoreCooldownReduction ? 0 : this.GetCooldownReduction() / 100);
                 AssignItemCooldown(item.Id, Globals.Timing.MillisecondsUTC + (long)(item.Cooldown * cooldownReduction));
                 PacketSender.SendItemCooldown(this, item.Id);
             }
@@ -5870,12 +5870,12 @@ namespace Intersect.Server.Entities
             if (spell.CooldownGroup.Trim().Length > 0)
             {
                 // Yes, so handle it!
-                UpdateCooldownGroup(GameObjectType.Spell, spell.CooldownGroup, spell.CooldownDuration);
+                UpdateCooldownGroup(GameObjectType.Spell, spell.CooldownGroup, spell.CooldownDuration, spell.IgnoreCooldownReduction);
             }
             else
             {
                 // No, handle singular cooldown as normal.
-                var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+                var cooldownReduction = 1 - (spell.IgnoreCooldownReduction ? 0 : this.GetCooldownReduction() / 100);
                 AssignSpellCooldown(spell.Id, Globals.Timing.MillisecondsUTC + (long)(spell.CooldownDuration * cooldownReduction));
                 PacketSender.SendSpellCooldown(this, spell.Id);
             }
@@ -5938,7 +5938,8 @@ namespace Intersect.Server.Entities
         /// <param name="type">The <see cref="GameObjectType"/> to set trigger the cooldown group for. Currently only accepts Items and Spells</param>
         /// <param name="group">The cooldown group to trigger.</param>
         /// <param name="cooldown">The base cooldown of the object that triggered this cooldown group.</param>
-        private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown)
+        /// <param name="ignoreCdr">Whether or not this item/spell is set to ignore cdr, in which case the group will ignore it too.</param>
+        private void UpdateCooldownGroup(GameObjectType type, string group, int cooldown, bool ignoreCdr)
         {
             // We're only dealing with these two types for now.
             if (type != GameObjectType.Item && type != GameObjectType.Spell)
@@ -5946,7 +5947,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
+            var cooldownReduction = 1 - (ignoreCdr ? 0 : this.GetCooldownReduction() / 100);
 
             // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
             var matchingItems = Array.Empty<ItemBase>();

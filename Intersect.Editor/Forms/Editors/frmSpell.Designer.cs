@@ -171,6 +171,7 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstSpells = new System.Windows.Forms.TreeView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.chkIgnoreCdr = new DarkUI.Controls.DarkCheckBox();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -503,6 +504,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpSpellCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpSpellCost.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSpellCost.Controls.Add(this.chkIgnoreCdr);
             this.grpSpellCost.Controls.Add(this.chkIgnoreGlobalCooldown);
             this.grpSpellCost.Controls.Add(this.btnAddCooldownGroup);
             this.grpSpellCost.Controls.Add(this.cmbCooldownGroup);
@@ -526,7 +528,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkIgnoreGlobalCooldown
             // 
             this.chkIgnoreGlobalCooldown.AutoSize = true;
-            this.chkIgnoreGlobalCooldown.Location = new System.Drawing.Point(9, 112);
+            this.chkIgnoreGlobalCooldown.Location = new System.Drawing.Point(9, 97);
             this.chkIgnoreGlobalCooldown.Name = "chkIgnoreGlobalCooldown";
             this.chkIgnoreGlobalCooldown.Size = new System.Drawing.Size(145, 17);
             this.chkIgnoreGlobalCooldown.TabIndex = 56;
@@ -2295,6 +2297,16 @@ namespace Intersect.Editor.Forms.Editors
             this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
             this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
+            // chkIgnoreCdr
+            // 
+            this.chkIgnoreCdr.AutoSize = true;
+            this.chkIgnoreCdr.Location = new System.Drawing.Point(8, 120);
+            this.chkIgnoreCdr.Name = "chkIgnoreCdr";
+            this.chkIgnoreCdr.Size = new System.Drawing.Size(164, 17);
+            this.chkIgnoreCdr.TabIndex = 57;
+            this.chkIgnoreCdr.Text = "Ignore Cooldown Reduction?";
+            this.chkIgnoreCdr.CheckedChanged += new System.EventHandler(this.chkIgnoreCdr_CheckedChanged);
+            // 
             // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2521,5 +2533,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbCooldownGroup;
         private System.Windows.Forms.Label lblCooldownGroup;
         private DarkCheckBox chkIgnoreGlobalCooldown;
+        private DarkCheckBox chkIgnoreCdr;
     }
 }

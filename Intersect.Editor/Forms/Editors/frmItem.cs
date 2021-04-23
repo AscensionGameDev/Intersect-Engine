@@ -222,6 +222,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCooldown.Text = Strings.ItemEditor.cooldown;
             lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
             chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
+            chkIgnoreCdr.Text = Strings.ItemEditor.IgnoreCooldownReduction;
 
             grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
             lblHealthBonus.Text = Strings.ItemEditor.health;
@@ -376,6 +377,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudCooldown.Value = mEditorItem.Cooldown;
                 cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
                 chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
+                chkIgnoreCdr.Checked = mEditorItem.IgnoreCooldownReduction;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -939,6 +941,12 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
         }
+
+        private void chkIgnoreCdr_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreCooldownReduction = chkIgnoreCdr.Checked;
+        }
+
         private void nudRgbaR_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Color.R = (byte)nudRgbaR.Value;
@@ -1344,7 +1352,6 @@ namespace Intersect.Editor.Forms.Editors
 
 
         #endregion
-
     }
 
 }

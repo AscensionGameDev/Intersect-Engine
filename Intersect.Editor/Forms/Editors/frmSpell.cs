@@ -167,7 +167,8 @@ namespace Intersect.Editor.Forms.Editors
             lblCastDuration.Text = Strings.SpellEditor.casttime;
             lblCooldownDuration.Text = Strings.SpellEditor.cooldown;
             lblCooldownGroup.Text = Strings.SpellEditor.CooldownGroup;
-            chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
+            chkIgnoreGlobalCooldown.Text = Strings.SpellEditor.IgnoreGlobalCooldown;
+            chkIgnoreCdr.Text = Strings.SpellEditor.IgnoreCooldownReduction;
 
             grpTargetInfo.Text = Strings.SpellEditor.targetting;
             lblTargetType.Text = Strings.SpellEditor.targettype;
@@ -269,6 +270,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
                 cmbCooldownGroup.SelectedItem = mEditorItem.CooldownGroup;
                 chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
+                chkIgnoreCdr.Checked = mEditorItem.IgnoreCooldownReduction;
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
@@ -955,6 +957,11 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
         }
 
+        private void chkIgnoreCdr_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreCooldownReduction = chkIgnoreCdr.Checked;
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -1218,7 +1225,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }

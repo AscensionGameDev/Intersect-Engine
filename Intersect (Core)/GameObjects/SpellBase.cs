@@ -74,6 +74,11 @@ namespace Intersect.GameObjects
         /// </summary>
         public bool IgnoreGlobalCooldown { get; set; } = false;
 
+        /// <summary>
+        /// Configured whether the cooldown of this spell should be reduced by the players cooldown reduction
+        /// </summary>
+        public bool IgnoreCooldownReduction { get; set; } = false;
+
         //Spell Bound
         public bool Bound { get; set; }
 

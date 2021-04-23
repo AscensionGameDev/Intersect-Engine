@@ -2938,6 +2938,9 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString IgnoreGlobalCooldown = @"Ignore Global Cooldown?";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString IgnoreCooldownReduction = @"Ignore Cooldown Reduction?";
+
             public static LocalizedString copy = @"Copy Item";
 
             public static LocalizedString critchance = @"Crit Chance (%):";
@@ -4188,6 +4191,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString IgnoreGlobalCooldown = @"Ignore Global Cooldown?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString IgnoreCooldownReduction = @"Ignore Cooldown Reduction?";
 
             public static LocalizedString copy = @"Copy Spell";
 

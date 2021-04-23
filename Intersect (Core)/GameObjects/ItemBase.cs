@@ -83,6 +83,11 @@ namespace Intersect.GameObjects
         /// </summary>
         public bool IgnoreGlobalCooldown { get; set; } = false;
 
+        /// <summary>
+        /// Configured whether the cooldown of this item should be reduced by the players cooldown reduction
+        /// </summary>
+        public bool IgnoreCooldownReduction { get; set; } = false;
+
         public int Damage { get; set; }
 
         public int DamageType { get; set; }
