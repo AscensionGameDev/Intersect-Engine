@@ -296,28 +296,29 @@ namespace Intersect.Server.Entities
                 for (var i = 0; i < mSpawnedAmount; i++)
                 {
                     var spawn = Spawns[i];
-                    if (spawn != null && Globals.Timing.Milliseconds > spawn.TransmittionTimer)
+                    if (spawn != null)
                     {
-                        var x = spawn.X;
-                        var y = spawn.Y;
-                        var map = spawn.MapId;
-                        var killSpawn = false;
-                        if (!spawn.Dead)
+                        while (Globals.Timing.Milliseconds > spawn.TransmittionTimer && Spawns[i] != null)
                         {
-                            killSpawn = MoveFragment(spawn);
-                            if (!killSpawn && (x != spawn.X || y != spawn.Y || map != spawn.MapId))
+                            var x = spawn.X;
+                            var y = spawn.Y;
+                            var map = spawn.MapId;
+                            var killSpawn = false;
+                            if (!spawn.Dead)
                             {
-                                killSpawn = CheckForCollision(spawn);
+                                killSpawn = MoveFragment(spawn);
+                                if (!killSpawn && (x != spawn.X || y != spawn.Y || map != spawn.MapId))
+                                {
+                                    killSpawn = CheckForCollision(spawn);
+                                }
                             }
-                        }
 
-                        if (killSpawn || spawn.Dead)
-                        {
-                            spawnDeaths.Add(new KeyValuePair<Guid, int>(Id, i));
-                            Spawns[i] = null;
-                            mSpawnCount--;
-
-                            continue;
+                            if (killSpawn || spawn.Dead)
+                            {
+                                spawnDeaths.Add(new KeyValuePair<Guid, int>(Id, i));
+                                Spawns[i] = null;
+                                mSpawnCount--;
+                            }
                         }
                     }
                 }
@@ -405,10 +406,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         if (z == entities.Count - 1)
-                        {
-                            spawn.TransmittionTimer = Globals.Timing.Milliseconds +
-                                                      (long) ((float) Base.Speed / (float) Base.Range);
-
+                        {       
                             if (spawn.Distance >= Base.Range)
                             {
                                 killSpawn = true;
@@ -430,6 +428,7 @@ namespace Intersect.Server.Entities
             if (move)
             {
                 spawn.Distance++;
+                spawn.TransmittionTimer += (long)((float)Base.Speed / (float)Base.Range);
                 newx = spawn.X + GetRangeX(spawn.Dir, 1);
                 newy = spawn.Y + GetRangeY(spawn.Dir, 1);
             }
