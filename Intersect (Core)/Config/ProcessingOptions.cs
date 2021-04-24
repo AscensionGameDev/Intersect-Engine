@@ -48,6 +48,42 @@ namespace Intersect.Config
         public int NetworkThreadIdleTimeout { get; set; } = 20000;
 
         /// <summary>
+        /// Minimum number of threads that will be used for database interactions like player or variable saving
+        /// </summary>
+        public int MinDatabaseThreads { get; set; } = 2;
+        /// <summary>
+        /// Maximum number of threads that will be used for database interactions like player or variable saving
+        /// </summary>
+        public int MaxDatabaseThreads { get; set; } = 4;
+
+        /// <summary>
+        /// This is how long (in ms) a database thread should be idle before it is considered unneeded and therefore disposed.
+        /// </summary>
+        public int DatabaseThreadIdleTimeout { get; set; } = 20000;
+
+        /// <summary>
+        /// How often should the server save changes to server variable values?
+        /// </summary>
+        public int DatabaseSaveServerVariablesInterval { get; set; } = 60000;
+
+        /// <summary>
+        /// Minimum number of worker threads that will be used in the system managed threadpool (-1 for default)
+        /// </summary>
+        public int MinSystemThreadpoolWorkerThreads { get; set; } = -1;
+        /// <summary>
+        /// Maximum number of worker threads that will be used in the system managed threadpool (-1 for default)
+        /// </summary>
+        public int MaxSystemThreadpoolWorkerThreads { get; set; } = -1;
+        /// <summary>
+        /// Minimum number of worker threads that will be used for io the system managed threadpool (-1 for default)
+        /// </summary>
+        public int MinSystemThreadpoolIOThreads { get; set; } = -1;
+        /// <summary>
+        /// Maximum number of worker threads that will be used for io the system managed threadpool (-1 for default)
+        /// </summary>
+        public int MaxSystemThreadpoolIOThreads { get; set; } = -1;
+
+        /// <summary>
         /// This controls how often maps/npcs should be updated in ms.
         /// </summary>
         public int MapUpdateInterval { get; set; } = 50;
@@ -103,6 +139,26 @@ namespace Intersect.Config
             if (NetworkThreadIdleTimeout < 1000)
             {
                 throw new Exception("Network thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+            }
+
+            if (MinDatabaseThreads < 1)
+            {
+                throw new InvalidOperationException("Need at least 1 database io thread.");
+            }
+
+            if (MaxDatabaseThreads < MinDatabaseThreads)
+            {
+                throw new InvalidOperationException("The maximum number of database io threads should be greater than the minimum number of database io threads.");
+            }
+
+            if (DatabaseThreadIdleTimeout < 1000)
+            {
+                throw new Exception("Database thread idle timeout is too low, should be above 1000ms else you may run into significant overhead due to threads being created/destroyed too often.");
+            }
+
+            if (DatabaseSaveServerVariablesInterval < 5000)
+            {
+                throw new Exception("Server variables should not be saved more often than once per every 5 seconds, extra db writes will hinder performance.");
             }
 
             if (MapUpdateInterval > 200)

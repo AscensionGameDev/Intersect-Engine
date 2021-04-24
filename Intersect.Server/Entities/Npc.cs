@@ -189,7 +189,16 @@ namespace Intersect.Server.Entities
             if (AggroCenterMap != null && pathTarget != null &&
                 pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
             {
-                return;
+                if (en == null)
+                {
+                                    return;
+
+                }
+                else
+                {
+                    return;
+
+                }
             }
 
             //Why are we doing all of this logic if we are assigning a target that we already have?
@@ -603,7 +612,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!InRangeOf(target, range) && targetType == SpellTargetTypes.Self)
+            if (!InRangeOf(target, range) && targetType == SpellTargetTypes.Single)
             {
                 // ReSharper disable once SwitchStatementMissingSomeCases
                 return;
@@ -748,7 +757,7 @@ namespace Intersect.Server.Entities
                                 mResetting = false;
                             }
 
-                            ResetNpc();
+                            ResetNpc(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
                             tempTarget = Target;
 
                             if (distance != mResetDistance)
@@ -1247,7 +1256,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public void TryFindNewTarget(long timeMs, Guid avoidId = new Guid(), bool ignoreTimer = false)
+        public void TryFindNewTarget(long timeMs, Guid avoidId = new Guid(), bool ignoreTimer = false, Entity attackedBy = null)
         {
             if (!ignoreTimer && FindTargetWaitTime > timeMs)
             {
@@ -1259,7 +1268,18 @@ namespace Intersect.Server.Entities
             if (AggroCenterMap != null && pathTarget != null &&
                 pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
             {
-                return;
+                if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.NpcOpts.ResetRadius, Base.ResetRadius))
+                {
+                    return;
+                }
+                else
+                {
+                    //We're resetting and just got attacked, and we allow reengagement.. let's stop resetting and fight!
+                    mPathFinder?.SetTarget(null);
+                    mResetting = false;
+                    AssignTarget(attackedBy);
+                    return;
+                }
             }
 
             var maps = MapInstance.Get(MapId).GetSurroundingMaps(true);

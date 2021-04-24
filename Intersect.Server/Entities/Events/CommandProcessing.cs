@@ -1400,7 +1400,7 @@ namespace Intersect.Server.Entities.Events
                     { Strings.Events.onlinecountcommand, Player.OnlineCount.ToString() },
                     { Strings.Events.onlinelistcommand, input.Contains(Strings.Events.onlinelistcommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },
                     { Strings.Events.eventnamecommand, instance?.PageInstance?.Name ?? "" },
-                    { Strings.Events.eventparam, instance?.PageInstance?.Param ?? "" },
+                    { Strings.Events.commandparameter, instance?.PageInstance?.Param ?? "" },
                     { Strings.Events.eventparams, (instance != null && input.Contains(Strings.Events.eventparams)) ? instance.FormatParameters(player) : "" },
 
                 };
@@ -1505,8 +1505,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 
@@ -1685,8 +1684,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 
@@ -1742,8 +1740,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                //TODO: Make async SaveGameObject for performance? We don't want to await on a save during the server loop...
-                DbInterface.SaveGameObject(ServerVariableBase.Get(command.VariableId));
+                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
             }
         }
 

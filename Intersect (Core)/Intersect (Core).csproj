@@ -216,6 +216,7 @@
     <Compile Include="Config\ChatOptions.cs" />
     <Compile Include="Config\LayerOptions.cs" />
     <Compile Include="Config\LootOptions.cs" />
+    <Compile Include="Config\MetricsOptions.cs" />
     <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
@@ -381,8 +382,8 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
-	<Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
-	<Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
+    <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
+    <Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\Server\AnnouncementPacket.cs" />
     <Compile Include="Network\Packets\Server\CancelCastPacket.cs" />

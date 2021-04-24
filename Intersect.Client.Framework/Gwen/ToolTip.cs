@@ -52,7 +52,7 @@ namespace Intersect.Client.Framework.Gwen
         /// <param name="skin"></param>
         public static void RenderToolTip(Skin.Base skin)
         {
-            if (null == sG_toolTip)
+            if (sG_toolTip == null || sG_toolTip.ToolTip == null)
             {
                 return;
             }

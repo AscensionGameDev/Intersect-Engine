@@ -112,6 +112,9 @@ namespace Intersect.Server.Entities
         [JsonIgnore, NotMapped]
         private int[] mOldVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
 
+        [JsonIgnore, NotMapped]
+        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
@@ -253,13 +256,14 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool VitalsUpdated
         {
-            get => !GetVitals().SequenceEqual(mOldVitals);
+            get => !GetVitals().SequenceEqual(mOldVitals) || !GetMaxVitals().SequenceEqual(mOldMaxVitals);
 
             set
             {
                 if (value == false)
                 {
                     mOldVitals = GetVitals();
+                    mOldMaxVitals = GetMaxVitals();
                 }
             }
         }
@@ -1796,7 +1800,7 @@ namespace Intersect.Server.Entities
 
                         enemyNpc.LootMap.TryAdd(Id, true);
                         enemyNpc.LootMapCache = enemyNpc.LootMap.Keys.ToArray();
-                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds);
+                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds, default, false, this);
                     }
 
                     enemy.NotifySwarm(this);
@@ -1832,7 +1836,7 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds);
+                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds, default, false, this);
                     }
 
                     enemy.NotifySwarm(this);
@@ -2463,7 +2467,7 @@ namespace Intersect.Server.Entities
             if (dropitems > 0)
             {
                 // If this is an NPC, drop loot for every single player that participated in the fight.
-                if (this is Npc npc)
+                if (this is Npc npc && npc.Base.IndividualizedLoot)
                 {
                     // Generate loot for every player that has helped damage this monster, as well as their party members.
                     // Keep track of who already got loot generated for them though, or this gets messy!
@@ -2473,7 +2477,7 @@ namespace Intersect.Server.Entities
                         if (player != null)
                         {
                             // is this player in a party?
-                            if (player.Party.Count > 0)
+                            if (player.Party.Count > 0 && Options.Instance.LootOpts.IndividualizedLootAutoIncludePartyMembers)
                             {
                                 // They are, so check for all party members and drop if still eligible!
                                 foreach (var partyMember in player.Party)

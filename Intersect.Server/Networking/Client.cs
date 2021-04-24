@@ -14,6 +14,7 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Metrics;
 
 namespace Intersect.Server.Networking
 {
@@ -37,7 +38,7 @@ namespace Intersect.Server.Networking
 
         private int mPacketCount = 0;
 
-        private ConcurrentQueue<Tuple<IPacket, TransmissionMode>> mSendPacketQueue = new ConcurrentQueue<Tuple<IPacket, TransmissionMode>>();
+        private ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>> mSendPacketQueue = new ConcurrentQueue<Tuple<IPacket, TransmissionMode, long>>();
         public ConcurrentQueue<IPacket> HandlePacketQueue = new ConcurrentQueue<IPacket>();
         public ConcurrentQueue<IPacket> RecentPackets = new ConcurrentQueue<IPacket>();
         public bool PacketHandlingQueued = false;
@@ -279,7 +280,7 @@ namespace Intersect.Server.Networking
 
         public void SendPackets()
         {
-            while (mSendPacketQueue.TryDequeue(out Tuple<IPacket, TransmissionMode> tuple))
+            while (mSendPacketQueue.TryDequeue(out Tuple<IPacket, TransmissionMode, long> tuple))
             {
                 if (mConnection != null)
                 {
@@ -293,6 +294,17 @@ namespace Intersect.Server.Networking
                             timedPacket.UpdateTiming();
                         }
                         mConnection.Send(packet, mode);
+                        if (Options.Instance.Metrics.Enable)
+                        {
+                            if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
+                            {
+                                PacketSender.SentPacketTypes.TryAdd(packet.GetType().Name, 0);
+                            }
+                            PacketSender.SentPacketTypes[packet.GetType().Name]++;
+                            PacketSender.SentPackets++;
+                            PacketSender.SentBytes += packet.Data.Length;
+                            MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Globals.Timing.Milliseconds - tuple.Item3);
+                        }
                     }
                     catch (Exception exception)
                     {
@@ -356,9 +368,11 @@ namespace Intersect.Server.Networking
                         {
                             try
                             {
-                                packet.ProcessTime = Globals.Timing.Milliseconds;
                                 PacketHandler.Instance.ProcessPacket(packet, this);
-
+                                if (Options.Instance.Metrics.Enable)
+                                {
+                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                }
                             }
                             catch (Exception exception)
                             {
@@ -404,7 +418,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode>(packet, mode));
+                mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Globals.Timing.Milliseconds));
                 lock (mSendPacketQueue)
                 {
                     if (!PacketSendingQueued)

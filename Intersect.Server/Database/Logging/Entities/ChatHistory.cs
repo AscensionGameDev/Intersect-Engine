@@ -54,20 +54,24 @@ namespace Intersect.Server.Database.Logging.Entities
         {
             if (Options.Instance.ChatOpts.LogChatMessagesToDatabase)
             {
-                using (var logging = DbInterface.LoggingContext)
+                DbInterface.Pool.QueueWorkItem(new Action<ChatHistory>(Log), new ChatHistory
                 {
-                    logging.ChatHistory.Add(
-                        new ChatHistory
-                        {
-                            UserId = player?.Client?.User?.Id ?? Guid.Empty,
-                            PlayerId = player?.Id ?? Guid.Empty,
-                            Ip = player?.Client?.GetIp(),
-                            MessageType = type,
-                            MessageText = message,
-                            TargetId = target?.Id ?? Guid.Empty
-                        }
-                    );
-                }
+                    TimeStamp = DateTime.UtcNow,
+                    UserId = player?.Client?.User?.Id ?? Guid.Empty,
+                    PlayerId = player?.Id ?? Guid.Empty,
+                    Ip = player?.Client?.GetIp(),
+                    MessageType = type,
+                    MessageText = message,
+                    TargetId = target?.Id ?? Guid.Empty
+                });
+            }
+        }
+
+        private static void Log(ChatHistory chatHistory)
+        {
+            using (var logging = DbInterface.LoggingContext)
+            {
+                logging.ChatHistory.Add(chatHistory);
             }
         }
     }

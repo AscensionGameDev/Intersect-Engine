@@ -7,6 +7,7 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
+using System;
 
 namespace Intersect.Server.Admin.Actions
 {
@@ -33,20 +34,7 @@ namespace Intersect.Server.Admin.Actions
                         Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
 
-                    using (var logging = DbInterface.LoggingContext)
-                    {
-                        logging.UserActivityHistory.Add(
-                            new UserActivityHistory
-                            {
-                                UserId = target.UserId,
-                                PlayerId = target.Id,
-                                Ip = target.Client?.GetIp(),
-                                Peer = UserActivityHistory.PeerType.Client,
-                                Action = UserActivityHistory.UserAction.DisconnectBan,
-                                Meta = $"{target.User?.Name},{target.Name}"
-                            }
-                        );
-                    }
+                    UserActivityHistory.LogActivity(target?.UserId ?? Guid.Empty, target?.Id ?? Guid.Empty, target?.Client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectBan, $"{target.User?.Name},{target.Name}");
 
                     target.Client?.Disconnect();
                     PacketSender.SendChatMsg(player, Strings.Account.banned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
@@ -68,20 +56,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                using (var logging = DbInterface.LoggingContext)
-                {
-                    logging.UserActivityHistory.Add(
-                        new UserActivityHistory
-                        {
-                            UserId = target.UserId,
-                            PlayerId = target.Id,
-                            Ip = target.Client.GetIp(),
-                            Peer = UserActivityHistory.PeerType.Client,
-                            Action = UserActivityHistory.UserAction.DisconnectKick,
-                            Meta = $"{target.Client.Name},{target.Name}"
-                        }
-                    );
-                }
+                UserActivityHistory.LogActivity(target?.UserId ?? Guid.Empty, target?.Id ?? Guid.Empty, target?.Client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectKick, $"{target.User?.Name},{target.Name}");
 
                 PacketSender.SendGlobalMsg(Strings.Player.kicked.ToString(target.Name, player.Name));
                 target.Client?.Disconnect(); //Kick em'
