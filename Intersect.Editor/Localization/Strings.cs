@@ -3625,6 +3625,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString hpregen = @"HP (%);";
 
+            public static LocalizedString individualizedloot = @"Spawn loot for all attackers?";
+
             public static LocalizedString magicresist = @"Magic Resist:";
 
             public static LocalizedString mana = @"Mana:";

@@ -149,6 +149,11 @@ namespace Intersect.GameObjects
             set => Drops = JsonConvert.DeserializeObject<List<NpcDrop>>(value);
         }
 
+        /// <summary>
+        /// If true this npc will drop individual loot for all of those who helped slay it.
+        /// </summary>
+        public bool IndividualizedLoot { get; set; }
+
         public long Experience { get; set; }
 
         public int Level { get; set; } = 1;

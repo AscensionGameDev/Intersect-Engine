@@ -547,6 +547,10 @@
     <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.designer.cs">
       <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.cs" />
+    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.designer.cs">
+      <DependentUpon>20210423141451_AddIndividualizedLootOptionToNpcs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
