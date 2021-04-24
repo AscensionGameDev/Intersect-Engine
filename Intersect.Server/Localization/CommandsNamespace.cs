@@ -136,6 +136,14 @@ namespace Intersect.Server.Localization
                 Help = @"Makes the server public to all players."
             };
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocaleCommand Metrics = new LocaleCommand
+            {
+                Name = @"metrics",
+                Description =
+                    @"Enables or disables metrics collection.",
+                Help = @"enables or disables metrics collection"
+            };
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocaleCommand Migrate = new LocaleCommand
             {
                 Name = @"migrate",
@@ -266,6 +274,16 @@ namespace Intersect.Server.Localization
                     Name = @"ip-ban",
                     Description = @"if it is an IP mute (true/false)"
                 };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString MetricsDisable = @"disable";
+                
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument MetricsOperation = new LocaleArgument
+                {
+                    Name = @"operation",
+                    Description = @"one of the following: disable, enable"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocalizedString MetricsEnable = @"enable";
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]                public readonly LocaleArgument Power = new LocaleArgument
                 {

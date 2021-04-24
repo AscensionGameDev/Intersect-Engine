@@ -22,7 +22,15 @@ namespace Intersect.Server.Networking.Lidgren
         /// <summary>
         /// This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of Threads & Idle Timeouts are set via server config.
         /// </summary>
-        public static SmartThreadPool Pool = new SmartThreadPool(Options.Instance.Processing.NetworkThreadIdleTimeout, Options.Instance.Processing.MaxNetworkThreads, Options.Instance.Processing.MinNetworkThreads);
+        public static SmartThreadPool Pool = new SmartThreadPool(
+            new STPStartInfo()
+            {
+                ThreadPoolName = "NetworkPool",
+                IdleTimeout = 20000,
+                MinWorkerThreads = Options.Instance.Processing.MinNetworkThreads,
+                MaxWorkerThreads = Options.Instance.Processing.MaxNetworkThreads
+            }
+        );
 
         internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
             networkHelper, configuration

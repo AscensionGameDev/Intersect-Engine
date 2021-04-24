@@ -66,6 +66,8 @@ namespace Intersect
 
         [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();
 
+        public MetricsOptions Metrics = new MetricsOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         public static Options Instance { get; private set; }

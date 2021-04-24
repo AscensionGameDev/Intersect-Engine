@@ -419,6 +419,10 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString listid = @"ID";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString metricsenabled = @"Metrics collection enabled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString metricsdisabled = @"Metrics collection disabled";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString notfound =
                 @"Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!";
 

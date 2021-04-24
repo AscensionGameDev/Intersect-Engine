@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amib.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -36,7 +37,6 @@ namespace Intersect.Server.Entities
 
     public partial class Player : Entity
     {
-
         //Online Players List
         private static readonly ConcurrentDictionary<Guid, Player> OnlinePlayers = new ConcurrentDictionary<Guid, Player>();
 
@@ -154,6 +154,12 @@ namespace Intersect.Server.Entities
         public long ClientMoveTimer { get; set; }
 
         private long mAutorunCommonEventTimer { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public int CommonAutorunEvents { get; private set; }
+
+        [NotMapped, JsonIgnore]
+        public int MapAutorunEvents { get; private set; }
 
         public static Player FindOnline(Guid id)
         {
@@ -382,6 +388,11 @@ namespace Intersect.Server.Entities
                 User?.TryLogout();
             }
 
+            DbInterface.Pool.QueueWorkItem(CompleteLogout);
+        }
+
+        public void CompleteLogout()
+        { 
             User?.Save();
 
             Dispose();
@@ -414,7 +425,11 @@ namespace Intersect.Server.Entities
                     {
                         if (SaveTimer < Globals.Timing.Milliseconds)
                         {
-                            ThreadPool.QueueUserWorkItem(o => User?.Save());
+                            var user = User;
+                            if (user != null)
+                            {
+                                DbInterface.Pool.QueueWorkItem(user.Save, false);
+                            }
                             SaveTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                         }
                     }
@@ -446,17 +461,23 @@ namespace Intersect.Server.Entities
 
                     if (mAutorunCommonEventTimer < Globals.Timing.Milliseconds)
                     {
+                        var autorunEvents = 0;
                         //Check for autorun common events and run them
                         foreach (var obj in EventBase.Lookup)
                         {
                             var evt = obj.Value as EventBase;
                             if (evt != null && evt.CommonEvent)
                             {
+                                if (Options.Instance.Metrics.Enable)
+                                {
+                                    autorunEvents += evt.Pages.Count(p => p.CommonTrigger == CommonEventTrigger.Autorun);
+                                }
                                 StartCommonEvent(evt, CommonEventTrigger.Autorun);
                             }
                         }
 
                         mAutorunCommonEventTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.CommonEventAutorunStartInterval;
+                        CommonAutorunEvents = autorunEvents;
                     }
 
                     //If we have a move route then let's process it....
@@ -527,6 +548,7 @@ namespace Intersect.Server.Entities
                         //Check to see if we can spawn events, if already spawned.. update them.
                         lock (mEventLock)
                         {
+                            var autorunEvents = 0;
                             foreach (var mapEvent in surrMap.EventsCache)
                             {
                                 if (mapEvent != null)
@@ -558,8 +580,13 @@ namespace Intersect.Server.Entities
                                     {
                                         foundEvent.Update(timeMs, foundEvent.MapInstance);
                                     }
+                                    if (Options.Instance.Metrics.Enable)
+                                    {
+                                        autorunEvents += mapEvent.Pages.Count(p => p.Trigger == EventTrigger.Autorun);
+                                    }
                                 }
                             }
+                            MapAutorunEvents = autorunEvents;
                         }
                     }
 
@@ -6076,19 +6103,7 @@ namespace Intersect.Server.Entities
             User?.Save();
 
             // Log the activity.
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(
-                    new UserActivityHistory {
-                        UserId = UserId,
-                        PlayerId = Id,
-                        Ip = Client.GetIp(),
-                        Peer = UserActivityHistory.PeerType.Client,
-                        Action = UserActivityHistory.UserAction.NameChange,
-                        Meta = $"Changing Character name from {oldName} to {newName}"
-                    }
-                );
-            }
+            UserActivityHistory.LogActivity(UserId, Id, Client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.NameChange, $"Changing Character name from {oldName} to {newName}");
 
             // Send our data around!
             PacketSender.SendEntityDataToProximity(this);

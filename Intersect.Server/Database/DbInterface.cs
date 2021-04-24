@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
+using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
@@ -44,8 +44,19 @@ namespace Intersect.Server.Database
     public static class DbInterface
     {
 
-        //Entity Framework Contexts are NOT threadsafe.. and using multiple contexts simultaneously doesn't work well due to us keeping players/maps/etc in memory.
-        //This class interfaces with a single playerdb and gamedb context and makes sure requests for information are handled in a safe manner.
+        /// <summary>
+        /// This is our thread pool for handling game-loop database interactions.
+        /// Min/Max Number of Threads & Idle Timeouts are set via server config.
+        /// </summary>
+        public static SmartThreadPool Pool = new SmartThreadPool(
+                new STPStartInfo()
+                {
+                    ThreadPoolName = "DatabasePool",
+                    IdleTimeout = Options.Instance.Processing.DatabaseThreadIdleTimeout,
+                    MinWorkerThreads = Options.Instance.Processing.MinDatabaseThreads,
+                    MaxWorkerThreads = Options.Instance.Processing.MaxDatabaseThreads
+                }
+            );
 
         private const string GameDbFilename = "resources/gamedata.db";
 
@@ -58,6 +69,8 @@ namespace Intersect.Server.Database
         public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup = new Dictionary<string, ServerVariableBase>();
 
         public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup = new Dictionary<string, PlayerVariableBase>();
+
+        public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables = new ConcurrentDictionary<Guid, ServerVariableBase>();
 
         private static List<MapGrid> mapGrids = new List<MapGrid>();
 
@@ -1439,6 +1452,26 @@ namespace Intersect.Server.Database
             {
                 Log.Error(ex);
                 throw;
+            }
+        }
+
+        public static void SaveUpdatedServerVariables()
+        {
+            if (UpdatedServerVariables.Count > 0)
+            {
+                using (var context = CreateGameContext(readOnly: false))
+                {
+                    foreach (var variable in UpdatedServerVariables)
+                    {
+                        var serverVar = variable.Value;
+                        if (serverVar != null)
+                        {
+                            context.ServerVariables.Update(variable.Value);
+                        }
+                        UpdatedServerVariables.TryRemove(variable.Key, out ServerVariableBase obj);
+                    }
+                    context.SaveChanges();
+                }
             }
         }
 
