@@ -1800,7 +1800,7 @@ namespace Intersect.Server.Entities
 
                         enemyNpc.LootMap.TryAdd(Id, true);
                         enemyNpc.LootMapCache = enemyNpc.LootMap.Keys.ToArray();
-                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds);
+                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds, default, false, this);
                     }
 
                     enemy.NotifySwarm(this);
@@ -1836,7 +1836,7 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds);
+                        enemyNpc.TryFindNewTarget(Timing.Global.Milliseconds, default, false, this);
                     }
 
                     enemy.NotifySwarm(this);
