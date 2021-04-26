@@ -32,7 +32,7 @@ namespace Intersect.Server.Maps
                     };
                     foreach (var plyr in nearbyPlayers)
                     {
-                        plyr.SendPacket(pkt);
+                        plyr.SendPacket(pkt, Network.TransmissionMode.Any);
                     }
                     mActionMessages.Clear();
                 }
