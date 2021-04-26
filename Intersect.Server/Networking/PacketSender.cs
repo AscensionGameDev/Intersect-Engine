@@ -776,17 +776,18 @@ namespace Intersect.Server.Networking
             var map = en?.Map;
             if (map != null)
             {
+                if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
+                {
+                    SendDataToProximity(
+                        en.MapId,
+                        new EntityMovePacket(
+                            en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction
+                        ), null, TransmissionMode.Any
+                    );
+                    return;
+                }
                 map.AddBatchedMovement(en, correction, null);
-                return;
             }
-
-            //TODO: Revisit and add options to send /some/ (potentially player) packets instantly if needed -- I can't tell a difference between instant/not running locally so this may never be required.
-            //SendDataToProximity(
-            //    en.MapId,
-            //    new EntityMovePacket(
-            //        en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-            //    ), null, TransmissionMode.Any
-            //);
         }
 
         //EntityMovePacket
@@ -795,16 +796,18 @@ namespace Intersect.Server.Networking
             var map = en?.Map;
             if (map != null)
             {
+                if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
+                {
+                    player.SendPacket(
+                        new EntityMovePacket(
+                            en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction
+                        )
+                    );
+                    return;
+                }
                 map.AddBatchedMovement(en, correction, player);
                 return;
             }
-
-            //TODO: Revisit and add options to send /some/ (potentially player) packets instantly if needed -- I can't tell a difference between instant/not running locally so this may never be required.
-            //player.SendPacket(
-            //    new EntityMovePacket(
-            //        en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-            //    )
-            //);
         }
 
         //EntityVitalsPacket
@@ -1426,7 +1429,18 @@ namespace Intersect.Server.Networking
             sbyte direction
         )
         {
-            SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
+            var map = MapInstance.Get(mapId);
+            if (map != null)
+            {
+                if (Options.Instance.Packets.BatchAnimationPackets)
+                {
+                    map.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+                }
+                else
+                {
+                    SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
+                }
+            }
         }
 
         //HoldPlayerPacket
@@ -1761,7 +1775,14 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            map.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            if (Options.Instance.Packets.BatchActionMessagePackets)
+            {
+                map.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            }
+            else
+            {
+                SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            }
         }
 
         //EnterMapPacket

@@ -78,6 +78,7 @@ namespace Intersect.Server.Maps
         private MapInstance[] mSurroundingMapsWithSelf = new MapInstance[0];
         private MapEntityMovements mEntityMovements = new MapEntityMovements();
         private MapActionMessages mActionMessages = new MapActionMessages();
+        private MapAnimations mMapAnimations = new MapAnimations();
 
         [JsonIgnore]
         [NotMapped]
@@ -1097,6 +1098,7 @@ namespace Intersect.Server.Maps
 
                 mEntityMovements.SendPackets(nearbyPlayers);
                 mActionMessages.SendPackets(nearbyPlayers);
+                mMapAnimations.SendPackets(nearbyPlayers);
 
                 LastUpdateTime = timeMs;
             }
@@ -1443,6 +1445,11 @@ namespace Intersect.Server.Maps
         public void AddBatchedActionMessage(ActionMsgPacket packet)
         {
             mActionMessages.Add(packet);
+        }
+
+        public void AddBatchedAnimation(PlayAnimationPacket packet)
+        {
+            mMapAnimations.Add(packet);
         }
 
         #endregion

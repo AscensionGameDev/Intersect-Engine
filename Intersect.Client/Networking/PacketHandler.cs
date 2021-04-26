@@ -1341,6 +1341,15 @@ namespace Intersect.Client.Networking
             }
         }
 
+        //PlayAnimationPackets
+        public void HandlePacket(IPacketSender sender, PlayAnimationPackets packet)
+        {
+            foreach (var pkt in packet.Packets)
+            {
+                HandlePacket(pkt);
+            }
+        }
+
         //PlayAnimationPacket
         public void HandlePacket(IPacketSender packetSender, PlayAnimationPacket packet)
         {

@@ -4,33 +4,33 @@ using System.Collections.Generic;
 
 namespace Intersect.Server.Maps
 {
-    public class MapActionMessages
+    public class MapAnimations
     {
-        public List<ActionMsgPacket> mActionMessages = new List<ActionMsgPacket>();
+        public List<PlayAnimationPacket> mAnimations = new List<PlayAnimationPacket>();
 
-        public void Add(ActionMsgPacket pkt)
+        public void Add(PlayAnimationPacket pkt)
         {
-            lock (mActionMessages)
+            lock (mAnimations)
             {
-                mActionMessages.Add(pkt);
+                mAnimations.Add(pkt);
             }
         }
 
         public void SendPackets(HashSet<Player> nearbyPlayers)
         {
-            if (mActionMessages.Count > 0)
+            if (mAnimations.Count > 0)
             {
-                lock (mActionMessages)
+                lock (mAnimations)
                 {
-                    var pkt = new ActionMsgPackets()
+                    var pkt = new PlayAnimationPackets()
                     {
-                        Packets = mActionMessages.ToArray()
+                        Packets = mAnimations.ToArray()
                     };
                     foreach (var plyr in nearbyPlayers)
                     {
                         plyr.SendPacket(pkt, Network.TransmissionMode.Any);
                     }
-                    mActionMessages.Clear();
+                    mAnimations.Clear();
                 }
             }
         }
