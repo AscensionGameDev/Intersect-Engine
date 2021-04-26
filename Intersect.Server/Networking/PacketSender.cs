@@ -773,7 +773,6 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(Entity en, bool correction = false)
         {
-            //TODO: Should we send player movements instantly? Maybe an option? In a local environment I really can't tell a difference.. might as well batch imo.
             var map = en?.Map;
             if (map != null)
             {
@@ -781,18 +780,18 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            SendDataToProximity(
-                en.MapId,
-                new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-                ), null, TransmissionMode.Any
-            );
+            //TODO: Revisit and add options to send /some/ (potentially player) packets instantly if needed -- I can't tell a difference between instant/not running locally so this may never be required.
+            //SendDataToProximity(
+            //    en.MapId,
+            //    new EntityMovePacket(
+            //        en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
+            //    ), null, TransmissionMode.Any
+            //);
         }
 
         //EntityMovePacket
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
-            //TODO: Should we send player movements instantly? Maybe an option? In a local environment I really can't tell a difference.. might as well batch imo.
             var map = en?.Map;
             if (map != null)
             {
@@ -800,11 +799,12 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.SendPacket(
-                new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-                )
-            );
+            //TODO: Revisit and add options to send /some/ (potentially player) packets instantly if needed -- I can't tell a difference between instant/not running locally so this may never be required.
+            //player.SendPacket(
+            //    new EntityMovePacket(
+            //        en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
+            //    )
+            //);
         }
 
         //EntityVitalsPacket
@@ -1755,12 +1755,13 @@ namespace Intersect.Server.Networking
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {
-            if (en == null || en.Map == null)
+            var map = en?.Map;
+            if (map == null)
             {
                 return;
             }
 
-            SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            map.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
         }
 
         //EnterMapPacket
