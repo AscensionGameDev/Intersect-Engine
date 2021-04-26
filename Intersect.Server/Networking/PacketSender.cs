@@ -773,6 +773,14 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(Entity en, bool correction = false)
         {
+            //TODO: Should we send player movements instantly? Maybe an option? In a local environment I really can't tell a difference.. might as well batch imo.
+            var map = en?.Map;
+            if (map != null)
+            {
+                map.AddBatchedMovement(en, correction, null);
+                return;
+            }
+
             SendDataToProximity(
                 en.MapId,
                 new EntityMovePacket(
@@ -784,6 +792,14 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
+            //TODO: Should we send player movements instantly? Maybe an option? In a local environment I really can't tell a difference.. might as well batch imo.
+            var map = en?.Map;
+            if (map != null)
+            {
+                map.AddBatchedMovement(en, correction, player);
+                return;
+            }
+
             player.SendPacket(
                 new EntityMovePacket(
                     en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction

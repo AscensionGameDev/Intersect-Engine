@@ -76,6 +76,7 @@ namespace Intersect.Server.Maps
         private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
         private MapInstance[] mSurroundingMaps = new MapInstance[0];
         private MapInstance[] mSurroundingMapsWithSelf = new MapInstance[0];
+        private MapEntityMovements mEntityMovements = new MapEntityMovements();
 
         [JsonIgnore]
         [NotMapped]
@@ -1083,6 +1084,9 @@ namespace Intersect.Server.Maps
                     }
                 }
 
+                //Send Batched Movement Packet
+                mEntityMovements.SendPackets(this);
+
                 LastUpdateTime = timeMs;
             }
         }
@@ -1419,6 +1423,13 @@ namespace Intersect.Server.Maps
             return locations;
         }
 
+        #region"Packet Batching"
+        public void AddBatchedMovement(Entity en, bool correction, Player forPlayer)
+        {
+            mEntityMovements.Add(en, correction, forPlayer);
+        }
+
+        #endregion
     }
 
 }

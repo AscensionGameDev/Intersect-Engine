@@ -517,6 +517,26 @@ namespace Intersect.Client.Networking
             //TODO ? If admin window is open update it
         }
 
+        //EntityMovementPackets
+        public void HandlePacket(IPacketSender packetSender, EntityMovementPackets packet)
+        {
+            if (packet.GlobalMovements != null)
+            {
+                foreach (var pkt in packet.GlobalMovements)
+                {
+                    HandlePacket(pkt);
+                }
+            }
+
+            if (packet.LocalMovements != null)
+            {
+                foreach (var pkt in packet.LocalMovements)
+                {
+                    HandlePacket(pkt);
+                }
+            }
+        }
+
         //EntityMovePacket
         public void HandlePacket(IPacketSender packetSender, EntityMovePacket packet)
         {
