@@ -132,6 +132,24 @@ namespace Intersect.Server.Entities
 
         private long mAutorunCommonEventTimer { get; set; }
 
+        /// <summary>
+        /// Information for Tags.
+        /// </summary>
+        [NotMapped]
+        public Tag EntityTag { get; set; }
+
+        /// <summary>
+        /// Serialized / Deserialized Info for Tags.
+        /// </summary>
+        [JsonIgnore, Column(nameof(Tag))]
+        public string TagJson
+        {
+            get => JsonConvert.SerializeObject(EntityTag);
+            set => EntityTag = value != null
+                ? JsonConvert.DeserializeObject<Tag>(value)
+                : new Tag(EntityTag.TagName, EntityTag.TagPos);
+        }
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -642,6 +660,11 @@ namespace Intersect.Server.Entities
             {
                 ((PlayerEntityPacket) packet).Equipment =
                     PacketSender.GenerateEquipmentPacket(forPlayer, (Player) this);
+            }
+
+            if (forPlayer != null && GetType() == typeof(Player) && EntityTag.TagName != null)
+            {
+                pkt.Tag = new EntityTagPacket(EntityTag.TagName, EntityTag.TagPos);
             }
 
             return pkt;

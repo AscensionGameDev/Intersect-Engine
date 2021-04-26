@@ -1208,7 +1208,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString cancel = @"Cancel";
 
-            public static LocalizedString label = @"Tag:";
+            public static LocalizedString lblTag = @"Tag:";
+
+            public static LocalizedString lblTagPos = @"Position:";
 
             public static LocalizedString okay = @"Ok";
 
@@ -1677,7 +1679,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString setface = @"Set Player Face to {00}";
 
-            public static LocalizedString settag = @"Set Player Tag to {00}";
+            public static LocalizedString settag { get; } = @"Set Player Tag: '{00}'  |  Position: '{01}'";
 
             public static LocalizedString setnamecolor = @"Set Player Name Color";
 
@@ -3637,6 +3639,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString general = @"General";
 
+            public static LocalizedString Textures = @"Textures";
+
             public static LocalizedString hp = @"HP:";
 
             public static LocalizedString hpregen = @"HP (%);";
@@ -3722,6 +3726,10 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Alpha = @"Alpha:";
+
+            public static LocalizedString Tag = @"Tag";
+
+            public static LocalizedString TagPos = @"Position:";
 
             public static LocalizedString stats = @"Stats:";
 

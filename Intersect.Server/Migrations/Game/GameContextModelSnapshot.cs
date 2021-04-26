@@ -213,8 +213,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("CooldownGroup");
 
-                    b.Property<bool>("IgnoreGlobalCooldown");
-
                     b.Property<int>("CritChance");
 
                     b.Property<double>("CritMultiplier");
@@ -238,6 +236,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Folder");
 
                     b.Property<string>("Icon");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<int>("ItemType");
 
@@ -408,6 +408,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Sprite");
 
                     b.Property<bool>("Swarm");
+
+                    b.Property<string>("TagJson")
+                        .HasColumnName("Tag");
 
                     b.Property<long>("TimeCreated");
 
@@ -640,8 +643,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("CooldownGroup");
 
-                    b.Property<bool>("IgnoreGlobalCooldown");
-
                     b.Property<string>("Description");
 
                     b.Property<Guid>("EventId")
@@ -653,6 +654,8 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("HitAnimation");
 
                     b.Property<string>("Icon");
+
+                    b.Property<bool>("IgnoreGlobalCooldown");
 
                     b.Property<string>("JsonCastRequirements")
                         .HasColumnName("CastRequirements");

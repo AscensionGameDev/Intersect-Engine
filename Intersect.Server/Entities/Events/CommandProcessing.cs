@@ -562,7 +562,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            player.Tag = command.Tag;
+            player.EntityTag = new Tag(command.EntityTag.TagName, command.EntityTag.TagPos);
             PacketSender.SendEntityDataToProximity(player);
         }
 

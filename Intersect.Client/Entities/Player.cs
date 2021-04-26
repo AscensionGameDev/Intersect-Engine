@@ -47,7 +47,7 @@ namespace Intersect.Client.Entities
         private ItemDescWindow mItemTargetBox;
 
         private Entity mLastBumpedEvent = null;
-
+        
         private List<PartyMember> mParty;
 
         public Dictionary<Guid, QuestProgress> QuestProgress = new Dictionary<Guid, QuestProgress>();
@@ -201,18 +201,16 @@ namespace Intersect.Client.Entities
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
-
             var playerPacket = (PlayerEntityPacket) packet;
-
             if (playerPacket.Equipment != null)
             {
                 if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
-                    this.MyEquipment = playerPacket.Equipment.InventorySlots;
+                    MyEquipment = playerPacket.Equipment.InventorySlots;
                 }
                 else if (playerPacket.Equipment.ItemIds != null)
                 {
-                    this.Equipment = playerPacket.Equipment.ItemIds;
+                    Equipment = playerPacket.Equipment.ItemIds;
                 }
             }
 
@@ -2017,67 +2015,73 @@ namespace Intersect.Client.Entities
         {
             // Variables
             var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
-            var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
-            var nameVertPos = GetLabelLocation(LabelType.Name);
-            var tagPos = Options.Player.TagPosition;
+
+            //var levelSize = Graphics.Renderer.MeasureText(Na
+            var nameHPos = (int) Math.Ceiling(GetCenterPos().X);
+            var nameVPos = GetLabelLocation(LabelType.Name);
+            var tagFile = EntityTag.TagName;
+            var tagPos = EntityTag.TagPos;
             var headerSize = Pointf.Empty;
             var footerSize = Pointf.Empty;
-            float x, y;
+
             // Feature Check
-            if (!Options.Player.ShowTags || Tag == null)
+            if (tagFile == null)
             {
                 return;
             }
-            // Player's Tag
-            else if (Tag != null)
+
+            // Lets load the player's tag texture right away.
+            var tagTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, tagFile);
+
+            // If the texture is null, we do nothing.
+            if (tagTexture == null)
             {
-                // Lets load the player's tag texture right away.
-                var tagTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, Tag);
-                // If the texture is null, we do nothing.
-                if (tagTexture == null)
-                {
-                    return;
-                }
-                // Check if HeaderLabel has text.
-                if (!string.IsNullOrWhiteSpace(HeaderLabel.Text))
-                {
-                    // if header text exists, lets measure it for later.
-                    headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
-                }
-                // Check if FooterLabel has text.
-                if (!string.IsNullOrWhiteSpace(FooterLabel.Text))
-                {
-                    // if footer text exists, lets measure it for later.
-                    footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
-                }
-                // Before we draw the sprite, lets have it's position set.
-                switch (tagPos)
-                {
-                    case TagPosition.Above:
-                    default:
-                        x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                        y = nameVertPos - tagTexture.GetHeight() - 2 - headerSize.Y;
-
-                        break;
-                    case TagPosition.Under:
-                        x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                        y = nameVertPos + nameSize.Y + 2 + footerSize.Y;
-
-                        break;
-                    case TagPosition.Prefix:
-                        x = nameCentHorPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
-                        y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
-
-                        break;
-                    case TagPosition.Suffix:
-                        x = nameCentHorPos + (nameSize.X / 2) + 6;
-                        y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
-
-                        break;
-                }
-                // And finally, we draw the tag.
-                Graphics.DrawGameTexture(tagTexture, x, y);
+                return;
             }
+
+            // Check if HeaderLabel has text.
+            if (!string.IsNullOrWhiteSpace(HeaderLabel.Text))
+            {
+                // if header text exists, lets measure it for later.
+                headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+            }
+
+            // Check if FooterLabel has text.
+            if (!string.IsNullOrWhiteSpace(FooterLabel.Text))
+            {
+                // if footer text exists, lets measure it for later.
+                footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+            }
+
+            // Before we draw the sprite, lets have it's position set.
+            float x, y;
+            switch (tagPos)
+            {
+                default: return;
+                case TagPosition.Above:
+                    x = nameHPos - (tagTexture.GetWidth() / 2);
+                    y = nameVPos - tagTexture.GetHeight() - 2 - headerSize.Y;
+
+                    break;
+                case TagPosition.Under:
+                    x = nameHPos - (tagTexture.GetWidth() / 2);
+                    y = nameVPos + nameSize.Y + 2 + footerSize.Y;
+
+                    break;
+                case TagPosition.Prefix:
+                    x = nameHPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
+                    y = nameVPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+
+                    break;
+                case TagPosition.Suffix:
+                    x = nameHPos + (nameSize.X / 2) + 6;
+                    y = nameVPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+
+                    break;
+            }
+
+            // And finally, we draw the tag.
+            Graphics.DrawGameTexture(tagTexture, x, y);
         }
 
         public void DrawTargets()

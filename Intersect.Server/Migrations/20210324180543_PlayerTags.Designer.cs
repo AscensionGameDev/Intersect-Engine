@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20210225034806_AddingTagToPlayers")]
-    partial class AddingTagToPlayers
+    [Migration("20210324180543_PlayerTags")]
+    partial class PlayerTags
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -378,7 +378,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("StatsJson")
                         .HasColumnName("BaseStats");
 
-                    b.Property<string>("Tag");
+                    b.Property<string>("TagJson")
+                        .HasColumnName("Tag");
 
                     b.Property<Guid>("UserId");
 

@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
+using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
-
     public partial class EventCommandChangeTag : UserControl
     {
-
         private readonly FrmEvent mEventEditor;
 
         private ChangeTagCommand mMyCommand;
@@ -22,18 +24,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitializeComponent();
             mMyCommand = refCommand;
             mEventEditor = editor;
+            // EntityTag.FileName
             cmbTag.Items.Clear();
             cmbTag.Items.Add(Strings.General.none);
             cmbTag.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tag));
-            if (cmbTag.Items.IndexOf(mMyCommand.Tag) > -1)
-            {
-                cmbTag.SelectedIndex = cmbTag.Items.IndexOf(mMyCommand.Tag);
-            }
-            else
-            {
-                cmbTag.SelectedIndex = 0;
-            }
-
+            cmbTag.SelectedIndex = cmbTag.FindString(TextUtils.NullToNone(mMyCommand.EntityTag.TagName));
+            // EntityTag.TagPos
+            cmbTagPos.Items.Clear();
+            cmbTagPos.Items.AddRange(Enum.GetNames(typeof(TagPosition)));
+            cmbTagPos.SelectedIndex = cmbTagPos.FindString(mMyCommand.EntityTag.TagPos.ToString());
             UpdatePreview();
             InitLocalization();
         }
@@ -41,7 +40,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitLocalization()
         {
             grpChangeTag.Text = Strings.EventChangeTag.title;
-            lblTag.Text = Strings.EventChangeTag.label;
+            lblTag.Text = Strings.EventChangeTag.lblTag;
+            lblTagPos.Text = Strings.EventChangeTag.lblTagPos;
             btnSave.Text = Strings.EventChangeTag.okay;
             btnCancel.Text = Strings.EventChangeTag.cancel;
         }
@@ -69,20 +69,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Tag = cmbTag.Text;
+            var selectedTag = TextUtils.SanitizeNone(cmbTag.Text);
+            var selectedPos = (TagPosition) Enum.Parse(typeof(TagPosition), cmbTagPos.SelectedItem.ToString());
+            mMyCommand.EntityTag = new Tag(selectedTag, selectedPos);
+
             mEventEditor.FinishCommandEdit();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            mEventEditor.CancelCommandEdit();
-        }
+        private void btnCancel_Click(object sender, EventArgs e) { mEventEditor.CancelCommandEdit(); }
 
-        private void cmbTag_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdatePreview();
-        }
-
+        private void cmbTag_SelectedIndexChanged(object sender, EventArgs e) { UpdatePreview(); }
     }
-
 }

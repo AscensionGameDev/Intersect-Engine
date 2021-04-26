@@ -7,18 +7,12 @@ namespace Intersect.Network.Packets.Server
     public class ResourceEntityPacket : EntityPacket
     {
         //Parameterless Constructor for MessagePack
-        public ResourceEntityPacket()
-        {
-        }
+        public ResourceEntityPacket() { }
 
-
-        [Key(25)]
+        [Key(24)]
         public Guid ResourceId { get; set; }
 
-
-        [Key(26)]
+        [Key(25)]
         public bool IsDead { get; set; }
-
     }
-
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -81,6 +82,7 @@ namespace Intersect.Server.Entities
         private int mResetCounter = 0;
         private int mResetMax = 100;
         private bool mResetting = false;
+        
 
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
@@ -106,12 +108,11 @@ namespace Intersect.Server.Entities
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
-            Tag = myBase.Tag;
             Color = myBase.Color;
             Level = myBase.Level;
             Base = myBase;
             Despawnable = despawnable;
-
+            
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
@@ -146,6 +147,13 @@ namespace Intersect.Server.Entities
 
             Range = (byte) myBase.SightRange;
             mPathFinder = new Pathfinder(this);
+            
+            if (myBase.EntityTag.TagName != null)
+            {
+                EntityTag.TagName = myBase.EntityTag.TagName;
+                EntityTag.TagPos = myBase.EntityTag.TagPos;
+            }
+
         }
 
         public NpcBase Base { get; private set; }
@@ -1521,6 +1529,11 @@ namespace Intersect.Server.Entities
 
             var pkt = (NpcEntityPacket) packet;
             pkt.Aggression = GetAggression(forPlayer);
+
+            if (EntityTag.TagName != null)
+            {
+                pkt.Tag = new EntityTagPacket(Base.EntityTag.TagName, Base.EntityTag.TagPos);
+            }
 
             return pkt;
         }

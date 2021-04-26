@@ -275,6 +275,7 @@
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
+    <Compile Include="GameObjects\Tag.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
@@ -382,6 +383,7 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+    <Compile Include="Network\Packets\Server\EntityTagPacket.cs" />
     <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
     <Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />

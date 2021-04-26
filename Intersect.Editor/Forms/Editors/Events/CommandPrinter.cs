@@ -735,7 +735,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(ChangeTagCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.settag.ToString(command.Tag);
+            return Strings.EventCommandList.settag.ToString(command.EntityTag.TagName, command.EntityTag.TagPos);
         }
 
         private static string GetCommandText(ChangeNameColorCommand command, MapInstance map)

@@ -82,7 +82,7 @@ namespace Intersect.Client.Entities
 
         public bool HideName;
 
-        public string Tag = "";
+        public Tag EntityTag;
 
         //Core Values
         public Guid Id;
@@ -303,8 +303,6 @@ namespace Intersect.Client.Entities
             NameColor = packet.NameColor;
             HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
             FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
-            Tag = packet.Tag;
-
             var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();
             for (var i = 0; i < packet.Animations.Length; i++)
@@ -348,13 +346,11 @@ namespace Intersect.Client.Entities
 
             ClearAnimations(animsToClear);
             AddAnimations(animsToAdd);
-
             Vital = packet.Vital;
             MaxVital = packet.MaxVital;
 
             //Update status effects
             Status.Clear();
-
             if (packet.StatusEffects == null)
             {
                 Log.Warn($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
@@ -368,7 +364,6 @@ namespace Intersect.Client.Entities
                     );
 
                     Status?.Add(instance);
-
                     if (instance.Type == StatusTypes.Shield)
                     {
                         instance.Shield = status.VitalShields;
@@ -378,7 +373,6 @@ namespace Intersect.Client.Entities
 
             SortStatuses();
             Stat = packet.Stats;
-
             mDisposed = false;
 
             //Status effects box update
@@ -1393,27 +1387,31 @@ namespace Intersect.Client.Entities
         public virtual void DrawTag()
         {
             // Variables
-            string tagFileName = string.Empty;
-            bool customNpcTagOnly = Options.Npc.ShowCustomTagsOnly;
             var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
-            var nameCentHorPos = (int)Math.Ceiling(GetCenterPos().X);
-            var nameVertPos = GetLabelLocation(LabelType.Name);
-            var tagPos = Options.Npc.TagPosition;
+            var nameHPos = (int) Math.Ceiling(GetCenterPos().X);
+            var nameVPos = GetLabelLocation(LabelType.Name);
+            var tagFileName = string.Empty;
+            var entityTagFile = EntityTag.TagName;
+            var defaultTagsOnly = Options.Npc.DefaultTagsOnly;
+            var tagPos = EntityTag.TagPos;
             var headerSize = Pointf.Empty;
             var footerSize = Pointf.Empty;
             float x, y;
+
             // Feature and Entity check
-            if (!Options.Npc.ShowTags || this is Player)
+            if (string.IsNullOrWhiteSpace(entityTagFile) || this is Player)
             {
                 return;
             }
+
             // Custom Npc Tag.
-            if (Tag != null)
+            if (!string.IsNullOrWhiteSpace(entityTagFile))
             {
-                tagFileName = Tag;
+                tagFileName = entityTagFile;
             }
+
             // Default Npc Tags.
-            else if (Tag == null || !customNpcTagOnly)
+            else if (string.IsNullOrWhiteSpace(entityTagFile) && defaultTagsOnly)
             {
                 switch (Type)
                 {
@@ -1445,50 +1443,58 @@ namespace Intersect.Client.Entities
                         break;
                 }
             }
+
             // Now that we have the name of the sprite file, we load it as a texture.
             var tagTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tag, tagFileName);
+
             // If the texture is null, we do nothing.
             if (tagTexture == null)
             {
                 return;
             }
+
             // Check if HeaderLabel has text.
             if (!string.IsNullOrWhiteSpace(HeaderLabel.Text))
             {
                 // if header text exists, lets measure it for later.
                 headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
             }
+
             // Check if FooterLabel has text.
             if (!string.IsNullOrWhiteSpace(FooterLabel.Text))
             {
                 // if footer text exists, lets measure it for later.
                 footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
             }
+
             // Before we draw the sprite, lets have it's position set.
             switch (tagPos)
             {
-                case TagPosition.Above:
                 default:
-                    x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                    y = nameVertPos - tagTexture.GetHeight() - 2 - headerSize.Y;
+                    return;
+
+                case TagPosition.Above:
+                    x = nameHPos - (tagTexture.GetWidth() / 2);
+                    y = nameVPos - tagTexture.GetHeight() - 2 - headerSize.Y;
 
                     break;
                 case TagPosition.Under:
-                    x = nameCentHorPos - (tagTexture.GetWidth() / 2);
-                    y = nameVertPos + nameSize.Y + 2 + footerSize.Y;
+                    x = nameHPos - (tagTexture.GetWidth() / 2);
+                    y = nameVPos + nameSize.Y + 2 + footerSize.Y;
 
                     break;
                 case TagPosition.Prefix:
-                    x = nameCentHorPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
-                    y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+                    x = nameHPos - (nameSize.X / 2) - tagTexture.GetWidth() - 6;
+                    y = nameVPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
 
                     break;
                 case TagPosition.Suffix:
-                    x = nameCentHorPos + (nameSize.X / 2) + 6;
-                    y = nameVertPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
+                    x = nameHPos + (nameSize.X / 2) + 6;
+                    y = nameVPos + (nameSize.Y / 2) - (tagTexture.GetHeight() / 2);
 
                     break;
             }
+
             // And finally, we draw the tag.
             Graphics.DrawGameTexture(tagTexture, x, y);
         }

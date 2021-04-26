@@ -19,11 +19,11 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace Intersect.Client.Networking
 {
@@ -256,6 +256,9 @@ namespace Intersect.Client.Networking
                 {
                     Globals.Me = (Player) Globals.Entities[packet.EntityId];
                 }
+
+                en.EntityTag.TagName = packet.Tag.FileName;
+                en.EntityTag.TagPos = packet.Tag.TagPos;
             }
             else
             {
@@ -275,6 +278,8 @@ namespace Intersect.Client.Networking
             {
                 en.Load(packet);
                 en.Type = packet.Aggression;
+                en.EntityTag.TagName = packet.Tag.FileName;
+                en.EntityTag.TagPos = packet.Tag.TagPos;
             }
             else
             {
@@ -999,7 +1004,7 @@ namespace Intersect.Client.Networking
 
             en.ClearAnimations(null);
         }
-
+        
         //EventDialogPacket
         public void HandlePacket(IPacketSender packetSender, EventDialogPacket packet)
         {

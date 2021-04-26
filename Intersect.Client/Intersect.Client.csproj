@@ -107,6 +107,7 @@
     <Compile Include="Entities\Resource.cs" />
     <Compile Include="Entities\SpriteAnimations.cs" />
     <Compile Include="Entities\Status.cs" />
+    <Compile Include="Entities\Tag.cs" />
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Interface\Game\AnnouncementWindow.cs" />

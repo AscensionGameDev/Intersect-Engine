@@ -8,30 +8,24 @@ namespace Intersect.Network.Packets.Server
     public class PlayerEntityPacket : EntityPacket
     {
         //Parameterless Constructor for MessagePack
-        public PlayerEntityPacket()
-        {
-        }
+        public PlayerEntityPacket() { }
 
-
-        [Key(25)]
+        [Key(24)]
         public int AccessLevel { get; set; }
 
-
-        [Key(26)]
+        [Key(25)]
         public Gender Gender { get; set; }
 
-
-        [Key(27)]
+        [Key(26)]
         public Guid ClassId { get; set; }
 
-
-        [Key(28)]
+        [Key(27)]
         public EquipmentPacket Equipment { get; set; }
 
-
-        [Key(29)]
+        [Key(28)]
         public long CombatTimeRemaining { get; set; }
 
+        [Key(29)]
+        public EntityTagPacket Tag { get; set; }
     }
-
 }

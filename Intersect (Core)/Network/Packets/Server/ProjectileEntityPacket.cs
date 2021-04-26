@@ -7,25 +7,18 @@ namespace Intersect.Network.Packets.Server
     public class ProjectileEntityPacket : EntityPacket
     {
         //Parameterless Constructor for MessagePack
-        public ProjectileEntityPacket()
-        {
-        }
+        public ProjectileEntityPacket() { }
 
-        [Key(25)]
+        [Key(24)]
         public Guid ProjectileId { get; set; }
 
-
-        [Key(26)]
+        [Key(25)]
         public byte ProjectileDirection { get; set; }
 
-
-        [Key(27)]
+        [Key(26)]
         public Guid TargetId { get; set; }
 
-
-        [Key(28)]
+        [Key(27)]
         public Guid OwnerId { get; set; }
-
     }
-
 }

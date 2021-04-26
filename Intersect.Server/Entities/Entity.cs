@@ -3,9 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading;
-using System.Web.UI;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -78,9 +76,6 @@ namespace Intersect.Server.Entities
         public int Dir { get; set; }
 
         public string Sprite { get; set; }
-
-        // Tag
-        public string Tag { get; set; }
 
         /// <summary>
         /// The database compatible version of <see cref="Color"/>
@@ -280,6 +275,9 @@ namespace Intersect.Server.Entities
                 }
             }
         }
+
+        [NotMapped]
+        public Tag EntityTag;
 
         public virtual void Dispose()
         {
@@ -2667,7 +2665,6 @@ namespace Intersect.Server.Entities
             packet.NameColor = NameColor;
             packet.HeaderLabel = new LabelPacket(HeaderLabel.Text, HeaderLabel.Color);
             packet.FooterLabel = new LabelPacket(FooterLabel.Text, FooterLabel.Color);
-            packet.Tag = Tag;
 
             return packet;
         }

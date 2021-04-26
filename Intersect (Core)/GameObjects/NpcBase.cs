@@ -189,10 +189,7 @@ namespace Intersect.GameObjects
         public DbList<SpellBase> Spells { get; set; } = new DbList<SpellBase>();
 
         public string Sprite { get; set; } = "";
-
-        // Tag
-        public string Tag { get; set; } = "";
-
+        
         /// <summary>
         /// The database compatible version of <see cref="Color"/>
         /// </summary>
@@ -225,6 +222,24 @@ namespace Intersect.GameObjects
         {
             get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vitals.VitalCount);
             set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+        }
+
+        /// <summary>
+        /// Information for Tags.
+        /// </summary>
+        [NotMapped]
+        public Tag EntityTag { get; set; }
+
+        /// <summary>
+        /// Serialized / Deserialized Info for Tags.
+        /// </summary>
+        [JsonIgnore, Column(nameof(Tag))]
+        public string TagJson
+        {
+            get => JsonConvert.SerializeObject(EntityTag);
+            set => EntityTag = value != null
+                ? JsonConvert.DeserializeObject<Tag>(value)
+                : new Tag(EntityTag.TagName, EntityTag.TagPos);
         }
 
         /// <inheritdoc />

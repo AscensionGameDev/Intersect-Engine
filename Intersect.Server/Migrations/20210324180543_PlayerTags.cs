@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations
 {
-    public partial class AddingTagToNpcs : Migration
+    public partial class PlayerTags : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Tag",
-                table: "Npcs",
+                table: "Players",
                 nullable: true);
         }
 
@@ -16,7 +16,7 @@ namespace Intersect.Server.Migrations.Game
         {
             migrationBuilder.DropColumn(
                 name: "Tag",
-                table: "Npcs");
+                table: "Players");
         }
     }
 }

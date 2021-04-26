@@ -1,35 +1,37 @@
-﻿using System;
+﻿using DarkUI.Forms;
+using Intersect.Editor.Content;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Networking;
+using Intersect.Editor.Properties;
+using Intersect.Enums;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-using DarkUI.Forms;
-
-using Intersect.Editor.Content;
-using Intersect.Editor.General;
-using Intersect.Editor.Localization;
-using Intersect.Editor.Networking;
-using Intersect.Enums;
-using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
-using Intersect.Utilities;
-
 namespace Intersect.Editor.Forms.Editors
 {
-
     public partial class FrmNpc : EditorForm
     {
+        #region Fields
 
-        private List<NpcBase> mChanged = new List<NpcBase>();
+        private readonly List<NpcBase> mChanged = new List<NpcBase>();
 
+        private readonly List<string> mExpandedFolders = new List<string>();
+        private readonly List<string> mKnownFolders = new List<string>();
+        Dictionary<string,int> mTagDictionary=new Dictionary<string,int>();
         private string mCopiedItem;
 
         private NpcBase mEditorItem;
 
-        private List<string> mExpandedFolders = new List<string>();
+        #endregion Fields
 
-        private List<string> mKnownFolders = new List<string>();
+        #region Constructors
 
         public FrmNpc()
         {
@@ -38,6 +40,10 @@ namespace Intersect.Editor.Forms.Editors
             lstNpcs.LostFocus += itemList_FocusChanged;
             lstNpcs.GotFocus += itemList_FocusChanged;
         }
+
+        #endregion Constructors
+
+        #region Methods
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
@@ -49,6 +55,58 @@ namespace Intersect.Editor.Forms.Editors
                     mEditorItem = null;
                     UpdateEditor();
                 }
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            mEditorItem.Spells.Add(SpellBase.IdFromList(cmbSpell.SelectedIndex));
+            var n = lstSpells.SelectedIndex;
+            lstSpells.Items.Clear();
+            for (var i = 0; i < mEditorItem.Spells.Count; i++)
+            {
+                lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
+            }
+
+            lstSpells.SelectedIndex = n;
+        }
+
+        private void btnAddAggro_Click(object sender, EventArgs e)
+        {
+            mEditorItem.AggroList.Add(NpcBase.IdFromList(cmbHostileNPC.SelectedIndex));
+            lstAggro.Items.Clear();
+            for (var i = 0; i < mEditorItem.AggroList.Count; i++)
+            {
+                if (mEditorItem.AggroList[i] != Guid.Empty)
+                {
+                    lstAggro.Items.Add(NpcBase.GetName(mEditorItem.AggroList[i]));
+                }
+                else
+                {
+                    lstAggro.Items.Add(Strings.General.none);
+                }
+            }
+        }
+
+        private void btnAttackOnSightCond_Click(object sender, EventArgs e)
+        {
+            if (chkAggressive.Checked)
+            {
+                var frm = new FrmDynamicRequirements(
+                    mEditorItem.AttackOnSightConditions, RequirementType.NpcDontAttackOnSight
+                );
+
+                frm.TopMost = true;
+                frm.ShowDialog();
+            }
+            else
+            {
+                var frm = new FrmDynamicRequirements(
+                    mEditorItem.AttackOnSightConditions, RequirementType.NpcAttackOnSight
+                );
+
+                frm.TopMost = true;
+                frm.ShowDialog();
             }
         }
 
@@ -65,6 +123,65 @@ namespace Intersect.Editor.Forms.Editors
             Dispose();
         }
 
+        private void btnDropAdd_Click(object sender, EventArgs e)
+        {
+            mEditorItem.Drops.Add(new NpcDrop());
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
+
+            UpdateDropValues();
+        }
+
+        private void btnDropRemove_Click(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                var i = lstDrops.SelectedIndex;
+                lstDrops.Items.RemoveAt(i);
+                mEditorItem.Drops.RemoveAt(i);
+            }
+
+            UpdateDropValues(true);
+        }
+
+        private void btnPlayerCanAttackCond_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(
+                mEditorItem.PlayerCanAttackConditions, RequirementType.NpcCanBeAttacked
+            );
+
+            frm.TopMost = true;
+            frm.ShowDialog();
+        }
+
+        private void btnPlayerFriendProtectorCond_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(mEditorItem.PlayerFriendConditions, RequirementType.NpcFriend);
+            frm.TopMost = true;
+            frm.ShowDialog();
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (lstSpells.SelectedIndex > -1)
+            {
+                var i = lstSpells.SelectedIndex;
+                lstSpells.Items.RemoveAt(i);
+                mEditorItem.Spells.RemoveAt(i);
+            }
+        }
+
+        private void btnRemoveAggro_Click(object sender, EventArgs e)
+        {
+            if (lstAggro.SelectedIndex > -1)
+            {
+                var i = lstAggro.SelectedIndex;
+                lstAggro.Items.RemoveAt(i);
+                mEditorItem.AggroList.RemoveAt(i);
+            }
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
@@ -79,6 +196,222 @@ namespace Intersect.Editor.Forms.Editors
             Dispose();
         }
 
+        private void chkAggressive_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Aggressive = chkAggressive.Checked;
+            if (mEditorItem.Aggressive)
+            {
+                btnAttackOnSightCond.Text = Strings.NpcEditor.dontattackonsightconditions;
+            }
+            else
+            {
+                btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
+            }
+        }
+
+        private void chkAttackAllies_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAllies = chkAttackAllies.Checked;
+        }
+
+        private void chkEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.NpcVsNpcEnabled = chkEnabled.Checked;
+        }
+
+        private void chkFocusDamageDealer_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.FocusHighestDamageDealer = chkFocusDamageDealer.Checked;
+        }
+
+        private void chkSwarm_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Swarm = chkSwarm.Checked;
+        }
+
+        private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackAnimation =
+                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+        }
+
+        private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedModifier = cmbAttackSpeedModifier.SelectedIndex;
+            nudAttackSpeedValue.Enabled = cmbAttackSpeedModifier.SelectedIndex > 0;
+        }
+
+        private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DamageType = cmbDamageType.SelectedIndex;
+        }
+
+        private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
+            {
+                mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
+            }
+
+            UpdateDropValues(true);
+        }
+
+        private void cmbFreq_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.SpellFrequency = cmbFreq.SelectedIndex;
+        }
+
+        private void cmbMovement_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Movement = (byte)cmbMovement.SelectedIndex;
+        }
+
+        private void cmbOnDeathEventKiller_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OnDeathEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventKiller.SelectedIndex - 1));
+        }
+
+        private void cmbOnDeathEventParty_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OnDeathPartyEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventParty.SelectedIndex - 1));
+        }
+
+        private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.ScalingStat = cmbScalingStat.SelectedIndex;
+        }
+
+        private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < mEditorItem.Spells.Count)
+            {
+                mEditorItem.Spells[lstSpells.SelectedIndex] = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+            }
+
+            var n = lstSpells.SelectedIndex;
+            lstSpells.Items.Clear();
+            for (var i = 0; i < mEditorItem.Spells.Count; i++)
+            {
+                lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
+            }
+
+            lstSpells.SelectedIndex = n;
+        }
+
+        private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Sprite = TextUtils.SanitizeNone(cmbSprite.Text);
+            DrawNpcSprite();
+        }
+
+        private void cmbTag_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedTag = TextUtils.SanitizeNone(cmbTag.Text);
+            var selectedPos = (TagPosition) Enum.Parse(typeof(TagPosition), cmbTagPos.SelectedItem.ToString());
+            mEditorItem.EntityTag = new Tag(selectedTag, selectedPos);
+
+            if (cmbTag.SelectedIndex == 0)
+            {
+                cmbTagPos.Visible = false;
+                lblTagPos.Visible = false;
+            }
+            else
+            {
+                cmbTagPos.Visible = true;
+                lblTagPos.Visible = true;
+            }
+
+            DrawTagSprite();
+        }
+
+        private void cmbTagPos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedTag = TextUtils.SanitizeNone(cmbTag.Text);
+            var selectedPos = (TagPosition) Enum.Parse(typeof(TagPosition), cmbTagPos.SelectedItem.ToString());
+            mEditorItem.EntityTag = new Tag(selectedTag, selectedPos);
+        }
+
+        private void DrawNpcSprite()
+        {
+            var picSpriteBmp = new Bitmap(picNpc.Width, picNpc.Height);
+            var gfx = Graphics.FromImage(picSpriteBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
+            if (cmbSprite.SelectedIndex > 0)
+            {
+                var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
+                var picSpriteW = img.Width / Options.Instance.Sprites.NormalFrames;
+                var picSpriteH = img.Height / Options.Instance.Sprites.Directions;
+                var imgAttributes = new ImageAttributes();
+
+                // Microsoft, what the heck is this crap?
+                imgAttributes.SetColorMatrix(
+                    new ColorMatrix(
+                        new[]
+                        {
+                            new[] {(float) nudRgbaR.Value / 255, 0, 0, 0, 0}, // Modify the red space
+                            new[] {0, (float) nudRgbaG.Value / 255, 0, 0, 0}, // Modify the green space
+                            new[] {0, 0, (float) nudRgbaB.Value / 255, 0, 0}, // Modify the blue space
+                            new[] {0, 0, 0, (float) nudRgbaA.Value / 255, 0}, // Modify the alpha space
+                            new float[]
+                            {
+                                0, 0, 0, 0, 1
+                            } // We're not adding any non-linear changes. Value of 1 at the end is a dummy value!
+                        }
+                    )
+                );
+
+                gfx.DrawImage(
+                    img, new Rectangle(0, 0, picSpriteW, picSpriteH),
+                    0, 0, picSpriteW, picSpriteH, GraphicsUnit.Pixel, imgAttributes
+                );
+
+                img.Dispose();
+                imgAttributes.Dispose();
+            }
+
+            gfx.Dispose();
+
+            picNpc.BackgroundImage = picSpriteBmp;
+        }
+
+        private void DrawTagSprite()
+        {
+            var picSpriteBmp = new Bitmap(picTag.Width, picTag.Height);
+            var gfx = Graphics.FromImage(picSpriteBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picTag.Width, picTag.Height));
+            if (cmbTag.SelectedIndex > 0)
+            {
+                var img = Image.FromFile("resources/tags/" + cmbTag.Text);
+
+                gfx.DrawImage(
+                    img, new Rectangle(img.Width / 2, img.Height / 2, img.Width, img.Height),
+                    0, 0, img.Width, img.Height, GraphicsUnit.Pixel
+                );
+
+                img.Dispose();
+            }
+
+            gfx.Dispose();
+
+            picTag.BackgroundImage = picSpriteBmp;
+        }
+
+        private void form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.N)
+                {
+                    toolStripItemNew_Click(null, null);
+                }
+            }
+        }
+
+        private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
+        }
+
         private void frmNpc_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
@@ -86,11 +419,23 @@ namespace Intersect.Editor.Forms.Editors
             cmbSprite.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
             );
+
+            // EntityTag.FileName
             cmbTag.Items.Clear();
             cmbTag.Items.Add(Strings.General.none);
-            cmbTag.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tag)
-            );
+            cmbTag.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Tag));
+
+            // EntityTag.TagPos
+            cmbTagPos.Items.Clear();
+            cmbTagPos.DataSource = Enum.GetValues(typeof(TagPosition));
+            foreach (int enumValue in
+                Enum.GetValues(typeof(TagPosition)))
+            {
+                mTagDictionary.Add(Enum.GetName(typeof(TagPosition),enumValue) ?? string.Empty,enumValue);
+            }
+            cmbTagPos.DataSource = new BindingSource(Enum.GetValues(typeof(TagPosition)),null); 
+            //cmbTagPos.Items.AddRange(Enum.GetNames(typeof(TagPosition)));
+
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(SpellBase.Names);
             cmbHostileNPC.Items.Clear();
@@ -134,14 +479,17 @@ namespace Intersect.Editor.Forms.Editors
             grpNpcs.Text = Strings.NpcEditor.npcs;
 
             grpGeneral.Text = Strings.NpcEditor.general;
+            grpTextures.Text = Strings.NpcEditor.Textures;
             lblName.Text = Strings.NpcEditor.name;
             grpBehavior.Text = Strings.NpcEditor.behavior;
 
-            lblPic.Text = Strings.NpcEditor.sprite;
+            grpSprite.Text = Strings.NpcEditor.sprite;
             lblRed.Text = Strings.NpcEditor.Red;
             lblGreen.Text = Strings.NpcEditor.Green;
             lblBlue.Text = Strings.NpcEditor.Blue;
             lblAlpha.Text = Strings.NpcEditor.Alpha;
+            grpTag.Text = Strings.NpcEditor.Tag;
+            lblTagPos.Text = Strings.NpcEditor.TagPos;
 
             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
 
@@ -241,35 +589,342 @@ namespace Intersect.Editor.Forms.Editors
             btnCancel.Text = Strings.NpcEditor.cancel;
         }
 
+        private void itemList_FocusChanged(object sender, EventArgs e)
+        {
+            UpdateToolStripItems();
+        }
+
+        private void itemList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.Z)
+                {
+                    toolStripItemUndo_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.V)
+                {
+                    toolStripItemPaste_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.C)
+                {
+                    toolStripItemCopy_Click(null, null);
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    toolStripItemDelete_Click(null, null);
+                }
+            }
+        }
+
+        private void lstDrops_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
+                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
+                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+            }
+        }
+
+        private void lstSpells_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstSpells.SelectedIndex > -1)
+            {
+                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
+            }
+        }
+
+        private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+        }
+
+        private void nudCritChance_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CritChance = (int)nudCritChance.Value;
+        }
+
+        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
+        }
+
+        private void nudDamage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Damage = (int)nudDamage.Value;
+        }
+
+        private void nudDef_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Defense] = (int)nudDef.Value;
+        }
+
+        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
+        {
+            // This should never be below 1. We shouldn't accept giving 0 items!
+            nudDropAmount.Value = Math.Max(1, nudDropAmount.Value);
+
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Drops[lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
+            UpdateDropValues(true);
+        }
+
+        private void nudDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Drops[lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
+            UpdateDropValues(true);
+        }
+
+        private void nudExp_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Experience = (int)nudExp.Value;
+        }
+
+        private void nudFlee_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.FleeHealthPercentage = (byte)nudFlee.Value;
+        }
+
+        private void nudHp_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.MaxVital[(int)Vitals.Health] = (int)nudHp.Value;
+        }
+
+        private void nudHpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Health] = (int)nudHpRegen.Value;
+        }
+
+        private void nudLevel_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Level = (int)nudLevel.Value;
+        }
+
+        private void nudMag_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.AbilityPower] = (int)nudMag.Value;
+        }
+
+        private void nudMana_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.MaxVital[(int)Vitals.Mana] = (int)nudMana.Value;
+        }
+
+        private void nudMpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Mana] = (int)nudMpRegen.Value;
+        }
+
+        private void nudMR_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.MagicResist] = (int)nudMR.Value;
+        }
+
+        private void nudResetRadius_ValueChanged(object sender, EventArgs e)
+        {
+            // Set to either default or higher.
+            nudResetRadius.Value = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
+            mEditorItem.ResetRadius = (int)nudResetRadius.Value;
+        }
+
+        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.A = (byte)nudRgbaA.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.B = (byte)nudRgbaB.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.G = (byte)nudRgbaG.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Color.R = (byte)nudRgbaR.Value;
+            DrawNpcSprite();
+        }
+
+        private void nudScaling_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Scaling = (int)nudScaling.Value;
+        }
+
+        private void nudSightRange_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.SightRange = (int)nudSightRange.Value;
+        }
+
+        private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.SpawnDuration = (int)nudSpawnDuration.Value;
+        }
+
+        private void nudSpd_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Speed] = (int)nudSpd.Value;
+        }
+
+        private void nudStr_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Attack] = (int)nudStr.Value;
+        }
+
+        private void toolStripItemCopy_Click(object sender, EventArgs e)
+        {
+            if (mEditorItem != null && lstNpcs.Focused)
+            {
+                mCopiedItem = mEditorItem.JsonData;
+                toolStripItemPaste.Enabled = true;
+            }
+        }
+
+        private void toolStripItemDelete_Click(object sender, EventArgs e)
+        {
+            if (mEditorItem != null && lstNpcs.Focused)
+            {
+                if (DarkMessageBox.ShowWarning(
+                        Strings.NpcEditor.deleteprompt, Strings.NpcEditor.deletetitle, DarkDialogButton.YesNo,
+                        Resources.Icon
+                    ) ==
+                    DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(mEditorItem);
+                }
+            }
+        }
+
+        private void toolStripItemNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObjectType.Npc);
+        }
+
+        private void toolStripItemPaste_Click(object sender, EventArgs e)
+        {
+            if (mEditorItem != null && mCopiedItem != null && lstNpcs.Focused)
+            {
+                mEditorItem.Load(mCopiedItem, true);
+                UpdateEditor();
+            }
+        }
+
+        private void toolStripItemUndo_Click(object sender, EventArgs e)
+        {
+            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
+            {
+                if (DarkMessageBox.ShowWarning(
+                        Strings.NpcEditor.undoprompt, Strings.NpcEditor.undotitle, DarkDialogButton.YesNo,
+                        Resources.Icon
+                    ) ==
+                    DialogResult.Yes)
+                {
+                    mEditorItem.RestoreBackup();
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void txtName_TextChanged(object sender, EventArgs e)
+        {
+            mChangingName = true;
+            mEditorItem.Name = txtName.Text;
+            if (lstNpcs.SelectedNode?.Tag != null)
+            {
+                lstNpcs.SelectedNode.Text = txtName.Text;
+            }
+
+            mChangingName = false;
+        }
+
+        private void UpdateDropValues(bool keepIndex = false)
+        {
+            var index = lstDrops.SelectedIndex;
+            lstDrops.Items.Clear();
+
+            var drops = mEditorItem.Drops.ToArray();
+            foreach (var drop in drops)
+            {
+                if (ItemBase.Get(drop.ItemId) == null)
+                {
+                    mEditorItem.Drops.Remove(drop);
+                }
+            }
+
+            for (var i = 0; i < mEditorItem.Drops.Count; i++)
+            {
+                if (mEditorItem.Drops[i].ItemId != Guid.Empty)
+                {
+                    lstDrops.Items.Add(
+                        Strings.NpcEditor.dropdisplay.ToString(
+                            ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity,
+                            mEditorItem.Drops[i].Chance
+                        )
+                    );
+                }
+                else
+                {
+                    lstDrops.Items.Add(TextUtils.None);
+                }
+            }
+
+            if (keepIndex && index < lstDrops.Items.Count)
+            {
+                lstDrops.SelectedIndex = index;
+            }
+        }
+
         private void UpdateEditor()
         {
             if (mEditorItem != null)
             {
                 pnlContainer.Show();
 
+                // General
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
+                nudLevel.Value = mEditorItem.Level;
+
+                // Textures
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
-                cmbTag.SelectedIndex = cmbTag.FindString(TextUtils.NullToNone(mEditorItem.Tag));
+                cmbTag.SelectedIndex = cmbTag.FindString(TextUtils.NullToNone(mEditorItem.EntityTag.TagName));
+                
+                // TODO : Properly load TagPosition for each NPC from the serialized db column into the dropdown. 
+                //cmbTagPos.SelectedText = cmbTagPos.GetItemText((int)mEditorItem.EntityTag.TagPos);
+                //cmbTagPos.SelectedIndex = cmbTagPos. (mEditorItem.EntityTag.TagPos);
+                //cmbTagPos.DisplayMember = "Key";
+                //cmbTagPos.ValueMember = "TagPosition";
+
                 nudRgbaR.Value = mEditorItem.Color.R;
                 nudRgbaG.Value = mEditorItem.Color.G;
                 nudRgbaB.Value = mEditorItem.Color.B;
                 nudRgbaA.Value = mEditorItem.Color.A;
 
-                nudLevel.Value = mEditorItem.Level;
-                nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-
                 //Behavior
                 chkAggressive.Checked = mEditorItem.Aggressive;
-                if (mEditorItem.Aggressive)
-                {
-                    btnAttackOnSightCond.Text = Strings.NpcEditor.dontattackonsightconditions;
-                }
-                else
-                {
-                    btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
-                }
+                btnAttackOnSightCond.Text = mEditorItem.Aggressive
+                    ? Strings.NpcEditor.dontattackonsightconditions
+                    : Strings.NpcEditor.attackonsightconditions;
 
+                nudSpawnDuration.Value = mEditorItem.SpawnDuration;
                 nudSightRange.Value = mEditorItem.SightRange;
                 cmbMovement.SelectedIndex = Math.Min(mEditorItem.Movement, cmbMovement.Items.Count - 1);
                 chkSwarm.Checked = mEditorItem.Swarm;
@@ -281,13 +936,13 @@ namespace Intersect.Editor.Forms.Editors
                 cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
                 cmbOnDeathEventParty.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
 
-                nudStr.Value = mEditorItem.Stats[(int) Stats.Attack];
-                nudMag.Value = mEditorItem.Stats[(int) Stats.AbilityPower];
-                nudDef.Value = mEditorItem.Stats[(int) Stats.Defense];
-                nudMR.Value = mEditorItem.Stats[(int) Stats.MagicResist];
-                nudSpd.Value = mEditorItem.Stats[(int) Stats.Speed];
-                nudHp.Value = mEditorItem.MaxVital[(int) Vitals.Health];
-                nudMana.Value = mEditorItem.MaxVital[(int) Vitals.Mana];
+                nudStr.Value = mEditorItem.Stats[(int)Stats.Attack];
+                nudMag.Value = mEditorItem.Stats[(int)Stats.AbilityPower];
+                nudDef.Value = mEditorItem.Stats[(int)Stats.Defense];
+                nudMR.Value = mEditorItem.Stats[(int)Stats.MagicResist];
+                nudSpd.Value = mEditorItem.Stats[(int)Stats.Speed];
+                nudHp.Value = mEditorItem.MaxVital[(int)Vitals.Health];
+                nudMana.Value = mEditorItem.MaxVital[(int)Vitals.Mana];
                 nudExp.Value = mEditorItem.Experience;
                 chkAttackAllies.Checked = mEditorItem.AttackAllies;
                 chkEnabled.Checked = mEditorItem.NpcVsNpcEnabled;
@@ -295,7 +950,7 @@ namespace Intersect.Editor.Forms.Editors
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
-                nudCritMultiplier.Value = (decimal) mEditorItem.CritMultiplier;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
@@ -304,8 +959,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
                 //Regen
-                nudHpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
-                nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Mana];
+                nudHpRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Health];
+                nudMpRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Mana];
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -360,278 +1015,6 @@ namespace Intersect.Editor.Forms.Editors
             UpdateToolStripItems();
         }
 
-        private void txtName_TextChanged(object sender, EventArgs e)
-        {
-            mChangingName = true;
-            mEditorItem.Name = txtName.Text;
-            if (lstNpcs.SelectedNode != null && lstNpcs.SelectedNode.Tag != null)
-            {
-                lstNpcs.SelectedNode.Text = txtName.Text;
-            }
-
-            mChangingName = false;
-        }
-
-        private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Sprite = TextUtils.SanitizeNone(cmbSprite.Text);
-            DrawNpcSprite();
-        }
-
-        private void cmbTag_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Tag = TextUtils.SanitizeNone(cmbTag.Text);
-            DrawTagSprite();
-        }
-
-        private void DrawNpcSprite()
-        {
-            var picSpriteBmp = new Bitmap(picNpc.Width, picNpc.Height);
-            var gfx = Graphics.FromImage(picSpriteBmp);
-            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
-            if (cmbSprite.SelectedIndex > 0)
-            {
-                var img = Image.FromFile("resources/entities/" + cmbSprite.Text);
-                var picSpriteW = img.Width / Options.Instance.Sprites.NormalFrames;
-                var picSpriteH = img.Height / Options.Instance.Sprites.Directions;
-                var imgAttributes = new ImageAttributes();
-
-                // Microsoft, what the heck is this crap?
-                imgAttributes.SetColorMatrix(
-                    new ColorMatrix(
-                        new float[][]
-                        {
-                            new float[] { (float)nudRgbaR.Value / 255,  0,  0,  0, 0},  // Modify the red space
-                            new float[] {0, (float)nudRgbaG.Value / 255,  0,  0, 0},    // Modify the green space
-                            new float[] {0,  0, (float)nudRgbaB.Value / 255,  0, 0},    // Modify the blue space
-                            new float[] {0,  0,  0, (float)nudRgbaA.Value / 255, 0},    // Modify the alpha space
-                            new float[] {0, 0, 0, 0, 1}                                 // We're not adding any non-linear changes. Value of 1 at the end is a dummy value!
-                        }
-                    )
-                );
-
-                gfx.DrawImage(
-                    img, new Rectangle(0, 0, picSpriteW, picSpriteH),
-                    0, 0, picSpriteW, picSpriteH, GraphicsUnit.Pixel, imgAttributes
-                );
-                
-                img.Dispose();
-                imgAttributes.Dispose();
-            }
-
-            gfx.Dispose();
-
-            picNpc.BackgroundImage = picSpriteBmp;
-        }
-
-        private void DrawTagSprite()
-        {
-            var picSpriteBmp = new Bitmap(picTag.Width, picTag.Height);
-            var gfx = Graphics.FromImage(picSpriteBmp);
-            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picTag.Width, picTag.Height));
-            if (cmbTag.SelectedIndex > 0)
-            {
-                var img = Image.FromFile("resources/tags/" + cmbTag.Text);
-
-                gfx.DrawImage(
-                    img, new Rectangle(img.Width / 2, img.Height / 2, img.Width, img.Height),
-                    0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
-
-                img.Dispose();
-            }
-
-            gfx.Dispose();
-
-            picTag.BackgroundImage = picSpriteBmp;
-        }
-
-        private void UpdateDropValues(bool keepIndex = false)
-        {
-            var index = lstDrops.SelectedIndex;
-            lstDrops.Items.Clear();
-
-            var drops = mEditorItem.Drops.ToArray();
-            foreach (var drop in drops)
-            {
-                if (ItemBase.Get(drop.ItemId) == null)
-                {
-                    mEditorItem.Drops.Remove(drop);
-                }
-            }
-
-            for (var i = 0; i < mEditorItem.Drops.Count; i++)
-            {
-                if (mEditorItem.Drops[i].ItemId != Guid.Empty)
-                {
-                    lstDrops.Items.Add(
-                        Strings.NpcEditor.dropdisplay.ToString(
-                            ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity,
-                            mEditorItem.Drops[i].Chance
-                        )
-                    );
-                }
-                else
-                {
-                    lstDrops.Items.Add(TextUtils.None);
-                }
-            }
-
-            if (keepIndex && index < lstDrops.Items.Count)
-            {
-                lstDrops.SelectedIndex = index;
-            }
-        }
-
-        private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Globals.CurrentEditor = -1;
-        }
-
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            mEditorItem.Spells.Add(SpellBase.IdFromList(cmbSpell.SelectedIndex));
-            var n = lstSpells.SelectedIndex;
-            lstSpells.Items.Clear();
-            for (var i = 0; i < mEditorItem.Spells.Count; i++)
-            {
-                lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
-            }
-
-            lstSpells.SelectedIndex = n;
-        }
-
-        private void btnRemove_Click(object sender, EventArgs e)
-        {
-            if (lstSpells.SelectedIndex > -1)
-            {
-                var i = lstSpells.SelectedIndex;
-                lstSpells.Items.RemoveAt(i);
-                mEditorItem.Spells.RemoveAt(i);
-            }
-        }
-
-        private void cmbFreq_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.SpellFrequency = cmbFreq.SelectedIndex;
-        }
-
-        private void chkEnabled_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.NpcVsNpcEnabled = chkEnabled.Checked;
-        }
-
-        private void chkAttackAllies_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.AttackAllies = chkAttackAllies.Checked;
-        }
-
-        private void btnAddAggro_Click(object sender, EventArgs e)
-        {
-            mEditorItem.AggroList.Add(NpcBase.IdFromList(cmbHostileNPC.SelectedIndex));
-            lstAggro.Items.Clear();
-            for (var i = 0; i < mEditorItem.AggroList.Count; i++)
-            {
-                if (mEditorItem.AggroList[i] != Guid.Empty)
-                {
-                    lstAggro.Items.Add(NpcBase.GetName(mEditorItem.AggroList[i]));
-                }
-                else
-                {
-                    lstAggro.Items.Add(Strings.General.none);
-                }
-            }
-        }
-
-        private void btnRemoveAggro_Click(object sender, EventArgs e)
-        {
-            if (lstAggro.SelectedIndex > -1)
-            {
-                var i = lstAggro.SelectedIndex;
-                lstAggro.Items.RemoveAt(i);
-                mEditorItem.AggroList.RemoveAt(i);
-            }
-        }
-
-        private void toolStripItemNew_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendCreateObject(GameObjectType.Npc);
-        }
-
-        private void toolStripItemDelete_Click(object sender, EventArgs e)
-        {
-            if (mEditorItem != null && lstNpcs.Focused)
-            {
-                if (DarkMessageBox.ShowWarning(
-                        Strings.NpcEditor.deleteprompt, Strings.NpcEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
-                    ) ==
-                    DialogResult.Yes)
-                {
-                    PacketSender.SendDeleteObject(mEditorItem);
-                }
-            }
-        }
-
-        private void toolStripItemCopy_Click(object sender, EventArgs e)
-        {
-            if (mEditorItem != null && lstNpcs.Focused)
-            {
-                mCopiedItem = mEditorItem.JsonData;
-                toolStripItemPaste.Enabled = true;
-            }
-        }
-
-        private void toolStripItemPaste_Click(object sender, EventArgs e)
-        {
-            if (mEditorItem != null && mCopiedItem != null && lstNpcs.Focused)
-            {
-                mEditorItem.Load(mCopiedItem, true);
-                UpdateEditor();
-            }
-        }
-
-        private void toolStripItemUndo_Click(object sender, EventArgs e)
-        {
-            if (mChanged.Contains(mEditorItem) && mEditorItem != null)
-            {
-                if (DarkMessageBox.ShowWarning(
-                        Strings.NpcEditor.undoprompt, Strings.NpcEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
-                    ) ==
-                    DialogResult.Yes)
-                {
-                    mEditorItem.RestoreBackup();
-                    UpdateEditor();
-                }
-            }
-        }
-
-        private void itemList_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Z)
-                {
-                    toolStripItemUndo_Click(null, null);
-                }
-                else if (e.KeyCode == Keys.V)
-                {
-                    toolStripItemPaste_Click(null, null);
-                }
-                else if (e.KeyCode == Keys.C)
-                {
-                    toolStripItemCopy_Click(null, null);
-                }
-            }
-            else
-            {
-                if (e.KeyCode == Keys.Delete)
-                {
-                    toolStripItemDelete_Click(null, null);
-                }
-            }
-        }
-
         private void UpdateToolStripItems()
         {
             toolStripItemCopy.Enabled = mEditorItem != null && lstNpcs.Focused;
@@ -640,338 +1023,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemUndo.Enabled = mEditorItem != null && lstNpcs.Focused;
         }
 
-        private void itemList_FocusChanged(object sender, EventArgs e)
-        {
-            UpdateToolStripItems();
-        }
-
-        private void form_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.N)
-                {
-                    toolStripItemNew_Click(null, null);
-                }
-            }
-        }
-
-        private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.AttackAnimation =
-                AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
-        }
-
-        private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.DamageType = cmbDamageType.SelectedIndex;
-        }
-
-        private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.ScalingStat = cmbScalingStat.SelectedIndex;
-        }
-
-        private void lstSpells_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstSpells.SelectedIndex > -1)
-            {
-                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex]);
-            }
-        }
-
-        private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < mEditorItem.Spells.Count)
-            {
-                mEditorItem.Spells[lstSpells.SelectedIndex] = SpellBase.IdFromList(cmbSpell.SelectedIndex);
-            }
-
-            var n = lstSpells.SelectedIndex;
-            lstSpells.Items.Clear();
-            for (var i = 0; i < mEditorItem.Spells.Count; i++)
-            {
-                lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
-            }
-
-            lstSpells.SelectedIndex = n;
-        }
-
-        private void nudScaling_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Scaling = (int) nudScaling.Value;
-        }
-
-        private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
-        }
-
-        private void nudSightRange_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.SightRange = (int) nudSightRange.Value;
-        }
-
-        private void nudStr_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Stats[(int) Stats.Attack] = (int) nudStr.Value;
-        }
-
-        private void nudMag_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Stats[(int) Stats.AbilityPower] = (int) nudMag.Value;
-        }
-
-        private void nudDef_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Stats[(int) Stats.Defense] = (int) nudDef.Value;
-        }
-
-        private void nudMR_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Stats[(int) Stats.MagicResist] = (int) nudMR.Value;
-        }
-
-        private void nudSpd_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Stats[(int) Stats.Speed] = (int) nudSpd.Value;
-        }
-
-        private void nudDamage_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Damage = (int) nudDamage.Value;
-        }
-
-        private void nudCritChance_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.CritChance = (int) nudCritChance.Value;
-        }
-
-        private void nudHp_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.MaxVital[(int) Vitals.Health] = (int) nudHp.Value;
-        }
-
-        private void nudMana_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.MaxVital[(int) Vitals.Mana] = (int) nudMana.Value;
-        }
-
-        private void nudExp_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Experience = (int) nudExp.Value;
-        }
-
-        private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
-            {
-                mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-            }
-
-            UpdateDropValues(true);
-        }
-
-        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
-        {
-            // This should never be below 1. We shouldn't accept giving 0 items!
-            nudDropAmount.Value = Math.Max(1, nudDropAmount.Value);
-
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
-            {
-                return;
-            }
-
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
-            UpdateDropValues(true);
-        }
-
-        private void lstDrops_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstDrops.SelectedIndex > -1)
-            {
-                cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
-                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
-                nudDropChance.Value = (decimal) mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
-            }
-        }
-
-        private void btnDropAdd_Click(object sender, EventArgs e)
-        {
-            mEditorItem.Drops.Add(new NpcDrop());
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int) nudDropAmount.Value;
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double) nudDropChance.Value;
-
-            UpdateDropValues();
-        }
-
-        private void btnDropRemove_Click(object sender, EventArgs e)
-        {
-            if (lstDrops.SelectedIndex > -1)
-            {
-                var i = lstDrops.SelectedIndex;
-                lstDrops.Items.RemoveAt(i);
-                mEditorItem.Drops.RemoveAt(i);
-            }
-
-            UpdateDropValues(true);
-        }
-
-        private void nudDropChance_ValueChanged(object sender, EventArgs e)
-        {
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
-            {
-                return;
-            }
-
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Chance = (double) nudDropChance.Value;
-            UpdateDropValues(true);
-        }
-
-        private void nudLevel_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Level = (int) nudLevel.Value;
-        }
-
-        private void nudHpRegen_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.VitalRegen[(int) Vitals.Health] = (int) nudHpRegen.Value;
-        }
-
-        private void nudMpRegen_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.VitalRegen[(int) Vitals.Mana] = (int) nudMpRegen.Value;
-        }
-
-        private void chkAggressive_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Aggressive = chkAggressive.Checked;
-            if (mEditorItem.Aggressive)
-            {
-                btnAttackOnSightCond.Text = Strings.NpcEditor.dontattackonsightconditions;
-            }
-            else
-            {
-                btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
-            }
-        }
-
-        private void cmbMovement_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Movement = (byte) cmbMovement.SelectedIndex;
-        }
-
-        private void chkSwarm_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Swarm = chkSwarm.Checked;
-        }
-
-        private void nudFlee_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.FleeHealthPercentage = (byte) nudFlee.Value;
-        }
-
-        private void btnPlayerFriendProtectorCond_Click(object sender, EventArgs e)
-        {
-            var frm = new FrmDynamicRequirements(mEditorItem.PlayerFriendConditions, RequirementType.NpcFriend);
-            frm.TopMost = true;
-            frm.ShowDialog();
-        }
-
-        private void btnAttackOnSightCond_Click(object sender, EventArgs e)
-        {
-            if (chkAggressive.Checked)
-            {
-                var frm = new FrmDynamicRequirements(
-                    mEditorItem.AttackOnSightConditions, RequirementType.NpcDontAttackOnSight
-                );
-
-                frm.TopMost = true;
-                frm.ShowDialog();
-            }
-            else
-            {
-                var frm = new FrmDynamicRequirements(
-                    mEditorItem.AttackOnSightConditions, RequirementType.NpcAttackOnSight
-                );
-
-                frm.TopMost = true;
-                frm.ShowDialog();
-            }
-        }
-
-        private void btnPlayerCanAttackCond_Click(object sender, EventArgs e)
-        {
-            var frm = new FrmDynamicRequirements(
-                mEditorItem.PlayerCanAttackConditions, RequirementType.NpcCanBeAttacked
-            );
-
-            frm.TopMost = true;
-            frm.ShowDialog();
-        }
-
-        private void cmbOnDeathEventKiller_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.OnDeathEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventKiller.SelectedIndex - 1));
-        }
-
-        private void cmbOnDeathEventParty_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.OnDeathPartyEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventParty.SelectedIndex - 1));
-        }
-
-        private void chkFocusDamageDealer_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.FocusHighestDamageDealer = chkFocusDamageDealer.Checked;
-        }
-
-        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.CritMultiplier = (double) nudCritMultiplier.Value;
-        }
-
-        private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.AttackSpeedModifier = cmbAttackSpeedModifier.SelectedIndex;
-            nudAttackSpeedValue.Enabled = cmbAttackSpeedModifier.SelectedIndex > 0;
-        }
-
-        private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
-        }
-
-        private void nudRgbaR_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Color.R = (byte)nudRgbaR.Value;
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaG_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Color.G = (byte)nudRgbaG.Value;
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaB_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Color.B = (byte)nudRgbaB.Value;
-            DrawNpcSprite();
-        }
-
-        private void nudRgbaA_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Color.A = (byte)nudRgbaA.Value;
-            DrawNpcSprite();
-        }
-
-        private void nudResetRadius_ValueChanged(object sender, EventArgs e)
-        {
-            // Set to either default or higher.
-            nudResetRadius.Value = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
-            mEditorItem.ResetRadius = (int)nudResetRadius.Value;
-        }
+        #endregion Methods
 
         #region "Item List - Folders, Searching, Sorting, Etc"
 
@@ -979,9 +1031,9 @@ namespace Intersect.Editor.Forms.Editors
         {
             var selectedId = Guid.Empty;
             var folderNodes = new Dictionary<string, TreeNode>();
-            if (lstNpcs.SelectedNode != null && lstNpcs.SelectedNode.Tag != null)
+            if (lstNpcs.SelectedNode?.Tag != null)
             {
-                selectedId = (Guid) lstNpcs.SelectedNode.Tag;
+                selectedId = (Guid)lstNpcs.SelectedNode.Tag;
             }
 
             lstNpcs.Nodes.Clear();
@@ -990,13 +1042,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in NpcBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((NpcBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((NpcBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((NpcBase)itm.Value).Folder) &&
+                    !mFolders.Contains(((NpcBase)itm.Value).Folder))
                 {
-                    mFolders.Add(((NpcBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((NpcBase) itm.Value).Folder))
+                    mFolders.Add(((NpcBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((NpcBase)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((NpcBase) itm.Value).Folder);
+                        mKnownFolders.Add(((NpcBase)itm.Value).Folder);
                     }
                 }
             }
@@ -1072,8 +1124,8 @@ namespace Intersect.Editor.Forms.Editors
                 }
             }
 
-//            searchableDarkTreeView1.ItemProvider = NpcBase.Lookup;
-//            searchableDarkTreeView1?.Refresh();
+            //            searchableDarkTreeView1.ItemProvider = NpcBase.Lookup;
+            //            searchableDarkTreeView1?.Refresh();
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
@@ -1093,6 +1145,42 @@ namespace Intersect.Editor.Forms.Editors
                     cmbFolder.Text = folderName;
                 }
             }
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.NpcEditor.searchplaceholder;
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private bool CustomSearch() => !string.IsNullOrWhiteSpace(txtSearch.Text) &&
+                                       txtSearch.Text != Strings.NpcEditor.searchplaceholder;
+
+        private void lstNpcs_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName)
+            {
+                return;
+            }
+
+            if (lstNpcs.SelectedNode?.Tag == null)
+            {
+                return;
+            }
+
+            mEditorItem = NpcBase.Get((Guid)lstNpcs.SelectedNode.Tag);
+            UpdateEditor();
         }
 
         private void lstNpcs_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -1141,37 +1229,18 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void lstNpcs_AfterSelect(object sender, TreeViewEventArgs e)
+        private void txtSearch_Click(object sender, EventArgs e)
         {
-            if (mChangingName)
+            if (txtSearch.Text == Strings.NpcEditor.searchplaceholder)
             {
-                return;
+                txtSearch.SelectAll();
             }
-
-            if (lstNpcs.SelectedNode == null || lstNpcs.SelectedNode.Tag == null)
-            {
-                return;
-            }
-
-            mEditorItem = NpcBase.Get((Guid) lstNpcs.SelectedNode.Tag);
-            UpdateEditor();
         }
 
-        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        private void txtSearch_Enter(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
-            InitEditor();
-        }
-
-        private void btnChronological_Click(object sender, EventArgs e)
-        {
-            btnChronological.Checked = !btnChronological.Checked;
-            InitEditor();
-        }
-
-        private void txtSearch_TextChanged(object sender, EventArgs e)
-        {
-            InitEditor();
+            txtSearch.SelectAll();
+            txtSearch.Focus();
         }
 
         private void txtSearch_Leave(object sender, EventArgs e)
@@ -1182,32 +1251,11 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void txtSearch_Enter(object sender, EventArgs e)
+        private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            txtSearch.SelectAll();
-            txtSearch.Focus();
+            InitEditor();
         }
 
-        private void btnClearSearch_Click(object sender, EventArgs e)
-        {
-            txtSearch.Text = Strings.NpcEditor.searchplaceholder;
-        }
-
-        private bool CustomSearch()
-        {
-            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.NpcEditor.searchplaceholder;
-        }
-
-        private void txtSearch_Click(object sender, EventArgs e)
-        {
-            if (txtSearch.Text == Strings.NpcEditor.searchplaceholder)
-            {
-                txtSearch.SelectAll();
-            }
-        }
-
-        #endregion
-
+        #endregion "Item List - Folders, Searching, Sorting, Etc"
     }
-
 }

@@ -566,8 +566,7 @@ namespace Intersect.GameObjects.Events.Commands
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeTag;
-
-        public string Tag { get; set; } = "";
+        public Tag EntityTag { get; set; }
 
     }
 

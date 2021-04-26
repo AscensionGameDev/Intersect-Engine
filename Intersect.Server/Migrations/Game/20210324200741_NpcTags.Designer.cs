@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20210225023137_AddingTagToNpcs")]
-    partial class AddingTagToNpcs
+    [Migration("20210324200741_NpcTags")]
+    partial class NpcTags
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -411,7 +411,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("Swarm");
 
-                    b.Property<string>("Tag");
+                    b.Property<string>("TagJson")
+                        .HasColumnName("Tag");
 
                     b.Property<long>("TimeCreated");
 

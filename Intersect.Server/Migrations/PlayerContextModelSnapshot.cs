@@ -376,6 +376,9 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("StatsJson")
                         .HasColumnName("BaseStats");
 
+                    b.Property<string>("TagJson")
+                        .HasColumnName("Tag");
+
                     b.Property<Guid>("UserId");
 
                     b.Property<string>("VitalsJson")

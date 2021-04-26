@@ -11,7 +11,6 @@ namespace Intersect.Network.Packets.Server
     [Union(4, typeof(ResourceEntityPacket))]
     public abstract class EntityPacket : IntersectPacket
     {
-
         [Key(1)]
         public Guid EntityId { get; set; }
 
@@ -80,10 +79,5 @@ namespace Intersect.Network.Packets.Server
 
         [Key(23)]
         public Color Color { get; set; }
-
-        [Key(24)]
-        public string Tag { get; set; }
-
     }
-
 }

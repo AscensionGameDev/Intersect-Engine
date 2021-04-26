@@ -473,6 +473,7 @@
     <Compile Include="Entities\Events\ConditionHandlerRegistry.cs" />
     <Compile Include="Entities\Events\Conditions.cs" />
     <Compile Include="Entities\Events\VariableCheckHandlerRegistry.cs" />
+    <Compile Include="Entities\Tag.cs" />
     <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\Player.Database.cs" />
     <Compile Include="Database\Spell.cs" />
@@ -508,9 +509,9 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Migrations\20210225034806_AddingTagToPlayers.cs" />
-    <Compile Include="Migrations\20210225034806_AddingTagToPlayers.Designer.cs">
-      <DependentUpon>20210225034806_AddingTagToPlayers.cs</DependentUpon>
+    <Compile Include="Migrations\20210324180543_PlayerTags.cs" />
+    <Compile Include="Migrations\20210324180543_PlayerTags.designer.cs">
+      <DependentUpon>20210324180543_PlayerTags.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
@@ -532,9 +533,9 @@
     <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.designer.cs">
       <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20210225023137_AddingTagToNpcs.cs" />
-    <Compile Include="Migrations\Game\20210225023137_AddingTagToNpcs.designer.cs">
-      <DependentUpon>20210225023137_AddingTagToNpcs.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20210324200741_NpcTags.cs" />
+    <Compile Include="Migrations\Game\20210324200741_NpcTags.designer.cs">
+      <DependentUpon>20210324200741_NpcTags.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">

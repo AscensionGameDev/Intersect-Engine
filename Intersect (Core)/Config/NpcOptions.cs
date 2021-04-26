@@ -55,21 +55,10 @@ namespace Intersect.Config
 		} = false;
 
 		/// <summary>
-		/// Configures whether or not to display Npc's Tags.
-		/// NOTE: Npc Tag Sprites are always loaded from the "tags" resource folder.
-		/// *Recommended sizes: 32x16, 64x32, 128x64 and so on [2:1 px]
-		/// </summary>
-		public bool ShowTags
-		{
-			get;
-			set;
-		} = false;
-
-		/// <summary>
-		/// Configures whether or not to ONLY allow Custom Tags for Npcs.
+		/// Configures whether or not to ONLY allow Default Tags for Npcs.
 		/// NOTE: default tags won't be rendered on NPCs anymore.
 		/// </summary>
-		public bool ShowCustomTagsOnly
+		public bool DefaultTagsOnly
 		{
 			get;
 			set;
