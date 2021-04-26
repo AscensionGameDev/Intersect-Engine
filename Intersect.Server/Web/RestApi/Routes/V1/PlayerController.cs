@@ -450,9 +450,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var variable = player.GetVariable(variableId, true);
 
+            var changed = true;
             if (variable?.Value != null)
             {
+                if (variable?.Value?.Value != value.Value)
+                {
+                    changed = false;
+                }
                 variable.Value.Value = value.Value;
+            }
+
+            if (changed)
+            {
+                var plyr = Player.FindOnline(player.Id);
+                if (plyr != null)
+                {
+                    player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", variableId.ToString());
+                }
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))

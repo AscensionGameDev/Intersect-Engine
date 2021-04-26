@@ -175,6 +175,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.lblType = new System.Windows.Forms.Label();
             this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
             this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
+            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
+            this.lblVariableTrigger = new System.Windows.Forms.Label();
             this.txtCommand = new DarkUI.Controls.DarkTextBox();
             this.lblCommand = new System.Windows.Forms.Label();
             this.lblTriggerVal = new System.Windows.Forms.Label();
@@ -650,6 +652,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             this.grpTriggers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTriggers.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTriggers.Controls.Add(this.cmbVariable);
+            this.grpTriggers.Controls.Add(this.lblVariableTrigger);
             this.grpTriggers.Controls.Add(this.txtCommand);
             this.grpTriggers.Controls.Add(this.lblCommand);
             this.grpTriggers.Controls.Add(this.lblTriggerVal);
@@ -662,6 +666,40 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpTriggers.TabIndex = 21;
             this.grpTriggers.TabStop = false;
             this.grpTriggers.Text = "Trigger";
+            // 
+            // cmbVariable
+            // 
+            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariable.ButtonIcon")));
+            this.cmbVariable.DrawDropdownHoverOutline = false;
+            this.cmbVariable.DrawFocusRectangle = false;
+            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbVariable.FormattingEnabled = true;
+            this.cmbVariable.Items.AddRange(new object[] {
+            "None"});
+            this.cmbVariable.Location = new System.Drawing.Point(181, 13);
+            this.cmbVariable.Name = "cmbVariable";
+            this.cmbVariable.Size = new System.Drawing.Size(130, 21);
+            this.cmbVariable.TabIndex = 14;
+            this.cmbVariable.Text = "None";
+            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbVariable.SelectedIndexChanged += new System.EventHandler(this.cmbVariable_SelectedIndexChanged);
+            // 
+            // lblVariableTrigger
+            // 
+            this.lblVariableTrigger.AutoSize = true;
+            this.lblVariableTrigger.Location = new System.Drawing.Point(113, 17);
+            this.lblVariableTrigger.Name = "lblVariableTrigger";
+            this.lblVariableTrigger.Size = new System.Drawing.Size(48, 13);
+            this.lblVariableTrigger.TabIndex = 13;
+            this.lblVariableTrigger.Text = "Variable:";
+            this.lblVariableTrigger.Visible = false;
             // 
             // txtCommand
             // 
@@ -1374,5 +1412,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         private ToolStripMenuItem btnCut;
         private ToolStripMenuItem btnCopy;
         private ToolStripMenuItem btnPaste;
+        private DarkComboBox cmbVariable;
+        private Label lblVariableTrigger;
     }
 }

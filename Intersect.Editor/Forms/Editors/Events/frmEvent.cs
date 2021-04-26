@@ -1014,18 +1014,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 cmbTrigger.SelectedIndex = (int) CurrentPage.Trigger;
             }
 
-            cmbTriggerVal.Hide();
-            lblTriggerVal.Hide();
-            if (MyEvent.CommonEvent)
-            {
-                if (cmbTrigger.SelectedIndex == (int) CommonEventTrigger.SlashCommand)
-                {
-                    txtCommand.Show();
-                    txtCommand.Text = CurrentPage.TriggerCommand;
-                    lblCommand.Show();
-                    lblCommand.Text = Strings.EventEditor.command;
-                }
-            }
+            SetupTrigger();
 
             cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(TextUtils.NullToNone(CurrentPage.FaceGraphic));
             if (cmbPreviewFace.SelectedIndex == -1)
@@ -1716,19 +1705,58 @@ namespace Intersect.Editor.Forms.Editors.Events
                 CurrentPage.Trigger = (EventTrigger) cmbTrigger.SelectedIndex;
             }
 
+            SetupTrigger();
+        }
+
+        private void SetupTrigger()
+        {
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
             txtCommand.Hide();
             lblCommand.Hide();
+            lblVariableTrigger.Hide();
+            cmbVariable.Hide();
 
             if (MyEvent.CommonEvent)
             {
-                if (cmbTrigger.SelectedIndex == (int) CommonEventTrigger.SlashCommand)
+                cmbVariable.Items.Clear();
+
+
+                if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.SlashCommand)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
                     lblCommand.Show();
                     lblCommand.Text = Strings.EventEditor.command;
+                }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.PlayerVariableChange)
+                {
+                    cmbVariable.Show();
+                    cmbVariable.Items.Add(Strings.General.none);
+                    cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+                    cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId);
+                }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
+                {
+                    cmbVariable.Show();
+                    cmbVariable.Items.Add(Strings.General.none);
+                    cmbVariable.Items.AddRange(ServerVariableBase.Names);
+                    cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId);
+                }
+            }
+        }
+
+        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (MyEvent.CommonEvent)
+            {
+                if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.PlayerVariableChange)
+                {
+                    CurrentPage.TriggerId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex - 1);
+                }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
+                {
+                    CurrentPage.TriggerId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex - 1);
                 }
             }
         }
@@ -1801,7 +1829,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         }
 
         #endregion
-
     }
 
     public class CommandListProperties
