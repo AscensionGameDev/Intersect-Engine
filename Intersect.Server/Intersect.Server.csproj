@@ -504,6 +504,7 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="Localization\CommandsNamespace.cs" />
     <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Maps\MapActionMessages.cs" />
     <Compile Include="Maps\MapEntityMovements.cs" />
     <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\MapItemInstance.cs" />

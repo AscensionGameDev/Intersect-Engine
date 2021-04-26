@@ -25,23 +25,14 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void SendPackets(MapInstance map)
+        public void SendPackets(HashSet<Player> nearbyPlayers)
         {
             if (mMovements.Count > 0)
             {
                 lock (mMovements)
                 {
-                    var players = new HashSet<Player>();
-                    foreach (var surrMap in map.GetSurroundingMaps(true))
-                    {
-                        foreach (var plyr in surrMap.GetPlayersOnMap())
-                        {
-                            players.Add(plyr);
-                        }
-                    }
-
                     var globalMovements = mMovements.ContainsKey(Guid.Empty) ? mMovements[Guid.Empty].ToArray() : null;
-                    foreach (var player in players)
+                    foreach (var player in nearbyPlayers)
                     {
                         var localMovements = mMovements.ContainsKey(player.Id) ? mMovements[player.Id].ToArray() : null;
                         if (globalMovements != null || localMovements != null)

@@ -77,6 +77,7 @@ namespace Intersect.Server.Maps
         private MapInstance[] mSurroundingMaps = new MapInstance[0];
         private MapInstance[] mSurroundingMapsWithSelf = new MapInstance[0];
         private MapEntityMovements mEntityMovements = new MapEntityMovements();
+        private MapActionMessages mActionMessages = new MapActionMessages();
 
         [JsonIgnore]
         [NotMapped]
@@ -1085,7 +1086,17 @@ namespace Intersect.Server.Maps
                 }
 
                 //Send Batched Movement Packet
-                mEntityMovements.SendPackets(this);
+                var nearbyPlayers = new HashSet<Player>();
+                foreach (var map in surrMaps)
+                {
+                    foreach (var plyr in map.GetPlayersOnMap())
+                    {
+                        nearbyPlayers.Add(plyr);
+                    }
+                }
+
+                mEntityMovements.SendPackets(nearbyPlayers);
+                mActionMessages.SendPackets(nearbyPlayers);
 
                 LastUpdateTime = timeMs;
             }
@@ -1427,6 +1438,11 @@ namespace Intersect.Server.Maps
         public void AddBatchedMovement(Entity en, bool correction, Player forPlayer)
         {
             mEntityMovements.Add(en, correction, forPlayer);
+        }
+
+        public void AddBatchedActionMessage(ActionMsgPacket packet)
+        {
+            mActionMessages.Add(packet);
         }
 
         #endregion

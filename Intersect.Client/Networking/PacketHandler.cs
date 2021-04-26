@@ -481,6 +481,15 @@ namespace Intersect.Client.Networking
             Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);   
         }
 
+        //ActionMsgPackets
+        public void HandlePacket(IPacketSender packetSender, ActionMsgPackets packet)
+        {
+            foreach (var pkt in packet.Packets)
+            {
+                HandlePacket(pkt);
+            }
+        }
+
         //ActionMsgPacket
         public void HandlePacket(IPacketSender packetSender, ActionMsgPacket packet)
         {
