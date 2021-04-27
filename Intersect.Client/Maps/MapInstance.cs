@@ -56,6 +56,9 @@ namespace Intersect.Client.Maps
 
         public Dictionary<Guid, Entity> LocalEntities = new Dictionary<Guid, Entity>();
 
+        //Map Critters
+        public Dictionary<Guid, Critter> Critters = new Dictionary<Guid, Critter>();
+
         //Map Players/Events/Npcs
         public List<Guid> LocalEntitiesToDispose = new List<Guid>();
 
@@ -63,8 +66,8 @@ namespace Intersect.Client.Maps
         public Dictionary<int, List<MapItemInstance>> MapItems = new Dictionary<int, List<MapItemInstance>>();
 
         //Map Attributes
-        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances =
-            new Dictionary<MapAttribute, Animation>();
+        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
+        private Dictionary<MapAttribute, Entity> mAttributeCritterInstances = new Dictionary<MapAttribute, Entity>();
 
         protected float mCurFogIntensity;
 
@@ -211,6 +214,16 @@ namespace Intersect.Client.Maps
                     }
 
                     en.Value.Update();
+                }
+
+                foreach (var critter in mAttributeCritterInstances)
+                {
+                    if (critter.Value == null)
+                    {
+                        continue;
+                    }
+
+                    critter.Value.Update();
                 }
 
                 for (var i = 0; i < LocalEntitiesToDispose.Count; i++)
@@ -483,29 +496,48 @@ namespace Intersect.Client.Maps
                         continue;
                     }
 
-                    if (att.Type != MapAttributes.Animation)
+                    if (att.Type == MapAttributes.Animation)
                     {
-                        continue;
+                        var anim = AnimationBase.Get(((MapAnimationAttribute)att).AnimationId);
+                        if (anim == null)
+                        {
+                            continue;
+                        }
+
+                        if (!mAttributeAnimInstances.ContainsKey(att))
+                        {
+                            var animInstance = new Animation(anim, true);
+                            animInstance.SetPosition(
+                                GetX() + x * Options.TileWidth + Options.TileWidth / 2,
+                                GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0
+                            );
+
+                            mAttributeAnimInstances.Add(att, animInstance);
+                        }
+
+                        mAttributeAnimInstances[att].Update();
                     }
 
-                    var anim = AnimationBase.Get(((MapAnimationAttribute) att).AnimationId);
-                    if (anim == null)
+
+                    if (att.Type == MapAttributes.Critter)
                     {
-                        continue;
+                        var critterAttribute = ((MapCritterAttribute)att);
+                        var sprite = critterAttribute.Sprite;
+                        var anim = AnimationBase.Get(critterAttribute.AnimationId);
+                        if (anim == null && TextUtils.IsNone(sprite))
+                        {
+                            continue;
+                        }
+
+                        if (!mAttributeCritterInstances.ContainsKey(att))
+                        {
+                            var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
+                            Critters.Add(critter.Id, critter);
+                            mAttributeCritterInstances.Add(att, critter);
+                        }
+
+                        mAttributeCritterInstances[att].Update();
                     }
-
-                    if (!mAttributeAnimInstances.ContainsKey(att))
-                    {
-                        var animInstance = new Animation(anim, true);
-                        animInstance.SetPosition(
-                            GetX() + x * Options.TileWidth + Options.TileWidth / 2,
-                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y, Id, 0
-                        );
-
-                        mAttributeAnimInstances.Add(att, animInstance);
-                    }
-
-                    mAttributeAnimInstances[att].Update();
                 }
             }
         }
@@ -517,6 +549,13 @@ namespace Intersect.Client.Maps
                 attributeInstance.Value.Dispose();
             }
 
+            foreach (var critter in mAttributeCritterInstances)
+            {
+                critter.Value.Dispose();
+            }
+
+            Critters.Clear();
+            mAttributeCritterInstances.Clear();
             mAttributeAnimInstances.Clear();
         }
 

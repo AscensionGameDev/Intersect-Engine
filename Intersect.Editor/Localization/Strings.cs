@@ -652,6 +652,40 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString blocked = @"Blocked";
 
+            public static LocalizedString critter = @"Critter";
+
+            public static Dictionary<int, LocalizedString> crittermovements = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Move Randomly"},
+                {1, @"Turn Randomly"},
+                {2, @"Stand Still"},
+            };
+
+            public static Dictionary<int, LocalizedString> critterlayers = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Below Player"},
+                {1, @"Same as Player"},
+                {2, @"Above Player"},
+            };
+
+            public static LocalizedString crittersprite = @"Sprite:";
+
+            public static LocalizedString critteranimation = @"Animation:";
+
+            public static LocalizedString crittermovement = @"Movement:";
+
+            public static LocalizedString critterlayer = @"Layer:";
+
+            public static LocalizedString critterspeed = @"Speed (ms):";
+
+            public static LocalizedString critterfrequency = @"Freq (ms):";
+
+            public static LocalizedString critterignorenpcavoids = @"Ignore Npc Avoids";
+
+            public static LocalizedString critterblockplayers = @"Block Players";
+
+            public static LocalizedString critterdirection = @"Direction:";
+
             public static LocalizedString dir = @"Dir:";
 
             public static LocalizedString distance = @"Distance (In Tiles):";
