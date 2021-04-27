@@ -716,6 +716,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 case MapAttributes.Animation:
                     var animationAttribute = attribute as MapAnimationAttribute;
                     animationAttribute.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                    animationAttribute.IsBlock = chkAnimationBlock.Checked;
                     break;
 
                 case MapAttributes.Slide:
@@ -1036,6 +1037,7 @@ namespace Intersect.Editor.Forms.DockingElements
             //Map Animation Groupbox
             grpAnimation.Text = Strings.Attributes.mapanimation;
             lblAnimation.Text = Strings.Attributes.mapanimation;
+            chkAnimationBlock.Text = Strings.Attributes.mapanimationblock;
 
             //Slide Groupbox
             grpSlide.Text = Strings.Attributes.slide;

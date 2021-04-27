@@ -68,6 +68,8 @@ namespace Intersect
 
         public MetricsOptions Metrics = new MetricsOptions();
 
+        public PacketOptions Packets = new PacketOptions();
+
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
         public static Options Instance { get; private set; }

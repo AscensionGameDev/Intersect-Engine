@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Intersect.GameObjects;
+using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Entities;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 
@@ -91,7 +93,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
             }
 
+            var changed = true;
+            if (variable.Value?.Value == value.Value)
+            {
+                changed = false;
+            }
             variable.Value.Value = value.Value;
+
+            if (changed)
+            {
+                Player.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.ServerVariableChange, "", guid.ToString());
+            }
+            DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
 
             return variable;
         }

@@ -219,6 +219,7 @@
     <Compile Include="Config\MetricsOptions.cs" />
     <Compile Include="Config\NpcOptions.cs" />
     <Compile Include="Config\PacketOptions.cs" />
+    <Compile Include="Config\PacketSecurityOptions.cs" />
     <Compile Include="Config\PartyOptions.cs" />
     <Compile Include="Config\ProcessingOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
@@ -382,11 +383,14 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+    <Compile Include="Network\Packets\Server\ActionMsgPackets.cs" />
+    <Compile Include="Network\Packets\Server\EntityMovementPackets.cs" />
     <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
     <Compile Include="Network\Packets\Server\MapEntityVitalsPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
     <Compile Include="Network\Packets\Server\AnnouncementPacket.cs" />
     <Compile Include="Network\Packets\Server\CancelCastPacket.cs" />
+    <Compile Include="Network\Packets\Server\PlayAnimationPackets.cs" />
     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />

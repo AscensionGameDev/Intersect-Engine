@@ -1368,7 +1368,7 @@ namespace Intersect.Client.Entities
             }
 
             var name = Name;
-            if ((this is Player && Options.Player.ShowLevelByName) || Options.Npc.ShowLevelByName)
+            if ((this is Player && Options.Player.ShowLevelByName) || (!(this is Player) && Options.Npc.ShowLevelByName))
             {
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }

@@ -742,13 +742,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityDataToProximity(this);
 
             //Search death common event trigger
-            foreach (EventBase evt in EventBase.Lookup.Values)
-            {
-                if (evt != null)
-                {
-                    StartCommonEvent(evt, CommonEventTrigger.OnRespawn);
-                }
-            }
+            StartCommonEventsWithTrigger(CommonEventTrigger.OnRespawn);
         }
 
         public override void Die(int dropitems = 0, Entity killer = null)
@@ -963,13 +957,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityDataToProximity(this);
 
             //Search for level up activated events and run them
-            foreach (var value in EventBase.Lookup.Values)
-            {
-                if (value is EventBase eventDescriptor)
-                {
-                    StartCommonEvent(eventDescriptor, CommonEventTrigger.LevelUp);
-                }
-            }
+            StartCommonEventsWithTrigger(CommonEventTrigger.LevelUp);
         }
 
         public void GiveExperience(long amount)
@@ -1968,6 +1956,7 @@ namespace Intersect.Server.Entities
                         {
                             Equipment[i] = -1;
                             FixVitals();
+                            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
                             PacketSender.SendPlayerEquipmentToProximity(this);
                             PacketSender.SendEntityStats(this);
 
@@ -2074,6 +2063,7 @@ namespace Intersect.Server.Entities
                         if (equipped)
                         {
                             FixVitals();
+                            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
                             PacketSender.SendPlayerEquipmentToProximity(this);
                             PacketSender.SendEntityStats(this);
 
@@ -4652,6 +4642,7 @@ namespace Intersect.Server.Entities
                 }
 
                 FixVitals();
+                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
                 PacketSender.SendPlayerEquipmentToProximity(this);
                 PacketSender.SendEntityStats(this);
             }
@@ -4672,6 +4663,7 @@ namespace Intersect.Server.Entities
             if (updated)
             {
                 FixVitals();
+                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
                 if (sendUpdate)
                 {
                     PacketSender.SendPlayerEquipmentToProximity(this);
@@ -4684,6 +4676,7 @@ namespace Intersect.Server.Entities
         {
             Equipment[slot] = -1;
             FixVitals();
+            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
 
             if (sendUpdate)
             {
@@ -4707,6 +4700,7 @@ namespace Intersect.Server.Entities
             }
 
             FixVitals();
+            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
         }
@@ -4722,6 +4716,7 @@ namespace Intersect.Server.Entities
             }
 
             FixVitals();
+            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
         }
@@ -4755,8 +4750,35 @@ namespace Intersect.Server.Entities
             if (updated)
             {
                 FixVitals();
+                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
                 PacketSender.SendPlayerEquipmentToProximity(this);
                 PacketSender.SendEntityStats(this);
+            }
+        }
+
+        public void StartCommonEventsWithTrigger(CommonEventTrigger trigger, string command = "", string param = "")
+        {
+            foreach (var value in EventBase.Lookup.Values)
+            {
+                if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
+                {
+                    StartCommonEvent(eventDescriptor, trigger, command, param);
+                }
+            }
+        }
+
+        public static void StartCommonEventsWithTriggerForAll(CommonEventTrigger trigger, string command = "", string param = "")
+        {
+            var players = Player.OnlineList;
+            foreach (var value in EventBase.Lookup.Values)
+            {
+                if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
+                {
+                    foreach (var player in players)
+                    {
+                        player.StartCommonEvent(eventDescriptor, trigger, command, param);
+                    }
+                }
             }
         }
 
@@ -5213,8 +5235,13 @@ namespace Intersect.Server.Entities
         public void SetSwitchValue(Guid id, bool value)
         {
             var s = GetSwitch(id);
+            var changed = true;
             if (s != null)
             {
+                if (s.Value?.Boolean == value)
+                {
+                    changed = false;
+                }
                 s.Value.Boolean = value;
             }
             else
@@ -5222,6 +5249,11 @@ namespace Intersect.Server.Entities
                 s = new Variable(id);
                 s.Value.Boolean = value;
                 Variables.Add(s);
+            }
+
+            if (changed)
+            {
+                StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", id.ToString());
             }
         }
 
@@ -5275,8 +5307,13 @@ namespace Intersect.Server.Entities
         public void SetVariableValue(Guid id, long value)
         {
             var v = GetVariable(id);
+            var changed = true;
             if (v != null)
             {
+                if (v.Value?.Integer == value)
+                {
+                    changed = false;
+                }
                 v.Value.Integer = value;
             }
             else
@@ -5284,14 +5321,24 @@ namespace Intersect.Server.Entities
                 v = new Variable(id);
                 v.Value.Integer = value;
                 Variables.Add(v);
+            }
+
+            if (changed)
+            {
+                StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", id.ToString());
             }
         }
 
         public void SetVariableValue(Guid id, string value)
         {
             var v = GetVariable(id);
+            var changed = true;
             if (v != null)
             {
+                if (v.Value?.String == value)
+                {
+                    changed = false;
+                }
                 v.Value.String = value;
             }
             else
@@ -5299,6 +5346,11 @@ namespace Intersect.Server.Entities
                 v = new Variable(id);
                 v.Value.String = value;
                 Variables.Add(v);
+            }
+
+            if (changed)
+            {
+                StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", id.ToString());
             }
         }
 
@@ -5513,14 +5565,20 @@ namespace Intersect.Server.Entities
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
-                                variable.Value = value;
+                                if (variable.Value?.Value != value.Value)
+                                {
+                                    variable.Value = value;
+                                    StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
+                                }
                             }
                             else if (cmd.VariableType == VariableTypes.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
-                                if (variable != null)
+                                if (variable.Value?.Value != value.Value)
                                 {
                                     variable.Value = value;
+                                    StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", cmd.VariableId.ToString());
+                                    DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
                                 }
                             }
 
@@ -5602,90 +5660,81 @@ namespace Intersect.Server.Entities
                 {
                     if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
                     {
-                        //Check for /command trigger
+                        if (trigger == CommonEventTrigger.SlashCommand && command.ToLower() != baseEvent.Pages[i].TriggerCommand.ToLower())
+                        {
+                            continue;
+                        }
+
+                        if (trigger == CommonEventTrigger.PlayerVariableChange && param != baseEvent.Pages[i].TriggerId.ToString())
+                        {
+                            continue;
+                        }
+
+                        if (trigger == CommonEventTrigger.ServerVariableChange && param != baseEvent.Pages[i].TriggerId.ToString())
+                        {
+                            continue;
+                        }
+
+                        newEvent = new Event(evtId, null, this, baseEvent)
+                        {
+                            MapId = mapId,
+                            SpawnX = -1,
+                            SpawnY = -1
+                        };
+                        newEvent.PageInstance = new EventPageInstance(
+                            baseEvent, baseEvent.Pages[i], mapId, newEvent, this
+                        );
+
+                        newEvent.PageIndex = i;
+
                         if (trigger == CommonEventTrigger.SlashCommand)
                         {
-                            if (command.ToLower() == baseEvent.Pages[i].TriggerCommand.ToLower())
+                            //Split params up
+                            var prams = param.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            for (var x = 0; x < prams.Length; x++)
                             {
-                                newEvent = new Event(evtId, null, this, baseEvent)
-                                {
-                                    MapId = mapId,
-                                    SpawnX = -1,
-                                    SpawnY = -1
-                                };
-                                newEvent.PageInstance = new EventPageInstance(
-                                    baseEvent, baseEvent.Pages[i], mapId, newEvent, this
-                                );
+                                newEvent.SetParam("slashParam" + x, prams[x]);
+                            }
+                        }
 
-                                newEvent.PageIndex = i;
-
-                                //Split params up
-                                var prams = param.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                for (var x = 0; x < prams.Length; x++)
-                                {
-                                    newEvent.SetParam("slashParam" + x, prams[x]);
-                                }
-
-                                var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
-                                newEvent.PageInstance.Param = param;
-                                newEvent.CallStack.Push(newStack);
+                        switch (trigger)
+                        {
+                            case CommonEventTrigger.None:
+                                break;
+                            case CommonEventTrigger.Login:
+                                break;
+                            case CommonEventTrigger.LevelUp:
+                                break;
+                            case CommonEventTrigger.OnRespawn:
+                                break;
+                            case CommonEventTrigger.SlashCommand:
+                                break;
+                            case CommonEventTrigger.Autorun:
+                                break;
+                            case CommonEventTrigger.PVPKill:
+                                //Add victim as a parameter
+                                newEvent.SetParam("victim", param);
 
                                 break;
-                            }
+                            case CommonEventTrigger.PVPDeath:
+                                //Add killer as a parameter
+                                newEvent.SetParam("killer", param);
+
+                                break;
+                            case CommonEventTrigger.PlayerInteract:
+                                //Interactee as a parameter
+                                newEvent.SetParam("triggered", param);
+
+                                break;
                         }
-                        else
-                        {
-                            newEvent = new Event(evtId, null, this, baseEvent)
-                            {
-                                MapId = mapId,
-                                SpawnX = -1,
-                                SpawnY = -1
-                            };
-                            newEvent.PageInstance = new EventPageInstance(
-                                baseEvent, baseEvent.Pages[i], mapId, newEvent, this
-                            );
 
-                            newEvent.PageIndex = i;
-
-                            switch (trigger)
-                            {
-                                case CommonEventTrigger.None:
-                                    break;
-                                case CommonEventTrigger.Login:
-                                    break;
-                                case CommonEventTrigger.LevelUp:
-                                    break;
-                                case CommonEventTrigger.OnRespawn:
-                                    break;
-                                case CommonEventTrigger.SlashCommand:
-                                    break;
-                                case CommonEventTrigger.Autorun:
-                                    break;
-                                case CommonEventTrigger.PVPKill:
-                                    //Add victim as a parameter
-                                    newEvent.SetParam("victim", param);
-
-                                    break;
-                                case CommonEventTrigger.PVPDeath:
-                                    //Add killer as a parameter
-                                    newEvent.SetParam("killer", param);
-
-                                    break;
-                                case CommonEventTrigger.PlayerInteract:
-                                    //Interactee as a parameter
-                                    newEvent.SetParam("triggered", param);
-
-                                    break;
-                            }
-
-                            var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
-                            newEvent.CallStack.Push(newStack);
-
-                            break;
-                        }
+                        var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
+                        newEvent.CallStack.Push(newStack);
 
                         break;
                     }
+
+                    break;
                 }
 
                 if (newEvent != null)

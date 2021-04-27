@@ -142,6 +142,9 @@ namespace Intersect.Editor.Forms.DockingElements
             this.chkCritterBlockPlayers = new DarkUI.Controls.DarkCheckBox();
             this.cmbCritterDirection = new DarkUI.Controls.DarkComboBox();
             this.lblCritterDirection = new System.Windows.Forms.Label();
+            this.pnlAttributes = new System.Windows.Forms.Panel();
+            this.pnlNpcs = new System.Windows.Forms.Panel();
+            this.chkAnimationBlock = new DarkUI.Controls.DarkCheckBox();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -934,12 +937,13 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.grpAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpAnimation.Controls.Add(this.chkAnimationBlock);
             this.grpAnimation.Controls.Add(this.cmbAnimationAttribute);
             this.grpAnimation.Controls.Add(this.lblAnimation);
             this.grpAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpAnimation.Location = new System.Drawing.Point(6, 179);
             this.grpAnimation.Name = "grpAnimation";
-            this.grpAnimation.Size = new System.Drawing.Size(256, 69);
+            this.grpAnimation.Size = new System.Drawing.Size(256, 96);
             this.grpAnimation.TabIndex = 33;
             this.grpAnimation.TabStop = false;
             this.grpAnimation.Text = "Animaton";
@@ -1658,6 +1662,15 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lblCritterDirection.Size = new System.Drawing.Size(52, 13);
             this.lblCritterDirection.TabIndex = 24;
             this.lblCritterDirection.Text = "Direction:";
+            // 
+            // chkAnimationBlock
+            // 
+            this.chkAnimationBlock.AutoSize = true;
+            this.chkAnimationBlock.Location = new System.Drawing.Point(16, 66);
+            this.chkAnimationBlock.Name = "chkAnimationBlock";
+            this.chkAnimationBlock.Size = new System.Drawing.Size(73, 17);
+            this.chkAnimationBlock.TabIndex = 27;
+            this.chkAnimationBlock.Text = "Block Tile";
             // 
             // FrmMapLayers
             // 

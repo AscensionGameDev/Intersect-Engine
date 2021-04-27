@@ -698,6 +698,8 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString mapanimation = @"Animation";
 
+            public static LocalizedString mapanimationblock = @"Block Tile";
+
             public static LocalizedString mapsound = @"Map Sound";
 
             public static LocalizedString npcavoid = @"NPC Avoid";
@@ -2205,6 +2207,9 @@ Tick timer saved in server config.json.";
                 {6, @"PVP Kill"},
                 {7, @"PVP Death"},
                 {8, @"Player Interact"},
+                {9, @"Equipment Changed"},
+                {10, @"Player Variable Changed"},
+                {11, @"Server Variable Changed"},
             };
 
             public static LocalizedString conditions = @"Conditions";

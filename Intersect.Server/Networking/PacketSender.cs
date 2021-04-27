@@ -115,13 +115,7 @@ namespace Intersect.Server.Networking
                 SendEntityDataTo(client.Entity, player);
 
                 //Search for login activated events and run them
-                foreach (EventBase evt in EventBase.Lookup.Values)
-                {
-                    if (evt != null)
-                    {
-                        player.StartCommonEvent(evt, CommonEventTrigger.Login);
-                    }
-                }
+                player.StartCommonEventsWithTrigger(CommonEventTrigger.Login);
             }
         }
 
@@ -773,22 +767,41 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(Entity en, bool correction = false)
         {
-            SendDataToProximity(
-                en.MapId,
-                new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-                ), null, TransmissionMode.Any
-            );
+            var map = en?.Map;
+            if (map != null)
+            {
+                if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
+                {
+                    SendDataToProximity(
+                        en.MapId,
+                        new EntityMovePacket(
+                            en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction
+                        ), null, TransmissionMode.Any
+                    );
+                    return;
+                }
+                map.AddBatchedMovement(en, correction, null);
+            }
         }
 
         //EntityMovePacket
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
-            player.SendPacket(
-                new EntityMovePacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, correction
-                )
-            );
+            var map = en?.Map;
+            if (map != null)
+            {
+                if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
+                {
+                    player.SendPacket(
+                        new EntityMovePacket(
+                            en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction
+                        )
+                    );
+                    return;
+                }
+                map.AddBatchedMovement(en, correction, player);
+                return;
+            }
         }
 
         //EntityVitalsPacket
@@ -1410,7 +1423,18 @@ namespace Intersect.Server.Networking
             sbyte direction
         )
         {
-            SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
+            var map = MapInstance.Get(mapId);
+            if (map != null)
+            {
+                if (Options.Instance.Packets.BatchAnimationPackets)
+                {
+                    map.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+                }
+                else
+                {
+                    SendDataToProximity(mapId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
+                }
+            }
         }
 
         //HoldPlayerPacket
@@ -1739,12 +1763,20 @@ namespace Intersect.Server.Networking
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {
-            if (en == null || en.Map == null)
+            var map = en?.Map;
+            if (map == null)
             {
                 return;
             }
 
-            SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            if (Options.Instance.Packets.BatchActionMessagePackets)
+            {
+                map.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            }
+            else
+            {
+                SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+            }
         }
 
         //EnterMapPacket

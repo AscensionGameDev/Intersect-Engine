@@ -20,7 +20,13 @@
 
         PVPDeath,
 
-        PlayerInteract
+        PlayerInteract,
+
+        EquipChange,
+
+        PlayerVariableChange,
+
+        ServerVariableChange,
 
     }
 
