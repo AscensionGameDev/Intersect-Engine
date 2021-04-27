@@ -1734,14 +1734,14 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.Show();
                     cmbVariable.Items.Add(Strings.General.none);
                     cmbVariable.Items.AddRange(PlayerVariableBase.Names);
-                    cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId);
+                    cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
                 {
                     cmbVariable.Show();
                     cmbVariable.Items.Add(Strings.General.none);
                     cmbVariable.Items.AddRange(ServerVariableBase.Names);
-                    cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId);
+                    cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                 }
             }
         }
