@@ -380,7 +380,7 @@ namespace Intersect.Server.Entities
                 }
 
                 if (attribute != null &&
-                    attribute.Type == MapAttributes.Blocked &&
+                    (attribute.Type == MapAttributes.Blocked || attribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)attribute).IsBlock) &&
                     !spawn.ProjectileBase.IgnoreMapBlocks)
                 {
                     killSpawn = true;

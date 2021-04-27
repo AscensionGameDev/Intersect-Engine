@@ -1927,7 +1927,8 @@ namespace Intersect.Client.Entities
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
                     {
-                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked)
+                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked || 
+                            (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
                         {
                             return -2;
                         }

@@ -218,7 +218,8 @@ namespace Intersect.Server.Maps
                     if (Attributes[x, y] != null)
                     {
                         if (Attributes[x, y].Type == MapAttributes.Blocked ||
-                            Attributes[x, y].Type == MapAttributes.GrappleStone)
+                            Attributes[x, y].Type == MapAttributes.GrappleStone ||
+                            Attributes[x,y].Type == MapAttributes.Animation && ((MapAnimationAttribute)Attributes[x,y]).IsBlock) 
                         {
                             blocks.Add(new BytePoint(x, y));
                             npcBlocks.Add(new BytePoint(x, y));
@@ -1233,7 +1234,8 @@ namespace Intersect.Server.Maps
             }
 
             //Check if tile is a blocked attribute
-            if (Attributes[x, y] != null && (Attributes[x, y].Type == MapAttributes.Blocked))
+            if (Attributes[x, y] != null && (Attributes[x, y].Type == MapAttributes.Blocked ||
+                Attributes[x,y].Type == MapAttributes.Animation && ((MapAnimationAttribute)Attributes[x,y]).IsBlock))
             {
                 return true;
             }
