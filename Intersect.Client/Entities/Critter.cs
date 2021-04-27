@@ -66,7 +66,7 @@ namespace Intersect.Client.Entities
 
                     }
 
-                    mLastMove = Globals.System.GetTimeMs() + mAttribute.Frequency + Globals.Random.Next(10);
+                    mLastMove = Globals.System.GetTimeMs() + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
                 }
                 return true;
             }
