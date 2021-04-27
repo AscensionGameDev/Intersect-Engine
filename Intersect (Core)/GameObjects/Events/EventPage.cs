@@ -56,6 +56,8 @@ namespace Intersect.GameObjects.Events
 
         public string TriggerCommand { get; set; }
 
+        public Guid TriggerId { get; set; }
+
         public Guid TriggerVal { get; set; }
 
         public bool WalkingAnimation { get; set; } = true;

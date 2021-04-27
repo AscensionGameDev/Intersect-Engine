@@ -1337,13 +1337,7 @@ namespace Intersect.Server.Entities
                 //Player interaction common events
                 if (projectile == null && parentSpell == null)
                 {
-                    foreach (EventBase evt in EventBase.Lookup.Values)
-                    {
-                        if (evt != null)
-                        {
-                            targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract, "", this.Name);
-                        }
-                    }
+                    targetPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerInteract, "", this.Name);
                 }
 
                 if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
@@ -1638,13 +1632,7 @@ namespace Intersect.Server.Entities
 
                 //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                 //Player interaction common events
-                foreach (EventBase evt in EventBase.Lookup.Values)
-                {
-                    if (evt != null)
-                    {
-                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract, "", this.Name);
-                    }
-                }
+                targetPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerInteract, "", this.Name);
 
                 if (MapInstance.Get(MapId)?.ZoneType == MapZones.Safe)
                 {
@@ -1885,14 +1873,8 @@ namespace Intersect.Server.Entities
                     {
                         if (MapInstance.Get(MapId).ZoneType != MapZones.Arena)
                         {
-                            foreach (EventBase evt in EventBase.Lookup.Values)
-                            {
-                                if (evt != null)
-                                {
-                                    ((Player) this).StartCommonEvent(evt, CommonEventTrigger.PVPKill, "", enemy.Name);
-                                    ((Player) enemy).StartCommonEvent(evt, CommonEventTrigger.PVPDeath, "", this.Name);
-                                }
-                            }
+                            ((Player)this).StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
+                            ((Player)enemy).StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
                         }
                     }
 

@@ -1469,6 +1469,8 @@ namespace Intersect.Server.Entities.Events
                 value = new VariableValue();
             }
 
+            var originalValue = value.Boolean;
+
             if (mod.DuplicateVariableId != Guid.Empty)
             {
                 if (mod.DupVariableType == VariableTypes.PlayerVariable)
@@ -1489,11 +1491,23 @@ namespace Intersect.Server.Entities.Events
                 value.Boolean = mod.Value;
             }
 
+            var changed = value.Boolean != originalValue;
+
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
+                if (changed)
+                {
+
+                }
+
                 // Set the party member switches too if Sync Party enabled!
                 if (command.SyncParty)
                 {
+                    if (changed)
+                    {
+                        player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", command.VariableId.ToString());
+                    }
+
                     foreach (var partyMember in player.Party)
                     {
                         if (partyMember != player)
@@ -1505,7 +1519,11 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                if (changed)
+                {
+                    Player.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.ServerVariableChange, "", command.VariableId.ToString());
+                    DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                }
             }
         }
 
@@ -1530,6 +1548,8 @@ namespace Intersect.Server.Entities.Events
             {
                 value = new VariableValue();
             }
+
+            var originalValue = value.Integer;
 
             switch (mod.ModType)
             {
@@ -1668,8 +1688,15 @@ namespace Intersect.Server.Entities.Events
                     break;
             }
 
+            var changed = value.Integer != originalValue;
+
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
+                if (changed)
+                {
+                    player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", command.VariableId.ToString());
+                }
+
                 // Set the party member switches too if Sync Party enabled!
                 if (command.SyncParty)
                 {
@@ -1684,7 +1711,11 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                if (changed)
+                {
+                    Player.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.ServerVariableChange, "", command.VariableId.ToString());
+                    DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                }
             }
         }
 
@@ -1710,6 +1741,8 @@ namespace Intersect.Server.Entities.Events
                 value = new VariableValue();
             }
 
+            var originalValue = value.String;
+
             switch (mod.ModType)
             {
                 case Enums.VariableMods.Set:
@@ -1724,8 +1757,15 @@ namespace Intersect.Server.Entities.Events
                     break;
             }
 
+            var changed = value.String != originalValue;
+
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
+                if (changed)
+                {
+                    player.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", command.VariableId.ToString());
+                }
+
                 // Set the party member switches too if Sync Party enabled!
                 if (command.SyncParty)
                 {
@@ -1740,7 +1780,11 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                if (changed)
+                {
+                    Player.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.ServerVariableChange, "", command.VariableId.ToString());
+                    DbInterface.UpdatedServerVariables.AddOrUpdate(command.VariableId, ServerVariableBase.Get(command.VariableId), (key, oldValue) => ServerVariableBase.Get(command.VariableId));
+                }
             }
         }
 

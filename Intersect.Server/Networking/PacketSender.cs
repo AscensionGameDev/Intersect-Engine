@@ -115,13 +115,7 @@ namespace Intersect.Server.Networking
                 SendEntityDataTo(client.Entity, player);
 
                 //Search for login activated events and run them
-                foreach (EventBase evt in EventBase.Lookup.Values)
-                {
-                    if (evt != null)
-                    {
-                        player.StartCommonEvent(evt, CommonEventTrigger.Login);
-                    }
-                }
+                player.StartCommonEventsWithTrigger(CommonEventTrigger.Login);
             }
         }
 

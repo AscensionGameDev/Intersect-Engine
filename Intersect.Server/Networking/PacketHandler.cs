@@ -3496,6 +3496,7 @@ namespace Intersect.Server.Networking
                     }
                     else if (type == GameObjectType.ServerVariable)
                     {
+                        Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", obj.Id.ToString());
                         DbInterface.CacheServerVariableEventTextLookups();
                     }
 
