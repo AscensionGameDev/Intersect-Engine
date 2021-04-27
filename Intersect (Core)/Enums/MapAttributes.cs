@@ -24,7 +24,9 @@ namespace Intersect.Enums
 
         GrappleStone,
 
-        Slide
+        Slide,
+
+        Critter
 
     }
 

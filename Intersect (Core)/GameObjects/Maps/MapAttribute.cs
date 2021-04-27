@@ -37,6 +37,8 @@ namespace Intersect.GameObjects.Maps
                     return new MapGrappleStoneAttribute();
                 case MapAttributes.Slide:
                     return new MapSlideAttribute();
+                case MapAttributes.Critter:
+                    return new MapCritterAttribute();
             }
 
             return null;
@@ -216,6 +218,51 @@ namespace Intersect.GameObjects.Maps
             return att;
         }
 
+    }
+
+    public class MapCritterAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Critter;
+
+        public string Sprite { get; set; }
+
+        public Guid AnimationId { get; set; }
+
+        //Movement types will mimic npc options?
+        //Random
+        //Turn
+        //Still
+        public byte Movement { get; set; }
+
+        //Time in MS to traverse a tile once moving
+        public int Speed { get; set; }
+
+        //Time in MS between movements?
+        public int Frequency { get; set; }
+
+        //Lower, Middle, Upper
+        public byte Layer { get; set; }
+
+        public byte Direction { get; set; }
+
+        public bool IgnoreNpcAvoids { get; set; }
+
+        public bool BlockPlayers { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapCritterAttribute)base.Clone();
+            att.Sprite = Sprite;
+            att.AnimationId = AnimationId;
+            att.Movement = Movement;
+            att.Speed = Speed;
+            att.Frequency = Frequency;
+            att.Layer = Layer;
+            att.IgnoreNpcAvoids = IgnoreNpcAvoids;
+
+
+            return att;
+        }
     }
 
 }

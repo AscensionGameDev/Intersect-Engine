@@ -445,6 +445,7 @@ namespace Intersect.Editor.Forms.DockingElements
             grpResource.Visible = false;
             grpAnimation.Visible = false;
             grpSlide.Visible = false;
+            grpCritter.Visible = false;
         }
 
         private void rbItem_CheckedChanged(object sender, EventArgs e)
@@ -595,6 +596,10 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 return (int) MapAttributes.Slide;
             }
+            else if (rbCritter.Checked == true)
+            {
+                return (int) MapAttributes.Critter;
+            }
 
             return (int) MapAttributes.Walkable;
         }
@@ -651,6 +656,11 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (rbSlide.Checked)
                 {
                     return MapAttributes.Slide;
+                }
+
+                if (rbCritter.Checked)
+                {
+                    return MapAttributes.Critter;
                 }
 
                 return (MapAttributes) byte.MaxValue;
@@ -711,6 +721,19 @@ namespace Intersect.Editor.Forms.DockingElements
                 case MapAttributes.Slide:
                     var slideAttribute = attribute as MapSlideAttribute;
                     slideAttribute.Direction = (byte)cmbSlideDir.SelectedIndex;
+                    break;
+
+                case MapAttributes.Critter:
+                    var critterAttribute = attribute as MapCritterAttribute;
+                    critterAttribute.Sprite = cmbCritterSprite.Text;
+                    critterAttribute.AnimationId = AnimationBase.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
+                    critterAttribute.Movement = (byte)cmbCritterMovement.SelectedIndex;
+                    critterAttribute.Layer = (byte)cmbCritterLayer.SelectedIndex;
+                    critterAttribute.Speed = (int)nudCritterMoveSpeed.Value;
+                    critterAttribute.Frequency = (int)nudCritterMoveFrequency.Value;
+                    critterAttribute.IgnoreNpcAvoids = chkCritterIgnoreNpcAvoids.Checked;
+                    critterAttribute.BlockPlayers = chkCritterBlockPlayers.Checked;
+                    critterAttribute.Direction = (byte)cmbCritterDirection.SelectedIndex;
                     break;
 
                 default:
@@ -934,6 +957,37 @@ namespace Intersect.Editor.Forms.DockingElements
             grpAnimation.Visible = true;
         }
 
+        private void rbCritter_CheckedChanged(object sender, EventArgs e)
+        {
+            cmbCritterAnimation.Items.Clear();
+            cmbCritterAnimation.Items.Add(Strings.General.none);
+            cmbCritterAnimation.Items.AddRange(AnimationBase.Names);
+            cmbCritterAnimation.SelectedIndex = 0;
+
+            cmbCritterSprite.Items.Clear();
+            cmbCritterSprite.Items.Add(Strings.General.none);
+            cmbCritterSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
+            cmbCritterSprite.SelectedIndex = 0;
+
+            if (nudCritterMoveFrequency.Value == 0)
+            {
+                nudCritterMoveFrequency.Value = 1000;
+            }
+
+            if (nudCritterMoveSpeed.Value == 0)
+            {
+                nudCritterMoveSpeed.Value = 400;
+            }
+
+            if (!rbCritter.Checked)
+            {
+                return;
+            }
+
+            HideAttributeMenus();
+            grpCritter.Visible = true;
+        }
+
         private void frmMapLayers_Load(object sender, EventArgs e)
         {
             CreateSwapChain();
@@ -977,6 +1031,7 @@ namespace Intersect.Editor.Forms.DockingElements
             rbAnimation.Text = Strings.Attributes.mapanimation;
             rbGrappleStone.Text = Strings.Attributes.grapple;
             rbSlide.Text = Strings.Attributes.slide;
+            rbCritter.Text = Strings.Attributes.critter;
 
             //Map Animation Groupbox
             grpAnimation.Text = Strings.Attributes.mapanimation;
@@ -1032,6 +1087,40 @@ namespace Intersect.Editor.Forms.DockingElements
             grpZResource.Text = Strings.Attributes.zdimension;
             rbLevel1.Text = Strings.Attributes.zlevel1;
             rbLevel2.Text = Strings.Attributes.zlevel2;
+
+            //Critter
+            grpCritter.Text = Strings.Attributes.critter;
+            lblCritterSprite.Text = Strings.Attributes.crittersprite;
+            lblCritterAnimation.Text = Strings.Attributes.critteranimation;
+            lblCritterMovement.Text = Strings.Attributes.crittermovement;
+            lblCritterLayer.Text = Strings.Attributes.critterlayer;
+            lblCritterMoveSpeed.Text = Strings.Attributes.critterspeed;
+            lblCritterMoveFrequency.Text = Strings.Attributes.critterfrequency;
+            chkCritterIgnoreNpcAvoids.Text = Strings.Attributes.critterignorenpcavoids;
+            chkCritterBlockPlayers.Text = Strings.Attributes.critterblockplayers;
+            lblCritterDirection.Text = Strings.Attributes.critterdirection;
+
+            cmbCritterDirection.Items.Clear();
+            cmbCritterDirection.Items.Add(Strings.NpcSpawns.randomdirection);
+            for (var i = 0; i < 4; i++)
+            {
+                cmbCritterDirection.Items.Add(Strings.Directions.dir[i]);
+            }
+            cmbCritterDirection.SelectedIndex = 0;
+
+            cmbCritterMovement.Items.Clear();
+            for (var i = 0; i < Strings.Attributes.crittermovements.Count; i++)
+            {
+                cmbCritterMovement.Items.Add(Strings.Attributes.crittermovements[i]);
+            }
+            cmbCritterMovement.SelectedIndex = 0;
+
+            cmbCritterLayer.Items.Clear();
+            for (var i = 0; i < Strings.Attributes.critterlayers.Count; i++)
+            {
+                cmbCritterLayer.Items.Add(Strings.Attributes.critterlayers[i]);
+            }
+            cmbCritterLayer.SelectedIndex = 1;
 
             //NPCS Tab
             grpSpawnLoc.Text = rbDeclared.Checked ? Strings.NpcSpawns.spawndeclared : Strings.NpcSpawns.spawnrandom;
