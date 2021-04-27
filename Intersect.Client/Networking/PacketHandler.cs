@@ -481,6 +481,15 @@ namespace Intersect.Client.Networking
             Interface.Interface.GameUi.AnnouncementWindow.ShowAnnouncement(packet.Message, packet.Duration);   
         }
 
+        //ActionMsgPackets
+        public void HandlePacket(IPacketSender packetSender, ActionMsgPackets packet)
+        {
+            foreach (var pkt in packet.Packets)
+            {
+                HandlePacket(pkt);
+            }
+        }
+
         //ActionMsgPacket
         public void HandlePacket(IPacketSender packetSender, ActionMsgPacket packet)
         {
@@ -515,6 +524,26 @@ namespace Intersect.Client.Networking
             MapList.List.PostLoad(MapBase.Lookup, false, true);
 
             //TODO ? If admin window is open update it
+        }
+
+        //EntityMovementPackets
+        public void HandlePacket(IPacketSender packetSender, EntityMovementPackets packet)
+        {
+            if (packet.GlobalMovements != null)
+            {
+                foreach (var pkt in packet.GlobalMovements)
+                {
+                    HandlePacket(pkt);
+                }
+            }
+
+            if (packet.LocalMovements != null)
+            {
+                foreach (var pkt in packet.LocalMovements)
+                {
+                    HandlePacket(pkt);
+                }
+            }
         }
 
         //EntityMovePacket
@@ -1309,6 +1338,15 @@ namespace Intersect.Client.Networking
                         ((Projectile)Globals.Entities[spawnDeath.Key]).SpawnDead(spawnDeath.Value);
                     }
                 }
+            }
+        }
+
+        //PlayAnimationPackets
+        public void HandlePacket(IPacketSender sender, PlayAnimationPackets packet)
+        {
+            foreach (var pkt in packet.Packets)
+            {
+                HandlePacket(pkt);
             }
         }
 
