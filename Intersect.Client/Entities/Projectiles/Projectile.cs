@@ -365,7 +365,7 @@ namespace Intersect.Client.Entities.Projectiles
                 var map = CurrentMap;
                 var y = Y;
 
-                if (mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
+                if (!mDisposing && mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
                 {
                     AddProjectileSpawns();
                 }
