@@ -228,12 +228,15 @@ namespace Intersect.Client.Entities
             get => mTransformedSprite;
             set
             {
-                mTransformedSprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mTransformedSprite);
-                LoadAnimationTextures(mTransformedSprite);
-                if (value == "")
+                if (mTransformedSprite != value)
                 {
-                    MySprite = mMySprite;
+                    mTransformedSprite = value;
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mTransformedSprite);
+                    LoadAnimationTextures(mTransformedSprite);
+                    if (value == "")
+                    {
+                        MySprite = mMySprite;
+                    }
                 }
             }
         }
@@ -243,9 +246,12 @@ namespace Intersect.Client.Entities
             get => mMySprite;
             set
             {
-                mMySprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
-                LoadAnimationTextures(mMySprite);
+                if (mMySprite != value)
+                {
+                    mMySprite = value;
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
+                    LoadAnimationTextures(mMySprite);
+                }
             }
         }
 
