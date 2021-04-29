@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
@@ -899,6 +899,11 @@ namespace Intersect.Client.Core
 
         public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
+            if (size == 0)
+            {
+                return;
+            }
+
             sLightQueue.Add(new LightBase(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;
         }
@@ -908,23 +913,26 @@ namespace Intersect.Client.Core
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
-                foreach (var l in sLightQueue)
+                foreach (var light in sLightQueue.GroupBy(c => c.GetHashCode()))
                 {
-                    var x = l.OffsetX - ((int) CurrentView.Left + l.Size);
-                    var y = l.OffsetY - ((int) CurrentView.Top + l.Size);
+                    foreach (var l in light)
+                    {
+                        var x = l.OffsetX - ((int)CurrentView.Left + l.Size);
+                        var y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
-                    radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
-                    radialShader.SetFloat("Expand", l.Expand / 100f);
+                        radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
+                        radialShader.SetFloat("Expand", l.Expand / 100f);
 
-                    DrawGameTexture(
-                        Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255), sDarknessTexture,
-                        GameBlendModes.Add, radialShader, 0, true
-                    );
+                        DrawGameTexture(
+                            Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                            new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255), sDarknessTexture, GameBlendModes.Add, radialShader, 0, false
+                        );
+
+                    }
                 }
-            }
 
-            sLightQueue.Clear();
+                sLightQueue.Clear();
+            }
         }
 
         public static void UpdatePlayerLight()
