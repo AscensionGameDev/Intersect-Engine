@@ -6,7 +6,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Entities.Projectiles
 {
 
-    public class ProjectileSpawns
+    public partial class ProjectileSpawns
     {
 
         public Animation Anim;

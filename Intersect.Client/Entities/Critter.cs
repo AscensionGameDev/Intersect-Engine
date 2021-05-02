@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Client.Entities
 {
-    public class Critter : Entity
+    public partial class Critter : Entity
     {
         private MapCritterAttribute mAttribute;
         private long mLastMove = -1;

@@ -10,7 +10,7 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Entities.Projectiles
 {
 
-    public class Projectile : Entity
+    public partial class Projectile : Entity
     {
 
         private bool mDisposing;

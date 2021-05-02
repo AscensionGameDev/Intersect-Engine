@@ -11,7 +11,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Entities
 {
 
-    public class Animation
+    public partial class Animation
     {
 
         public bool AutoRotate;

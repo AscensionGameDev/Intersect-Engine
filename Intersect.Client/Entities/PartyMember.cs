@@ -5,7 +5,7 @@ using Intersect.Enums;
 namespace Intersect.Client.Entities
 {
 
-    public class PartyMember
+    public partial class PartyMember
     {
 
         public Guid Id;

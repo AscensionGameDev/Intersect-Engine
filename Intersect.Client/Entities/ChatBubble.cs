@@ -9,7 +9,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Entities
 {
 
-    public class ChatBubble
+    public partial class ChatBubble
     {
 
         private GameTexture mBubbleTex;

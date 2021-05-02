@@ -13,7 +13,7 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Entities
 {
 
-    public class Resource : Entity
+    public partial class Resource : Entity
     {
 
         private bool _waitingForTilesets;
