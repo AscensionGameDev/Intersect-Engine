@@ -4700,25 +4700,30 @@ namespace Intersect.Server.Entities
             }
 
             FixVitals();
-            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
         }
 
         public void EquipmentProcessItemLoss(int slot)
         {
+            var changed = false;
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Equipment[i] == slot)
                 {
+                    changed |= Equipment[i] != -1;
                     Equipment[i] = -1;
                 }
             }
 
-            FixVitals();
-            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-            PacketSender.SendPlayerEquipmentToProximity(this);
-            PacketSender.SendEntityStats(this);
+            
+            if (changed)
+            {
+                FixVitals();
+                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
+                PacketSender.SendPlayerEquipmentToProximity(this);
+                PacketSender.SendEntityStats(this);
+            }
         }
 
         /// <summary>
