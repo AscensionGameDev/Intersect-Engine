@@ -37,7 +37,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="Menu" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Menu(Base parent, string name) : base(parent, name)
+        public Menu(Base parent, string name = "") : base(parent, name)
         {
             SetBounds(0, 0, 10, 10);
             Padding = Padding.Two;
