@@ -92,7 +92,7 @@ namespace Intersect.Editor.Content
 
             if (mTexture == null)
             {
-                LoadTexture();
+                GetDimensions();
             }
 
             if (mLoadError)
@@ -113,7 +113,7 @@ namespace Intersect.Editor.Content
 
             if (mTexture == null)
             {
-                LoadTexture();
+                GetDimensions();
             }
 
             if (mLoadError)
@@ -133,6 +133,51 @@ namespace Intersect.Editor.Content
             }
 
             return mTexture;
+        }
+
+        public void GetDimensions()
+        {
+            mLoadError = true;
+            if (string.IsNullOrWhiteSpace(mPath))
+            {
+                Log.Error("Invalid texture path (empty/null).");
+
+                return;
+            }
+
+            var relativePath = FileSystemHelper.RelativePath(Directory.GetCurrentDirectory(), mPath);
+
+            if (!File.Exists(mPath))
+            {
+                Log.Error($"Texture does not exist: {relativePath}");
+
+                return;
+            }
+
+            using (var fileStream = File.Open(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                try
+                {
+                    var img = System.Drawing.Image.FromStream(fileStream, false, false);
+                    if (img == null)
+                    {
+                        Log.Error($"Failed to load texture due to unknown error: {relativePath}");
+
+                        return;
+                    }
+
+                    mWidth = img.Width;
+                    mHeight = img.Height;
+                    mLoadError = false;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(
+                        exception,
+                        $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
+                    );
+                }
+            }
         }
 
         public void Update()
