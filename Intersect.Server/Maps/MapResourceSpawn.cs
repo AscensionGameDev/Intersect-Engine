@@ -3,7 +3,7 @@
 namespace Intersect.Server.Maps
 {
 
-    public class MapResourceSpawn
+    public partial class MapResourceSpawn
     {
 
         public Resource Entity;

@@ -10,7 +10,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Entities
 {
 
-    public class ProjectileSpawn
+    public partial class ProjectileSpawn
     {
 
         public byte Dir;

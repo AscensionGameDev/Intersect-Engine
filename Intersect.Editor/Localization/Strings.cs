@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Editor.Localization
 {
 
-    public static class Strings
+    public static partial class Strings
     {
 
         public static string GetEventConditionalDesc(VariableIsCondition condition)

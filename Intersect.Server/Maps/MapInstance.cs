@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Maps
 {
 
-    public class MapInstance : MapBase
+    public partial class MapInstance : MapBase
     {
 
         private static MapInstances sLookup;

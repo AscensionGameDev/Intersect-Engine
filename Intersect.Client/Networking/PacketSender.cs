@@ -10,7 +10,7 @@ using Intersect.Network.Packets.Client;
 namespace Intersect.Client.Networking
 {
 
-    public static class PacketSender
+    public static partial class PacketSender
     {
 
         public static void SendPing()

@@ -3,7 +3,7 @@
 namespace Intersect.Server.Maps
 {
 
-    public class MapNpcSpawn
+    public partial class MapNpcSpawn
     {
 
         public Entity Entity;

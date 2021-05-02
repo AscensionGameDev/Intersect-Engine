@@ -3,7 +3,7 @@
 namespace Intersect.Client.Maps
 {
 
-    public class ActionMessage
+    public partial class ActionMessage
     {
 
         public Color Clr = new Color();

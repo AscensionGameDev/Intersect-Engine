@@ -12,7 +12,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities.Combat
 {
 
-    public class Status
+    public partial class Status
     {
 
         public string Data = "";

@@ -4,7 +4,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Entities.Combat
 {
 
-    public class Buff
+    public partial class Buff
     {
 
         public int FlatStatcount;

@@ -10,7 +10,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Entities.Combat
 {
 
-    public class Stat
+    public partial class Stat
     {
 
         private ConcurrentDictionary<SpellBase, Buff> mBuff = new ConcurrentDictionary<SpellBase, Buff>();

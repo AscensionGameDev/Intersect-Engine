@@ -6,7 +6,7 @@ using Intersect.Enums;
 namespace Intersect.Client.Entities
 {
 
-    public class Status
+    public partial class Status
     {
 
         public string Data = "";

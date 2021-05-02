@@ -13,7 +13,7 @@ using Intersect.Server.Maps;
 
 namespace Intersect.Server.Entities.Events
 {
-    public static class Conditions
+    public static partial class Conditions
     {
         public static bool CanSpawnPage(EventPage page, Player player, Event activeInstance)
         {

@@ -9,7 +9,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Entities.Combat
 {
 
-    public class DoT
+    public partial class DoT
     {
         public Guid Id = Guid.NewGuid();
 

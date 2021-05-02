@@ -20,7 +20,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities.Events
 {
 
-    public static class CommandProcessing
+    public static partial class CommandProcessing
     {
 
         public static void ProcessCommand(EventCommand command, Player player, Event instance)
