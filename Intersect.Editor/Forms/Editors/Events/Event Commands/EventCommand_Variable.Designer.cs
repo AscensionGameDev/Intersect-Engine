@@ -156,7 +156,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariable.ButtonIcon")));
             this.cmbVariable.DrawDropdownHoverOutline = false;
             this.cmbVariable.DrawFocusRectangle = false;
             this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -364,7 +363,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbBooleanCloneGlobalVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbBooleanCloneGlobalVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbBooleanCloneGlobalVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbBooleanCloneGlobalVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbBooleanCloneGlobalVar.ButtonIcon")));
             this.cmbBooleanCloneGlobalVar.DrawDropdownHoverOutline = false;
             this.cmbBooleanCloneGlobalVar.DrawFocusRectangle = false;
             this.cmbBooleanCloneGlobalVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -385,7 +383,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbBooleanClonePlayerVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbBooleanClonePlayerVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbBooleanClonePlayerVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbBooleanClonePlayerVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbBooleanClonePlayerVar.ButtonIcon")));
             this.cmbBooleanClonePlayerVar.DrawDropdownHoverOutline = false;
             this.cmbBooleanClonePlayerVar.DrawFocusRectangle = false;
             this.cmbBooleanClonePlayerVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -555,7 +552,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbNumericCloneGlobalVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbNumericCloneGlobalVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbNumericCloneGlobalVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbNumericCloneGlobalVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbNumericCloneGlobalVar.ButtonIcon")));
             this.cmbNumericCloneGlobalVar.DrawDropdownHoverOutline = false;
             this.cmbNumericCloneGlobalVar.DrawFocusRectangle = false;
             this.cmbNumericCloneGlobalVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -576,7 +572,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbNumericClonePlayerVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbNumericClonePlayerVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbNumericClonePlayerVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbNumericClonePlayerVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbNumericClonePlayerVar.ButtonIcon")));
             this.cmbNumericClonePlayerVar.DrawDropdownHoverOutline = false;
             this.cmbNumericClonePlayerVar.DrawFocusRectangle = false;
             this.cmbNumericClonePlayerVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

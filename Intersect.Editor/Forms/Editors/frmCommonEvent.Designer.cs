@@ -30,11 +30,9 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCommonEvent));
             this.grpCommonEvents = new DarkUI.Controls.DarkGroupBox();
-            this.lstCommonEvents = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstCommonEvents = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
@@ -78,24 +76,14 @@ namespace Intersect.Editor.Forms.Editors
             this.lstCommonEvents.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstCommonEvents.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstCommonEvents.HideSelection = false;
-            this.lstCommonEvents.ImageIndex = 0;
-            this.lstCommonEvents.ImageList = this.imageList;
             this.lstCommonEvents.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstCommonEvents.Location = new System.Drawing.Point(6, 45);
             this.lstCommonEvents.Name = "lstCommonEvents";
-            this.lstCommonEvents.SelectedImageIndex = 0;
             this.lstCommonEvents.Size = new System.Drawing.Size(288, 430);
             this.lstCommonEvents.TabIndex = 28;
             this.lstCommonEvents.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstCommonEvents_AfterSelect);
             this.lstCommonEvents.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommonEvents_NodeMouseClick);
             this.lstCommonEvents.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommonEvents_NodeMouseDoubleClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // btnClearSearch
             // 
@@ -149,7 +137,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -276,7 +263,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.grpCommonEvents);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmCommonEvent";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -307,7 +293,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
-        public System.Windows.Forms.TreeView lstCommonEvents;
-        private System.Windows.Forms.ImageList imageList;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstCommonEvents;
     }
 }

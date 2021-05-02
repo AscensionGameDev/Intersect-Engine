@@ -51,6 +51,8 @@ namespace Intersect.Editor.Forms.Editors
             mEdittingLists = new ConditionLists(lists.Data());
             UpdateLists();
             InitLocalization(type);
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void InitLocalization(RequirementType type)

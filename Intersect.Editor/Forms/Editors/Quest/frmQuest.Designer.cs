@@ -30,13 +30,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmQuest));
             this.grpQuests = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstQuests = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstQuests = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -142,23 +140,13 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.lstQuests.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstQuests.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstQuests.HideSelection = false;
-            this.lstQuests.ImageIndex = 0;
-            this.lstQuests.ImageList = this.imageList;
             this.lstQuests.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstQuests.Location = new System.Drawing.Point(6, 45);
             this.lstQuests.Name = "lstQuests";
-            this.lstQuests.SelectedImageIndex = 0;
             this.lstQuests.Size = new System.Drawing.Size(191, 323);
             this.lstQuests.TabIndex = 32;
             this.lstQuests.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstQuests_AfterSelect);
             this.lstQuests.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstQuests_NodeMouseClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
@@ -212,7 +200,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -721,7 +708,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.Controls.Add(this.grpQuests);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimizeBox = false;
             this.Name = "FrmQuest";
@@ -793,8 +779,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private DarkButton btnEditRequirements;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public System.Windows.Forms.TreeView lstQuests;
-        private System.Windows.Forms.ImageList imageList;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstQuests;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;

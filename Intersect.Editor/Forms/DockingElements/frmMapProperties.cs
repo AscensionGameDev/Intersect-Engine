@@ -20,6 +20,8 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             InitializeComponent();
             UpdatePropertiesDelegate = Update;
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         public void Init(MapInstance map)

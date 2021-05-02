@@ -77,7 +77,6 @@
             this.cmbSize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSize.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbSize.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSize.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSize.ButtonIcon")));
             this.cmbSize.DrawDropdownHoverOutline = false;
             this.cmbSize.DrawFocusRectangle = false;
             this.cmbSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -112,7 +111,6 @@
             this.cmbPicture.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbPicture.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbPicture.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbPicture.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbPicture.ButtonIcon")));
             this.cmbPicture.DrawDropdownHoverOutline = false;
             this.cmbPicture.DrawFocusRectangle = false;
             this.cmbPicture.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

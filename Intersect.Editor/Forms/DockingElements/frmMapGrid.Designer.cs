@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.recacheMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.recacheMapToolStripMenuItem.Text = "Recache Map";
             // 
-            // frmMapGrid
+            // FrmMapGrid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -178,7 +178,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.Controls.Add(this.pnlMapGrid);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmMapGrid";
             this.Text = "Map Grid";

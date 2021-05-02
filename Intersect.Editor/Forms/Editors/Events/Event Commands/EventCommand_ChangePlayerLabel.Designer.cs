@@ -116,7 +116,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbPosition.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbPosition.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbPosition.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbPosition.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbPosition.ButtonIcon")));
             this.cmbPosition.DrawDropdownHoverOutline = false;
             this.cmbPosition.DrawFocusRectangle = false;
             this.cmbPosition.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

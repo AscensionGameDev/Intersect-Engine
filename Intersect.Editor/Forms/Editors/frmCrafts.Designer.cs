@@ -30,15 +30,13 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCrafts));
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpCrafts = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstCrafts = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstCrafts = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
@@ -150,23 +148,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lstCrafts.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstCrafts.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstCrafts.HideSelection = false;
-            this.lstCrafts.ImageIndex = 0;
-            this.lstCrafts.ImageList = this.imageList;
             this.lstCrafts.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstCrafts.Location = new System.Drawing.Point(6, 39);
             this.lstCrafts.Name = "lstCrafts";
-            this.lstCrafts.SelectedImageIndex = 0;
             this.lstCrafts.Size = new System.Drawing.Size(191, 351);
             this.lstCrafts.TabIndex = 26;
             this.lstCrafts.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstCrafts_AfterSelect);
             this.lstCrafts.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCrafts_NodeMouseClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // pnlContainer
             // 
@@ -226,7 +214,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -307,7 +294,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbResult.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbResult.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbResult.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbResult.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbResult.ButtonIcon")));
             this.cmbResult.DrawDropdownHoverOutline = false;
             this.cmbResult.DrawFocusRectangle = false;
             this.cmbResult.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -412,7 +398,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbIngredient.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbIngredient.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbIngredient.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbIngredient.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbIngredient.ButtonIcon")));
             this.cmbIngredient.DrawDropdownHoverOutline = false;
             this.cmbIngredient.DrawFocusRectangle = false;
             this.cmbIngredient.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -625,7 +610,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpCrafts);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -685,12 +669,11 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblCraftQuantity;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public System.Windows.Forms.TreeView lstCrafts;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstCrafts;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
-        private System.Windows.Forms.ImageList imageList;
     }
 }

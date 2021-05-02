@@ -45,6 +45,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapEditor()
         {
             InitializeComponent();
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void InitLocalization()

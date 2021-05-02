@@ -176,7 +176,6 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.lblStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmLogin";

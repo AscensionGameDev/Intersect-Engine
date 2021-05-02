@@ -18,6 +18,8 @@ namespace Intersect.Editor.Forms.Editors
         protected EditorForm()
         {
             ApplyHooks();
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         protected void ApplyHooks()
@@ -74,16 +76,14 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitializeComponent()
         {
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorForm));
             this.SuspendLayout();
-
             // 
             // EditorForm
             // 
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Icon = (System.Drawing.Icon) resources.GetObject("$this.Icon");
             this.Name = "EditorForm";
             this.ResumeLayout(false);
+
         }
 
     }

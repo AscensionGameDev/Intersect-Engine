@@ -35,8 +35,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpResources = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstResources = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstResources = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -168,23 +167,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lstResources.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstResources.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstResources.HideSelection = false;
-            this.lstResources.ImageIndex = 0;
-            this.lstResources.ImageList = this.imageList;
             this.lstResources.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstResources.Location = new System.Drawing.Point(6, 45);
             this.lstResources.Name = "lstResources";
-            this.lstResources.SelectedImageIndex = 0;
             this.lstResources.Size = new System.Drawing.Size(191, 386);
             this.lstResources.TabIndex = 32;
             this.lstResources.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstResources_AfterSelect);
             this.lstResources.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstResources_NodeMouseClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
@@ -241,7 +230,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -323,7 +311,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAnimation.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAnimation.ButtonIcon")));
             this.cmbAnimation.DrawDropdownHoverOutline = false;
             this.cmbAnimation.DrawFocusRectangle = false;
             this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -400,7 +387,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbToolType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbToolType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbToolType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbToolType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbToolType.ButtonIcon")));
             this.cmbToolType.DrawDropdownHoverOutline = false;
             this.cmbToolType.DrawFocusRectangle = false;
             this.cmbToolType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -558,7 +544,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEndSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEndSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbEndSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEndSprite.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEndSprite.ButtonIcon")));
             this.cmbEndSprite.DrawDropdownHoverOutline = false;
             this.cmbEndSprite.DrawFocusRectangle = false;
             this.cmbEndSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -591,7 +576,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbInitialSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbInitialSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbInitialSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbInitialSprite.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbInitialSprite.ButtonIcon")));
             this.cmbInitialSprite.DrawDropdownHoverOutline = false;
             this.cmbInitialSprite.DrawFocusRectangle = false;
             this.cmbInitialSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -660,7 +644,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEvent.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEvent.ButtonIcon")));
             this.cmbEvent.DrawDropdownHoverOutline = false;
             this.cmbEvent.DrawFocusRectangle = false;
             this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -835,7 +818,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbDropItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbDropItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbDropItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbDropItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDropItem.ButtonIcon")));
             this.cmbDropItem.DrawDropdownHoverOutline = false;
             this.cmbDropItem.DrawFocusRectangle = false;
             this.cmbDropItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1034,7 +1016,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.grpResources);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmResource";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1135,8 +1116,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkInitialBelowEntities;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public System.Windows.Forms.TreeView lstResources;
-        private System.Windows.Forms.ImageList imageList;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstResources;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;

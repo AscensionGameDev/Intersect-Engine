@@ -127,7 +127,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbTaskType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTaskType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbTaskType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTaskType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTaskType.ButtonIcon")));
             this.cmbTaskType.DrawDropdownHoverOutline = false;
             this.cmbTaskType.DrawFocusRectangle = false;
             this.cmbTaskType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -213,7 +212,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbNpc.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbNpc.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbNpc.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbNpc.ButtonIcon")));
             this.cmbNpc.DrawDropdownHoverOutline = false;
             this.cmbNpc.DrawFocusRectangle = false;
             this.cmbNpc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -292,7 +290,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbItem.ButtonIcon")));
             this.cmbItem.DrawDropdownHoverOutline = false;
             this.cmbItem.DrawFocusRectangle = false;
             this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

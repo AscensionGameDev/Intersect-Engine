@@ -12,6 +12,8 @@ namespace Intersect.Editor.Forms
         public FrmAbout()
         {
             InitializeComponent();
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void lblWebsite_Click(object sender, EventArgs e)

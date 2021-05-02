@@ -23,6 +23,8 @@ namespace Intersect.Editor.Forms
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void frmUpdate_Load(object sender, EventArgs e)

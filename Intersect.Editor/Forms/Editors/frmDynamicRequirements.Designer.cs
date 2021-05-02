@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDynamicRequirements));
             this.grpConditionLists = new DarkUI.Controls.DarkGroupBox();
             this.btnRemoveList = new DarkUI.Controls.DarkButton();
             this.btnAddList = new DarkUI.Controls.DarkButton();
@@ -205,7 +204,6 @@
             this.Controls.Add(this.grpConditionList);
             this.Controls.Add(this.grpConditionLists);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmDynamicRequirements";

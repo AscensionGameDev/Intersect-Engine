@@ -61,6 +61,8 @@ namespace Intersect.Editor.Forms.DockingElements
             mMapLayers.Add(picLayer3);
             mMapLayers.Add(picLayer4);
             mMapLayers.Add(picLayer5);
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         public void Init()

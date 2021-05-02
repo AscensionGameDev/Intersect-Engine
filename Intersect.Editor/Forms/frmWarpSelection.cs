@@ -46,6 +46,8 @@ namespace Intersect.Editor.Forms
                 "DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
                 pnlMap, new object[] {true}
             );
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         public void InitForm(bool tileSelection = true, List<Guid> restrictMaps = null)

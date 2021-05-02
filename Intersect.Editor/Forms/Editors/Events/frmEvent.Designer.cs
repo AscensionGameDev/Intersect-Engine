@@ -33,7 +33,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Show Text");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Show Options");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Input Variable");
@@ -391,7 +390,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbPreviewFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbPreviewFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbPreviewFace.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbPreviewFace.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbPreviewFace.ButtonIcon")));
             this.cmbPreviewFace.DrawDropdownHoverOutline = false;
             this.cmbPreviewFace.DrawFocusRectangle = false;
             this.cmbPreviewFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -446,7 +444,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAnimation.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAnimation.ButtonIcon")));
             this.cmbAnimation.DrawDropdownHoverOutline = false;
             this.cmbAnimation.DrawFocusRectangle = false;
             this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -508,7 +505,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbLayering.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLayering.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbLayering.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbLayering.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLayering.ButtonIcon")));
             this.cmbLayering.DrawDropdownHoverOutline = false;
             this.cmbLayering.DrawFocusRectangle = false;
             this.cmbLayering.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -534,7 +530,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbEventFreq.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEventFreq.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbEventFreq.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEventFreq.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEventFreq.ButtonIcon")));
             this.cmbEventFreq.DrawDropdownHoverOutline = false;
             this.cmbEventFreq.DrawFocusRectangle = false;
             this.cmbEventFreq.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -562,7 +557,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbEventSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbEventSpeed.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbEventSpeed.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEventSpeed.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEventSpeed.ButtonIcon")));
             this.cmbEventSpeed.DrawDropdownHoverOutline = false;
             this.cmbEventSpeed.DrawFocusRectangle = false;
             this.cmbEventSpeed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -628,7 +622,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbMoveType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbMoveType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbMoveType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbMoveType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbMoveType.ButtonIcon")));
             this.cmbMoveType.DrawDropdownHoverOutline = false;
             this.cmbMoveType.DrawFocusRectangle = false;
             this.cmbMoveType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -673,7 +666,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariable.ButtonIcon")));
             this.cmbVariable.DrawDropdownHoverOutline = false;
             this.cmbVariable.DrawFocusRectangle = false;
             this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -739,7 +731,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTriggerVal.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTriggerVal.ButtonIcon")));
             this.cmbTriggerVal.DrawDropdownHoverOutline = false;
             this.cmbTriggerVal.DrawFocusRectangle = false;
             this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -763,7 +754,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.cmbTrigger.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTrigger.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbTrigger.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTrigger.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTrigger.ButtonIcon")));
             this.cmbTrigger.DrawDropdownHoverOutline = false;
             this.cmbTrigger.DrawFocusRectangle = false;
             this.cmbTrigger.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1308,7 +1298,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.Controls.Add(this.grpCreateCommands);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmEvent";
