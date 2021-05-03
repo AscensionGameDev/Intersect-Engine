@@ -5733,8 +5733,6 @@ namespace Intersect.Server.Entities
 
                         break;
                     }
-
-                    break;
                 }
 
                 if (newEvent != null)
