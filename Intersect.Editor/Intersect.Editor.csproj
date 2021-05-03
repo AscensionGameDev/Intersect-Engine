@@ -94,6 +94,12 @@
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Forms\Controls\GameObjectList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\Controls\GameObjectList.Designer.cs">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -640,158 +646,23 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Forms\Controls\GameObjectList.resx">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\Controls\LightEditorCtrl.resx">
-      <DependentUpon>LightEditorCtrl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Controls\MapTreeList.resx">
       <DependentUpon>MapTreeList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Controls\SearchableDarkTreeView.resx">
       <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DockingElements\frmMapEditor.resx">
-      <DependentUpon>frmMapEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DockingElements\frmMapGrid.resx">
       <DependentUpon>frmMapGrid.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DockingElements\frmMapLayers.resx">
-      <DependentUpon>frmMapLayers.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DockingElements\frmMapList.resx">
       <DependentUpon>frmMapList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DockingElements\frmMapProperties.resx">
-      <DependentUpon>frmMapProperties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\EditorForm.resx">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.resx">
-      <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.resx">
-      <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.resx">
-      <DependentUpon>EventCommand_ChangeName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.resx">
-      <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.resx">
-      <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.resx">
-      <DependentUpon>EventCommand_ChangePlayerLabel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.resx">
-      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.resx">
-      <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.resx">
-      <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.resx">
-      <DependentUpon>EventCommand_ChangeLevel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.resx">
-      <DependentUpon>EventCommand_ChangeSpells.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.resx">
-      <DependentUpon>EventCommand_ChangeSprite.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.resx">
-      <DependentUpon>EventCommand_ChatboxText.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.resx">
-      <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.resx">
-      <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.resx">
-      <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.resx">
-      <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.resx">
-      <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Label.resx">
-      <DependentUpon>EventCommand_Label.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.resx">
-      <DependentUpon>EventCommand_OpenCrafting.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.resx">
-      <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Options.resx">
-      <DependentUpon>EventCommand_Options.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.resx">
-      <DependentUpon>EventCommand_PlayAnimation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.resx">
-      <DependentUpon>EventCommand_PlayBgm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.resx">
-      <DependentUpon>EventCommand_PlayBgs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.resx">
-      <DependentUpon>EventCommand_SelfSwitch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.resx">
-      <DependentUpon>EventCommand_SetAccess.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.resx">
-      <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.resx">
-      <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.resx">
-      <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.resx">
-      <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
-      <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Input.resx">
-      <DependentUpon>EventCommand_Input.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
-      <DependentUpon>EventCommand_Text.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.resx">
-      <DependentUpon>EventCommand_Variable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.resx">
-      <DependentUpon>EventCommand_Wait.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.resx">
-      <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.resx">
-      <DependentUpon>EventCommand_Warp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.resx">
-      <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.resx">
-      <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.resx">
-      <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
       <DependentUpon>frmAnimation.cs</DependentUpon>
@@ -807,9 +678,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmCraftingTables.resx">
       <DependentUpon>frmCraftingTables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmDynamicRequirements.resx">
-      <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>
@@ -841,9 +709,6 @@
     <EmbeddedResource Include="Forms\Editors\Quest\frmQuest.resx">
       <DependentUpon>frmQuest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Quest\Quest_TaskEditor.resx">
-      <DependentUpon>Quest_TaskEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
@@ -856,12 +721,6 @@
     <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmOptions.resx">
-      <DependentUpon>frmOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmProgress.resx">
-      <DependentUpon>frmProgress.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmWarpSelection.resx">
       <DependentUpon>frmWarpSelection.cs</DependentUpon>
@@ -881,26 +740,6 @@
     <Content Include="Icon.ico" />
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
     <None Include="packages.config" />
-    <None Include="Resources\1_A.png" />
-    <None Include="Resources\1_B Hide.png" />
-    <None Include="Resources\1_B.png" />
-    <None Include="Resources\2_A Hide.png" />
-    <None Include="Resources\2_A.png" />
-    <None Include="Resources\2_B Hide.png" />
-    <None Include="Resources\2_B.png" />
-    <None Include="Resources\3_A Hide.png" />
-    <None Include="Resources\3_A.png" />
-    <None Include="Resources\3_B Hide.png" />
-    <None Include="Resources\3_B.png" />
-    <None Include="Resources\4_A Hide.png" />
-    <None Include="Resources\4_A.png" />
-    <None Include="Resources\4_B Hide.png" />
-    <None Include="Resources\4_B.png" />
-    <None Include="Resources\5_A Hide.png" />
-    <None Include="Resources\5_A.png" />
-    <None Include="Resources\5_B Hide.png" />
-    <None Include="Resources\5_B.png" />
-    <None Include="Resources\1_A Hide.png" />
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
   </ItemGroup>

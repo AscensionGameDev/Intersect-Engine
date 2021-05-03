@@ -203,7 +203,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbIntervals.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbIntervals.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbIntervals.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbIntervals.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbIntervals.ButtonIcon")));
             this.cmbIntervals.DrawDropdownHoverOutline = false;
             this.cmbIntervals.DrawFocusRectangle = false;
             this.cmbIntervals.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -278,7 +277,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.lblTimes);
             this.Controls.Add(this.lstTimes);
             this.DoubleBuffered = true;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmTime";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Time Editor (Day/Night Settings)";

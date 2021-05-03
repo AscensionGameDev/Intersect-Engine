@@ -142,9 +142,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.chkCritterBlockPlayers = new DarkUI.Controls.DarkCheckBox();
             this.cmbCritterDirection = new DarkUI.Controls.DarkComboBox();
             this.lblCritterDirection = new System.Windows.Forms.Label();
-            this.pnlAttributes = new System.Windows.Forms.Panel();
-            this.pnlNpcs = new System.Windows.Forms.Panel();
-            this.chkAnimationBlock = new DarkUI.Controls.DarkCheckBox();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -216,7 +213,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbAutotile.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAutotile.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAutotile.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAutotile.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAutotile.ButtonIcon")));
             this.cmbAutotile.DrawDropdownHoverOutline = false;
             this.cmbAutotile.DrawFocusRectangle = false;
             this.cmbAutotile.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -247,7 +243,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbTilesets.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbTilesets.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbTilesets.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTilesets.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTilesets.ButtonIcon")));
             this.cmbTilesets.DrawDropdownHoverOutline = false;
             this.cmbTilesets.DrawFocusRectangle = false;
             this.cmbTilesets.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -434,7 +429,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbResourceAttribute.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbResourceAttribute.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbResourceAttribute.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbResourceAttribute.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbResourceAttribute.ButtonIcon")));
             this.cmbResourceAttribute.DrawDropdownHoverOutline = false;
             this.cmbResourceAttribute.DrawFocusRectangle = false;
             this.cmbResourceAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -501,7 +495,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbItemAttribute.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbItemAttribute.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbItemAttribute.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbItemAttribute.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbItemAttribute.ButtonIcon")));
             this.cmbItemAttribute.DrawDropdownHoverOutline = false;
             this.cmbItemAttribute.DrawFocusRectangle = false;
             this.cmbItemAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -600,7 +593,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbWarpMap.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbWarpMap.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbWarpMap.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbWarpMap.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbWarpMap.ButtonIcon")));
             this.cmbWarpMap.DrawDropdownHoverOutline = false;
             this.cmbWarpMap.DrawFocusRectangle = false;
             this.cmbWarpMap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -621,7 +613,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbDirection.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbDirection.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDirection.ButtonIcon")));
             this.cmbDirection.DrawDropdownHoverOutline = false;
             this.cmbDirection.DrawFocusRectangle = false;
             this.cmbDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -848,7 +839,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbMapAttributeSound.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbMapAttributeSound.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbMapAttributeSound.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbMapAttributeSound.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbMapAttributeSound.ButtonIcon")));
             this.cmbMapAttributeSound.DrawDropdownHoverOutline = false;
             this.cmbMapAttributeSound.DrawFocusRectangle = false;
             this.cmbMapAttributeSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -902,7 +892,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbSlideDir.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSlideDir.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbSlideDir.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSlideDir.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSlideDir.ButtonIcon")));
             this.cmbSlideDir.DrawDropdownHoverOutline = false;
             this.cmbSlideDir.DrawFocusRectangle = false;
             this.cmbSlideDir.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -955,7 +944,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbAnimationAttribute.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAnimationAttribute.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAnimationAttribute.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAnimationAttribute.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAnimationAttribute.ButtonIcon")));
             this.cmbAnimationAttribute.DrawDropdownHoverOutline = false;
             this.cmbAnimationAttribute.DrawFocusRectangle = false;
             this.cmbAnimationAttribute.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1048,7 +1036,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbNpc.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbNpc.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbNpc.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbNpc.ButtonIcon")));
             this.cmbNpc.DrawDropdownHoverOutline = false;
             this.cmbNpc.DrawFocusRectangle = false;
             this.cmbNpc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1086,7 +1073,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbDir.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbDir.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbDir.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbDir.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDir.ButtonIcon")));
             this.cmbDir.DrawDropdownHoverOutline = false;
             this.cmbDir.DrawFocusRectangle = false;
             this.cmbDir.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1280,7 +1266,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbCritterSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCritterSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbCritterSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterSprite.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCritterSprite.ButtonIcon")));
             this.cmbCritterSprite.DrawDropdownHoverOutline = false;
             this.cmbCritterSprite.DrawFocusRectangle = false;
             this.cmbCritterSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1310,7 +1295,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbCritterAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCritterAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbCritterAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterAnimation.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCritterAnimation.ButtonIcon")));
             this.cmbCritterAnimation.DrawDropdownHoverOutline = false;
             this.cmbCritterAnimation.DrawFocusRectangle = false;
             this.cmbCritterAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1382,7 +1366,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbMapLayer.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbMapLayer.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbMapLayer.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbMapLayer.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbMapLayer.ButtonIcon")));
             this.cmbMapLayer.DrawDropdownHoverOutline = false;
             this.cmbMapLayer.DrawFocusRectangle = false;
             this.cmbMapLayer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1507,7 +1490,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbCritterMovement.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCritterMovement.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbCritterMovement.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterMovement.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCritterMovement.ButtonIcon")));
             this.cmbCritterMovement.DrawDropdownHoverOutline = false;
             this.cmbCritterMovement.DrawFocusRectangle = false;
             this.cmbCritterMovement.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1593,7 +1575,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbCritterLayer.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCritterLayer.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbCritterLayer.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterLayer.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCritterLayer.ButtonIcon")));
             this.cmbCritterLayer.DrawDropdownHoverOutline = false;
             this.cmbCritterLayer.DrawFocusRectangle = false;
             this.cmbCritterLayer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1639,7 +1620,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbCritterDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbCritterDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbCritterDirection.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterDirection.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCritterDirection.ButtonIcon")));
             this.cmbCritterDirection.DrawDropdownHoverOutline = false;
             this.cmbCritterDirection.DrawFocusRectangle = false;
             this.cmbCritterDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

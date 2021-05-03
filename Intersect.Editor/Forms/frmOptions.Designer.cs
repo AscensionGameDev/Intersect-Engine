@@ -30,7 +30,6 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmOptions));
             this.txtGamePath = new DarkUI.Controls.DarkTextBox();
             this.btnBrowseClient = new DarkUI.Controls.DarkButton();
             this.chkSuppressTilesetWarning = new DarkUI.Controls.DarkCheckBox();
@@ -39,20 +38,20 @@ namespace Intersect.Editor.Forms
             this.grpClientPath = new DarkUI.Controls.DarkGroupBox();
             this.btnUpdateOptions = new DarkUI.Controls.DarkButton();
             this.pnlUpdate = new System.Windows.Forms.Panel();
-            this.chkPackageAssets = new DarkUI.Controls.DarkCheckBox();
             this.grpAssetPackingOptions = new DarkUI.Controls.DarkGroupBox();
-            this.lblSoundBatch = new System.Windows.Forms.Label();
-            this.lblMusicBatch = new System.Windows.Forms.Label();
-            this.nudSoundBatch = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudMusicBatch = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblTextureSize = new System.Windows.Forms.Label();
             this.cmbTextureSize = new DarkUI.Controls.DarkComboBox();
+            this.lblTextureSize = new System.Windows.Forms.Label();
+            this.nudMusicBatch = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudSoundBatch = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblMusicBatch = new System.Windows.Forms.Label();
+            this.lblSoundBatch = new System.Windows.Forms.Label();
+            this.chkPackageAssets = new DarkUI.Controls.DarkCheckBox();
             this.pnlGeneral.SuspendLayout();
             this.grpClientPath.SuspendLayout();
             this.pnlUpdate.SuspendLayout();
             this.grpAssetPackingOptions.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSoundBatch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMusicBatch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundBatch)).BeginInit();
             this.SuspendLayout();
             // 
             // txtGamePath
@@ -146,14 +145,6 @@ namespace Intersect.Editor.Forms
             this.pnlUpdate.Size = new System.Drawing.Size(357, 149);
             this.pnlUpdate.TabIndex = 22;
             // 
-            // chkPackageAssets
-            // 
-            this.chkPackageAssets.Location = new System.Drawing.Point(14, 5);
-            this.chkPackageAssets.Name = "chkPackageAssets";
-            this.chkPackageAssets.Size = new System.Drawing.Size(332, 17);
-            this.chkPackageAssets.TabIndex = 1;
-            this.chkPackageAssets.Text = "Package assets when generating updates";
-            // 
             // grpAssetPackingOptions
             // 
             this.grpAssetPackingOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -172,49 +163,43 @@ namespace Intersect.Editor.Forms
             this.grpAssetPackingOptions.TabStop = false;
             this.grpAssetPackingOptions.Text = "Asset Packing Options";
             // 
-            // lblSoundBatch
+            // cmbTextureSize
             // 
-            this.lblSoundBatch.AutoSize = true;
-            this.lblSoundBatch.ForeColor = System.Drawing.Color.White;
-            this.lblSoundBatch.Location = new System.Drawing.Point(6, 20);
-            this.lblSoundBatch.Name = "lblSoundBatch";
-            this.lblSoundBatch.Size = new System.Drawing.Size(92, 13);
-            this.lblSoundBatch.TabIndex = 7;
-            this.lblSoundBatch.Text = "Sound Batch Size";
+            this.cmbTextureSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbTextureSize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTextureSize.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTextureSize.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTextureSize.DrawDropdownHoverOutline = false;
+            this.cmbTextureSize.DrawFocusRectangle = false;
+            this.cmbTextureSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTextureSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTextureSize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTextureSize.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbTextureSize.FormattingEnabled = true;
+            this.cmbTextureSize.Items.AddRange(new object[] {
+            "1",
+            "256",
+            "512",
+            "1024",
+            "2048",
+            "4096",
+            "8192"});
+            this.cmbTextureSize.Location = new System.Drawing.Point(104, 42);
+            this.cmbTextureSize.Name = "cmbTextureSize";
+            this.cmbTextureSize.Size = new System.Drawing.Size(59, 21);
+            this.cmbTextureSize.TabIndex = 52;
+            this.cmbTextureSize.Text = "1";
+            this.cmbTextureSize.TextPadding = new System.Windows.Forms.Padding(2);
             // 
-            // lblMusicBatch
+            // lblTextureSize
             // 
-            this.lblMusicBatch.AutoSize = true;
-            this.lblMusicBatch.ForeColor = System.Drawing.Color.White;
-            this.lblMusicBatch.Location = new System.Drawing.Point(169, 20);
-            this.lblMusicBatch.Name = "lblMusicBatch";
-            this.lblMusicBatch.Size = new System.Drawing.Size(89, 13);
-            this.lblMusicBatch.TabIndex = 8;
-            this.lblMusicBatch.Text = "Music Batch Size";
-            // 
-            // nudSoundBatch
-            // 
-            this.nudSoundBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudSoundBatch.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSoundBatch.Location = new System.Drawing.Point(104, 16);
-            this.nudSoundBatch.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.nudSoundBatch.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudSoundBatch.Name = "nudSoundBatch";
-            this.nudSoundBatch.Size = new System.Drawing.Size(59, 20);
-            this.nudSoundBatch.TabIndex = 49;
-            this.nudSoundBatch.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
+            this.lblTextureSize.AutoSize = true;
+            this.lblTextureSize.ForeColor = System.Drawing.Color.White;
+            this.lblTextureSize.Location = new System.Drawing.Point(6, 48);
+            this.lblTextureSize.Name = "lblTextureSize";
+            this.lblTextureSize.Size = new System.Drawing.Size(94, 13);
+            this.lblTextureSize.TabIndex = 51;
+            this.lblTextureSize.Text = "Texture Pack Size";
             // 
             // nudMusicBatch
             // 
@@ -240,44 +225,57 @@ namespace Intersect.Editor.Forms
             0,
             0});
             // 
-            // lblTextureSize
+            // nudSoundBatch
             // 
-            this.lblTextureSize.AutoSize = true;
-            this.lblTextureSize.ForeColor = System.Drawing.Color.White;
-            this.lblTextureSize.Location = new System.Drawing.Point(6, 48);
-            this.lblTextureSize.Name = "lblTextureSize";
-            this.lblTextureSize.Size = new System.Drawing.Size(94, 13);
-            this.lblTextureSize.TabIndex = 51;
-            this.lblTextureSize.Text = "Texture Pack Size";
+            this.nudSoundBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSoundBatch.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSoundBatch.Location = new System.Drawing.Point(104, 16);
+            this.nudSoundBatch.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.nudSoundBatch.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudSoundBatch.Name = "nudSoundBatch";
+            this.nudSoundBatch.Size = new System.Drawing.Size(59, 20);
+            this.nudSoundBatch.TabIndex = 49;
+            this.nudSoundBatch.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
-            // cmbTextureSize
+            // lblMusicBatch
             // 
-            this.cmbTextureSize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTextureSize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTextureSize.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTextureSize.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTextureSize.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbTextureSize.ButtonIcon")));
-            this.cmbTextureSize.DrawDropdownHoverOutline = false;
-            this.cmbTextureSize.DrawFocusRectangle = false;
-            this.cmbTextureSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTextureSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTextureSize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTextureSize.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTextureSize.FormattingEnabled = true;
-            this.cmbTextureSize.Items.AddRange(new object[] {
-            "1",
-            "256",
-            "512",
-            "1024",
-            "2048",
-            "4096",
-            "8192"});
-            this.cmbTextureSize.Location = new System.Drawing.Point(104, 42);
-            this.cmbTextureSize.Name = "cmbTextureSize";
-            this.cmbTextureSize.Size = new System.Drawing.Size(59, 21);
-            this.cmbTextureSize.TabIndex = 52;
-            this.cmbTextureSize.Text = "1";
-            this.cmbTextureSize.TextPadding = new System.Windows.Forms.Padding(2);
+            this.lblMusicBatch.AutoSize = true;
+            this.lblMusicBatch.ForeColor = System.Drawing.Color.White;
+            this.lblMusicBatch.Location = new System.Drawing.Point(169, 20);
+            this.lblMusicBatch.Name = "lblMusicBatch";
+            this.lblMusicBatch.Size = new System.Drawing.Size(89, 13);
+            this.lblMusicBatch.TabIndex = 8;
+            this.lblMusicBatch.Text = "Music Batch Size";
+            // 
+            // lblSoundBatch
+            // 
+            this.lblSoundBatch.AutoSize = true;
+            this.lblSoundBatch.ForeColor = System.Drawing.Color.White;
+            this.lblSoundBatch.Location = new System.Drawing.Point(6, 20);
+            this.lblSoundBatch.Name = "lblSoundBatch";
+            this.lblSoundBatch.Size = new System.Drawing.Size(92, 13);
+            this.lblSoundBatch.TabIndex = 7;
+            this.lblSoundBatch.Text = "Sound Batch Size";
+            // 
+            // chkPackageAssets
+            // 
+            this.chkPackageAssets.Location = new System.Drawing.Point(14, 5);
+            this.chkPackageAssets.Name = "chkPackageAssets";
+            this.chkPackageAssets.Size = new System.Drawing.Size(332, 17);
+            this.chkPackageAssets.TabIndex = 1;
+            this.chkPackageAssets.Text = "Package assets when generating updates";
             // 
             // FrmOptions
             // 
@@ -290,7 +288,6 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.pnlGeneral);
             this.Controls.Add(this.btnGeneralOptions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmOptions";
             this.Text = "Options";
@@ -301,8 +298,8 @@ namespace Intersect.Editor.Forms
             this.pnlUpdate.ResumeLayout(false);
             this.grpAssetPackingOptions.ResumeLayout(false);
             this.grpAssetPackingOptions.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSoundBatch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMusicBatch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSoundBatch)).EndInit();
             this.ResumeLayout(false);
 
         }

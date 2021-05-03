@@ -151,7 +151,7 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.newMapToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.btnNewMap_Click);
             // 
@@ -159,7 +159,7 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.renameToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.btnRename_Click);
             // 
@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.deleteToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -182,14 +182,14 @@ namespace Intersect.Editor.Forms.DockingElements
             this.renameToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 136);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(135, 114);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // newFolderToolStripMenuItem
             // 
             this.newFolderToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.newFolderToolStripMenuItem.Text = "New Folder";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.btnNewFolder_Click);
             // 
@@ -197,7 +197,7 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.copyIdToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.copyIdToolStripMenuItem.Name = "copyIdToolStripMenuItem";
-            this.copyIdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyIdToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.copyIdToolStripMenuItem.Text = "Copy Id";
             this.copyIdToolStripMenuItem.Click += new System.EventHandler(this.copyIdToolStripMenuItem_Click);
             // 
@@ -221,7 +221,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.Controls.Add(this.mapTreeList);
             this.Controls.Add(this.toolStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMapList";
             this.Text = "Map List";
             this.Load += new System.EventHandler(this.frmMapList_Load);

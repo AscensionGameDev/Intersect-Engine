@@ -14,6 +14,8 @@ namespace Intersect.Editor.Forms
             InitializeComponent();
             InitForm();
             InitLocalization();
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void InitForm()

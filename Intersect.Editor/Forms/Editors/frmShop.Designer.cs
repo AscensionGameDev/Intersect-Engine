@@ -30,13 +30,11 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmShop));
             this.grpShops = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstShops = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstShops = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -138,23 +136,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lstShops.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstShops.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstShops.HideSelection = false;
-            this.lstShops.ImageIndex = 0;
-            this.lstShops.ImageList = this.imageList;
             this.lstShops.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstShops.Location = new System.Drawing.Point(6, 46);
             this.lstShops.Name = "lstShops";
-            this.lstShops.SelectedImageIndex = 0;
             this.lstShops.Size = new System.Drawing.Size(191, 415);
             this.lstShops.TabIndex = 35;
             this.lstShops.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstShops_AfterSelect);
             this.lstShops.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstShops_NodeMouseClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
@@ -200,7 +188,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -222,7 +209,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbDefaultCurrency.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbDefaultCurrency.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbDefaultCurrency.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbDefaultCurrency.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDefaultCurrency.ButtonIcon")));
             this.cmbDefaultCurrency.DrawDropdownHoverOutline = false;
             this.cmbDefaultCurrency.DrawFocusRectangle = false;
             this.cmbDefaultCurrency.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -313,7 +299,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSellFor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSellFor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbSellFor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSellFor.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSellFor.ButtonIcon")));
             this.cmbSellFor.DrawDropdownHoverOutline = false;
             this.cmbSellFor.DrawFocusRectangle = false;
             this.cmbSellFor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -372,7 +357,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAddSoldItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAddSoldItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAddSoldItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAddSoldItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAddSoldItem.ButtonIcon")));
             this.cmbAddSoldItem.DrawDropdownHoverOutline = false;
             this.cmbAddSoldItem.DrawFocusRectangle = false;
             this.cmbAddSoldItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -455,7 +439,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbBuyFor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbBuyFor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbBuyFor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbBuyFor.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbBuyFor.ButtonIcon")));
             this.cmbBuyFor.DrawDropdownHoverOutline = false;
             this.cmbBuyFor.DrawFocusRectangle = false;
             this.cmbBuyFor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -514,7 +497,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAddBoughtItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbAddBoughtItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbAddBoughtItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAddBoughtItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbAddBoughtItem.ButtonIcon")));
             this.cmbAddBoughtItem.DrawDropdownHoverOutline = false;
             this.cmbAddBoughtItem.DrawFocusRectangle = false;
             this.cmbAddBoughtItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -738,7 +720,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.grpShops);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmShop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -806,8 +787,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudBuyAmount;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public System.Windows.Forms.TreeView lstShops;
-        private System.Windows.Forms.ImageList imageList;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstShops;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;

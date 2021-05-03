@@ -63,7 +63,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbItem.ButtonIcon")));
             this.cmbItem.DrawDropdownHoverOutline = false;
             this.cmbItem.DrawFocusRectangle = false;
             this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;

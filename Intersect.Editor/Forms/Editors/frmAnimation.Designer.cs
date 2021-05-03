@@ -35,8 +35,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstAnimations = new System.Windows.Forms.TreeView();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.lstAnimations = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.chkCompleteSoundPlayback = new DarkUI.Controls.DarkCheckBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
@@ -112,7 +111,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.tmrRender = new System.Windows.Forms.Timer(this.components);
-            this.sqliteCommand1 = new Mono.Data.Sqlite.SqliteCommand();
             this.grpAnimations.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.grpLower.SuspendLayout();
@@ -184,23 +182,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lstAnimations.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstAnimations.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstAnimations.HideSelection = false;
-            this.lstAnimations.ImageIndex = 0;
-            this.lstAnimations.ImageList = this.imageList;
             this.lstAnimations.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstAnimations.Location = new System.Drawing.Point(6, 46);
             this.lstAnimations.Name = "lstAnimations";
-            this.lstAnimations.SelectedImageIndex = 0;
             this.lstAnimations.Size = new System.Drawing.Size(191, 485);
             this.lstAnimations.TabIndex = 2;
             this.lstAnimations.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstAnimations_AfterSelect);
             this.lstAnimations.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstAnimations_NodeMouseClick);
-            // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
-            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
@@ -259,7 +247,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
             this.cmbFolder.DrawDropdownHoverOutline = false;
             this.cmbFolder.DrawFocusRectangle = false;
             this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -318,7 +305,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSound.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSound.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbSound.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSound.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSound.ButtonIcon")));
             this.cmbSound.DrawDropdownHoverOutline = false;
             this.cmbSound.DrawFocusRectangle = false;
             this.cmbSound.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -654,7 +640,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbLowerGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbLowerGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbLowerGraphic.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbLowerGraphic.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLowerGraphic.ButtonIcon")));
             this.cmbLowerGraphic.DrawDropdownHoverOutline = false;
             this.cmbLowerGraphic.DrawFocusRectangle = false;
             this.cmbLowerGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -987,7 +972,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbUpperGraphic.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbUpperGraphic.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.cmbUpperGraphic.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbUpperGraphic.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbUpperGraphic.ButtonIcon")));
             this.cmbUpperGraphic.DrawDropdownHoverOutline = false;
             this.cmbUpperGraphic.DrawFocusRectangle = false;
             this.cmbUpperGraphic.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
@@ -1191,10 +1175,6 @@ namespace Intersect.Editor.Forms.Editors
             this.tmrRender.Interval = 16;
             this.tmrRender.Tick += new System.EventHandler(this.tmrRender_Tick);
             // 
-            // sqliteCommand1
-            // 
-            this.sqliteCommand1.CommandText = null;
-            // 
             // FrmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1209,7 +1189,6 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmAnimation";
@@ -1326,11 +1305,9 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private DarkButton btnAddFolder;
-        public System.Windows.Forms.TreeView lstAnimations;
-        private System.Windows.Forms.ImageList imageList;
+        public Intersect.Editor.Forms.Controls.GameObjectList lstAnimations;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnChronological;
-        private Mono.Data.Sqlite.SqliteCommand sqliteCommand1;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
         private DarkCheckBox chkCompleteSoundPlayback;

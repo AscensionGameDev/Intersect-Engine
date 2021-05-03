@@ -23,6 +23,8 @@ namespace Intersect.Editor.Forms.DockingElements
             //Enable Editting of the list
             mapTreeList.EnableEditing(contextMenuStrip1);
             mapTreeList.SetDoubleClick(NodeDoubleClick);
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)

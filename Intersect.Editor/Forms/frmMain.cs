@@ -98,6 +98,8 @@ namespace Intersect.Editor.Forms
 
             Globals.MapGridWindowNew = new FrmMapGrid();
             Globals.MapGridWindowNew.Show(dockLeft, DockState.Document);
+
+            this.Icon = Properties.Resources.Icon;
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]

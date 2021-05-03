@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapEditor));
             this.pnlMapContainer = new System.Windows.Forms.Panel();
             this.picMap = new System.Windows.Forms.PictureBox();
             this.pnlMapContainer.SuspendLayout();
@@ -68,7 +67,7 @@
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
             this.picMap.Resize += new System.EventHandler(this.picMap_Resize);
             // 
-            // frmMapEditor
+            // FrmMapEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -79,7 +78,6 @@
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmMapEditor";
             this.Text = "Map Editor";

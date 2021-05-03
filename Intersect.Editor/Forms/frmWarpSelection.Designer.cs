@@ -188,7 +188,6 @@ namespace Intersect.Editor.Forms
             this.ClientSize = new System.Drawing.Size(787, 609);
             this.Controls.Add(this.grpEverything);
             this.DoubleBuffered = true;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmWarpSelection";
             this.Text = "Warp Tile Selection";
             this.Load += new System.EventHandler(this.frmWarpSelection_Load);
