@@ -1038,7 +1038,7 @@ namespace Intersect.Server.Entities
                             }
                         }
 
-
+                        CheckForResetLocation();
 
                         //Move randomly
                         if (targetMap != Guid.Empty)
@@ -1107,8 +1107,6 @@ namespace Intersect.Server.Entities
                             MapInstance.Get(MapId).AddEntity(this);
                         }
                     }
-
-                    CheckForResetLocation();
                 }
             }
             finally
