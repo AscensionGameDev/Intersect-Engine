@@ -22,7 +22,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities
 {
 
-    public class Npc : Entity
+    public partial class Npc : Entity
     {
 
         //Spell casting

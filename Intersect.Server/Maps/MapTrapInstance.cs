@@ -9,7 +9,7 @@ using Intersect.Server.Maps;
 namespace Intersect.Server.Classes.Maps
 {
 
-    public class MapTrapInstance
+    public partial class MapTrapInstance
     {
         public Guid Id { get; } = Guid.NewGuid();
 

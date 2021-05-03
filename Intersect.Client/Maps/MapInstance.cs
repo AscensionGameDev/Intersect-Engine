@@ -26,7 +26,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Maps
 {
 
-    public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
+    public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
 
         //Client Only Values

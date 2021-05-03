@@ -10,7 +10,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Maps
 {
 
-    public class WeatherParticle
+    public partial class WeatherParticle
     {
 
         private List<WeatherParticle> _RemoveParticle;

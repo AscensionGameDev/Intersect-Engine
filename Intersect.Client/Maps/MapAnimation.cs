@@ -5,7 +5,7 @@ using System;
 namespace Intersect.Client.Maps
 {
 
-    public class MapAnimation : Animation
+    public partial class MapAnimation : Animation
     {
         public Guid Id { get; } = Guid.NewGuid();
 

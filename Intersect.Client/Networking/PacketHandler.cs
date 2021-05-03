@@ -28,7 +28,7 @@ using System.Linq;
 namespace Intersect.Client.Networking
 {
 
-    internal sealed class PacketHandler
+    internal sealed partial class PacketHandler
     {
         private sealed class VirtualPacketSender : IPacketSender
         {

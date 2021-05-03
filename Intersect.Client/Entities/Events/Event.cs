@@ -14,7 +14,7 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Entities.Events
 {
 
-    public class Event : Entity
+    public partial class Event : Entity
     {
 
         public string Desc = "";

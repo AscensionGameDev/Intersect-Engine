@@ -34,7 +34,7 @@ using System.Text;
 
 namespace Intersect.Server.Networking
 {
-    internal sealed class PacketHandler
+    internal sealed partial class PacketHandler
     {
         public IServerContext Context { get; }
 

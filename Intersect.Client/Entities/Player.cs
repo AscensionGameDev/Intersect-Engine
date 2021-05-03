@@ -25,7 +25,7 @@ using Intersect.Client.Items;
 namespace Intersect.Client.Entities
 {
 
-    public class Player : Entity
+    public partial class Player : Entity
     {
 
         public delegate void InventoryUpdated();

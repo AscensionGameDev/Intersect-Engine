@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Client.Localization
 {
 
-    public static class Strings
+    public static partial class Strings
     {
 
         private static char[] mQuantityTrimChars = new char[] {'.', '0'};

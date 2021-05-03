@@ -12,7 +12,7 @@ using MapListUpdates = Intersect.Enums.MapListUpdates;
 namespace Intersect.Editor.Networking
 {
 
-    public static class PacketSender
+    public static partial class PacketSender
     {
 
         public static void SendPing()

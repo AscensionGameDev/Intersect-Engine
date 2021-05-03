@@ -24,7 +24,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Entities
 {
 
-    public class Entity
+    public partial class Entity
     {
 
         public enum LabelType

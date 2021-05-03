@@ -13,7 +13,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities.Events
 {
 
-    public class EventPageInstance : Entity
+    public partial class EventPageInstance : Entity
     {
 
         public EventBase BaseEvent;

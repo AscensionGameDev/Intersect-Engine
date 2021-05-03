@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Maps
 {
 
-    public class MapItem : Item
+    public partial class MapItem : Item
     {
 
         [JsonIgnore] public int AttributeSpawnX = -1;

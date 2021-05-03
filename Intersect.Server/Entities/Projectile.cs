@@ -14,7 +14,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Entities
 {
 
-    public class Projectile : Entity
+    public partial class Projectile : Entity
     {
 
         public ProjectileBase Base;

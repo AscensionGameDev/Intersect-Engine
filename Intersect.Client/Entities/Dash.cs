@@ -6,7 +6,7 @@ using Intersect.Client.Maps;
 namespace Intersect.Client.Entities
 {
 
-    public class Dash
+    public partial class Dash
     {
 
         private int mChangeDirection = -1;

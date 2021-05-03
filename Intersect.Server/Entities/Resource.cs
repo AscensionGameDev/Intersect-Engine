@@ -14,7 +14,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Entities
 {
 
-    public class Resource : Entity
+    public partial class Resource : Entity
     {
 
         // Resource Number

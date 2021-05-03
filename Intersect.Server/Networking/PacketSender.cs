@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Networking
 {
 
-    public static class PacketSender
+    public static partial class PacketSender
     {
 
         //Cached GameDataPacket that gets sent to clients

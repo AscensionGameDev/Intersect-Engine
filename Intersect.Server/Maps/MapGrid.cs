@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Server.Maps
 {
 
-    public class MapGrid
+    public partial class MapGrid
     {
 
         private readonly int mMyIndex;

@@ -18,7 +18,7 @@ using Intersect.Network.Packets.Server;
 
 namespace Intersect.Editor.Networking
 {
-    internal sealed class PacketHandler
+    internal sealed partial class PacketHandler
     {
         private sealed class VirtualPacketSender : IPacketSender
         {

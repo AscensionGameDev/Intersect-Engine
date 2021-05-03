@@ -5,7 +5,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Entities.Combat
 {
 
-    public class Dash
+    public partial class Dash
     {
 
         public byte Direction;

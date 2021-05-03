@@ -3,7 +3,7 @@
 namespace Intersect.Server.Maps
 {
 
-    public class MapItemSpawn
+    public partial class MapItemSpawn
     {
         public Guid Id { get; } = Guid.NewGuid();
 
