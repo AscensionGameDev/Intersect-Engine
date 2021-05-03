@@ -131,12 +131,14 @@ namespace Intersect.Client.Interface.Game
             mEntitiesDrawnLabel.Text = Strings.Debug.entitiesdrawn.ToString(+Graphics.EntitiesDrawn);
             mLightsDrawnLabel.Text = Strings.Debug.lightsdrawn.ToString(Graphics.LightsDrawn);
             mTimeLabel.Text = Strings.Debug.time.ToString(Time.GetTime());
-            mInterfaceObjectsLabel.Text = Strings.Debug.interfaceobjects.ToString(Interface.GameUi.GameCanvas.Children.ToArray().SelectManyRecursive(x => x.Children).ToArray().Length);
         }
 
         public void Show()
         {
             mDebugWindow.IsHidden = false;
+
+            //This linq query takes too long and hurts fps, so let's only update this label when opening the debug menu
+            mInterfaceObjectsLabel.Text = Strings.Debug.interfaceobjects.ToString(Interface.GameUi.GameCanvas.Children.ToArray().SelectManyRecursive(x => x.Children).ToArray().Length);
         }
 
         public bool IsVisible()

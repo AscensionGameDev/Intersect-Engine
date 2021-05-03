@@ -5,7 +5,7 @@ using Intersect.IO.Files;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+using System.Collections.Generic;
 using System.IO;
 
 namespace Intersect.Client.MonoGame.Graphics
@@ -18,6 +18,10 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private bool mValuesChanged = false;
 
+        private Dictionary<string, Color> Colors = new Dictionary<string, Color>();
+
+        private Dictionary<string, float> Floats = new Dictionary<string, float>();
+
         public MonoShader(string shaderName, ContentManager contentManager) : base(shaderName)
         {
             using (var resourceStream = typeof(MonoShader).Assembly.GetManifestResourceStream(shaderName))
@@ -29,8 +33,19 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void SetFloat(string key, float val)
         {
-            mShader.Parameters[key].SetValue(val);
-            mValuesChanged = true;
+            if (!Floats.ContainsKey(key))
+            {
+                Floats.Add(key, val);
+                mValuesChanged = true;
+            }
+            else
+            {
+                if (Floats[key] != val)
+                {
+                    Floats[key] = val;
+                    mValuesChanged = true;
+                }
+            }
         }
 
         public override void SetInt(string key, int val)
@@ -40,9 +55,19 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void SetColor(string key, Color val)
         {
-            var vec = new Vector4(val.R / 255f, val.G / 255f, val.B / 255f, val.A / 255f);
-            mShader.Parameters[key].SetValue(vec);
-            mValuesChanged = true;
+            if (!Colors.ContainsKey(key))
+            {
+                Colors.Add(key, val);
+                mValuesChanged = true;
+            }
+            else
+            {
+                if (Colors[key].A != val.A || Colors[key].R != val.R || Colors[key].G != val.G || Colors[key].B != val.B)
+                {
+                    Colors[key] = val;
+                    mValuesChanged = true;
+                }
+            }
         }
 
         public override void SetVector2(string key, Pointf val)
@@ -58,6 +83,18 @@ namespace Intersect.Client.MonoGame.Graphics
         public override void ResetChanged()
         {
             mValuesChanged = false;
+
+            //Set Pending
+            foreach (var clr in Colors)
+            {
+                var vec = new Vector4(clr.Value.R / 255f, clr.Value.G / 255f, clr.Value.B / 255f, clr.Value.A / 255f);
+                mShader.Parameters[clr.Key].SetValue(vec);
+            }
+
+            foreach (var f in Floats)
+            {
+                mShader.Parameters[f.Key].SetValue(f.Value);
+            }
         }
 
         public override object GetShader()
