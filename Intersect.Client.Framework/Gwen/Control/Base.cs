@@ -827,8 +827,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             try
             {
+                bool cacheUsed = false;
                 var obj = JsonConvert.DeserializeObject<JObject>(
-                    GameContentManager.Current?.GetUIJson(stage, Name, resolution)
+                    GameContentManager.Current?.GetUIJson(stage, Name, resolution, out cacheUsed)
                 );
 
                 if (obj != null)
@@ -836,6 +837,12 @@ namespace Intersect.Client.Framework.Gwen.Control
                     LoadJson(obj);
                     ProcessAlignments();
                 }
+
+                if (obj == null || cacheUsed)
+                {
+                    saveOutput = false;
+                }
+
             }
             catch (Exception exception)
             {
@@ -843,7 +850,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 throw new Exception("Error loading json ui for " + CanonicalName, exception);
             }
 
-            GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
+            if (saveOutput)
+            {
+                GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
+            }
         }
 
         public virtual void LoadJson(JToken obj)

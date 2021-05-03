@@ -85,6 +85,8 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, GameAudioSource> mSoundDict = new Dictionary<string, GameAudioSource>();
 
+        protected Dictionary<KeyValuePair<UI, string>, string> mUiDict = new Dictionary<KeyValuePair<UI, string>, string>();
+
         /// <summary>
         /// Contains all indexed files and their caches from sound pack files.
         /// </summary>
@@ -364,8 +366,17 @@ namespace Intersect.Client.Framework.File_Management
             return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound : null;
         }
 
-        public virtual string GetUIJson(UI stage, string name, string resolution)
+        public virtual string GetUIJson(UI stage, string name, string resolution, out bool loadedCachedJson)
         {
+            var key = new KeyValuePair<UI, string>(stage, $"{name}.{resolution}.json");
+            if (mUiDict.TryGetValue(key, out string uiJson))
+            {
+                loadedCachedJson = true;
+                return uiJson;
+            }
+
+            loadedCachedJson = false;
+
             var layouts = Path.Combine("resources", "gui", "layouts");
             if (!Directory.Exists(layouts))
             {
@@ -396,7 +407,9 @@ namespace Intersect.Client.Framework.File_Management
                 {
                     try
                     {
-                        return File.ReadAllText(path);
+                        var json = File.ReadAllText(path);
+                        mUiDict.Add(key, json);
+                        return json;
                     }
                     catch (Exception ex)
                     {

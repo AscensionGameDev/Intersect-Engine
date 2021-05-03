@@ -305,6 +305,8 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             mChatboxInput.Text = msg;
             mChatboxInput.Focus();
+            mChatboxInput.CursorEnd = mChatboxInput.Text.Length;
+            mChatboxInput.CursorPos = mChatboxInput.Text.Length;
         }
 
         private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
