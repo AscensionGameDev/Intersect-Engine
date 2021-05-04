@@ -30,13 +30,14 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCraftingTables));
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpTables = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstTables = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
@@ -91,7 +92,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTables.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpTables.Controls.Add(this.btnClearSearch);
             this.grpTables.Controls.Add(this.txtSearch);
-            this.grpTables.Controls.Add(this.lstTables);
+            this.grpTables.Controls.Add(this.lstGameObjects);
             this.grpTables.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTables.Location = new System.Drawing.Point(12, 36);
             this.grpTables.Name = "grpTables";
@@ -125,20 +126,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstTables
+            // lstGameObjects
             // 
-            this.lstTables.AllowDrop = true;
-            this.lstTables.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstTables.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstTables.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstTables.HideSelection = false;
-            this.lstTables.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstTables.Location = new System.Drawing.Point(6, 42);
-            this.lstTables.Name = "lstTables";
-            this.lstTables.Size = new System.Drawing.Size(191, 351);
-            this.lstTables.TabIndex = 23;
-            this.lstTables.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstTables_AfterSelect);
-            this.lstTables.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstTables_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 42);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(191, 351);
+            this.lstGameObjects.TabIndex = 23;
             // 
             // pnlContainer
             // 
@@ -430,11 +431,11 @@ namespace Intersect.Editor.Forms.Editors
         private DarkTextBox txtName;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstTables;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private Controls.GameObjectList lstGameObjects;
     }
 }

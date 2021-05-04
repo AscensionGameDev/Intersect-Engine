@@ -30,11 +30,12 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProjectile));
             this.grpProjectiles = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstProjectiles = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpSpawns = new DarkUI.Controls.DarkGroupBox();
             this.picSpawns = new System.Windows.Forms.PictureBox();
             this.grpProperties = new DarkUI.Controls.DarkGroupBox();
@@ -113,7 +114,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpProjectiles.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpProjectiles.Controls.Add(this.btnClearSearch);
             this.grpProjectiles.Controls.Add(this.txtSearch);
-            this.grpProjectiles.Controls.Add(this.lstProjectiles);
+            this.grpProjectiles.Controls.Add(this.lstGameObjects);
             this.grpProjectiles.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpProjectiles.Location = new System.Drawing.Point(12, 36);
             this.grpProjectiles.Name = "grpProjectiles";
@@ -147,20 +148,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstProjectiles
+            // lstGameObjects
             // 
-            this.lstProjectiles.AllowDrop = true;
-            this.lstProjectiles.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstProjectiles.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstProjectiles.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstProjectiles.HideSelection = false;
-            this.lstProjectiles.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstProjectiles.Location = new System.Drawing.Point(6, 44);
-            this.lstProjectiles.Name = "lstProjectiles";
-            this.lstProjectiles.Size = new System.Drawing.Size(191, 371);
-            this.lstProjectiles.TabIndex = 32;
-            this.lstProjectiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstProjectiles_AfterSelect);
-            this.lstProjectiles.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstProjectiles_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 44);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(191, 371);
+            this.lstGameObjects.TabIndex = 32;
             // 
             // grpSpawns
             // 
@@ -976,12 +977,12 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudConsume;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstProjectiles;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-    private DarkCheckBox chkPierce;
+        private DarkCheckBox chkPierce;
+        private Controls.GameObjectList lstGameObjects;
   }
 }
