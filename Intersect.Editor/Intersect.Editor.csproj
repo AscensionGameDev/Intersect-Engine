@@ -100,6 +100,12 @@
     <Compile Include="Forms\Controls\GameObjectList.Designer.cs">
       <DependentUpon>GameObjectList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.Designer.cs">
+      <DependentUpon>EventCommand_SetGuildBankSlots.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -112,6 +118,12 @@
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.Designer.cs">
       <DependentUpon>EventCommand_ChangeName.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.Designer.cs">
+      <DependentUpon>EventCommand_CreateGuild.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmUpdate.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +131,7 @@
       <DependentUpon>frmUpdate.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Helpers\GridHelper.cs" />
+    <Compile Include="Localization\Strings.Guilds.cs" />
     <Compile Include="Maps\MapGridItem.cs" />
     <Compile Include="Maps\MapSaveState.cs" />
     <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">

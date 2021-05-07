@@ -110,6 +110,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public bool IsHidden;
 
+        public Button GuildLabel;
+
         //Init
         public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
         {
@@ -188,6 +190,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             FriendLabel.SetToolTipText(Strings.EntityBox.friendtip.ToString(MyEntity?.Name));
             FriendLabel.Clicked += friendRequest_Clicked;
             FriendLabel.IsHidden = true;
+
+            GuildLabel = new Button(EntityInfoPanel, "GuildButton");
+            GuildLabel.SetText(Strings.Guilds.Guild);
+            GuildLabel.SetToolTipText(Strings.Guilds.guildtip.ToString(MyEntity?.Name));
+            GuildLabel.Clicked += guildRequest_Clicked;
+            GuildLabel.IsHidden = true;
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
@@ -268,6 +276,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpBar.Show();
             HpLbl.Show();
             HpTitle.Show();
+
+            ShowGuildButton();
         }
 
         public void SetupEntityElements()
@@ -293,6 +303,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         TradeLabel.Hide();
                         PartyLabel.Hide();
                         FriendLabel.Hide();
+                        GuildLabel.Hide();
 
                         if (!PlayerBox)
                         {
@@ -323,6 +334,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     ExpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
+                    GuildLabel.Hide();
                     FriendLabel.Hide();
                     EntityMap.Hide();
 
@@ -344,6 +356,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     TradeLabel.Hide();
                     PartyLabel.Hide();
                     FriendLabel.Hide();
+                    GuildLabel.Hide();
                     EntityMap.Hide();
 
                     break;
@@ -425,12 +438,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     TradeLabel.Hide();
                     PartyLabel.Hide();
                     FriendLabel.Hide();
+                    GuildLabel.Hide();
                 }
                 else if (TradeLabel.IsHidden || PartyLabel.IsHidden || FriendLabel.IsHidden)
                 {
                     TradeLabel.Show();
                     PartyLabel.Show();
                     FriendLabel.Show();
+                    ShowGuildButton();
                 }
             }
 
@@ -984,6 +999,36 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 else
                 {
                     PacketSender.SendChatMsg(Strings.Friends.infight.ToString(), 4);
+                }
+            }
+        }
+
+
+        void guildRequest_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
+            {
+                if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
+                {
+                    if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                    {
+                        PacketSender.SendInviteGuild(MyEntity.Name);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(Strings.Friends.infight.ToString(), 4);
+                    }
+                }
+            }
+        }
+
+        void ShowGuildButton()
+        {
+            if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
+            {
+                if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
+                {
+                    GuildLabel.Show();
                 }
             }
         }

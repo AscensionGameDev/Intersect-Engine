@@ -63,6 +63,10 @@ namespace Intersect.Server.Database.PlayerData
 
         public DbSet<BagSlot> Bag_Items { get; set; }
 
+        public DbSet<Guild> Guilds { get; set; }
+
+        public DbSet<GuildBankSlot> Guild_Bank { get; set; }
+
         internal async ValueTask Commit(
             bool commit = false,
             CancellationToken cancellationToken = default(CancellationToken)
@@ -118,6 +122,9 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<InventorySlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
+
+            modelBuilder.Entity<Guild>().HasMany(b => b.Bank).WithOne(p => p.Guild);
+            modelBuilder.Entity<GuildBankSlot>().HasOne(b => b.Bag);
         }
 
         public void Seed()

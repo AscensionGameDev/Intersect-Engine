@@ -774,11 +774,16 @@ namespace Intersect.Server.Networking
 
                         break;
 
-                    case 3: //admin
+                    case 3:
+                        cmd = Strings.Guilds.guildcmd;
+                        break;
+
+                    case 4: //admin
                         cmd = Strings.Chat.admincmd;
 
                         break;
-                    case 4: //private
+
+                    case 5: //private
                         PacketSender.SendChatMsg(player, msg, ChatMessageType.Local);
 
                         return;
@@ -870,6 +875,24 @@ namespace Intersect.Server.Networking
                     );
                     ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, null);
                 }
+            }
+            else if (cmd == Strings.Guilds.guildcmd)
+            {
+                if (player.Guild == null)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Guilds.NotInGuild, ChatMessageType.Guild, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                if (msg.Trim().Length == 0)
+                {
+                    return;
+                }
+
+                //Normalize Rank
+                var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(player.GuildRank, Options.Instance.Guild.Ranks.Length - 1))].Title;
+                PacketSender.SendGuildMsg(player, Strings.Guilds.guildchat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
+
             }
             else if (cmd == Strings.Chat.announcementcmd)
             {
@@ -1875,7 +1898,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.TryDepositItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity);
         }
 
         //WithdrawItemPacket
@@ -1887,7 +1910,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.WithdrawItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity);
         }
 
         //MoveBankItemPacket
@@ -1899,7 +1922,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.SwapBankItems(packet.Slot1, packet.Slot2);
+            player?.BankInterface?.SwapBankItems(packet.Slot1, packet.Slot2);
         }
 
         //PartyInvitePacket
@@ -2420,6 +2443,13 @@ namespace Intersect.Server.Networking
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
+                character.LoadGuild();
+                if (character.Guild != null && character.GuildRank == 0)
+                {
+                    PacketSender.SendError(client, Strings.Guilds.deleteguildleader, Strings.Account.deleted);
+                    return;
+                }
+
                 foreach (var chr in client.Characters.ToArray())
                 {
                     if (chr.Id == packet.CharacterId)

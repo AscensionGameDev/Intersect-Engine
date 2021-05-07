@@ -158,7 +158,6 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, ConfigPacket packet)
         {
             Options.LoadFromServer(packet.Config);
-            Globals.Bank = new Item[Options.MaxBankSlots];
             Graphics.InitInGame();
         }
 
@@ -1523,6 +1522,13 @@ namespace Intersect.Client.Networking
         {
             if (!packet.Close)
             {
+                Globals.GuildBank = packet.Guild;
+                Globals.Bank = new Item[packet.Slots];
+                foreach (var itm in packet.Items)
+                {
+                    HandlePacket(itm);
+                }
+                Globals.BankSlots = packet.Slots;
                 Interface.Interface.GameUi.NotifyOpenBank();
             }
             else

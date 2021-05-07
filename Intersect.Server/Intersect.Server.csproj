@@ -465,8 +465,10 @@
     <Compile Include="Database\PlayerData\IPlayerContext.cs" />
     <Compile Include="Database\PlayerData\Players\Bag.cs" />
     <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\GuildBankSlot.cs" />
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
     <Compile Include="Database\PlayerData\Players\Friend.cs" />
+    <Compile Include="Database\PlayerData\Players\Guild.cs" />
     <Compile Include="Database\PlayerData\Players\HotbarSlot.cs" />
     <Compile Include="Database\PlayerData\Players\InventorySlot.cs" />
     <Compile Include="Database\Item.cs" />
@@ -475,9 +477,11 @@
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Entities\BankInterface.cs" />
     <Compile Include="Entities\Combat\Buff.cs" />
     <Compile Include="Entities\Combat\Dash.cs" />
     <Compile Include="Entities\Combat\DoT.cs" />
+    <Compile Include="Entities\Events\CommandProcessing.Guilds.cs" />
     <Compile Include="Entities\Events\ConditionHandlerRegistry.cs" />
     <Compile Include="Entities\Events\Conditions.cs" />
     <Compile Include="Entities\Events\VariableCheckHandlerRegistry.cs" />
@@ -490,6 +494,7 @@
     <Compile Include="Database\PlayerData\User.cs" />
     <Compile Include="Database\PlayerData\PlayerContext.cs" />
     <Compile Include="Entities\Events\Event.cs" />
+    <Compile Include="Entities\Player.Guilds.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileSpawn.cs" />
     <Compile Include="Entities\Resource.cs" />
@@ -504,6 +509,7 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="Localization\CommandsNamespace.cs" />
     <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Localization\Strings.Guilds.cs" />
     <Compile Include="Maps\MapActionMessages.cs" />
     <Compile Include="Maps\MapAnimations.cs" />
     <Compile Include="Maps\MapEntityMovements.cs" />
@@ -530,6 +536,10 @@
     <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
     <Compile Include="Metrics\Histogram.cs" />
     <Compile Include="Metrics\MetricsRoot.cs" />
+    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.cs" />
+    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.designer.cs">
+      <DependentUpon>20210503165540_AddingGuildsWithGuildBanks.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
       <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
@@ -571,6 +581,7 @@
     <Compile Include="Networking\Helpers\NetDebug.cs" />
     <Compile Include="Networking\PacketHandler.cs" />
     <Compile Include="General\Globals.cs" />
+    <Compile Include="Networking\PacketHandler.Guilds.cs" />
     <Compile Include="Networking\PacketSender.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\Entity.cs" />
@@ -578,6 +589,7 @@
     <Compile Include="Maps\MapGrid.cs" />
     <Compile Include="Networking\Helpers\PortChecker.cs" />
     <Compile Include="Networking\Helpers\UPnP.cs" />
+    <Compile Include="Networking\PacketSender.Guilds.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\ResetPassword.cs" />
     <Compile Include="Networking\Lidgren\ServerNetwork.cs" />

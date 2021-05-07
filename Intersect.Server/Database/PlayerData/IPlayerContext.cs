@@ -35,5 +35,9 @@ namespace Intersect.Server.Database.PlayerData
         DbSet<Bag> Bags { get; set; }
 
         DbSet<BagSlot> Bag_Items { get; set; }
+
+        DbSet<Guild> Guilds { get; set; }
+
+        DbSet<GuildBankSlot> Guild_Bank { get; set; }
     }
 }

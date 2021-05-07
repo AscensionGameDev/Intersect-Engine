@@ -131,6 +131,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoInvPlayerVariable = new DarkUI.Controls.DarkRadioButton();
             this.lblItemQuantity = new System.Windows.Forms.Label();
             this.chkHasElse = new DarkUI.Controls.DarkCheckBox();
+            this.grpInGuild = new DarkUI.Controls.DarkGroupBox();
+            this.lblRank = new System.Windows.Forms.Label();
+            this.cmbRank = new DarkUI.Controls.DarkComboBox();
             this.grpConditional.SuspendLayout();
             this.grpVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
@@ -156,12 +159,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
             this.grpAmountType.SuspendLayout();
             this.grpVariableAmount.SuspendLayout();
+            this.grpInGuild.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpInGuild);
             this.grpConditional.Controls.Add(this.chkHasElse);
             this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.btnSave);
@@ -237,7 +242,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "No NPCs on the map...",
             "Gender is...",
             "Item Equipped Is...",
-            "Has X free Inventory slots..."});
+            "Has X free Inventory slots...",
+            "In Guild With At Least Rank..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
@@ -1611,6 +1617,49 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.chkHasElse.Size = new System.Drawing.Size(72, 17);
             this.chkHasElse.TabIndex = 56;
             this.chkHasElse.Text = "Has Else";
+            // grpInGuild
+            // 
+            this.grpInGuild.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpInGuild.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpInGuild.Controls.Add(this.lblRank);
+            this.grpInGuild.Controls.Add(this.cmbRank);
+            this.grpInGuild.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpInGuild.Location = new System.Drawing.Point(9, 40);
+            this.grpInGuild.Name = "grpInGuild";
+            this.grpInGuild.Size = new System.Drawing.Size(262, 71);
+            this.grpInGuild.TabIndex = 33;
+            this.grpInGuild.TabStop = false;
+            this.grpInGuild.Text = "In Guild With At Least Rank:";
+            this.grpInGuild.Visible = false;
+            // 
+            // lblRank
+            // 
+            this.lblRank.AutoSize = true;
+            this.lblRank.Location = new System.Drawing.Point(6, 21);
+            this.lblRank.Name = "lblRank";
+            this.lblRank.Size = new System.Drawing.Size(36, 13);
+            this.lblRank.TabIndex = 5;
+            this.lblRank.Text = "Rank:";
+            // 
+            // cmbRank
+            // 
+            this.cmbRank.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbRank.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbRank.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbRank.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbRank.DrawDropdownHoverOutline = false;
+            this.cmbRank.DrawFocusRectangle = false;
+            this.cmbRank.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbRank.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbRank.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbRank.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbRank.FormattingEnabled = true;
+            this.cmbRank.Location = new System.Drawing.Point(92, 18);
+            this.cmbRank.Name = "cmbRank";
+            this.cmbRank.Size = new System.Drawing.Size(162, 21);
+            this.cmbRank.TabIndex = 3;
+            this.cmbRank.Text = null;
+            this.cmbRank.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // EventCommandConditionalBranch
             // 
@@ -1666,6 +1715,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpAmountType.PerformLayout();
             this.grpVariableAmount.ResumeLayout(false);
             this.grpVariableAmount.PerformLayout();
+            this.grpInGuild.ResumeLayout(false);
+            this.grpInGuild.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1771,5 +1822,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkRadioButton rdoInvGlobalVariable;
         private DarkRadioButton rdoInvPlayerVariable;
         private DarkCheckBox chkHasElse;
+        private DarkGroupBox grpInGuild;
+        private System.Windows.Forms.Label lblRank;
+        private DarkComboBox cmbRank;
     }
 }

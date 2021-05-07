@@ -1868,6 +1868,11 @@ Tick timer saved in server config.json.";
                 {"changeplayerlabel", @"Change Player Label"},
                 {"changeplayercolor", @"Change Player Color" },
                 {"changename", @"Change Player Name" },
+                {"guilds", @"Guilds"},
+                {"createguild", @"Create Guild"},
+                {"disbandguild", "Disband Guild" },
+                {"openguildbank", @"Open Guild Bank"},
+                {"setguildbankslots", @"Set Guild Bank Slots Count"},
             };
 
         }
@@ -1947,7 +1952,8 @@ Tick timer saved in server config.json.";
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
-                {18, @"Has X free Inventory slots..." }
+                {18, @"Has X free Inventory slots..." },
+                {19, @"In Guild With At Least Rank..." }
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -2210,6 +2216,9 @@ Tick timer saved in server config.json.";
                 {9, @"Equipment Changed"},
                 {10, @"Player Variable Changed"},
                 {11, @"Server Variable Changed"},
+                {12, @"Guild Member Joined"},
+                {13, @"Guild Member Left"},
+                {14, @"Guild Member Kicked"},
             };
 
             public static LocalizedString conditions = @"Conditions";

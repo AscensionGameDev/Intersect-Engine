@@ -470,6 +470,17 @@ namespace Intersect.Server.Entities.Events
             return false;
         }
 
+        public static bool MeetsCondition(
+            InGuildWithRank condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase
+        )
+        {
+            var value = player.Guild != null && player.GuildRank <= condition.Rank;
+            return condition.Negated ? !value : value;
+        }
+
         //Variable Comparison Processing
 
         public static bool CheckVariableComparison(

@@ -36,7 +36,7 @@ namespace Intersect.Client.Interface.Game.Bank
         //Init
         public BankWindow(Canvas gameCanvas)
         {
-            mBankWindow = new WindowControl(gameCanvas, Strings.Bank.title, false, "BankWindow");
+            mBankWindow = new WindowControl(gameCanvas, Globals.GuildBank ? Strings.Guilds.Bank.ToString(Globals.Me?.Guild) : Strings.Bank.title.ToString(), false, "BankWindow");
             mBankWindow.DisableResizing();
             Interface.InputBlockingElements.Add(mBankWindow);
 
@@ -71,7 +71,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
             X = mBankWindow.X;
             Y = mBankWindow.Y;
-            for (var i = 0; i < Options.MaxBankSlots; i++)
+            for (var i = 0; i < Globals.BankSlots; i++)
             {
                 if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
                 {
@@ -108,7 +108,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Options.MaxBankSlots; i++)
+            for (var i = 0; i < Globals.BankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "BankItem");

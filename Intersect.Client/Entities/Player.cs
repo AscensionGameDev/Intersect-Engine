@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Utilities;
 using Intersect.Client.Items;
+using Intersect.Client.Interface.Game.Chat;
 
 namespace Intersect.Client.Entities
 {
@@ -187,6 +188,13 @@ namespace Intersect.Client.Entities
                 TargetBox.Hide();
             }
 
+
+            // Hide our Guild window if we're not in a guild!
+            if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
+            {
+                Interface.Interface.GameUi.HideGuildWindow();
+            }
+
             var returnval = base.Update();
 
             return returnval;
@@ -201,6 +209,8 @@ namespace Intersect.Client.Entities
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
+            Guild = pkt.Guild;
+            Rank = pkt.GuildRank;
 
             var playerPacket = (PlayerEntityPacket) packet;
 
@@ -495,6 +505,17 @@ namespace Intersect.Client.Entities
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
+                //Permission Check
+                if (Globals.GuildBank)
+                {
+                    var rank = Globals.Me.GuildRank;
+                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
+                    {
+                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                        return;
+                    }
+                }
+
                 if (Inventory[index].Quantity > 1)
                 {
                     var iBox = new InputBox(
@@ -523,6 +544,17 @@ namespace Intersect.Client.Entities
         {
             if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
             {
+                //Permission Check
+                if (Globals.GuildBank)
+                {
+                    var rank = Globals.Me.GuildRank;
+                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankRetrieve && Globals.Me.Rank != 0))
+                    {
+                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                        return;
+                    }
+                }
+
                 if (Globals.Bank[index].Quantity > 1)
                 {
                     var iBox = new InputBox(
@@ -1829,6 +1861,7 @@ namespace Intersect.Client.Entities
             base.DrawName(textColor, borderColor, backgroundColor);
             DrawLabels(HeaderLabel.Text, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
             DrawLabels(FooterLabel.Text, 1, FooterLabel.Color, textColor, borderColor, backgroundColor);
+            DrawGuildName(textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()

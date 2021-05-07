@@ -564,6 +564,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString playernamecommand = @"\pn";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString playerguildcommand = @"\pg";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString playerswitch = @"\ps";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1279,6 +1282,8 @@ namespace Intersect.Server.Localization
             public readonly TradingNamespace Trading = new TradingNamespace();
 
             public readonly UpnpNamespace Upnp = new UpnpNamespace();
+
+            public readonly GuildsNamespace Guilds = new GuildsNamespace();
 
         }
 

@@ -441,6 +441,7 @@ namespace Intersect.Client.Localization
                 {0, @"local"},
                 {1, @"global"},
                 {2, @"party"},
+                {3, @"guild"}
             };
 
             public static LocalizedString channeladmin = @"admin";
@@ -462,6 +463,7 @@ namespace Intersect.Client.Localization
                 { ChatboxTab.Local, @"Local" },
                 { ChatboxTab.Party, @"Party" },
                 { ChatboxTab.Global, @"Global" },
+                { ChatboxTab.Guild, @"Guild" },
                 { ChatboxTab.System, @"System" },
             };
 

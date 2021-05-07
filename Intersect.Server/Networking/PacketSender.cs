@@ -1502,23 +1502,6 @@ namespace Intersect.Server.Networking
             player.SendPacket(new ShopPacket(null, true));
         }
 
-        //BankPacket
-        public static void SendOpenBank(Player player)
-        {
-            for (var i = 0; i < Options.MaxBankSlots; i++)
-            {
-                SendBankUpdate(player, i);
-            }
-
-            player.SendPacket(new BankPacket(false));
-        }
-
-        //BankPacket
-        public static void SendCloseBank(Player player)
-        {
-            player.SendPacket(new BankPacket(true));
-        }
-
         //CraftingTablePacket
         public static void SendOpenCraftingTable(Player player, CraftingTableBase table)
         {
@@ -1532,24 +1515,6 @@ namespace Intersect.Server.Networking
         public static void SendCloseCraftingTable(Player player)
         {
             player.SendPacket(new CraftingTablePacket(null, true));
-        }
-
-        //BankUpdatePacket
-        public static void SendBankUpdate(Player player, int slot)
-        {
-            if (player.Bank[slot] != null && player.Bank[slot].ItemId != Guid.Empty && player.Bank[slot].Quantity > 0)
-            {
-                player.SendPacket(
-                    new BankUpdatePacket(
-                        slot, player.Bank[slot].ItemId, player.Bank[slot].Quantity, player.Bank[slot].BagId,
-                        player.Bank[slot].StatBuffs
-                    )
-                );
-            }
-            else
-            {
-                player.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
-            }
         }
 
         //GameObjectPacket

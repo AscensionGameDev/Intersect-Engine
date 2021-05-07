@@ -14,6 +14,7 @@ using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Helpers;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -293,6 +294,11 @@ namespace Intersect.Server.Core
             Time.Update();
 
             PacketSender.CacheGameDataPacket();
+
+            if (Options.Instance.Guild.DeleteStaleGuildsAfterDays > 0)
+            {
+                Guild.WipeStaleGuilds();
+            }
 
             return true;
         }

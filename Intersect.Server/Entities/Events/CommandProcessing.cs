@@ -1392,6 +1392,7 @@ namespace Intersect.Server.Entities.Events
                 var replacements = new Dictionary<string, string>()
                 {
                     { Strings.Events.playernamecommand, player.Name },
+                    { Strings.Events.playerguildcommand, player.Guild?.Name ?? "" },
                     { Strings.Events.timehour, Time.Hour },
                     { Strings.Events.militaryhour, Time.MilitaryHour },
                     { Strings.Events.timeminute, Time.Minute },

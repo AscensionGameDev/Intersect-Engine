@@ -20,6 +20,7 @@ namespace Intersect.Client.Interface.Game.Chat
             { ChatboxTab.Local, new ChatMessageType[] { ChatMessageType.Local, ChatMessageType.PM, ChatMessageType.Admin } },
             { ChatboxTab.Party, new ChatMessageType[] { ChatMessageType.Party, ChatMessageType.PM, ChatMessageType.Admin } },
             { ChatboxTab.Global, new ChatMessageType[] { ChatMessageType.Global, ChatMessageType.PM, ChatMessageType.Admin } },
+            { ChatboxTab.Guild, new ChatMessageType[] { ChatMessageType.Guild, ChatMessageType.PM, ChatMessageType.Admin } },
             { ChatboxTab.System, new ChatMessageType[] { 
                 ChatMessageType.Experience, ChatMessageType.Loot, ChatMessageType.Inventory, ChatMessageType.Bank, 
                 ChatMessageType.Combat, ChatMessageType.Quest, ChatMessageType.Crafting, ChatMessageType.Trading, 
