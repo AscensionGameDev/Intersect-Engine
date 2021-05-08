@@ -96,7 +96,7 @@ namespace Intersect.Config.Guilds
             },
             new GuildRank()
             {
-                Title = "Probationary",
+                Title = "Newbie",
                 Limit = -1,
                 Permissions = new GuildPermissions()
                 {
