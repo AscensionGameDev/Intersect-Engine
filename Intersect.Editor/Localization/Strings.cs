@@ -1262,6 +1262,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString stretchtofit = @"Stretch To Fit";
 
+            public static LocalizedString hide = @"Hide After (ms):";
+
+            public static LocalizedString wait = @"Wait Until Closed?";
+
         }
 
         public struct EventChangeGender
