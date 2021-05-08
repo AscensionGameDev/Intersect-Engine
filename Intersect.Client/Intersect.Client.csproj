@@ -103,7 +103,6 @@
     <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\PartyMember.cs" />
     <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\Player.Guilds.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Projectiles\ProjectileSpawns.cs" />
     <Compile Include="Entities\Resource.cs" />
@@ -120,7 +119,6 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\MapItem.cs" />
     <Compile Include="Localization\Strings.cs" />
-    <Compile Include="Localization\Strings.Guilds.cs" />
     <Compile Include="Maps\ActionMessage.cs" />
     <Compile Include="Maps\MapAnimation.cs" />
     <Compile Include="Maps\MapInstance.cs" />
@@ -147,8 +145,6 @@
     <Compile Include="Interface\Menu\CreditsWindow.cs" />
     <Compile Include="Interface\Menu\ResetPasswordWindow.cs" />
     <Compile Include="Interface\Menu\ForgotPasswordWindow.cs" />
-    <Compile Include="Networking\PacketHandler.Guilds.cs" />
-    <Compile Include="Networking\PacketSender.Guilds.cs" />
     <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
     <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Utilities\MathHelper.cs" />

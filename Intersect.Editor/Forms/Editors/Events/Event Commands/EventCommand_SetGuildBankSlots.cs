@@ -33,14 +33,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void InitLocalization()
         {
-            grpGuildSlots.Text = Strings.EventGuildSetBankSlotsCountCommand.title;
-            lblVariable.Text = Strings.EventGuildSetBankSlotsCountCommand.Variable;
+            grpGuildSlots.Text = Strings.EventGuildSetBankSlotsCount.title;
+            lblVariable.Text = Strings.EventGuildSetBankSlotsCount.Variable;
 
-            rdoPlayerVariable.Text = Strings.EventGuildSetBankSlotsCountCommand.PlayerVariable;
-            rdoGlobalVariable.Text = Strings.EventGuildSetBankSlotsCountCommand.ServerVariable;
+            rdoPlayerVariable.Text = Strings.EventGuildSetBankSlotsCount.PlayerVariable;
+            rdoGlobalVariable.Text = Strings.EventGuildSetBankSlotsCount.ServerVariable;
 
-            btnSave.Text = Strings.EventGuildSetBankSlotsCountCommand.okay;
-            btnCancel.Text = Strings.EventGuildSetBankSlotsCountCommand.cancel;
+            btnSave.Text = Strings.EventGuildSetBankSlotsCount.okay;
+            btnCancel.Text = Strings.EventGuildSetBankSlotsCount.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

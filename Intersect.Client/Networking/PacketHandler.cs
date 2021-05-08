@@ -2018,6 +2018,30 @@ namespace Intersect.Client.Networking
             }
         }
 
+        //GuildPacket
+        public void HandlePacket(IPacketSender packetSender, GuildPacket packet)
+        {
+            if (Globals.Me == null || Globals.Me.Guild == null)
+            {
+                return;
+            }
+
+            Globals.Me.GuildMembers = packet.Members.OrderByDescending(m => m.Online).ThenBy(m => m.Rank).ThenBy(m => m.Name).ToArray();
+
+            Interface.Interface.GameUi.NotifyUpdateGuildList();
+        }
+
+
+        //GuildInvitePacket
+        public void HandlePacket(IPacketSender packetSender, GuildInvitePacket packet)
+        {
+            var iBox = new InputBox(
+                Strings.Guilds.InviteRequestTitle, Strings.Guilds.InviteRequestPrompt.ToString(packet.Inviter, packet.GuildName), true,
+                InputBox.InputType.YesNo, PacketSender.SendGuildInviteAccept, PacketSender.SendGuildInviteDecline,
+                null
+            );
+        }
+
     }
 
 }

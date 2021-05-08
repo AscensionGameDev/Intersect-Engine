@@ -229,8 +229,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnSelectMap.Text = Strings.EventConditional.selectmap;
 
             //In Guild With At Least Rank
-            grpInGuild.Text = Strings.GuildConditional.Title;
-            lblRank.Text = Strings.GuildConditional.Rank;
+            grpInGuild.Text = Strings.EventConditional.inguild;
+            lblRank.Text = Strings.EventConditional.rank;
             cmbRank.Items.Clear();
             foreach (var rank in Options.Instance.Guild.Ranks)
             {

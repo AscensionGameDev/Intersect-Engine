@@ -256,6 +256,11 @@ namespace Intersect.Editor.Localization
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }
 
+        public static string GetEventConditionalDesc(InGuildWithRank condition)
+        {
+            return Strings.EventConditionDesc.guild.ToString(Intersect.Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Intersect.Options.Instance.Guild.Ranks.Length - 1, condition.Rank))].Title);
+        }
+
         public static string GetEventConditionalDesc(HasFreeInventorySlots condition)
         {
             if (condition.UseVariable)
@@ -1776,6 +1781,35 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ChangePlayerColor = @"Change Player Color to: R: {00} G: {01} B: {02} A: {03}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString createguild = @"Create Guild [Player Variable {00} as name]";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildcreated = @"Guild created successfully.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildfailed = @"Guild failed to create.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString endcreateguild = @"End Create Guild";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString disbandguild = @"Disband Guild";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guildisbanded = @"Guild disbanded successfully.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString guilddisbandfailed = @"Guild failed to disband.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString enddisbandguild = @"End Disband Guild";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString openguildbank = @"Open Guild Bank";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString setguildbankslots = @"Set Guild Bank Slots";
         }
 
         public struct EventChangePlayerColor
@@ -2087,6 +2121,11 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Manual = @"Manual";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString inguild = @"In Guild With At Least Rank...";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString rank = @"Rank:";
         }
 
         public struct EventConditionDesc
@@ -2117,6 +2156,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString greater = @"is greater than {00}";
 
             public static LocalizedString greaterequal = @"is greater than or equal to {00}";
+
+            public static LocalizedString guild = @"Player is in Guild with at least rank: {00}";
 
             public static LocalizedString hasitem = @"Player has at least {00} of Item {01}";
 
@@ -2185,6 +2226,45 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString True = @"True";
 
+        }
+
+        public struct EventCreateGuild
+        {
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cancel = @"Cancel";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SelectVariable = @"Player Variable containing Guild Name:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Ok";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Create Guild";
+
+        }
+
+        public struct EventGuildSetBankSlotsCount
+        {
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Variable = @"Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayerVariable = @"Player Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ServerVariable = @"Global Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString cancel = @"Cancel";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString okay = @"Ok";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString title = @"Set Guild Bank Slots Count";
         }
 
         public struct EventEditor

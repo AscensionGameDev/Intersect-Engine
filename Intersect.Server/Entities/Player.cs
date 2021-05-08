@@ -161,6 +161,29 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int MapAutorunEvents { get; private set; }
 
+        /// <summary>
+        /// References the in-memory copy of the guild for this player, reference this instead of the Guild property below.
+        /// </summary>
+        [NotMapped] [JsonIgnore] public Guild Guild { get; set; }
+
+        /// <summary>
+        /// This field is used for EF database fields only and should never be assigned to or used, instead the guild instance will be assigned to CachedGuild above
+        /// </summary>
+        [JsonIgnore] public Guild DbGuild { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public Tuple<Player, Guild> GuildInvite { get; set; }
+
+        public int GuildRank { get; set; }
+
+        public DateTime GuildJoinDate { get; set; }
+
+        /// <summary>
+        /// Used to determine whether the player is operating in the guild bank vs player bank
+        /// </summary>
+        [NotMapped] public bool GuildBank;
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;

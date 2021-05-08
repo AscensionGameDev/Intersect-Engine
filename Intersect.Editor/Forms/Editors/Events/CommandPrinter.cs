@@ -536,7 +536,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
 
                             //When the guild is created successfully:
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.guildcreated);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildcreated);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -553,7 +553,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                             );
 
                             //When the guild was not created for any reason:
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.guildfailed);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildfailed);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -569,7 +569,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 mCommandProperties, map
                             );
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.endcreateguild);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endcreateguild);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -603,7 +603,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
 
                             //When the guild is disbanded successfully:
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.guildisbanded);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guildisbanded);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -620,7 +620,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                             );
 
                             //When the guild was not disbanded for any reason:
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.guilddisbandfailed);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.guilddisbandfailed);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -636,7 +636,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 mCommandProperties, map
                             );
 
-                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventGuildCommands.enddisbandguild);
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.enddisbandguild);
                             clp = new CommandListProperties
                             {
                                 Editable = false,
@@ -1253,22 +1253,22 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(CreateGuildCommand command, MapInstance map)
         {
-            return Strings.EventGuildCommands.createguild.ToString(PlayerVariableBase.GetName(command.VariableId));
+            return Strings.EventCommandList.createguild.ToString(PlayerVariableBase.GetName(command.VariableId));
         }
 
         private static string GetCommandText(DisbandGuildCommand command, MapInstance map)
         {
-            return Strings.EventGuildCommands.disbandguild;
+            return Strings.EventCommandList.disbandguild;
         }
 
         private static string GetCommandText(OpenGuildBankCommand command, MapInstance map)
         {
-            return Strings.EventGuildCommands.openbank;
+            return Strings.EventCommandList.openguildbank;
         }
 
         private static string GetCommandText(SetGuildBankSlotsCommand command, MapInstance map)
         {
-            return Strings.EventGuildCommands.setguildbankslots;
+            return Strings.EventCommandList.setguildbankslots;
         }
 
 
