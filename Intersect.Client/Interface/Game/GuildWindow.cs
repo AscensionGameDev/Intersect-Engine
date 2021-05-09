@@ -272,7 +272,7 @@ namespace Intersect.Client.Interface.Game
                     //Promote Options
                     foreach (var opt in mPromoteOptions)
                     {
-                        if ((isOwner || rank.Permissions.Promote) && (int)opt.UserData > rankIndex && (int)opt.UserData < member.Rank)
+                        if ((isOwner || rank.Permissions.Promote) && (int)opt.UserData > rankIndex && (int)opt.UserData < member.Rank && member.Rank > rankIndex)
                         {
                             mContextMenu.AddChild(opt);
                         }
@@ -281,7 +281,7 @@ namespace Intersect.Client.Interface.Game
                     //Demote Options
                     foreach (var opt in mDemoteOptions)
                     {
-                        if ((isOwner || rank.Permissions.Demote) && (int)opt.UserData > rankIndex && (int)opt.UserData > member.Rank)
+                        if ((isOwner || rank.Permissions.Demote) && (int)opt.UserData > rankIndex && (int)opt.UserData > member.Rank && member.Rank > rankIndex)
                         {
                             mContextMenu.AddChild(opt);
                         }
