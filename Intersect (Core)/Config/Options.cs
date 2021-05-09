@@ -72,6 +72,8 @@ namespace Intersect
 
         public SmtpSettings SmtpSettings = new SmtpSettings();
 
+        public QuestOptions Quest = new QuestOptions();
+
         public static Options Instance { get; private set; }
 
         [JsonIgnore]

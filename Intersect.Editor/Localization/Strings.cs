@@ -4016,6 +4016,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString unstartedcategory = @"Unstarted Category:";
+
+            public static LocalizedString inprogressgategory = @"In Progress Category:";
+
+            public static LocalizedString completedcategory = @"Completed Category:";
+
+            public static LocalizedString donotshowunlessreqsmet = @"Do not show in quest log unless requirements are met";
+
+            public static LocalizedString order = @"Quest Log Sort Order:";
         }
 
         public struct ResourceEditor

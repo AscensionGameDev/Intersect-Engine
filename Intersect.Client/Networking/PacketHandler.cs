@@ -1774,6 +1774,8 @@ namespace Intersect.Client.Networking
                     }
                 }
 
+                Globals.Me.HiddenQuests = packet.HiddenQuests;
+
                 if (Interface.Interface.GameUi != null)
                 {
                     Interface.Interface.GameUi.NotifyQuestsUpdated();

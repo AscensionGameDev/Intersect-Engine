@@ -52,6 +52,8 @@ namespace Intersect.Client.Entities
 
         public Dictionary<Guid, QuestProgress> QuestProgress = new Dictionary<Guid, QuestProgress>();
 
+        public Guid[] HiddenQuests = new Guid[0];
+
         public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
 
         public int StatPoints = 0;

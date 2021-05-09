@@ -558,6 +558,10 @@
     <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.designer.cs">
       <DependentUpon>20210423141451_AddIndividualizedLootOptionToNpcs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.cs" />
+    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.designer.cs">
+      <DependentUpon>20210509070229_AddingQuestCategoriesAndOrderValues.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>

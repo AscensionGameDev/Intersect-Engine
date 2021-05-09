@@ -1079,7 +1079,7 @@ namespace Intersect.Server.Entities
                                 }
                                 else
                                 {
-                                    PacketSender.SendQuestProgress(this, quest.Id);
+                                    PacketSender.SendQuestsProgress(this);
                                     PacketSender.SendChatMsg(
                                         this,
                                         Strings.Quests.npctask.ToString(
@@ -4984,7 +4984,7 @@ namespace Intersect.Server.Entities
                     this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.Quests.Started
                 );
 
-                PacketSender.SendQuestProgress(this, quest.Id);
+                PacketSender.SendQuestsProgress(this);
             }
         }
 
@@ -5077,7 +5077,7 @@ namespace Intersect.Server.Entities
                             this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, Color.Red
                         );
 
-                        PacketSender.SendQuestProgress(this, questId);
+                        PacketSender.SendQuestsProgress(this);
                     }
                 }
             }
@@ -5140,7 +5140,7 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    PacketSender.SendQuestProgress(this, questId);
+                    PacketSender.SendQuestsProgress(this);
                 }
             }
         }
@@ -5162,7 +5162,7 @@ namespace Intersect.Server.Entities
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
                         PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
                     }
-                    PacketSender.SendQuestProgress(this, questId);
+                    PacketSender.SendQuestsProgress(this);
                 }
             }
         }
@@ -5194,7 +5194,7 @@ namespace Intersect.Server.Entities
                                     }
                                     else
                                     {
-                                        PacketSender.SendQuestProgress(this, quest.Id);
+                                        PacketSender.SendQuestsProgress(this);
                                         PacketSender.SendChatMsg(
                                             this,
                                             Strings.Quests.itemtask.ToString(

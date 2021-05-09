@@ -1886,24 +1886,17 @@ namespace Intersect.Server.Networking
                 dict.Add(quest.QuestId, quest.Data());
             }
 
-            player.SendPacket(new QuestProgressPacket(dict));
-        }
-
-        //QuestProgressPacket
-        public static void SendQuestProgress(Player player, Guid questId)
-        {
-            var dict = new Dictionary<Guid, string>();
-            var questProgress = player.FindQuest(questId);
-            if (questProgress != null)
+            var hiddenQuests = new List<Guid>();
+            foreach (var pair in QuestBase.Lookup)
             {
-                dict.Add(questId, questProgress.Data());
-            }
-            else
-            {
-                dict.Add(questId, null);
+                var quest = (QuestBase)pair.Value;
+                if (!player.Quests.Any(q => q.QuestId == quest.Id) && quest.DoNotShowUnlessRequirementsMet && !player.CanStartQuest(quest))
+                {
+                    hiddenQuests.Add(quest.Id);
+                }
             }
 
-            player.SendPacket(new QuestProgressPacket(dict));
+            player.SendPacket(new QuestProgressPacket(dict, hiddenQuests.ToArray()));
         }
 
         //TradePacket
