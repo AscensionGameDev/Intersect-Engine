@@ -1783,7 +1783,7 @@ namespace Intersect.Server.Entities
                     throw new NotImplementedException();
             }
 
-            var bankInterface = new BankInterface(this, (IList<Item>)Bank, new object(), null, Options.MaxBankSlots);
+            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
             return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
 
