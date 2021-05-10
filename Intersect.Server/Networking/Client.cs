@@ -218,7 +218,7 @@ namespace Intersect.Server.Networking
 
             if (User != null && User.LoginTime != null)
             {
-                User.PlayTime += DateTime.UtcNow - (DateTime)User.LoginTime;
+                User.PlayTimeSeconds += (ulong)(DateTime.UtcNow - (DateTime)User.LoginTime).TotalSeconds;
                 User.LoginTime = null;
             }
 

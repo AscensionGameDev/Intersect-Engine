@@ -325,7 +325,7 @@ namespace Intersect.Server.Entities
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.CreationDate) : compiledQuery.OrderByDescending(u => u.CreationDate);
                             break;
                         case "playtime":
-                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTime) : compiledQuery.OrderByDescending(u => u.PlayTime);
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTimeSeconds) : compiledQuery.OrderByDescending(u => u.PlayTimeSeconds);
                             break;
                         case "name":
                         default:

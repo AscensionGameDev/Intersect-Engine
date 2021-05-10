@@ -96,13 +96,13 @@ namespace Intersect.Server.Entities
 
         public DateTime? CreationDate { get; set; } = DateTime.UtcNow;
 
-        private TimeSpan mLoadedPlaytime { get; set; } = TimeSpan.Zero;
+        private ulong mLoadedPlaytime { get; set; } = 0;
 
-        public TimeSpan PlayTime
+        public ulong PlayTimeSeconds
         {
             get
             {
-                return mLoadedPlaytime + (LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero);
+                return mLoadedPlaytime + (ulong)(LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero).TotalSeconds;
             }
 
             set
@@ -307,7 +307,7 @@ namespace Intersect.Server.Entities
 
             if (LoginTime != null)
             {
-                PlayTime += DateTime.UtcNow - (DateTime)LoginTime;
+                PlayTimeSeconds += (ulong)(DateTime.UtcNow - (DateTime)LoginTime).TotalSeconds;
                 LoginTime = null;
             }
 
