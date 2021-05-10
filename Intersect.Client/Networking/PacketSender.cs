@@ -416,6 +416,14 @@ namespace Intersect.Client.Networking
         {
             Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateActions.Transfer));
         }
+      
+        public static void SendClosePicture(Guid eventId)
+        {
+            if (eventId != Guid.Empty)
+            {
+                Network.SendPacket(new PictureClosedPacket(eventId));
+            }
+        }
 
     }
 

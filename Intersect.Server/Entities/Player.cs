@@ -381,7 +381,7 @@ namespace Intersect.Server.Entities
             var keys = SpellCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (SpellCooldowns[key] < Globals.Timing.MillisecondsUTC)
+                if (SpellCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
                 {
                     SpellCooldowns.TryRemove(key, out _);
                 }
@@ -390,7 +390,7 @@ namespace Intersect.Server.Entities
             keys = ItemCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (ItemCooldowns[key] < Globals.Timing.MillisecondsUTC)
+                if (ItemCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
                 {
                     ItemCooldowns.TryRemove(key, out _);
                 }
@@ -5214,6 +5214,33 @@ namespace Intersect.Server.Entities
                             var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[responseId - 1]);
                             evt.Value.CallStack.Push(tmpStack);
                         }
+
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void PictureClosed(Guid eventId)
+        {
+            lock (mEventLock)
+            {
+                foreach (var evt in EventLookup)
+                {
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.Id == eventId)
+                    {
+                        if (evt.Value.CallStack.Count <= 0)
+                        {
+                            return;
+                        }
+
+                        var stackInfo = evt.Value.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Picture)
+                        {
+                            return;
+                        }
+
+                        stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
 
                         return;
                     }

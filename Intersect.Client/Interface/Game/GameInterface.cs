@@ -112,6 +112,7 @@ namespace Intersect.Client.Interface.Game
             GameMenu = new Menu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            PlayerBox.SetEntity(Globals.Me);
             if (mPictureWindow == null)
             {
                 mPictureWindow = new PictureWindow(GameCanvas);
@@ -343,6 +344,7 @@ namespace Intersect.Client.Interface.Game
             PlayerBox?.Update();
             mMapItemWindow.Update();
             AnnouncementWindow?.Update();
+            mPictureWindow?.Update();
 
             if (Globals.QuestOffers.Count > 0)
             {
@@ -356,11 +358,11 @@ namespace Intersect.Client.Interface.Game
 
             if (Globals.Picture != null)
             {
-                if (mPictureWindow.Picture != Globals.Picture ||
-                    mPictureWindow.Size != Globals.PictureSize ||
-                    mPictureWindow.Clickable != Globals.PictureClickable)
+                if (mPictureWindow.Picture != Globals.Picture.Picture ||
+                    mPictureWindow.Size != Globals.Picture.Size ||
+                    mPictureWindow.Clickable != Globals.Picture.Clickable)
                 {
-                    mPictureWindow.Setup(Globals.Picture, Globals.PictureSize, Globals.PictureClickable);
+                    mPictureWindow.Setup(Globals.Picture.Picture, Globals.Picture.Size, Globals.Picture.Clickable);
                 }
             }
             else

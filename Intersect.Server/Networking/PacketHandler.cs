@@ -2552,7 +2552,6 @@ namespace Intersect.Server.Networking
             {
                 return;
             }
-
             PacketSender.SendGuild(player);
         }
 
@@ -2841,7 +2840,19 @@ namespace Intersect.Server.Networking
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
-
+ 
+        }
+      
+      
+        //PictureClosedPacket
+        public void HandlePacket(Client client, PictureClosedPacket packet)
+        {
+            var player = client?.Entity;
+            if (player == null)
+            {
+                return;
+            }
+            player.PictureClosed(packet.EventId);
         }
 
         #endregion

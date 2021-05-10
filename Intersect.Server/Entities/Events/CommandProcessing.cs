@@ -1069,7 +1069,15 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable);
+            var id = Guid.Empty;
+            var shouldWait = command.WaitUntilClosed && (command.Clickable || command.HideTime > 0);
+            if (shouldWait)
+            {
+                id = instance.PageInstance.Id;
+                stackInfo.WaitingForResponse = CommandInstance.EventResponse.Picture;
+            }
+            
+            PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable, command.HideTime, id);
         }
 
         //Hide Picture Command

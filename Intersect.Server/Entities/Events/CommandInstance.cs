@@ -25,7 +25,9 @@ namespace Intersect.Server.Entities.Events
 
             Quest,
 
-            Timer
+            Timer,
+
+            Picture
 
         }
 

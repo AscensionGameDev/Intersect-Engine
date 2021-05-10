@@ -52,6 +52,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
 
             chkClick.Checked = mMyCommand.Clickable;
+            nudHideTime.Value = mMyCommand.HideTime;
+            chkWaitUntilClosed.Checked = mMyCommand.WaitUntilClosed;
 
             InitLocalization();
         }
@@ -64,6 +66,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnCancel.Text = Strings.EventShowPicture.cancel;
             chkClick.Text = Strings.EventShowPicture.checkbox;
             lblSize.Text = Strings.EventShowPicture.size;
+            lblHide.Text = Strings.EventShowPicture.hide;
+            chkWaitUntilClosed.Text = Strings.EventShowPicture.wait;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -71,6 +75,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.File = cmbPicture.Text;
             mMyCommand.Size = cmbSize.SelectedIndex;
             mMyCommand.Clickable = chkClick.Checked;
+            mMyCommand.HideTime = (int)nudHideTime.Value;
+            mMyCommand.WaitUntilClosed = chkWaitUntilClosed.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
