@@ -35,7 +35,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstAnimations = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.chkCompleteSoundPlayback = new DarkUI.Controls.DarkCheckBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
@@ -141,7 +141,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpAnimations.Controls.Add(this.btnClearSearch);
             this.grpAnimations.Controls.Add(this.txtSearch);
-            this.grpAnimations.Controls.Add(this.lstAnimations);
+            this.grpAnimations.Controls.Add(this.lstGameObjects);
             this.grpAnimations.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpAnimations.Location = new System.Drawing.Point(3, 28);
             this.grpAnimations.Name = "grpAnimations";
@@ -175,20 +175,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstAnimations
+            // lstGameObjects
             // 
-            this.lstAnimations.AllowDrop = true;
-            this.lstAnimations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstAnimations.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstAnimations.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstAnimations.HideSelection = false;
-            this.lstAnimations.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstAnimations.Location = new System.Drawing.Point(6, 46);
-            this.lstAnimations.Name = "lstAnimations";
-            this.lstAnimations.Size = new System.Drawing.Size(191, 485);
-            this.lstAnimations.TabIndex = 2;
-            this.lstAnimations.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstAnimations_AfterSelect);
-            this.lstAnimations.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstAnimations_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 46);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(191, 485);
+            this.lstGameObjects.TabIndex = 2;
             // 
             // grpGeneral
             // 
@@ -1305,11 +1305,11 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private DarkButton btnAddFolder;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstAnimations;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
         private DarkCheckBox chkCompleteSoundPlayback;
+        private Controls.GameObjectList lstGameObjects;
     }
 }

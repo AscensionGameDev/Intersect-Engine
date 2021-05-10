@@ -11,8 +11,6 @@ namespace Intersect.Editor.Forms.Editors
     public class EditorForm : Form
     {
 
-        protected bool mChangingName = false;
-
         private bool mClosing = false;
 
         protected EditorForm()

@@ -2513,6 +2513,18 @@ namespace Intersect.Server.Networking
             PacketSender.SendPasswordResetResult(client, success);
         }
 
+        //PictureClosedPacket
+        public void HandlePacket(Client client, PictureClosedPacket packet)
+        {
+            var player = client?.Entity;
+            if (player == null)
+            {
+                return;
+            }
+
+            player.PictureClosed(packet.EventId);
+        }
+
         #endregion
 
         #region "Editor Packets"

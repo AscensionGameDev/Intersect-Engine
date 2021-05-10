@@ -135,11 +135,7 @@ namespace Intersect.Client.General
             new Dictionary<Guid, Dictionary<Guid, EventEntityPacket>>();
 
         //Event Show Pictures
-        public static string Picture;
-
-        public static bool PictureClickable;
-
-        public static int PictureSize;
+        public static ShowPicturePacket Picture;
 
         public static List<Guid> QuestOffers = new List<Guid>();
 

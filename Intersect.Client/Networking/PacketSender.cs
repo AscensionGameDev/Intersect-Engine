@@ -373,6 +373,14 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new BumpPacket(mapId, eventId));
         }
 
+        public static void SendClosePicture(Guid eventId)
+        {
+            if (eventId != Guid.Empty)
+            {
+                Network.SendPacket(new PictureClosedPacket(eventId));
+            }
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -26,17 +27,20 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private QuestBase mEditorItem;
 
-        private List<string> mExpandedFolders = new List<string>();
-
         private List<string> mKnownFolders = new List<string>();
 
         public FrmQuest()
         {
             ApplyHooks();
             InitializeComponent();
-            lstQuests.LostFocus += itemList_FocusChanged;
-            lstQuests.GotFocus += itemList_FocusChanged;
             InitLocalization();
+
+            lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
+        }
+        private void AssignEditorItem(Guid id)
+        {
+            mEditorItem = QuestBase.Get(id);
+            UpdateEditor();
         }
 
         private void InitLocalization()
@@ -282,7 +286,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            mChangingName = true;
             if (mEditorItem != null)
             {
                 mEditorItem.Name = txtName?.Text ?? "";
@@ -309,16 +312,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     }
                 }
 
-                if (lstQuests != null)
-                {
-                    if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
-                    {
-                        lstQuests.SelectedNode.Text = txtName?.Text ?? "";
-                    }
-                }
+                lstGameObjects.UpdateText(txtName?.Text ?? "");
             }
-
-            mChangingName = false;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
@@ -483,7 +478,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (mEditorItem != null && lstQuests.Focused)
+            if (mEditorItem != null && lstGameObjects.Focused)
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.QuestEditor.deleteprompt, Strings.QuestEditor.deletetitle, DarkDialogButton.YesNo,
@@ -498,7 +493,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
-            if (mEditorItem != null && lstQuests.Focused)
+            if (mEditorItem != null && lstGameObjects.Focused)
             {
                 mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
@@ -507,7 +502,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
-            if (mEditorItem != null && mCopiedItem != null && lstQuests.Focused)
+            if (mEditorItem != null && mCopiedItem != null && lstGameObjects.Focused)
             {
                 var startEventId = mEditorItem.StartEventId;
                 var endEventId = mEditorItem.EndEventId;
@@ -562,43 +557,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
             }
         }
 
-        private void itemList_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                if (e.KeyCode == Keys.Z)
-                {
-                    toolStripItemUndo_Click(null, null);
-                }
-                else if (e.KeyCode == Keys.V)
-                {
-                    toolStripItemPaste_Click(null, null);
-                }
-                else if (e.KeyCode == Keys.C)
-                {
-                    toolStripItemCopy_Click(null, null);
-                }
-            }
-            else
-            {
-                if (e.KeyCode == Keys.Delete)
-                {
-                    toolStripItemDelete_Click(null, null);
-                }
-            }
-        }
-
         private void UpdateToolStripItems()
         {
-            toolStripItemCopy.Enabled = mEditorItem != null && lstQuests.Focused;
-            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstQuests.Focused;
-            toolStripItemDelete.Enabled = mEditorItem != null && lstQuests.Focused;
-            toolStripItemUndo.Enabled = mEditorItem != null && lstQuests.Focused;
-        }
-
-        private void itemList_FocusChanged(object sender, EventArgs e)
-        {
-            UpdateToolStripItems();
+            toolStripItemCopy.Enabled = mEditorItem != null && lstGameObjects.Focused;
+            toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstGameObjects.Focused;
+            toolStripItemDelete.Enabled = mEditorItem != null && lstGameObjects.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstGameObjects.Focused;
         }
 
         private void form_KeyDown(object sender, KeyEventArgs e)
@@ -622,15 +586,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         public void InitEditor()
         {
-            var selectedId = Guid.Empty;
-            var folderNodes = new Dictionary<string, TreeNode>();
-            if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
-            {
-                selectedId = (Guid) lstQuests.SelectedNode.Tag;
-            }
-
-            lstQuests.Nodes.Clear();
-
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in QuestBase.Lookup)
@@ -652,70 +607,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-            lstQuests.Sorted = !btnChronological.Checked;
-
-            if (!btnChronological.Checked && !CustomSearch())
-            {
-                foreach (var folder in mFolders)
-                {
-                    var node = lstQuests.Nodes.Add(folder);
-                    node.ImageIndex = 0;
-                    node.SelectedImageIndex = 0;
-                    folderNodes.Add(folder, node);
-                }
-            }
-
-            foreach (var itm in QuestBase.ItemPairs)
-            {
-                var node = new TreeNode(itm.Value);
-                node.Tag = itm.Key;
-                node.ImageIndex = 1;
-                node.SelectedImageIndex = 1;
-
-                var folder = QuestBase.Get(itm.Key).Folder;
-                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
-                {
-                    var folderNode = folderNodes[folder];
-                    folderNode.Nodes.Add(node);
-                    if (itm.Key == selectedId)
-                    {
-                        folderNode.Expand();
-                    }
-                }
-                else
-                {
-                    lstQuests.Nodes.Add(node);
-                }
-
-                if (CustomSearch())
-                {
-                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
-                    {
-                        node.Remove();
-                    }
-                }
-
-                if (itm.Key == selectedId)
-                {
-                    lstQuests.SelectedNode = node;
-                }
-            }
-
-            var selectedNode = lstQuests.SelectedNode;
-
-            if (!btnChronological.Checked)
-            {
-                lstQuests.Sort();
-            }
-
-            lstQuests.SelectedNode = selectedNode;
-            foreach (var node in mExpandedFolders)
-            {
-                if (folderNodes.ContainsKey(node))
-                {
-                    folderNodes[node].Expand();
-                }
-            }
+            var items = QuestBase.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+                new KeyValuePair<string, string>(((QuestBase)pair.Value)?.Name ?? Models.DatabaseObject<QuestBase>.Deleted, ((QuestBase)pair.Value)?.Folder ?? ""))).ToArray();
+            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
@@ -731,73 +625,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 if (!cmbFolder.Items.Contains(folderName))
                 {
                     mEditorItem.Folder = folderName;
-                    mExpandedFolders.Add(folderName);
+                    lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
                 }
             }
-        }
-
-        private void lstQuests_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            var node = e.Node;
-            if (node != null)
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
-                    {
-                        Clipboard.SetText(e.Node.Tag.ToString());
-                    }
-                }
-
-                var hitTest = lstQuests.HitTest(e.Location);
-                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
-                {
-                    if (node.Nodes.Count > 0)
-                    {
-                        if (node.IsExpanded)
-                        {
-                            node.Collapse();
-                        }
-                        else
-                        {
-                            node.Expand();
-                        }
-                    }
-                }
-
-                if (node.IsExpanded)
-                {
-                    if (!mExpandedFolders.Contains(node.Text))
-                    {
-                        mExpandedFolders.Add(node.Text);
-                    }
-                }
-                else
-                {
-                    if (mExpandedFolders.Contains(node.Text))
-                    {
-                        mExpandedFolders.Remove(node.Text);
-                    }
-                }
-            }
-        }
-
-        private void lstQuests_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (mChangingName)
-            {
-                return;
-            }
-
-            if (lstQuests.SelectedNode == null || lstQuests.SelectedNode.Tag == null)
-            {
-                return;
-            }
-
-            mEditorItem = QuestBase.Get((Guid) lstQuests.SelectedNode.Tag);
-            UpdateEditor();
         }
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)

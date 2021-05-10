@@ -35,7 +35,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpQuests = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstQuests = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -110,7 +110,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpQuests.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpQuests.Controls.Add(this.btnClearSearch);
             this.grpQuests.Controls.Add(this.txtSearch);
-            this.grpQuests.Controls.Add(this.lstQuests);
+            this.grpQuests.Controls.Add(this.lstGameObjects);
             this.grpQuests.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpQuests.Location = new System.Drawing.Point(12, 34);
             this.grpQuests.Name = "grpQuests";
@@ -144,22 +144,20 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstQuests
+            // lstGameObjects
             // 
-            this.lstQuests.AllowDrop = true;
-            this.lstQuests.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstQuests.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstQuests.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstQuests.HideSelection = false;
-            this.lstQuests.ImageIndex = 0;
-            this.lstQuests.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstQuests.Location = new System.Drawing.Point(6, 45);
-            this.lstQuests.Name = "lstQuests";
-            this.lstQuests.SelectedImageIndex = 0;
-            this.lstQuests.Size = new System.Drawing.Size(191, 323);
-            this.lstQuests.TabIndex = 32;
-            this.lstQuests.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstQuests_AfterSelect);
-            this.lstQuests.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstQuests_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 45);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(191, 323);
+            this.lstGameObjects.TabIndex = 32;
             // 
             // grpGeneral
             // 
@@ -931,7 +929,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private DarkButton btnEditRequirements;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstQuests;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
@@ -946,5 +943,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private DarkComboBox cmbUnstartedCategory;
         private DarkNumericUpDown nudOrderValue;
         private System.Windows.Forms.Label lblSortOrder;
+        private Controls.GameObjectList lstGameObjects;
     }
 }

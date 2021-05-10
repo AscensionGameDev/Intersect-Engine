@@ -1474,9 +1474,9 @@ namespace Intersect.Server.Networking
         }
 
         //ShowPicturePacket
-        public static void SendShowPicture(Player player, string picture, int size, bool clickable)
+        public static void SendShowPicture(Player player, string picture, int size, bool clickable, int hideTime, Guid eventId)
         {
-            player.SendPacket(new ShowPicturePacket(picture, size, clickable));
+            player.SendPacket(new ShowPicturePacket(picture, size, clickable, hideTime, eventId));
         }
 
         //HidePicturePacket

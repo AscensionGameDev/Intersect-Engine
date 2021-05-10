@@ -3,6 +3,8 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Networking;
+using System;
 
 namespace Intersect.Client.Interface.Game
 {
@@ -102,9 +104,22 @@ namespace Intersect.Client.Interface.Game
         {
             if (Picture != null)
             {
+                PacketSender.SendClosePicture(Globals.Picture?.EventId ?? Guid.Empty);
                 Globals.Picture = null;
                 Picture = null;
                 mPicture.Hide();
+            }
+        }
+
+        public void Update()
+        {
+            if (Picture != null)
+            {
+                if (Globals.Picture != null && Globals.Picture.HideTime > 0 && Globals.System.GetTimeMs() > Globals.Picture.ReceiveTime + Globals.Picture.HideTime)
+                {
+                    //Should auto close this picture
+                    Close();
+                }
             }
         }
 

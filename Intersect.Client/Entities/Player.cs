@@ -702,7 +702,7 @@ namespace Intersect.Client.Entities
             {
                 var spellBase = SpellBase.Get(Spells[index].SpellId);
 
-                if (spellBase.CastDuration > 0 && Globals.Me.IsMoving)
+                if (spellBase.CastDuration > 0 && (Options.Instance.CombatOpts.MovementCancelsCast && Globals.Me.IsMoving))
                 {
                     return;
                 }
