@@ -116,13 +116,13 @@ namespace Intersect.Server.Database.PlayerData
 
         public DateTime? RegistrationDate { get; set; } = DateTime.UtcNow;
 
-        private TimeSpan mLoadedPlaytime { get; set; } = TimeSpan.Zero;
+        private ulong mLoadedPlaytime { get; set; } = 0;
 
-        public TimeSpan PlayTime
+        public ulong PlayTimeSeconds
         {
             get
             {
-                return mLoadedPlaytime + ( LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero);
+                return mLoadedPlaytime + (ulong)(LoginTime != null ? (DateTime.UtcNow - (DateTime)LoginTime) : TimeSpan.Zero).TotalSeconds;
             }
 
             set
@@ -684,7 +684,7 @@ namespace Intersect.Server.Database.PlayerData
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.RegistrationDate) : compiledQuery.OrderByDescending(u => u.RegistrationDate);
                             break;
                         case "playtime":
-                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTime) : compiledQuery.OrderByDescending(u => u.PlayTime);
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTimeSeconds) : compiledQuery.OrderByDescending(u => u.PlayTimeSeconds);
                             break;
                         case "name":
                         default:
