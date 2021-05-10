@@ -276,8 +276,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             //Update Bars
             CurHpWidth = -1;
+            CurShieldWidth = -1;
             CurMpWidth = -1;
             CurExpWidth = -1;
+            ShieldBar.Hide();
             UpdateHpBar(0, true);
             UpdateMpBar(0, true);
             if (MyEntity is Player)
@@ -555,6 +557,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 var maxVital = MyEntity.MaxVital[(int) Vitals.Health];
                 var shieldSize = MyEntity.GetShieldSize();
 
+                if (shieldSize + MyEntity.Vital[(int)Vitals.Health] > maxVital)
+                {
+                    maxVital = shieldSize + MyEntity.Vital[(int)Vitals.Health];
+                }
+
                 var width = HpBackground.Width;
 
                 var hpfillRatio = (float) MyEntity.Vital[(int) Vitals.Health] / maxVital;
@@ -569,7 +576,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 HpLbl.Text = Strings.EntityBox.vital0val.ToString(
                     MyEntity.Vital[(int) Vitals.Health], MyEntity.MaxVital[(int) Vitals.Health]
                 );
-                Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health], MyEntity.MaxVital[(int) Vitals.Health]);
             }
             else
             {
