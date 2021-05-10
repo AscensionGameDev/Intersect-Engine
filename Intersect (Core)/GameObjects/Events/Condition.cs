@@ -40,6 +40,8 @@ namespace Intersect.GameObjects.Events
 
         HasFreeInventorySlots,
 
+        InGuildWithRank,
+
     }
 
     public class Condition
@@ -254,6 +256,22 @@ namespace Intersect.GameObjects.Events
         /// </summary>
         public Guid VariableId { get; set; }
 
+    }
+
+    /// <summary>
+    /// Defines the condition class used when checking whether a player is in a guild with at least a specified rank
+    /// </summary>
+    public class InGuildWithRank : Condition
+    {
+        /// <summary>
+        /// Defines the type of condition
+        /// </summary>
+        public override ConditionTypes Type { get; } = ConditionTypes.InGuildWithRank;
+
+        /// <summary>
+        /// The guild rank the condition checks for as a minimum
+        /// </summary>
+        public int Rank { get; set; }
     }
 
     public class VariableCompaison

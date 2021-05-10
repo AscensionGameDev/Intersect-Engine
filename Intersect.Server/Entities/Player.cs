@@ -161,6 +161,29 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int MapAutorunEvents { get; private set; }
 
+        /// <summary>
+        /// References the in-memory copy of the guild for this player, reference this instead of the Guild property below.
+        /// </summary>
+        [NotMapped] [JsonIgnore] public Guild Guild { get; set; }
+
+        /// <summary>
+        /// This field is used for EF database fields only and should never be assigned to or used, instead the guild instance will be assigned to CachedGuild above
+        /// </summary>
+        [JsonIgnore] public Guild DbGuild { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public Tuple<Player, Guild> GuildInvite { get; set; }
+
+        public int GuildRank { get; set; }
+
+        public DateTime GuildJoinDate { get; set; }
+
+        /// <summary>
+        /// Used to determine whether the player is operating in the guild bank vs player bank
+        /// </summary>
+        [NotMapped] public bool GuildBank;
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -228,6 +251,7 @@ namespace Intersect.Server.Entities
             }
 
             LoadFriends();
+            LoadGuild();
 
             //Upon Sign In Remove Any Items/Spells that have been deleted
             foreach (var itm in Items)
@@ -256,6 +280,9 @@ namespace Intersect.Server.Entities
 
             OnlinePlayers[Id] = this;
             OnlineList = OnlinePlayers.Values.ToArray();
+
+            //Send guild list update to all members when coming online
+            Guild?.UpdateMemberList();
         }
 
         public void SendPacket(IPacket packet, TransmissionMode mode = TransmissionMode.All)
@@ -346,7 +373,8 @@ namespace Intersect.Server.Entities
             FriendRequester = null;
             FriendRequests.Clear();
             InBag = null;
-            InBank = false;
+            BankInterface?.Dispose();
+            BankInterface = null;
             InShop = null;
 
             //Clear cooldowns that have expired
@@ -381,6 +409,11 @@ namespace Intersect.Server.Entities
                 OnlinePlayers.TryRemove(Id, out Player me);
                 OnlineList = OnlinePlayers.Values.ToArray();
             }
+
+            //Send guild update to all members when logging out
+            Guild?.UpdateMemberList();
+            Guild = null;
+            GuildBank = false;
 
             //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
             if (Client == null)
@@ -709,6 +742,9 @@ namespace Intersect.Server.Entities
                 ((PlayerEntityPacket) packet).Equipment =
                     PacketSender.GenerateEquipmentPacket(forPlayer, (Player) this);
             }
+
+            pkt.Guild = Guild?.Name;
+            pkt.GuildRank = GuildRank;
 
             return pkt;
         }
@@ -1266,7 +1302,7 @@ namespace Intersect.Server.Entities
             var friendly = spell?.Combat != null && spell.Combat.Friendly;
             if (entity is Player player)
             {
-                if (player.InParty(this) || this == player)
+                if (player.InParty(this) || this == player || (!Options.Instance.Guild.AllowGuildMemberPvp && friendly != (player.Guild != null && player.Guild == this.Guild)))
                 {
                     return friendly;
                 }
@@ -1747,7 +1783,8 @@ namespace Intersect.Server.Entities
                     throw new NotImplementedException();
             }
 
-            return bankOverflow && TryDepositItem(item, sendUpdate);
+            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
+            return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
 
 
@@ -2965,15 +3002,29 @@ namespace Intersect.Server.Entities
         }
 
         //Bank
-        public bool OpenBank()
+        public bool OpenBank(bool guild = false)
         {
             if (IsBusy())
             {
                 return false;
             }
 
-            InBank = true;
-            PacketSender.SendOpenBank(this);
+            if (guild && Guild == null)
+            {
+                return false;
+            }
+
+            var bankItems = ((IEnumerable<Item>)Bank).ToList();
+
+            if (guild)
+            {
+                bankItems = ((IEnumerable<Item>)Guild.Bank).ToList();
+            }
+
+            BankInterface = new BankInterface(this, bankItems, guild ? Guild.Lock : new object(), guild ? Guild : null, guild ? Guild.BankSlotsCount : Options.MaxBankSlots);
+
+            GuildBank = guild;
+            BankInterface.SendOpenBank();
 
             return true;
         }
@@ -2982,313 +3033,8 @@ namespace Intersect.Server.Entities
         {
             if (InBank)
             {
-                InBank = false;
-                PacketSender.SendCloseBank(this);
+                BankInterface.Dispose();
             }
-        }
-
-        public bool TryDepositItem(int slot, int amount, bool sendUpdate = true)
-        {
-            if (!InBank)
-            {
-                return false;
-            }
-
-            var itemBase = Items[slot].Descriptor;
-            if (itemBase != null)
-            {
-                if (Items[slot].ItemId != Guid.Empty)
-                {
-                    if (itemBase.IsStackable)
-                    {
-                        if (amount >= Items[slot].Quantity)
-                        {
-                            amount = Items[slot].Quantity;
-                        }
-                    }
-                    else
-                    {
-                        amount = 1;
-                    }
-
-                    //Find a spot in the bank for it!
-                    if (itemBase.IsStackable)
-                    {
-                        for (var i = 0; i < Options.MaxBankSlots; i++)
-                        {
-                            if (Bank[i] != null && Bank[i].ItemId == Items[slot].ItemId)
-                            {
-                                amount = Math.Min(amount, int.MaxValue - Bank[i].Quantity);
-                                Bank[i].Quantity += amount;
-
-                                //Remove Items from inventory send updates
-                                if (amount >= Items[slot].Quantity)
-                                {
-                                    Items[slot].Set(Item.None);
-                                    EquipmentProcessItemLoss(slot);
-                                }
-                                else
-                                {
-                                    Items[slot].Quantity -= amount;
-                                }
-
-                                if (sendUpdate)
-                                {
-                                    PacketSender.SendInventoryItemUpdate(this, slot);
-                                    PacketSender.SendBankUpdate(this, i);
-                                }
-
-                                return true;
-                            }
-                        }
-                    }
-
-                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                    for (var i = 0; i < Options.MaxBankSlots; i++)
-                    {
-                        if (Bank[i] == null || Bank[i].ItemId == Guid.Empty)
-                        {
-                            Bank[i].Set(Items[slot]);
-                            Bank[i].Quantity = amount;
-
-                            //Remove Items from inventory send updates
-                            if (amount >= Items[slot].Quantity)
-                            {
-                                Items[slot].Set(Item.None);
-                                EquipmentProcessItemLoss(slot);
-                            }
-                            else
-                            {
-                                Items[slot].Quantity -= amount;
-                            }
-
-                            if (sendUpdate)
-                            {
-                                PacketSender.SendInventoryItemUpdate(this, slot);
-                                PacketSender.SendBankUpdate(this, i);
-                            }
-
-                            return true;
-                        }
-                    }
-
-                    PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
-                }
-                else
-                {
-                    PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
-                }
-            }
-
-            return false;
-        }
-
-        public bool TryDepositItem(Item item, bool sendUpdate = true)
-        {
-            var itemBase = item.Descriptor;
-
-            if (itemBase == null)
-            {
-                return false;
-            }
-
-            if (item.ItemId != Guid.Empty)
-            {
-                // Find a spot in the bank for it!
-                if (itemBase.IsStackable)
-                {
-                    for (var i = 0; i < Options.MaxBankSlots; i++)
-                    {
-                        var bankSlot = Bank[i];
-                        if (bankSlot != null && bankSlot.ItemId == item.ItemId)
-                        {
-                            if (item.Quantity <= int.MaxValue - bankSlot.Quantity)
-                            {
-                                bankSlot.Quantity += item.Quantity;
-
-                                if (sendUpdate)
-                                {
-                                    PacketSender.SendBankUpdate(this, i);
-                                }
-
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                // Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (var i = 0; i < Options.MaxBankSlots; i++)
-                {
-                    var bankSlot = Bank[i];
-
-                    if (bankSlot == null || bankSlot.ItemId == Guid.Empty)
-                    {
-                        bankSlot.Set(item);
-
-                        if (sendUpdate)
-                        {
-                            PacketSender.SendBankUpdate(this, i);
-                        }
-
-                        return true;
-                    }
-                }
-
-                PacketSender.SendChatMsg(this, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(this, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
-            }
-
-            return false;
-        }
-
-        public void WithdrawItem(int slot, int amount)
-        {
-            if (!InBank)
-            {
-                return;
-            }
-
-            Debug.Assert(ItemBase.Lookup != null, "ItemBase.Lookup != null");
-            Debug.Assert(Bank != null, "Bank != null");
-            Debug.Assert(Items != null, "Inventory != null");
-
-            var bankSlotItem = Bank[slot];
-            if (bankSlotItem == null)
-            {
-                return;
-            }
-
-            var itemBase = bankSlotItem.Descriptor;
-            var inventorySlot = -1;
-            if (itemBase == null)
-            {
-                return;
-            }
-
-            if (bankSlotItem.ItemId != Guid.Empty)
-            {
-                if (itemBase.IsStackable)
-                {
-                    if (amount >= bankSlotItem.Quantity)
-                    {
-                        amount = bankSlotItem.Quantity;
-                    }
-                }
-                else
-                {
-                    amount = 1;
-                }
-
-                //Find a spot in the inventory for it!
-                if (itemBase.IsStackable)
-                {
-                    /* Find an existing stack */
-                    for (var i = 0; i < Options.MaxInvItems; i++)
-                    {
-                        var inventorySlotItem = Items[i];
-                        if (inventorySlotItem == null)
-                        {
-                            continue;
-                        }
-
-                        if (inventorySlotItem.ItemId != bankSlotItem.ItemId)
-                        {
-                            continue;
-                        }
-
-                        inventorySlot = i;
-
-                        break;
-                    }
-                }
-
-                if (inventorySlot < 0)
-                {
-                    /* Find a free slot if we don't have one already */
-                    for (var j = 0; j < Options.MaxInvItems; j++)
-                    {
-                        if (Items[j] != null && Items[j].ItemId != Guid.Empty)
-                        {
-                            continue;
-                        }
-
-                        inventorySlot = j;
-
-                        break;
-                    }
-                }
-
-                /* If we don't have a slot send an error. */
-                if (inventorySlot < 0)
-                {
-                    PacketSender.SendChatMsg(this, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
-                    return; //Panda forgot this :P
-                }
-
-                /* Move the items to the inventory */
-                Debug.Assert(Items[inventorySlot] != null, "Inventory[inventorySlot] != null");
-                amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].Quantity);
-
-                if (Items[inventorySlot] == null ||
-                    Items[inventorySlot].ItemId == Guid.Empty ||
-                    Items[inventorySlot].Quantity < 0)
-                {
-                    Items[inventorySlot].Set(bankSlotItem);
-                    Items[inventorySlot].Quantity = 0;
-                }
-
-                Items[inventorySlot].Quantity += amount;
-                if (amount >= bankSlotItem.Quantity)
-                {
-                    Bank[slot].Set(Item.None);
-                }
-                else
-                {
-                    bankSlotItem.Quantity -= amount;
-                }
-
-                PacketSender.SendInventoryItemUpdate(this, inventorySlot);
-                PacketSender.SendBankUpdate(this, slot);
-            }
-            else
-            {
-                PacketSender.SendChatMsg(this, Strings.Banks.withdrawinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
-            }
-        }
-
-        public void SwapBankItems(int item1, int item2)
-        {
-            Item tmpInstance = null;
-            if (Bank[item2] != null)
-            {
-                tmpInstance = Bank[item2].Clone();
-            }
-
-            if (Bank[item1] != null)
-            {
-                Bank[item2].Set(Bank[item1]);
-            }
-            else
-            {
-                Bank[item2].Set(Item.None);
-            }
-
-            if (tmpInstance != null)
-            {
-                Bank[item1].Set(tmpInstance);
-            }
-            else
-            {
-                Bank[item1].Set(Item.None);
-            }
-
-            PacketSender.SendBankUpdate(this, item1);
-            PacketSender.SendBankUpdate(this, item2);
         }
 
         // TODO: Document this. The TODO on bagItem == null needs to be resolved before this is.
@@ -5758,6 +5504,13 @@ namespace Intersect.Server.Entities
                                 newEvent.SetParam("triggered", param);
 
                                 break;
+                            case CommonEventTrigger.GuildMemberJoined:
+                            case CommonEventTrigger.GuildMemberKicked:
+                            case CommonEventTrigger.GuildMemberLeft:
+                                newEvent.SetParam("member", param);
+                                newEvent.SetParam("guild", command);
+
+                                break;
                         }
 
                         var newStack = new CommandInstance(newEvent.PageInstance.MyPage);
@@ -6288,7 +6041,9 @@ namespace Intersect.Server.Entities
 
         [JsonIgnore, NotMapped] public ShopBase InShop;
 
-        [NotMapped] public bool InBank;
+        [NotMapped] public bool InBank => BankInterface != null;
+
+        [NotMapped][JsonIgnore] public BankInterface BankInterface;
 
         #endregion
 

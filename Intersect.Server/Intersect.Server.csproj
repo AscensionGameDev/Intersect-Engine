@@ -465,8 +465,10 @@
     <Compile Include="Database\PlayerData\IPlayerContext.cs" />
     <Compile Include="Database\PlayerData\Players\Bag.cs" />
     <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\GuildBankSlot.cs" />
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
     <Compile Include="Database\PlayerData\Players\Friend.cs" />
+    <Compile Include="Database\PlayerData\Players\Guild.cs" />
     <Compile Include="Database\PlayerData\Players\HotbarSlot.cs" />
     <Compile Include="Database\PlayerData\Players\InventorySlot.cs" />
     <Compile Include="Database\Item.cs" />
@@ -475,6 +477,7 @@
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Entities\BankInterface.cs" />
     <Compile Include="Entities\Combat\Buff.cs" />
     <Compile Include="Entities\Combat\Dash.cs" />
     <Compile Include="Entities\Combat\DoT.cs" />
@@ -530,6 +533,10 @@
     <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
     <Compile Include="Metrics\Histogram.cs" />
     <Compile Include="Metrics\MetricsRoot.cs" />
+    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.cs" />
+    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.designer.cs">
+      <DependentUpon>20210503165540_AddingGuildsWithGuildBanks.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
       <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>

@@ -219,6 +219,14 @@
         ChangePlayerColor,
 
         ChangeName,
+
+        //Guilds
+        CreateGuild,
+        DisbandGuild,
+        OpenGuildBank,
+        SetGuildBankSlots
+        //End Guilds
+
     }
 
 }

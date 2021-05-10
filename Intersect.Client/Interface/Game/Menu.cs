@@ -4,10 +4,12 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Character;
+using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game
@@ -61,6 +63,12 @@ namespace Intersect.Client.Interface.Game
 
         private readonly MapItemWindow mMapItemWindow;
 
+        private readonly ImagePanel mGuildBackground;
+
+        private readonly Button mGuildButton;
+
+        private readonly GuildWindow mGuildWindow;
+
         private int mBackgroundHeight = 42;
 
         private int mBackgroundWidth = 42;
@@ -112,6 +120,11 @@ namespace Intersect.Client.Interface.Game
             mPartyButton.SetToolTipText(Strings.GameMenu.party);
             mPartyButton.Clicked += PartyBtn_Clicked;
 
+            mGuildBackground = new ImagePanel(mMenuContainer, "GuildContainer");
+            mGuildButton = new Button(mGuildBackground, "GuildButton");
+            mGuildButton.SetToolTipText(Strings.Guilds.Guild);
+            mGuildButton.Clicked += GuildBtn_Clicked;
+
             mMenuBackground = new ImagePanel(mMenuContainer, "MenuContainer");
             mMenuButton = new Button(mMenuBackground, "MenuButton");
             mMenuButton.SetToolTipText(Strings.GameMenu.Menu);
@@ -127,6 +140,7 @@ namespace Intersect.Client.Interface.Game
             mCharacterWindow = new CharacterWindow(gameCanvas);
             mQuestsWindow = new QuestsWindow(gameCanvas);
             mMapItemWindow = new MapItemWindow(gameCanvas);
+            mGuildWindow = new GuildWindow(gameCanvas);
         }
 
         //Methods
@@ -139,11 +153,17 @@ namespace Intersect.Client.Interface.Game
             mFriendsWindow.Update();
             mQuestsWindow.Update(updateQuestLog);
             mMapItemWindow.Update();
+            mGuildWindow.Update();
         }
 
         public void UpdateFriendsList()
         {
             mFriendsWindow.UpdateList();
+        }
+
+        public void UpdateGuildList()
+        {
+            mGuildWindow.UpdateList();
         }
 
         public void HideWindows()
@@ -159,6 +179,7 @@ namespace Intersect.Client.Interface.Game
             mPartyWindow.Hide();
             mQuestsWindow.Hide();
             mSpellsWindow.Hide();
+            mGuildWindow.Hide();
         }
 
         public void ToggleCharacterWindow()
@@ -189,6 +210,28 @@ namespace Intersect.Client.Interface.Game
             }
 
             return mFriendsWindow.IsVisible();
+        }
+
+        public bool ToggleGuildWindow()
+        {
+            if (mGuildWindow.IsVisible())
+            {
+                mGuildWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                PacketSender.SendRequestGuild();
+                mGuildWindow.UpdateList();
+                mGuildWindow.Show();
+            }
+
+            return mGuildWindow.IsVisible();
+        }
+
+        public void HideGuildWindow()
+        {
+            mGuildWindow.Hide();
         }
 
         public void ToggleInventoryWindow()
@@ -319,6 +362,18 @@ namespace Intersect.Client.Interface.Game
         private void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleFriendsWindow();
+        }
+
+        private void GuildBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (!string.IsNullOrEmpty(Globals.Me.Guild))
+            {
+                ToggleGuildWindow();
+            }
+            else
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotInGuild, CustomColors.Alerts.Error, ChatMessageType.Guild));
+            }
         }
 
         private void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)

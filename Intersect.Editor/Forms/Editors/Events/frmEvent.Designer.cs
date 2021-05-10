@@ -143,6 +143,15 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode56,
             treeNode57,
             treeNode58});
+            System.Windows.Forms.TreeNode treeNode60 = new System.Windows.Forms.TreeNode("Create Guild");
+            System.Windows.Forms.TreeNode treeNode61 = new System.Windows.Forms.TreeNode("Disband Guild");
+            System.Windows.Forms.TreeNode treeNode62 = new System.Windows.Forms.TreeNode("Open Guild Bank");
+            System.Windows.Forms.TreeNode treeNode63 = new System.Windows.Forms.TreeNode("Set Guild Bank Slots Count");
+            System.Windows.Forms.TreeNode treeNode64 = new System.Windows.Forms.TreeNode("Guilds", new System.Windows.Forms.TreeNode[] {
+            treeNode60,
+            treeNode61,
+            treeNode62,
+            treeNode63});
             this.lblName = new System.Windows.Forms.Label();
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
@@ -999,6 +1008,20 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode58.Text = "Open Crafting Station";
             treeNode59.Name = "shopandbank";
             treeNode59.Text = "Shop and Bank";
+            treeNode60.Name = "createguild";
+            treeNode60.Tag = "53";
+            treeNode60.Text = "Create Guild";
+            treeNode61.Name = "disbandguild";
+            treeNode61.Tag = "54";
+            treeNode61.Text = "Disband Guild";
+            treeNode62.Name = "openguildbank";
+            treeNode62.Tag = "55";
+            treeNode62.Text = "Open Guild Bank";
+            treeNode63.Name = "setguildbankslots";
+            treeNode63.Tag = "56";
+            treeNode63.Text = "Set Guild Bank Slots Count";
+            treeNode64.Name = "guilds";
+            treeNode64.Text = "Guilds";
             this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode5,
             treeNode13,
@@ -1007,7 +1030,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode49,
             treeNode53,
             treeNode55,
-            treeNode59});
+            treeNode59,
+            treeNode64});
             this.lstCommands.Size = new System.Drawing.Size(445, 440);
             this.lstCommands.TabIndex = 2;
             this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);

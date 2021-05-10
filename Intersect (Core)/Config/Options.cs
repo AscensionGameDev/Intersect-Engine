@@ -2,7 +2,7 @@
 using System.IO;
 
 using Intersect.Config;
-
+using Intersect.Config.Guilds;
 using Newtonsoft.Json;
 
 namespace Intersect
@@ -71,6 +71,8 @@ namespace Intersect
         public PacketOptions Packets = new PacketOptions();
 
         public SmtpSettings SmtpSettings = new SmtpSettings();
+
+        public GuildOptions Guild = new GuildOptions();
 
         public static Options Instance { get; private set; }
 

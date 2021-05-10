@@ -17,6 +17,7 @@ using Intersect.Server.Metrics;
 using Newtonsoft.Json;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Database.PlayerData.Players;
 
 namespace Intersect.Server.Core
 {
@@ -234,6 +235,15 @@ namespace Intersect.Server.Core
 
                                 PacketSender.ResetMetrics();
                                 PacketHandler.ResetMetrics();
+                            }
+
+                            //Should we send out guild updates?
+                            foreach (var guild in Guild.Guilds)
+                            {
+                                if (guild.Value.LastUpdateTime + Options.Instance.Guild.GuildUpdateInterval < Globals.Timing.Milliseconds)
+                                {
+                                    LogicPool.QueueWorkItem(guild.Value.UpdateMemberList);
+                                }
                             }
 
                             swCpsTimer = Globals.Timing.Milliseconds + 1000;

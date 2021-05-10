@@ -116,7 +116,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChannelLabel.IsHidden = true;
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
                 menuItem.UserData = i;
@@ -127,7 +127,7 @@ namespace Intersect.Client.Interface.Game.Chat
             if (Globals.Me.Type > 0)
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channeladmin);
-                menuItem.UserData = 3;
+                menuItem.UserData = 4;
                 menuItem.Selected += MenuItem_Selected;
             }
 
@@ -219,6 +219,10 @@ namespace Intersect.Client.Interface.Game.Chat
 
                 case ChatboxTab.Party:
                     mChannelCombobox.SelectByUserData(2);
+                    break;
+
+                case ChatboxTab.Guild:
+                    mChannelCombobox.SelectByUserData(3);
                     break;
 
                 default:
