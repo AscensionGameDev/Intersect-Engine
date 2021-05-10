@@ -155,6 +155,32 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
+        /// <summary>
+        /// Hides this quest from the quest log if it has not been started and cannot be started due to the requiremetns/conditions
+        /// </summary>
+        public bool DoNotShowUnlessRequirementsMet { get; set; }
+
+        /// <summary>
+        /// Quest category in the quest log when this quest hasn't been started yet
+        /// </summary>
+        public string UnstartedCategory { get; set; } = "";
+
+        /// <summary>
+        /// Quest category in the quest log when this quest is in progress
+        /// </summary>
+        public string InProgressCategory { get; set; } = "";
+
+        /// <summary>
+        /// Quest category in the quest log when this quest has been completed
+        /// </summary>
+        public string CompletedCategory { get; set; } = "";
+
+        /// <summary>
+        /// Order priority of this quest within the quest log
+        /// </summary>
+        public int OrderValue { get; set; }
+
+
         public int GetTaskIndex(Guid taskId)
         {
             for (var i = 0; i < Tasks.Count; i++)

@@ -87,6 +87,26 @@ namespace Intersect.Editor.Forms.Editors.Quest
             txtSearch.Text = Strings.QuestEditor.searchplaceholder;
             lblFolder.Text = Strings.QuestEditor.folderlabel;
 
+
+            chkDoNotShowUnlessReqsMet.Text = Strings.QuestEditor.donotshowunlessreqsmet;
+
+            //Categories
+            lblUnstartedCategory.Text = Strings.QuestEditor.unstartedcategory;
+            lblInProgressCategory.Text = Strings.QuestEditor.inprogressgategory;
+            lblCompletedCategory.Text = Strings.QuestEditor.completedcategory;
+            cmbUnstartedCategory.Items.Add(Strings.General.none);
+            cmbInProgressCategory.Items.Add(Strings.General.none);
+            cmbCompletedCategory.Items.Add(Strings.General.none);
+
+            foreach (var questCategory in Options.Instance.Quest.Categories)
+            {
+                cmbUnstartedCategory.Items.Add(questCategory);
+                cmbInProgressCategory.Items.Add(questCategory);
+                cmbCompletedCategory.Items.Add(questCategory);
+            }
+
+            lblSortOrder.Text = Strings.QuestEditor.order;
+
             btnSave.Text = Strings.QuestEditor.save;
             btnCancel.Text = Strings.QuestEditor.cancel;
         }
@@ -216,6 +236,29 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 chkQuittable.Checked = Convert.ToBoolean(mEditorItem.Quitable);
                 chkLogBeforeOffer.Checked = Convert.ToBoolean(mEditorItem.LogBeforeOffer);
                 chkLogAfterComplete.Checked = Convert.ToBoolean(mEditorItem.LogAfterComplete);
+
+                chkDoNotShowUnlessReqsMet.Checked = Convert.ToBoolean(mEditorItem.DoNotShowUnlessRequirementsMet);
+
+                cmbUnstartedCategory.SelectedIndex = cmbUnstartedCategory.Items.IndexOf(mEditorItem.UnstartedCategory ?? "");
+                cmbInProgressCategory.SelectedIndex = cmbInProgressCategory.Items.IndexOf(mEditorItem.InProgressCategory ?? "");
+                cmbCompletedCategory.SelectedIndex = cmbCompletedCategory.Items.IndexOf(mEditorItem.CompletedCategory ?? "");
+
+                if (cmbUnstartedCategory.SelectedIndex == -1)
+                {
+                    cmbUnstartedCategory.SelectedIndex = 0;
+                }
+
+                if (cmbInProgressCategory.SelectedIndex == -1)
+                {
+                    cmbInProgressCategory.SelectedIndex = 0;
+                }
+
+                if (cmbCompletedCategory.SelectedIndex == -1)
+                {
+                    cmbCompletedCategory.SelectedIndex = 0;
+                }
+
+                nudOrderValue.Value = mEditorItem.OrderValue;
 
                 ListQuestTasks();
 
@@ -641,6 +684,39 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         #endregion
 
+        private void chkDoNotShowUnlessReqsMet_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DoNotShowUnlessRequirementsMet = chkDoNotShowUnlessReqsMet.Checked;
+        }
+
+        private void cmbUnstartedCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbUnstartedCategory.SelectedIndex > -1)
+            {
+                mEditorItem.UnstartedCategory = cmbUnstartedCategory.Text;
+            }
+        }
+
+        private void cmbInProgressCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbInProgressCategory.SelectedIndex > -1)
+            {
+                mEditorItem.InProgressCategory = cmbInProgressCategory.Text;
+            }
+        }
+
+        private void cmbCompletedCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbCompletedCategory.SelectedIndex > -1)
+            {
+                mEditorItem.CompletedCategory = cmbCompletedCategory.Text;
+            }
+        }
+
+        private void nudOrderValue_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OrderValue = (int)nudOrderValue.Value; 
+        }
     }
 
 }

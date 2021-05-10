@@ -39,10 +39,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
+            this.grpQuestReqs = new DarkUI.Controls.DarkGroupBox();
+            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
-            this.grpLogOptions = new DarkUI.Controls.DarkGroupBox();
-            this.chkLogAfterComplete = new DarkUI.Controls.DarkCheckBox();
-            this.chkLogBeforeOffer = new DarkUI.Controls.DarkCheckBox();
             this.txtBeforeDesc = new DarkUI.Controls.DarkTextBox();
             this.lblBeforeOffer = new System.Windows.Forms.Label();
             this.txtInProgressDesc = new DarkUI.Controls.DarkTextBox();
@@ -56,6 +55,16 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpProgessionOptions = new DarkUI.Controls.DarkGroupBox();
             this.chkQuittable = new DarkUI.Controls.DarkCheckBox();
             this.chkRepeatable = new DarkUI.Controls.DarkCheckBox();
+            this.grpLogOptions = new DarkUI.Controls.DarkGroupBox();
+            this.lblCompletedCategory = new System.Windows.Forms.Label();
+            this.cmbCompletedCategory = new DarkUI.Controls.DarkComboBox();
+            this.lblInProgressCategory = new System.Windows.Forms.Label();
+            this.cmbInProgressCategory = new DarkUI.Controls.DarkComboBox();
+            this.lblUnstartedCategory = new System.Windows.Forms.Label();
+            this.cmbUnstartedCategory = new DarkUI.Controls.DarkComboBox();
+            this.chkDoNotShowUnlessReqsMet = new DarkUI.Controls.DarkCheckBox();
+            this.chkLogAfterComplete = new DarkUI.Controls.DarkCheckBox();
+            this.chkLogBeforeOffer = new DarkUI.Controls.DarkCheckBox();
             this.grpQuestTasks = new DarkUI.Controls.DarkGroupBox();
             this.btnShiftTaskDown = new DarkUI.Controls.DarkButton();
             this.btnShiftTaskUp = new DarkUI.Controls.DarkButton();
@@ -68,8 +77,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.btnEditStartEvent = new DarkUI.Controls.DarkButton();
             this.lblOnEnd = new System.Windows.Forms.Label();
             this.lblOnStart = new System.Windows.Forms.Label();
-            this.grpQuestReqs = new DarkUI.Controls.DarkGroupBox();
-            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
@@ -83,15 +90,18 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.nudOrderValue = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblSortOrder = new System.Windows.Forms.Label();
             this.grpQuests.SuspendLayout();
             this.grpGeneral.SuspendLayout();
-            this.grpLogOptions.SuspendLayout();
+            this.grpQuestReqs.SuspendLayout();
             this.grpProgessionOptions.SuspendLayout();
+            this.grpLogOptions.SuspendLayout();
             this.grpQuestTasks.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.grpActions.SuspendLayout();
-            this.grpQuestReqs.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOrderValue)).BeginInit();
             this.SuspendLayout();
             // 
             // grpQuests
@@ -155,8 +165,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpGeneral.Controls.Add(this.btnAddFolder);
             this.grpGeneral.Controls.Add(this.lblFolder);
+            this.grpGeneral.Controls.Add(this.grpQuestReqs);
             this.grpGeneral.Controls.Add(this.cmbFolder);
-            this.grpGeneral.Controls.Add(this.grpLogOptions);
             this.grpGeneral.Controls.Add(this.txtBeforeDesc);
             this.grpGeneral.Controls.Add(this.lblBeforeOffer);
             this.grpGeneral.Controls.Add(this.txtInProgressDesc);
@@ -195,6 +205,29 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.lblFolder.TabIndex = 51;
             this.lblFolder.Text = "Folder:";
             // 
+            // grpQuestReqs
+            // 
+            this.grpQuestReqs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpQuestReqs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpQuestReqs.Controls.Add(this.btnEditRequirements);
+            this.grpQuestReqs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpQuestReqs.Location = new System.Drawing.Point(169, 11);
+            this.grpQuestReqs.Name = "grpQuestReqs";
+            this.grpQuestReqs.Size = new System.Drawing.Size(271, 52);
+            this.grpQuestReqs.TabIndex = 20;
+            this.grpQuestReqs.TabStop = false;
+            this.grpQuestReqs.Text = "Quest Requirements";
+            // 
+            // btnEditRequirements
+            // 
+            this.btnEditRequirements.Location = new System.Drawing.Point(10, 20);
+            this.btnEditRequirements.Name = "btnEditRequirements";
+            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditRequirements.Size = new System.Drawing.Size(255, 23);
+            this.btnEditRequirements.TabIndex = 0;
+            this.btnEditRequirements.Text = "Edit Quest Requirements";
+            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
+            // 
             // cmbFolder
             // 
             this.cmbFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -215,38 +248,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbFolder.Text = null;
             this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbFolder.SelectedIndexChanged += new System.EventHandler(this.cmbFolder_SelectedIndexChanged);
-            // 
-            // grpLogOptions
-            // 
-            this.grpLogOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpLogOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpLogOptions.Controls.Add(this.chkLogAfterComplete);
-            this.grpLogOptions.Controls.Add(this.chkLogBeforeOffer);
-            this.grpLogOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLogOptions.Location = new System.Drawing.Point(167, 9);
-            this.grpLogOptions.Name = "grpLogOptions";
-            this.grpLogOptions.Size = new System.Drawing.Size(274, 60);
-            this.grpLogOptions.TabIndex = 37;
-            this.grpLogOptions.TabStop = false;
-            this.grpLogOptions.Text = "Quest Log Options";
-            // 
-            // chkLogAfterComplete
-            // 
-            this.chkLogAfterComplete.Location = new System.Drawing.Point(6, 37);
-            this.chkLogAfterComplete.Name = "chkLogAfterComplete";
-            this.chkLogAfterComplete.Size = new System.Drawing.Size(262, 17);
-            this.chkLogAfterComplete.TabIndex = 31;
-            this.chkLogAfterComplete.Text = "Show in quest log after completing quest?";
-            this.chkLogAfterComplete.CheckedChanged += new System.EventHandler(this.chkLogAfterComplete_CheckedChanged);
-            // 
-            // chkLogBeforeOffer
-            // 
-            this.chkLogBeforeOffer.Location = new System.Drawing.Point(6, 19);
-            this.chkLogBeforeOffer.Name = "chkLogBeforeOffer";
-            this.chkLogBeforeOffer.Size = new System.Drawing.Size(262, 17);
-            this.chkLogBeforeOffer.TabIndex = 30;
-            this.chkLogBeforeOffer.Text = "Show in quest log before accepting quest?";
-            this.chkLogBeforeOffer.CheckedChanged += new System.EventHandler(this.chkLogBeforeOffer_CheckedChanged);
             // 
             // txtBeforeDesc
             // 
@@ -392,6 +393,146 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.chkRepeatable.Text = "Quest Repeatable?";
             this.chkRepeatable.CheckedChanged += new System.EventHandler(this.chkRepeatable_CheckedChanged);
             // 
+            // grpLogOptions
+            // 
+            this.grpLogOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLogOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLogOptions.Controls.Add(this.nudOrderValue);
+            this.grpLogOptions.Controls.Add(this.lblSortOrder);
+            this.grpLogOptions.Controls.Add(this.lblCompletedCategory);
+            this.grpLogOptions.Controls.Add(this.cmbCompletedCategory);
+            this.grpLogOptions.Controls.Add(this.lblInProgressCategory);
+            this.grpLogOptions.Controls.Add(this.cmbInProgressCategory);
+            this.grpLogOptions.Controls.Add(this.lblUnstartedCategory);
+            this.grpLogOptions.Controls.Add(this.cmbUnstartedCategory);
+            this.grpLogOptions.Controls.Add(this.chkDoNotShowUnlessReqsMet);
+            this.grpLogOptions.Controls.Add(this.chkLogAfterComplete);
+            this.grpLogOptions.Controls.Add(this.chkLogBeforeOffer);
+            this.grpLogOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLogOptions.Location = new System.Drawing.Point(3, 168);
+            this.grpLogOptions.Name = "grpLogOptions";
+            this.grpLogOptions.Size = new System.Drawing.Size(268, 201);
+            this.grpLogOptions.TabIndex = 37;
+            this.grpLogOptions.TabStop = false;
+            this.grpLogOptions.Text = "Quest Log Options";
+            // 
+            // lblCompletedCategory
+            // 
+            this.lblCompletedCategory.AutoSize = true;
+            this.lblCompletedCategory.Location = new System.Drawing.Point(6, 147);
+            this.lblCompletedCategory.Name = "lblCompletedCategory";
+            this.lblCompletedCategory.Size = new System.Drawing.Size(105, 13);
+            this.lblCompletedCategory.TabIndex = 57;
+            this.lblCompletedCategory.Text = "Completed Category:";
+            // 
+            // cmbCompletedCategory
+            // 
+            this.cmbCompletedCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCompletedCategory.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCompletedCategory.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCompletedCategory.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCompletedCategory.DrawDropdownHoverOutline = false;
+            this.cmbCompletedCategory.DrawFocusRectangle = false;
+            this.cmbCompletedCategory.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCompletedCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompletedCategory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCompletedCategory.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCompletedCategory.FormattingEnabled = true;
+            this.cmbCompletedCategory.Location = new System.Drawing.Point(120, 144);
+            this.cmbCompletedCategory.Name = "cmbCompletedCategory";
+            this.cmbCompletedCategory.Size = new System.Drawing.Size(142, 21);
+            this.cmbCompletedCategory.TabIndex = 56;
+            this.cmbCompletedCategory.Text = null;
+            this.cmbCompletedCategory.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbCompletedCategory.SelectedIndexChanged += new System.EventHandler(this.cmbCompletedCategory_SelectedIndexChanged);
+            // 
+            // lblInProgressCategory
+            // 
+            this.lblInProgressCategory.AutoSize = true;
+            this.lblInProgressCategory.Location = new System.Drawing.Point(6, 120);
+            this.lblInProgressCategory.Name = "lblInProgressCategory";
+            this.lblInProgressCategory.Size = new System.Drawing.Size(108, 13);
+            this.lblInProgressCategory.TabIndex = 55;
+            this.lblInProgressCategory.Text = "In Progress Category:";
+            // 
+            // cmbInProgressCategory
+            // 
+            this.cmbInProgressCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbInProgressCategory.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbInProgressCategory.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbInProgressCategory.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbInProgressCategory.DrawDropdownHoverOutline = false;
+            this.cmbInProgressCategory.DrawFocusRectangle = false;
+            this.cmbInProgressCategory.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbInProgressCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbInProgressCategory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbInProgressCategory.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbInProgressCategory.FormattingEnabled = true;
+            this.cmbInProgressCategory.Location = new System.Drawing.Point(120, 117);
+            this.cmbInProgressCategory.Name = "cmbInProgressCategory";
+            this.cmbInProgressCategory.Size = new System.Drawing.Size(142, 21);
+            this.cmbInProgressCategory.TabIndex = 54;
+            this.cmbInProgressCategory.Text = null;
+            this.cmbInProgressCategory.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbInProgressCategory.SelectedIndexChanged += new System.EventHandler(this.cmbInProgressCategory_SelectedIndexChanged);
+            // 
+            // lblUnstartedCategory
+            // 
+            this.lblUnstartedCategory.AutoSize = true;
+            this.lblUnstartedCategory.Location = new System.Drawing.Point(6, 93);
+            this.lblUnstartedCategory.Name = "lblUnstartedCategory";
+            this.lblUnstartedCategory.Size = new System.Drawing.Size(101, 13);
+            this.lblUnstartedCategory.TabIndex = 53;
+            this.lblUnstartedCategory.Text = "Unstarted Category:";
+            // 
+            // cmbUnstartedCategory
+            // 
+            this.cmbUnstartedCategory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbUnstartedCategory.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbUnstartedCategory.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbUnstartedCategory.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbUnstartedCategory.DrawDropdownHoverOutline = false;
+            this.cmbUnstartedCategory.DrawFocusRectangle = false;
+            this.cmbUnstartedCategory.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbUnstartedCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUnstartedCategory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUnstartedCategory.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbUnstartedCategory.FormattingEnabled = true;
+            this.cmbUnstartedCategory.Location = new System.Drawing.Point(120, 90);
+            this.cmbUnstartedCategory.Name = "cmbUnstartedCategory";
+            this.cmbUnstartedCategory.Size = new System.Drawing.Size(142, 21);
+            this.cmbUnstartedCategory.TabIndex = 52;
+            this.cmbUnstartedCategory.Text = null;
+            this.cmbUnstartedCategory.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbUnstartedCategory.SelectedIndexChanged += new System.EventHandler(this.cmbUnstartedCategory_SelectedIndexChanged);
+            // 
+            // chkDoNotShowUnlessReqsMet
+            // 
+            this.chkDoNotShowUnlessReqsMet.Location = new System.Drawing.Point(6, 58);
+            this.chkDoNotShowUnlessReqsMet.Name = "chkDoNotShowUnlessReqsMet";
+            this.chkDoNotShowUnlessReqsMet.Size = new System.Drawing.Size(256, 32);
+            this.chkDoNotShowUnlessReqsMet.TabIndex = 32;
+            this.chkDoNotShowUnlessReqsMet.Text = "Do not show in quest log unless requirements are met";
+            this.chkDoNotShowUnlessReqsMet.CheckedChanged += new System.EventHandler(this.chkDoNotShowUnlessReqsMet_CheckedChanged);
+            // 
+            // chkLogAfterComplete
+            // 
+            this.chkLogAfterComplete.Location = new System.Drawing.Point(6, 37);
+            this.chkLogAfterComplete.Name = "chkLogAfterComplete";
+            this.chkLogAfterComplete.Size = new System.Drawing.Size(256, 17);
+            this.chkLogAfterComplete.TabIndex = 31;
+            this.chkLogAfterComplete.Text = "Show in quest log after completing quest?";
+            this.chkLogAfterComplete.CheckedChanged += new System.EventHandler(this.chkLogAfterComplete_CheckedChanged);
+            // 
+            // chkLogBeforeOffer
+            // 
+            this.chkLogBeforeOffer.Location = new System.Drawing.Point(6, 19);
+            this.chkLogBeforeOffer.Name = "chkLogBeforeOffer";
+            this.chkLogBeforeOffer.Size = new System.Drawing.Size(256, 17);
+            this.chkLogBeforeOffer.TabIndex = 30;
+            this.chkLogBeforeOffer.Text = "Show in quest log before accepting quest?";
+            this.chkLogBeforeOffer.CheckedChanged += new System.EventHandler(this.chkLogBeforeOffer_CheckedChanged);
+            // 
             // grpQuestTasks
             // 
             this.grpQuestTasks.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -468,7 +609,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             // 
             this.pnlContainer.Controls.Add(this.grpActions);
             this.pnlContainer.Controls.Add(this.grpGeneral);
-            this.pnlContainer.Controls.Add(this.grpQuestReqs);
+            this.pnlContainer.Controls.Add(this.grpLogOptions);
             this.pnlContainer.Controls.Add(this.grpQuestTasks);
             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
@@ -529,29 +670,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.lblOnStart.Size = new System.Drawing.Size(80, 13);
             this.lblOnStart.TabIndex = 0;
             this.lblOnStart.Text = "On Quest Start:";
-            // 
-            // grpQuestReqs
-            // 
-            this.grpQuestReqs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpQuestReqs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpQuestReqs.Controls.Add(this.btnEditRequirements);
-            this.grpQuestReqs.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpQuestReqs.Location = new System.Drawing.Point(0, 168);
-            this.grpQuestReqs.Name = "grpQuestReqs";
-            this.grpQuestReqs.Size = new System.Drawing.Size(271, 52);
-            this.grpQuestReqs.TabIndex = 20;
-            this.grpQuestReqs.TabStop = false;
-            this.grpQuestReqs.Text = "Quest Requirements";
-            // 
-            // btnEditRequirements
-            // 
-            this.btnEditRequirements.Location = new System.Drawing.Point(10, 20);
-            this.btnEditRequirements.Name = "btnEditRequirements";
-            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnEditRequirements.Size = new System.Drawing.Size(255, 23);
-            this.btnEditRequirements.TabIndex = 0;
-            this.btnEditRequirements.Text = "Edit Quest Requirements";
-            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
             // 
             // btnCancel
             // 
@@ -695,6 +813,35 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // nudOrderValue
+            // 
+            this.nudOrderValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudOrderValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudOrderValue.Location = new System.Drawing.Point(120, 171);
+            this.nudOrderValue.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nudOrderValue.Name = "nudOrderValue";
+            this.nudOrderValue.Size = new System.Drawing.Size(142, 20);
+            this.nudOrderValue.TabIndex = 59;
+            this.nudOrderValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudOrderValue.ValueChanged += new System.EventHandler(this.nudOrderValue_ValueChanged);
+            // 
+            // lblSortOrder
+            // 
+            this.lblSortOrder.AutoSize = true;
+            this.lblSortOrder.Location = new System.Drawing.Point(6, 173);
+            this.lblSortOrder.Name = "lblSortOrder";
+            this.lblSortOrder.Size = new System.Drawing.Size(110, 13);
+            this.lblSortOrder.TabIndex = 58;
+            this.lblSortOrder.Text = "Quest Log Sort Order:";
+            // 
             // FrmQuest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -719,16 +866,18 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.grpQuests.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
-            this.grpLogOptions.ResumeLayout(false);
+            this.grpQuestReqs.ResumeLayout(false);
             this.grpProgessionOptions.ResumeLayout(false);
             this.grpProgessionOptions.PerformLayout();
+            this.grpLogOptions.ResumeLayout(false);
+            this.grpLogOptions.PerformLayout();
             this.grpQuestTasks.ResumeLayout(false);
             this.pnlContainer.ResumeLayout(false);
             this.grpActions.ResumeLayout(false);
             this.grpActions.PerformLayout();
-            this.grpQuestReqs.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOrderValue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -785,6 +934,15 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private DarkCheckBox chkDoNotShowUnlessReqsMet;
+        private System.Windows.Forms.Label lblCompletedCategory;
+        private DarkComboBox cmbCompletedCategory;
+        private System.Windows.Forms.Label lblInProgressCategory;
+        private DarkComboBox cmbInProgressCategory;
+        private System.Windows.Forms.Label lblUnstartedCategory;
+        private DarkComboBox cmbUnstartedCategory;
+        private DarkNumericUpDown nudOrderValue;
+        private System.Windows.Forms.Label lblSortOrder;
         private Controls.GameObjectList lstGameObjects;
     }
 }
