@@ -38,7 +38,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpClasses = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstClasses = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpBaseStats = new DarkUI.Controls.DarkGroupBox();
             this.nudBaseMana = new DarkUI.Controls.DarkNumericUpDown();
             this.nudBaseHP = new DarkUI.Controls.DarkNumericUpDown();
@@ -231,7 +231,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpClasses.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpClasses.Controls.Add(this.btnClearSearch);
             this.grpClasses.Controls.Add(this.txtSearch);
-            this.grpClasses.Controls.Add(this.lstClasses);
+            this.grpClasses.Controls.Add(this.lstGameObjects);
             this.grpClasses.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpClasses.Location = new System.Drawing.Point(8, 36);
             this.grpClasses.Margin = new System.Windows.Forms.Padding(2);
@@ -267,20 +267,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstClasses
+            // lstGameObjects
             // 
-            this.lstClasses.AllowDrop = true;
-            this.lstClasses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstClasses.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstClasses.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstClasses.HideSelection = false;
-            this.lstClasses.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstClasses.Location = new System.Drawing.Point(4, 45);
-            this.lstClasses.Name = "lstClasses";
-            this.lstClasses.Size = new System.Drawing.Size(126, 305);
-            this.lstClasses.TabIndex = 20;
-            this.lstClasses.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstClasses_AfterSelect);
-            this.lstClasses.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstClasses_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(4, 45);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(126, 305);
+            this.lstGameObjects.TabIndex = 20;
             // 
             // grpBaseStats
             // 
@@ -2463,7 +2463,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstClasses;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
@@ -2472,5 +2471,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblAttackSpeedValue;
         private DarkComboBox cmbAttackSpeedModifier;
         private System.Windows.Forms.Label lblAttackSpeedModifier;
+        private Controls.GameObjectList lstGameObjects;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -19,8 +20,6 @@ namespace Intersect.Editor.Forms.Editors
 
         private string mCopiedItem;
 
-        private List<string> mExpandedFolders = new List<string>();
-
         private List<string> mKnownFolders = new List<string>();
 
         public FrmCommonEvent()
@@ -29,6 +28,10 @@ namespace Intersect.Editor.Forms.Editors
             InitializeComponent();
             InitLocalization();
             InitEditor();
+
+            lstGameObjects.NodeMouseDoubleClick += lstGameObjects_NodeMouseDoubleClick;
+            lstGameObjects.AfterSelect += lstGameObjects_AfterSelect;
+            lstGameObjects.Init(null, null, toolStripItemNew_Click, toolStripItemCopy_Click, null, toolStripItemPaste_Click, toolStripItemDelete_Click);
         }
 
         private void InitLocalization()
@@ -54,15 +57,15 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void btnNew_Click(object sender, EventArgs e)
+        private void toolStripItemNew_Click(object sender, EventArgs e)
         {
             PacketSender.SendCreateObject(GameObjectType.Event);
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void toolStripItemDelete_Click(object sender, EventArgs e)
         {
-            if (lstCommonEvents.SelectedNode?.Tag != null &&
-                EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag) != null)
+            if (lstGameObjects.SelectedNode?.Tag != null &&
+                EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag) != null)
             {
                 if (MessageBox.Show(
                         Strings.CommonEventEditor.deleteprompt, Strings.CommonEventEditor.delete,
@@ -70,35 +73,26 @@ namespace Intersect.Editor.Forms.Editors
                     ) ==
                     DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag));
+                    PacketSender.SendDeleteObject(EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag));
                 }
             }
         }
 
         private void InitEditor()
         {
-            var selectedId = Guid.Empty;
-            var folderNodes = new Dictionary<string, TreeNode>();
-            if (lstCommonEvents.SelectedNode != null && lstCommonEvents.SelectedNode.Tag != null)
-            {
-                selectedId = (Guid) lstCommonEvents.SelectedNode.Tag;
-            }
-
-            lstCommonEvents.Nodes.Clear();
-
             //Collect folders
             var mFolders = new List<string>();
             foreach (var itm in EventBase.Lookup)
             {
-                if (((EventBase) itm.Value).CommonEvent)
+                if (((EventBase)itm.Value).CommonEvent)
                 {
-                    if (!string.IsNullOrEmpty(((EventBase) itm.Value).Folder) &&
-                        !mFolders.Contains(((EventBase) itm.Value).Folder))
+                    if (!string.IsNullOrEmpty(((EventBase)itm.Value).Folder) &&
+                        !mFolders.Contains(((EventBase)itm.Value).Folder))
                     {
-                        mFolders.Add(((EventBase) itm.Value).Folder);
-                        if (!mKnownFolders.Contains(((EventBase) itm.Value).Folder))
+                        mFolders.Add(((EventBase)itm.Value).Folder);
+                        if (!mKnownFolders.Contains(((EventBase)itm.Value).Folder))
                         {
-                            mKnownFolders.Add(((EventBase) itm.Value).Folder);
+                            mKnownFolders.Add(((EventBase)itm.Value).Folder);
                         }
                     }
                 }
@@ -110,70 +104,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-            lstCommonEvents.Sorted = !btnChronological.Checked;
-
-            if (!btnChronological.Checked && !CustomSearch())
-            {
-                foreach (var folder in mFolders)
-                {
-                    var node = lstCommonEvents.Nodes.Add(folder);
-                    node.ImageIndex = 0;
-                    node.SelectedImageIndex = 0;
-                    folderNodes.Add(folder, node);
-                }
-            }
-
-            foreach (var itm in EventBase.ItemPairs)
-            {
-                var node = new TreeNode(itm.Value);
-                node.Tag = itm.Key;
-                node.ImageIndex = 1;
-                node.SelectedImageIndex = 1;
-
-                var folder = EventBase.Get(itm.Key).Folder;
-                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
-                {
-                    var folderNode = folderNodes[folder];
-                    folderNode.Nodes.Add(node);
-                    if (itm.Key == selectedId)
-                    {
-                        folderNode.Expand();
-                    }
-                }
-                else
-                {
-                    lstCommonEvents.Nodes.Add(node);
-                }
-
-                if (CustomSearch())
-                {
-                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
-                    {
-                        node.Remove();
-                    }
-                }
-
-                if (itm.Key == selectedId)
-                {
-                    lstCommonEvents.SelectedNode = node;
-                }
-            }
-
-            var selectedNode = lstCommonEvents.SelectedNode;
-
-            if (!btnChronological.Checked)
-            {
-                lstCommonEvents.Sort();
-            }
-
-            lstCommonEvents.SelectedNode = selectedNode;
-            foreach (var node in mExpandedFolders)
-            {
-                if (folderNodes.ContainsKey(node))
-                {
-                    folderNodes[node].Expand();
-                }
-            }
+            var items = EventBase.Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+                new KeyValuePair<string, string>(((EventBase)pair.Value)?.Name ?? Models.DatabaseObject<EventBase>.Deleted, ((EventBase)pair.Value)?.Folder ?? ""))).ToArray();
+            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void frmCommonEvent_FormClosed(object sender, FormClosedEventArgs e)
@@ -184,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors
         private void toolStripItemCopy_Click(object sender, EventArgs e)
         {
             var evt = GetSelectedEvent();
-            if (evt != null && lstCommonEvents.Focused)
+            if (evt != null && lstGameObjects.Focused)
             {
                 mCopiedItem = evt.JsonData;
                 toolStripItemPaste.Enabled = true;
@@ -194,7 +127,7 @@ namespace Intersect.Editor.Forms.Editors
         private void toolStripItemPaste_Click(object sender, EventArgs e)
         {
             var evt = GetSelectedEvent();
-            if (evt != null && mCopiedItem != null && lstCommonEvents.Focused)
+            if (evt != null && mCopiedItem != null && lstGameObjects.Focused)
             {
                 if (MessageBox.Show(
                         Strings.CommonEventEditor.pasteprompt, Strings.CommonEventEditor.pastetitle,
@@ -213,12 +146,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private EventBase GetSelectedEvent()
         {
-            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null)
+            if (lstGameObjects.SelectedNode == null || lstGameObjects.SelectedNode.Tag == null)
             {
                 return null;
             }
 
-            return EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag);
+            return EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
@@ -240,69 +173,23 @@ namespace Intersect.Editor.Forms.Editors
                         PacketSender.SendSaveObject(evt);
                     }
 
-                    mExpandedFolders.Add(folderName);
+                    lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
                 }
             }
         }
 
-        private void lstCommonEvents_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void lstGameObjects_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            var node = e.Node;
-            if (node != null)
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
-                    {
-                        Clipboard.SetText(e.Node.Tag.ToString());
-                    }
-                }
-
-                var hitTest = lstCommonEvents.HitTest(e.Location);
-                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
-                {
-                    if (node.Nodes.Count > 0)
-                    {
-                        if (node.IsExpanded)
-                        {
-                            node.Collapse();
-                        }
-                        else
-                        {
-                            node.Expand();
-                        }
-                    }
-                }
-
-                if (node.IsExpanded)
-                {
-                    if (!mExpandedFolders.Contains(node.Text))
-                    {
-                        mExpandedFolders.Add(node.Text);
-                    }
-                }
-                else
-                {
-                    if (mExpandedFolders.Contains(node.Text))
-                    {
-                        mExpandedFolders.Remove(node.Text);
-                    }
-                }
-            }
-        }
-
-        private void lstCommonEvents_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (lstCommonEvents.SelectedNode == null || lstCommonEvents.SelectedNode.Tag == null)
+            if (lstGameObjects.SelectedNode == null || lstGameObjects.SelectedNode.Tag == null)
             {
                 return;
             }
 
             var editor = new FrmEvent(null)
             {
-                MyEvent = EventBase.Get((Guid) lstCommonEvents.SelectedNode.Tag)
+                MyEvent = EventBase.Get((Guid) lstGameObjects.SelectedNode.Tag)
             };
 
             editor.InitEditor(false, false, false);
@@ -368,7 +255,7 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void lstCommonEvents_AfterSelect(object sender, TreeViewEventArgs e)
+        private void lstGameObjects_AfterSelect(object sender, EventArgs e)
         {
             var evt = GetSelectedEvent();
             toolStripItemDelete.Enabled = false;

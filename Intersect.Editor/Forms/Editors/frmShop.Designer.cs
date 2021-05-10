@@ -30,11 +30,12 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmShop));
             this.grpShops = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstShops = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -95,7 +96,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpShops.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpShops.Controls.Add(this.btnClearSearch);
             this.grpShops.Controls.Add(this.txtSearch);
-            this.grpShops.Controls.Add(this.lstShops);
+            this.grpShops.Controls.Add(this.lstGameObjects);
             this.grpShops.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpShops.Location = new System.Drawing.Point(12, 34);
             this.grpShops.Name = "grpShops";
@@ -129,20 +130,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstShops
+            // lstGameObjects
             // 
-            this.lstShops.AllowDrop = true;
-            this.lstShops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstShops.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstShops.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstShops.HideSelection = false;
-            this.lstShops.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstShops.Location = new System.Drawing.Point(6, 46);
-            this.lstShops.Name = "lstShops";
-            this.lstShops.Size = new System.Drawing.Size(191, 415);
-            this.lstShops.TabIndex = 35;
-            this.lstShops.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstShops_AfterSelect);
-            this.lstShops.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstShops_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 46);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(191, 415);
+            this.lstGameObjects.TabIndex = 35;
             // 
             // grpGeneral
             // 
@@ -787,11 +788,11 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudBuyAmount;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstShops;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private Controls.GameObjectList lstGameObjects;
     }
 }

@@ -30,6 +30,7 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSwitchVariable));
             this.grpTypes = new DarkUI.Controls.DarkGroupBox();
             this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
@@ -37,7 +38,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstVariables = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -115,7 +116,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpList.Controls.Add(this.btnClearSearch);
             this.grpList.Controls.Add(this.txtSearch);
-            this.grpList.Controls.Add(this.lstVariables);
+            this.grpList.Controls.Add(this.lstGameObjects);
             this.grpList.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpList.Location = new System.Drawing.Point(8, 44);
             this.grpList.Name = "grpList";
@@ -149,20 +150,20 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
             this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             // 
-            // lstVariables
+            // lstGameObjects
             // 
-            this.lstVariables.AllowDrop = true;
-            this.lstVariables.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstVariables.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstVariables.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstVariables.HideSelection = false;
-            this.lstVariables.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstVariables.Location = new System.Drawing.Point(6, 46);
-            this.lstVariables.Name = "lstVariables";
-            this.lstVariables.Size = new System.Drawing.Size(188, 330);
-            this.lstVariables.TabIndex = 32;
-            this.lstVariables.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstVariables_AfterSelect);
-            this.lstVariables.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstVariables_NodeMouseClick);
+            this.lstGameObjects.AllowDrop = true;
+            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstGameObjects.HideSelection = false;
+            this.lstGameObjects.ImageIndex = 0;
+            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstGameObjects.Location = new System.Drawing.Point(6, 46);
+            this.lstGameObjects.Name = "lstGameObjects";
+            this.lstGameObjects.SelectedImageIndex = 0;
+            this.lstGameObjects.Size = new System.Drawing.Size(188, 330);
+            this.lstGameObjects.TabIndex = 32;
             // 
             // grpEditor
             // 
@@ -446,7 +447,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemNew.Name = "toolStripItemNew";
             this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemNew.Text = "New";
-            this.toolStripItemNew.Click += new System.EventHandler(this.btnNew_Click);
+            this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
             // 
             // toolStripSeparator1
             // 
@@ -465,7 +466,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemDelete.Name = "toolStripItemDelete";
             this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemDelete.Text = "Delete";
-            this.toolStripItemDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
             // 
             // toolStripSeparator2
             // 
@@ -502,7 +503,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Name = "toolStripItemUndo";
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
-            this.toolStripItemUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
             // FrmSwitchVariable
             // 
@@ -567,10 +568,10 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
-        public Intersect.Editor.Forms.Controls.GameObjectList lstVariables;
         private DarkButton btnAddFolder;
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private DarkTextBox txtStringValue;
+        private Controls.GameObjectList lstGameObjects;
     }
 }
