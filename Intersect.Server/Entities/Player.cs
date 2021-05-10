@@ -353,7 +353,7 @@ namespace Intersect.Server.Entities
             var keys = SpellCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (SpellCooldowns[key] < Globals.Timing.MillisecondsUTC)
+                if (SpellCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
                 {
                     SpellCooldowns.TryRemove(key, out _);
                 }
@@ -362,7 +362,7 @@ namespace Intersect.Server.Entities
             keys = ItemCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (ItemCooldowns[key] < Globals.Timing.MillisecondsUTC)
+                if (ItemCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
                 {
                     ItemCooldowns.TryRemove(key, out _);
                 }
