@@ -1466,14 +1466,15 @@ namespace Intersect.Client.Networking
         //ShowPicturePacket
         public void HandlePacket(IPacketSender packetSender, ShowPicturePacket packet)
         {
-            Globals.Picture = packet.Picture;
-            Globals.PictureSize = packet.Size;
-            Globals.PictureClickable = packet.Clickable;
+            PacketSender.SendClosePicture(Globals.Picture?.EventId ?? Guid.Empty);
+            packet.ReceiveTime = Globals.System.GetTimeMs();
+            Globals.Picture = packet;
         }
 
         //HidePicturePacket
         public void HandlePacket(IPacketSender packetSender, HidePicturePacket packet)
         {
+            PacketSender.SendClosePicture(Globals.Picture?.EventId ?? Guid.Empty);
             Globals.Picture = null;
         }
 

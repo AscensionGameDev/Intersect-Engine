@@ -5475,6 +5475,33 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void PictureClosed(Guid eventId)
+        {
+            lock (mEventLock)
+            {
+                foreach (var evt in EventLookup)
+                {
+                    if (evt.Value.PageInstance != null && evt.Value.PageInstance.Id == eventId)
+                    {
+                        if (evt.Value.CallStack.Count <= 0)
+                        {
+                            return;
+                        }
+
+                        var stackInfo = evt.Value.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Picture)
+                        {
+                            return;
+                        }
+
+                        stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
+
+                        return;
+                    }
+                }
+            }
+        }
+
         public void RespondToEventInput(Guid eventId, int newValue, string newValueString, bool canceled = false)
         {
             lock (mEventLock)

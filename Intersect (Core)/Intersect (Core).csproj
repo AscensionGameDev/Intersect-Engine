@@ -383,6 +383,7 @@
     <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+    <Compile Include="Network\Packets\Client\PictureClosedPacket.cs" />
     <Compile Include="Network\Packets\Server\ActionMsgPackets.cs" />
     <Compile Include="Network\Packets\Server\EntityMovementPackets.cs" />
     <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />
