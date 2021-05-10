@@ -17,6 +17,8 @@
 
         Admin,
 
+        Guild,
+
         // Player Messages
         Experience = 20,
 

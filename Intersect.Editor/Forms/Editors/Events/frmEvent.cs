@@ -730,6 +730,24 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ChangeNameCommand(CurrentPage.CommandLists);
 
                     break;
+
+                case EventCommandType.CreateGuild:
+                    tmpCommand = new CreateGuildCommand(CurrentPage.CommandLists);
+
+                    break;
+
+                case EventCommandType.DisbandGuild:
+                    tmpCommand = new DisbandGuildCommand(CurrentPage.CommandLists);
+
+                    break;
+                case EventCommandType.OpenGuildBank:
+                    tmpCommand = new OpenGuildBankCommand();
+
+                    break;
+                case EventCommandType.SetGuildBankSlots:
+                    tmpCommand = new SetGuildBankSlotsCommand();
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1303,6 +1321,22 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangeName:
                     cmdWindow = new EventCommandChangeName((ChangeNameCommand)command, CurrentPage, this);
+
+                    break;
+
+                case EventCommandType.CreateGuild:
+                    cmdWindow = new EventCommandCreateGuild((CreateGuildCommand)command, CurrentPage, this);
+
+                    break;
+
+                case EventCommandType.DisbandGuild:
+
+                    break;
+                case EventCommandType.OpenGuildBank:
+
+                    break;
+                case EventCommandType.SetGuildBankSlots:
+                    cmdWindow = new EventCommandSetGuildBankSlots((SetGuildBankSlotsCommand)command, CurrentPage, this);
 
                     break;
                 default:

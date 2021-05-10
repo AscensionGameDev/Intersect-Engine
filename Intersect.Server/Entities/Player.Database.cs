@@ -9,6 +9,7 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Database.PlayerData.Players;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -264,6 +265,25 @@ namespace Intersect.Server.Entities
             {
                 Log.Error(ex, $"Failed to remove friendship between {id} and {otherId}.");
                 //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+            }
+        }
+        #endregion
+
+        #region "Guilds"
+        public void LoadGuild()
+        {
+            using (var context = DbInterface.CreatePlayerContext())
+            {
+                var guildId = context.Players.Where(p => p.Id == Id && p.DbGuild.Id != null && p.DbGuild.Id != Guid.Empty).Select(p => p.DbGuild.Id).FirstOrDefault();
+                if (guildId != default)
+                {
+                    Guild = Guild.LoadGuild(guildId);
+                }
+            }
+
+            if (GuildRank > Options.Instance.Guild.Ranks.Length - 1)
+            {
+                GuildRank = Options.Instance.Guild.Ranks.Length - 1;
             }
         }
         #endregion

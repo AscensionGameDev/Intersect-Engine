@@ -33,6 +33,13 @@ namespace Intersect.Network.Packets.Server
         [Key(28)]
         public long CombatTimeRemaining { get; set; }
 
+
+        [Key(29)]
+        public string Guild { get; set; }
+
+
+        [Key(30)]
+        public int GuildRank { get; set; }
     }
 
 }

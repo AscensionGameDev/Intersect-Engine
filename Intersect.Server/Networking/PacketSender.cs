@@ -1502,23 +1502,6 @@ namespace Intersect.Server.Networking
             player.SendPacket(new ShopPacket(null, true));
         }
 
-        //BankPacket
-        public static void SendOpenBank(Player player)
-        {
-            for (var i = 0; i < Options.MaxBankSlots; i++)
-            {
-                SendBankUpdate(player, i);
-            }
-
-            player.SendPacket(new BankPacket(false));
-        }
-
-        //BankPacket
-        public static void SendCloseBank(Player player)
-        {
-            player.SendPacket(new BankPacket(true));
-        }
-
         //CraftingTablePacket
         public static void SendOpenCraftingTable(Player player, CraftingTableBase table)
         {
@@ -1532,24 +1515,6 @@ namespace Intersect.Server.Networking
         public static void SendCloseCraftingTable(Player player)
         {
             player.SendPacket(new CraftingTablePacket(null, true));
-        }
-
-        //BankUpdatePacket
-        public static void SendBankUpdate(Player player, int slot)
-        {
-            if (player.Bank[slot] != null && player.Bank[slot].ItemId != Guid.Empty && player.Bank[slot].Quantity > 0)
-            {
-                player.SendPacket(
-                    new BankUpdatePacket(
-                        slot, player.Bank[slot].ItemId, player.Bank[slot].Quantity, player.Bank[slot].BagId,
-                        player.Bank[slot].StatBuffs
-                    )
-                );
-            }
-            else
-            {
-                player.SendPacket(new BankUpdatePacket(slot, Guid.Empty, 0, null, null));
-            }
         }
 
         //GameObjectPacket
@@ -2027,6 +1992,46 @@ namespace Intersect.Server.Networking
         public static void SetPlayerTarget(Player player, Guid targetId)
         {
             player.SendPacket(new TargetOverridePacket(targetId));
+        }
+
+        //GuildMsgPacket
+        public static void SendGuildMsg(Player player, string message, Color clr, string target = "")
+        {
+            foreach (var p in player.Guild.FindOnlineMembers())
+            {
+                if (p != null)
+                {
+                    SendChatMsg(p, message, ChatMessageType.Guild, clr, target);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send a player their guild member list.
+        /// </summary>
+        /// <param name="player"></param>
+        public static void SendGuild(Player player)
+        {
+            if (player == null || player.Guild == null)
+            {
+                return;
+            }
+
+            var members = player.Guild.Members.Values.ToArray();
+            var onlineMembers = player.Guild.FindOnlineMembers();
+
+            foreach (var member in members)
+            {
+                member.Online = onlineMembers.Any(m => m.Id == member.Id);
+            }
+
+            player.SendPacket(new GuildPacket(members));
+        }
+
+        //GuildRequestPacket
+        public static void SendGuildInvite(Player player, Player from)
+        {
+            player.SendPacket(new GuildInvitePacket(from.Name, from.Guild.Name));
         }
 
         public static void SendDataToMap(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)

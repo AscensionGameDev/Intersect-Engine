@@ -28,6 +28,12 @@
 
         ServerVariableChange,
 
+        GuildMemberJoined,
+
+        GuildMemberLeft,
+
+        GuildMemberKicked
+
     }
 
 }

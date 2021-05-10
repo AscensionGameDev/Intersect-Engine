@@ -7,7 +7,10 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Bank
@@ -229,7 +232,7 @@ namespace Intersect.Client.Interface.Game.Bank
                     //Check inventory first.
                     if (mBankWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxBankSlots; i++)
+                        for (var i = 0; i < Globals.BankSlots; i++)
                         {
                             if (mBankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
@@ -250,8 +253,23 @@ namespace Intersect.Client.Interface.Game.Bank
                         {
                             if (mMySlot != bestIntersectIndex)
                             {
-                                //Try to swap....
-                                PacketSender.SendMoveBankItems(bestIntersectIndex, mMySlot);
+                                var allowed = true;
+
+                                //Permission Check
+                                if (Globals.GuildBank)
+                                {
+                                    var rank = Globals.Me.GuildRank;
+                                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
+                                    {
+                                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedSwap.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                                        allowed = false;
+                                    }
+                                }
+
+                                if (allowed)
+                                {
+                                    PacketSender.SendMoveBankItems(bestIntersectIndex, mMySlot);
+                                }
 
                                 //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
                             }

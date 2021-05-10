@@ -29,6 +29,8 @@ namespace Intersect.Client.General
 
         //Bank
         public static Item[] Bank;
+        public static bool GuildBank;
+        public static int BankSlots;
 
         public static bool ConnectionLost;
 

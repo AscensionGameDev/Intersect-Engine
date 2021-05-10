@@ -1871,11 +1871,8 @@ namespace Intersect.Server.Entities
                     //PVP Kill common events
                     if (!enemy.Dead && enemy is Player && this is Player)
                     {
-                        if (MapInstance.Get(MapId).ZoneType != MapZones.Arena)
-                        {
-                            ((Player)this).StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
-                            ((Player)enemy).StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
-                        }
+                        ((Player)this).StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
+                        ((Player)enemy).StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
                     }
 
                     lock (enemy.EntityLock)

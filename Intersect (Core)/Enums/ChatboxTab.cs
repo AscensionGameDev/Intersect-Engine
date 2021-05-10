@@ -11,6 +11,8 @@
 
         Party,
 
+        Guild,
+
         Global,
 
         System,
