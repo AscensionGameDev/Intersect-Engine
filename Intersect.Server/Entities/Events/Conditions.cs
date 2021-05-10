@@ -481,6 +481,15 @@ namespace Intersect.Server.Entities.Events
             return condition.Negated ? !value : value;
         }
 
+        public static bool MeetsCondition(
+            MapZoneTypeIs condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase)
+        {
+            return player.Map?.ZoneType == condition.ZoneType;
+        }
+
         //Variable Comparison Processing
 
         public static bool CheckVariableComparison(
