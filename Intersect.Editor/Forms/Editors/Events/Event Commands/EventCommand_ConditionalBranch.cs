@@ -237,6 +237,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbRank.Items.Add(rank.Title);
             }
 
+            // Map Zone Type
+            grpMapZoneType.Text = Strings.EventConditional.MapZoneTypeIs;
+            lblMapZoneType.Text = Strings.EventConditional.MapZoneTypeLabel;
+            cmbMapZoneType.Items.Clear();
+            for (var i = 0; i < Strings.MapProperties.zones.Count; i++)
+            {
+                cmbMapZoneType.Items.Add(Strings.MapProperties.zones[i]);
+            }
+
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
         }
@@ -359,6 +368,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbRank.SelectedIndex = 0;
 
                     break;
+                case ConditionTypes.MapZoneTypeIs:
+                    Condition = new MapZoneTypeIs();
+                    if (cmbMapZoneType.Items.Count > 0)
+                    {
+                        cmbMapZoneType.SelectedIndex = 0;
+                    }
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -381,6 +398,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpMapIs.Hide();
             grpEquippedItem.Hide();
             grpInGuild.Hide();
+            grpMapZoneType.Hide();
             switch (type)
             {
                 case ConditionTypes.VariableIs:
@@ -492,6 +510,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.InGuildWithRank:
                     grpInGuild.Show();
+
+                    break;
+                case ConditionTypes.MapZoneTypeIs:
+                    grpMapZoneType.Show();
 
                     break;
                 default:
@@ -1144,6 +1166,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbRank.SelectedIndex = Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, condition.Rank));
         }
 
+        private void SetupFormValues(MapZoneTypeIs condition)
+        {
+            if (cmbMapZoneType.Items.Count > 0)
+            {
+                cmbMapZoneType.SelectedIndex = (int)condition.ZoneType;
+            }
+        }
+
 
         #endregion
 
@@ -1289,6 +1319,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(InGuildWithRank condition)
         {
             condition.Rank = Math.Max(cmbRank.SelectedIndex, 0);
+        }
+
+        private void SaveFormValues(MapZoneTypeIs condition)
+        {
+            if (cmbMapZoneType.Items.Count > 0)
+            {
+                condition.ZoneType = (MapZones)cmbMapZoneType.SelectedIndex;
+            }
         }
 
         #endregion

@@ -42,6 +42,8 @@ namespace Intersect.GameObjects.Events
 
         InGuildWithRank,
 
+        MapZoneTypeIs,
+
     }
 
     public class Condition
@@ -272,6 +274,22 @@ namespace Intersect.GameObjects.Events
         /// The guild rank the condition checks for as a minimum
         /// </summary>
         public int Rank { get; set; }
+    }
+
+    /// <summary>
+    /// Defines the condition class used when checking whether a player is on a specific map zone type.
+    /// </summary>
+    public class MapZoneTypeIs : Condition
+    {
+        /// <summary>
+        /// Defines the type of condition.
+        /// </summary>
+        public override ConditionTypes Type { get; } = ConditionTypes.MapZoneTypeIs;
+
+        /// <summary>
+        /// Defines the map Zone Type to compare to.
+        /// </summary>
+        public MapZones ZoneType { get; set; }
     }
 
     public class VariableCompaison

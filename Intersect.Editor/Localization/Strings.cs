@@ -284,6 +284,11 @@ namespace Intersect.Editor.Localization
             }
         }
 
+        public static string GetEventConditionalDesc(MapZoneTypeIs condition)
+        {
+            return Strings.EventConditionDesc.MapZoneTypeIs.ToString(Strings.MapProperties.zones[(int)condition.ZoneType]);
+        }
+
         public static string GetVariableComparisonString(VariableCompaison comparison)
         {
             return "";
@@ -1991,7 +1996,8 @@ Tick timer saved in server config.json.";
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
                 {18, @"Has X free Inventory slots..." },
-                {19, @"In Guild With At Least Rank..." }
+                {19, @"In Guild With At Least Rank..." },
+                {20, @"Map Zone Type is..." }
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -2130,6 +2136,12 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString rank = @"Rank:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapZoneTypeIs = @"Map Zone Type is:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapZoneTypeLabel = @"Zone Type:";
         }
 
         public struct EventConditionDesc
@@ -2211,6 +2223,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty]
             public static LocalizedString HasFreeInventorySlots = @"Player has {00} free inventory slot(s)";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapZoneTypeIs = @"Map Zone Type is {00}";
 
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
