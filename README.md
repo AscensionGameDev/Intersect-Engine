@@ -23,7 +23,7 @@ Our [build server](https://teamcity.freemmorpgmaker.com/?guest=1) builds, tests,
 | Name  | Status |
 |:---|--------|
 | Master (Stable) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:stable/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=stable&guest=1) |
-| Development (Nightly) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:dev/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=dev&guest=1) |
+| Prerelease (Nightly) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:prerelease/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=prerelease&guest=1) |
 
 
 ## Supported Platforms
@@ -81,6 +81,7 @@ This project has split licensing. See license.md within each of the projects' fo
 | Intersect.Shared | [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://tldrlegal.com/license/mit-license) |
 | Intersect.Editor | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
 | Intersect.Server | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
+| Intersect.Server.Framework | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
 | Intersect.Utilities | [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)) |
 
 Third-party libraries used by Intersect are under their own licenses.  Please refer to those libraries for details on the license they use.
