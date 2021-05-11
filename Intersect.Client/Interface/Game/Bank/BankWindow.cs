@@ -82,7 +82,7 @@ namespace Intersect.Client.Interface.Game.Bank
                         if (item.IsStackable)
                         {
                             mValues[i].IsHidden = false;
-                            mValues[i].Text = Globals.Bank[i].Quantity.ToString();
+                            mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Bank[i].Quantity);
                         }
                         else
                         {
