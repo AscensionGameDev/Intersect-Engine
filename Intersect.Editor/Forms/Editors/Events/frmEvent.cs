@@ -786,6 +786,8 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             InitializeComponent();
             mCurrentMap = currentMap;
+			
+			this.Icon = Properties.Resources.Icon;
         }
 
         private void frmEvent_Load(object sender, EventArgs e)
