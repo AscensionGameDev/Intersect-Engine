@@ -120,7 +120,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         creator.GuildJoinDate = DateTime.UtcNow;
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(creator);
+                        PacketSender.SendEntityDataToProximity(Player.FindOnline(creator.Id));
 
                         Guilds.AddOrUpdate(guild.Id, guild, (key, oldValue) => guild);
 
@@ -227,7 +227,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         UpdateMemberList();
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(player);
+                        PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
                     }
                 }
             }
@@ -267,7 +267,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         UpdateMemberList();
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(player);
+                        PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
                     }
                 }
 
@@ -321,7 +321,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                     UpdateMemberList();
 
                     // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(player);
+                    PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
                 }
             }
         }
@@ -493,10 +493,10 @@ namespace Intersect.Server.Database.PlayerData.Players
                         UpdateMemberList();
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(newOwner);
+                        PacketSender.SendEntityDataToProximity(Player.FindOnline(newOwner.Id));
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(owner);
+                        PacketSender.SendEntityDataToProximity(Player.FindOnline(owner.Id));
 
                         return true;
                     }
