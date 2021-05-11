@@ -9,7 +9,7 @@ namespace Intersect.Server.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Color",
                 table: "Players",
-                nullable: false);
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
