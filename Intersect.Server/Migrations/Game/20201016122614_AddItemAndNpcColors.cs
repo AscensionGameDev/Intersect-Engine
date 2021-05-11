@@ -9,14 +9,12 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.AddColumn<string>(
                 name: "Color",
                 table: "Npcs",
-                nullable: false,
-                defaultValue: "{\"A\":255,\"R\":255,\"G\":255,\"B\":255}");
+                nullable: false);
 
             migrationBuilder.AddColumn<string>(
                 name: "Color",
                 table: "Items",
-                nullable: false,
-                defaultValue: "{\"A\":255,\"R\":255,\"G\":255,\"B\":255}");
+                nullable: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

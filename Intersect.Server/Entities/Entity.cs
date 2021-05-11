@@ -86,7 +86,7 @@ namespace Intersect.Server.Entities
         public string JsonColor
         {
             get => JsonConvert.SerializeObject(Color);
-            set => Color = JsonConvert.DeserializeObject<Color>(value);
+            set => Color = !string.IsNullOrWhiteSpace(value) ? JsonConvert.DeserializeObject<Color>(value) : Color.White;
         }
 
         /// <summary>
