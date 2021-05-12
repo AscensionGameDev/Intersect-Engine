@@ -48,7 +48,7 @@ namespace Intersect.Server.Migrations.Game
                 table: "Items");
 
             migrationBuilder.DropColumn(
-                name: "CanDropOnDeath",
+                name: "DropChanceOnDeath",
                 table: "Items");
 
             migrationBuilder.DropColumn(
