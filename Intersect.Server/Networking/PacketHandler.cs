@@ -3531,9 +3531,24 @@ namespace Intersect.Server.Networking
 
             var type = packet.Type;
             var obj = DbInterface.AddGameObject(type);
-            if (type == GameObjectType.Event)
+
+            var changed = false;
+            switch(type)
             {
-                ((EventBase)obj).CommonEvent = true;
+                case GameObjectType.Event:
+                    ((EventBase)obj).CommonEvent = true;
+                    changed = true;
+
+                    break;
+                case GameObjectType.Item:
+                    ((ItemBase)obj).DropChanceOnDeath = Options.ItemDropChance;
+                    changed = true;
+
+                    break;
+            }
+
+            if (changed)
+            {
                 DbInterface.SaveGameObject(obj);
             }
 

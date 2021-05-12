@@ -450,6 +450,7 @@
     <Compile Include="Database\GameData\GameContext.cs" />
     <Compile Include="Database\GameData\IGameContext.cs" />
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\GameData\Migrations\BoundItemExtensionMigration.cs" />
     <Compile Include="Database\GameData\Migrations\CerasVersionToleranceMigration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
@@ -572,6 +573,10 @@
     <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.cs" />
     <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.designer.cs">
       <DependentUpon>20210509070229_AddingQuestCategoriesAndOrderValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.cs" />
+    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.designer.cs">
+      <DependentUpon>20210512071349_BoundItemExtension.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">

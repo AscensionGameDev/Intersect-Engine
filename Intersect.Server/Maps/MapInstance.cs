@@ -488,7 +488,7 @@ namespace Intersect.Server.Maps
                 {
                     lock (npc.EntityLock)
                     {
-                        npc.Die(0);
+                        npc.Die(false);
                     }
                 }
             }
@@ -502,7 +502,7 @@ namespace Intersect.Server.Maps
                 {
                     lock (res.EntityLock)
                     {
-                        res.Die(0);
+                        res.Die(false);
                     }
                 }
             }
@@ -518,7 +518,7 @@ namespace Intersect.Server.Maps
                     lock (proj.EntityLock)
                     {
                         guids.Add(proj.Id);
-                        proj.Die(0);
+                        proj.Die(false);
                     }
                 }
             }
@@ -609,7 +609,7 @@ namespace Intersect.Server.Maps
                 {
                     if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
                     {
-                        resourceSpawn.Value.Entity.Destroy(0);
+                        resourceSpawn.Value.Entity.Destroy();
                         RemoveEntity(resourceSpawn.Value.Entity);
                     }
                 }
@@ -688,7 +688,7 @@ namespace Intersect.Server.Maps
                 {
                     lock (npcSpawn.Value.Entity.EntityLock)
                     {
-                        npcSpawn.Value.Entity.Die(0);
+                        npcSpawn.Value.Entity.Die(false);
                     }
                 }
 
@@ -701,7 +701,7 @@ namespace Intersect.Server.Maps
                     {
                         lock (npc.EntityLock)
                         {
-                            npc.Die(0);
+                            npc.Die(false);
                         }
                     }
                 }

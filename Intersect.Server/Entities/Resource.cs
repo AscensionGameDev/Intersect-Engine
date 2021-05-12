@@ -40,28 +40,29 @@ namespace Intersect.Server.Entities
             HideName = true;
         }
 
-        public void Destroy(int dropitems = 0, Entity killer = null)
+        public void Destroy(bool dropItems = false, Entity killer = null)
         {
             lock (EntityLock)
             {
-                Die(dropitems, killer);
+                Die(dropItems, killer);
             }
             
             PacketSender.SendEntityDie(this);
             PacketSender.SendEntityLeave(this);
         }
 
-        public override void Die(int dropitems = 100, Entity killer = null)
+        public override void Die(bool dropItems = true, Entity killer = null)
         {
             lock (EntityLock)
             {
-                base.Die(0, killer);
+                base.Die(false, killer);
             }
             
             Sprite = Base.Exhausted.Graphic;
             Passable = Base.WalkableAfter;
             Dead = true;
-            if (dropitems > 0)
+
+            if (dropItems)
             {
                 SpawnResourceItems(killer);
                 if (Base.AnimationId != Guid.Empty)
@@ -71,7 +72,7 @@ namespace Intersect.Server.Entities
                     );
                 }
             }
-
+ 
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendEntityPositionToAll(this);
         }

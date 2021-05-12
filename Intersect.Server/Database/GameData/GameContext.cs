@@ -106,6 +106,12 @@ namespace Intersect.Server.Database.GameData
             {
                 CerasVersionToleranceMigration.Run(this);
             }
+
+            if (migrations.IndexOf("20210512071349_BoundItemExtension") > -1)
+            {
+                BoundItemExtensionMigration.Run(this);
+            }
+            
         }
 
         internal static class Queries

@@ -192,7 +192,12 @@ namespace Intersect.Editor.Forms.Editors
             lblAlpha.Text = Strings.ItemEditor.Alpha;
             lblPrice.Text = Strings.ItemEditor.price;
             lblAnim.Text = Strings.ItemEditor.animation;
-            chkBound.Text = Strings.ItemEditor.bound;
+            chkCanDrop.Text = Strings.ItemEditor.CanDrop;
+            lblDeathDropChance.Text = Strings.ItemEditor.DeathDropChance;
+            chkCanBank.Text = Strings.ItemEditor.CanBank;
+            chkCanBag.Text = Strings.ItemEditor.CanBag;
+            chkCanTrade.Text = Strings.ItemEditor.CanTrade;
+            chkCanSell.Text = Strings.ItemEditor.CanSell;
             chkStackable.Text = Strings.ItemEditor.stackable;
             btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
@@ -340,8 +345,13 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
                 nudRange.Value = mEditorItem.StatGrowth;
-                chkBound.Checked = Convert.ToBoolean(mEditorItem.Bound);
+                chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
+                chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
+                chkCanBag.Checked = Convert.ToBoolean(mEditorItem.CanBag);
+                chkCanSell.Checked = Convert.ToBoolean(mEditorItem.CanSell);
+                chkCanTrade.Checked = Convert.ToBoolean(mEditorItem.CanTrade);
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
+                nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
@@ -806,7 +816,32 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Bound = chkBound.Checked;
+            mEditorItem.CanDrop = chkCanDrop.Checked;
+        }
+
+        private void chkCanBank_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CanBank = chkCanBank.Checked;
+        }
+
+        private void chkCanBag_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CanBag = chkCanBag.Checked;
+        }
+
+        private void chkCanTrade_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CanTrade = chkCanTrade.Checked;
+        }
+
+        private void chkCanSell_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CanSell = chkCanSell.Checked;
+        }
+
+        private void nudDeathDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DropChanceOnDeath = (int)nudDeathDropChance.Value;
         }
 
         private void chkStackable_CheckedChanged(object sender, EventArgs e)
@@ -1187,6 +1222,7 @@ namespace Intersect.Editor.Forms.Editors
 
 
         #endregion
+
     }
 
 }

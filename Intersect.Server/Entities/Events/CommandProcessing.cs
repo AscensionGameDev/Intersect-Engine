@@ -301,7 +301,7 @@ namespace Intersect.Server.Entities.Events
                 {
                     lock (player.EntityLock)
                     {
-                        player.Die(Options.ItemDropChance);
+                        player.Die();
                     }
                 }
             }
@@ -845,7 +845,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         lock (player.EntityLock)
                         {
-                            ((Npc)entities[i]).Die(100);
+                            ((Npc)entities[i]).Die();
                         }
                     }
                 }
