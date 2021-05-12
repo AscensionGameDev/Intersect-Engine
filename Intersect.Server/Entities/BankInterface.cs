@@ -107,14 +107,14 @@ namespace Intersect.Server.Entities
             {
                 if (mPlayer.Items[slot].ItemId != Guid.Empty)
                 {
+                    if (!itemBase.CanBank)
+                    {
+                        PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+                        return false;
+                    }
+
                     lock (mLock)
                     {
-                        if (!itemBase.CanBank)
-                        {
-                            PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
-                            return false;
-                        }
-
                         if (itemBase.IsStackable)
                         {
                             if (amount >= mPlayer.Items[slot].Quantity)
