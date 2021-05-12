@@ -344,7 +344,7 @@ namespace Intersect.Server.Entities
                 {
                     lock (t.EntityLock)
                     {
-                        t.Die(0);
+                        t.Die();
                     }
                 }
             }
@@ -781,7 +781,7 @@ namespace Intersect.Server.Entities
             StartCommonEventsWithTrigger(CommonEventTrigger.OnRespawn);
         }
 
-        public override void Die(int dropitems = 0, Entity killer = null)
+        public override void Die(bool dropItems = true, Entity killer = null)
         {
             CastTime = 0;
             CastTarget = null;
@@ -810,7 +810,7 @@ namespace Intersect.Server.Entities
             
             lock (EntityLock)
             {
-                base.Die(dropitems, killer);
+                base.Die(dropItems, killer);
             }
             
             PacketSender.SendEntityDie(this);
@@ -2080,7 +2080,7 @@ namespace Intersect.Server.Entities
                         {
                             lock (EntityLock)
                             {
-                                Die(Options.ItemDropChance, this);
+                                Die(true, this);
                             }
                         }
 

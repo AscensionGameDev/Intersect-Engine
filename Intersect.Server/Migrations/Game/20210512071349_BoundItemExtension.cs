@@ -18,11 +18,11 @@ namespace Intersect.Server.Migrations.Game
                 nullable: false,
                 defaultValue: true);
 
-            migrationBuilder.AddColumn<bool>(
-                name: "CanDropOnDeath",
+            migrationBuilder.AddColumn<int>(
+                name: "DropChanceOnDeath",
                 table: "Items",
                 nullable: false,
-                defaultValue: true);
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<bool>(
                 name: "CanSell",

@@ -72,9 +72,9 @@ namespace Intersect.GameObjects
         public bool CanDrop { get; set; } = true;
 
         /// <summary>
-        /// Defines whether or not this item can be dropped by a player on death.
+        /// Defines the percentage chance an item will drop upon player Death.
         /// </summary>
-        public bool CanDropOnDeath { get; set; } = true;
+        public int DropChanceOnDeath { get; set; }
 
         /// <summary>
         /// Defines whether or not this item can be traded by a player to another player.

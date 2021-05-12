@@ -10,18 +10,32 @@
 
         public static void MigrateBoundItems(GameContext context)
         {
-            // Go through all of our items and determine whether or not the Bound property (now CanDrop) was true, if so set all the Cans to false because it's a bound item!
-            // The user will have to set the granularity later.
+            // Go through all of our items to reconfigure the new item binding properties.
             foreach(var item in context.Items)
             {
+
+                // Determine whether or not the Bound property(now CanDrop) was true, if so set all the binding options to not allow item drops.
                 if (item.CanDrop == true)
                 {
                     item.CanDrop = false;
-                    item.CanDropOnDeath = false;
                     item.CanTrade = false;
                     item.CanSell = false;
                     item.CanBank = false;
                     item.CanBag = false;
+
+                    item.DropChanceOnDeath = 0;
+                }
+                // If it wasn't bound before, unbind all the new options!
+                else
+                {
+                    item.CanDrop = true;
+                    item.CanTrade = true;
+                    item.CanSell = true;
+                    item.CanBank = true;
+                    item.CanBag = true;
+
+                    // Set item drop chance to the default configuration option.
+                    item.DropChanceOnDeath = Options.ItemDropChance;
                 }
             }
 

@@ -193,7 +193,7 @@ namespace Intersect.Editor.Forms.Editors
             lblPrice.Text = Strings.ItemEditor.price;
             lblAnim.Text = Strings.ItemEditor.animation;
             chkCanDrop.Text = Strings.ItemEditor.CanDrop;
-            chkCanDropOnDeath.Text = Strings.ItemEditor.CanDropOnDeath;
+            lblDeathDropChance.Text = Strings.ItemEditor.DeathDropChance;
             chkCanBank.Text = Strings.ItemEditor.CanBank;
             chkCanBag.Text = Strings.ItemEditor.CanBag;
             chkCanTrade.Text = Strings.ItemEditor.CanTrade;
@@ -346,12 +346,12 @@ namespace Intersect.Editor.Forms.Editors
                 nudScaling.Value = mEditorItem.Scaling;
                 nudRange.Value = mEditorItem.StatGrowth;
                 chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
-                chkCanDropOnDeath.Checked = Convert.ToBoolean(mEditorItem.CanDropOnDeath);
                 chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
                 chkCanBag.Checked = Convert.ToBoolean(mEditorItem.CanBag);
                 chkCanSell.Checked = Convert.ToBoolean(mEditorItem.CanSell);
                 chkCanTrade.Checked = Convert.ToBoolean(mEditorItem.CanTrade);
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
+                nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
@@ -819,11 +819,6 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CanDrop = chkCanDrop.Checked;
         }
 
-        private void chkCanDropOnDeath_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.CanDropOnDeath = chkCanDropOnDeath.Checked;
-        }
-
         private void chkCanBank_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.CanBank = chkCanBank.Checked;
@@ -842,6 +837,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkCanSell_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.CanSell = chkCanSell.Checked;
+        }
+
+        private void nudDeathDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DropChanceOnDeath = (int)nudDeathDropChance.Value;
         }
 
         private void chkStackable_CheckedChanged(object sender, EventArgs e)

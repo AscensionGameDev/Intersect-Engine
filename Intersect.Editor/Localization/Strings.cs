@@ -3067,7 +3067,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString CanDrop = @"Can Drop?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CanDropOnDeath = @"Can Drop on Death?";
+            public static LocalizedString DeathDropChance = @"Drop chance on Death (%):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CanBag = @"Can Bag?";
