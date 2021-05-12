@@ -3063,7 +3063,23 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString bonusrange = @"Stat Bonus Range (+-):";
 
-            public static LocalizedString bound = @"Bound?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanDrop = @"Can Drop?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanDropOnDeath = @"Can Drop on Death?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanBag = @"Can Bag?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanBank = @"Can Bank?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanTrade = @"Can Trade?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanSell = @"Can Sell?";
 
             public static LocalizedString cancel = @"Cancel";
 

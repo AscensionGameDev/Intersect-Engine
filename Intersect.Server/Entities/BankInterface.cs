@@ -109,6 +109,12 @@ namespace Intersect.Server.Entities
                 {
                     lock (mLock)
                     {
+                        if (!itemBase.CanBank)
+                        {
+                            PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+                            return false;
+                        }
+
                         if (itemBase.IsStackable)
                         {
                             if (amount >= mPlayer.Items[slot].Quantity)

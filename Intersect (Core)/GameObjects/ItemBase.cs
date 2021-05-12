@@ -65,7 +65,36 @@ namespace Intersect.GameObjects
             set => EquipmentAnimationId = value?.Id ?? Guid.Empty;
         }
 
-        public bool Bound { get; set; }
+        /// <summary>
+        /// Defines whether or not this item can be dropped by a player.
+        /// </summary>
+        [Column("Bound")]   // Not exactly the cleanest solution, since CanDrop and Bound set to true will do the opposite.. But don't want to leave a bogus field!
+        public bool CanDrop { get; set; } = true;
+
+        /// <summary>
+        /// Defines whether or not this item can be dropped by a player on death.
+        /// </summary>
+        public bool CanDropOnDeath { get; set; } = true;
+
+        /// <summary>
+        /// Defines whether or not this item can be traded by a player to another player.
+        /// </summary>
+        public bool CanTrade { get; set; } = true;
+
+        /// <summary>
+        /// Defines whether or not this item can be sold by a player to a shop.
+        /// </summary>
+        public bool CanSell { get; set; } = true;
+
+        /// <summary>
+        /// Defines whether or not this item can be banked by a player.
+        /// </summary>
+        public bool CanBank { get; set; } = true;
+
+        /// <summary>
+        /// Defines whether or not this item can be placed in a bag by a player.
+        /// </summary>
+        public bool CanBag { get; set; } = true;
 
         public int CritChance { get; set; }
 

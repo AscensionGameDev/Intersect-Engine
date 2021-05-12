@@ -1913,7 +1913,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (itemDescriptor.Bound)
+            if (!itemDescriptor.CanDrop)
             {
                 PacketSender.SendChatMsg(this, Strings.Items.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
@@ -2662,7 +2662,7 @@ namespace Intersect.Server.Entities
                 var itemDescriptor = Items[slot].Descriptor;
                 if (itemDescriptor != null)
                 {
-                    if (itemDescriptor.Bound)
+                    if (!itemDescriptor.CanSell)
                     {
                         PacketSender.SendChatMsg(this, Strings.Shops.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
 
@@ -3116,6 +3116,12 @@ namespace Intersect.Server.Entities
             {
                 if (Items[slot].ItemId != Guid.Empty)
                 {
+                    if (!itemBase.CanBag)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
+                        return;
+                    }
+
                     if (itemBase.IsStackable)
                     {
                         if (amount >= Items[slot].Quantity)
@@ -3471,7 +3477,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if the item is bound.. if so don't allow trade
-                    if (itemBase.Bound)
+                    if (!itemBase.CanTrade)
                     {
                         PacketSender.SendChatMsg(this, Strings.Bags.tradebound, ChatMessageType.Trading, CustomColors.Items.Bound);
 

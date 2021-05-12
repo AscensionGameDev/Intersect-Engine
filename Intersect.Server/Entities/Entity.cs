@@ -2532,7 +2532,7 @@ namespace Intersect.Server.Entities
                 //Don't lose bound items on death for players.
                 if (this.GetType() == typeof(Player))
                 {
-                    if (itemBase.Bound)
+                    if (!itemBase.CanDropOnDeath)
                     {
                         continue;
                     }

@@ -777,6 +777,12 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString bound = @"You cannot drop this item.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString nobag = @"You cannot store this item in a bag.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString nobank = @"You cannot store this item in a bank.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cannotuse = @"You cannot use this item!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
