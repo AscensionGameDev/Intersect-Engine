@@ -232,6 +232,12 @@ namespace Intersect.Server.Entities
 
             if (item.ItemId != Guid.Empty)
             {
+                if (!itemBase.CanBank)
+                {
+                    PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+                    return false;
+                }
+
                 lock (mLock)
                 {
                     // Find a spot in the bank for it!
