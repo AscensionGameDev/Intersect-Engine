@@ -199,6 +199,8 @@ namespace Intersect.Editor.Forms.Editors
             chkCanTrade.Text = Strings.ItemEditor.CanTrade;
             chkCanSell.Text = Strings.ItemEditor.CanSell;
             chkStackable.Text = Strings.ItemEditor.stackable;
+            lblInvStackLimit.Text = Strings.ItemEditor.InventoryStackLimit;
+            lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
             btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
             cmbRarity.Items.Clear();
@@ -351,6 +353,8 @@ namespace Intersect.Editor.Forms.Editors
                 chkCanSell.Checked = Convert.ToBoolean(mEditorItem.CanSell);
                 chkCanTrade.Checked = Convert.ToBoolean(mEditorItem.CanTrade);
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
+                nudInvStackLimit.Value = mEditorItem.MaxInventoryStack;
+                nudBankStackLimit.Value = mEditorItem.MaxBankStack;
                 nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
@@ -494,12 +498,6 @@ namespace Intersect.Editor.Forms.Editors
 
                 // Whether this item type is stackable is not up for debate.
                 chkStackable.Checked = false;
-                chkStackable.Enabled = false;
-            }
-            else if (cmbType.SelectedIndex == (int)ItemTypes.Currency)
-            {
-                // Whether this item type is stackable is not up for debate.
-                chkStackable.Checked = true;
                 chkStackable.Enabled = false;
             }
             else if (cmbType.SelectedIndex == (int)ItemTypes.Currency)
@@ -847,6 +845,29 @@ namespace Intersect.Editor.Forms.Editors
         private void chkStackable_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.Stackable = chkStackable.Checked;
+
+            if (chkStackable.Checked)
+            {
+                nudInvStackLimit.Enabled = true;
+                nudBankStackLimit.Enabled = true;
+            }
+            else
+            {
+                nudInvStackLimit.Enabled = false;
+                nudInvStackLimit.Value = 1;
+                nudBankStackLimit.Enabled = false;
+                nudBankStackLimit.Value = 1;
+            }
+        }
+
+        private void nudInvStackLimit_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.MaxInventoryStack = (int)nudInvStackLimit.Value;
+        }
+
+        private void nudBankStackLimit_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.MaxBankStack = (int)nudBankStackLimit.Value;
         }
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)

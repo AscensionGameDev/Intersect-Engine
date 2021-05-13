@@ -1821,15 +1821,29 @@ namespace Intersect.Server.Entities
                 var toGive = item.Quantity;
                 foreach (var slot in existingSlots)
                 {
+                    if (toGive == 0)
+                    {
+                        break;
+                    }
+
                     if (slot.Quantity >= item.Descriptor.MaxInventoryStack)
                     {
                         continue;
                     }
 
-                    var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
-                    slot.Quantity += canAdd;
-                    updateSlots.Add(slot.Slot);
-                    toGive -= canAdd;
+                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    if (canAdd > toGive)
+                    {
+                        slot.Quantity += toGive;
+                        updateSlots.Add(slot.Slot);
+                        toGive = 0;
+                    }
+                    else
+                    {
+                        slot.Quantity += canAdd;
+                        updateSlots.Add(slot.Slot);
+                        toGive -= canAdd;
+                    }
                 }
 
                 // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!

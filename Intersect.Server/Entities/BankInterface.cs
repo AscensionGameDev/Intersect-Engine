@@ -411,7 +411,6 @@ namespace Intersect.Server.Entities
         /// <param name="sendUpdate"></param>
         private void PutItem(Item item, bool sendUpdate)
         {
-
             // Decide how we're going to handle this item.
             var existingSlots = FindItemSlots(item.Descriptor.Id);
             var updateSlots = new List<int>();
@@ -421,15 +420,30 @@ namespace Intersect.Server.Entities
                 var toGive = item.Quantity;
                 foreach (var slot in existingSlots)
                 {
+                    if (toGive == 0)
+                    {
+                        break;
+                    }
+
                     if (mBank[slot].Quantity >= item.Descriptor.MaxBankStack)
                     {
                         continue;
                     }
 
                     var canAdd = item.Descriptor.MaxBankStack - mBank[slot].Quantity;
-                    mBank[slot].Quantity += canAdd;
-                    updateSlots.Add(slot);
-                    toGive -= canAdd;
+                    if (canAdd > toGive)
+                    {
+                        mBank[slot].Quantity += toGive;
+                        updateSlots.Add(slot);
+                        toGive = 0;
+                    }
+                    else
+                    {
+                        mBank[slot].Quantity += canAdd;
+                        updateSlots.Add(slot);
+                        toGive -= canAdd;
+                    }
+                    
                 }
 
                 // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!
