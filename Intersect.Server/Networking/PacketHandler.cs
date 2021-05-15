@@ -2181,10 +2181,17 @@ namespace Intersect.Server.Networking
             player.Trading.Accepted = true;
             if (player.Trading.Counterparty.Trading.Accepted)
             {
-                var t = new Item[Options.MaxInvItems];
-
+                if (Options.Instance.Logging.Trade)
+                {
+                    //Duplicate the items we are trading because they are messed with in the ReturnTradeItems() function below
+                    var tradeId = Guid.NewGuid();
+                    var ourItems = player.Trading.Offer.Where(i => i != null && i.ItemId != Guid.Empty).Select(i => i.Clone()).ToArray();
+                    var theirItems = player.Trading.Counterparty.Trading.Offer.Where(i => i != null && i.ItemId != Guid.Empty).Select(i => i.Clone()).ToArray();
+                    TradeHistory.LogTrade(tradeId, player, player.Trading.Counterparty, ourItems, theirItems);
+                    TradeHistory.LogTrade(tradeId, player.Trading.Counterparty, player, theirItems, ourItems);
+                }
                 //Swap the trade boxes over, then return the trade boxes to their new owners!
-                t = player.Trading.Offer;
+                var t = player.Trading.Offer;
                 player.Trading.Offer = player.Trading.Counterparty.Trading.Offer;
                 player.Trading.Counterparty.Trading.Offer = t;
                 player.Trading.Counterparty.ReturnTradeItems();

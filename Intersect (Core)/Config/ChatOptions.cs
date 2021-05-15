@@ -18,11 +18,6 @@
         /// The time (in milliseconds) the announcement banners should display, if enabled.
         /// </summary>
         public int AnnouncementDisplayDuration = 5000;
-
-        /// <summary>
-        /// Whether or not chat messages should be logged to the database.
-        /// </summary>
-        public bool LogChatMessagesToDatabase = true;
     }
 
 }
