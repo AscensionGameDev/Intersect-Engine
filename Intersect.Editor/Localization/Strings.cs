@@ -3222,6 +3222,12 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString stackable = @"Stackable?";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InventoryStackLimit = @"Inventory Stack Limit:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BankStackLimit = @"Bank Stack Limit:";
+
             public static LocalizedString title = @"Item Editor";
 
             public static LocalizedString tooltype = @"Tool Type:";

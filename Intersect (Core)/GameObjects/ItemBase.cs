@@ -215,6 +215,16 @@ namespace Intersect.GameObjects
 
         public bool Stackable { get; set; }
 
+        /// <summary>
+        /// Defines how high the item can stack in a player's inventory before starting a new stack.
+        /// </summary>
+        public int MaxInventoryStack { get; set; } = 1000000;
+
+        /// <summary>
+        /// Defines how high the item can stack in a player/guild's bank before starting a new stack.
+        /// </summary>
+        public int MaxBankStack { get; set; } = 1000000;
+
         public int StatGrowth { get; set; }
 
         public int Tool { get; set; } = -1;

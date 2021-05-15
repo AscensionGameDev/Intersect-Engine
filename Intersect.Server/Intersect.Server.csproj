@@ -578,6 +578,10 @@
     <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.designer.cs">
       <DependentUpon>20210512071349_BoundItemExtension.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.cs" />
+    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.designer.cs">
+      <DependentUpon>20210513080440_AddItemStackCaps.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
