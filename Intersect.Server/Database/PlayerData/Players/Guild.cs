@@ -15,6 +15,8 @@ using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.General;
+using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Logging;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
 
@@ -42,7 +44,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// The name of the guild.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The date on which this guild was founded.
@@ -102,6 +104,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                     };
 
                     SlotHelper.ValidateSlots(guild.Bank, Options.Instance.Guild.GuildBankSlots);
+                    guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
 
                     var player = context.Players.FirstOrDefault(p => p.Id == creator.Id);
                     if (player != null)
@@ -157,6 +160,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         }
 
                         SlotHelper.ValidateSlots(guild.Bank, guild.BankSlotsCount);
+                        guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
 
                         Guilds.AddOrUpdate(id, guild, (key, oldValue) => guild);
 
@@ -460,28 +464,43 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// Transfers guild ownership to another member
         /// </summary>
-        /// <param name="owner">The current owner.</param>
         /// <param name="newOwnerId">The new owner.</param>
-        public bool TransferOwnership(Player owner, Player newOwner)
+        public bool TransferOwnership(Player newOwner)
         {
-            if (owner != null && newOwner != null)
+            if (newOwner != null)
             {
                 using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
-                    var dbOwner = context.Players.Where(p => p.Id == owner.Id && p.DbGuild.Id == this.Id && p.GuildRank == 0).FirstOrDefault();
-                    var dbNewOwner = context.Players.Where(p => p.Id == newOwner.Id && p.DbGuild.Id == this.Id).FirstOrDefault();
-                    if (dbOwner != null && dbNewOwner != null)
+                    //Find the current owner?
+                    Player dbOwner = null;
+                    var ownerPair = Members.Where(m => m.Value.Rank == 0).FirstOrDefault();
+
+                    if (ownerPair.Key != Guid.Empty)
                     {
-                        dbOwner.GuildRank = 1;
+                        dbOwner = context.Players.Where(p => p.Id == ownerPair.Key && p.DbGuild.Id == this.Id && p.GuildRank == 0).FirstOrDefault();
+                    }
+
+                    var dbNewOwner = context.Players.Where(p => p.Id == newOwner.Id && p.DbGuild.Id == this.Id).FirstOrDefault();
+                    if (dbNewOwner != null)
+                    {
+                        if (dbOwner != null)
+                        {
+                            dbOwner.GuildRank = 1;
+                        }
                         dbNewOwner.GuildRank = 0;
 
                         context.ChangeTracker.DetectChanges();
                         context.SaveChanges();
 
-                        owner.GuildRank = 1;
+                        var onlineOwner = Player.FindOnline(ownerPair.Key);
+                        if (onlineOwner != null)
+                        {
+                            onlineOwner.GuildRank = 1;
+                        }
                         newOwner.GuildRank = 0;
 
-                        if (Members.TryGetValue(owner.Id, out GuildMember ownerMem))
+
+                        if (Members.TryGetValue(ownerPair.Key, out GuildMember ownerMem))
                         {
                             ownerMem.Rank = 1;
                         }
@@ -498,7 +517,10 @@ namespace Intersect.Server.Database.PlayerData.Players
                         PacketSender.SendEntityDataToProximity(Player.FindOnline(newOwner.Id));
 
                         // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(Player.FindOnline(owner.Id));
+                        if (onlineOwner != null)
+                        {
+                            PacketSender.SendEntityDataToProximity(onlineOwner);
+                        }
 
                         return true;
                     }
@@ -600,6 +622,44 @@ namespace Intersect.Server.Database.PlayerData.Players
                     context.ChangeTracker.DetectChanges();
                     context.SaveChanges();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a list of guilds from the db as an IList
+        /// </summary>
+        public static IList<KeyValuePair<Guild, int>> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
+        {
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Guilds : context.Guilds.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
+
+                    total = compiledQuery.Count();
+
+                    switch (sortBy?.ToLower() ?? "")
+                    {
+                        case "members":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count()) : compiledQuery.OrderByDescending(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count());
+                            break;
+                        case "foundingdate":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.FoundingDate) : compiledQuery.OrderByDescending(u => u.FoundingDate);
+                            break;
+                        case "name":
+                        default:
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                            break;
+                    }
+
+                    return compiledQuery.Skip(skip).Take(take).Select(g => new KeyValuePair<Guild, int>(g, context.Players.Where(p => p.DbGuild.Id == g.Id).Count())).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                total = 0;
+                return null;
             }
         }
     }

@@ -2713,7 +2713,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.TransferOwnership(player, Player.Find(packet.Id));
+                        guild.TransferOwnership(Player.Find(packet.Id));
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Transferred.ToString(guild.Name, player.Name, member.Name), CustomColors.Alerts.Success);
                     }

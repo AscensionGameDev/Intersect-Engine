@@ -785,6 +785,7 @@
     <Compile Include="Web\RestApi\Middleware\IntersectThrottlingMiddleware.cs" />
     <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\GuildRank.cs" />
     <Compile Include="Web\RestApi\Payloads\IpAddress.cs" />
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
@@ -824,6 +825,7 @@
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\GuildController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\LogsController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
