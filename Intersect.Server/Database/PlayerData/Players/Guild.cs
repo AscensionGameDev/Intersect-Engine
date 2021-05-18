@@ -15,6 +15,8 @@ using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.General;
+using Intersect.Utilities;
+using Intersect.Server.Localization;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
@@ -89,7 +91,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         {
             name = name.Trim();
 
-            if (creator != null && name.Length >= Options.Instance.Guild.MinimumGuildNameSize && name.Length <= Options.Instance.Guild.MaximumGuildNameSize)
+            if (creator != null && FieldChecking.IsValidGuildName(name, Strings.Regex.guildname))
             {
                 using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
