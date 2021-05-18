@@ -29,6 +29,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromUri] int messageType = -1,
             [FromUri] Guid userId = default(Guid),
             [FromUri] Guid playerId = default(Guid),
+            [FromUri] Guid guildId = default(Guid),
             [FromUri] string search = null,
             [FromUri] SortDirection sortDirection = SortDirection.Ascending
         )
@@ -61,6 +62,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         messages = messages.Where(m => m.PlayerId == playerId);
                     }
+                }
+
+                if (guildId != Guid.Empty)
+                {
+                    messages = messages.Where(m => m.MessageType == ChatMessageType.Guild && m.TargetId == guildId);
                 }
 
                 if (!string.IsNullOrWhiteSpace(search))
@@ -159,7 +165,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             var userIds = messages.Where(m => m.UserId != Guid.Empty).GroupBy(m => m.UserId).Select(m => m.First().UserId).ToList();
             var playerIds = messages.Where(m => m.PlayerId != Guid.Empty).GroupBy(m => m.PlayerId).Select(m => m.First().PlayerId).ToList();
-            var targetIds = messages.Where(m => m.TargetId != Guid.Empty).GroupBy(m => m.TargetId).Select(m => m.First().TargetId).ToList();
+            var targetIds = messages.Where(m => m.TargetId != Guid.Empty && m.MessageType == ChatMessageType.PM).GroupBy(m => m.TargetId).Select(m => m.First().TargetId).ToList();
 
             var playerSet = new HashSet<Guid>(playerIds);
             playerSet.UnionWith(targetIds);

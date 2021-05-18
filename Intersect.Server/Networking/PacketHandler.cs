@@ -821,7 +821,7 @@ namespace Intersect.Server.Networking
                     player.Name
                 );
                 PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
-                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, null);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
             {
@@ -841,7 +841,7 @@ namespace Intersect.Server.Networking
                 }
 
                 PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
-                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, null);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, Guid.Empty);
             }
             else if (cmd == Strings.Chat.partycmd)
             {
@@ -855,7 +855,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendPartyMsg(
                         player, Strings.Chat.party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
                     );
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, Guid.Empty);
                 }
                 else
                 {
@@ -874,7 +874,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendAdminMsg(
                         Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                     );
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, Guid.Empty);
                 }
             }
             else if (cmd == Strings.Guilds.guildcmd)
@@ -893,6 +893,7 @@ namespace Intersect.Server.Networking
                 //Normalize Rank
                 var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(player.GuildRank, Options.Instance.Guild.Ranks.Length - 1))].Title;
                 PacketSender.SendGuildMsg(player, Strings.Guilds.guildchat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Guild, player.Guild.Id);
 
             }
             else if (cmd == Strings.Chat.announcementcmd)
@@ -916,7 +917,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendGameAnnouncement(msg, Options.Chat.AnnouncementDisplayDuration);
                     }
 
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, Guid.Empty);
                 }
             }
             else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
@@ -948,7 +949,7 @@ namespace Intersect.Server.Networking
 
                     target.ChatTarget = player;
                     player.ChatTarget = target;
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, target);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, target?.Id ?? Guid.Empty);
                 }
                 else
                 {
@@ -975,7 +976,7 @@ namespace Intersect.Server.Networking
                     );
 
                     player.ChatTarget.ChatTarget = player;
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, player.ChatTarget);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, player.ChatTarget?.Id ?? Guid.Empty);
                 }
                 else
                 {

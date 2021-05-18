@@ -49,8 +49,8 @@ namespace Intersect.Server.Database.Logging.Entities
         /// <param name="player">The player to which to send a message.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="type">The type of message we are sending.</param>
-        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
-        public static void LogMessage(Player player, string message, ChatMessageType type, Player target)
+        /// <param name="target">The target id of this message, can be a player or guild id.</param>
+        public static void LogMessage(Player player, string message, ChatMessageType type, Guid targetId)
         {
             if (Options.Instance.Logging.Chat)
             {
@@ -62,7 +62,7 @@ namespace Intersect.Server.Database.Logging.Entities
                     Ip = player?.Client?.GetIp(),
                     MessageType = type,
                     MessageText = message,
-                    TargetId = target?.Id ?? Guid.Empty
+                    TargetId = targetId
                 });
             }
         }
