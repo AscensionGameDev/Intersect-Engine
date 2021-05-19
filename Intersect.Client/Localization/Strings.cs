@@ -563,6 +563,7 @@ namespace Intersect.Client.Localization
                 {"opensettings", @"Open Settings:"},
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
+                {"openguild", @"Open Guilds:"},
                 {"togglegui", @"Toggle Interface:"}
             };
 

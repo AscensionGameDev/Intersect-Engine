@@ -64,6 +64,8 @@
 
         OpenAdminPanel,
 
+        OpenGuild,
+
         ToggleGui
 
     }
