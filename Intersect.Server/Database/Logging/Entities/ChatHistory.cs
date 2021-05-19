@@ -52,7 +52,7 @@ namespace Intersect.Server.Database.Logging.Entities
         /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
         public static void LogMessage(Player player, string message, ChatMessageType type, Player target)
         {
-            if (Options.Instance.ChatOpts.LogChatMessagesToDatabase)
+            if (Options.Instance.Logging.Chat)
             {
                 DbInterface.Pool.QueueWorkItem(new Action<ChatHistory>(Log), new ChatHistory
                 {
