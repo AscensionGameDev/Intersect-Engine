@@ -1392,7 +1392,7 @@ namespace Intersect.Server.Entities.Events
             {
                 // Send the members a notification, then start wiping the guild from existence through sheer willpower!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
-                Guild.DeleteGuild(player.Guild);
+                Guild.DeleteGuild(player.Guild, player);
 
                 // :(
                 success = true;

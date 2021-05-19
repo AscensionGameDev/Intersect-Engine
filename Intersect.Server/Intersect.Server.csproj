@@ -457,6 +457,7 @@
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
     <Compile Include="Database\Logging\Entities\TradeHistory.cs" />
+    <Compile Include="Database\Logging\Entities\GuildHistory.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
@@ -594,6 +595,10 @@
     <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.cs" />
     <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.designer.cs">
       <DependentUpon>20210515114555_LogPlayerTrades.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.cs" />
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.designer.cs">
+      <DependentUpon>20210519095613_AddGuildActivityLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

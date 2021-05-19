@@ -99,24 +99,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (Guild.GuildExists(change.Name))
-            {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Name already taken."
-                );
-            }
-
             var guild = Guild.LoadGuild(guildId);
             if (guild != null)
             {
-                guild.Name = change.Name;
-                foreach (var member in guild.FindOnlineMembers())
+                if (guild.Rename(change.Name))
                 {
-                    PacketSender.SendEntityDataToProximity(member);
+                    return guild;
                 }
-                guild.Save();
-                return guild;
+                else
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.BadRequest,
+                        $@"Invalid name, or name already taken."
+                    );
+                }
             }
 
             return Request.CreateErrorResponse(
@@ -243,7 +239,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            guild.RemoveMember(player);
+            guild.RemoveMember(player, null, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
 
             return player;
         }
@@ -306,7 +302,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            guild.SetPlayerRank(player, guildRank.Rank);
+            guild.SetPlayerRank(player, guildRank.Rank, null);
 
             return player;
         }

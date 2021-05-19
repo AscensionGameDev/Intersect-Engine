@@ -19,6 +19,8 @@ using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Logging;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
+using Intersect.Server.Database.Logging.Entities;
+using static Intersect.Server.Database.Logging.Entities.GuildHistory;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
@@ -44,7 +46,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// The name of the guild.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
         /// The date on which this guild was founded.
@@ -129,6 +131,8 @@ namespace Intersect.Server.Database.PlayerData.Players
 
                         Guilds.AddOrUpdate(guild.Id, guild, (key, oldValue) => guild);
 
+                        LogActivity(guild.Id, creator, null, GuildActivityType.Created, name);
+
                         return guild;
                     }
                 }
@@ -206,7 +210,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// </summary>
         /// <param name="player">The player to join into the guild.</param>
         /// <param name="rank">Integer index of the rank to give this new member.</param>
-        public void AddMember(Player player, int rank)
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public void AddMember(Player player, int rank, Player initiator = null)
         {
             if (player != null && !Members.Any(m => m.Key == player.Id))
             {
@@ -234,6 +239,8 @@ namespace Intersect.Server.Database.PlayerData.Players
 
                         // Send our entity data to nearby players.
                         PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
+
+                        LogActivity(Id, player, initiator, GuildActivityType.Joined);
                     }
                 }
             }
@@ -243,7 +250,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// Removes a player from the guild.
         /// </summary>
         /// <param name="player">The player to remove from the guild.</param>
-        public void RemoveMember(Player player)
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public void RemoveMember(Player player, Player initiator = null, GuildActivityType action = GuildActivityType.Left)
         {
             if (player != null)
             {
@@ -274,6 +282,8 @@ namespace Intersect.Server.Database.PlayerData.Players
 
                         // Send our entity data to nearby players.
                         PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
+
+                        LogActivity(Id, player, initiator, action);
                     }
                 }
 
@@ -297,20 +307,24 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// </summary>
         /// <param name="id">The player to set the rank for.</param>
         /// <param name="rank">The integer index of the rank to assign.</param>
-        public void SetPlayerRank(Guid id, int rank) => SetPlayerRank(Player.Find(id), rank);
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public void SetPlayerRank(Guid id, int rank, Player initiator = null) => SetPlayerRank(Player.Find(id), rank, initiator);
 
         /// <summary>
         /// Sets a player's guild rank.
         /// </summary>
         /// <param name="player">The player to set the rank for.</param>
         /// <param name="rank">The integer index of the rank to assign.</param>
-        public void SetPlayerRank(Player player, int rank)
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public void SetPlayerRank(Player player, int rank, Player initiator = null)
         {
             using (var context = DbInterface.CreatePlayerContext(readOnly: false))
             {
                 var dbPlayer = context.Players.Where(p => p.Id == player.Id && p.DbGuild.Id == this.Id).FirstOrDefault();
                 if (dbPlayer != null)
                 {
+                    var origRank = dbPlayer.GuildRank;
+
                     dbPlayer.GuildRank = rank;
 
                     context.ChangeTracker.DetectChanges();
@@ -328,6 +342,16 @@ namespace Intersect.Server.Database.PlayerData.Players
 
                     // Send our entity data to nearby players.
                     PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
+
+                    //Log this change
+                    if (origRank < rank)
+                    {
+                        LogActivity(Id, player, initiator, GuildActivityType.Demoted, rank.ToString());
+                    }
+                    else if (origRank > rank)
+                    {
+                        LogActivity(Id, player, initiator, GuildActivityType.Promoted, rank.ToString());
+                    }
                 }
             }
         }
@@ -420,7 +444,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// Completely removes a guild from the game.
         /// </summary>
         /// <param name="guild">The <see cref="Guild"/> to delete.</param>
-        public static void DeleteGuild(Guild guild)
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public static void DeleteGuild(Guild guild, Player initiator = null)
         {
             // Remove our members cleanly before deleting this from our database.
             using (var context = DbInterface.CreatePlayerContext(readOnly: false))
@@ -457,6 +482,8 @@ namespace Intersect.Server.Database.PlayerData.Players
 
                 context.ChangeTracker.DetectChanges();
                 context.SaveChanges();
+
+                LogActivity(guild.Id, initiator, null, GuildActivityType.Disbanded);
             }
         }
 
@@ -465,7 +492,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// Transfers guild ownership to another member
         /// </summary>
         /// <param name="newOwnerId">The new owner.</param>
-        public bool TransferOwnership(Player newOwner)
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public bool TransferOwnership(Player newOwner, Player initiator = null)
         {
             if (newOwner != null)
             {
@@ -522,6 +550,8 @@ namespace Intersect.Server.Database.PlayerData.Players
                             PacketSender.SendEntityDataToProximity(onlineOwner);
                         }
 
+                        LogActivity(Id, newOwner, initiator, GuildActivityType.Transfer);
+
                         return true;
                     }
                 }
@@ -544,6 +574,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         if (memberCount == 0)
                         {
                             context.Entry(guild).State = EntityState.Deleted;
+                            LogActivity(guild.Id, null, null, GuildActivityType.Disbanded, "Stale");
                         }
                         else if (context.Players.Where(p => p.DbGuild.Id == guild.Id).Count() == 1)
                         {
@@ -551,6 +582,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                             if (lastOnline != null && DateTime.UtcNow - lastOnline > TimeSpan.FromDays(Options.Instance.Guild.DeleteStaleGuildsAfterDays))
                             {
                                 context.Entry(guild).State = EntityState.Deleted;
+                                LogActivity(guild.Id, null, null, GuildActivityType.Disbanded, "Stale");
                             }
                         }
                     }
@@ -607,7 +639,30 @@ namespace Intersect.Server.Database.PlayerData.Players
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Renames this guild and then saves the new name to the db
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
+        public bool Rename(string name, Player initiator = null)
+        {
+            if (GuildExists(name) || !FieldChecking.IsValidGuildName(name, Strings.Regex.guildname))
+            {
+                return false;
+            }
+
+            Name = name;
+            foreach (var member in FindOnlineMembers())
+            {
+                PacketSender.SendEntityDataToProximity(member);
+            }
+            LogActivity(Id, initiator, null, GuildActivityType.Rename, name);
+            Save();
+
+            return true;
+        }
+
 
         /// <summary>
         /// Updates the db with this guild state & bank slots

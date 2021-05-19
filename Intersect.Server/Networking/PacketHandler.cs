@@ -2645,7 +2645,7 @@ namespace Intersect.Server.Networking
                             mem.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberKicked, guild.Name, member.Name);
                         }
 
-                        guild.RemoveMember(Player.Find(packet.Id));
+                        guild.RemoveMember(Player.Find(packet.Id), player, GuildHistory.GuildActivityType.Kicked);
                     }
                     else
                     {
@@ -2669,7 +2669,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.SetPlayerRank(packet.Id, packet.Rank);
+                        guild.SetPlayerRank(packet.Id, packet.Rank, player);
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Promoted.ToString(member.Name, promotionRank.Title), CustomColors.Alerts.Success);
                     }
@@ -2695,7 +2695,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.SetPlayerRank(packet.Id, packet.Rank);
+                        guild.SetPlayerRank(packet.Id, packet.Rank, player);
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Demoted.ToString(member.Name, demotionRank.Title), CustomColors.Alerts.Error);
                     }
@@ -2737,6 +2737,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            var invitor = player?.GuildInvite?.Item1;
             var guild = player?.GuildInvite?.Item2;
 
             // Have we received an invite at all?
@@ -2767,7 +2768,7 @@ namespace Intersect.Server.Networking
             }
 
             // Accept our invite!
-            guild.AddMember(player, Options.Instance.Guild.Ranks.Length - 1);
+            guild.AddMember(player, Options.Instance.Guild.Ranks.Length - 1, invitor);
             player.GuildInvite = null;
 
             // Start common events for all online guild members that this one left
@@ -2844,7 +2845,7 @@ namespace Intersect.Server.Networking
                 member.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberLeft, guild.Name, player.Name);
             }
 
-            guild.RemoveMember(player);
+            guild.RemoveMember(player, null, GuildHistory.GuildActivityType.Left);
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
