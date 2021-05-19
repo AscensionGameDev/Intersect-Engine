@@ -309,8 +309,6 @@ namespace Intersect.Client.Interface.Game
             mSpellsWindow.Hide();
 
             mPartyWindow.Hide();
-
-            mGuildWindow.Hide();
         }
 
         public bool HasWindowsOpen()
@@ -343,11 +341,6 @@ namespace Intersect.Client.Interface.Game
             }
 
             if (mPartyWindow.IsVisible())
-            {
-                windowsOpen = true;
-            }
-
-            if (mGuildWindow.IsVisible())
             {
                 windowsOpen = true;
             }
