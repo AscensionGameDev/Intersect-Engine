@@ -59,6 +59,12 @@
         /// </summary>
         public bool ShowLevelByName = false;
 
+        /// <summary>
+        /// First thanks for letting me share an idea, of losing XP when dying <3
+        /// </summary>
+        public bool XPLossOnDeath = false;
+        public int XPLossPercent = 0;
+
     }
 
 }
