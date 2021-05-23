@@ -58,6 +58,11 @@
         /// Configures whether or not the level of a player is shown next to their name.
         /// </summary>
         public bool ShowLevelByName = false;
+        /// <summary>
+        /// First thanks for letting me share an idea, of losing XP when dying <3
+        /// </summary>
+        public bool XPLossOnDeath = false;
+        public int XPLossPercent = 0;
 
     }
 

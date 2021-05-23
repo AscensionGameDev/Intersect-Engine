@@ -812,7 +812,12 @@ namespace Intersect.Server.Entities
             {
                 base.Die(dropitems, killer);
             }
-            
+
+            if (Options.Player.XPLossOnDeath.Equals(true))
+            {
+                var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.XPLossPercent / 100.0));
+                TakeExperience((long)ExpLoss);
+            }
             PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
@@ -1004,10 +1009,21 @@ namespace Intersect.Server.Entities
                 Exp = 0;
             }
 
+
             if (!CheckLevelUp())
             {
                 PacketSender.SendExperience(this);
             }
+        }
+        public void TakeExperience(long amount)
+        {
+            Exp -= amount;
+            if (Exp < 0)
+            {
+                Exp = 0;
+            }
+
+            PacketSender.SendExperience(this);
         }
 
         private bool CheckLevelUp()
