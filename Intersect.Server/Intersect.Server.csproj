@@ -17,7 +17,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Intersect.Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
