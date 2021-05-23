@@ -797,9 +797,9 @@ namespace Intersect.Server.Entities
 
             // Remove player from ALL threat lists.
             var mapList = Map.GetSurroundingMaps(true).ToArray();
-            foreach (var map in mapList)
+            foreach(var map in mapList)
             {
-                foreach (var entity in map.GetCachedEntities())
+                foreach(var entity in map.GetCachedEntities())
                 {
                     if (entity is Npc npc)
                     {
@@ -807,16 +807,12 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
-
+            
             lock (EntityLock)
             {
                 base.Die(dropitems, killer);
             }
-            if (Options.Player.XPLossOnDeath.Equals(true))
-            {
-                var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.XPLossPercent / 100.0));
-                TakeExperience((long)ExpLoss);
-            }
+            
             PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
@@ -1012,16 +1008,6 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendExperience(this);
             }
-        }
-        public void TakeExperience(long amount)
-        {
-            Exp -= amount;
-            if (Exp< 0)
-            {
-                Exp = 0;
-            }
-
-            PacketSender.SendExperience(this);
         }
 
         private bool CheckLevelUp()
