@@ -813,7 +813,7 @@ namespace Intersect.Server.Entities
                 base.Die(dropItems, killer);
             }
 
-            if (Options.Player.XPLossOnDeath.Equals(true))
+            if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
                 var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.XPLossPercent / 100.0));
                 TakeExperience((long)ExpLoss);
