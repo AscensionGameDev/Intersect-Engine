@@ -815,10 +815,17 @@ namespace Intersect.Server.Entities
 
             if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
+                if (Options.Player.ExpLossFromCurrentExp.Equals(true))
+                {
+                var ExpLoss = (this.Exp * (Options.Player.ExpLossOnDeathPercent / 100.0));
+                TakeExperience((long)ExpLoss);
+                }
+                else
+                {
                 var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.ExpLossOnDeathPercent / 100.0));
                 TakeExperience((long)ExpLoss);
+                }
             }
-
             PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
