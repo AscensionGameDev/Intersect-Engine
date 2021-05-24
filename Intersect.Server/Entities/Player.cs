@@ -815,7 +815,7 @@ namespace Intersect.Server.Entities
 
             if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
             {
-                var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.XPLossPercent / 100.0));
+                var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.ExpLossOnDeathPercent / 100.0));
                 TakeExperience((long)ExpLoss);
             }
 
