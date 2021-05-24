@@ -62,7 +62,7 @@
         /// <summary>
         /// First thanks for letting me share an idea, of losing XP when dying <3
         /// </summary>
-        public int XPLossPercent = 0;
+        public int ExpLossOnDeathPercent = 0;
 
     }
 
