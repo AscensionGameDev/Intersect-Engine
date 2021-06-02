@@ -1033,6 +1033,7 @@ namespace Intersect.Server.Entities
 
             PacketSender.SendExperience(this);
         }
+        
         private bool CheckLevelUp()
         {
             var levelCount = 0;
