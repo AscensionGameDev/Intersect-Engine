@@ -457,6 +457,7 @@
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
     <Compile Include="Database\Logging\Entities\TradeHistory.cs" />
+    <Compile Include="Database\Logging\Entities\GuildHistory.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
@@ -594,6 +595,10 @@
     <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.cs" />
     <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.Designer.cs">
       <DependentUpon>20210515114555_LogPlayerTrades.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.cs" />
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.designer.cs">
+      <DependentUpon>20210519095613_AddGuildActivityLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
@@ -785,6 +790,7 @@
     <Compile Include="Web\RestApi\Middleware\IntersectThrottlingMiddleware.cs" />
     <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\GuildRank.cs" />
     <Compile Include="Web\RestApi\Payloads\IpAddress.cs" />
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
@@ -824,6 +830,7 @@
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\GuildController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\LogsController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />

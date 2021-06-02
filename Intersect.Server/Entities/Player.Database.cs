@@ -306,13 +306,18 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public static IList<Player> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total)
+        public static IList<Player> List(string query, string sortBy, SortDirection sortDirection, int skip, int take, out int total, Guid guildId = default(Guid))
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
                     var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Players : context.Players.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
+
+                    if (guildId != Guid.Empty)
+                    {
+                        compiledQuery = compiledQuery.Where(p => p.DbGuild.Id == guildId);
+                    }
 
                     total = compiledQuery.Count();
 
@@ -326,6 +331,9 @@ namespace Intersect.Server.Entities
                             break;
                         case "playtime":
                             compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.PlayTimeSeconds) : compiledQuery.OrderByDescending(u => u.PlayTimeSeconds);
+                            break;
+                        case "guildrank":
+                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.GuildRank) : compiledQuery.OrderByDescending(u => u.GuildRank);
                             break;
                         case "name":
                         default:

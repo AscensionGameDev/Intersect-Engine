@@ -15,5 +15,7 @@ namespace Intersect.Server.Database.Logging
         DbSet<ChatHistory> ChatHistory { get; }
 
         DbSet<TradeHistory> TradeHistory { get; }
+        
+        DbSet<GuildHistory> GuildHistory { get; }
     }
 }
