@@ -560,6 +560,7 @@ namespace Intersect.Client.Localization
                 {"openparties", @"Open Parties:"},
                 {"openspells", @"Open Spells:"},
                 {"openfriends", @"Open Friends:"},
+                {"openguild", @"Open Guild:"},
                 {"opensettings", @"Open Settings:"},
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
