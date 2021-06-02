@@ -817,13 +817,13 @@ namespace Intersect.Server.Entities
             {
                 if (Options.Player.ExpLossFromCurrentExp.Equals(true))
                 {
-                var ExpLoss = (this.Exp * (Options.Player.ExpLossOnDeathPercent / 100.0));
-                TakeExperience((long)ExpLoss);
+                    var ExpLoss = (this.Exp * (Options.Player.ExpLossOnDeathPercent / 100.0));
+                    TakeExperience((long)ExpLoss);
                 }
                 else
                 {
-                var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.ExpLossOnDeathPercent / 100.0));
-                TakeExperience((long)ExpLoss);
+                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.ExpLossOnDeathPercent / 100.0));
+                    TakeExperience((long)ExpLoss);
                 }
             }
             PacketSender.SendEntityDie(this);
