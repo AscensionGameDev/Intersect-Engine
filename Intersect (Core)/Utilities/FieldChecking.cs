@@ -15,6 +15,8 @@ namespace Intersect.Utilities
 
         public const string PATTERN_USERNAME = @"^[a-zA-Z0-9]{2,24}$";
 
+        public const string PATTERN_GUILDNAME = @"^[a-zA-Z0-9 ]{3,20}$";
+
         public static bool IsWellformedEmailAddress(string email, string emailRegex)
         {
             if (email == null)
@@ -84,6 +86,28 @@ namespace Intersect.Utilities
             }
         }
 
+        public static bool IsValidGuildName(string guildName, string guildNameRegex)
+        {
+            if (guildName == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                var customPattern = guildNameRegex;
+                if (string.IsNullOrEmpty(customPattern))
+                {
+                    customPattern = PATTERN_GUILDNAME;
+                }
+
+                return Regex.IsMatch(guildName.Trim(), customPattern);
+            }
+            catch (ArgumentException)
+            {
+                return Regex.IsMatch(guildName.Trim(), PATTERN_GUILDNAME);
+            }
+        }
     }
 
 }

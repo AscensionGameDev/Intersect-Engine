@@ -56,6 +56,8 @@
 
         OpenSpells,
 
+        OpenGuild,
+
         OpenFriends,
 
         OpenSettings,
