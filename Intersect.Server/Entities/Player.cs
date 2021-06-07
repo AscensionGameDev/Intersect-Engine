@@ -5411,6 +5411,7 @@ namespace Intersect.Server.Entities
                             }
 
                             var success = false;
+                            var changed = false;
 
                             if (!canceled)
                             {
@@ -5419,6 +5420,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Integer != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Integer = newValue;
                                             success = true;
                                         }
@@ -5427,6 +5432,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Number:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Number != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Number = newValue;
                                             success = true;
                                         }
@@ -5436,12 +5445,20 @@ namespace Intersect.Server.Entities
                                         if (newValueString.Length >= cmd.Minimum &&
                                             newValueString.Length <= cmd.Maximum)
                                         {
+                                            if (value.String != newValueString)
+                                            {
+                                                changed = true;
+                                            }
                                             value.String = newValueString;
                                             success = true;
                                         }
 
                                         break;
                                     case VariableDataTypes.Boolean:
+                                        if (value.Boolean != newValue > 0)
+                                        {
+                                            changed = true;
+                                        }
                                         value.Boolean = newValue > 0;
                                         success = true;
 
@@ -5453,7 +5470,7 @@ namespace Intersect.Server.Entities
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
@@ -5462,7 +5479,7 @@ namespace Intersect.Server.Entities
                             else if (cmd.VariableType == VariableTypes.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", cmd.VariableId.ToString());
