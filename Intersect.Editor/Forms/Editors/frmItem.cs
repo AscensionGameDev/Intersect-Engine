@@ -195,6 +195,7 @@ namespace Intersect.Editor.Forms.Editors
             chkCanDrop.Text = Strings.ItemEditor.CanDrop;
             lblDeathDropChance.Text = Strings.ItemEditor.DeathDropChance;
             chkCanBank.Text = Strings.ItemEditor.CanBank;
+            chkCanGuildBank.Text = Strings.ItemEditor.CanGuildBank;
             chkCanBag.Text = Strings.ItemEditor.CanBag;
             chkCanTrade.Text = Strings.ItemEditor.CanTrade;
             chkCanSell.Text = Strings.ItemEditor.CanSell;
@@ -349,6 +350,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudRange.Value = mEditorItem.StatGrowth;
                 chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
                 chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
+                chkCanGuildBank.Checked = Convert.ToBoolean(mEditorItem.CanGuildBank);
                 chkCanBag.Checked = Convert.ToBoolean(mEditorItem.CanBag);
                 chkCanSell.Checked = Convert.ToBoolean(mEditorItem.CanSell);
                 chkCanTrade.Checked = Convert.ToBoolean(mEditorItem.CanTrade);
@@ -820,6 +822,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkCanBank_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.CanBank = chkCanBank.Checked;
+        }
+
+        private void chkCanGuildBank_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CanGuildBank = chkCanGuildBank.Checked;
         }
 
         private void chkCanBag_CheckedChanged(object sender, EventArgs e)

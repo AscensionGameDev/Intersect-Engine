@@ -41,6 +41,10 @@ namespace Intersect.Editor.Forms.Editors
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.nudBankStackLimit = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudInvStackLimit = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBankStackLimit = new System.Windows.Forms.Label();
+            this.lblInvStackLimit = new System.Windows.Forms.Label();
             this.nudDeathDropChance = new DarkUI.Controls.DarkNumericUpDown();
             this.lblDeathDropChance = new System.Windows.Forms.Label();
             this.chkCanSell = new DarkUI.Controls.DarkCheckBox();
@@ -199,12 +203,11 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.lblInvStackLimit = new System.Windows.Forms.Label();
-            this.lblBankStackLimit = new System.Windows.Forms.Label();
-            this.nudInvStackLimit = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudBankStackLimit = new DarkUI.Controls.DarkNumericUpDown();
+            this.chkCanGuildBank = new DarkUI.Controls.DarkCheckBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDeathDropChance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaB)).BeginInit();
@@ -253,8 +256,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).BeginInit();
             this.SuspendLayout();
             // 
             // grpItems
@@ -337,6 +338,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.chkCanGuildBank);
             this.grpGeneral.Controls.Add(this.nudBankStackLimit);
             this.grpGeneral.Controls.Add(this.nudInvStackLimit);
             this.grpGeneral.Controls.Add(this.lblBankStackLimit);
@@ -390,6 +392,64 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // nudBankStackLimit
+            // 
+            this.nudBankStackLimit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBankStackLimit.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBankStackLimit.Location = new System.Drawing.Point(262, 401);
+            this.nudBankStackLimit.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudBankStackLimit.Name = "nudBankStackLimit";
+            this.nudBankStackLimit.Size = new System.Drawing.Size(171, 20);
+            this.nudBankStackLimit.TabIndex = 98;
+            this.nudBankStackLimit.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBankStackLimit.ValueChanged += new System.EventHandler(this.nudBankStackLimit_ValueChanged);
+            // 
+            // nudInvStackLimit
+            // 
+            this.nudInvStackLimit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudInvStackLimit.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudInvStackLimit.Location = new System.Drawing.Point(262, 362);
+            this.nudInvStackLimit.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudInvStackLimit.Name = "nudInvStackLimit";
+            this.nudInvStackLimit.Size = new System.Drawing.Size(171, 20);
+            this.nudInvStackLimit.TabIndex = 97;
+            this.nudInvStackLimit.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudInvStackLimit.ValueChanged += new System.EventHandler(this.nudInvStackLimit_ValueChanged);
+            // 
+            // lblBankStackLimit
+            // 
+            this.lblBankStackLimit.AutoSize = true;
+            this.lblBankStackLimit.Location = new System.Drawing.Point(259, 384);
+            this.lblBankStackLimit.Name = "lblBankStackLimit";
+            this.lblBankStackLimit.Size = new System.Drawing.Size(90, 13);
+            this.lblBankStackLimit.TabIndex = 96;
+            this.lblBankStackLimit.Text = "Bank Stack Limit:";
+            // 
+            // lblInvStackLimit
+            // 
+            this.lblInvStackLimit.AutoSize = true;
+            this.lblInvStackLimit.Location = new System.Drawing.Point(259, 346);
+            this.lblInvStackLimit.Name = "lblInvStackLimit";
+            this.lblInvStackLimit.Size = new System.Drawing.Size(109, 13);
+            this.lblInvStackLimit.TabIndex = 95;
+            this.lblInvStackLimit.Text = "Inventory Stack Limit:";
             // 
             // nudDeathDropChance
             // 
@@ -2650,63 +2710,15 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // lblInvStackLimit
+            // chkCanGuildBank
             // 
-            this.lblInvStackLimit.AutoSize = true;
-            this.lblInvStackLimit.Location = new System.Drawing.Point(259, 346);
-            this.lblInvStackLimit.Name = "lblInvStackLimit";
-            this.lblInvStackLimit.Size = new System.Drawing.Size(109, 13);
-            this.lblInvStackLimit.TabIndex = 95;
-            this.lblInvStackLimit.Text = "Inventory Stack Limit:";
-            // 
-            // lblBankStackLimit
-            // 
-            this.lblBankStackLimit.AutoSize = true;
-            this.lblBankStackLimit.Location = new System.Drawing.Point(259, 384);
-            this.lblBankStackLimit.Name = "lblBankStackLimit";
-            this.lblBankStackLimit.Size = new System.Drawing.Size(90, 13);
-            this.lblBankStackLimit.TabIndex = 96;
-            this.lblBankStackLimit.Text = "Bank Stack Limit:";
-            // 
-            // nudInvStackLimit
-            // 
-            this.nudInvStackLimit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudInvStackLimit.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudInvStackLimit.Location = new System.Drawing.Point(262, 362);
-            this.nudInvStackLimit.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.nudInvStackLimit.Name = "nudInvStackLimit";
-            this.nudInvStackLimit.Size = new System.Drawing.Size(171, 20);
-            this.nudInvStackLimit.TabIndex = 97;
-            this.nudInvStackLimit.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudInvStackLimit.ValueChanged += new System.EventHandler(this.nudInvStackLimit_ValueChanged);
-            // 
-            // nudBankStackLimit
-            // 
-            this.nudBankStackLimit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudBankStackLimit.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudBankStackLimit.Location = new System.Drawing.Point(262, 401);
-            this.nudBankStackLimit.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.nudBankStackLimit.Name = "nudBankStackLimit";
-            this.nudBankStackLimit.Size = new System.Drawing.Size(171, 20);
-            this.nudBankStackLimit.TabIndex = 98;
-            this.nudBankStackLimit.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudBankStackLimit.ValueChanged += new System.EventHandler(this.nudBankStackLimit_ValueChanged);
+            this.chkCanGuildBank.AutoSize = true;
+            this.chkCanGuildBank.Location = new System.Drawing.Point(121, 241);
+            this.chkCanGuildBank.Name = "chkCanGuildBank";
+            this.chkCanGuildBank.Size = new System.Drawing.Size(106, 17);
+            this.chkCanGuildBank.TabIndex = 99;
+            this.chkCanGuildBank.Text = "Can Guild Bank?";
+            this.chkCanGuildBank.CheckedChanged += new System.EventHandler(this.chkCanGuildBank_CheckedChanged);
             // 
             // FrmItem
             // 
@@ -2733,6 +2745,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpItems.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDeathDropChance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRgbaB)).EndInit();
@@ -2792,8 +2806,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2968,5 +2980,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudInvStackLimit;
         private Label lblBankStackLimit;
         private Label lblInvStackLimit;
+        private DarkCheckBox chkCanGuildBank;
     }
 }

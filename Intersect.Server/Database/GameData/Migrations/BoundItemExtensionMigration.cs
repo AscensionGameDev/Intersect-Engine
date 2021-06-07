@@ -22,6 +22,7 @@
                     item.CanSell = false;
                     item.CanBank = false;
                     item.CanBag = false;
+                    item.CanGuildBank = false;
 
                     item.DropChanceOnDeath = 0;
                 }
@@ -33,6 +34,7 @@
                     item.CanSell = true;
                     item.CanBank = true;
                     item.CanBag = true;
+                    item.CanGuildBank = true;
 
                     // Set item drop chance to the default configuration option.
                     item.DropChanceOnDeath = Options.ItemDropChance;

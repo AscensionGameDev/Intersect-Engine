@@ -3080,6 +3080,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString CanBank = @"Can Bank?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanGuildBank = @"Can Guild Bank?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CanTrade = @"Can Trade?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
