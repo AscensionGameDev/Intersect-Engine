@@ -92,6 +92,11 @@ namespace Intersect.GameObjects
         public bool CanBank { get; set; } = true;
 
         /// <summary>
+        /// Defines whether or not this item can be guild banked by a player.
+        /// </summary>
+        public bool CanGuildBank { get; set; } = true;
+
+        /// <summary>
         /// Defines whether or not this item can be placed in a bag by a player.
         /// </summary>
         public bool CanBag { get; set; } = true;

@@ -284,7 +284,7 @@ namespace Intersect.Server.Entities
             {
                 if (mPlayer.Items[slot].ItemId != Guid.Empty)
                 {
-                    if (!itemBase.CanBank)
+                    if ((!itemBase.CanBank && mGuild == null) || (!itemBase.CanGuildBank && mGuild != null))
                     {
                         PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
                         return false;
@@ -376,7 +376,7 @@ namespace Intersect.Server.Entities
 
             if (item.ItemId != Guid.Empty)
             {
-                if (!itemBase.CanBank)
+                if ((!itemBase.CanBank && mGuild == null) || (!itemBase.CanGuildBank && mGuild != null))
                 {
                     PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
                     return false;
@@ -597,6 +597,7 @@ namespace Intersect.Server.Entities
                     {
                         mPlayer.TryGiveItem(mBank[slot]);
                         mBank[slot].Set(Item.None);
+                        SendBankUpdate(slot);
                     }
 
                     if (mGuild != null)
