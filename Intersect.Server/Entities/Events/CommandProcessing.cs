@@ -1464,6 +1464,23 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
+        //Reset Stat Point Allocations Command
+        private static void ProcessCommand(
+            ResetStatPointAllocationsCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                player.StatPointAllocations[i] = 0;
+            }
+            player.RecalculateStatsAndPoints();
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             var newStack = new Stack<CommandInstance>();
