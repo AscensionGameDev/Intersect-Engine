@@ -1080,7 +1080,7 @@ namespace Intersect.Server.Entities
                             {
                                 foreach (var partyMember in Party)
                                 {
-                                    if (partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange) && !(partyMember == this && playerEvent != null))
+                                    if ((Options.Party.NpcDeathCommonEventStartRange <= 0 || partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange)) && !(partyMember == this && playerEvent != null))
                                     {
                                         partyMember.StartCommonEvent(partyEvent);
                                     }
