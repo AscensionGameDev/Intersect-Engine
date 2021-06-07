@@ -277,7 +277,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpLbl.Show();
             HpTitle.Show();
 
-            ShowGuildButton();
+            TryShowGuildButton();
         }
 
         public void SetupEntityElements()
@@ -447,7 +447,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     TradeLabel.Show();
                     PartyLabel.Show();
                     FriendLabel.Show();
-                    ShowGuildButton();
+                    TryShowGuildButton();
                 }
             }
 
@@ -1028,15 +1028,18 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
-        void ShowGuildButton()
+        void TryShowGuildButton()
         {
+            var show = false;
             if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
             {
                 if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
                 {
-                    GuildLabel.Show();
+                    show = true;
                 }
             }
+
+            GuildLabel.IsHidden = !show;
         }
 
 
