@@ -1012,18 +1012,25 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         void guildRequest_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
+            if (MyEntity is Player plyr && MyEntity != Globals.Me)
             {
-                if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
+                if (string.IsNullOrWhiteSpace(plyr.Guild))
                 {
-                    if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                    if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
                     {
-                        PacketSender.SendInviteGuild(MyEntity.Name);
+                        if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                        {
+                            PacketSender.SendInviteGuild(MyEntity.Name);
+                        }
+                        else
+                        {
+                            PacketSender.SendChatMsg(Strings.Friends.infight.ToString(), 4);
+                        }
                     }
-                    else
-                    {
-                        PacketSender.SendChatMsg(Strings.Friends.infight.ToString(), 4);
-                    }
+                }
+                else
+                {
+                    Chat.ChatboxMsg.AddMessage(new Chat.ChatboxMsg(Strings.Guilds.InviteAlreadyInGuild, Color.Red, ChatMessageType.Guild));
                 }
             }
         }
