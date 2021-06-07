@@ -813,16 +813,16 @@ namespace Intersect.Server.Entities
                 base.Die(dropItems, killer);
             }
 
-            if (Options.Instance.Player.ExpLossOnDeathPercent > 0)
+            if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
             {
-                if (Options.Player.ExpLossFromCurrentExp.Equals(true))
+                if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
                 {
-                    var ExpLoss = (this.Exp * (Options.Player.ExpLossOnDeathPercent / 100.0));
+                    var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
                     TakeExperience((long)ExpLoss);
                 }
                 else
                 {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Player.ExpLossOnDeathPercent / 100.0));
+                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
                     TakeExperience((long)ExpLoss);
                 }
             }
