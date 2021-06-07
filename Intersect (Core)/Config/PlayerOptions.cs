@@ -63,11 +63,11 @@
         /// First thanks for letting me share an idea, of losing XP when dying <3
         /// </summary>
         public int ExpLossOnDeathPercent = 0;
-        
+
         /// <summary>
         /// If true, it will remove the associated exp, otherwise you will lose the exp based on the exp required to level up.
         /// </summary>
-        public bool ExpLossFromCurrentExp = true
+        public bool ExpLossFromCurrentExp = true;
 
     }
 
