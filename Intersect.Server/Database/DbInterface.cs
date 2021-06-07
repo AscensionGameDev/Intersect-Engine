@@ -1191,12 +1191,14 @@ namespace Intersect.Server.Database
         public static void CachePlayerVariableEventTextLookups()
         {
             var lookup = new Dictionary<string, PlayerVariableBase>();
+            var addedIds = new HashSet<string>();
             foreach (PlayerVariableBase variable in PlayerVariableBase.Lookup.Values)
             {
-                if (!string.IsNullOrWhiteSpace(variable.TextId))
+                if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
                 {
                     lookup.Add(Strings.Events.playervar + "{" + variable.TextId + "}", variable);
                     lookup.Add(Strings.Events.playerswitch + "{" + variable.TextId + "}", variable);
+                    addedIds.Add(variable.TextId);
                 }
             }
             PlayerVariableEventTextLookup = lookup;
@@ -1205,12 +1207,14 @@ namespace Intersect.Server.Database
         public static void CacheServerVariableEventTextLookups()
         {
             var lookup = new Dictionary<string, ServerVariableBase>();
+            var addedIds = new HashSet<string>();
             foreach (ServerVariableBase variable in ServerVariableBase.Lookup.Values)
             {
-                if (!string.IsNullOrWhiteSpace(variable.TextId))
+                if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
                 {
                     lookup.Add(Strings.Events.globalvar + "{" + variable.TextId + "}", variable);
                     lookup.Add(Strings.Events.globalswitch + "{" + variable.TextId + "}", variable);
+                    addedIds.Add(variable.TextId);
                 }
             }
             ServerVariableEventTextLookup = lookup;
