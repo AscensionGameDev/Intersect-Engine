@@ -2610,7 +2610,7 @@ namespace Intersect.Server.Networking
                     if (target != null)
                     {
                         // Are we already in a guild? or have a pending invite?
-                        if (target.DbGuild == null && target.GuildInvite == null)
+                        if (target.Guild == null && target.GuildInvite == null)
                         {
                             // Thank god, we can FINALLY get started!
                             // Set our invite and send our players the relevant messages.
