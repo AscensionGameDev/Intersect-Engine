@@ -1819,6 +1819,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString setguildbankslots = @"Set Guild Bank Slots";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString resetstatpointallocations = @"Reset Player Stat Point Allocations";
         }
 
         public struct EventChangePlayerColor
@@ -1916,6 +1919,7 @@ Tick timer saved in server config.json.";
                 {"disbandguild", "Disband Guild" },
                 {"openguildbank", @"Open Guild Bank"},
                 {"setguildbankslots", @"Set Guild Bank Slots Count"},
+                {"resetstatallocations", @"Reset Stat Point Allocations"},
             };
 
         }

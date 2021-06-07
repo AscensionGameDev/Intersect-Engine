@@ -748,6 +748,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new SetGuildBankSlotsCommand();
 
                     break;
+                case EventCommandType.ResetStatPointAllocations:
+                    tmpCommand = new ResetStatPointAllocationsCommand();
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1339,6 +1343,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.SetGuildBankSlots:
                     cmdWindow = new EventCommandSetGuildBankSlots((SetGuildBankSlotsCommand)command, CurrentPage, this);
+
+                    break;
+                case EventCommandType.ResetStatPointAllocations:
 
                     break;
                 default:
