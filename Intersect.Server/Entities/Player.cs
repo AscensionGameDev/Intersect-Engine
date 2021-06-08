@@ -4655,6 +4655,18 @@ namespace Intersect.Server.Entities
             }
         }
 
+        // Multiple Stats
+        public void UpgradeMultiStat(int statIndex)
+        {
+            if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints >= 5)
+            {
+                StatPointAllocations[statIndex] += 5;
+                StatPoints -= 5;
+                PacketSender.SendEntityStats(this);
+                PacketSender.SendPointsTo(this);
+            }
+        }
+
         //HotbarSlot
         public void HotbarChange(int index, int type, int slot)
         {

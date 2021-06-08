@@ -1772,6 +1772,17 @@ namespace Intersect.Server.Networking
             player.UpgradeStat(packet.Stat);
         }
 
+        public void HandlePacket(Client client, UpgradeMultipleStatPacket packet)
+        {
+            var player = client?.Entity;
+            if (player == null)
+            {
+                return;
+            }
+
+            player.UpgradeMultiStat(packet.Stat);
+        }
+
         //HotbarUpdatePacket
         public void HandlePacket(Client client, HotbarUpdatePacket packet)
         {

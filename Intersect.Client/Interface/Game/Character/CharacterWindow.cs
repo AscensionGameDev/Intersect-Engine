@@ -25,13 +25,23 @@ namespace Intersect.Client.Interface.Game.Character
 
         Button mAddAbilityPwrBtn;
 
+        Button mAddMultiAbilityPwrBtn;
+
         Button mAddAttackBtn;
+
+        Button mAddMultiAttackBtn;
 
         Button mAddDefenseBtn;
 
+        Button mAddMultiDefenseBtn;
+
         Button mAddMagicResistBtn;
 
+        Button mAddMultiMagicResistBtn;
+
         Button mAddSpeedBtn;
+
+        Button mAddMultiSpeedBtn;
 
         //Stats
         Label mAttackLabel;
@@ -102,25 +112,34 @@ namespace Intersect.Client.Interface.Game.Character
             statsLabel.SetText(Strings.Character.stats);
 
             mAttackLabel = new Label(mCharacterWindow, "AttackLabel");
-
             mAddAttackBtn = new Button(mCharacterWindow, "IncreaseAttackButton");
             mAddAttackBtn.Clicked += _addAttackBtn_Clicked;
+            mAddMultiAttackBtn = new Button(mCharacterWindow, "IncreaseMultiAttackButton");
+            mAddMultiAttackBtn.Clicked += _addMultiAttackBtn_Clicked;
 
             mDefenseLabel = new Label(mCharacterWindow, "DefenseLabel");
             mAddDefenseBtn = new Button(mCharacterWindow, "IncreaseDefenseButton");
             mAddDefenseBtn.Clicked += _addDefenseBtn_Clicked;
+            mAddMultiDefenseBtn = new Button(mCharacterWindow, "IncreaseMultiDefenseButton");
+            mAddMultiDefenseBtn.Clicked += _addMultiDefenseBtn_Clicked;
 
             mSpeedLabel = new Label(mCharacterWindow, "SpeedLabel");
             mAddSpeedBtn = new Button(mCharacterWindow, "IncreaseSpeedButton");
             mAddSpeedBtn.Clicked += _addSpeedBtn_Clicked;
+            mAddMultiSpeedBtn = new Button(mCharacterWindow, "IncreaseMultiSpeedButton");
+            mAddMultiSpeedBtn.Clicked += _addMultiSpeedBtn_Clicked;
 
             mAbilityPwrLabel = new Label(mCharacterWindow, "AbilityPowerLabel");
             mAddAbilityPwrBtn = new Button(mCharacterWindow, "IncreaseAbilityPowerButton");
             mAddAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
+            mAddMultiAbilityPwrBtn = new Button(mCharacterWindow, "IncreaseMultiAbilityPowerButton");
+            mAddMultiAbilityPwrBtn.Clicked += _addMultiAbilityPwrBtn_Clicked;
 
             mMagicRstLabel = new Label(mCharacterWindow, "MagicResistLabel");
             mAddMagicResistBtn = new Button(mCharacterWindow, "IncreaseMagicResistButton");
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
+            mAddMultiMagicResistBtn = new Button(mCharacterWindow, "IncreaseMultiMagicResistButton");
+            mAddMultiMagicResistBtn.Clicked += _addMultiMagicResistBtn_Clicked;
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
@@ -140,9 +159,19 @@ namespace Intersect.Client.Interface.Game.Character
             PacketSender.SendUpgradeStat((int) Stats.MagicResist);
         }
 
+        void _addMultiMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendMultiUpgradeStat((int) Stats.MagicResist);
+        }
+
         void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendUpgradeStat((int) Stats.AbilityPower);
+        }
+
+        void _addMultiAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendMultiUpgradeStat((int) Stats.AbilityPower);
         }
 
         void _addSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -150,14 +179,29 @@ namespace Intersect.Client.Interface.Game.Character
             PacketSender.SendUpgradeStat((int) Stats.Speed);
         }
 
+        void _addMultiSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendMultiUpgradeStat((int) Stats.Speed);
+        }
+
         void _addDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendUpgradeStat((int) Stats.Defense);
         }
 
+        void _addMultiDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendMultiUpgradeStat((int) Stats.Defense);
+        }
+
         void _addAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendUpgradeStat((int) Stats.Attack);
+        }
+
+        void _addMultiAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendMultiUpgradeStat((int) Stats.Attack);
         }
 
         //Methods
@@ -301,20 +345,36 @@ namespace Intersect.Client.Interface.Game.Character
             );
 
             mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
-            mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                         Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue;
+
+            mAddAbilityPwrBtn.IsHidden = 
+                Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue;
+
+            mAddMultiAbilityPwrBtn.IsHidden =
+                Globals.Me.StatPoints < 5 || Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue - 5;
 
             mAddAttackBtn.IsHidden =
                 Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue;
 
-            mAddDefenseBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                      Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue;
+            mAddMultiAttackBtn.IsHidden =
+                Globals.Me.StatPoints < 5 || Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue - 5;
 
-            mAddMagicResistBtn.IsHidden = Globals.Me.StatPoints == 0 ||
-                                          Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue;
+            mAddDefenseBtn.IsHidden = 
+                Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue;
+
+            mAddMultiDefenseBtn.IsHidden =
+                Globals.Me.StatPoints < 5 || Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue - 5;
+
+            mAddMagicResistBtn.IsHidden = 
+                Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue;
+
+            mAddMultiMagicResistBtn.IsHidden =
+                Globals.Me.StatPoints < 5 || Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue - 5;
 
             mAddSpeedBtn.IsHidden =
                 Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue;
+
+            mAddMultiSpeedBtn.IsHidden =
+                Globals.Me.StatPoints < 5 || Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue - 5;
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {

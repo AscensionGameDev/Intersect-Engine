@@ -395,6 +395,7 @@
     <Compile Include="Network\Packets\Client\RequestGuildPacket.cs" />
     <Compile Include="Network\Packets\Client\UpdateGuildMemberPacket.cs" />
     <Compile Include="Network\Packets\Client\PictureClosedPacket.cs" />
+    <Compile Include="Network\Packets\Client\UpgradeMultipleStatPacket.cs" />
     <Compile Include="Network\Packets\Server\ActionMsgPackets.cs" />
     <Compile Include="Network\Packets\Server\EntityMovementPackets.cs" />
     <Compile Include="Network\Packets\Server\GuildInvitePacket.cs" />
