@@ -11,6 +11,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
+using Intersect.GameObjects.Events;
 using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
@@ -41,6 +42,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbIngredient.Items.Clear();
             cmbIngredient.Items.Add(Strings.General.none);
             cmbIngredient.Items.AddRange(ItemBase.Names);
+            cmbEvent.Items.Clear();
+            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.AddRange(EventBase.Names);
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
         }
@@ -549,6 +553,10 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void darkComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        }
     }
 
 }
