@@ -3037,6 +3037,7 @@ namespace Intersect.Server.Entities
                         this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Success
                     );
+                    StartCommonEvent(CraftBase.Get(id).Event);
                 }
                 else
                 {
