@@ -29,6 +29,10 @@ namespace Intersect.Server.Database.Logging
 
         public DbSet<ChatHistory> ChatHistory { get; set; }
 
+        public DbSet<TradeHistory> TradeHistory { get; set; }
+        
+        public DbSet<GuildHistory> GuildHistory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -54,6 +58,12 @@ namespace Intersect.Server.Database.Logging
 
         /// <inheritdoc />
         public DbSet<ChatHistory> ChatHistory => Context.ChatHistory;
+
+        /// <inheritdoc />
+        public DbSet<TradeHistory> TradeHistory => Context.TradeHistory;
+
+        /// <inheritdoc />
+        public DbSet<GuildHistory> GuildHistory => Context.GuildHistory;
 
         #endregion
     }

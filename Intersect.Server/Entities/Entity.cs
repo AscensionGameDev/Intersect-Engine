@@ -1863,7 +1863,7 @@ namespace Intersect.Server.Entities
                 {
                     lock (enemy.EntityLock)
                     {
-                        enemy.Die(100, this);
+                        enemy.Die(true, this);
                     }
                 }
                 else
@@ -1877,7 +1877,7 @@ namespace Intersect.Server.Entities
 
                     lock (enemy.EntityLock)
                     {
-                        enemy.Die(Options.ItemDropChance, this);
+                        enemy.Die(true, this);
                     }
                 }
 
@@ -2432,7 +2432,7 @@ namespace Intersect.Server.Entities
         }
 
         //Spawning/Dying
-        public virtual void Die(int dropitems = 0, Entity killer = null)
+        public virtual void Die(bool dropItems = true, Entity killer = null)
         {
             if (IsDead() || Items == null)
             {
@@ -2442,9 +2442,9 @@ namespace Intersect.Server.Entities
             // Run events and other things.
             killer?.KilledEntity(this);
 
-            var lootGenerated = new List<Player>();
-            if (dropitems > 0)
+            if (dropItems)
             {
+                var lootGenerated = new List<Player>();
                 // If this is an NPC, drop loot for every single player that participated in the fight.
                 if (this is Npc npc && npc.Base.IndividualizedLoot)
                 {
@@ -2463,7 +2463,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (!lootGenerated.Contains(partyMember))
                                     {
-                                        DropItems(dropitems, partyMember);
+                                        DropItems(partyMember);
                                         lootGenerated.Add(partyMember);
                                     }
                                 }
@@ -2473,7 +2473,7 @@ namespace Intersect.Server.Entities
                                 // They're not in a party, so drop the item if still eligible!
                                 if (!lootGenerated.Contains(player))
                                 {
-                                    DropItems(dropitems, player);
+                                    DropItems(player);
                                     lootGenerated.Add(player);
                                 }
                             }
@@ -2488,10 +2488,10 @@ namespace Intersect.Server.Entities
                 else
                 {
                     // Drop as normal.
-                    DropItems(dropitems, killer);
+                    DropItems(killer);
                 }
             }
-
+            
             var currentMap = MapInstance.Get(MapId);
             if (currentMap != null)
             {
@@ -2510,7 +2510,7 @@ namespace Intersect.Server.Entities
             Dead = true;
         }
 
-        private void DropItems(int chance, Entity killer, bool sendUpdate = true)
+        private void DropItems(Entity killer, bool sendUpdate = true)
         {
             // Drop items
             for (var n = 0; n < Items.Count; n++)
@@ -2532,7 +2532,7 @@ namespace Intersect.Server.Entities
                 //Don't lose bound items on death for players.
                 if (this.GetType() == typeof(Player))
                 {
-                    if (itemBase.Bound)
+                    if (itemBase.DropChanceOnDeath == 0)
                     {
                         continue;
                     }
@@ -2546,7 +2546,7 @@ namespace Intersect.Server.Entities
                 if (this is Player)
                 {
                     //Player drop rates
-                    if (Randomization.Next(1, 101) <= chance * luck)
+                    if (Randomization.Next(1, 101) >= itemBase.DropChanceOnDeath * luck)
                     {
                         continue;
                     }

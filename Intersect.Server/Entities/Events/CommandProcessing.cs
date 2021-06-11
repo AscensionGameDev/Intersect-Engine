@@ -301,7 +301,7 @@ namespace Intersect.Server.Entities.Events
                 {
                     lock (player.EntityLock)
                     {
-                        player.Die(Options.ItemDropChance);
+                        player.Die();
                     }
                 }
             }
@@ -845,7 +845,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         lock (player.EntityLock)
                         {
-                            ((Npc)entities[i]).Die(100);
+                            ((Npc)entities[i]).Die();
                         }
                     }
                 }
@@ -1314,7 +1314,7 @@ namespace Intersect.Server.Entities.Events
                 var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();
 
                 // Can we use this name according to our configuration?
-                if (gname != null && gname.Length >= Options.Instance.Guild.MinimumGuildNameSize && gname.Length <= Options.Instance.Guild.MaximumGuildNameSize)
+                if (gname != null && FieldChecking.IsValidGuildName(gname, Strings.Regex.guildname))
                 {
                     // Is the name already in use?
                     if (Guild.GetGuild(gname) == null)
@@ -1348,7 +1348,7 @@ namespace Intersect.Server.Entities.Events
                 else
                 {
                     // Let our player know they need to adjust their name.
-                    PacketSender.SendChatMsg(player, Strings.Guilds.VariableNotMatchLength.ToString(Options.Instance.Guild.MinimumGuildNameSize, Options.Instance.Guild.MaximumGuildNameSize), ChatMessageType.Guild, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(player, Strings.Guilds.VariableInvalid, ChatMessageType.Guild, CustomColors.Alerts.Error);
                 }
             }
             else
@@ -1392,7 +1392,7 @@ namespace Intersect.Server.Entities.Events
             {
                 // Send the members a notification, then start wiping the guild from existence through sheer willpower!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
-                Guild.DeleteGuild(player.Guild);
+                Guild.DeleteGuild(player.Guild, player);
 
                 // :(
                 success = true;
@@ -1462,6 +1462,23 @@ namespace Intersect.Server.Entities.Events
             {
                 guild.ExpandBankSlots(quantity);
             }
+        }
+
+        //Reset Stat Point Allocations Command
+        private static void ProcessCommand(
+            ResetStatPointAllocationsCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                player.StatPointAllocations[i] = 0;
+            }
+            player.RecalculateStatsAndPoints();
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)

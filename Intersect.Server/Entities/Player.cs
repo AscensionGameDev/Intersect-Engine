@@ -344,7 +344,7 @@ namespace Intersect.Server.Entities
                 {
                     lock (t.EntityLock)
                     {
-                        t.Die(0);
+                        t.Die();
                     }
                 }
             }
@@ -781,7 +781,7 @@ namespace Intersect.Server.Entities
             StartCommonEventsWithTrigger(CommonEventTrigger.OnRespawn);
         }
 
-        public override void Die(int dropitems = 0, Entity killer = null)
+        public override void Die(bool dropItems = true, Entity killer = null)
         {
             CastTime = 0;
             CastTarget = null;
@@ -810,9 +810,22 @@ namespace Intersect.Server.Entities
             
             lock (EntityLock)
             {
-                base.Die(dropitems, killer);
+                base.Die(dropItems, killer);
             }
-            
+
+            if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
+            {
+                if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                {
+                    var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                    TakeExperience((long)ExpLoss);
+                }
+                else
+                {
+                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                    TakeExperience((long)ExpLoss);
+                }
+            }
             PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
@@ -1010,6 +1023,17 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void TakeExperience(long amount)
+        {
+            Exp -= amount;
+            if (Exp < 0)
+            {
+                Exp = 0;
+            }
+
+            PacketSender.SendExperience(this);
+        }
+        
         private bool CheckLevelUp()
         {
             var levelCount = 0;
@@ -1056,7 +1080,7 @@ namespace Intersect.Server.Entities
                             {
                                 foreach (var partyMember in Party)
                                 {
-                                    if (partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange) && !(partyMember == this && playerEvent != null))
+                                    if ((Options.Party.NpcDeathCommonEventStartRange <= 0 || partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange)) && !(partyMember == this && playerEvent != null))
                                     {
                                         partyMember.StartCommonEvent(partyEvent);
                                     }
@@ -1583,20 +1607,36 @@ namespace Intersect.Server.Entities
                 if (item.Descriptor.IsStackable)
                 {
                     // Does the user have this item already?
-                    if (FindInventoryItemSlot(item.ItemId) != null)
+                    var existingSlot = FindInventoryItemSlot(item.ItemId);
+                    if (existingSlot != null)
                     {
-                        return true;
-                    }
+                        // Can we blindly add more to this stack?
+                        var untilFull = item.Descriptor.MaxInventoryStack - existingSlot.Quantity;
+                        if (untilFull >= item.Quantity)
+                        {
+                            return true;
+                        }
 
-                    // Does the user have a free space?
-                    if (FindOpenInventorySlots().Count >= 1)
+                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
+                        var toGive = item.Quantity - untilFull;
+                        if (Math.Ceiling((double) toGive / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                        {
+                            return true;
+                        }
+                    }
+                    // User doesn't have this item yet.
+                    else
                     {
-                        return true;
+                        // Does the user have enough free space for these stacks?
+                        if (Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                        {
+                            return true;
+                        }
                     }
                 }
+                // Not a stacking item, so can we contain the amount we want to give them?
                 else
                 {
-                    // Not a stacking item, so can we contain the amount we want to give them?
                     if (FindOpenInventorySlots().Count >= item.Quantity)
                     {
                         return true;
@@ -1721,7 +1761,6 @@ namespace Intersect.Server.Entities
 
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
-            var hasItem = FindInventoryItemSlot(item.ItemId) != null;
             int spawnAmount = 0;
 
             // How are we going to be handling this?
@@ -1798,12 +1837,55 @@ namespace Intersect.Server.Entities
         {
 
             // Decide how we're going to handle this item.
-            var existingSlot = FindInventoryItemSlot(item.Descriptor.Id);
+            var existingSlots = FindInventoryItemSlots(item.Descriptor.Id);
             var updateSlots = new List<int>();
-            if (item.Descriptor.Stackable && existingSlot != null) // Stackable, but already exists in the inventory.
+            if (item.Descriptor.Stackable && existingSlots.Count > 0) // Stackable, but already exists in the inventory.
             {
-                Items[existingSlot.Slot].Quantity += item.Quantity;
-                updateSlots.Add(existingSlot.Slot);
+                // So this gets complicated.. First let's hand out the quantity we can hand out before we hit a stack limit.
+                var toGive = item.Quantity;
+                foreach (var slot in existingSlots)
+                {
+                    if (toGive == 0)
+                    {
+                        break;
+                    }
+
+                    if (slot.Quantity >= item.Descriptor.MaxInventoryStack)
+                    {
+                        continue;
+                    }
+
+                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    if (canAdd > toGive)
+                    {
+                        slot.Quantity += toGive;
+                        updateSlots.Add(slot.Slot);
+                        toGive = 0;
+                    }
+                    else
+                    {
+                        slot.Quantity += canAdd;
+                        updateSlots.Add(slot.Slot);
+                        toGive -= canAdd;
+                    }
+                }
+
+                // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!
+                if (toGive > 0)
+                {
+                    var openSlots = FindOpenInventorySlots();
+                    var total = toGive; // Copy this as we're going to be editing toGive.
+                    for (var slot = 0; slot < Math.Ceiling((double)total / item.Descriptor.MaxInventoryStack); slot++)
+                    {
+                        var quantity = item.Descriptor.MaxInventoryStack <= toGive ?
+                            item.Descriptor.MaxInventoryStack :
+                            toGive;
+
+                        toGive -= quantity;
+                        openSlots[slot].Set(new Item(item.ItemId, quantity));
+                        updateSlots.Add(openSlots[slot].Slot);
+                    }
+                }
             }
             else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
             {
@@ -1816,9 +1898,30 @@ namespace Intersect.Server.Entities
             }
             else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.
             {
-                var newSlot = FindOpenInventorySlot();
-                newSlot.Set(item);
-                updateSlots.Add(newSlot.Slot);
+                // If the item is not stackable, or the amount is below our stack cap just blindly hand it out.
+                if (!item.Descriptor.Stackable || item.Quantity < item.Descriptor.MaxInventoryStack)
+                {
+                    var newSlot = FindOpenInventorySlot();
+                    newSlot.Set(item);
+                    updateSlots.Add(newSlot.Slot);
+                }
+                // The item is above our stack cap.. Let's start handing them phat stacks out!
+                else
+                {
+                    var toGive = item.Quantity;
+                    var openSlots = FindOpenInventorySlots();
+                    for (var slot = 0; slot < Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack); slot++)
+                    {
+                        var quantity = item.Descriptor.MaxInventoryStack <= toGive ?
+                            item.Descriptor.MaxInventoryStack :
+                            toGive;
+
+                        toGive -= quantity;
+                        openSlots[slot].Set(new Item(item.ItemId, quantity));
+                        updateSlots.Add(openSlots[slot].Slot);
+                    }
+                }
+
             }
 
             // Do we need to update the player's inventory?
@@ -1913,7 +2016,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (itemDescriptor.Bound)
+            if (!itemDescriptor.CanDrop)
             {
                 PacketSender.SendChatMsg(this, Strings.Items.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return false;
@@ -2080,7 +2183,7 @@ namespace Intersect.Server.Entities
                         {
                             lock (EntityLock)
                             {
-                                Die(Options.ItemDropChance, this);
+                                Die(true, this);
                             }
                         }
 
@@ -2380,7 +2483,7 @@ namespace Intersect.Server.Entities
                 return 0;
             }
 
-            var itemCount = 0;
+            long itemCount = 0;
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
                 var item = Items[i];
@@ -2390,7 +2493,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            return itemCount;
+            // TODO: Stop using Int32 for item quantities
+            return itemCount >= Int32.MaxValue ? Int32.MaxValue : (int) itemCount;
         }
 
         /// <summary>
@@ -2662,7 +2766,7 @@ namespace Intersect.Server.Entities
                 var itemDescriptor = Items[slot].Descriptor;
                 if (itemDescriptor != null)
                 {
-                    if (itemDescriptor.Bound)
+                    if (!itemDescriptor.CanSell)
                     {
                         PacketSender.SendChatMsg(this, Strings.Shops.bound, ChatMessageType.Inventory, CustomColors.Items.Bound);
 
@@ -3116,6 +3220,12 @@ namespace Intersect.Server.Entities
             {
                 if (Items[slot].ItemId != Guid.Empty)
                 {
+                    if (!itemBase.CanBag)
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
+                        return;
+                    }
+
                     if (itemBase.IsStackable)
                     {
                         if (amount >= Items[slot].Quantity)
@@ -3471,7 +3581,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if the item is bound.. if so don't allow trade
-                    if (itemBase.Bound)
+                    if (!itemBase.CanTrade)
                     {
                         PacketSender.SendChatMsg(this, Strings.Bags.tradebound, ChatMessageType.Trading, CustomColors.Items.Bound);
 
@@ -3666,7 +3776,7 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                if (!TryGiveItem(offer.ItemId, offer.Quantity))
+                if (!TryGiveItem(offer))
                 {
                     MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity, Id);
                     PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);
@@ -5301,6 +5411,7 @@ namespace Intersect.Server.Entities
                             }
 
                             var success = false;
+                            var changed = false;
 
                             if (!canceled)
                             {
@@ -5309,6 +5420,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Integer != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Integer = newValue;
                                             success = true;
                                         }
@@ -5317,6 +5432,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Number:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Number != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Number = newValue;
                                             success = true;
                                         }
@@ -5326,12 +5445,20 @@ namespace Intersect.Server.Entities
                                         if (newValueString.Length >= cmd.Minimum &&
                                             newValueString.Length <= cmd.Maximum)
                                         {
+                                            if (value.String != newValueString)
+                                            {
+                                                changed = true;
+                                            }
                                             value.String = newValueString;
                                             success = true;
                                         }
 
                                         break;
                                     case VariableDataTypes.Boolean:
+                                        if (value.Boolean != newValue > 0)
+                                        {
+                                            changed = true;
+                                        }
                                         value.Boolean = newValue > 0;
                                         success = true;
 
@@ -5343,7 +5470,7 @@ namespace Intersect.Server.Entities
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
@@ -5352,7 +5479,7 @@ namespace Intersect.Server.Entities
                             else if (cmd.VariableType == VariableTypes.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", cmd.VariableId.ToString());

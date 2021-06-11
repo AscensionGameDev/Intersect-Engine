@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Logging
 {
     [DbContext(typeof(LoggingContext))]
-    partial class LoggingContextModelSnapshot : ModelSnapshot
+    [Migration("20210515114555_LogPlayerTrades")]
+    partial class LogPlayerTrades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,32 +40,6 @@ namespace Intersect.Server.Migrations.Logging
                     b.HasKey("Id");
 
                     b.ToTable("ChatHistory");
-                });
-
-            modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.GuildHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("GuildId");
-
-                    b.Property<Guid>("InitiatorId");
-
-                    b.Property<string>("Ip");
-
-                    b.Property<string>("Meta");
-
-                    b.Property<Guid>("PlayerId");
-
-                    b.Property<DateTime>("TimeStamp");
-
-                    b.Property<int>("Type");
-
-                    b.Property<Guid>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GuildHistory");
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.TradeHistory", b =>

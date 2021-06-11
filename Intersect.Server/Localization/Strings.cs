@@ -653,7 +653,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString VariableNotString = @"The given guild name does not contain any text.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString VariableNotMatchLength = @"A guild name needs to be between {00} and {01} characters!";
+            public readonly LocalizedString VariableInvalid = @"Invalid guild name!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString VariableNoText = @"A guild name can not be empty!";
@@ -775,6 +775,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString bound = @"You cannot drop this item.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString nobag = @"You cannot store this item in a bag.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString nobank = @"You cannot store this item in a bank.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cannotuse = @"You cannot use this item!";
@@ -1159,6 +1165,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString username = @"^[a-zA-Z0-9]{2,20}$";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString guildname = @"^[a-zA-Z0-9 ]{3,20}$";
 
         }
 

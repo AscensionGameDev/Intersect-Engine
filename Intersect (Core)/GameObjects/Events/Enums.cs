@@ -224,9 +224,11 @@
         CreateGuild,
         DisbandGuild,
         OpenGuildBank,
-        SetGuildBankSlots
+        SetGuildBankSlots,
         //End Guilds
 
+        //Reset Stats
+        ResetStatPointAllocations,
     }
 
 }
