@@ -25,6 +25,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             rdoVariable.Checked = mMyCommand.UseVariable;
             rdoGlobalVariable.Checked = mMyCommand.VariableType == VariableTypes.ServerVariable;
+            rdoGuildVariable.Checked = mMyCommand.VariableType == VariableTypes.GuildVariable;
 
             SetupAmountInput();
         }
@@ -45,6 +46,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             rdoPlayerVariable.Text = Strings.EventGiveExperience.PlayerVariable;
             rdoGlobalVariable.Text = Strings.EventGiveExperience.ServerVariable;
+            rdoGuildVariable.Text = Strings.EventGiveExperience.GuildVariable;
 
             btnSave.Text = Strings.EventGiveExperience.okay;
             btnCancel.Text = Strings.EventGiveExperience.cancel;
@@ -53,9 +55,22 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.Exp = (long) nudExperience.Value;
-            mMyCommand.VariableType = rdoPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
+            if (rdoPlayerVariable.Checked)
+            {
+                mMyCommand.VariableType = VariableTypes.PlayerVariable;
+                mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
+            }
+            else if (rdoGlobalVariable.Checked)
+            {
+                mMyCommand.VariableType = VariableTypes.ServerVariable;
+                mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
+            }
+            else if (rdoGuildVariable.Checked)
+            {
+                mMyCommand.VariableType = VariableTypes.GuildVariable;
+                mMyCommand.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
+            }
             mMyCommand.UseVariable = !rdoManual.Checked;
-            mMyCommand.VariableId = rdoPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer) : ServerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
             mEventEditor.FinishCommandEdit();
         }
 
@@ -80,6 +95,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            SetupAmountInput();
+        }
+
+        private void rdoGuildVariable_CheckedChanged(object sender, EventArgs e)
         {
             SetupAmountInput();
         }
@@ -124,13 +144,34 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     VariableBlank();
                 }
             }
-            else
+            else if (rdoGlobalVariable.Checked)
             {
                 cmbVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataTypes.Integer));
                 // Do not update if the wrong type of variable is saved
                 if (mMyCommand.VariableType == VariableTypes.ServerVariable)
                 {
                     var index = ServerVariableBase.ListIndex(mMyCommand.VariableId, VariableDataTypes.Integer);
+                    if (index > -1)
+                    {
+                        cmbVariable.SelectedIndex = index;
+                    }
+                    else
+                    {
+                        VariableBlank();
+                    }
+                }
+                else
+                {
+                    VariableBlank();
+                }
+            }
+            else if (rdoGuildVariable.Checked)
+            {
+                cmbVariable.Items.AddRange(GuildVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                // Do not update if the wrong type of variable is saved
+                if (mMyCommand.VariableType == VariableTypes.GuildVariable)
+                {
+                    var index = GuildVariableBase.ListIndex(mMyCommand.VariableId, VariableDataTypes.Integer);
                     if (index > -1)
                     {
                         cmbVariable.SelectedIndex = index;

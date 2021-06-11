@@ -119,6 +119,10 @@ namespace Intersect.Server.Entities.Events
             {
                 value = ServerVariableBase.Get(condition.VariableId)?.Value;
             }
+            else if (condition.VariableType == VariableTypes.GuildVariable)
+            {
+                value = player.Guild?.GetVariableValue(condition.VariableId);
+            }
 
             if (value == null)
             {
@@ -146,6 +150,11 @@ namespace Intersect.Server.Entities.Events
                         break;
                     case VariableTypes.ServerVariable:
                         quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+
+                        break;
+                    case VariableTypes.GuildVariable:
+                        quantity = (int)player.Guild?.GetVariableValue(condition.VariableId).Integer;
+
                         break;
                 }
             }
@@ -452,6 +461,11 @@ namespace Intersect.Server.Entities.Events
                         break;
                     case VariableTypes.ServerVariable:
                         quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+
+                        break;
+                    case VariableTypes.GuildVariable:
+                        quantity = (int)player.Guild?.GetVariableValue(condition.VariableId).Integer;
+
                         break;
                 }
             }
@@ -511,6 +525,10 @@ namespace Intersect.Server.Entities.Events
                 {
                     compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
                 }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
+                }
             }
             else
             {
@@ -562,6 +580,10 @@ namespace Intersect.Server.Entities.Events
                 else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
                 {
                     compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
                 }
             }
             else

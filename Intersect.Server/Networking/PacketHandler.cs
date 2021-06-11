@@ -3692,6 +3692,11 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Time:
                     break;
 
+                case GameObjectType.GuildVariable:
+                    obj = GuildVariableBase.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -3811,6 +3816,11 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Time:
                     break;
 
+                case GameObjectType.GuildVariable:
+                    obj = GuildVariableBase.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -3875,6 +3885,10 @@ namespace Intersect.Server.Networking
                     {
                         Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", obj.Id.ToString());
                         DbInterface.CacheServerVariableEventTextLookups();
+                    }
+                    else if (type == GameObjectType.GuildVariable)
+                    {
+                        DbInterface.CacheGuildVariableEventTextLookups();
                     }
 
                     DbInterface.SaveGameObject(obj);
