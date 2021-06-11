@@ -30,7 +30,7 @@ namespace Intersect.Server.Database.PlayerData
 
         DbSet<SpellSlot> Player_Spells { get; set; }
 
-        DbSet<Variable> Player_Variables { get; set; }
+        DbSet<PlayerVariable> Player_Variables { get; set; }
 
         DbSet<Bag> Bags { get; set; }
 

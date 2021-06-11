@@ -65,6 +65,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnChronological = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.rdoGuildVariables = new DarkUI.Controls.DarkRadioButton();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -78,6 +79,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpTypes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTypes.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTypes.Controls.Add(this.rdoGuildVariables);
             this.grpTypes.Controls.Add(this.rdoGlobalVariables);
             this.grpTypes.Controls.Add(this.rdoPlayerVariables);
             this.grpTypes.ForeColor = System.Drawing.Color.Gainsboro;
@@ -505,6 +507,16 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // rdoGuildVariables
+            // 
+            this.rdoGuildVariables.AutoSize = true;
+            this.rdoGuildVariables.Location = new System.Drawing.Point(242, 20);
+            this.rdoGuildVariables.Name = "rdoGuildVariables";
+            this.rdoGuildVariables.Size = new System.Drawing.Size(95, 17);
+            this.rdoGuildVariables.TabIndex = 4;
+            this.rdoGuildVariables.Text = "Guild Variables";
+            this.rdoGuildVariables.CheckedChanged += new System.EventHandler(this.rdoGuildVariables_CheckedChanged);
+            // 
             // FrmSwitchVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -573,5 +585,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbFolder;
         private DarkTextBox txtStringValue;
         private Controls.GameObjectList lstGameObjects;
+        private DarkRadioButton rdoGuildVariables;
     }
 }

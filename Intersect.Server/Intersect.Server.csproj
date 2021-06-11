@@ -472,6 +472,7 @@
     <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
     <Compile Include="Database\PlayerData\Players\Friend.cs" />
     <Compile Include="Database\PlayerData\Players\Guild.cs" />
+    <Compile Include="Database\PlayerData\Players\GuildVariable.cs" />
     <Compile Include="Database\PlayerData\Players\HotbarSlot.cs" />
     <Compile Include="Database\PlayerData\Players\InventorySlot.cs" />
     <Compile Include="Database\Item.cs" />
@@ -480,6 +481,7 @@
     <Compile Include="Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Database\PlayerData\Players\Variable.cs" />
     <Compile Include="Entities\BankInterface.cs" />
     <Compile Include="Entities\Combat\Buff.cs" />
     <Compile Include="Entities\Combat\Dash.cs" />
@@ -491,7 +493,7 @@
     <Compile Include="Entities\Player.Database.cs" />
     <Compile Include="Database\Spell.cs" />
     <Compile Include="Database\PlayerData\Players\Switch.cs" />
-    <Compile Include="Database\PlayerData\Players\Variable.cs" />
+    <Compile Include="Database\PlayerData\Players\PlayerVariable.cs" />
     <Compile Include="Database\PlayerData\Mute.cs" />
     <Compile Include="Database\PlayerData\User.cs" />
     <Compile Include="Database\PlayerData\PlayerContext.cs" />
@@ -544,6 +546,10 @@
     <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.Designer.cs">
       <DependentUpon>20210510223205_TrackPlaytimeAsULongsInSeconds.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20210611184605_AddingGuildVariables.cs" />
+    <Compile Include="Migrations\20210611184605_AddingGuildVariables.designer.cs">
+      <DependentUpon>20210611184605_AddingGuildVariables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.Designer.cs">
       <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
@@ -587,6 +593,10 @@
     <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.cs" />
     <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.designer.cs">
       <DependentUpon>20210607115442_AddedCanGuildBankOptionToItems.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20210611154131_AddingGuildVariables.cs" />
+    <Compile Include="Migrations\Game\20210611154131_AddingGuildVariables.designer.cs">
+      <DependentUpon>20210611154131_AddingGuildVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">

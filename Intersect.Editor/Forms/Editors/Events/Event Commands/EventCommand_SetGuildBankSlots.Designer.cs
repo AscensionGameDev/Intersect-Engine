@@ -30,13 +30,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandSetGuildBankSlots));
             this.grpGuildSlots = new DarkUI.Controls.DarkGroupBox();
             this.cmbVariable = new DarkUI.Controls.DarkComboBox();
             this.lblVariable = new System.Windows.Forms.Label();
             this.rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
-            this.rdoPlayerVariable = new DarkUI.Controls.DarkRadioButton();
+            this.rdoGuildVariable = new DarkUI.Controls.DarkRadioButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.rdoPlayerVariable = new DarkUI.Controls.DarkRadioButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGuildSlots.SuspendLayout();
             this.SuspendLayout();
@@ -48,13 +48,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGuildSlots.Controls.Add(this.cmbVariable);
             this.grpGuildSlots.Controls.Add(this.lblVariable);
             this.grpGuildSlots.Controls.Add(this.rdoGlobalVariable);
+            this.grpGuildSlots.Controls.Add(this.rdoGuildVariable);
             this.grpGuildSlots.Controls.Add(this.btnCancel);
             this.grpGuildSlots.Controls.Add(this.rdoPlayerVariable);
             this.grpGuildSlots.Controls.Add(this.btnSave);
             this.grpGuildSlots.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGuildSlots.Location = new System.Drawing.Point(3, 3);
             this.grpGuildSlots.Name = "grpGuildSlots";
-            this.grpGuildSlots.Size = new System.Drawing.Size(306, 110);
+            this.grpGuildSlots.Size = new System.Drawing.Size(373, 110);
             this.grpGuildSlots.TabIndex = 17;
             this.grpGuildSlots.TabStop = false;
             this.grpGuildSlots.Text = "Set Guild Slots Count";
@@ -74,7 +75,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbVariable.FormattingEnabled = true;
             this.cmbVariable.Location = new System.Drawing.Point(73, 44);
             this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(219, 21);
+            this.cmbVariable.Size = new System.Drawing.Size(294, 21);
             this.cmbVariable.TabIndex = 39;
             this.cmbVariable.Text = null;
             this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
@@ -91,12 +92,32 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // rdoGlobalVariable
             // 
             this.rdoGlobalVariable.AutoSize = true;
-            this.rdoGlobalVariable.Location = new System.Drawing.Point(162, 19);
+            this.rdoGlobalVariable.Location = new System.Drawing.Point(142, 19);
             this.rdoGlobalVariable.Name = "rdoGlobalVariable";
             this.rdoGlobalVariable.Size = new System.Drawing.Size(96, 17);
             this.rdoGlobalVariable.TabIndex = 37;
             this.rdoGlobalVariable.Text = "Global Variable";
             this.rdoGlobalVariable.CheckedChanged += new System.EventHandler(this.rdoGlobalVariable_CheckedChanged);
+            // 
+            // rdoGuildVariable
+            // 
+            this.rdoGuildVariable.AutoSize = true;
+            this.rdoGuildVariable.Location = new System.Drawing.Point(277, 19);
+            this.rdoGuildVariable.Name = "rdoGuildVariable";
+            this.rdoGuildVariable.Size = new System.Drawing.Size(90, 17);
+            this.rdoGuildVariable.TabIndex = 37;
+            this.rdoGuildVariable.Text = "Guild Variable";
+            this.rdoGuildVariable.CheckedChanged += new System.EventHandler(this.rdoGuildVariable_CheckedChanged);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(292, 75);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // rdoPlayerVariable
             // 
@@ -109,16 +130,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoPlayerVariable.TabStop = true;
             this.rdoPlayerVariable.Text = "Player Variable";
             this.rdoPlayerVariable.CheckedChanged += new System.EventHandler(this.rdoPlayerVariable_CheckedChanged);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(225, 75);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
@@ -138,7 +149,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpGuildSlots);
             this.Name = "EventCommandSetGuildBankSlots";
-            this.Size = new System.Drawing.Size(314, 124);
+            this.Size = new System.Drawing.Size(382, 124);
             this.grpGuildSlots.ResumeLayout(false);
             this.grpGuildSlots.PerformLayout();
             this.ResumeLayout(false);
@@ -153,6 +164,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkComboBox cmbVariable;
         private System.Windows.Forms.Label lblVariable;
         private DarkRadioButton rdoGlobalVariable;
+        private DarkRadioButton rdoGuildVariable;
         private DarkRadioButton rdoPlayerVariable;
     }
 }

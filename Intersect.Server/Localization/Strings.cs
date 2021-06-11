@@ -592,6 +592,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString watchdogkillcommon =
                 @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshhold.  (Event {00})";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString guildvar = @"\guildvar";
+
         }
 
         public sealed class FormulasNamespace : LocaleNamespace

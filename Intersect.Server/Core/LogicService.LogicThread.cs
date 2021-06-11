@@ -242,7 +242,7 @@ namespace Intersect.Server.Core
                             {
                                 if (guild.Value.LastUpdateTime + Options.Instance.Guild.GuildUpdateInterval < Globals.Timing.Milliseconds)
                                 {
-                                    LogicPool.QueueWorkItem(guild.Value.UpdateMemberList);
+                                    LogicPool.QueueWorkItem(guild.Value.Update);
                                 }
                             }
 

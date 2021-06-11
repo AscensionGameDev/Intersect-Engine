@@ -32,7 +32,9 @@
 
         GuildMemberLeft,
 
-        GuildMemberKicked
+        GuildMemberKicked,
+
+        GuildVariableChange
 
     }
 

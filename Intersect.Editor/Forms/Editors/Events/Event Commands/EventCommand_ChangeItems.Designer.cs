@@ -30,12 +30,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandChangeItems));
             this.grpChangeItems = new DarkUI.Controls.DarkGroupBox();
             this.grpVariableAmount = new DarkUI.Controls.DarkGroupBox();
-            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
             this.lblVariable = new System.Windows.Forms.Label();
             this.rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
+            this.rdoGuildVariable = new DarkUI.Controls.DarkRadioButton();
             this.rdoPlayerVariable = new DarkUI.Controls.DarkRadioButton();
             this.grpManualAmount = new DarkUI.Controls.DarkGroupBox();
             this.nudGiveTakeAmount = new DarkUI.Controls.DarkNumericUpDown();
@@ -43,14 +42,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpAmountType = new DarkUI.Controls.DarkGroupBox();
             this.rdoVariable = new DarkUI.Controls.DarkRadioButton();
             this.rdoManual = new DarkUI.Controls.DarkRadioButton();
-            this.cmbMethod = new DarkUI.Controls.DarkComboBox();
             this.lblMethod = new System.Windows.Forms.Label();
-            this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
-            this.cmbAction = new DarkUI.Controls.DarkComboBox();
             this.lblAction = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
+            this.cmbMethod = new DarkUI.Controls.DarkComboBox();
+            this.cmbItem = new DarkUI.Controls.DarkComboBox();
+            this.cmbAction = new DarkUI.Controls.DarkComboBox();
             this.grpChangeItems.SuspendLayout();
             this.grpVariableAmount.SuspendLayout();
             this.grpManualAmount.SuspendLayout();
@@ -76,7 +76,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeItems.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpChangeItems.Location = new System.Drawing.Point(3, 3);
             this.grpChangeItems.Name = "grpChangeItems";
-            this.grpChangeItems.Size = new System.Drawing.Size(306, 208);
+            this.grpChangeItems.Size = new System.Drawing.Size(336, 208);
             this.grpChangeItems.TabIndex = 17;
             this.grpChangeItems.TabStop = false;
             this.grpChangeItems.Text = "Change Player Items:";
@@ -88,35 +88,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpVariableAmount.Controls.Add(this.cmbVariable);
             this.grpVariableAmount.Controls.Add(this.lblVariable);
             this.grpVariableAmount.Controls.Add(this.rdoGlobalVariable);
+            this.grpVariableAmount.Controls.Add(this.rdoGuildVariable);
             this.grpVariableAmount.Controls.Add(this.rdoPlayerVariable);
             this.grpVariableAmount.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpVariableAmount.Location = new System.Drawing.Point(8, 100);
             this.grpVariableAmount.Name = "grpVariableAmount";
-            this.grpVariableAmount.Size = new System.Drawing.Size(292, 71);
+            this.grpVariableAmount.Size = new System.Drawing.Size(320, 71);
             this.grpVariableAmount.TabIndex = 38;
             this.grpVariableAmount.TabStop = false;
             this.grpVariableAmount.Text = "Variable Amount:";
             this.grpVariableAmount.Visible = false;
-            // 
-            // cmbVariable
-            // 
-            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbVariable.DrawDropdownHoverOutline = false;
-            this.cmbVariable.DrawFocusRectangle = false;
-            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Location = new System.Drawing.Point(67, 44);
-            this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(219, 21);
-            this.cmbVariable.TabIndex = 39;
-            this.cmbVariable.Text = null;
-            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblVariable
             // 
@@ -130,12 +111,22 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // rdoGlobalVariable
             // 
             this.rdoGlobalVariable.AutoSize = true;
-            this.rdoGlobalVariable.Location = new System.Drawing.Point(156, 19);
+            this.rdoGlobalVariable.Location = new System.Drawing.Point(112, 19);
             this.rdoGlobalVariable.Name = "rdoGlobalVariable";
             this.rdoGlobalVariable.Size = new System.Drawing.Size(96, 17);
             this.rdoGlobalVariable.TabIndex = 37;
             this.rdoGlobalVariable.Text = "Global Variable";
             this.rdoGlobalVariable.CheckedChanged += new System.EventHandler(this.rdoGlobalVariable_CheckedChanged);
+            // 
+            // rdoGuildVariable
+            // 
+            this.rdoGuildVariable.AutoSize = true;
+            this.rdoGuildVariable.Location = new System.Drawing.Point(224, 19);
+            this.rdoGuildVariable.Name = "rdoGuildVariable";
+            this.rdoGuildVariable.Size = new System.Drawing.Size(90, 17);
+            this.rdoGuildVariable.TabIndex = 37;
+            this.rdoGuildVariable.Text = "Guild Variable";
+            this.rdoGuildVariable.CheckedChanged += new System.EventHandler(this.rdoGuildVariable_CheckedChanged);
             // 
             // rdoPlayerVariable
             // 
@@ -203,7 +194,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpAmountType.Controls.Add(this.rdoVariable);
             this.grpAmountType.Controls.Add(this.rdoManual);
             this.grpAmountType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAmountType.Location = new System.Drawing.Point(185, 19);
+            this.grpAmountType.Location = new System.Drawing.Point(213, 19);
             this.grpAmountType.Name = "grpAmountType";
             this.grpAmountType.Size = new System.Drawing.Size(115, 75);
             this.grpAmountType.TabIndex = 36;
@@ -232,6 +223,73 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoManual.Text = "Manual";
             this.rdoManual.CheckedChanged += new System.EventHandler(this.rdoManual_CheckedChanged);
             // 
+            // lblMethod
+            // 
+            this.lblMethod.AutoSize = true;
+            this.lblMethod.Location = new System.Drawing.Point(5, 76);
+            this.lblMethod.Name = "lblMethod";
+            this.lblMethod.Size = new System.Drawing.Size(46, 13);
+            this.lblMethod.TabIndex = 27;
+            this.lblMethod.Text = "Method:";
+            // 
+            // lblItem
+            // 
+            this.lblItem.AutoSize = true;
+            this.lblItem.Location = new System.Drawing.Point(5, 48);
+            this.lblItem.Name = "lblItem";
+            this.lblItem.Size = new System.Drawing.Size(30, 13);
+            this.lblItem.TabIndex = 23;
+            this.lblItem.Text = "Item:";
+            // 
+            // lblAction
+            // 
+            this.lblAction.AutoSize = true;
+            this.lblAction.Location = new System.Drawing.Point(5, 21);
+            this.lblAction.Name = "lblAction";
+            this.lblAction.Size = new System.Drawing.Size(40, 13);
+            this.lblAction.TabIndex = 21;
+            this.lblAction.Text = "Action:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(253, 177);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(8, 177);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // cmbVariable
+            // 
+            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariable.DrawDropdownHoverOutline = false;
+            this.cmbVariable.DrawFocusRectangle = false;
+            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbVariable.FormattingEnabled = true;
+            this.cmbVariable.Location = new System.Drawing.Point(67, 44);
+            this.cmbVariable.Name = "cmbVariable";
+            this.cmbVariable.Size = new System.Drawing.Size(247, 21);
+            this.cmbVariable.TabIndex = 39;
+            this.cmbVariable.Text = null;
+            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
             // cmbMethod
             // 
             this.cmbMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -251,19 +309,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Up to Amount"});
             this.cmbMethod.Location = new System.Drawing.Point(64, 73);
             this.cmbMethod.Name = "cmbMethod";
-            this.cmbMethod.Size = new System.Drawing.Size(115, 21);
+            this.cmbMethod.Size = new System.Drawing.Size(143, 21);
             this.cmbMethod.TabIndex = 28;
             this.cmbMethod.Text = "Normal";
             this.cmbMethod.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblMethod
-            // 
-            this.lblMethod.AutoSize = true;
-            this.lblMethod.Location = new System.Drawing.Point(5, 76);
-            this.lblMethod.Name = "lblMethod";
-            this.lblMethod.Size = new System.Drawing.Size(46, 13);
-            this.lblMethod.TabIndex = 27;
-            this.lblMethod.Text = "Method:";
             // 
             // cmbItem
             // 
@@ -280,19 +329,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem.FormattingEnabled = true;
             this.cmbItem.Location = new System.Drawing.Point(64, 46);
             this.cmbItem.Name = "cmbItem";
-            this.cmbItem.Size = new System.Drawing.Size(115, 21);
+            this.cmbItem.Size = new System.Drawing.Size(143, 21);
             this.cmbItem.TabIndex = 24;
             this.cmbItem.Text = null;
             this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblItem
-            // 
-            this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(5, 48);
-            this.lblItem.Name = "lblItem";
-            this.lblItem.Size = new System.Drawing.Size(30, 13);
-            this.lblItem.TabIndex = 23;
-            this.lblItem.Text = "Item:";
             // 
             // cmbAction
             // 
@@ -312,39 +352,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Take"});
             this.cmbAction.Location = new System.Drawing.Point(64, 19);
             this.cmbAction.Name = "cmbAction";
-            this.cmbAction.Size = new System.Drawing.Size(115, 21);
+            this.cmbAction.Size = new System.Drawing.Size(143, 21);
             this.cmbAction.TabIndex = 22;
             this.cmbAction.Text = "Give";
             this.cmbAction.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblAction
-            // 
-            this.lblAction.AutoSize = true;
-            this.lblAction.Location = new System.Drawing.Point(5, 21);
-            this.lblAction.Name = "lblAction";
-            this.lblAction.Size = new System.Drawing.Size(40, 13);
-            this.lblAction.TabIndex = 21;
-            this.lblAction.Text = "Action:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(225, 177);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(8, 177);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // EventCommandChangeItems
             // 
@@ -354,7 +365,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChangeItems);
             this.Name = "EventCommandChangeItems";
-            this.Size = new System.Drawing.Size(314, 218);
+            this.Size = new System.Drawing.Size(349, 218);
             this.grpChangeItems.ResumeLayout(false);
             this.grpChangeItems.PerformLayout();
             this.grpVariableAmount.ResumeLayout(false);
@@ -389,6 +400,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkComboBox cmbVariable;
         private System.Windows.Forms.Label lblVariable;
         private DarkRadioButton rdoGlobalVariable;
+        private DarkRadioButton rdoGuildVariable;
         private DarkRadioButton rdoPlayerVariable;
     }
 }

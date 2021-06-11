@@ -33,6 +33,12 @@ namespace Intersect.Editor.Localization
                     ServerVariableBase.GetName(condition.VariableId), pVar
                 );
             }
+            else if (condition.VariableType == VariableTypes.GuildVariable)
+            {
+                return Strings.EventConditionDesc.guildvariable.ToString(
+                    GuildVariableBase.GetName(condition.VariableId), pVar
+                );
+            }
 
             return "";
         }
@@ -49,6 +55,9 @@ namespace Intersect.Editor.Localization
                         break;
                     case VariableTypes.ServerVariable:
                         amount = string.Format(@"({0}: {1})", Strings.EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
+                        break;
+                    case VariableTypes.GuildVariable:
+                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
                         break;
                 }
 
@@ -274,6 +283,9 @@ namespace Intersect.Editor.Localization
                     case VariableTypes.ServerVariable:
                         amount = string.Format(@"({0}: {1})", Strings.EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
                         break;
+                    case VariableTypes.GuildVariable:
+                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
+                        break;
                 }
 
                 return Strings.EventConditionDesc.HasFreeInventorySlots.ToString(amount);
@@ -317,6 +329,12 @@ namespace Intersect.Editor.Localization
                         ServerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    value = Strings.EventConditionDesc.guildvariablevalue.ToString(
+                        GuildVariableBase.GetName(comparison.CompareVariableId)
+                    );
+                }
             }
 
             if (comparison.ComparingEqual)
@@ -352,6 +370,12 @@ namespace Intersect.Editor.Localization
                 {
                     value = Strings.EventConditionDesc.globalvariablevalue.ToString(
                         ServerVariableBase.GetName(comparison.CompareVariableId)
+                    );
+                }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    value = Strings.EventConditionDesc.guildvariablevalue.ToString(
+                        GuildVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
             }
@@ -1325,6 +1349,9 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ServerVariable = @"Global Variable";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildVariable = @"Guild Variable";
+
             public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString item = @"Item:";
@@ -1563,29 +1590,43 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dupplayervariable = @"Player Variable: {00}'s Value";
 
+            public static LocalizedString dupguildvariable = @"Guild Variable: {00}'s Value";
+
             public static LocalizedString addglobalvariable = @"Add Global Variable: {00}'s Value";
 
             public static LocalizedString addplayervariable = @"Add Player Variable: {00}'s Value";
+
+            public static LocalizedString addguildvariable = @"Add Guild Variable: {00}'s Value";
 
             public static LocalizedString subtractglobalvariable = @"Subtract Global Variable: {00}'s Value";
 
             public static LocalizedString subtractplayervariable = @"Subtract Player Variable: {00}'s Value";
 
+            public static LocalizedString subtractguildvariable = @"Subtract Guild Variable: {00}'s Value";
+
             public static LocalizedString multiplyglobalvariable = @"Multiply Global Variable: {00}'s Value";
 
             public static LocalizedString multiplyplayervariable = @"Multiply Player Variable: {00}'s Value";
+
+            public static LocalizedString multiplyguildvariable = @"Multiply Guild Variable: {00}'s Value";
 
             public static LocalizedString divideglobalvariable = @"Divide Global Variable: {00}'s Value";
 
             public static LocalizedString divideplayervariable = @"Divide Player Variable: {00}'s Value";
 
+            public static LocalizedString divideguildvariable = @"Divide Guild Variable: {00}'s Value";
+
             public static LocalizedString leftshiftglobalvariable = @"Left Bit Shift Global Variable: {00}'s Value";
 
             public static LocalizedString leftshiftplayervariable = @"Left Bit Shift Player Variable: {00}'s Value";
 
+            public static LocalizedString leftshiftguildvariable = @"Left Bit Shift Guild Variable: {00}'s Value";
+
             public static LocalizedString rightshiftglobalvariable = @"Right Bit Shift Global Variable: {00}'s Value";
 
             public static LocalizedString rightshiftplayervariable = @"Right Bit Shift Player Variable: {00}'s Value";
+
+            public static LocalizedString rightshiftguildvariable = @"Right Bit Shift Guild Variable: {00}'s Value";
 
             public static LocalizedString enditemchange = @"End Item Change";
 
@@ -1618,6 +1659,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalswitch = @"Set Global Switch {00} to {01}";
 
             public static LocalizedString globalvariable = @"Set Global Variable {00} ({01})";
+
+            public static LocalizedString guildvariable = @"Set Guild Variable {00} ({01})";
 
             public static LocalizedString gotolabel = @"Go to Label {00}";
 
@@ -2020,6 +2063,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
 
+            public static LocalizedString guildvariable = @"Guild Variable";
+
+            public static LocalizedString guildvariablevalue = @"Guild Variable Value: ";
+
             public static LocalizedString hasatleast = @"Has at least:";
 
             public static LocalizedString hasitem = @"Has Item";
@@ -2173,6 +2220,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString globalvariablevalue = @"Global Variable: {00}'s Value";
 
+            public static LocalizedString guildvariable = @"Guild Variable: {00} {01}";
+
+            public static LocalizedString guildvariablevalue = @"Guild Variable: {00}'s Value";
+
             public static LocalizedString greater = @"is greater than {00}";
 
             public static LocalizedString greaterequal = @"is greater than or equal to {00}";
@@ -2281,6 +2332,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString ServerVariable = @"Global Variable";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildVariable = @"Guild Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString cancel = @"Cancel";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2322,6 +2376,7 @@ Tick timer saved in server config.json.";
                 {12, @"Guild Member Joined"},
                 {13, @"Guild Member Left"},
                 {14, @"Guild Member Kicked"},
+                {15, @"Guild Variable Changed"},
             };
 
             public static LocalizedString conditions = @"Conditions";
@@ -2486,6 +2541,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ServerVariable = @"Global Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildVariable = @"Guild Variable";
 
         }
 
@@ -2774,6 +2832,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString global = @"Global Variable";
 
+            public static LocalizedString guild = @"Guild Variable";
+
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString player = @"Player Variable";
@@ -2792,6 +2852,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString booleanccloneglobalvariablevalue = @"Global Variable Value: ";
 
+            public static LocalizedString booleanccloneguildvariablevalue = @"Guild Variable Value: ";
+
             public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
 
             public static LocalizedString numericlabel = @"Integer Variable:";
@@ -2803,6 +2865,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericleftshift = @"LShift";
 
             public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
+
+            public static LocalizedString numericcloneguildvariablevalue = @"Global Variable Value: ";
 
             public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
 
@@ -2900,6 +2964,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString playervariable = @"Player Variable";
 
             public static LocalizedString globalvariable = @"Global Variable";
+
+            public static LocalizedString guildvariable = @"Guild Variable";
 
             public static LocalizedString minval = @"Minimum Value";
 
@@ -4610,6 +4676,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString undo = @"Undo Changes";
 
             public static LocalizedString value = @"Value:";
+
+            public static LocalizedString guildvariable = @"Guild Variable";
+
+            public static LocalizedString guildvariables = @"Guild Variables";
+
+            public static LocalizedString textidguildvar = @"Text Id: \guildvar ";
 
         }
 
