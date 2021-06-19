@@ -1576,7 +1576,7 @@ namespace Intersect.Client.Entities
             if (hpForeground != null)
             {
                 Graphics.DrawGameTexture(
-                    hpForeground, new FloatRect(0, 0, hpfillWidth, hpForeground.GetHeight()),
+                    hpForeground, new FloatRect(0, 0, hpForeground.GetWidth(), hpForeground.GetHeight()),
                     new FloatRect((int) (x - width / 2), (int) (y - 1), hpfillWidth, 6), Color.White
                 );
             }
@@ -1585,7 +1585,7 @@ namespace Intersect.Client.Entities
             {
                 Graphics.DrawGameTexture(
                     shieldForeground,
-                    new FloatRect((float) (width - shieldfillWidth), 0, shieldfillWidth, shieldForeground.GetHeight()),
+                    new FloatRect((float) (width - shieldfillWidth), 0, shieldForeground.GetWidth(), shieldForeground.GetHeight()),
                     new FloatRect((int) (x - width / 2) + hpfillWidth, (int) (y - 1), shieldfillWidth, 6), Color.White
                 );
             }
