@@ -1189,7 +1189,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(descriptor.CannotHarvestMessage))
+                    {
+                        PacketSender.SendChatMsg(this, descriptor.CannotHarvestMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -1259,7 +1266,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(descriptor.CannotHarvestMessage))
+                    {
+                        PacketSender.SendChatMsg(this, descriptor.CannotHarvestMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -2107,7 +2121,14 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(itemBase.CannotUseMessage))
+                    {
+                        PacketSender.SendChatMsg(this, itemBase.CannotUseMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -4143,7 +4164,14 @@ namespace Intersect.Server.Entities
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
+                if (!string.IsNullOrWhiteSpace(spell.CannotCastMessage))
+                {
+                    PacketSender.SendChatMsg(this, spell.CannotCastMessage, ChatMessageType.Error);
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
+                }
 
                 return false;
             }
