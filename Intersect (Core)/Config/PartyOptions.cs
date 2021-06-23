@@ -18,7 +18,7 @@
         /// It will determine if you will have an XP bonus for each member, Eg 10, will give 10% more to the monster's total XP, then split equally to all members.
         /// A monster that would give 100 XP, now gives 120, getting 60 for each member, when 2 in the party.
         /// </summary>
-        public float BonifyExpPercentPerMember = 0;
+        public float BonusExperiencePercentPerMember = 0;
 
     }
 }
