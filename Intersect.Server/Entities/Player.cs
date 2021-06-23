@@ -1069,8 +1069,8 @@ namespace Intersect.Server.Entities
                         if (Party != null && Party.Count > 0)
                         {
                             var partyMembersInXpRange = Party.Where(partyMember => partyMember.InRangeOf(this, Options.Party.SharedXpRange));
-                            float bonifyXp = Options.Party.BonifyExpPercentPerMember / 100;
-                            var multiplier = 1.0f + (partyMembersInXpRange.Count() * bonifyXp);
+                            float bonusExp = Options.Party.BonifyExpPercentPerMember / 100;
+                            var multiplier = 1.0f + (partyMembersInXpRange.Count() * bonusExp);
                             var partyExperience = (int)(descriptor.Experience * multiplier) / partyMembersInXpRange.Count();
                             foreach (var partyMember in partyMembersInXpRange)
                             {
