@@ -1415,7 +1415,7 @@ namespace Intersect.Server.Entities
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 var equipment = Equipment[i];
-                if (equipment >= 0 && equipment < Items.Count && equipment < Items.Count)
+                if (equipment >= 0 && equipment < Items.Count)
                 {
                     var item = Items[equipment];
                     if (item.ItemId != Guid.Empty)
