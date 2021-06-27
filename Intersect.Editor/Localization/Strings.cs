@@ -1819,6 +1819,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString setguildbankslots = @"Set Guild Bank Slots";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString resetstatpointallocations = @"Reset Player Stat Point Allocations";
         }
 
         public struct EventChangePlayerColor
@@ -1916,6 +1919,7 @@ Tick timer saved in server config.json.";
                 {"disbandguild", "Disband Guild" },
                 {"openguildbank", @"Open Guild Bank"},
                 {"setguildbankslots", @"Set Guild Bank Slots Count"},
+                {"resetstatallocations", @"Reset Stat Point Allocations"},
             };
 
         }
@@ -3063,7 +3067,26 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString bonusrange = @"Stat Bonus Range (+-):";
 
-            public static LocalizedString bound = @"Bound?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanDrop = @"Can Drop?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DeathDropChance = @"Drop chance on Death (%):";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanBag = @"Can Bag?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanBank = @"Can Bank?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanGuildBank = @"Can Guild Bank?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanTrade = @"Can Trade?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CanSell = @"Can Sell?";
 
             public static LocalizedString cancel = @"Cancel";
 
@@ -3205,6 +3228,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString SingleUseEvent = @"Destroy On Use?";
 
             public static LocalizedString stackable = @"Stackable?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InventoryStackLimit = @"Inventory Stack Limit:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BankStackLimit = @"Bank Stack Limit:";
 
             public static LocalizedString title = @"Item Editor";
 

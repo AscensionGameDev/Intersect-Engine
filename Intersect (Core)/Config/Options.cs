@@ -76,6 +76,8 @@ namespace Intersect
 
         public GuildOptions Guild = new GuildOptions();
 
+        public LoggingOptions Logging = new LoggingOptions();
+
         public static Options Instance { get; private set; }
 
         [JsonIgnore]

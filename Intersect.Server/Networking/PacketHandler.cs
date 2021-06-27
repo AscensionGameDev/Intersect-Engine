@@ -821,7 +821,7 @@ namespace Intersect.Server.Networking
                     player.Name
                 );
                 PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
-                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, null);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
             {
@@ -841,7 +841,7 @@ namespace Intersect.Server.Networking
                 }
 
                 PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(player.Name, msg), chatColor, player.Name);
-                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, null);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Global, Guid.Empty);
             }
             else if (cmd == Strings.Chat.partycmd)
             {
@@ -855,7 +855,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendPartyMsg(
                         player, Strings.Chat.party.ToString(player.Name, msg), CustomColors.Chat.PartyChat, player.Name
                     );
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Party, Guid.Empty);
                 }
                 else
                 {
@@ -874,7 +874,7 @@ namespace Intersect.Server.Networking
                     PacketSender.SendAdminMsg(
                         Strings.Chat.admin.ToString(player.Name, msg), CustomColors.Chat.AdminChat, player.Name
                     );
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Admin, Guid.Empty);
                 }
             }
             else if (cmd == Strings.Guilds.guildcmd)
@@ -893,6 +893,7 @@ namespace Intersect.Server.Networking
                 //Normalize Rank
                 var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(player.GuildRank, Options.Instance.Guild.Ranks.Length - 1))].Title;
                 PacketSender.SendGuildMsg(player, Strings.Guilds.guildchat.ToString(rank, player.Name, msg), CustomColors.Chat.GuildChat);
+                ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Guild, player.Guild.Id);
 
             }
             else if (cmd == Strings.Chat.announcementcmd)
@@ -916,7 +917,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendGameAnnouncement(msg, Options.Chat.AnnouncementDisplayDuration);
                     }
 
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, null);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Notice, Guid.Empty);
                 }
             }
             else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
@@ -948,7 +949,7 @@ namespace Intersect.Server.Networking
 
                     target.ChatTarget = player;
                     player.ChatTarget = target;
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, target);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, target?.Id ?? Guid.Empty);
                 }
                 else
                 {
@@ -975,7 +976,7 @@ namespace Intersect.Server.Networking
                     );
 
                     player.ChatTarget.ChatTarget = player;
-                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, player.ChatTarget);
+                    ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.PM, player.ChatTarget?.Id ?? Guid.Empty);
                 }
                 else
                 {
@@ -2181,10 +2182,17 @@ namespace Intersect.Server.Networking
             player.Trading.Accepted = true;
             if (player.Trading.Counterparty.Trading.Accepted)
             {
-                var t = new Item[Options.MaxInvItems];
-
+                if (Options.Instance.Logging.Trade)
+                {
+                    //Duplicate the items we are trading because they are messed with in the ReturnTradeItems() function below
+                    var tradeId = Guid.NewGuid();
+                    var ourItems = player.Trading.Offer.Where(i => i != null && i.ItemId != Guid.Empty).Select(i => i.Clone()).ToArray();
+                    var theirItems = player.Trading.Counterparty.Trading.Offer.Where(i => i != null && i.ItemId != Guid.Empty).Select(i => i.Clone()).ToArray();
+                    TradeHistory.LogTrade(tradeId, player, player.Trading.Counterparty, ourItems, theirItems);
+                    TradeHistory.LogTrade(tradeId, player.Trading.Counterparty, player, theirItems, ourItems);
+                }
                 //Swap the trade boxes over, then return the trade boxes to their new owners!
-                t = player.Trading.Offer;
+                var t = player.Trading.Offer;
                 player.Trading.Offer = player.Trading.Counterparty.Trading.Offer;
                 player.Trading.Counterparty.Trading.Offer = t;
                 player.Trading.Counterparty.ReturnTradeItems();
@@ -2602,7 +2610,7 @@ namespace Intersect.Server.Networking
                     if (target != null)
                     {
                         // Are we already in a guild? or have a pending invite?
-                        if (target.DbGuild == null && target.GuildInvite == null)
+                        if (target.Guild == null && target.GuildInvite == null)
                         {
                             // Thank god, we can FINALLY get started!
                             // Set our invite and send our players the relevant messages.
@@ -2637,7 +2645,7 @@ namespace Intersect.Server.Networking
                             mem.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberKicked, guild.Name, member.Name);
                         }
 
-                        guild.RemoveMember(Player.Find(packet.Id));
+                        guild.RemoveMember(Player.Find(packet.Id), player, GuildHistory.GuildActivityType.Kicked);
                     }
                     else
                     {
@@ -2661,7 +2669,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.SetPlayerRank(packet.Id, packet.Rank);
+                        guild.SetPlayerRank(packet.Id, packet.Rank, player);
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Promoted.ToString(member.Name, promotionRank.Title), CustomColors.Alerts.Success);
                     }
@@ -2687,7 +2695,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.SetPlayerRank(packet.Id, packet.Rank);
+                        guild.SetPlayerRank(packet.Id, packet.Rank, player);
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Demoted.ToString(member.Name, demotionRank.Title), CustomColors.Alerts.Error);
                     }
@@ -2705,7 +2713,7 @@ namespace Intersect.Server.Networking
                             return;
                         }
 
-                        guild.TransferOwnership(player, Player.Find(packet.Id));
+                        guild.TransferOwnership(Player.Find(packet.Id));
 
                         PacketSender.SendGuildMsg(player, Strings.Guilds.Transferred.ToString(guild.Name, player.Name, member.Name), CustomColors.Alerts.Success);
                     }
@@ -2729,6 +2737,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            var invitor = player?.GuildInvite?.Item1;
             var guild = player?.GuildInvite?.Item2;
 
             // Have we received an invite at all?
@@ -2759,7 +2768,7 @@ namespace Intersect.Server.Networking
             }
 
             // Accept our invite!
-            guild.AddMember(player, Options.Instance.Guild.Ranks.Length - 1);
+            guild.AddMember(player, Options.Instance.Guild.Ranks.Length - 1, invitor);
             player.GuildInvite = null;
 
             // Start common events for all online guild members that this one left
@@ -2836,7 +2845,7 @@ namespace Intersect.Server.Networking
                 member.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberLeft, guild.Name, player.Name);
             }
 
-            guild.RemoveMember(player);
+            guild.RemoveMember(player, null, GuildHistory.GuildActivityType.Left);
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
@@ -3531,9 +3540,24 @@ namespace Intersect.Server.Networking
 
             var type = packet.Type;
             var obj = DbInterface.AddGameObject(type);
-            if (type == GameObjectType.Event)
+
+            var changed = false;
+            switch(type)
             {
-                ((EventBase)obj).CommonEvent = true;
+                case GameObjectType.Event:
+                    ((EventBase)obj).CommonEvent = true;
+                    changed = true;
+
+                    break;
+                case GameObjectType.Item:
+                    ((ItemBase)obj).DropChanceOnDeath = Options.ItemDropChance;
+                    changed = true;
+
+                    break;
+            }
+
+            if (changed)
+            {
                 DbInterface.SaveGameObject(obj);
             }
 

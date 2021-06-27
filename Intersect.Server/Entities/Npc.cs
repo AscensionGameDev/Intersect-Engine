@@ -158,10 +158,10 @@ namespace Intersect.Server.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public override void Die(int dropitems = 100, Entity killer = null)
+        public override void Die(bool generateLoot = true, Entity killer = null)
         {
             lock (EntityLock) {
-                base.Die(dropitems, killer);
+                base.Die(generateLoot, killer);
 
                 AggroCenterMap = null;
                 AggroCenterX = 0;
@@ -772,7 +772,7 @@ namespace Intersect.Server.Entities
                                 if (mResetCounter > mResetMax)
                                 {
                                     // Kill the Npc, and simply do not drop any loot or give any credit.
-                                    Die(0, null);
+                                    Die(false, null);
                                     mResetCounter = 0;
                                     mResetDistance = 0;
                                 }

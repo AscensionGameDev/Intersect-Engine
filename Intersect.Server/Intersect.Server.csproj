@@ -450,11 +450,14 @@
     <Compile Include="Database\GameData\GameContext.cs" />
     <Compile Include="Database\GameData\IGameContext.cs" />
     <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Database\GameData\Migrations\BoundItemExtensionMigration.cs" />
     <Compile Include="Database\GameData\Migrations\CerasVersionToleranceMigration.cs" />
     <Compile Include="Database\ContextInterface.cs" />
     <Compile Include="Database\IDbContext.cs" />
     <Compile Include="Database\IntersectDbContext.cs" />
     <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
+    <Compile Include="Database\Logging\Entities\TradeHistory.cs" />
+    <Compile Include="Database\Logging\Entities\GuildHistory.cs" />
     <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
@@ -523,7 +526,7 @@
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
     <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.cs" />
-    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.designer.cs">
+    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.Designer.cs">
       <DependentUpon>20210414121435_TrackUserPlayerStats.cs</DependentUpon>
     </Compile>
     <Compile Include="Metrics\Controllers\ApplicationMetricsController.cs" />
@@ -534,52 +537,72 @@
     <Compile Include="Metrics\Histogram.cs" />
     <Compile Include="Metrics\MetricsRoot.cs" />
     <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.cs" />
-    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.designer.cs">
+    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.Designer.cs">
       <DependentUpon>20210503165540_AddingGuildsWithGuildBanks.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.cs" />
-    <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.designer.cs">
+    <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.Designer.cs">
       <DependentUpon>20210510223205_TrackPlaytimeAsULongsInSeconds.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
-    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.designer.cs">
+    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.Designer.cs">
       <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
-    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.designer.cs">
+    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.Designer.cs">
       <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.cs" />
-    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.designer.cs">
+    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.Designer.cs">
       <DependentUpon>20201001163344_ItemAndSpellCooldownImprovements.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20201017065035_AddColorToEntities.cs" />
-    <Compile Include="Migrations\20201017065035_AddColorToEntities.designer.cs">
+    <Compile Include="Migrations\20201017065035_AddColorToEntities.Designer.cs">
       <DependentUpon>20201017065035_AddColorToEntities.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.cs" />
-    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.designer.cs">
+    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.Designer.cs">
       <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20210423131813_AddItemSpellIgnoreCdrOptions.cs" />
-    <Compile Include="Migrations\Game\20210423131813_AddItemSpellIgnoreCdrOptions.designer.cs">
+    <Compile Include="Migrations\Game\20210423131813_AddItemSpellIgnoreCdrOptions.Designer.cs">
       <DependentUpon>20210423131813_AddItemSpellIgnoreCdrOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.cs" />
-    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.designer.cs">
+    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.Designer.cs">
       <DependentUpon>20210423141451_AddIndividualizedLootOptionToNpcs.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.cs" />
-    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.designer.cs">
+    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.Designer.cs">
       <DependentUpon>20210509070229_AddingQuestCategoriesAndOrderValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.cs" />
+    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.Designer.cs">
+      <DependentUpon>20210512071349_BoundItemExtension.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.cs" />
+    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.Designer.cs">
+      <DependentUpon>20210513080440_AddItemStackCaps.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.cs" />
+    <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.designer.cs">
+      <DependentUpon>20210607115442_AddedCanGuildBankOptionToItems.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.cs" />
-    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.designer.cs">
+    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.Designer.cs">
       <DependentUpon>20210414222302_AddedChatLogging.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.cs" />
+    <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.Designer.cs">
+      <DependentUpon>20210515114555_LogPlayerTrades.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.cs" />
+    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.designer.cs">
+      <DependentUpon>20210519095613_AddGuildActivityLogging.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />
@@ -771,6 +794,7 @@
     <Compile Include="Web\RestApi\Middleware\IntersectThrottlingMiddleware.cs" />
     <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\GuildRank.cs" />
     <Compile Include="Web\RestApi\Payloads\IpAddress.cs" />
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
@@ -810,6 +834,7 @@
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\GuildController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\LogsController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />

@@ -876,7 +876,8 @@ namespace Intersect.Client.Entities
             var d = 0;
 
             var sprite = "";
-            var alpha = 255;
+            // Copy the actual render color, because we'll be editing it later and don't want to overwrite it.
+            var renderColor = new Color(Color.A, Color.R, Color.G, Color. B); 
 
             //If the entity has transformed, apply that sprite instead.
             for (var n = 0; n < Status.Count; n++)
@@ -896,7 +897,7 @@ namespace Intersect.Client.Entities
                     }
                     else
                     {
-                        alpha = 125;
+                        renderColor.A /= 2;
                     }
                 }
             }
@@ -1004,7 +1005,7 @@ namespace Intersect.Client.Entities
                     if (paperdoll == "Player")
                     {
                         Graphics.DrawGameTexture(
-                            texture, srcRectangle, destRectangle, Color ?? new Color(alpha, 255, 255, 255)
+                            texture, srcRectangle, destRectangle, renderColor
                         );
                     }
                     else if (equipSlot > -1)
@@ -1034,11 +1035,11 @@ namespace Intersect.Client.Entities
                                 {
                                     if (Gender == 0)
                                     {
-                                        DrawEquipment(item.MalePaperdoll, alpha);
+                                        DrawEquipment(item.MalePaperdoll, renderColor.A);
                                     }
                                     else
                                     {
-                                        DrawEquipment(item.FemalePaperdoll, alpha);
+                                        DrawEquipment(item.FemalePaperdoll, renderColor.A);
                                     }
                                 }
                             }
@@ -1059,6 +1060,24 @@ namespace Intersect.Client.Entities
 
         public void DrawChatBubbles()
         {
+            //Don't draw if the entity is hidden
+            if (HideEntity)
+            {
+                return; 
+            }
+
+            //If unit is stealthed, don't render unless the entity is the player or party member.
+            if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
+            {
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == StatusTypes.Stealth)
+                    {
+                        return;
+                    }
+                }
+            }
+
             var chatbubbles = mChatBubbles.ToArray();
             var bubbleoffset = 0f;
             for (var i = chatbubbles.Length - 1; i > -1; i--)

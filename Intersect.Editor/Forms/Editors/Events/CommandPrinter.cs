@@ -1271,6 +1271,10 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.setguildbankslots;
         }
 
+        private static string GetCommandText(ResetStatPointAllocationsCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.resetstatpointallocations;
+        }
 
         //Set Variable Modification Texts
         private static string GetVariableModText(SetVariableCommand command, VariableMod mod)

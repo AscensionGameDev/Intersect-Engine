@@ -248,6 +248,11 @@ namespace Intersect.Client.Core
                                         PacketSender.SendOpenAdminWindow();
 
                                         break;
+
+                                    case Control.OpenGuild:
+                                        Interface.Interface.GameUi?.GameMenu.ToggleGuildWindow();
+
+                                        break;
                                 }
 
                                 break;

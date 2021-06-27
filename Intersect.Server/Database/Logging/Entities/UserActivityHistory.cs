@@ -100,16 +100,19 @@ namespace Intersect.Server.Database.Logging.Entities
         /// <param name="meta">Any extra metadata/notes for this event</param>
         public static void LogActivity(Guid userId, Guid playerId, string ip, PeerType peer, UserAction action, string meta)
         {
-            DbInterface.Pool.QueueWorkItem(new Action<UserActivityHistory>(Log), new UserActivityHistory
+            if (Options.Instance.Logging.UserActivity)
             {
-                TimeStamp = DateTime.UtcNow,
-                UserId = userId,
-                PlayerId = playerId,
-                Ip = ip ?? "",
-                Peer = peer,
-                Action = action,
-                Meta = meta,
-            });
+                DbInterface.Pool.QueueWorkItem(new Action<UserActivityHistory>(Log), new UserActivityHistory
+                {
+                    TimeStamp = DateTime.UtcNow,
+                    UserId = userId,
+                    PlayerId = playerId,
+                    Ip = ip ?? "",
+                    Peer = peer,
+                    Action = action,
+                    Meta = meta,
+                });
+            }
         }
 
         private static void Log(UserActivityHistory activity)

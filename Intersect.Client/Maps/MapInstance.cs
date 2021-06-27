@@ -486,9 +486,9 @@ namespace Intersect.Client.Maps
         {
             var width = Options.MapWidth;
             var height = Options.MapHeight;
-            for (var x = 0; x < width; x++)
+            for (var y = 0; y < height; y++)
             {
-                for (var y = 0; y < height; y++)
+                for (var x = 0; x < width; x++)
                 {
                     var att = Attributes[x, y];
                     if (att == null)

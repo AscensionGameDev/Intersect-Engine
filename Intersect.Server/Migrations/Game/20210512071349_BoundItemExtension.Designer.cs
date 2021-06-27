@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20210512071349_BoundItemExtension")]
+    partial class BoundItemExtension
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,7 +216,7 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<bool>("CanDrop")
                         .HasColumnName("Bound");
 
-                    b.Property<bool>("CanGuildBank");
+                    b.Property<bool>("CanDropOnDeath");
 
                     b.Property<bool>("CanSell");
 
@@ -233,8 +235,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("DamageType");
 
                     b.Property<string>("Description");
-
-                    b.Property<int>("DropChanceOnDeath");
 
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
@@ -263,10 +263,6 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("UsageRequirements");
 
                     b.Property<string>("MalePaperdoll");
-
-                    b.Property<int>("MaxBankStack");
-
-                    b.Property<int>("MaxInventoryStack");
 
                     b.Property<string>("Name");
 

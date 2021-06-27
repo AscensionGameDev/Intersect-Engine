@@ -328,7 +328,7 @@ namespace Intersect.Server.Entities
                 lock (EntityLock)
                 {
                     projDeaths.Add(Id);
-                    Die(0, null);
+                    Die(false);
                 }
             }
         }
@@ -495,7 +495,7 @@ namespace Intersect.Server.Entities
             return killSpawn;
         }
 
-        public override void Die(int dropitems = 0, Entity killer = null)
+        public override void Die(bool dropItems = true, Entity killer = null)
         {
             for (var i = 0; i < Spawns.Length; i++)
             {
