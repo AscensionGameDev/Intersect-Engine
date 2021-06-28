@@ -81,7 +81,7 @@ namespace Intersect.Client.Interface.Game.Bank
                         Items[i].Pnl.IsHidden = false;
                         if (item.IsStackable)
                         {
-                            mValues[i].IsHidden = false;
+                            mValues[i].IsHidden = Options.NoSingleQuantityDisplay && Globals.Bank[i].Quantity == 1;
                             mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Bank[i].Quantity);
                         }
                         else
