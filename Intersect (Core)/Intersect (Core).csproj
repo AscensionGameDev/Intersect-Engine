@@ -384,7 +384,7 @@
     <Compile Include="Network\Packets\Client\EnterGamePacket.cs" />
     <Compile Include="Network\Packets\Client\EventInputVariablePacket.cs" />
     <Compile Include="Network\Packets\Client\EventResponsePacket.cs" />
-    <Compile Include="Network\Packets\Client\FadedOutPacket.cs" />
+    <Compile Include="Network\Packets\Client\MapTransitionReadyPacket.cs" />
     <Compile Include="Network\Packets\Client\ForgetSpellPacket.cs" />
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\GuildInviteAcceptPacket.cs" />
