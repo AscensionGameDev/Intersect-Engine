@@ -2864,7 +2864,7 @@ namespace Intersect.Server.Networking
             player.PictureClosed(packet.EventId);
         }
 
-        public void HandlePacket(Client client, FadedOutPacket packet)
+        public void HandlePacket(Client client, MapTransitionReadyPacket packet)
         {
             var player = client?.Entity;
 

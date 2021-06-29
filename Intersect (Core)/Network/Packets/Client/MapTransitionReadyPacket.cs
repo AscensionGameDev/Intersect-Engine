@@ -3,9 +3,9 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class FadedOutPacket : IntersectPacket
+    public class MapTransitionReadyPacket : IntersectPacket
     {
-        public FadedOutPacket(System.Guid mapId, float x, float y)
+        public MapTransitionReadyPacket(System.Guid mapId, float x, float y)
         {
             NewMapId = mapId;
             X = x;
