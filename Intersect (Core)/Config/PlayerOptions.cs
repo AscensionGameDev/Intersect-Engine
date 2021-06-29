@@ -69,11 +69,6 @@
         /// </summary>
         public bool ExpLossFromCurrentExp = true;
 
-        /// <summary>
-        /// If true, will not display a quantity of "1" next to a stackable item, and will only show quantities if greater than one of that item exists
-        /// </summary>
-        public bool DoNotDisplayQuantityIfSingleItem = false;
-
     }
 
 }

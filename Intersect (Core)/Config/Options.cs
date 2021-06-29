@@ -102,8 +102,6 @@ namespace Intersect
 
         public static int MaxInvItems => Instance.PlayerOpts.MaxInventory;
 
-        public static bool NoSingleQuantityDisplay => Instance.PlayerOpts.DoNotDisplayQuantityIfSingleItem;
-
         public static int MaxPlayerSkills => Instance.PlayerOpts.MaxSpells;
 
         public static int MaxBankSlots => Instance.PlayerOpts.MaxBank;
