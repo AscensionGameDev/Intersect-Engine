@@ -593,7 +593,7 @@ namespace Intersect.GameObjects.Events.Commands
 
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
 
-        public bool FadeOnWarp { get; set; } = false; // TODO Default to false; make configurable in editor config
+        public bool FadeOnWarp { get; set; } = false;
 
     }
 
