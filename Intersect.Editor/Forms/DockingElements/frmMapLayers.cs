@@ -700,6 +700,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     warpAttribute.X = (byte)nudWarpX.Value;
                     warpAttribute.Y = (byte)nudWarpY.Value;
                     warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
+                    warpAttribute.FadeOnWarp = chkMapFade.Checked;
                     break;
 
                 case MapAttributes.Sound:

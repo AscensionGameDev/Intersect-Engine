@@ -1783,7 +1783,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString waitforroute = @"Wait for Move Route Completion of {00}";
 
-            public static LocalizedString warp = @"Warp Player [Map: {00} X: {01} Y: {02} Dir: {03}]";
+            public static LocalizedString warp = @"Warp Player [Map: {00} X: {01} Y: {02} Dir: {03} Fade: {04}]";
 
             public static LocalizedString whenoption = @"When [{00}]";
 
@@ -4830,6 +4830,8 @@ Negative values for time to flow backwards.";
             public static LocalizedString x = @"X: {00}";
 
             public static LocalizedString y = @"Y: {00}";
+            
+            public static LocalizedString mapFade = @"Fade transition?";
 
         }
 

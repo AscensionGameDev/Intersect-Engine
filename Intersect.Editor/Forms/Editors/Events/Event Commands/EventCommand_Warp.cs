@@ -43,8 +43,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             scrlY.Maximum = Options.MapHeight - 1;
             scrlX.Value = mMyCommand.X;
             scrlY.Value = mMyCommand.Y;
+            chkMapFade.Checked = mMyCommand.FadeOnWarp;
             lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
             lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
+            chkMapFade.Text = Strings.Warping.mapFade;
             cmbDirection.SelectedIndex = (int) mMyCommand.Direction;
         }
 
@@ -55,6 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
             lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
             lblDir.Text = Strings.Warping.direction.ToString("");
+            chkMapFade.Text = Strings.Warping.mapFade;
             btnVisual.Text = Strings.Warping.visual;
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
@@ -72,6 +75,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.X = (byte) scrlX.Value;
             mMyCommand.Y = (byte) scrlY.Value;
             mMyCommand.Direction = (WarpDirection) cmbDirection.SelectedIndex;
+            mMyCommand.FadeOnWarp = chkMapFade.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -138,6 +142,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

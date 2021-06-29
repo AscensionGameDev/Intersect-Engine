@@ -661,8 +661,14 @@
     <EmbeddedResource Include="Forms\Controls\GameObjectList.resx">
       <DependentUpon>GameObjectList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DockingElements\frmMapLayers.resx">
+      <DependentUpon>frmMapLayers.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.resx">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.resx">
+      <DependentUpon>EventCommand_Warp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
   </ItemGroup>

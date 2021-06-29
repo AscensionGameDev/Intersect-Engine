@@ -5727,11 +5727,11 @@ namespace Intersect.Server.Entities
                     var warpAtt = (MapWarpAttribute)attribute;
                     if (warpAtt.Direction == WarpDirection.Retain)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir, false, 0, false, true);
+                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir, false, 0, false, warpAtt.FadeOnWarp);
                     }
                     else
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1), false, 0, false, true);
+                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1), false, 0, false, warpAtt.FadeOnWarp);
                     }
                 }
 

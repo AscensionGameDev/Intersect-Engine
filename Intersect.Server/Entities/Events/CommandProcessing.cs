@@ -668,7 +668,8 @@ namespace Intersect.Server.Entities.Events
         {
             player.Warp(
                 command.MapId, command.X, command.Y,
-                command.Direction == WarpDirection.Retain ? (byte) player.Dir : (byte) (command.Direction - 1)
+                command.Direction == WarpDirection.Retain ? (byte) player.Dir : (byte) (command.Direction - 1),
+                false, 0, false, command.FadeOnWarp
             );
         }
 
