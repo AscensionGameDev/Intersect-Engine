@@ -2864,6 +2864,18 @@ namespace Intersect.Server.Networking
             player.PictureClosed(packet.EventId);
         }
 
+        public void HandlePacket(Client client, FadedOutPacket packet)
+        {
+            var player = client?.Entity;
+
+            if (player == null || client.IsEditor)
+            {
+                return;
+            }
+
+            player.Warp(packet.NewMapId, packet.X, packet.Y);
+        }
+
         #endregion
 
         #region "Editor Packets"

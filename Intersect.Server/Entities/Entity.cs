@@ -2603,7 +2603,7 @@ namespace Intersect.Server.Entities
         }
 
         //Empty virtual functions for players
-        public virtual void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false)
+        public virtual void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false, bool fromWarpEvent = false)
         {
             Warp(newMapId, newX, newY, (byte) Dir, adminWarp);
         }
@@ -2615,7 +2615,8 @@ namespace Intersect.Server.Entities
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
-            bool mapSave = false
+            bool mapSave = false,
+            bool fromWarpEvent = false
         )
         {
         }

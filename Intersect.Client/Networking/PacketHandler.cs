@@ -2045,6 +2045,21 @@ namespace Intersect.Client.Networking
             );
         }
 
+        public void HandlePacket(IPacketSender packetSender, MapFadePacket packet)
+        {
+            if (packet.FadeIn)
+            {
+                if (Fade.GetFade() > 0)
+                {
+                    Fade.FadeIn(true);
+                }
+                Globals.InMapTransition = false;
+            } else
+            {
+                Fade.FadeOut(true, true);
+                Globals.InMapTransition = true;
+            }
+        }
     }
 
 }

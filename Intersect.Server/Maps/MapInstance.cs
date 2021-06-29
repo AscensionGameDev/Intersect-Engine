@@ -1200,7 +1200,6 @@ namespace Intersect.Server.Maps
                 t.SendMapEntitiesTo(player);
                 PacketSender.SendMapItems(player, t.Id);
             }
-
             PacketSender.SendEntityDataToProximity(player, player);
         }
 

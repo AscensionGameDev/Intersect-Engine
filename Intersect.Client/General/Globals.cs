@@ -151,6 +151,8 @@ namespace Intersect.Client.General
         //Scene management
         public static bool WaitingOnServer = false;
 
+        public static bool InMapTransition = false;
+
         public static Entity GetEntity(Guid id, EntityTypes type)
         {
             if (Entities.ContainsKey(id))

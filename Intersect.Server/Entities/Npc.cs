@@ -1453,7 +1453,8 @@ namespace Intersect.Server.Entities
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
-            bool mapSave = false
+            bool mapSave = false,
+            bool fromWarpEvent = false
         )
         {
             var map = MapInstance.Get(newMapId);

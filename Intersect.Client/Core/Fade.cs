@@ -5,6 +5,8 @@ namespace Intersect.Client.Core
 
     public static class Fade
     {
+        private const float STANDARD_FADE_RATE = 3000f;
+        private const float FAST_FADE_RATE = 800f;
 
         public enum FadeType
         {
@@ -25,18 +27,38 @@ namespace Intersect.Client.Core
 
         private static long sLastUpdate;
 
-        public static void FadeIn()
+        private static bool sAlertServerWhenFaded;
+
+        private static System.Guid sNewMapId;
+
+        private static float sX;
+
+        private static float sY;
+
+        public static void SetFutureWarpParameters(System.Guid mapId, float x, float y)
         {
+            sNewMapId = mapId;
+            sX = x;
+            sY = y;
+        }
+
+        public static void FadeIn(bool fast = false)
+        {
+            sFadeRate = fast ? FAST_FADE_RATE : STANDARD_FADE_RATE;
+
             sCurrentAction = FadeType.In;
             sFadeAmt = 255f;
             sLastUpdate = Globals.System.GetTimeMs();
         }
 
-        public static void FadeOut()
+        public static void FadeOut(bool alertServerWhenFaded = false, bool fast = false)
         {
+            sFadeRate = fast ? FAST_FADE_RATE : STANDARD_FADE_RATE;
+            
             sCurrentAction = FadeType.Out;
             sFadeAmt = 0f;
             sLastUpdate = Globals.System.GetTimeMs();
+            sAlertServerWhenFaded = alertServerWhenFaded;
         }
 
         public static bool DoneFading()
@@ -66,6 +88,11 @@ namespace Intersect.Client.Core
                 if (sFadeAmt >= 255f)
                 {
                     sCurrentAction = FadeType.None;
+                    if (sAlertServerWhenFaded)
+                    {
+                        Networking.PacketSender.SendFadedOut(sNewMapId, sX, sY);
+                    }
+                    sAlertServerWhenFaded = false;
                     sFadeAmt = 255f;
                 }
             }

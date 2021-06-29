@@ -384,6 +384,7 @@
     <Compile Include="Network\Packets\Client\EnterGamePacket.cs" />
     <Compile Include="Network\Packets\Client\EventInputVariablePacket.cs" />
     <Compile Include="Network\Packets\Client\EventResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\FadedOutPacket.cs" />
     <Compile Include="Network\Packets\Client\ForgetSpellPacket.cs" />
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\GuildInviteAcceptPacket.cs" />
@@ -397,6 +398,7 @@
     <Compile Include="Network\Packets\Client\PictureClosedPacket.cs" />
     <Compile Include="Network\Packets\Server\ActionMsgPackets.cs" />
     <Compile Include="Network\Packets\Server\EntityMovementPackets.cs" />
+    <Compile Include="Network\Packets\Server\MapFadePacket.cs" />
     <Compile Include="Network\Packets\Server\GuildInvitePacket.cs" />
     <Compile Include="Network\Packets\Server\GuildPacket.cs" />
     <Compile Include="Network\Packets\Server\MapEntityStatusPacket.cs" />

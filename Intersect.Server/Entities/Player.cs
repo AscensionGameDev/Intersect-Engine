@@ -1491,9 +1491,9 @@ namespace Intersect.Server.Entities
         }
 
         //Warping
-        public override void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false)
+        public override void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false, bool fromWarpEvent = false)
         {
-            Warp(newMapId, newX, newY, (byte) Directions.Up, adminWarp, 0, false);
+            Warp(newMapId, newX, newY, (byte) Directions.Up, adminWarp, 0, false, fromWarpEvent);
         }
 
         public override void Warp(
@@ -1503,56 +1503,64 @@ namespace Intersect.Server.Entities
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
-            bool mapSave = false
+            bool mapSave = false,
+            bool fromWarpEvent = false
         )
         {
-            var map = MapInstance.Get(newMapId);
-            if (map == null)
+            if (fromWarpEvent)
             {
-                WarpToSpawn();
-
-                return;
-            }
-
-            X = (int)newX;
-            Y = (int)newY;
-            Z = zOverride;
-            Dir = newDir;
-            var newSurroundingMaps = map.GetSurroundingMapIds(true);
-            foreach (var evt in EventLookup)
+                PacketSender.SendFadePacket(Client, false);
+            } else
             {
-                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                var map = MapInstance.Get(newMapId);
+                if (map == null)
                 {
-                    RemoveEvent(evt.Value.Id, false);
-                }
-            }
+                    WarpToSpawn();
 
-            if (newMapId != MapId || mSentMap == false)
-            {
-                var oldMap = MapInstance.Get(MapId);
-                if (oldMap != null)
-                {
-                    oldMap.RemoveEntity(this);
+                    return;
                 }
 
-                PacketSender.SendEntityLeave(this);
-                MapId = newMapId;
-                map.PlayerEnteredMap(this);
-                PacketSender.SendEntityDataToProximity(this);
-                PacketSender.SendEntityPositionToAll(this);
-
-                //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
+                X = (int)newX;
+                Y = (int)newY;
+                Z = zOverride;
+                Dir = newDir;
+                var newSurroundingMaps = map.GetSurroundingMapIds(true);
+                foreach (var evt in EventLookup)
                 {
-                    PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
+                    if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                    {
+                        RemoveEvent(evt.Value.Id, false);
+                    }
                 }
 
-                mSentMap = true;
-            }
-            else
-            {
-                PacketSender.SendEntityPositionToAll(this);
-                PacketSender.SendEntityStats(this);
+                if (newMapId != MapId || mSentMap == false)
+                {
+                    var oldMap = MapInstance.Get(MapId);
+                    if (oldMap != null)
+                    {
+                        oldMap.RemoveEntity(this);
+                    }
+
+                    PacketSender.SendEntityLeave(this);
+                    MapId = newMapId;
+                    map.PlayerEnteredMap(this);
+                    PacketSender.SendEntityDataToProximity(this);
+                    PacketSender.SendEntityPositionToAll(this);
+
+                    //If map grid changed then send the new map grid
+                    if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
+                    {
+                        PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
+                    }
+
+                    mSentMap = true;
+                }
+                else
+                {
+                    PacketSender.SendEntityPositionToAll(this);
+                    PacketSender.SendEntityStats(this);
+                }
+                PacketSender.SendFadePacket(Client, true); // fade in by default - either the player was faded out or was not
             }
         }
 
@@ -5719,11 +5727,11 @@ namespace Intersect.Server.Entities
                     var warpAtt = (MapWarpAttribute)attribute;
                     if (warpAtt.Direction == WarpDirection.Retain)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir);
+                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir, false, 0, false, true);
                     }
                     else
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1));
+                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1), false, 0, false, true);
                     }
                 }
 
