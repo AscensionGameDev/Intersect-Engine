@@ -237,7 +237,7 @@ namespace Intersect.Client.Interface.Game.Chat
             // TODO: Find a cleaner way to do this logic, right now this will only start working properly (ie not resetting scroll height) after a few chat messages.
             // Can't seem to find a cleaner way yet. But works in longer chat convos.
             var scrollAmount = mChatboxMessages.GetVerticalScrollBar().ScrollAmount;
-            var scrollToBottom = mChatboxMessages.GetVerticalScrollBar().ScrollAmount == 1 || (mChatboxMessages.RowCount <= 10 && mChatboxMessages.GetVerticalScrollBar().ScrollAmount <= 1);
+            var scrollToBottom = mChatboxMessages.GetVerticalScrollBar().ScrollAmount == 1 || (mChatboxMessages.RowCount <= ClientConfiguration.Instance.ChatLinesToInitScroll && mReceivedMessage && mChatboxMessages.GetVerticalScrollBar().ScrollAmount <= 1);
 
             // Did the tab change recently? If so, we need to reset a few things to make it work...
             if (mLastTab != mCurrentTab)

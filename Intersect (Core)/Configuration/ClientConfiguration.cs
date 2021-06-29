@@ -44,6 +44,8 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
+        public const int CHAT_LINES_TO_INIT_SCROLL = 6;
+
         public const string DEFAULT_MENU_BACKGROUND = "background.png";
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
@@ -107,6 +109,11 @@ namespace Intersect.Configuration
         /// Number of lines to save for chat scrollback
         /// </summary>
         public int ChatLines { get; set; } = DEFAULT_CHAT_LINES;
+
+        /// <summary>
+        /// Number of lines/rows required in the chat log to init the scrollbar and position it down to the bottom of the chat log.
+        /// </summary>
+        public int ChatLinesToInitScroll { get; set; } = CHAT_LINES_TO_INIT_SCROLL;
 
         /// <summary>
         /// Menu music file name
