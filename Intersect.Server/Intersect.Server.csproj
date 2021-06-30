@@ -588,6 +588,10 @@
     <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.designer.cs">
       <DependentUpon>20210607115442_AddedCanGuildBankOptionToItems.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20210630114724_CraftingCommonEvents.cs" />
+    <Compile Include="Migrations\Game\20210630114724_CraftingCommonEvents.designer.cs">
+      <DependentUpon>20210630114724_CraftingCommonEvents.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
