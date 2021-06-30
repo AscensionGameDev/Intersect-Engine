@@ -168,6 +168,7 @@ namespace Intersect.Editor.Forms.Editors
             chkBound.Text = Strings.SpellEditor.bound;
 
             grpRequirements.Text = Strings.SpellEditor.requirements;
+            lblCannotCast.Text = Strings.SpellEditor.cannotcast;
             btnDynamicRequirements.Text = Strings.SpellEditor.requirementsbutton;
 
             grpSpellCost.Text = Strings.SpellEditor.cost;
@@ -296,6 +297,8 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
                 nudMpCost.Value = mEditorItem.VitalCost[(int) Vitals.Mana];
+
+                txtCannotCast.Text = mEditorItem.CannotCastMessage;
 
                 UpdateSpellTypePanels();
                 if (mChanged.IndexOf(mEditorItem) == -1)
@@ -932,6 +935,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkIgnoreCdr_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.IgnoreCooldownReduction = chkIgnoreCdr.Checked;
+        }
+
+        private void txtCannotCast_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CannotCastMessage = txtCannotCast.Text;
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

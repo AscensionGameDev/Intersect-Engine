@@ -41,6 +41,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.chkCanGuildBank = new DarkUI.Controls.DarkCheckBox();
             this.nudBankStackLimit = new DarkUI.Controls.DarkNumericUpDown();
             this.nudInvStackLimit = new DarkUI.Controls.DarkNumericUpDown();
             this.lblBankStackLimit = new System.Windows.Forms.Label();
@@ -203,7 +204,9 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.chkCanGuildBank = new DarkUI.Controls.DarkCheckBox();
+            this.grpRequirements = new DarkUI.Controls.DarkGroupBox();
+            this.lblCannotUse = new System.Windows.Forms.Label();
+            this.txtCannotUse = new DarkUI.Controls.DarkTextBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).BeginInit();
@@ -256,6 +259,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
             this.toolStrip.SuspendLayout();
+            this.grpRequirements.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpItems
@@ -338,6 +342,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.grpRequirements);
             this.grpGeneral.Controls.Add(this.chkCanGuildBank);
             this.grpGeneral.Controls.Add(this.nudBankStackLimit);
             this.grpGeneral.Controls.Add(this.nudInvStackLimit);
@@ -369,7 +374,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.Controls.Add(this.lblRarity);
             this.grpGeneral.Controls.Add(this.nudCooldown);
             this.grpGeneral.Controls.Add(this.lblCooldown);
-            this.grpGeneral.Controls.Add(this.btnEditRequirements);
             this.grpGeneral.Controls.Add(this.chkStackable);
             this.grpGeneral.Controls.Add(this.nudPrice);
             this.grpGeneral.Controls.Add(this.chkCanDrop);
@@ -392,6 +396,16 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // chkCanGuildBank
+            // 
+            this.chkCanGuildBank.AutoSize = true;
+            this.chkCanGuildBank.Location = new System.Drawing.Point(121, 241);
+            this.chkCanGuildBank.Name = "chkCanGuildBank";
+            this.chkCanGuildBank.Size = new System.Drawing.Size(106, 17);
+            this.chkCanGuildBank.TabIndex = 99;
+            this.chkCanGuildBank.Text = "Can Guild Bank?";
+            this.chkCanGuildBank.CheckedChanged += new System.EventHandler(this.chkCanGuildBank_CheckedChanged);
             // 
             // nudBankStackLimit
             // 
@@ -799,10 +813,10 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnEditRequirements
             // 
-            this.btnEditRequirements.Location = new System.Drawing.Point(13, 396);
+            this.btnEditRequirements.Location = new System.Drawing.Point(8, 18);
             this.btnEditRequirements.Name = "btnEditRequirements";
             this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnEditRequirements.Size = new System.Drawing.Size(171, 23);
+            this.btnEditRequirements.Size = new System.Drawing.Size(207, 23);
             this.btnEditRequirements.TabIndex = 0;
             this.btnEditRequirements.Text = "Edit Usage Requirements";
             this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
@@ -2710,15 +2724,42 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // chkCanGuildBank
+            // grpRequirements
             // 
-            this.chkCanGuildBank.AutoSize = true;
-            this.chkCanGuildBank.Location = new System.Drawing.Point(121, 241);
-            this.chkCanGuildBank.Name = "chkCanGuildBank";
-            this.chkCanGuildBank.Size = new System.Drawing.Size(106, 17);
-            this.chkCanGuildBank.TabIndex = 99;
-            this.chkCanGuildBank.Text = "Can Guild Bank?";
-            this.chkCanGuildBank.CheckedChanged += new System.EventHandler(this.chkCanGuildBank_CheckedChanged);
+            this.grpRequirements.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpRequirements.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpRequirements.Controls.Add(this.lblCannotUse);
+            this.grpRequirements.Controls.Add(this.txtCannotUse);
+            this.grpRequirements.Controls.Add(this.btnEditRequirements);
+            this.grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpRequirements.Location = new System.Drawing.Point(12, 326);
+            this.grpRequirements.Margin = new System.Windows.Forms.Padding(2);
+            this.grpRequirements.Name = "grpRequirements";
+            this.grpRequirements.Padding = new System.Windows.Forms.Padding(2);
+            this.grpRequirements.Size = new System.Drawing.Size(229, 92);
+            this.grpRequirements.TabIndex = 100;
+            this.grpRequirements.TabStop = false;
+            this.grpRequirements.Text = "Requirements";
+            // 
+            // lblCannotUse
+            // 
+            this.lblCannotUse.AutoSize = true;
+            this.lblCannotUse.Location = new System.Drawing.Point(5, 47);
+            this.lblCannotUse.Name = "lblCannotUse";
+            this.lblCannotUse.Size = new System.Drawing.Size(112, 13);
+            this.lblCannotUse.TabIndex = 54;
+            this.lblCannotUse.Text = "Cannot Use Message:";
+            // 
+            // txtCannotUse
+            // 
+            this.txtCannotUse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtCannotUse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCannotUse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtCannotUse.Location = new System.Drawing.Point(8, 63);
+            this.txtCannotUse.Name = "txtCannotUse";
+            this.txtCannotUse.Size = new System.Drawing.Size(207, 20);
+            this.txtCannotUse.TabIndex = 53;
+            this.txtCannotUse.TextChanged += new System.EventHandler(this.txtCannotUse_TextChanged);
             // 
             // FrmItem
             // 
@@ -2806,6 +2847,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.grpRequirements.ResumeLayout(false);
+            this.grpRequirements.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2981,5 +3024,8 @@ namespace Intersect.Editor.Forms.Editors
         private Label lblBankStackLimit;
         private Label lblInvStackLimit;
         private DarkCheckBox chkCanGuildBank;
+        private DarkGroupBox grpRequirements;
+        private Label lblCannotUse;
+        private DarkTextBox txtCannotUse;
     }
 }

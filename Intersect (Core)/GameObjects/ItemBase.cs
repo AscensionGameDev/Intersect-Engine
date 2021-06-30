@@ -20,6 +20,8 @@ namespace Intersect.GameObjects
 
         [NotMapped] public ConditionLists UsageRequirements = new ConditionLists();
 
+        public string CannotUseMessage { get; set; } = "";
+
         public ItemBase()
         {
             Initialize();
