@@ -509,6 +509,67 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public override int CanMove(int moveDir)
+        {
+            var canMove = base.CanMove(moveDir);
+            if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
+            {
+                var yOffset = 0;
+                var xOffset = 0;
+                var tile = new TileHelper(MapId, X, Y);
+                switch (moveDir)
+                {
+                    case 0: //Up
+                        yOffset--;
+
+                        break;
+                    case 1: //Down
+                        yOffset++;
+
+                        break;
+                    case 2: //Left
+                        xOffset--;
+
+                        break;
+                    case 3: //Right
+                        xOffset++;
+
+                        break;
+                    case 4: //NW
+                        yOffset--;
+                        xOffset--;
+
+                        break;
+                    case 5: //NE
+                        yOffset--;
+                        xOffset++;
+
+                        break;
+                    case 6: //SW
+                        yOffset++;
+                        xOffset--;
+
+                        break;
+                    case 7: //SE
+                        yOffset++;
+                        xOffset++;
+
+                        break;
+                }
+
+                if (tile.Translate(xOffset, yOffset))
+                {
+                    //If this would move us past our reset radius then we cannot move.
+                    var dist = GetDistanceBetween(AggroCenterMap, tile.GetMap(), AggroCenterX, tile.GetX(), AggroCenterY, tile.GetY());
+                    if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
+                    {
+                        return -2;
+                    }
+                }
+            }
+            return canMove;
+        }
+
         private void TryCastSpells()
         {
             var target = Target;
@@ -687,6 +748,19 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityCastTime(this, spellId);
         }
 
+        public bool IsFleeing()
+        {
+            if (Base.FleeHealthPercentage > 0)
+            {
+                var fleeHpCutoff = GetMaxVital(Vitals.Health) * ((float)Base.FleeHealthPercentage / 100f);
+                if (GetVital(Vitals.Health) < fleeHpCutoff)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // TODO: Improve NPC movement to be more fluid like a player
         //General Updating
         public override void Update(long timeMs)
@@ -709,15 +783,7 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    var fleeing = false;
-                    if (Base.FleeHealthPercentage > 0)
-                    {
-                        var fleeHpCutoff = GetMaxVital(Vitals.Health) * ((float)Base.FleeHealthPercentage / 100f);
-                        if (GetVital(Vitals.Health) < fleeHpCutoff)
-                        {
-                            fleeing = true;
-                        }
-                    }
+                    var fleeing = IsFleeing();
 
                     if (MoveTimer < Globals.Timing.Milliseconds)
                     {

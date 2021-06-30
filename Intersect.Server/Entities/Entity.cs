@@ -2320,19 +2320,23 @@ namespace Intersect.Server.Entities
 
         public int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
         {
-            var myMap = MapInstance.Get(MapId);
-            if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
+            return GetDistanceBetween(Map, targetMap, X, targetX, Y, targetY);
+        }
+
+        public int GetDistanceBetween(MapInstance mapA, MapInstance mapB, int xTileA, int xTileB, int yTileA, int yTileB)
+        {
+            if (mapA != null && mapB != null && mapA.MapGrid == mapB.MapGrid
             ) //Make sure both maps exist and that they are in the same dimension
             {
                 //Calculate World Tile of Me
-                var x1 = X + myMap.MapGridX * Options.MapWidth;
-                var y1 = Y + myMap.MapGridY * Options.MapHeight;
+                var x1 = xTileA + mapA.MapGridX * Options.MapWidth;
+                var y1 = yTileA + mapA.MapGridY * Options.MapHeight;
 
                 //Calculate world tile of target
-                var x2 = targetX + targetMap.MapGridX * Options.MapWidth;
-                var y2 = targetY + targetMap.MapGridY * Options.MapHeight;
+                var x2 = xTileB + mapB.MapGridX * Options.MapWidth;
+                var y2 = yTileB + mapB.MapGridY * Options.MapHeight;
 
-                return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+                return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
             //Something is null.. return a value that is out of range :) 
