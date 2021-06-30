@@ -1987,6 +1987,11 @@ namespace Intersect.Server.Networking
             client.Send(new MapFadePacket(fadeIn));
         }
 
+        public static void SendUpdateFutureWarpPacket(Client client, Guid mapId, float x, float y, byte dir)
+        {
+            client.Send(new UpdateFutureWarpPacket(mapId, x, y, dir));
+        }
+
         //PasswordResetResultPacket
         public static void SendPasswordResetResult(Client client, bool result)
         {

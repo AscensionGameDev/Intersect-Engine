@@ -1,11 +1,11 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapTransitionReadyPacket : IntersectPacket
+    public class UpdateFutureWarpPacket : IntersectPacket
     {
-        public MapTransitionReadyPacket(System.Guid mapId, float x, float y, byte dir)
+        public UpdateFutureWarpPacket(System.Guid mapId, float x, float y, byte dir)
         {
             NewMapId = mapId;
             X = x;

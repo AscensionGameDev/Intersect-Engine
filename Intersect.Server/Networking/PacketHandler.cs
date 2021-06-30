@@ -2864,6 +2864,7 @@ namespace Intersect.Server.Networking
             player.PictureClosed(packet.EventId);
         }
 
+        // The client has fully faded out while doing a map transition
         public void HandlePacket(Client client, MapTransitionReadyPacket packet)
         {
             var player = client?.Entity;
@@ -2873,7 +2874,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.Warp(packet.NewMapId, packet.X, packet.Y);
+            player.Warp(packet.NewMapId, packet.X, packet.Y, packet.Dir);
         }
 
         #endregion

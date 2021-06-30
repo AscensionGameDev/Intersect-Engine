@@ -1510,6 +1510,7 @@ namespace Intersect.Server.Entities
             if (fromWarpEvent)
             {
                 PacketSender.SendFadePacket(Client, false);
+                PacketSender.SendUpdateFutureWarpPacket(Client, newMapId, newX, newY, newDir);
             } else
             {
                 var map = MapInstance.Get(newMapId);

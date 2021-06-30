@@ -425,9 +425,9 @@ namespace Intersect.Client.Networking
             }
         }
 
-        public static void SendFadedOut(Guid newMapId, float x, float y)
+        public static void SendMapTransitionReady(Guid newMapId, float x, float y, byte dir)
         {
-            Network.SendPacket(new MapTransitionReadyPacket(newMapId, x, y));
+            Network.SendPacket(new MapTransitionReadyPacket(newMapId, x, y, dir));
         }
     }
 

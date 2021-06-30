@@ -29,19 +29,6 @@ namespace Intersect.Client.Core
 
         private static bool sAlertServerWhenFaded;
 
-        private static System.Guid sNewMapId;
-
-        private static float sX;
-
-        private static float sY;
-
-        public static void SetFutureWarpParameters(System.Guid mapId, float x, float y)
-        {
-            sNewMapId = mapId;
-            sX = x;
-            sY = y;
-        }
-
         public static void FadeIn(bool fast = false)
         {
             sFadeRate = fast ? FAST_FADE_RATE : STANDARD_FADE_RATE;
@@ -90,7 +77,7 @@ namespace Intersect.Client.Core
                     sCurrentAction = FadeType.None;
                     if (sAlertServerWhenFaded)
                     {
-                        Networking.PacketSender.SendFadedOut(sNewMapId, sX, sY);
+                        Networking.PacketSender.SendMapTransitionReady(Globals.futureWarpMapId, Globals.futureWarpX, Globals.futureWarpY, Globals.futureWarpDir);
                     }
                     sAlertServerWhenFaded = false;
                     sFadeAmt = 255f;
