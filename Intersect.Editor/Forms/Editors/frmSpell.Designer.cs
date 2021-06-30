@@ -171,6 +171,8 @@ namespace Intersect.Editor.Forms.Editors
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lblCannotCast = new System.Windows.Forms.Label();
+            this.txtCannotCast = new DarkUI.Controls.DarkTextBox();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -512,7 +514,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpellCost.Controls.Add(this.lblCastDuration);
             this.grpSpellCost.Controls.Add(this.lblCooldownDuration);
             this.grpSpellCost.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpellCost.Location = new System.Drawing.Point(3, 305);
+            this.grpSpellCost.Location = new System.Drawing.Point(3, 362);
             this.grpSpellCost.Name = "grpSpellCost";
             this.grpSpellCost.Size = new System.Drawing.Size(438, 143);
             this.grpSpellCost.TabIndex = 36;
@@ -709,11 +711,13 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpRequirements.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpRequirements.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpRequirements.Controls.Add(this.lblCannotCast);
+            this.grpRequirements.Controls.Add(this.txtCannotCast);
             this.grpRequirements.Controls.Add(this.btnDynamicRequirements);
             this.grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpRequirements.Location = new System.Drawing.Point(215, 0);
             this.grpRequirements.Name = "grpRequirements";
-            this.grpRequirements.Size = new System.Drawing.Size(226, 52);
+            this.grpRequirements.Size = new System.Drawing.Size(226, 96);
             this.grpRequirements.TabIndex = 18;
             this.grpRequirements.TabStop = false;
             this.grpRequirements.Text = "Casting Requirements";
@@ -743,7 +747,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTargetInfo.Controls.Add(this.lblProjectile);
             this.grpTargetInfo.Controls.Add(this.cmbProjectile);
             this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTargetInfo.Location = new System.Drawing.Point(215, 58);
+            this.grpTargetInfo.Location = new System.Drawing.Point(215, 105);
             this.grpTargetInfo.Name = "grpTargetInfo";
             this.grpTargetInfo.Size = new System.Drawing.Size(225, 192);
             this.grpTargetInfo.TabIndex = 19;
@@ -907,9 +911,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEvent.Controls.Add(this.cmbEvent);
             this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEvent.Location = new System.Drawing.Point(215, 251);
+            this.grpEvent.Location = new System.Drawing.Point(0, 305);
             this.grpEvent.Name = "grpEvent";
-            this.grpEvent.Size = new System.Drawing.Size(225, 48);
+            this.grpEvent.Size = new System.Drawing.Size(441, 48);
             this.grpEvent.TabIndex = 40;
             this.grpEvent.TabStop = false;
             this.grpEvent.Text = "Event";
@@ -930,7 +934,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEvent.FormattingEnabled = true;
             this.cmbEvent.Location = new System.Drawing.Point(9, 17);
             this.cmbEvent.Name = "cmbEvent";
-            this.cmbEvent.Size = new System.Drawing.Size(206, 21);
+            this.cmbEvent.Size = new System.Drawing.Size(425, 21);
             this.cmbEvent.TabIndex = 17;
             this.cmbEvent.Text = null;
             this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
@@ -946,7 +950,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.grpEffectDuration);
             this.grpCombat.Controls.Add(this.grpDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(3, 456);
+            this.grpCombat.Location = new System.Drawing.Point(3, 513);
             this.grpCombat.Name = "grpCombat";
             this.grpCombat.Size = new System.Drawing.Size(440, 432);
             this.grpCombat.TabIndex = 39;
@@ -2281,6 +2285,26 @@ namespace Intersect.Editor.Forms.Editors
             this.lstGameObjects.Size = new System.Drawing.Size(191, 422);
             this.lstGameObjects.TabIndex = 32;
             // 
+            // lblCannotCast
+            // 
+            this.lblCannotCast.AutoSize = true;
+            this.lblCannotCast.Location = new System.Drawing.Point(8, 51);
+            this.lblCannotCast.Name = "lblCannotCast";
+            this.lblCannotCast.Size = new System.Drawing.Size(114, 13);
+            this.lblCannotCast.TabIndex = 56;
+            this.lblCannotCast.Text = "Cannot Cast Message:";
+            // 
+            // txtCannotCast
+            // 
+            this.txtCannotCast.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtCannotCast.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCannotCast.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtCannotCast.Location = new System.Drawing.Point(11, 67);
+            this.txtCannotCast.Name = "txtCannotCast";
+            this.txtCannotCast.Size = new System.Drawing.Size(207, 20);
+            this.txtCannotCast.TabIndex = 55;
+            this.txtCannotCast.TextChanged += new System.EventHandler(this.txtCannotCast_TextChanged);
+            // 
             // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2314,6 +2338,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMpCost)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHPCost)).EndInit();
             this.grpRequirements.ResumeLayout(false);
+            this.grpRequirements.PerformLayout();
             this.grpTargetInfo.ResumeLayout(false);
             this.grpTargetInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).EndInit();
@@ -2506,5 +2531,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkIgnoreGlobalCooldown;
         private DarkCheckBox chkIgnoreCdr;
         private Controls.GameObjectList lstGameObjects;
+        private System.Windows.Forms.Label lblCannotCast;
+        private DarkTextBox txtCannotCast;
     }
 }

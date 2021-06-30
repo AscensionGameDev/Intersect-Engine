@@ -202,7 +202,6 @@ namespace Intersect.Editor.Forms.Editors
             chkStackable.Text = Strings.ItemEditor.stackable;
             lblInvStackLimit.Text = Strings.ItemEditor.InventoryStackLimit;
             lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
-            btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
             cmbRarity.Items.Clear();
             for (var i = 0; i < Strings.ItemEditor.rarity.Count; i++)
@@ -293,6 +292,10 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             cmbConsume.Items.Add(Strings.Combat.exp);
+
+            grpRequirements.Text = Strings.ItemEditor.requirementsgroup;
+            lblCannotUse.Text = Strings.ItemEditor.cannotuse;
+            btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
             //Searching/Sorting
             btnChronological.ToolTipText = Strings.ItemEditor.sortchronologically;
@@ -413,6 +416,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
                 chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
                 chkIgnoreCdr.Checked = mEditorItem.IgnoreCooldownReduction;
+
+                txtCannotUse.Text = mEditorItem.CannotUseMessage;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -1125,6 +1130,11 @@ namespace Intersect.Editor.Forms.Editors
             picPaperdoll.BackgroundImage = picItemBmp;
         }
 
+        private void txtCannotUse_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CannotUseMessage = txtCannotUse.Text;
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -1250,7 +1260,6 @@ namespace Intersect.Editor.Forms.Editors
 
 
         #endregion
-
     }
 
 }
