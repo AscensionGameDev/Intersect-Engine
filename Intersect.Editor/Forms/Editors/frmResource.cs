@@ -198,7 +198,6 @@ namespace Intersect.Editor.Forms.Editors
             lblAnimation.Text = Strings.ResourceEditor.animation;
             chkWalkableBefore.Text = Strings.ResourceEditor.walkablebefore;
             chkWalkableAfter.Text = Strings.ResourceEditor.walkableafter;
-            btnRequirements.Text = Strings.ResourceEditor.requirements;
 
             grpDrops.Text = Strings.ResourceEditor.drops;
             lblDropItem.Text = Strings.ResourceEditor.dropitem;
@@ -222,6 +221,10 @@ namespace Intersect.Editor.Forms.Editors
 
             grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
             lblEvent.Text = Strings.ResourceEditor.harvestevent;
+
+            grpRequirements.Text = Strings.ResourceEditor.requirementsgroup;
+            lblCannotHarvest.Text = Strings.ResourceEditor.cannotharvest;
+            btnRequirements.Text = Strings.ResourceEditor.requirements;
 
             //Searching/Sorting
             btnChronological.ToolTipText = Strings.ResourceEditor.sortchronologically;
@@ -252,6 +255,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
                 chkInitialBelowEntities.Checked = mEditorItem.Initial.RenderBelowEntities;
                 chkExhaustedBelowEntities.Checked = mEditorItem.Exhausted.RenderBelowEntities;
+                txtCannotHarvest.Text = mEditorItem.CannotHarvestMessage;
 
                 //Regen
                 nudHpRegen.Value = mEditorItem.VitalRegen;
@@ -869,6 +873,11 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Exhausted.RenderBelowEntities = chkExhaustedBelowEntities.Checked;
         }
 
+        private void txtCannotHarvest_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CannotHarvestMessage = txtCannotHarvest.Text;
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -970,7 +979,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }
