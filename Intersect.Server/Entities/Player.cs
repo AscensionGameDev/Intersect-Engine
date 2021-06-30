@@ -1428,15 +1428,17 @@ namespace Intersect.Server.Entities
             //Add up player equipment values
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                var equipment = Equipment[i];
+                if (equipment >= 0 && equipment < Items.Count)
                 {
-                    if (Items[Equipment[i]].ItemId != Guid.Empty)
+                    var item = Items[equipment];
+                    if (item.ItemId != Guid.Empty)
                     {
-                        var item = Items[Equipment[i]].Descriptor;
-                        if (item != null)
+                        var descriptor = ItemBase.Get(item.ItemId);
+                        if (descriptor != null)
                         {
-                            flatStats += item.StatsGiven[(int)statType] + Items[Equipment[i]].StatBuffs[(int)statType];
-                            percentageStats += item.PercentageStatsGiven[(int)statType];
+                            flatStats += descriptor.StatsGiven[(int)statType] + item.StatBuffs[(int)statType];
+                            percentageStats += descriptor.PercentageStatsGiven[(int)statType];
                         }
                     }
                 }
