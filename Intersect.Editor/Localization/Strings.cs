@@ -1141,6 +1141,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString commonevent = @"Common Event:";
+
         }
 
         public struct Directions

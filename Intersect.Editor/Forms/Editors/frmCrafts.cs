@@ -431,6 +431,7 @@ namespace Intersect.Editor.Forms.Editors
             grpIngredients.Text = Strings.CraftsEditor.ingredients;
             lblIngredient.Text = Strings.CraftsEditor.ingredientitem;
             lblQuantity.Text = Strings.CraftsEditor.ingredientquantity;
+            lblCommonEvent.Text = Strings.CraftsEditor.commonevent;
             btnAdd.Text = Strings.CraftsEditor.newingredient;
             btnRemove.Text = Strings.CraftsEditor.deleteingredient;
             btnDupIngredient.Text = Strings.CraftsEditor.duplicateingredient;

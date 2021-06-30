@@ -52,7 +52,8 @@ namespace Intersect.Editor.Forms.Editors
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.lblSpeed = new System.Windows.Forms.Label();
             this.grpIngredients = new DarkUI.Controls.DarkGroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
+            this.lblCommonEvent = new System.Windows.Forms.Label();
             this.nudQuantity = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbIngredient = new DarkUI.Controls.DarkComboBox();
             this.btnDupIngredient = new DarkUI.Controls.DarkButton();
@@ -72,7 +73,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
             this.grpCrafts.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
@@ -355,7 +355,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpIngredients.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpIngredients.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpIngredients.Controls.Add(this.cmbEvent);
-            this.grpIngredients.Controls.Add(this.label1);
+            this.grpIngredients.Controls.Add(this.lblCommonEvent);
             this.grpIngredients.Controls.Add(this.nudQuantity);
             this.grpIngredients.Controls.Add(this.cmbIngredient);
             this.grpIngredients.Controls.Add(this.btnDupIngredient);
@@ -372,14 +372,35 @@ namespace Intersect.Editor.Forms.Editors
             this.grpIngredients.TabStop = false;
             this.grpIngredients.Text = "Ingredients";
             // 
-            // label1
+            // cmbEvent
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
-            this.label1.TabIndex = 42;
-            this.label1.Text = "Common Event:";
+            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbEvent.DrawDropdownHoverOutline = false;
+            this.cmbEvent.DrawFocusRectangle = false;
+            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbEvent.FormattingEnabled = true;
+            this.cmbEvent.Location = new System.Drawing.Point(13, 92);
+            this.cmbEvent.Name = "cmbEvent";
+            this.cmbEvent.Size = new System.Drawing.Size(250, 21);
+            this.cmbEvent.TabIndex = 43;
+            this.cmbEvent.Text = null;
+            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.darkComboBox1_SelectedIndexChanged);
+            // 
+            // lblCommonEvent
+            // 
+            this.lblCommonEvent.AutoSize = true;
+            this.lblCommonEvent.Location = new System.Drawing.Point(9, 75);
+            this.lblCommonEvent.Name = "lblCommonEvent";
+            this.lblCommonEvent.Size = new System.Drawing.Size(82, 13);
+            this.lblCommonEvent.TabIndex = 42;
+            this.lblCommonEvent.Text = "Common Event:";
             // 
             // nudQuantity
             // 
@@ -611,27 +632,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // cmbEvent
-            // 
-            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEvent.DrawDropdownHoverOutline = false;
-            this.cmbEvent.DrawFocusRectangle = false;
-            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEvent.FormattingEnabled = true;
-            this.cmbEvent.Location = new System.Drawing.Point(13, 92);
-            this.cmbEvent.Name = "cmbEvent";
-            this.cmbEvent.Size = new System.Drawing.Size(250, 21);
-            this.cmbEvent.TabIndex = 43;
-            this.cmbEvent.Text = null;
-            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.darkComboBox1_SelectedIndexChanged);
-            // 
             // FrmCrafts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -711,7 +711,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private Controls.GameObjectList lstGameObjects;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblCommonEvent;
         private DarkComboBox cmbEvent;
     }
 }
