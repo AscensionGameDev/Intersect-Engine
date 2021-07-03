@@ -4,12 +4,13 @@ using System.Linq;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
-
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -110,6 +111,14 @@ namespace Intersect.Editor.Forms.Editors
                 cmbSellFor.SelectedIndex = 0;
             }
 
+            cmbBuySound.Items.Clear();
+            cmbBuySound.Items.Add(Strings.General.none);
+            cmbBuySound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
+
+            cmbSellSound.Items.Clear();
+            cmbSellSound.Items.Add(Strings.General.none);
+            cmbSellSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
+
             InitLocalization();
             UpdateEditor();
         }
@@ -143,6 +152,9 @@ namespace Intersect.Editor.Forms.Editors
             btnAddBoughtItem.Text = Strings.ShopEditor.addboughtitem;
             btnDelBoughtItem.Text = Strings.ShopEditor.removeboughtitem;
 
+            lblBuySound.Text = Strings.ShopEditor.buysound;
+            lblSellSound.Text = Strings.ShopEditor.sellsound;
+
             //Searching/Sorting
             btnChronological.ToolTipText = Strings.ShopEditor.sortchronologically;
             txtSearch.Text = Strings.ShopEditor.searchplaceholder;
@@ -169,6 +181,9 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     rdoBuyBlacklist.Checked = true;
                 }
+
+                cmbBuySound.SelectedIndex = cmbBuySound.FindString(TextUtils.NullToNone(mEditorItem.BuySound));
+                cmbSellSound.SelectedIndex = cmbSellSound.FindString(TextUtils.NullToNone(mEditorItem.SellSound));
 
                 UpdateWhitelist();
                 UpdateLists();
@@ -338,6 +353,16 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.DefaultCurrency = ItemBase.FromList(cmbDefaultCurrency.SelectedIndex);
+        }
+
+        private void cmbBuySound_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BuySound = TextUtils.SanitizeNone(cmbBuySound?.Text);
+        }
+
+        private void cmbSellSound_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.SellSound = TextUtils.SanitizeNone(cmbSellSound?.Text);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)

@@ -2875,6 +2875,11 @@ namespace Intersect.Server.Entities
                     if (canSellItem)
                     {
                         TryGiveItem(rewardItemId, rewardItemVal * amount);
+
+                        if (!TextUtils.IsNone(shop.SellSound))
+                        {
+                            PacketSender.SendPlaySound(this, shop.SellSound);
+                        }
                     }
 
                     PacketSender.SendInventoryItemUpdate(this, slot);
@@ -2921,6 +2926,11 @@ namespace Intersect.Server.Entities
                                 }
 
                                 TryGiveItem(buyItemNum, buyItemAmt);
+
+                                if (!TextUtils.IsNone(shop.BuySound))
+                                {
+                                    PacketSender.SendPlaySound(this, shop.BuySound);
+                                }
                             }
                             else
                             {
@@ -2940,6 +2950,11 @@ namespace Intersect.Server.Entities
                                     );
 
                                     TryGiveItem(buyItemNum, buyItemAmt);
+
+                                    if (!TextUtils.IsNone(shop.BuySound))
+                                    {
+                                        PacketSender.SendPlaySound(this, shop.BuySound);
+                                    }
                                 }
                                 else
                                 {
