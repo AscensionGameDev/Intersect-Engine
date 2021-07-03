@@ -46,7 +46,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpCrafts = new DarkUI.Controls.DarkGroupBox();
-            this.lstAvailableCrafts = new System.Windows.Forms.CheckedListBox();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -58,6 +57,13 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.btnCraftDown = new DarkUI.Controls.DarkButton();
+            this.btnCraftUp = new DarkUI.Controls.DarkButton();
+            this.btnAddCraftedItem = new DarkUI.Controls.DarkButton();
+            this.cmbCrafts = new DarkUI.Controls.DarkComboBox();
+            this.lblAddCraftedItem = new System.Windows.Forms.Label();
+            this.lstCrafts = new System.Windows.Forms.ListBox();
+            this.btnRemoveCraftedItem = new DarkUI.Controls.DarkButton();
             this.grpTables.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
@@ -232,7 +238,13 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpCrafts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCrafts.Controls.Add(this.lstAvailableCrafts);
+            this.grpCrafts.Controls.Add(this.btnRemoveCraftedItem);
+            this.grpCrafts.Controls.Add(this.btnCraftDown);
+            this.grpCrafts.Controls.Add(this.btnCraftUp);
+            this.grpCrafts.Controls.Add(this.btnAddCraftedItem);
+            this.grpCrafts.Controls.Add(this.cmbCrafts);
+            this.grpCrafts.Controls.Add(this.lblAddCraftedItem);
+            this.grpCrafts.Controls.Add(this.lstCrafts);
             this.grpCrafts.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpCrafts.Location = new System.Drawing.Point(3, 85);
             this.grpCrafts.Name = "grpCrafts";
@@ -240,19 +252,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCrafts.TabIndex = 33;
             this.grpCrafts.TabStop = false;
             this.grpCrafts.Text = "Available Crafts";
-            // 
-            // lstAvailableCrafts
-            // 
-            this.lstAvailableCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstAvailableCrafts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstAvailableCrafts.CheckOnClick = true;
-            this.lstAvailableCrafts.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstAvailableCrafts.FormattingEnabled = true;
-            this.lstAvailableCrafts.Location = new System.Drawing.Point(7, 20);
-            this.lstAvailableCrafts.Name = "lstAvailableCrafts";
-            this.lstAvailableCrafts.Size = new System.Drawing.Size(190, 287);
-            this.lstAvailableCrafts.TabIndex = 0;
-            this.lstAvailableCrafts.SelectedValueChanged += new System.EventHandler(this.lstAvailableCrafts_SelectedValueChanged);
             // 
             // toolStrip
             // 
@@ -375,6 +374,86 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // btnCraftDown
+            // 
+            this.btnCraftDown.Location = new System.Drawing.Point(177, 176);
+            this.btnCraftDown.Name = "btnCraftDown";
+            this.btnCraftDown.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCraftDown.Size = new System.Drawing.Size(22, 40);
+            this.btnCraftDown.TabIndex = 52;
+            this.btnCraftDown.Text = "▼";
+            this.btnCraftDown.Click += new System.EventHandler(this.btnCraftDown_Click);
+            // 
+            // btnCraftUp
+            // 
+            this.btnCraftUp.Location = new System.Drawing.Point(177, 19);
+            this.btnCraftUp.Name = "btnCraftUp";
+            this.btnCraftUp.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCraftUp.Size = new System.Drawing.Size(22, 40);
+            this.btnCraftUp.TabIndex = 51;
+            this.btnCraftUp.Text = "▲";
+            this.btnCraftUp.Click += new System.EventHandler(this.btnCraftUp_Click);
+            // 
+            // btnAddCraftedItem
+            // 
+            this.btnAddCraftedItem.Location = new System.Drawing.Point(7, 259);
+            this.btnAddCraftedItem.Name = "btnAddCraftedItem";
+            this.btnAddCraftedItem.Padding = new System.Windows.Forms.Padding(5);
+            this.btnAddCraftedItem.Size = new System.Drawing.Size(189, 23);
+            this.btnAddCraftedItem.TabIndex = 50;
+            this.btnAddCraftedItem.Text = "Add Selected";
+            this.btnAddCraftedItem.Click += new System.EventHandler(this.btnAddCraftedItem_Click);
+            // 
+            // cmbCrafts
+            // 
+            this.cmbCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCrafts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCrafts.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCrafts.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCrafts.DrawDropdownHoverOutline = false;
+            this.cmbCrafts.DrawFocusRectangle = false;
+            this.cmbCrafts.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCrafts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCrafts.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCrafts.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCrafts.FormattingEnabled = true;
+            this.cmbCrafts.Location = new System.Drawing.Point(7, 234);
+            this.cmbCrafts.Name = "cmbCrafts";
+            this.cmbCrafts.Size = new System.Drawing.Size(189, 21);
+            this.cmbCrafts.TabIndex = 49;
+            this.cmbCrafts.Text = null;
+            this.cmbCrafts.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblAddCraftedItem
+            // 
+            this.lblAddCraftedItem.AutoSize = true;
+            this.lblAddCraftedItem.Location = new System.Drawing.Point(6, 218);
+            this.lblAddCraftedItem.Name = "lblAddCraftedItem";
+            this.lblAddCraftedItem.Size = new System.Drawing.Size(121, 13);
+            this.lblAddCraftedItem.TabIndex = 48;
+            this.lblAddCraftedItem.Text = "Add Item To Be Crafted:";
+            // 
+            // lstCrafts
+            // 
+            this.lstCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstCrafts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstCrafts.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstCrafts.FormattingEnabled = true;
+            this.lstCrafts.Location = new System.Drawing.Point(6, 19);
+            this.lstCrafts.Name = "lstCrafts";
+            this.lstCrafts.Size = new System.Drawing.Size(168, 197);
+            this.lstCrafts.TabIndex = 47;
+            // 
+            // btnRemoveCraftedItem
+            // 
+            this.btnRemoveCraftedItem.Location = new System.Drawing.Point(7, 285);
+            this.btnRemoveCraftedItem.Name = "btnRemoveCraftedItem";
+            this.btnRemoveCraftedItem.Padding = new System.Windows.Forms.Padding(5);
+            this.btnRemoveCraftedItem.Size = new System.Drawing.Size(189, 23);
+            this.btnRemoveCraftedItem.TabIndex = 53;
+            this.btnRemoveCraftedItem.Text = "Remove Selected";
+            this.btnRemoveCraftedItem.Click += new System.EventHandler(this.btnRemoveCraftedItem_Click);
+            // 
             // FrmCraftingTables
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -403,6 +482,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
             this.grpCrafts.ResumeLayout(false);
+            this.grpCrafts.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -425,7 +505,6 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private System.Windows.Forms.CheckedListBox lstAvailableCrafts;
         private DarkGroupBox grpGeneral;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
@@ -437,5 +516,12 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private Controls.GameObjectList lstGameObjects;
+        private DarkButton btnCraftDown;
+        private DarkButton btnCraftUp;
+        private DarkButton btnAddCraftedItem;
+        private DarkComboBox cmbCrafts;
+        private System.Windows.Forms.Label lblAddCraftedItem;
+        private System.Windows.Forms.ListBox lstCrafts;
+        private DarkButton btnRemoveCraftedItem;
     }
 }

@@ -80,6 +80,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.btnItemUp = new DarkUI.Controls.DarkButton();
+            this.btnItemDown = new DarkUI.Controls.DarkButton();
             this.lblBuySound = new System.Windows.Forms.Label();
             this.cmbBuySound = new DarkUI.Controls.DarkComboBox();
             this.lblSellSound = new System.Windows.Forms.Label();
@@ -266,6 +268,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpItemsSold.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpItemsSold.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpItemsSold.Controls.Add(this.btnItemDown);
+            this.grpItemsSold.Controls.Add(this.btnItemUp);
             this.grpItemsSold.Controls.Add(this.nudSellCost);
             this.grpItemsSold.Controls.Add(this.cmbSellFor);
             this.grpItemsSold.Controls.Add(this.lblSellFor);
@@ -397,7 +401,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstSoldItems.FormattingEnabled = true;
             this.lstSoldItems.Location = new System.Drawing.Point(7, 20);
             this.lstSoldItems.Name = "lstSoldItems";
-            this.lstSoldItems.Size = new System.Drawing.Size(245, 210);
+            this.lstSoldItems.Size = new System.Drawing.Size(223, 210);
             this.lstSoldItems.TabIndex = 0;
             // 
             // grpItemsBought
@@ -715,6 +719,26 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // btnItemUp
+            // 
+            this.btnItemUp.Location = new System.Drawing.Point(233, 20);
+            this.btnItemUp.Name = "btnItemUp";
+            this.btnItemUp.Padding = new System.Windows.Forms.Padding(5);
+            this.btnItemUp.Size = new System.Drawing.Size(22, 40);
+            this.btnItemUp.TabIndex = 45;
+            this.btnItemUp.Text = "▲";
+            this.btnItemUp.Click += new System.EventHandler(this.btnItemUp_Click);
+            // 
+            // btnItemDown
+            // 
+            this.btnItemDown.Location = new System.Drawing.Point(233, 190);
+            this.btnItemDown.Name = "btnItemDown";
+            this.btnItemDown.Padding = new System.Windows.Forms.Padding(5);
+            this.btnItemDown.Size = new System.Drawing.Size(22, 40);
+            this.btnItemDown.TabIndex = 46;
+            this.btnItemDown.Text = "▼";
+            this.btnItemDown.Click += new System.EventHandler(this.btnItemDown_Click);
+            //
             // lblBuySound
             // 
             this.lblBuySound.AutoSize = true;
@@ -866,6 +890,8 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private Controls.GameObjectList lstGameObjects;
+        private DarkButton btnItemDown;
+        private DarkButton btnItemUp;
         private System.Windows.Forms.Label lblSellSound;
         private DarkComboBox cmbSellSound;
         private System.Windows.Forms.Label lblBuySound;

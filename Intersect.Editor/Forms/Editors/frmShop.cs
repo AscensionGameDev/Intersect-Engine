@@ -355,6 +355,32 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.DefaultCurrency = ItemBase.FromList(cmbDefaultCurrency.SelectedIndex);
         }
 
+        private void btnItemUp_Click(object sender, EventArgs e)
+        {
+            if (lstSoldItems.SelectedIndex > 0 && lstSoldItems.Items.Count > 1)
+            {
+                var index = lstSoldItems.SelectedIndex;
+                var swapWith = mEditorItem.SellingItems[index - 1];
+                mEditorItem.SellingItems[index - 1] = mEditorItem.SellingItems[index];
+                mEditorItem.SellingItems[index] = swapWith;
+                UpdateLists();
+                lstSoldItems.SelectedIndex = index - 1;
+            }
+        }
+
+        private void btnItemDown_Click(object sender, EventArgs e)
+        {
+            if (lstSoldItems.SelectedIndex > -1 && lstSoldItems.SelectedIndex + 1 != lstSoldItems.Items.Count)
+            {
+                var index = lstSoldItems.SelectedIndex;
+                var swapWith = mEditorItem.SellingItems[index + 1];
+                mEditorItem.SellingItems[index + 1] = mEditorItem.SellingItems[index];
+                mEditorItem.SellingItems[index] = swapWith;
+                UpdateLists();
+                lstSoldItems.SelectedIndex = index + 1;
+            }
+        }
+
         private void cmbBuySound_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.BuySound = TextUtils.SanitizeNone(cmbBuySound?.Text);
@@ -538,7 +564,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }
