@@ -1609,7 +1609,7 @@ namespace Intersect.Server.Networking
                     if (canTake)
                     {
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
@@ -1620,33 +1620,6 @@ namespace Intersect.Server.Networking
                             // Mark this item for map removal.
                             // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
                             toRemove.Add(mapItem);
-                        }
-                        else
-                        {
-                            var quantity = mapItem.Quantity;
-                            for (int i = quantity -1; i > 0; i--)
-                            {
-                                var itm = mapItem.Clone();
-                                itm.Quantity = i;
-                                if (player.TryGiveItem(itm))
-                                {
-                                    var item = ItemBase.Get(mapItem.ItemId);
-                                    if (item != null)
-                                    {
-                                        PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
-                                    }
-                                    mapItem.Quantity = mapItem.Quantity - i;
-                                    PacketSender.SendMapItemUpdate(tempMap.Id, mapItem, false, mapItem.Owner == default, mapItem.Owner);
-                                }
-                                else
-                                {
-                                    if (i == 1)
-                                    {
-                                        // We couldn't give the player their item, notify them.
-                                        PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-                                    }
-                                }
-                            }
                         }
                     }
                 }
