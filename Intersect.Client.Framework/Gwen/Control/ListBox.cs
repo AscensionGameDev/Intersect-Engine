@@ -347,6 +347,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void RemoveRow(int idx)
         {
             mTable.RemoveRow(idx); // this calls Dispose()
+            mTable.DoSizeToContents();
         }
 
         /// <summary>
@@ -398,6 +399,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             mTable.SizeToContents(Width);
+            mTable.DoSizeToContents();
 
             return row;
         }

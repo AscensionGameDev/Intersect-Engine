@@ -234,10 +234,10 @@ namespace Intersect.Client.Interface.Game.Chat
         //Update
         public void Update()
         {
-            // TODO: Find a cleaner way to do this logic, right now this will only start working properly (ie not resetting scroll height) after a few chat messages.
-            // Can't seem to find a cleaner way yet. But works in longer chat convos.
-            var scrollAmount = mChatboxMessages.GetVerticalScrollBar().ScrollAmount;
-            var scrollToBottom = mChatboxMessages.GetVerticalScrollBar().ScrollAmount == 1 || (mChatboxMessages.RowCount <= 10 && mChatboxMessages.GetVerticalScrollBar().ScrollAmount <= 1);
+            var vScrollBar = mChatboxMessages.GetVerticalScrollBar();
+            var scrollAmount = vScrollBar.ScrollAmount;
+            var scrollBarVisible = vScrollBar.ContentSize > mChatboxMessages.Height;
+            var scrollToBottom = vScrollBar.ScrollAmount == 1 || !scrollBarVisible;
 
             // Did the tab change recently? If so, we need to reset a few things to make it work...
             if (mLastTab != mCurrentTab)
@@ -250,18 +250,12 @@ namespace Intersect.Client.Interface.Game.Chat
                 mLastTab = mCurrentTab;
             }
 
-            if (mReceivedMessage)
-            {
-                mChatboxMessages.ScrollToBottom();
-                mReceivedMessage = false;
-            }
-
             var msgs = ChatboxMsg.GetMessages(mCurrentTab);
             for (var i = mMessageIndex; i < msgs.Count; i++)
             {
                 var msg = msgs[i];
                 var myText = Interface.WrapText(
-                    msg.Message, mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
+                    msg.Message, mChatboxMessages.Width - vScrollBar.Width - 8,
                     mChatboxText.Font
                 );
 
@@ -285,13 +279,20 @@ namespace Intersect.Client.Interface.Game.Chat
                 mMessageIndex++;
             }
 
-            if (!scrollToBottom)
+
+            if (mReceivedMessage)
             {
-                mChatboxMessages.GetVerticalScrollBar().SetScrollAmount(scrollAmount);
-            }
-            else
-            {
-                mChatboxMessages.GetVerticalScrollBar().SetScrollAmount(1);
+                mChatboxMessages.InnerPanel.SizeToChildren(false, true);
+                mChatboxMessages.UpdateScrollBars();
+                if (!scrollToBottom)
+                {
+                    vScrollBar.SetScrollAmount(scrollAmount);
+                }
+                else
+                {
+                    vScrollBar.SetScrollAmount(1);
+                }
+                mReceivedMessage = false;
             }
         }
 
