@@ -365,7 +365,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                         continue;
                     }
 
-                    var tmpRow = mRecipes?.AddRow(i + 1 + ") " + ItemBase.GetName(activeCraft.ItemId));
+                    var tmpRow = mRecipes?.AddRow(i + 1 + ") " + activeCraft.Name);
                     if (tmpRow == null)
                     {
                         continue;
