@@ -82,7 +82,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
                         if (item.IsStackable)
                         {
-                            mValues[i].IsHidden = false;
+                            mValues[i].IsHidden = Globals.Bag[i].Quantity <= 1;
                             mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Bag[i].Quantity);
                         }
                         else
