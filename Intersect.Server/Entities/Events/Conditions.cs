@@ -76,10 +76,6 @@ namespace Intersect.Server.Entities.Events
             for (var i = 0; i < list.Conditions.Count; i++)
             {
                 var meetsCondition = MeetsCondition(list.Conditions[i], player, eventInstance, questBase);
-                if (list.Conditions[i].Negated)
-                {
-                    meetsCondition = !meetsCondition;
-                }
 
                 if (!meetsCondition)
                 {
@@ -99,7 +95,12 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            return ConditionHandlerRegistry.CheckCondition(condition, player, eventInstance, questBase);
+            var result = ConditionHandlerRegistry.CheckCondition(condition, player, eventInstance, questBase);
+            if (condition.Negated)
+            {
+                result = !result;
+            }
+            return result;
         }
 
         public static bool MeetsCondition(
@@ -149,12 +150,7 @@ namespace Intersect.Server.Entities.Events
                 }
             }
 
-            if ((!condition.Negated && player.CountItems(condition.ItemId) >= quantity) || (condition.Negated && player.CountItems(condition.ItemId) < quantity))
-            {
-                return true;
-            }
-
-            return false;
+            return player.CountItems(condition.ItemId) >= quantity;
         }
 
         public static bool MeetsCondition(
@@ -462,12 +458,8 @@ namespace Intersect.Server.Entities.Events
 
             // Check if the user has (or does not have when negated) the desired amount of inventory slots.
             var slots = player.FindOpenInventorySlots().Count;
-            if ((!condition.Negated && slots >= quantity) || (condition.Negated && slots < quantity))
-            {
-                return true;
-            }
 
-            return false;
+            return slots >= quantity;
         }
 
         public static bool MeetsCondition(
@@ -477,8 +469,7 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            var value = player.Guild != null && player.GuildRank <= condition.Rank;
-            return condition.Negated ? !value : value;
+            return player.Guild != null && player.GuildRank <= condition.Rank;
         }
 
         public static bool MeetsCondition(
