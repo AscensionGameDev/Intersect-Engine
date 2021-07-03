@@ -212,6 +212,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             {
                 RemoveRow(0);
             }
+            DoSizeToContents();
         }
 
         /// <summary>
@@ -264,7 +265,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             Invalidate();
         }
 
-        protected void DoSizeToContents()
+        public void DoSizeToContents()
         {
             var height = 0;
             var width = 0;
