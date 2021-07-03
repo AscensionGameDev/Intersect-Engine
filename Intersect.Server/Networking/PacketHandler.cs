@@ -1621,6 +1621,11 @@ namespace Intersect.Server.Networking
                             // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
                             toRemove.Add(mapItem);
                         }
+                        else
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                        }
                     }
                 }
 
