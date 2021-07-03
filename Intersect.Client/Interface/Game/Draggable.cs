@@ -16,7 +16,7 @@ namespace Intersect.Client.Interface.Game
 
         ImagePanel mPnl;
 
-        public Draggable(int x, int y, GameTexture tex)
+        public Draggable(int x, int y, GameTexture tex, Color color)
         {
             mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
             mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -25,6 +25,7 @@ namespace Intersect.Client.Interface.Game
             );
 
             mPnl.Texture = tex;
+            mPnl.RenderColor = color;
             Active = this;
         }
 
