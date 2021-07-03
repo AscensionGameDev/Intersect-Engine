@@ -94,6 +94,8 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ConditionLists CastingRequirements { get; set; } = new ConditionLists();
 
+        public string CannotCastMessage { get; set; } = "";
+
         //Combat Info
         public SpellCombatData Combat { get; set; } = new SpellCombatData();
 

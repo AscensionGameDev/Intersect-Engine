@@ -3203,6 +3203,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString projectile = @"Projectile:";
 
+            public static LocalizedString requirementsgroup = @"Requirements";
+
+            public static LocalizedString cannotuse = @"Cannot Use Message:";
+
             public static LocalizedString requirements = @"Edit Usage Requirements";
 
             public static LocalizedString save = @"Save";
@@ -4236,7 +4240,11 @@ Tick timer saved in server config.json.";
 
 Tick timer saved in server config.json.";
 
+            public static LocalizedString requirementsgroup = @"Requirements";
+
             public static LocalizedString requirements = @"Harvesting Requirements";
+
+            public static LocalizedString cannotharvest = @"Cannot Harvest Message:";
 
             public static LocalizedString resources = @"Resources";
 
@@ -4491,6 +4499,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString projectile = @"Projectile:";
 
             public static LocalizedString requirements = @"Casting Requirements";
+
+            public static LocalizedString cannotcast = @"Cannot Cast Message:";
 
             public static LocalizedString requirementsbutton = @"Edit Casting Requirements";
 

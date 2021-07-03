@@ -1189,7 +1189,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(descriptor.CannotHarvestMessage))
+                    {
+                        PacketSender.SendChatMsg(this, descriptor.CannotHarvestMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -1259,7 +1266,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(descriptor.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(descriptor.CannotHarvestMessage))
+                    {
+                        PacketSender.SendChatMsg(this, descriptor.CannotHarvestMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -1414,15 +1428,17 @@ namespace Intersect.Server.Entities
             //Add up player equipment values
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                var equipment = Equipment[i];
+                if (equipment >= 0 && equipment < Items.Count)
                 {
-                    if (Items[Equipment[i]].ItemId != Guid.Empty)
+                    var item = Items[equipment];
+                    if (item.ItemId != Guid.Empty)
                     {
-                        var item = Items[Equipment[i]].Descriptor;
-                        if (item != null)
+                        var descriptor = ItemBase.Get(item.ItemId);
+                        if (descriptor != null)
                         {
-                            flatStats += item.StatsGiven[(int)statType] + Items[Equipment[i]].StatBuffs[(int)statType];
-                            percentageStats += item.PercentageStatsGiven[(int)statType];
+                            flatStats += descriptor.StatsGiven[(int)statType] + item.StatBuffs[(int)statType];
+                            percentageStats += descriptor.PercentageStatsGiven[(int)statType];
                         }
                     }
                 }
@@ -2107,7 +2123,14 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
+                    if (!string.IsNullOrWhiteSpace(itemBase.CannotUseMessage))
+                    {
+                        PacketSender.SendChatMsg(this, itemBase.CannotUseMessage, ChatMessageType.Error);
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(this, Strings.Items.dynamicreq, ChatMessageType.Error);
+                    }
 
                     return;
                 }
@@ -4145,7 +4168,14 @@ namespace Intersect.Server.Entities
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
+                if (!string.IsNullOrWhiteSpace(spell.CannotCastMessage))
+                {
+                    PacketSender.SendChatMsg(this, spell.CannotCastMessage, ChatMessageType.Error);
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
+                }
 
                 return false;
             }
@@ -5413,6 +5443,7 @@ namespace Intersect.Server.Entities
                             }
 
                             var success = false;
+                            var changed = false;
 
                             if (!canceled)
                             {
@@ -5421,6 +5452,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Integer != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Integer = newValue;
                                             success = true;
                                         }
@@ -5429,6 +5464,10 @@ namespace Intersect.Server.Entities
                                     case VariableDataTypes.Number:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
+                                            if (value.Number != newValue)
+                                            {
+                                                changed = true;
+                                            }
                                             value.Number = newValue;
                                             success = true;
                                         }
@@ -5438,12 +5477,20 @@ namespace Intersect.Server.Entities
                                         if (newValueString.Length >= cmd.Minimum &&
                                             newValueString.Length <= cmd.Maximum)
                                         {
+                                            if (value.String != newValueString)
+                                            {
+                                                changed = true;
+                                            }
                                             value.String = newValueString;
                                             success = true;
                                         }
 
                                         break;
                                     case VariableDataTypes.Boolean:
+                                        if (value.Boolean != newValue > 0)
+                                        {
+                                            changed = true;
+                                        }
                                         value.Boolean = newValue > 0;
                                         success = true;
 
@@ -5455,7 +5502,7 @@ namespace Intersect.Server.Entities
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
@@ -5464,7 +5511,7 @@ namespace Intersect.Server.Entities
                             else if (cmd.VariableType == VariableTypes.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
-                                if (variable.Value?.Value != value.Value)
+                                if (changed)
                                 {
                                     variable.Value = value;
                                     StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", cmd.VariableId.ToString());
