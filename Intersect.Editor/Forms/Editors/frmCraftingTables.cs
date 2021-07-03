@@ -63,20 +63,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 cmbFolder.Text = mEditorItem.Folder;
 
-                //Populate the checked list box
-                lstAvailableCrafts.Items.Clear();
-                lstAvailableCrafts.Items.AddRange(CraftBase.Names);
-
-                //Clean up crafts array
-
-                foreach (var val in mEditorItem.Crafts)
-                {
-                    var listIndex = CraftBase.ListIndex(val);
-                    if (listIndex > -1)
-                    {
-                        lstAvailableCrafts.SetItemCheckState(listIndex, CheckState.Checked);
-                    }
-                }
+                UpdateList();
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -205,6 +192,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void frmCrafting_Load(object sender, EventArgs e)
         {
+            cmbCrafts.Items.Clear();
+            cmbCrafts.Items.AddRange(CraftBase.Names);
+
             InitLocalization();
         }
 
@@ -220,6 +210,10 @@ namespace Intersect.Editor.Forms.Editors
             grpTables.Text = Strings.CraftingTableEditor.tables;
             grpCrafts.Text = Strings.CraftingTableEditor.crafts;
 
+            lblAddCraftedItem.Text = Strings.CraftingTableEditor.addcraftlabel;
+            btnAddCraftedItem.Text = Strings.CraftingTableEditor.add;
+            btnRemoveCraftedItem.Text = Strings.CraftingTableEditor.remove;
+
             grpGeneral.Text = Strings.CraftingTableEditor.general;
             lblName.Text = Strings.CraftingTableEditor.name;
 
@@ -232,15 +226,58 @@ namespace Intersect.Editor.Forms.Editors
             btnCancel.Text = Strings.CraftingTableEditor.cancel;
         }
 
-        private void lstAvailableCrafts_SelectedValueChanged(object sender, EventArgs e)
+        public void UpdateList()
         {
-            mEditorItem.Crafts.Clear();
-            for (var i = 0; i < lstAvailableCrafts.Items.Count; i++)
+            lstCrafts.Items.Clear();
+            foreach (var id in mEditorItem.Crafts)
             {
-                if (lstAvailableCrafts.CheckedIndices.Contains(i))
-                {
-                    mEditorItem.Crafts.Add(CraftBase.IdFromList(i));
-                }
+                lstCrafts.Items.Add(CraftBase.GetName(id));
+            }
+        }
+
+        private void btnAddCraftedItem_Click(object sender, EventArgs e)
+        {
+            var id = CraftBase.IdFromList(cmbCrafts.SelectedIndex);
+            var craft = CraftBase.Get(id);
+            if (craft != null && !mEditorItem.Crafts.Contains(id))
+            {
+                mEditorItem.Crafts.Add(id);
+                UpdateList();
+            }
+        }
+
+        private void btnRemoveCraftedItem_Click(object sender, EventArgs e)
+        {
+            if (lstCrafts.SelectedIndex > -1)
+            {
+                mEditorItem.Crafts.RemoveAt(lstCrafts.SelectedIndex);
+                UpdateList();
+            }
+        }
+
+        private void btnCraftUp_Click(object sender, EventArgs e)
+        {
+            if (lstCrafts.SelectedIndex > 0 && lstCrafts.Items.Count > 1)
+            {
+                var index = lstCrafts.SelectedIndex;
+                var swapWith = mEditorItem.Crafts[index - 1];
+                mEditorItem.Crafts[index - 1] = mEditorItem.Crafts[index];
+                mEditorItem.Crafts[index] = swapWith;
+                UpdateList();
+                lstCrafts.SelectedIndex = index - 1;
+            }
+        }
+
+        private void btnCraftDown_Click(object sender, EventArgs e)
+        {
+            if (lstCrafts.SelectedIndex > -1 && lstCrafts.SelectedIndex + 1 != lstCrafts.Items.Count)
+            {
+                var index = lstCrafts.SelectedIndex;
+                var swapWith = mEditorItem.Crafts[index + 1];
+                mEditorItem.Crafts[index + 1] = mEditorItem.Crafts[index];
+                mEditorItem.Crafts[index] = swapWith;
+                UpdateList();
+                lstCrafts.SelectedIndex = index + 1;
             }
         }
 
@@ -345,7 +382,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }
