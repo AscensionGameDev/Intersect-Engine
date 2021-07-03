@@ -578,7 +578,11 @@ namespace Intersect.Client.Localization
         public struct Crafting
         {
 
-            public static LocalizedString craft = @"Craft";
+            public static LocalizedString craft = @"Craft 1";
+
+            public static LocalizedString craftall = @"Craft {00}";
+
+            public static LocalizedString craftstop = "Stop";
 
             public static LocalizedString incorrectresources =
                 @"You do not have the correct resources to craft this item.";
