@@ -580,7 +580,7 @@ namespace Intersect.Client.Interface.Game
                 closedWindows = true;
             }
 
-            if (mCraftingWindow != null && mCraftingWindow.IsVisible())
+            if (mCraftingWindow != null && mCraftingWindow.IsVisible() && !mCraftingWindow.Crafting)
             {
                 CloseCraftingTable();
                 closedWindows = true;
