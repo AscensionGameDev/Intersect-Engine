@@ -1625,12 +1625,13 @@ namespace Intersect.Editor.Forms.Editors
             // nudCritMultiplier
             // 
             this.nudCritMultiplier.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudCritMultiplier.DecimalPlaces = 2;
             this.nudCritMultiplier.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudCritMultiplier.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            65536});
+            131072});
             this.nudCritMultiplier.Location = new System.Drawing.Point(9, 285);
             this.nudCritMultiplier.Maximum = new decimal(new int[] {
             1000,
