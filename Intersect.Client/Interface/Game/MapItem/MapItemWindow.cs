@@ -108,7 +108,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                                 Items[itemSlot].Pnl.IsHidden = false;
                                 if (finalItem.IsStackable)
                                 {
-                                    mValues[itemSlot].IsHidden = false;
+                                    mValues[itemSlot].IsHidden = mapItem.Quantity <= 1;
                                     mValues[itemSlot].Text = Strings.FormatQuantityAbbreviated(mapItem.Quantity);
                                 }
                                 else
