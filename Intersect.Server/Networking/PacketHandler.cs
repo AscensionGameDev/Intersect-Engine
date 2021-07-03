@@ -1609,7 +1609,7 @@ namespace Intersect.Server.Networking
                     if (canTake)
                     {
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
