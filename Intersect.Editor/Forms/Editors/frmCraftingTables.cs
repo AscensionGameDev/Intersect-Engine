@@ -224,7 +224,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.CraftingTableEditor.name;
 
             //Searching/Sorting
-            btnChronological.ToolTipText = Strings.CraftingTableEditor.sortchronologically;
+            btnAlphabetical.ToolTipText = Strings.CraftingTableEditor.sortalphabetically;
             txtSearch.Text = Strings.CraftingTableEditor.searchplaceholder;
             lblFolder.Text = Strings.CraftingTableEditor.folderlabel;
 
@@ -269,9 +269,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-            var items = CraftingTableBase.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            var items = CraftingTableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
                 new KeyValuePair<string, string>(((CraftingTableBase)pair.Value)?.Name ?? Models.DatabaseObject<CraftingTableBase>.Deleted, ((CraftingTableBase)pair.Value)?.Folder ?? ""))).ToArray();
-            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
+            lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
@@ -300,9 +300,9 @@ namespace Intersect.Editor.Forms.Editors
             InitEditor();
         }
 
-        private void btnChronological_Click(object sender, EventArgs e)
+        private void btnAlphabetical_Click(object sender, EventArgs e)
         {
-            btnChronological.Checked = !btnChronological.Checked;
+            btnAlphabetical.Checked = !btnAlphabetical.Checked;
             InitEditor();
         }
 

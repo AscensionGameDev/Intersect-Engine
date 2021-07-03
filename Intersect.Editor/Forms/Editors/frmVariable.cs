@@ -91,7 +91,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemUndo.ToolTipText = Strings.VariableEditor.undo;
 
             //Searching/Sorting
-            btnChronological.ToolTipText = Strings.VariableEditor.sortchronologically;
+            btnAlphabetical.ToolTipText = Strings.VariableEditor.sortalphabetically;
             txtSearch.Text = Strings.VariableEditor.searchplaceholder;
             lblFolder.Text = Strings.VariableEditor.folderlabel;
 
@@ -484,16 +484,16 @@ namespace Intersect.Editor.Forms.Editors
 
             if (rdoPlayerVariables.Checked)
             {
-                items = PlayerVariableBase.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+                items = PlayerVariableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
                     new KeyValuePair<string, string>(((PlayerVariableBase)pair.Value)?.Name ?? Models.DatabaseObject<PlayerVariableBase>.Deleted, ((PlayerVariableBase)pair.Value)?.Folder ?? ""))).ToArray();
             }
             else
             {
-                items = ServerVariableBase.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+                items = ServerVariableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
                     new KeyValuePair<string, string>(((ServerVariableBase)pair.Value)?.Name ?? Models.DatabaseObject<ServerVariableBase>.Deleted + " = " + ((ServerVariableBase)pair.Value)?.Value.ToString(((ServerVariableBase)pair.Value).Type) ?? "", ((ServerVariableBase)pair.Value)?.Folder ?? ""))).ToArray();
             }
 
-            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
+            lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
 
             UpdateEditor();
         }
@@ -551,9 +551,9 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void btnChronological_Click(object sender, EventArgs e)
+        private void btnAlphabetical_Click(object sender, EventArgs e)
         {
-            btnChronological.Checked = !btnChronological.Checked;
+            btnAlphabetical.Checked = !btnAlphabetical.Checked;
             InitEditor();
         }
 

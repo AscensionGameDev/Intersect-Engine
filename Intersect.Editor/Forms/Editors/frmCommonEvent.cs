@@ -44,7 +44,7 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemPaste.Text = Strings.CommonEventEditor.paste;
 
             //Searching/Sorting
-            btnChronological.ToolTipText = Strings.CommonEventEditor.sortchronologically;
+            btnAlphabetical.ToolTipText = Strings.CommonEventEditor.sortalphabetically;
             txtSearch.Text = Strings.CommonEventEditor.searchplaceholder;
             lblFolder.Text = Strings.CommonEventEditor.folderlabel;
         }
@@ -104,9 +104,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-            var items = EventBase.Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
+            var items = EventBase.Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
                 new KeyValuePair<string, string>(((EventBase)pair.Value)?.Name ?? Models.DatabaseObject<EventBase>.Deleted, ((EventBase)pair.Value)?.Folder ?? ""))).ToArray();
-            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
+            lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void frmCommonEvent_FormClosed(object sender, FormClosedEventArgs e)
@@ -211,9 +211,9 @@ namespace Intersect.Editor.Forms.Editors
             InitEditor();
         }
 
-        private void btnChronological_Click(object sender, EventArgs e)
+        private void btnAlphabetical_Click(object sender, EventArgs e)
         {
-            btnChronological.Checked = !btnChronological.Checked;
+            btnAlphabetical.Checked = !btnAlphabetical.Checked;
             InitEditor();
         }
 
