@@ -1024,7 +1024,7 @@ namespace Intersect.Client.Entities
                     }
 
                     // Check if the entity has stealth status
-                    if (en.Value.IsStealthed() && !Globals.Me.IsInMyParty(en.Value.Id))
+                    if (en.Value.HideEntity || (en.Value.IsStealthed() && !Globals.Me.IsInMyParty(en.Value.Id)))
                     {
                         continue;
                     }
@@ -1956,7 +1956,7 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
-                if (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player))
+                if (!en.Value.HideEntity && (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
@@ -1984,6 +1984,7 @@ namespace Intersect.Client.Entities
 
                     if (en.Value.CurrentMap == eventMap.Id &&
                         !((Event) en.Value).DisablePreview &&
+                        !en.Value.HideEntity &&
                         (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
@@ -2011,7 +2012,8 @@ namespace Intersect.Client.Entities
                             }
 
                             if (en.Value.CurrentMap == mapId &&
-                                !en.Value.IsStealthed() &&
+                                !en.Value.HideName &&
+                                (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
                                 en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                             {
                                 if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
@@ -2035,7 +2037,8 @@ namespace Intersect.Client.Entities
 
                                 if (en.Value.CurrentMap == mapId &&
                                     !((Event) en.Value).DisablePreview &&
-                                    !en.Value.IsStealthed() &&
+                                    !en.Value.HideEntity &&
+                                    (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
                                     en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                                 {
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
