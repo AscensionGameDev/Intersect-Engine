@@ -1775,6 +1775,11 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
+            if (item.Quantity <= 0)
+            {
+                return true;
+            }
+
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
             int spawnAmount = 0;
