@@ -451,6 +451,10 @@ namespace Intersect.Editor.Forms.Editors
             nudCraftQuantity.Value = Math.Max(1, nudCraftQuantity.Value);
             mEditorItem.Quantity = (int) nudCraftQuantity.Value;
         }
+        private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
 
@@ -553,11 +557,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
-        private void darkComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
-        }
     }
 
 }

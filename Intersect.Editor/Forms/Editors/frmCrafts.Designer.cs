@@ -391,7 +391,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEvent.TabIndex = 43;
             this.cmbEvent.Text = null;
             this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.darkComboBox1_SelectedIndexChanged);
+            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.cmbEvent_SelectedIndexChanged);
             // 
             // lblCommonEvent
             // 
