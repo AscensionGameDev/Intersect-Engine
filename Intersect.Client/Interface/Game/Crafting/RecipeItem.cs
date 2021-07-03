@@ -64,6 +64,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
+                    Pnl.RenderColor = item.Color;
                 }
                 else
                 {

@@ -935,6 +935,12 @@ namespace Intersect.Server.Networking
                 }
 
                 var target = Player.FindOnline(msgSplit[0].ToLower());
+
+                if (target == player)
+                {
+                    return;
+                }
+
                 if (target != null)
                 {
                     PacketSender.SendChatMsg(
