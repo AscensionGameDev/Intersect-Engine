@@ -203,7 +203,7 @@ namespace Intersect.Client.Interface.Game.Bag
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseX,
-                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X + mMouseY, Pnl.Texture, Pnl.RenderColor
                                     );
                                 }
                             }
