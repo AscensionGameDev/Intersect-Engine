@@ -1068,6 +1068,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString addcraftlabel = @"Add Item To Be Crafted:";
+
+            public static LocalizedString add = @"Add Selected";
+
+            public static LocalizedString remove = @"Remove Selected";
         }
 
         public struct CraftsEditor
