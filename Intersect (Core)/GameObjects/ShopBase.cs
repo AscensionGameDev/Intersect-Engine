@@ -59,6 +59,10 @@ namespace Intersect.GameObjects
             set => SellingItems = JsonConvert.DeserializeObject<List<ShopItem>>(value);
         }
 
+        public string BuySound { get; set; } = null;
+
+        public string SellSound { get; set; } = null;
+
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
