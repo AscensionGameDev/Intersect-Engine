@@ -4352,6 +4352,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString whitelist = @"Whitelist";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString buysound = @"Buy Sound:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString sellsound = @"Sell Sound:";
         }
 
         public struct SpellEditor
