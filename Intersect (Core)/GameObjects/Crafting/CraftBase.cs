@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Models;
+using Intersect.GameObjects.Events;
 
 using Newtonsoft.Json;
 
@@ -45,6 +46,18 @@ namespace Intersect.GameObjects.Crafting
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
+
+        [Column("Event")]
+        [JsonProperty]
+        public Guid EventId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase Event
+        {
+            get => EventBase.Get(EventId);
+            set => EventId = value?.Id ?? Guid.Empty;
+        }
 
     }
 

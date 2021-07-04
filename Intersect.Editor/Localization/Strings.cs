@@ -1168,6 +1168,9 @@ Tick timer saved in server config.json.";
                 @"Are you sure you want to undo changes made to this craft? This action cannot be reverted!";
 
             public static LocalizedString undotitle = @"Undo Changes";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString commonevent = @"Common Event:";
 
         }
 

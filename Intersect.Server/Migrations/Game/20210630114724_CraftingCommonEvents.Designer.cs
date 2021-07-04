@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20210630114724_CraftingCommonEvents")]
+    partial class CraftingCommonEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,8 +224,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<bool>("CanSell");
 
                     b.Property<bool>("CanTrade");
-
-                    b.Property<string>("CannotUseMessage");
 
                     b.Property<int>("Cooldown");
 
@@ -576,8 +576,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("AnimationId")
                         .HasColumnName("Animation");
 
-                    b.Property<string>("CannotHarvestMessage");
-
                     b.Property<Guid>("EventId")
                         .HasColumnName("Event");
 
@@ -640,8 +638,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BuySound");
-
                     b.Property<bool>("BuyingWhitelist");
 
                     b.Property<Guid>("DefaultCurrencyId")
@@ -657,8 +653,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("SellSound");
-
                     b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
@@ -672,8 +666,6 @@ namespace Intersect.Server.Migrations.Game
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Bound");
-
-                    b.Property<string>("CannotCastMessage");
 
                     b.Property<Guid>("CastAnimationId")
                         .HasColumnName("CastAnimation");
