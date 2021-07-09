@@ -1,4 +1,5 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="AscensionGameDev.Intersect.CommonVariables.targets" />
   <Import Project="FindIntersect.targets" />
 
   <PropertyGroup>
@@ -20,7 +21,7 @@
 
   <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild">
     <ItemGroup>
-      <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="**/Ceras.*; **/CommandLine.*; **/Newtonsoft.Json.*; **/Semver.*; **/System.Runtime.CompilerServices.Unsafe.*; **/System.ValueTuple.*; **/Intersect Core.*; **/Intersect.*.Framework.*" />
+      <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="$(ExcludedIntersectDependencies)" />
     </ItemGroup>
 
     <Message Importance="High" Text="TargetDir=$(TargetDir)"/>
