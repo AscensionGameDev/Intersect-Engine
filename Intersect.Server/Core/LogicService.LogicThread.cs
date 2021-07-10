@@ -285,6 +285,9 @@ namespace Intersect.Server.Core
                             }
                         }
 
+                        // Update plugin services every frame
+                        serverContext.UpdateServices();
+
                         if (saveServerVariablesTimer < endTime)
                         {
                             DbInterface.Pool.QueueWorkItem(DbInterface.SaveUpdatedServerVariables);

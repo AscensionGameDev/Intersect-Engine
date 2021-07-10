@@ -35,6 +35,22 @@ namespace Intersect.Core
             );
         }
 
+        /// <exception cref="ArgumentNullException">throws an exception if <paramref name="applicationContext"/> is not an instance of <typeparamref name="TApplicationContext"/></exception>
+        /// <inheritdoc />
+        protected override void TaskUpdate([ValidatedNotNull] IApplicationContext applicationContext)
+        {
+            if (applicationContext is TApplicationContext typedContext)
+            {
+                TaskUpdate(typedContext);
+                return;
+            }
+
+            throw new ArgumentException(
+                $@"Invalid context, expected type {typeof(TApplicationContext).FullName} but received {applicationContext.GetType().FullName}.",
+                nameof(applicationContext)
+            );
+        }
+
         /// <inheritdoc />
         protected override void TaskStop([ValidatedNotNull] IApplicationContext applicationContext)
         {
@@ -59,6 +75,12 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="applicationContext">the application context the service is being started in</param>
         protected abstract void TaskStart(TApplicationContext applicationContext);
+
+        /// <summary>
+        /// Specialized internal update handler declaration.
+        /// </summary>
+        /// <param name="applicationContext">The application context the service is being updated in.</param>
+        protected abstract void TaskUpdate(TApplicationContext applicationContext);
 
         /// <summary>
         /// Specialized internal shutdown handler declaration.

@@ -17,6 +17,15 @@
         }
 
         /// <inheritdoc />
+        public override void OnUpdate(IPluginContext context)
+        {
+            if (context is TPluginContext typedPluginContext)
+            {
+                OnUpdate(typedPluginContext);
+            }
+        }
+
+        /// <inheritdoc />
         public override void OnStop(IPluginContext context)
         {
             if (context is TPluginContext typedPluginContext)
@@ -27,6 +36,9 @@
 
         /// <inheritdoc />
         public abstract void OnStart(TPluginContext context);
+
+        /// <inheritdoc />
+        public abstract void OnUpdate(TPluginContext context);
 
         /// <inheritdoc />
         public abstract void OnStop(TPluginContext context);

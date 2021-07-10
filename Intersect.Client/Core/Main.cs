@@ -106,6 +106,9 @@ namespace Intersect.Client.Core
 
                 Globals.InputManager.Update();
                 Audio.Update();
+
+                // Update plugin services every frame
+                ClientContext.Instance.UpdateServices();
             }
         }
 

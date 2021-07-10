@@ -16,6 +16,9 @@ namespace Intersect.Plugins
         public virtual void OnStart(IPluginContext context) { }
 
         /// <inheritdoc />
+        public virtual void OnUpdate(IPluginContext context) { }
+
+        /// <inheritdoc />
         public virtual void OnStop(IPluginContext context) { }
 
         /// <inheritdoc />

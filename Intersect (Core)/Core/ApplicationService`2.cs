@@ -99,6 +99,29 @@ namespace Intersect.Core
         }
 
         /// <inheritdoc />
+        public bool Update(IApplicationContext applicationContext)
+        {
+            lock (mLifecycleLock)
+            {
+                if (!IsRunning)
+                {
+                    throw new InvalidOperationException($"Service '{Name}' is not currently running.");
+                }
+
+                try
+                {
+                    TaskUpdate(applicationContext);
+                }
+                catch (Exception exception)
+                {
+                    throw new ServiceLifecycleFailureException(ServiceLifecycleStage.Update, Name, exception);
+                }
+            }
+
+            return IsRunning;
+        }
+
+        /// <inheritdoc />
         public bool Stop(IApplicationContext applicationContext)
         {
             lock (mLifecycleLock)
@@ -131,6 +154,12 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="applicationContext">the application context the service is being started in</param>
         protected abstract void TaskStart([ValidatedNotNull] IApplicationContext applicationContext);
+
+        /// <summary>
+        /// Internal update handler declaration.
+        /// </summary>
+        /// <param name="applicationContext">The application context the service is being updated in.</param>
+        protected abstract void TaskUpdate([ValidatedNotNull] IApplicationContext applicationContext);
 
         /// <summary>
         /// Internal shutdown handler declaration.

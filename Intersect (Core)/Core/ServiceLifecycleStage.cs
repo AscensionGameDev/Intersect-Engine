@@ -18,6 +18,11 @@ namespace Intersect.Core
         Startup,
 
         /// <summary>
+        /// The application update stage.
+        /// </summary>
+        Update,
+
+        /// <summary>
         /// The application finalization stage.
         /// </summary>
         Shutdown,

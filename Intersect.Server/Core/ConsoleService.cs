@@ -30,6 +30,12 @@ namespace Intersect.Server.Core
         }
 
         /// <inheritdoc />
+        protected override void TaskUpdate(IServerContext applicationContext)
+        {
+            // Nothing to do. Don't interfere with the existing thread
+        }
+
+        /// <inheritdoc />
         protected override void TaskStop(IServerContext applicationContext)
         {
             // Nothing to do, the thread already has a stopping condition

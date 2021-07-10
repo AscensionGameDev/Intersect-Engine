@@ -25,6 +25,12 @@ namespace Intersect.Plugins
         void OnStart([ValidatedNotNull] IPluginContext context);
 
         /// <summary>
+        /// Invoked at the end of the context's update.
+        /// </summary>
+        /// <param name="context">The current plugin context.</param>
+        void OnUpdate([ValidatedNotNull] IPluginContext context);
+
+        /// <summary>
         /// Invoked during application shutdown.
         /// </summary>
         /// <param name="context">the current plugin context</param>

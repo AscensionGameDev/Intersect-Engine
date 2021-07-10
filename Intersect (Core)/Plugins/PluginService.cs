@@ -106,6 +106,10 @@ namespace Intersect.Plugins
             RunOnAllInstances(applicationContext, OnStart);
 
         /// <inheritdoc />
+        protected override void TaskUpdate(IApplicationContext applicationContext) =>
+            RunOnAllInstances(applicationContext, OnUpdate);
+
+        /// <inheritdoc />
         protected override void TaskStop(IApplicationContext applicationContext)
         {
             RunOnAllInstances(applicationContext, OnStop);
@@ -232,6 +236,16 @@ namespace Intersect.Plugins
             var instance = instancePair.Value;
             var entry = instance.Entry;
             entry.OnStart(instance.Context);
+        }
+
+        private void OnUpdate(KeyValuePair<Plugin, PluginInstance> instancePair)
+        {
+            Debug.Assert(instancePair.Key != null, $@"{nameof(instancePair)}.Key != null");
+            Debug.Assert(instancePair.Value != null, $@"{nameof(instancePair)}.Value != null");
+
+            var instance = instancePair.Value;
+            var entry = instance.Entry;
+            entry.OnUpdate(instance.Context);
         }
 
         private void OnStop(KeyValuePair<Plugin, PluginInstance> instancePair)

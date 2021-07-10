@@ -193,6 +193,11 @@ namespace Intersect.Core
         protected virtual void StartServices() => RunOnAllServices(service => service?.Start(this), false);
 
         /// <summary>
+        /// Runs the update lifecycle method at the end every frame on all enabled services.
+        /// </summary>
+        public virtual void UpdateServices() => RunOnAllServices(service => service?.Update(this), true);
+
+        /// <summary>
         /// Run the shutdown lifecycle method on all enabled services.
         /// </summary>
         /// <param name="force">if the service should be forced to stop no matter its status</param>

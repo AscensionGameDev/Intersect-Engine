@@ -53,6 +53,13 @@ namespace Intersect.Core
         bool Start(IApplicationContext applicationContext);
 
         /// <summary>
+        /// Update lifecycle method for application services.
+        /// </summary>
+        /// <param name="applicationContext">The current application context.</param>
+        /// <returns>If update was successful.</returns>
+        bool Update(IApplicationContext applicationContext);
+
+        /// <summary>
         /// Shutdown lifecycle method for application services.
         /// </summary>
         /// <param name="applicationContext">the current application context</param>
