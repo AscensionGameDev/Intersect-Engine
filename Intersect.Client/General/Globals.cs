@@ -71,6 +71,13 @@ namespace Intersect.Client.General
             );
         }
 
+        internal static void OnLifecycleUpdate()
+        {
+            ClientLifecycleHelpers.ForEach(
+                clientLifecycleHelper => clientLifecycleHelper?.OnLifecycleUpdate(GameState)
+            );
+        }
+
         private static GameStates mGameState = GameStates.Intro;
 
         /// <see cref="GameStates" />
