@@ -38,10 +38,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 var entries = gameObjectType == GameObjectType.Event
                     ? lookup.Where(obj => ((EventBase) obj.Value).CommonEvent)
-                        .OrderBy(obj => obj.Value.TimeCreated)
+                        .OrderBy(obj => obj.Value.Name)
                         .Skip(pageInfo.Page * pageInfo.Count)
                         .Take(pageInfo.Count)
-                    : lookup.OrderBy(obj => obj.Value.TimeCreated)
+                    : lookup.OrderBy(obj => obj.Value.Name)
                         .Skip(pageInfo.Page * pageInfo.Count)
                         .Take(pageInfo.Count);
 

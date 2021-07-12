@@ -63,7 +63,7 @@ namespace Intersect.GameObjects
         /// <returns>Returns an array of names.</returns>
         public static string[] GetNamesByType(VariableDataTypes dataType)
         {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Name).ToArray();
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Name).ToArray();
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Intersect.GameObjects
         /// <returns>Returns the list Index of the provided Id.</returns>
         public static int ListIndex(Guid id, VariableDataTypes dataType)
         {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Id).ToList().IndexOf(id);
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Id).ToList().IndexOf(id);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Intersect.GameObjects
                 return Guid.Empty;
             }
 
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Id).ToArray()[listIndex];
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).Where(pairs => ((ServerVariableBase)Lookup[pairs]).Type == dataType).Select(pairs => ((ServerVariableBase)Lookup[pairs]).Id).ToArray()[listIndex];
         }
     }
 
