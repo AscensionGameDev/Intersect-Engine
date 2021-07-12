@@ -193,7 +193,7 @@ namespace Intersect.Editor.Forms.Editors
             chkRenderBelowFringe.Text = Strings.AnimationEditor.renderbelowfringe;
 
             //Searching/Sorting
-            btnChronological.ToolTipText = Strings.AnimationEditor.sortchronologically;
+            btnAlphabetical.ToolTipText = Strings.AnimationEditor.sortalphabetically;
             txtSearch.Text = Strings.AnimationEditor.searchplaceholder;
             lblFolder.Text = Strings.AnimationEditor.folderlabel;
 
@@ -796,9 +796,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
-            var items = AnimationBase.Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key, 
+            var items = AnimationBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key, 
                 new KeyValuePair<string, string>(((AnimationBase)pair.Value)?.Name ?? Models.DatabaseObject<AnimationBase>.Deleted, ((AnimationBase)pair.Value)?.Folder ?? ""))).ToArray();
-            lstGameObjects.Repopulate(items, mFolders, btnChronological.Checked, CustomSearch(), txtSearch.Text);
+            lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
@@ -827,9 +827,9 @@ namespace Intersect.Editor.Forms.Editors
             InitEditor();
         }
 
-        private void btnChronological_Click(object sender, EventArgs e)
+        private void btnAlphabetical_Click(object sender, EventArgs e)
         {
-            btnChronological.Checked = !btnChronological.Checked;
+            btnAlphabetical.Checked = !btnAlphabetical.Checked;
             InitEditor();
         }
 

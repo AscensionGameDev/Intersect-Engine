@@ -29,11 +29,11 @@ namespace Intersect.Models
             TimeCreated = DateTime.Now.ToBinary();
         }
 
-        public static KeyValuePair<Guid, string>[] ItemPairs => Lookup.OrderBy(p => p.Value?.TimeCreated)
+        public static KeyValuePair<Guid, string>[] ItemPairs => Lookup.OrderBy(p => p.Value?.Name)
             .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
             .ToArray();
 
-        public static string[] Names => Lookup.OrderBy(p => p.Value?.TimeCreated)
+        public static string[] Names => Lookup.OrderBy(p => p.Value?.Name)
             .Select(pair => pair.Value?.Name ?? Deleted)
             .ToArray();
 
@@ -111,7 +111,7 @@ namespace Intersect.Models
                 return Guid.Empty;
             }
 
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).ToArray()[listIndex];
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToArray()[listIndex];
         }
 
         public static TObject FromList(int listIndex)
@@ -121,7 +121,7 @@ namespace Intersect.Models
                 return null;
             }
 
-            return (TObject) Lookup.ValueList.OrderBy(databaseObject => databaseObject?.TimeCreated).ToArray()[
+            return (TObject) Lookup.ValueList.OrderBy(databaseObject => databaseObject?.Name).ToArray()[
                 listIndex];
         }
 
@@ -132,7 +132,7 @@ namespace Intersect.Models
 
         public static int ListIndex(Guid id)
         {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).ToList().IndexOf(id);
+            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToList().IndexOf(id);
         }
 
         public static TObject Get(Guid id)

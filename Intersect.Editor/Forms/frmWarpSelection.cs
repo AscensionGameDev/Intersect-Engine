@@ -64,7 +64,7 @@ namespace Intersect.Editor.Forms
         private void InitLocalization()
         {
             Text = Strings.WarpSelection.title;
-            chkChronological.Text = Strings.WarpSelection.chronological;
+            chkAlphabetical.Text = Strings.WarpSelection.alphabetical;
             btnOk.Text = Strings.WarpSelection.okay;
             btnCancel.Text = Strings.WarpSelection.cancel;
             grpMapList.Text = Strings.WarpSelection.maplist;
@@ -160,7 +160,7 @@ namespace Intersect.Editor.Forms
 
         private void chkChronological_CheckedChanged(object sender, EventArgs e)
         {
-            mapTreeList1.Chronological = chkChronological.Checked;
+            mapTreeList1.Chronological = chkAlphabetical.Checked;
             mapTreeList1.UpdateMapList(mCurrentMapId, mRestrictMaps);
         }
 

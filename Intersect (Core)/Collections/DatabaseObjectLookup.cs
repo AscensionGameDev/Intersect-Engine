@@ -57,7 +57,7 @@ namespace Intersect.Collections
                 {
                     try
                     {
-                        return mIdMap.Values.OrderBy(databaseObject => databaseObject?.TimeCreated).ToList();
+                        return mIdMap.Values.OrderBy(databaseObject => databaseObject?.Name).ToList();
                     }
                     catch (Exception exception)
                     {
