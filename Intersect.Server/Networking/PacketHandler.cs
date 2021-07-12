@@ -1614,18 +1614,17 @@ namespace Intersect.Server.Networking
 
                     if (canTake)
                     {
+                        //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
+                        tempMap.RemoveItem(mapItem);
+
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
                             {
                                 PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
                             }
-
-                            // Mark this item for map removal.
-                            // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
-                            toRemove.Add(mapItem);
                         }
                         else
                         {
