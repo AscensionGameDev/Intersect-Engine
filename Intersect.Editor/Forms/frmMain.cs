@@ -997,17 +997,13 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.exportmap
             };
-
-            //TODO Reimplement
-            //fileDialog.ShowDialog();
-            //var buff = new ByteBuffer();
-            //buff.WriteString(Application.ProductVersion);
-            //buff.WriteBytes(Globals.CurrentMap.SaveInternal());
-            //if (fileDialog.FileName != "")
-            //{
-            //    File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
-            //}
-            //buff.Dispose();
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Globals.CurrentMap.AttributeJson = JsonConvert.SerializeObject(Globals.CurrentMap.AttributeData);
+                Globals.CurrentMap.TileData = Globals.CurrentMap.GenerateTileData();
+                Globals.CurrentMap.LayersJson = JsonConvert.SerializeObject(Globals.CurrentMap.TileData);
+                File.WriteAllText(fileDialog.FileName, Globals.CurrentMap.JsonData);
+            }
         }
 
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1017,27 +1013,13 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.importmap
             };
-
-            //TODO Reimplement
-            //fileDialog.ShowDialog();
-
-            //if (fileDialog.FileName != "")
-            //{
-            //    var data = File.ReadAllBytes(fileDialog.FileName);
-            //    var buff = new ByteBuffer();
-            //    buff.WriteBytes(data);
-            //    if (buff.ReadString() == Application.ProductVersion)
-            //    {
-            //        Globals.MapEditorWindow.PrepUndoState();
-            //        Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
-            //        Globals.MapEditorWindow.AddUndoState();
-            //    }
-            //    else
-            //    {
-            //        DarkMessageBox.ShowError(Strings.Errors.importfailed,
-            //            Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
-            //    }
-            //}
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Globals.CurrentMap.Load(File.ReadAllText(fileDialog.FileName));
+                Globals.CurrentMap.AttributeData = JsonConvert.DeserializeObject<byte[]>(Globals.CurrentMap.AttributeJson);
+                Globals.CurrentMap.TileData = JsonConvert.DeserializeObject<byte[]>(Globals.CurrentMap.LayersJson);
+                Globals.CurrentMap.DecompressTileData();
+            }
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
