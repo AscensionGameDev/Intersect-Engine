@@ -191,10 +191,6 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = Conditions.MeetsCondition(command.Condition, player, instance, null);
-            if (command.Condition.Negated)
-            {
-                success = !success;
-            }
 
             List<EventCommand> newCommandList = null;
             if (success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[0]))

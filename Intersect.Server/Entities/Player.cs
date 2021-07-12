@@ -1768,8 +1768,10 @@ namespace Intersect.Server.Entities
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
         /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
+        /// <param name="overflowTileX">The x coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
+        /// <param name="overflowTileY">The y coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true)
+        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true, int overflowTileX = -1, int overflowTileY = -1)
         {
             // Is this a valid item?
             if (item.Descriptor == null)
@@ -1821,8 +1823,8 @@ namespace Intersect.Server.Entities
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0)
                     {
-                        Map.SpawnItem(X, Y, item, spawnAmount, Id);
-                        return true;
+                        Map.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                        return spawnAmount != item.Quantity;
                     }
 
                     break;
@@ -2875,6 +2877,11 @@ namespace Intersect.Server.Entities
                     if (canSellItem)
                     {
                         TryGiveItem(rewardItemId, rewardItemVal * amount);
+
+                        if (!TextUtils.IsNone(shop.SellSound))
+                        {
+                            PacketSender.SendPlaySound(this, shop.SellSound);
+                        }
                     }
 
                     PacketSender.SendInventoryItemUpdate(this, slot);
@@ -2921,6 +2928,11 @@ namespace Intersect.Server.Entities
                                 }
 
                                 TryGiveItem(buyItemNum, buyItemAmt);
+
+                                if (!TextUtils.IsNone(shop.BuySound))
+                                {
+                                    PacketSender.SendPlaySound(this, shop.BuySound);
+                                }
                             }
                             else
                             {
@@ -2940,6 +2952,11 @@ namespace Intersect.Server.Entities
                                     );
 
                                     TryGiveItem(buyItemNum, buyItemAmt);
+
+                                    if (!TextUtils.IsNone(shop.BuySound))
+                                    {
+                                        PacketSender.SendPlaySound(this, shop.BuySound);
+                                    }
                                 }
                                 else
                                 {
@@ -3067,6 +3084,8 @@ namespace Intersect.Server.Entities
                         this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)), ChatMessageType.Crafting,
                         CustomColors.Alerts.Success
                     );
+                    if (CraftBase.Get(id).Event != null)
+                        StartCommonEvent(CraftBase.Get(id).Event);
                 }
                 else
                 {
