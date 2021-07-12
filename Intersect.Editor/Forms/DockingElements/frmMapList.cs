@@ -69,7 +69,7 @@ namespace Intersect.Editor.Forms.DockingElements
         private void InitLocalization()
         {
             Text = Strings.MapList.title;
-            btnChronological.Text = Strings.MapList.chronological;
+            btnAlphabetical.Text = Strings.MapList.alphabetical;
             toolSelectMap.Text = Strings.MapList.selectcurrent;
             btnNewMap.Text = Strings.MapList.newmap;
             btnNewFolder.Text = Strings.MapList.newfolder;
@@ -136,10 +136,10 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void btnChronological_Click(object sender, EventArgs e)
+        private void btnAlphabetical_Click(object sender, EventArgs e)
         {
-            btnChronological.Checked = !btnChronological.Checked;
-            mapTreeList.Chronological = btnChronological.Checked;
+            btnAlphabetical.Checked = !btnAlphabetical.Checked;
+            mapTreeList.Chronological = btnAlphabetical.Checked;
             mapTreeList.UpdateMapList();
         }
 
