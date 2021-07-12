@@ -580,7 +580,6 @@ namespace Intersect.Editor.Forms
             this.importMapToolStripMenuItem.Name = "importMapToolStripMenuItem";
             this.importMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.importMapToolStripMenuItem.Text = "Import Map";
-            this.importMapToolStripMenuItem.Visible = false;
             this.importMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
             // 
             // exportMapToolStripMenuItem
@@ -589,7 +588,6 @@ namespace Intersect.Editor.Forms
             this.exportMapToolStripMenuItem.Name = "exportMapToolStripMenuItem";
             this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.exportMapToolStripMenuItem.Text = "Export Map";
-            this.exportMapToolStripMenuItem.Visible = false;
             this.exportMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem

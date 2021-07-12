@@ -26,6 +26,10 @@ namespace Intersect.Editor.Maps
 
         private MapSaveState mLoadedState;
 
+        //Temporary json variables used for importing and exporting maps.
+        public string AttributeJson;
+        public string LayersJson;
+
         public MapInstance(Guid id) : base(id)
         {
             lock (MapLock)
@@ -127,6 +131,11 @@ namespace Intersect.Editor.Maps
         public byte[] GenerateTileData()
         {
             return LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
+        }
+
+        public void DecompressTileData()
+        {
+            Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(TileData), mJsonSerializerSettings);
         }
 
         public bool Changed()
