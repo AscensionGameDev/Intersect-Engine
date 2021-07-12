@@ -107,7 +107,7 @@ namespace Intersect.Client.Core
                 Globals.InputManager.Update();
                 Audio.Update();
 
-                Globals.OnLifecycleUpdate();
+                Globals.OnGameUpdate();
             }
         }
 

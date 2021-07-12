@@ -21,19 +21,19 @@ namespace Intersect.Client.Plugins.Interfaces
         LifecycleChangeStateArgs lifecycleChangeStateArgs
     );
 
-    public class LifecycleUpdateArgs : EventArgs
+    public class GameUpdateArgs : EventArgs
     {
         public GameStates State { get; }
 
-        public LifecycleUpdateArgs(GameStates state)
+        public GameUpdateArgs(GameStates state)
         {
             State = state;
         }
     }
 
-    public delegate void LifecycleUpdateHandler(
+    public delegate void GameUpdateHandler(
         IClientPluginContext context,
-        LifecycleUpdateArgs lifecycleUpdateArgs
+        GameUpdateArgs GameUpdateArgs
     );
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace Intersect.Client.Plugins.Interfaces
         /// <summary>
         /// Lifecycle update event.
         /// </summary>
-        event LifecycleUpdateHandler LifecycleUpdate;
+        event GameUpdateHandler GameUpdate;
 
         /// <summary>
         /// A reference to the currently active interface if one is loaded.
@@ -64,9 +64,9 @@ namespace Intersect.Client.Plugins.Interfaces
         void OnLifecycleChangeState(GameStates state);
 
         /// <summary>
-        /// Invokes <see cref="LifecycleUpdate"/> handlers for <paramref name="state"/>.
+        /// Invokes <see cref="GameUpdate"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
-        void OnLifecycleUpdate(GameStates state);
+        void OnGameUpdate(GameStates state);
     }
 }

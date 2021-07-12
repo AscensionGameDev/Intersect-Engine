@@ -12,7 +12,7 @@ namespace Intersect.Client.Plugins.Helpers
         public event LifecycleChangeStateHandler LifecycleChangeState;
 
         /// <inheritdoc />
-        public event LifecycleUpdateHandler LifecycleUpdate;
+        public event GameUpdateHandler GameUpdate;
 
         internal ClientLifecycleHelper(IClientPluginContext context) : base(context)
         {
@@ -36,10 +36,10 @@ namespace Intersect.Client.Plugins.Helpers
         }
 
         /// <inheritdoc />
-        public void OnLifecycleUpdate(GameStates state)
+        public void OnGameUpdate(GameStates state)
         {
-            var lifecycleUpdateArgs = new LifecycleUpdateArgs(state);
-            LifecycleUpdate?.Invoke(Context, lifecycleUpdateArgs);
+            var GameUpdateArgs = new GameUpdateArgs(state);
+            GameUpdate?.Invoke(Context, GameUpdateArgs);
         }
     }
 }

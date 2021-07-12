@@ -71,10 +71,10 @@ namespace Intersect.Client.General
             );
         }
 
-        internal static void OnLifecycleUpdate()
+        internal static void OnGameUpdate()
         {
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnLifecycleUpdate(GameState)
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState)
             );
         }
 
