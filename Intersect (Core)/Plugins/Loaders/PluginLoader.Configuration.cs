@@ -53,6 +53,15 @@ namespace Intersect.Plugins.Loaders
             {
                 try
                 {
+                    if (!File.Exists(configurationFilePath))
+                    {
+                        File.WriteAllText(
+                            configurationFilePath,
+                            JsonConvert.SerializeObject(configuration, Formatting.Indented),
+                            Encoding.UTF8
+                        );
+                    }
+
                     if (File.Exists(configurationFilePath))
                     {
                         serializedOldConfiguration = File.ReadAllText(configurationFilePath, Encoding.UTF8);
