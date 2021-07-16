@@ -324,8 +324,8 @@ namespace Intersect.Server.Entities
                         PacketSender.SendEntityStats(this);
                     }
 
-                    //Regen Timers
-                    if (timeMs > CombatTimer && timeMs > RegenTimer)
+                    //Regen Timers and regen in combat validation
+                    if ((timeMs > CombatTimer || Options.CombatRegen) && timeMs > RegenTimer)
                     {
                         ProcessRegen();
                         RegenTimer = timeMs + Options.RegenTime;
