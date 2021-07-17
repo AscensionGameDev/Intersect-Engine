@@ -33,7 +33,7 @@ Write-Host "Building version " $version
 nuget pack .\Intersect.Client.Framework\Intersect.Client.Framework.nuspec -OutputDirectory .\build\release\ -Version $version
 nuget pack .\Intersect.Server.Framework\Intersect.Server.Framework.nuspec -OutputDirectory .\build\release\ -Version $version
 
-if ($development -and $copyTo -ne "")
+if ($copyTo -ne "")
 {
     cp .\build\release\AscensionGameDev.Intersect.Client.Framework.$version.nupkg $copyTo
     cp .\build\release\AscensionGameDev.Intersect.Server.Framework.$version.nupkg $copyTo

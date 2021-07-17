@@ -5,7 +5,7 @@
       **/CommandLine.*;
       **/Intersect Client Framework.*;
       **/Intersect Core.*;
-      **/Intersect.Server.Framework.*
+      **/Intersect.Server.Framework.*;
       **/MessagePack.*;
       **/MessagePack.Annotations.*;
       **/Microsoft.Bcl.AsyncInterfaces.*;
