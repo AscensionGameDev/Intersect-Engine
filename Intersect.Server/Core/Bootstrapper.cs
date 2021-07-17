@@ -64,17 +64,17 @@ namespace Intersect.Server.Core
             }
 
             var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
-            var networkHelper = new NetworkHelper(packetTypeRegistry, packetHandlerRegistry);
+            var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
 
             FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(
                 PluginBootstrapContext.CreateFactory(
                     parsedArguments.Args ?? Array.Empty<string>(),
                     parsedArguments.Parser,
-                    networkHelper
+                    packetHelper
                 )
             );
 
-            Context = new ServerContext(parsedArguments.CommandLineOptions, logger, networkHelper);
+            Context = new ServerContext(parsedArguments.CommandLineOptions, logger, packetHelper);
             var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())

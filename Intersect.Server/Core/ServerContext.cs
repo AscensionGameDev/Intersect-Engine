@@ -40,8 +40,8 @@ namespace Intersect.Server.Core
     /// </summary>
     internal sealed class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
-        internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, INetworkHelper networkHelper) : base(
-            startupOptions, logger, networkHelper
+        internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
+            startupOptions, logger, packetHelper
         )
         {
             // Register the factory for creating service plugin contexts
@@ -54,7 +54,7 @@ namespace Intersect.Server.Core
 
             RestApi = new RestApi(startupOptions.ApiPort);
 
-            Network = CreateNetwork(networkHelper);
+            Network = CreateNetwork(packetHelper);
         }
 
         public IConsoleService ConsoleService => GetExpectedService<IConsoleService>();
@@ -177,7 +177,7 @@ namespace Intersect.Server.Core
                     }
                 }
 
-                NetworkHelper.HandlerRegistry.Dispose();
+                PacketHelper.HandlerRegistry.Dispose();
             }
 
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
@@ -199,7 +199,7 @@ namespace Intersect.Server.Core
 
         #region Network
 
-        private ServerNetwork CreateNetwork(INetworkHelper networkHelper)
+        private ServerNetwork CreateNetwork(IPacketHelper packetHelper)
         {
             ServerNetwork network;
 
@@ -216,14 +216,14 @@ namespace Intersect.Server.Core
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                network = new ServerNetwork(this, networkHelper, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                network = new ServerNetwork(this, packetHelper, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
             #endregion
 
             #region Configure Packet Handlers
 
-            var packetHandler = new PacketHandler(this, networkHelper.HandlerRegistry);
+            var packetHandler = new PacketHandler(this, packetHelper.HandlerRegistry);
             network.Handler = packetHandler.HandlePacket;
             network.PreProcessHandler = packetHandler.PreProcessPacket;
 

@@ -25,26 +25,26 @@ namespace Intersect.Examples.Plugin.Server
                 $@"{nameof(ExampleServerPluginEntry)}.{nameof(OnBootstrap)} writing to the plugin log!");
 
             context.Logging.Plugin.Info("Registering packets...");
-            if (!context.Network.TryRegisterPacketType<ExamplePluginClientPacket>())
+            if (!context.Packet.TryRegisterPacketType<ExamplePluginClientPacket>())
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginClientPacket)} packet.");
                 Environment.Exit(-3);
             }
 
-            if (!context.Network.TryRegisterPacketType<ExamplePluginServerPacket>())
+            if (!context.Packet.TryRegisterPacketType<ExamplePluginServerPacket>())
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginServerPacket)} packet.");
                 Environment.Exit(-3);
             }
 
             context.Logging.Plugin.Info("Registering packet handlers...");
-            if (!context.Network.TryRegisterPacketHandler<ExamplePluginClientPacketHandler, ExamplePluginClientPacket>(out _))
+            if (!context.Packet.TryRegisterPacketHandler<ExamplePluginClientPacketHandler, ExamplePluginClientPacket>(out _))
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginClientPacketHandler)} packet handler.");
                 Environment.Exit(-4);
             }
 
-            if (!context.Network.TryRegisterPacketPostHook<ExamplePluginLoginPostHook, LoginPacket>(out _))
+            if (!context.Packet.TryRegisterPacketPostHook<ExamplePluginLoginPostHook, LoginPacket>(out _))
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginLoginPostHook)} packet post-hook handler.");
                 Environment.Exit(-4);

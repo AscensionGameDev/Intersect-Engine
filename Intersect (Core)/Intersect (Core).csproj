@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -550,8 +550,8 @@
     <Compile Include="Plugins\Helpers\CommandLineHelper.cs" />
     <Compile Include="Plugins\Helpers\ContextHelper.cs" />
     <Compile Include="Plugins\Helpers\EmbeddedResourceHelper.cs" />
-    <Compile Include="Plugins\Helpers\NetworkHelper.cs" />
-    <Compile Include="Plugins\Interfaces\INetworkHelper.cs" />
+    <Compile Include="Plugins\Helpers\PacketHelper.cs" />
+    <Compile Include="Plugins\Interfaces\IPacketHelper.cs" />
     <Compile Include="Plugins\Helpers\LoggingHelper.cs" />
     <Compile Include="Plugins\Contexts\PluginBootstrapContext.cs" />
     <Compile Include="Plugins\Contexts\PluginContext.cs" />

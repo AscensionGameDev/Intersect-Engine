@@ -44,9 +44,9 @@ namespace Intersect.Editor.Networking
                 }
 
                 var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
-                var networkHelper = new NetworkHelper(packetTypeRegistry, packetHandlerRegistry);
-                PackedIntersectPacket.AddKnownTypes(networkHelper.AvailablePacketTypes);
-                var virtualEditorContext = new VirtualEditorContext(networkHelper, logger);
+                var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
+                PackedIntersectPacket.AddKnownTypes(packetHelper.AvailablePacketTypes);
+                var virtualEditorContext = new VirtualEditorContext(packetHelper, logger);
                 PacketHandler = new PacketHandler(virtualEditorContext, packetHandlerRegistry);
 
                 var config = new NetworkConfiguration(
@@ -58,7 +58,7 @@ namespace Intersect.Editor.Networking
                 {
                     var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                     Debug.Assert(rsaKey != null, "rsaKey != null");
-                    EditorLidgrenNetwork = new ClientNetwork(networkHelper, config, rsaKey.Parameters);
+                    EditorLidgrenNetwork = new ClientNetwork(packetHelper, config, rsaKey.Parameters);
                 }
 
                 EditorLidgrenNetwork.Handler = PacketHandler.HandlePacket;
@@ -141,9 +141,9 @@ namespace Intersect.Editor.Networking
 
     internal sealed class VirtualEditorContext : IApplicationContext
     {
-        internal VirtualEditorContext(NetworkHelper networkHelper, Logger logger)
+        internal VirtualEditorContext(PacketHelper packetHelper, Logger logger)
         {
-            NetworkHelper = networkHelper;
+            PacketHelper = packetHelper;
             Logger = logger;
         }
 
@@ -161,7 +161,7 @@ namespace Intersect.Editor.Networking
 
         public List<IApplicationService> Services { get; } = new List<IApplicationService>();
 
-        public INetworkHelper NetworkHelper { get; }
+        public IPacketHelper PacketHelper { get; }
 
         public void Dispose() => IsDisposed = true;
 

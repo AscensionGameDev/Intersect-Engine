@@ -13,8 +13,8 @@ namespace Intersect.Plugins
         ICommandLineHelper CommandLine { get; }
 
         /// <summary>
-        /// The <see cref="INetworkHelper"/> of the current plugin.
+        /// The <see cref="IPacketHelper"/> of the current plugin.
         /// </summary>
-        INetworkHelper Network { get; }
+        IPacketHelper Packet { get; }
     }
 }

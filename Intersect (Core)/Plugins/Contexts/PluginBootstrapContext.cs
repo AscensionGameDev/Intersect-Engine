@@ -21,10 +21,10 @@ namespace Intersect.Plugins.Contexts
         /// </summary>
         /// <param name="args">the startup arguments that were parsed</param>
         /// <param name="parser">the <see cref="Parser"/> used to parse <paramref name="args"/></param>
-        /// <param name="networkHelper"></param>
+        /// <param name="packetHelper"></param>
         /// <returns>a <see cref="IFactory{TValue}"/> instance</returns>
         public static IFactory<IPluginBootstrapContext>
-            CreateFactory(string[] args, Parser parser, INetworkHelper networkHelper) => new Factory(args, parser, networkHelper);
+            CreateFactory(string[] args, Parser parser, IPacketHelper packetHelper) => new Factory(args, parser, packetHelper);
 
         /// <summary>
         /// Factory implementation for <see cref="IPluginBootstrapContext"/>.
@@ -35,19 +35,19 @@ namespace Intersect.Plugins.Contexts
 
             private readonly Parser mParser;
 
-            private readonly INetworkHelper mNetworkHelper;
+            private readonly IPacketHelper mPacketHelper;
 
             /// <summary>
             /// Initializes a <see cref="Factory"/> for <see cref="IPluginBootstrapContext"/>.
             /// </summary>
             /// <param name="args">the startup arguments that were parsed</param>
             /// <param name="parser">the <see cref="Parser"/> used to parse <paramref name="args"/></param>
-            /// <param name="networkHelper"></param>
-            public Factory(string[] args, Parser parser, INetworkHelper networkHelper)
+            /// <param name="packetHelper"></param>
+            public Factory(string[] args, Parser parser, IPacketHelper packetHelper)
             {
                 mArgs = args;
                 mParser = parser;
-                mNetworkHelper = networkHelper;
+                mPacketHelper = packetHelper;
             }
 
             /// <inheritdoc />
@@ -68,7 +68,7 @@ namespace Intersect.Plugins.Contexts
                     );
                 }
 
-                return new PluginBootstrapContext(mArgs, mParser, plugin, mNetworkHelper);
+                return new PluginBootstrapContext(mArgs, mParser, plugin, mPacketHelper);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Intersect.Plugins.Contexts
         public ICommandLineHelper CommandLine { get; }
 
         /// <inheritdoc />
-        public INetworkHelper Network { get; }
+        public IPacketHelper Packet { get; }
 
         /// <inheritdoc />
         public Assembly Assembly => Plugin.Reference.Assembly;
@@ -95,13 +95,13 @@ namespace Intersect.Plugins.Contexts
         /// <inheritdoc />
         public IManifestHelper Manifest => Plugin.Manifest;
 
-        private PluginBootstrapContext(string[] args, Parser parser, Plugin plugin, INetworkHelper parentNetworkHelper)
+        private PluginBootstrapContext(string[] args, Parser parser, Plugin plugin, IPacketHelper parentPacketHelper)
         {
             Plugin = plugin;
 
             CommandLine = new CommandLineHelper(plugin.Logging.Plugin, args, parser);
             EmbeddedResources = new EmbeddedResourceHelper(Assembly);
-            Network = new NetworkHelper(parentNetworkHelper);
+            Packet = new PacketHelper(parentPacketHelper);
         }
 
         /// <inheritdoc />

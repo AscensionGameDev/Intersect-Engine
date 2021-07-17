@@ -51,20 +51,20 @@ namespace Intersect.Examples.Plugin.Client
             }
 
             context.Logging.Plugin.Info("Registering packets...");
-            if (!context.Network.TryRegisterPacketType<ExamplePluginClientPacket>())
+            if (!context.Packet.TryRegisterPacketType<ExamplePluginClientPacket>())
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginClientPacket)} packet.");
                 Environment.Exit(-3);
             }
 
-            if (!context.Network.TryRegisterPacketType<ExamplePluginServerPacket>())
+            if (!context.Packet.TryRegisterPacketType<ExamplePluginServerPacket>())
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginServerPacket)} packet.");
                 Environment.Exit(-3);
             }
 
             context.Logging.Plugin.Info("Registering packet handlers...");
-            if (!context.Network.TryRegisterPacketHandler<ExamplePluginServerPacketHandler, ExamplePluginServerPacket>(out _))
+            if (!context.Packet.TryRegisterPacketHandler<ExamplePluginServerPacketHandler, ExamplePluginServerPacket>(out _))
             {
                 context.Logging.Plugin.Error($"Failed to register {nameof(ExamplePluginServerPacketHandler)} packet handler.");
                 Environment.Exit(-4);
@@ -87,6 +87,8 @@ namespace Intersect.Examples.Plugin.Client
                 context, ContentTypes.Interface, "Assets/join-our-discord.png");
 
             context.Lifecycle.LifecycleChangeState += HandleLifecycleChangeState;
+
+            context.Lifecycle.GameUpdate += HandleGameUpdate;
         }
 
         /// <inheritdoc />
@@ -99,6 +101,19 @@ namespace Intersect.Examples.Plugin.Client
                 $@"{nameof(ExampleClientPluginEntry)}.{nameof(OnStop)} writing to the plugin log!");
         }
 
+        private bool wasConnected = false;
+        
+        private void HandleGameUpdate([ValidatedNotNull] IClientPluginContext context,
+            [ValidatedNotNull] GameUpdateArgs gameUpdateArgs)
+        {
+            if (!wasConnected && context.Network.IsConnected)
+            {
+                wasConnected = true;
+
+                context.Network.PacketSender.Send(new ExamplePluginClientPacket("This is an unprompted client packet."));
+            }
+        }
+        
         private void HandleLifecycleChangeState([ValidatedNotNull] IClientPluginContext context,
             [ValidatedNotNull] LifecycleChangeStateArgs lifecycleChangeStateArgs)
         {
