@@ -46,7 +46,7 @@ namespace Intersect.Client.MonoGame.Network
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                ClientLidgrenNetwork = new ClientNetwork(Context.NetworkHelper, config, rsaKey.Parameters);
+                ClientLidgrenNetwork = new ClientNetwork(Context.PacketHelper, config, rsaKey.Parameters);
             }
 
             if (ClientLidgrenNetwork == null)

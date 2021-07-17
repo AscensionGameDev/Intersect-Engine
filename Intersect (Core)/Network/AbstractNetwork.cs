@@ -18,12 +18,12 @@ namespace Intersect.Network
 
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
 
-        protected AbstractNetwork(INetworkHelper networkHelper, NetworkConfiguration configuration)
+        protected AbstractNetwork(IPacketHelper packetHelper, NetworkConfiguration configuration)
         {
             mDisposed = false;
             mDisposeLock = new object();
 
-            Helper = networkHelper ?? throw new ArgumentNullException(nameof(networkHelper));
+            Helper = packetHelper ?? throw new ArgumentNullException(nameof(packetHelper));
 
             mNetworkLayerInterfaces = new List<INetworkLayerInterface>();
 
@@ -37,7 +37,7 @@ namespace Intersect.Network
             Configuration = configuration;
         }
 
-        public INetworkHelper Helper { get; }
+        public IPacketHelper Helper { get; }
 
         public ICollection<IConnection> Connections => ConnectionLookup.Values;
 

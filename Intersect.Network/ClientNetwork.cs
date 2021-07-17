@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 
 using Intersect.Logging;
@@ -18,15 +19,14 @@ namespace Intersect.Network
 
         private readonly LidgrenInterface mLidgrenInterface;
 
-        public ClientNetwork(INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
-            networkHelper,
+        public ClientNetwork(IPacketHelper packetHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
+            packetHelper,
             configuration
         )
         {
             Guid = Guid.Empty;
 
             IsConnected = false;
-            IsServerOnline = false;
 
             mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
             mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
@@ -44,9 +44,11 @@ namespace Intersect.Network
 
         public HandleConnectionEvent OnDisconnected { get; set; }
 
+        public IConnection Connection => Connections.FirstOrDefault();
+
         public bool IsConnected { get; private set; }
 
-        public bool IsServerOnline { get; }
+        public bool IsServerOnline => IsConnected;
 
         public int Ping
         {

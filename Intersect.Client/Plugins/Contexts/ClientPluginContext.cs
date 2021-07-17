@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.General;
 using Intersect.Client.Plugins.Helpers;
 using Intersect.Client.Plugins.Interfaces;
@@ -40,12 +41,10 @@ namespace Intersect.Client.Plugins.Contexts
         }
 
         /// <inheritdoc />
-        public override IClientLifecycleHelper Lifecycle { get; }
-
-        /// <inheritdoc />
         private ClientPluginContext(Plugin plugin) : base(plugin)
         {
             Lifecycle = new ClientLifecycleHelper(this);
+            Network = new ClientNetworkHelper();
         }
 
         /// <inheritdoc />
@@ -53,5 +52,12 @@ namespace Intersect.Client.Plugins.Contexts
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the content manager before it was created."
                                                  );
+
+
+        /// <inheritdoc />
+        public override IClientLifecycleHelper Lifecycle { get; }
+        
+        /// <inheritdoc />
+        public IClientNetworkHelper Network { get; }
     }
 }

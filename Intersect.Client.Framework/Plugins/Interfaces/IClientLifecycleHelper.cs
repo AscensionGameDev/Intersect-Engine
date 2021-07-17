@@ -33,7 +33,7 @@ namespace Intersect.Client.Plugins.Interfaces
 
     public delegate void GameUpdateHandler(
         IClientPluginContext context,
-        GameUpdateArgs GameUpdateArgs
+        GameUpdateArgs gameUpdateArgs
     );
 
     /// <summary>
