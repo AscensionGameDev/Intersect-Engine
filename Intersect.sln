@@ -31,6 +31,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Building", "Inter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Server.Framework", "Intersect.Server.Framework\Intersect.Server.Framework.csproj", "{4E38C9B0-DF8C-44E4-9704-D6B05E092733}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{0C9FAC99-60FC-4063-A15F-7A200096F67C}"
+ProjectSection(SolutionItems) = preProject
+	targets\AscensionGameDev.Intersect.Client.Framework.targets = targets\AscensionGameDev.Intersect.Client.Framework.targets
+	targets\AscensionGameDev.Intersect.CommonVariables.targets = targets\AscensionGameDev.Intersect.CommonVariables.targets
+	targets\AscensionGameDev.Intersect.Server.Framework.targets = targets\AscensionGameDev.Intersect.Server.Framework.targets
+	targets\FindIntersect.targets = targets\FindIntersect.targets
+	targets\Intersect.Building.KeyGeneration.msbuild = targets\Intersect.Building.KeyGeneration.msbuild
+	targets\Intersect.targets = targets\Intersect.targets
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
