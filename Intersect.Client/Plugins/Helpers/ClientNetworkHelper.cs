@@ -11,12 +11,7 @@ namespace Intersect.Client.Plugins.Helpers
     /// </summary>
     public sealed class ClientNetworkHelper : IClientNetworkHelper
     {
-        private IClient Client => MonoSocket.ClientLidgrenNetwork;
-        
-        public ClientNetworkHelper(IPacketSender packetSender)
-        {
-            PacketSender = packetSender;
-        }
+        private static IClient Client => MonoSocket.ClientLidgrenNetwork;
 
         /// <inheritdoc />
         public bool IsConnected => Client?.IsConnected ?? false;
@@ -25,7 +20,7 @@ namespace Intersect.Client.Plugins.Helpers
         public bool IsServerOnline => Client?.IsServerOnline ?? false;
 
         /// <inheritdoc />
-        public IPacketSender PacketSender { get; }
+        public IPacketSender PacketSender => Networking.Network.PacketHandler?.VirtualSender;
 
         /// <inheritdoc />
         public ConnectionStatistics Statistics => Client?.Connection?.Statistics;

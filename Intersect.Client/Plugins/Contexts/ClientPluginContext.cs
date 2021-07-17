@@ -44,7 +44,7 @@ namespace Intersect.Client.Plugins.Contexts
         private ClientPluginContext(Plugin plugin) : base(plugin)
         {
             Lifecycle = new ClientLifecycleHelper(this);
-            Network = new ClientNetworkHelper(Networking.Network.PacketHandler.VirtualSender);
+            Network = new ClientNetworkHelper();
         }
 
         /// <inheritdoc />
