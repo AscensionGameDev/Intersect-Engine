@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
 
@@ -13,5 +14,10 @@ namespace Intersect.Client.Plugins
         /// The <see cref="IContentManager"/> of the current plugin.
         /// </summary>
         IContentManager ContentManager { get; }
+        
+        /// <summary>
+        /// The <see cref="IClientNetworkHelper"/> of the current plugin.
+        /// </summary>
+        IClientNetworkHelper Network { get; }
     }
 }

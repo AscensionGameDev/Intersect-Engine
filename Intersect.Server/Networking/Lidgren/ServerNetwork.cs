@@ -32,8 +32,8 @@ namespace Intersect.Server.Networking.Lidgren
             }
         );
 
-        internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
-            networkHelper, configuration
+        internal ServerNetwork(IServerContext context, IPacketHelper packetHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
+            packetHelper, configuration
         )
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));

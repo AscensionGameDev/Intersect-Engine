@@ -45,7 +45,7 @@ namespace Intersect.Core
         /// <summary>
         /// The network helper for the application.
         /// </summary>
-        INetworkHelper NetworkHelper { get; }
+        IPacketHelper PacketHelper { get; }
 
         /// <summary>
         /// The <see cref="IApplicationService"/>s currently registered.

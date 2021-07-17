@@ -21,8 +21,8 @@ namespace Intersect.Client.Core
     {
         private IPlatformRunner mPlatformRunner;
 
-        internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, INetworkHelper networkHelper) : base(
-            startupOptions, logger, networkHelper
+        internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
+            startupOptions, logger, packetHelper
         )
         {
             FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
@@ -39,7 +39,7 @@ namespace Intersect.Client.Core
         /// <inheritdoc />
         protected override void InternalStart()
         {
-            Networking.Network.PacketHandler = new PacketHandler(this, NetworkHelper.HandlerRegistry);
+            Networking.Network.PacketHandler = new PacketHandler(this, PacketHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
             PlatformRunner.Start(this, PostStartup);
         }
@@ -71,7 +71,7 @@ namespace Intersect.Client.Core
 
             if (disposing)
             {
-                NetworkHelper.HandlerRegistry.Dispose();
+                PacketHelper.HandlerRegistry.Dispose();
             }
         }
     }

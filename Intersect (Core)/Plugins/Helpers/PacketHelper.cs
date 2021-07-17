@@ -7,13 +7,16 @@ using System.Collections.Generic;
 
 namespace Intersect.Plugins.Helpers
 {
-    public sealed class NetworkHelper : INetworkHelper
+    /// <summary>
+    /// Implementation for <see cref="IPacketHelper"/>.
+    /// </summary>
+    public sealed class PacketHelper : IPacketHelper
     {
-        private NetworkHelper Parent { get; }
+        private PacketHelper Parent { get; }
 
         private List<Type> PluginPacketTypes { get; }
 
-        public NetworkHelper(PacketTypeRegistry packetTypeRegistry, PacketHandlerRegistry packetHandlerRegistry)
+        public PacketHelper(PacketTypeRegistry packetTypeRegistry, PacketHandlerRegistry packetHandlerRegistry)
         {
             Parent = null;
 
@@ -23,18 +26,18 @@ namespace Intersect.Plugins.Helpers
             PluginPacketTypes = new List<Type>();
         }
 
-        public NetworkHelper(INetworkHelper parentINetworkHelper)
+        public PacketHelper(IPacketHelper parentPacketHelper)
         {
-            if (default == parentINetworkHelper)
+            if (default == parentPacketHelper)
             {
-                throw new ArgumentNullException(nameof(parentINetworkHelper));
+                throw new ArgumentNullException(nameof(parentPacketHelper));
             }
 
-            if (!(parentINetworkHelper is NetworkHelper parentNetworkHelper))
+            if (!(parentPacketHelper is PacketHelper parentNetworkHelper))
             {
                 throw new ArgumentException(
-                    $"This constructor can only be used if {nameof(parentINetworkHelper)} is a {typeof(NetworkHelper).FullName}.",
-                    nameof(parentINetworkHelper)
+                    $"This constructor can only be used if {nameof(parentPacketHelper)} is a {typeof(PacketHelper).FullName}.",
+                    nameof(parentPacketHelper)
                 );
             }
 
