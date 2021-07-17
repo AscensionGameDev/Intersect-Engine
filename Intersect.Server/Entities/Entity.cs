@@ -325,7 +325,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Regen Timers and regen in combat validation
-                    if ((timeMs > CombatTimer || Options.CombatRegen) && timeMs > RegenTimer)
+                    if ((timeMs > CombatTimer || Options.Instance.CombatOpts.RegenVitalsInCombat) && timeMs > RegenTimer)
                     {
                         ProcessRegen();
                         RegenTimer = timeMs + Options.RegenTime;

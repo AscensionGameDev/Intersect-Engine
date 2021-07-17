@@ -16,9 +16,7 @@
 
         //Combat
         public int RegenTime = 3000; //3 seconds
-
-        public bool CombatRegen = false; // Enable or disable regeneration in combat.
-
+        
         public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
 
         //Spells
@@ -62,6 +60,11 @@
         /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
         /// </summary>
         public int MaxPlayerAutoTargetRadius = 15;
+        
+        /// <summary>
+        /// If enabled this allows regenerate vitals in combat
+        /// </summary>
+        public bool RegenVitalsInCombat = false;
     }
 
 }
