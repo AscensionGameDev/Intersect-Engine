@@ -2045,6 +2045,31 @@ namespace Intersect.Client.Networking
             );
         }
 
+        // Map fading in/out packet
+        public void HandlePacket(IPacketSender packetSender, MapFadePacket packet)
+        {
+            if (packet.FadeIn)
+            {
+                if (Fade.GetFade() > 0)
+                {
+                    Fade.FadeIn(true);
+                }
+                Globals.InMapTransition = false;
+            } else
+            {
+                Fade.FadeOut(true, true);
+                Globals.InMapTransition = true;
+            }
+        }
+
+        // Update future warp position packet
+        public void HandlePacket(IPacketSender packetSender, UpdateFutureWarpPacket packet)
+        {
+            Globals.futureWarpMapId = packet.NewMapId;
+            Globals.futureWarpX = packet.X;
+            Globals.futureWarpY = packet.Y;
+            Globals.futureWarpDir = packet.Dir;
+        }
     }
 
 }

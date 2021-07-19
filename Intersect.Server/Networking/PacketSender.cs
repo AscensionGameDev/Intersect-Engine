@@ -1982,6 +1982,16 @@ namespace Intersect.Server.Networking
             player.SendPacket(new FriendRequestPacket(partner.Id, partner.Name));
         }
 
+        public static void SendFadePacket(Client client, bool fadeIn)
+        {
+            client.Send(new MapFadePacket(fadeIn));
+        }
+
+        public static void SendUpdateFutureWarpPacket(Client client, Guid mapId, float x, float y, byte dir)
+        {
+            client.Send(new UpdateFutureWarpPacket(mapId, x, y, dir));
+        }
+
         //PasswordResetResultPacket
         public static void SendPasswordResetResult(Client client, bool result)
         {

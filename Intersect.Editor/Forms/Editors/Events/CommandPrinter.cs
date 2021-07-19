@@ -923,7 +923,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
 
             return Strings.EventCommandList.warp.ToString(
-                mapName, command.X, command.Y, Strings.Directions.dir[(int) command.Direction - 1]
+                mapName, command.X, command.Y, Strings.Directions.dir[(int) command.Direction - 1], command.FadeOnWarp.ToString()
             );
         }
 

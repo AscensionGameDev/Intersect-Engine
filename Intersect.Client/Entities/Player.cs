@@ -1641,6 +1641,12 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            // Check if the player is currently transitioning between maps with a fade
+            if (Globals.InMapTransition == true)
+            {
+                return;
+            }
+
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {

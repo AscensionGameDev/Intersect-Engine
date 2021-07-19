@@ -425,6 +425,10 @@ namespace Intersect.Client.Networking
             }
         }
 
+        public static void SendMapTransitionReady(Guid newMapId, float x, float y, byte dir)
+        {
+            Network.SendPacket(new MapTransitionReadyPacket(newMapId, x, y, dir));
+        }
     }
 
 }

@@ -123,6 +123,8 @@ namespace Intersect.GameObjects.Maps
 
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
 
+        public bool FadeOnWarp { get; set; } = false;
+
         public override MapAttribute Clone()
         {
             var att = (MapWarpAttribute) base.Clone();
@@ -130,7 +132,7 @@ namespace Intersect.GameObjects.Maps
             att.X = X;
             att.Y = Y;
             att.Direction = Direction;
-
+            att.FadeOnWarp = FadeOnWarp;
             return att;
         }
 

@@ -593,6 +593,7 @@ namespace Intersect.GameObjects.Events.Commands
 
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
 
+        public bool FadeOnWarp { get; set; } = false;
     }
 
     public class SetMoveRouteCommand : EventCommand
