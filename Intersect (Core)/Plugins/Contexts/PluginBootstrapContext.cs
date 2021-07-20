@@ -53,9 +53,9 @@ namespace Intersect.Plugins.Contexts
             /// <inheritdoc />
             public IPluginBootstrapContext Create(params object[] args)
             {
-                if (args.Length < 1)
+                if (args.Length != 1)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(args), $"{nameof(args)} should have 1 arguments.");
+                    throw new ArgumentOutOfRangeException(nameof(args), $"{nameof(args)} should have 1 argument.");
                 }
 
                 if (!(args[0] is Plugin plugin))

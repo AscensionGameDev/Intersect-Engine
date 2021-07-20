@@ -3,6 +3,8 @@
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Network;
+using Intersect.Plugins.Helpers;
+using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Plugins.Helpers
 {
@@ -13,6 +15,14 @@ namespace Intersect.Client.Plugins.Helpers
     {
         private static IClient Client => MonoSocket.ClientLidgrenNetwork;
 
+        public ClientNetworkHelper(IPacketHelper packetHelper)
+        {
+            PacketHelper = packetHelper ?? throw new ArgumentNullException(nameof(packetHelper));
+            PacketSender = new PluginPacketSender(PacketHelper);
+        }
+        
+        private IPacketHelper PacketHelper { get; }
+
         /// <inheritdoc />
         public bool IsConnected => Client?.IsConnected ?? false;
 
@@ -20,7 +30,7 @@ namespace Intersect.Client.Plugins.Helpers
         public bool IsServerOnline => Client?.IsServerOnline ?? false;
 
         /// <inheritdoc />
-        public IPacketSender PacketSender => Networking.Network.PacketHandler?.VirtualSender;
+        public IPacketSender PacketSender { get; }
 
         /// <inheritdoc />
         public ConnectionStatistics Statistics => Client?.Connection?.Statistics;
