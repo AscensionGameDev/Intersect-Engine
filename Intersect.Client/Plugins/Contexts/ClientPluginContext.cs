@@ -26,9 +26,9 @@ namespace Intersect.Client.Plugins.Contexts
             /// <inheritdoc />
             public IPluginContext Create(params object[] args)
             {
-                if (args.Length < 1)
+                if (args.Length != 2)
                 {
-                    throw new ArgumentException($@"Need to provide an instance of {nameof(IManifestHelper)}.");
+                    throw new ArgumentOutOfRangeException(nameof(args), $"{nameof(args)} should have 2 arguments.");
                 }
 
                 if (!(args[0] is Plugin plugin))
@@ -36,15 +36,20 @@ namespace Intersect.Client.Plugins.Contexts
                     throw new ArgumentException($@"First argument needs to be non-null and of type {nameof(Plugin)}.");
                 }
 
-                return new ClientPluginContext(plugin);
+                if (!(args[1] is IPacketHelper packetHelper))
+                {
+                    throw new ArgumentException($@"Second argument needs to be non-null and of type {nameof(IPacketHelper)}.");
+                }
+
+                return new ClientPluginContext(plugin, packetHelper);
             }
         }
 
         /// <inheritdoc />
-        private ClientPluginContext(Plugin plugin) : base(plugin)
+        private ClientPluginContext(Plugin plugin, IPacketHelper packetHelper) : base(plugin)
         {
             Lifecycle = new ClientLifecycleHelper(this);
-            Network = new ClientNetworkHelper();
+            Network = new ClientNetworkHelper(packetHelper);
         }
 
         /// <inheritdoc />

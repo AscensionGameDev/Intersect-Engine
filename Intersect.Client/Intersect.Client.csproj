@@ -148,6 +148,7 @@
     <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
     <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Plugins\Helpers\ClientNetworkHelper.cs" />
+    <Compile Include="Plugins\Helpers\PluginPacketSender.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="MonoGame\Audio\MonoMusicSource.cs" />
