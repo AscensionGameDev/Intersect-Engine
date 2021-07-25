@@ -267,6 +267,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.PlaySound(mHoverSound);
         }
 
+        public void PlayClickSound()
+        {
+            base.PlaySound(mClickSound);
+        }
+
         public void ClearSounds()
         {
             mMouseUpSound = "";
@@ -550,6 +555,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetHoverSound(string sound)
         {
             mHoverSound = sound;
+        }
+
+        public void SetClickSound(string sound)
+        {
+            mClickSound = sound;
         }
 
     }
