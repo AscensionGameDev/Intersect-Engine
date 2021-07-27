@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
@@ -25,9 +26,15 @@ namespace Intersect.Client.Plugins.Interfaces
     {
         public GameStates State { get; }
 
-        public GameUpdateArgs(GameStates state)
+        public IEntity Player { get; }
+
+        public Dictionary<Guid, IEntity> KnownEntities { get; }
+
+        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities)
         {
             State = state;
+            Player = player;
+            KnownEntities = knownEntities;
         }
     }
 
@@ -95,7 +102,7 @@ namespace Intersect.Client.Plugins.Interfaces
         /// Invokes <see cref="GameUpdate"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
-        void OnGameUpdate(GameStates state);
+        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.

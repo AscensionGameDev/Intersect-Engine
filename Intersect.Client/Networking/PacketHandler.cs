@@ -1611,7 +1611,7 @@ namespace Intersect.Client.Networking
                 Globals.Entities[packet.EntityId]
                     .DashQueue.Enqueue(
                         new Dash(
-                            Globals.Entities[packet.EntityId], packet.EndMapId, packet.EndX, packet.EndY,
+                            Globals.Entities[packet.EntityId] as Entity, packet.EndMapId, packet.EndX, packet.EndY,
                             packet.DashTime, packet.Direction
                         )
                     );
@@ -2002,7 +2002,7 @@ namespace Intersect.Client.Networking
         {
             if (Globals.Entities.ContainsKey(packet.TargetId))
             { 
-                Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
+                Globals.Me.TryTarget(Globals.Entities[packet.TargetId] as Entity, true);
             }
         }
 

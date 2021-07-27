@@ -44,7 +44,7 @@ namespace Intersect.Client.General
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
-        public static Dictionary<Guid, Entity> Entities = new Dictionary<Guid, Entity>();
+        public static Dictionary<Guid, IEntity> Entities = new Dictionary<Guid, IEntity>();
 
         public static List<Guid> EntitiesToDispose = new List<Guid>();
 
@@ -75,7 +75,7 @@ namespace Intersect.Client.General
         internal static void OnGameUpdate()
         {
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState)
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, Globals.Entities)
             );
         }
 
@@ -181,7 +181,7 @@ namespace Intersect.Client.General
                 {
                     EntitiesToDispose.Remove(Entities[id].Id);
 
-                    return Entities[id];
+                    return Entities[id] as Entity;
                 }
 
                 Entities[id].Dispose();

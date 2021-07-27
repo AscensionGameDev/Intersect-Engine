@@ -3,6 +3,8 @@ using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins.Helpers;
+using System;
+using System.Collections.Generic;
 
 namespace Intersect.Client.Plugins.Helpers
 {
@@ -40,9 +42,9 @@ namespace Intersect.Client.Plugins.Helpers
         }
 
         /// <inheritdoc />
-        public void OnGameUpdate(GameStates state)
+        public void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities)
         {
-            var GameUpdateArgs = new GameUpdateArgs(state);
+            var GameUpdateArgs = new GameUpdateArgs(state, player, knownEntities);
             GameUpdate?.Invoke(Context, GameUpdateArgs);
         }
 

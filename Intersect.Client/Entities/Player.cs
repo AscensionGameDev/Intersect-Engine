@@ -77,7 +77,7 @@ namespace Intersect.Client.Entities
 
         Point mlastTargetScanLocation = new Point(-1, -1);
 
-        Dictionary<Entity, TargetInfo> mlastTargetList = new Dictionary<Entity, TargetInfo>(); // Entity, Last Time Selected
+        Dictionary<IEntity, TargetInfo> mlastTargetList = new Dictionary<IEntity, TargetInfo>(); // Entity, Last Time Selected
 
         Entity mLastEntitySelected = null;
 
@@ -960,7 +960,7 @@ namespace Intersect.Client.Entities
             }  
         }
 
-        protected int GetDistanceTo(Entity target)
+        protected int GetDistanceTo(IEntity target)
         {
             if (target != null)
             {
@@ -1076,7 +1076,7 @@ namespace Intersect.Client.Entities
             }
 
             // Find all valid entities in the direction we are facing.
-            var validEntities = Array.Empty<KeyValuePair<Entity, TargetInfo>>(); 
+            var validEntities = Array.Empty<KeyValuePair<IEntity, TargetInfo>>(); 
 
             // TODO: Expose option to users
             if (Globals.Database.TargetAccountDirection)
@@ -1118,7 +1118,7 @@ namespace Intersect.Client.Entities
 
             int currentDistance = 9999;
             long currentTime = Timing.Global.Milliseconds;
-            Entity currentEntity = mLastEntitySelected;
+            IEntity currentEntity = mLastEntitySelected;
             foreach(var entity in validEntities)
             {
                 if (currentEntity == entity.Key)
@@ -1169,11 +1169,11 @@ namespace Intersect.Client.Entities
             {
                 mlastTargetList[currentEntity].LastTimeSelected = Timing.Global.Milliseconds;
             }
-            mLastEntitySelected = currentEntity;
+            mLastEntitySelected = currentEntity as Entity;
 
             if (TargetIndex != currentEntity.Id)
             {
-                SetTargetBox(currentEntity);
+                SetTargetBox(currentEntity as Entity);
                 TargetIndex = currentEntity.Id;
                 TargetType = 0;
             } 
@@ -1387,7 +1387,7 @@ namespace Intersect.Client.Entities
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
             var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
 
-            Entity bestMatch = null;
+            IEntity bestMatch = null;
             var bestAreaMatch = 0f;
 
 
@@ -1436,7 +1436,7 @@ namespace Intersect.Client.Entities
                                     if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
                                     {
                                         bestAreaMatch = intersectRect.Width * intersectRect.Height;
-                                        bestMatch = en.Value as Entity;
+                                        bestMatch = en.Value;
                                     }
                                 }
                             }
@@ -1446,7 +1446,7 @@ namespace Intersect.Client.Entities
                                 var targetType = bestMatch is Event ? 1 : 0;
 
 
-                                SetTargetBox(bestMatch);
+                                SetTargetBox(bestMatch as Entity);
 
                                 if (bestMatch is Player)
                                 {
