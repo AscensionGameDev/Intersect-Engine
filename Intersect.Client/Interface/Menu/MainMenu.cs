@@ -72,7 +72,7 @@ namespace Intersect.Client.Interface.Menu
             mMenuCanvas = menuCanvas;
 
             var logo = new ImagePanel(menuCanvas, "Logo");
-            logo.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
+            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
@@ -124,7 +124,7 @@ namespace Intersect.Client.Interface.Menu
                 mOptionsButton.SetToolTipText(Strings.MainMenu.optionstooltip);
             }
 
-            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
+            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
             //Options Controls
             mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);

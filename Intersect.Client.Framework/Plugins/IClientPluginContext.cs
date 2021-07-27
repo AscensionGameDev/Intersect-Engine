@@ -21,6 +21,9 @@ namespace Intersect.Client.Plugins
         /// </summary>
         IClientNetworkHelper Network { get; }
 
+        /// <summary>
+        /// The current <see cref="GameRenderer"/> of the current client instance.
+        /// </summary>
         GameRenderer GameRenderer { get; }
     }
 }

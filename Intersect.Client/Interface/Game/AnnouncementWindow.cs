@@ -43,7 +43,7 @@ namespace Intersect.Client.Interface.Game
            mPicture = new ImagePanel(gameCanvas, "AnnouncementWindow");
            mLabel = new Label(mPicture, "AnnouncementLabel");
         
-           mPicture.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+           mPicture.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         /// <summary>

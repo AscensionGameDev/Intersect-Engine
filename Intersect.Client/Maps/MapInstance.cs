@@ -696,7 +696,7 @@ namespace Intersect.Client.Maps
                 {
                     for (var i = 0; i < mTileBuffers[drawLayer][Globals.AnimFrame].Length; i++)
                     {
-                        GameRenderer.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
+                        Graphics.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
                     }
                 }
             }
@@ -780,7 +780,7 @@ namespace Intersect.Client.Maps
                         var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                             ? CustomColors.Items.MapRarities[rarity]
                             : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
-                        var textSize = GameRenderer.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
                         var offsetY = (baseOffset * textSize.Y);
                         var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
                         var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
@@ -789,13 +789,13 @@ namespace Intersect.Client.Maps
                         if (color.Background != Color.Transparent)
                         {
                             Graphics.DrawGameTexture(
-                                GameRenderer.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                                Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                                 new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y), color.Background
                             );
                         }
 
                         // Finaly, draw the actual name!
-                        GameRenderer.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
+                        Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
 
                         baseOffset++;
                     }
@@ -912,7 +912,7 @@ namespace Intersect.Client.Maps
                         buffers = new GameTileBuffer[3];
                         for (var i = 0; i < 3; i++)
                         {
-                            buffers[i] = GameRenderer.Renderer.CreateTileBuffer();
+                            buffers[i] = Graphics.Renderer.CreateTileBuffer();
                         }
 
                         tileBuffers.Add(platformTex, buffers);
@@ -1114,7 +1114,7 @@ namespace Intersect.Client.Maps
                     var spawnTime = 25 + (int)(475 * (float)(1f - (float)(WeatherIntensity / 100f)));
                     spawnTime = (int)(spawnTime *
                                        (480000f /
-                                        (GameRenderer.Renderer.GetScreenWidth() * GameRenderer.Renderer.GetScreenHeight())));
+                                        (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
 
                     _weatherParticleSpawnTime = Globals.System.GetTimeMs() + spawnTime;
                 }
@@ -1284,8 +1284,8 @@ namespace Intersect.Client.Maps
                 );
 
                 var x = (int)Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].XOffset);
-                var textWidth = GameRenderer.Renderer.MeasureText(ActionMsgs[n].Msg, Graphics.ActionMsgFont, 1).X;
-                GameRenderer.Renderer.DrawString(
+                var textWidth = Graphics.Renderer.MeasureText(ActionMsgs[n].Msg, Graphics.ActionMsgFont, 1).X;
+                Graphics.Renderer.DrawString(
                     ActionMsgs[n].Msg, Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMsgs[n].Clr,
                     true, null, new Color(40, 40, 40)
                 );

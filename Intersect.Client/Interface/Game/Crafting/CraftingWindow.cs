@@ -103,7 +103,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCraftAll.SetText(Strings.Crafting.craftall.ToString("1"));
             mCraftAll.Clicked += craftAll_Clicked;
 
-            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             Interface.InputBlockingElements.Add(mCraftWindow);
 
@@ -154,7 +154,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCombinedItem.Setup("CraftedItemIcon");
             mCombinedValue = new Label(mCombinedItem.Container, "CraftedItemQuantity");
 
-            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             mCombinedItem.LoadItem();
             mCombinedValue.Show();
@@ -225,7 +225,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
                 mValues.Add(lblTemp);
 
-                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 mItems[i].LoadItem();
 

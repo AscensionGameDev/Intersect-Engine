@@ -63,7 +63,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
 
-            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             for (var i = 0; i < 2; i++)
             {

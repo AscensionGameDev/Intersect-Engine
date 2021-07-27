@@ -117,7 +117,7 @@ namespace Intersect.Client.Interface.Shared
             mResolutionLabel.SetText(Strings.Options.resolution);
 
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
-            var myModes = GameRenderer.Renderer.GetValidVideoModes();
+            var myModes = Graphics.Renderer.GetValidVideoModes();
             myModes?.ForEach(
                 t =>
                 {
@@ -253,7 +253,7 @@ namespace Intersect.Client.Interface.Shared
 
             mOptionsPanel.LoadJsonUi(
                 mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu,
-                GameRenderer.Renderer.GetResolutionString()
+                Graphics.Renderer.GetResolutionString()
             );
 
             CloseKeybindings();
@@ -409,10 +409,10 @@ namespace Intersect.Client.Interface.Shared
             mPreviousMusicVolume = Globals.Database.MusicVolume;
             mPreviousSoundVolume = Globals.Database.SoundVolume;
             mEdittingControls = new Controls(Controls.ActiveControls);
-            if (GameRenderer.Renderer.GetValidVideoModes().Count > 0)
+            if (Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
                 string resolutionLabel;
-                if (GameRenderer.Renderer.HasOverrideResolution)
+                if (Graphics.Renderer.HasOverrideResolution)
                 {
                     resolutionLabel = Strings.Options.ResolutionCustom;
 
@@ -425,7 +425,7 @@ namespace Intersect.Client.Interface.Shared
                 }
                 else
                 {
-                    resolutionLabel = GameRenderer.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                    resolutionLabel = Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
                 }
 
                 mResolutionList.SelectByText(resolutionLabel);
@@ -522,11 +522,11 @@ namespace Intersect.Client.Interface.Shared
         {
             var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
-            var validVideoModes = GameRenderer.Renderer.GetValidVideoModes();
+            var validVideoModes = Graphics.Renderer.GetValidVideoModes();
             var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
             if (targetResolution > -1)
             {
-                shouldReset = Globals.Database.TargetResolution != targetResolution || GameRenderer.Renderer.HasOverrideResolution;
+                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.Renderer.HasOverrideResolution;
                 Globals.Database.TargetResolution = targetResolution;
             }
 
@@ -572,8 +572,8 @@ namespace Intersect.Client.Interface.Shared
             if (shouldReset)
             {
                 mCustomResolutionMenuItem?.Hide();
-                GameRenderer.Renderer.OverrideResolution = Resolution.Empty;
-                GameRenderer.Renderer.Init();
+                Graphics.Renderer.OverrideResolution = Resolution.Empty;
+                Graphics.Renderer.Init();
             }
 
             if (Globals.GameState == GameStates.InGame)

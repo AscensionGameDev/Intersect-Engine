@@ -106,7 +106,7 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            mFpsLabel.Text = Strings.Debug.fps.ToString(GameRenderer.Renderer.GetFps());
+            mFpsLabel.Text = Strings.Debug.fps.ToString(Graphics.Renderer.GetFps());
             mPingLabel.Text = Strings.Debug.ping.ToString(Networking.Network.Ping);
             mDrawsLabel.Text = Strings.Debug.draws.ToString(Graphics.DrawCalls);
             if (MapInstance.Get(Globals.Me.CurrentMap) != null)

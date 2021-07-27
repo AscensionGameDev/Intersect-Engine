@@ -70,7 +70,7 @@ namespace Intersect.Client.Interface.Game
             mQuitButton.SetText(Strings.QuestLog.abandon);
             mQuitButton.Clicked += _quitButton_Clicked;
 
-            mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mQuestsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         private void _quitButton_Clicked(Base sender, ClickedEventArgs arguments)

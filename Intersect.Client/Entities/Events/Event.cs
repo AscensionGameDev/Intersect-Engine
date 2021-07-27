@@ -297,7 +297,7 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (!WorldPos.IntersectsWith(GameRenderer.Renderer.GetView()))
+            if (!WorldPos.IntersectsWith(Graphics.Renderer.GetView()))
             {
                 return;
             }
@@ -348,18 +348,18 @@ namespace Intersect.Client.Entities.Events
                 y -= 12;
             }
 
-            var textSize = GameRenderer.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
 
             if (CustomColors.Names.Events.Background != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    GameRenderer.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
                     CustomColors.Names.Events.Background
                 );
             }
 
-            GameRenderer.Renderer.DrawString(
+            Graphics.Renderer.DrawString(
                 Name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())

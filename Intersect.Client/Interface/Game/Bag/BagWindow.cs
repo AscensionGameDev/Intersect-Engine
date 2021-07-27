@@ -39,7 +39,7 @@ namespace Intersect.Client.Interface.Game.Bag
             mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            mBagWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mBagWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             InitItemContainer();
         }
@@ -118,7 +118,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
                 mValues.Add(new Label(Items[i].Container, "BagItemValue"));
                 mValues[i].Text = "";
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;

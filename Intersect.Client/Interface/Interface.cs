@@ -76,12 +76,12 @@ namespace Intersect.Client.Interface
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(Skin, "MainMenu")
             {
-                Scale = 1f //(GameGameRenderer.Renderer.GetScreenWidth()/1920f);
+                Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
 
             sMenuCanvas.SetSize(
-                (int) (GameRenderer.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
-                (int) (GameRenderer.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
+                (int) (Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
+                (int) (Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
             );
 
             sMenuCanvas.ShouldDrawBackground = false;
@@ -91,10 +91,10 @@ namespace Intersect.Client.Interface
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             sGameCanvas = new Canvas(Skin, "InGame");
 
-            //_gameCanvas.Scale = (GameGameRenderer.Renderer.GetScreenWidth() / 1920f);
+            //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             sGameCanvas.SetSize(
-                (int) (GameRenderer.Renderer.GetScreenWidth() / sGameCanvas.Scale),
-                (int) (GameRenderer.Renderer.GetScreenHeight() / sGameCanvas.Scale)
+                (int) (Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
+                (int) (Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
             );
 
             sGameCanvas.ShouldDrawBackground = false;
@@ -257,7 +257,7 @@ namespace Intersect.Client.Interface
                 while (curPos + curLen < input.Length)
                 {
                     line = input.Substring(curPos, curLen);
-                    measured = GameRenderer.Renderer.MeasureText(line, font, 1).X;
+                    measured = Graphics.Renderer.MeasureText(line, font, 1).X;
                     if (measured < width)
                     {
                         lastOk = lastSpace;

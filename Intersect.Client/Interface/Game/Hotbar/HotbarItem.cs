@@ -101,7 +101,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             mContentPanel.Clicked += pnl_Clicked;
 
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-            EquipPanel.Texture = GameRenderer.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;

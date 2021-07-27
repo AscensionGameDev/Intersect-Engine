@@ -77,7 +77,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
-            EquipPanel.Texture = GameRenderer.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;

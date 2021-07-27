@@ -10,8 +10,6 @@ namespace Intersect.Client.Framework.Graphics
     public abstract class GameRenderer
     {
 
-        public static GameRenderer Renderer { get; set; }
-
         public GameRenderer()
         {
             ScreenshotRequests = new List<Stream>();

@@ -35,7 +35,7 @@ namespace Intersect.Client.Interface.Menu
                 Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
             };
 
-            mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
+            mServerStatusArea.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
             MainMenu.NetworkStatusChanged += HandleNetworkStatusChanged;
         }
 

@@ -40,7 +40,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
             mItemContainer.EnableScroll(false, true);
-            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         //Methods
@@ -85,7 +85,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;

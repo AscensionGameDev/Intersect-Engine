@@ -123,7 +123,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Registration.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
+            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mRegistrationPanel.IsHidden;

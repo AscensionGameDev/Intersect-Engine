@@ -54,7 +54,7 @@ namespace Intersect.Client.Interface.Game
 
             UpdateList();
 
-            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         //Methods

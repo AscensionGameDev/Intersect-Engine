@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Intersect.Client.Core;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Plugins.Interfaces;
@@ -46,7 +46,7 @@ namespace Intersect.Client.Plugins.Contexts
             }
         }
 
-        public GameRenderer GameRenderer => GameRenderer.Renderer;
+        public GameRenderer GameRenderer => Graphics.Renderer;
 
         /// <inheritdoc />
         private ClientPluginContext(Plugin plugin, IPacketHelper packetHelper) : base(plugin)

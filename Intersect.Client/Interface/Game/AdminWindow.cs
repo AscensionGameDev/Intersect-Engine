@@ -86,8 +86,8 @@ namespace Intersect.Client.Interface.Game
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title);
             mAdminWindow.SetSize(200, 540);
             mAdminWindow.SetPosition(
-                GameRenderer.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                GameRenderer.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
+                Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
+                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
             );
 
             mAdminWindow.DisableResizing();

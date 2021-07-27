@@ -95,7 +95,7 @@ namespace Intersect.Client.Interface.Game
                 itemStatsText.IsHidden = true;
 
                 //Load this up now so we know what color to make the text when filling out the desc
-                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
                 if (item.Description.Length > 0)
                 {
                     itemDesc.AddText(
@@ -206,7 +206,7 @@ namespace Intersect.Client.Interface.Game
                 }
 
                 //Load Again for positioning purposes.
-                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+                mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
                 var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {

@@ -74,7 +74,7 @@ namespace Intersect.Client.Entities
                 //Gotta Calculate Bounds
                 for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
                 {
-                    var textSize = GameRenderer.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
+                    var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
                     if (textSize.X > mTextureBounds.Width)
                     {
                         mTextureBounds.Width = (int) textSize.X + 16;
@@ -173,7 +173,7 @@ namespace Intersect.Client.Entities
                 {
                     for (var y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
                     {
-                        GameRenderer.Renderer.DrawTexture(
+                        Graphics.Renderer.DrawTexture(
                             mBubbleTex, mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8,
                             x - mTextureBounds.Width / 2 + x1 * 8, y - mTextureBounds.Height - yoffset + y1 * 8, 8, 8,
                             Color.White
@@ -183,8 +183,8 @@ namespace Intersect.Client.Entities
 
                 for (var i = mText.Length - 1; i > -1; i--)
                 {
-                    var textSize = GameRenderer.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
-                    GameRenderer.Renderer.DrawString(
+                    var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
+                    Graphics.Renderer.DrawString(
                         mText[i], Graphics.ChatBubbleFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) (y - mTextureBounds.Height - yoffset + 8 + i * 16), 1,

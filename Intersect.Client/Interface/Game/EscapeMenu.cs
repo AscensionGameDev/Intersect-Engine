@@ -82,7 +82,7 @@ namespace Intersect.Client.Interface.Game
 
             mClose.Clicked += Close_Clicked;
 
-            mContainer.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             if (Options.Player.MaxCharacters <= 1)
             {

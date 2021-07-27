@@ -46,7 +46,7 @@ namespace Intersect.Client.Interface.Game
             spellStatsText.IsHidden = true;
 
             //Load this up now so we know what color to make the text when filling out the desc
-            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             if (spell.Description.Length > 0)
             {
                 spellDesc.AddText(
@@ -250,7 +250,7 @@ namespace Intersect.Client.Interface.Game
             }
 
             //Load Again for positioning purposes.
-            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             spellDescText.IsHidden = true;
             spellStatsText.IsHidden = true;
             icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);

@@ -1931,7 +1931,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = GameRenderer.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
+            var textSize = Graphics.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
 
             var x = (int)Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Guild);
@@ -1939,12 +1939,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    GameRenderer.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
+                    Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
                     new Framework.GenericClasses.FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            GameRenderer.Renderer.DrawString(
+            Graphics.Renderer.DrawString(
                 Guild, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );

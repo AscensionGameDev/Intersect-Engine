@@ -60,7 +60,7 @@ namespace Intersect.Client.MonoGame.File_Management
                     !mTilesetDict.ContainsKey(t.ToLower()))
                 {
                     mTilesetDict.Add(
-                        t.ToLower(), GameRenderer.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t), Path.Combine("resources", "tilesets", realFilename))
+                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t), Path.Combine("resources", "tilesets", realFilename))
                     );
                 }
             }
@@ -86,7 +86,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 var img = obj["meta"]["image"].ToString();
                 if (File.Exists(Path.Combine("resources", "packs", img)))
                 {
-                    var platformText = GameRenderer.Renderer.LoadTexture(Path.Combine("resources", "packs", img), Path.Combine("resources", "packs", img));
+                    var platformText = Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "packs", img), Path.Combine("resources", "packs", img));
                     if (platformText != null)
                     {
                         foreach (var frame in frames)
@@ -131,7 +131,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 for (var i = 0; i < items.Length; i++)
                 {
                     var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                    dict.Add(filename, GameRenderer.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
+                    dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar))));
                 }
             }
 
@@ -143,7 +143,7 @@ namespace Intersect.Client.MonoGame.File_Management
                     var filename = Path.GetFileName(itm.Filename.ToLower().Replace("\\", "/"));
                     if (!dict.ContainsKey(filename))
                     {
-                        dict.Add(filename, GameRenderer.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
+                        dict.Add(filename, Core.Graphics.Renderer.LoadTexture(Path.Combine(dir, filename), Path.Combine(dir, Path.Combine(dir, filename))));
                     }
                 }
             }
@@ -217,7 +217,7 @@ namespace Intersect.Client.MonoGame.File_Management
             for (var i = 0; i < items.Length; i++)
             {
                 var filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                var font = GameRenderer.Renderer.LoadFont(Path.Combine(dir, filename));
+                var font = Core.Graphics.Renderer.LoadFont(Path.Combine(dir, filename));
                 if (mFontDict.IndexOf(font) == -1)
                 {
                     mFontDict.Add(font);
@@ -242,7 +242,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 var resourceFullName = availableShaders[i];
                 var shaderNameWithoutExtension = resourceFullName.Substring(0, resourceFullName.Length - 4);
                 var shaderName = shaderNameWithoutExtension.Substring(shaderPrefix.Length);
-                mShaderDict.Add(shaderName, GameRenderer.Renderer.LoadShader(resourceFullName));
+                mShaderDict.Add(shaderName, Core.Graphics.Renderer.LoadShader(resourceFullName));
             }
         }
 
@@ -351,7 +351,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 case ContentTypes.Spell:
                 case ContentTypes.TexturePack:
                 case ContentTypes.TileSet:
-                    return GameRenderer.Renderer.LoadTexture(name, createStream) as TAsset;
+                    return Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
 
                 case ContentTypes.Font:
                     throw new NotImplementedException();

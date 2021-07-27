@@ -61,7 +61,7 @@ namespace Intersect.Client.Core
             //TODO - Destroy Graphics and Networking peacefully
             //Network.Close();
             Interface.Interface.DestroyGwen();
-            GameRenderer.Renderer.Close();
+            Graphics.Renderer.Close();
         }
 
         public static void Update()

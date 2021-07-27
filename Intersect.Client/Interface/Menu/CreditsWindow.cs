@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
