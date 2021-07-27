@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Game;
 
@@ -45,8 +46,8 @@ namespace Intersect.Client.Interface.Shared.Errors
         protected virtual void ErrorBox_Resized(Base sender, EventArgs arguments)
         {
             sender.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2
+                GameRenderer.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
+                GameRenderer.Renderer.GetScreenHeight() / 2 - sender.Height / 2
             );
         }
 

@@ -5,6 +5,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
@@ -139,7 +140,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
 
-            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
 

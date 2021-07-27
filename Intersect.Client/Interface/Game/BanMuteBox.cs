@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -35,8 +36,8 @@ namespace Intersect.Client.Interface.Game
             mMyWindow = new WindowControl(Interface.GameUi.GameCanvas, title, modal);
             mMyWindow.SetSize(500, 150);
             mMyWindow.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2
+                GameRenderer.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
+                GameRenderer.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2
             );
 
             mMyWindow.IsClosable = false;

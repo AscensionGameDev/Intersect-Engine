@@ -3,6 +3,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -76,7 +77,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = GameRenderer.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;

@@ -3,6 +3,7 @@
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -85,8 +86,8 @@ namespace Intersect.Client.Interface.Game
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title);
             mAdminWindow.SetSize(200, 540);
             mAdminWindow.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
+                GameRenderer.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
+                GameRenderer.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
             );
 
             mAdminWindow.DisableResizing();

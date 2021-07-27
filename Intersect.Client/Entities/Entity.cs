@@ -1313,7 +1313,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
+            var textSize = GameRenderer.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = position == 0 ? GetLabelLocation(LabelType.Header) : GetLabelLocation(LabelType.Footer);
@@ -1321,12 +1321,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    GameRenderer.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
+            GameRenderer.Renderer.DrawString(
                 label, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
@@ -1411,7 +1411,7 @@ namespace Intersect.Client.Entities
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }
 
-            var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+            var textSize = GameRenderer.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
 
             var x = (int) Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Name);
@@ -1419,12 +1419,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    GameRenderer.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
+            GameRenderer.Renderer.DrawString(
                 name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
@@ -1442,7 +1442,7 @@ namespace Intersect.Client.Entities
                     }
 
                     y = GetLabelLocation(LabelType.Name);
-                    var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+                    var headerSize = GameRenderer.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
                     y -= headerSize.Y;
 
                     break;
@@ -1452,13 +1452,13 @@ namespace Intersect.Client.Entities
                         break;
                     }
 
-                    var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+                    var footerSize = GameRenderer.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
                     y -= footerSize.Y - 8;
 
                     break;
                 case LabelType.Name:
                     y = GetLabelLocation(LabelType.Footer);
-                    var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+                    var nameSize = GameRenderer.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
                     if (string.IsNullOrEmpty(FooterLabel.Text))
                     {
                         y -= nameSize.Y - 8;
@@ -1492,7 +1492,7 @@ namespace Intersect.Client.Entities
                             y = GetLabelLocation(LabelType.Header);
                         }
 
-                        var guildSize = Graphics.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
+                        var guildSize = GameRenderer.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
                         y -= guildSize.Y;
                     }
                     break;

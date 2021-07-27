@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -48,7 +49,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             mBtnLootAll.Text = Strings.MapItemWindow.LootButton;
             mBtnLootAll.Clicked += MBtnLootAll_Clicked;
 
-            mMapItemWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mMapItemWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
             CreateItemContainer();
         }
@@ -170,7 +171,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mValues.Add(new Label(Items[i].Container, "MapItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;

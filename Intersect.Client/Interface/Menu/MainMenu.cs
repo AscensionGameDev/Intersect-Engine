@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -71,7 +72,7 @@ namespace Intersect.Client.Interface.Menu
             mMenuCanvas = menuCanvas;
 
             var logo = new ImagePanel(menuCanvas, "Logo");
-            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            logo.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
@@ -123,7 +124,7 @@ namespace Intersect.Client.Interface.Menu
                 mOptionsButton.SetToolTipText(Strings.MainMenu.optionstooltip);
             }
 
-            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
 
             //Options Controls
             mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);

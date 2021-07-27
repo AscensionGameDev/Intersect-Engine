@@ -7,6 +7,7 @@ using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -201,7 +202,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             SetEntity(myEntity);
 
-            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
             UpdateSpellStatus();
 
@@ -511,7 +512,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     itm.Setup();
 
-                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
                     itm.Container.Name = "";
                     mActiveStatuses.Add(id, itm);
                 }

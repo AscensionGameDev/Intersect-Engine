@@ -71,12 +71,12 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void End()
         {
-            ((MonoRenderer) Core.Graphics.Renderer).EndSpriteBatch();
+            ((MonoRenderer) GameRenderer.Renderer).EndSpriteBatch();
         }
 
         public override void Clear(Color color)
         {
-            ((MonoRenderer) Core.Graphics.Renderer).EndSpriteBatch();
+            ((MonoRenderer) GameRenderer.Renderer).EndSpriteBatch();
             mGraphicsDevice.SetRenderTarget(mRenderTexture);
             mGraphicsDevice.Clear(MonoRenderer.ConvertColor(color));
             mGraphicsDevice.SetRenderTarget(null);

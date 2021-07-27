@@ -14,6 +14,9 @@ namespace Intersect.Client.Plugins.Helpers
         /// <inheritdoc />
         public event GameUpdateHandler GameUpdate;
 
+        /// <inheritdoc />
+        public event GameDrawHandler GameDraw;
+
         internal ClientLifecycleHelper(IClientPluginContext context) : base(context)
         {
             Globals.ClientLifecycleHelpers.Add(this);
@@ -40,6 +43,12 @@ namespace Intersect.Client.Plugins.Helpers
         {
             var GameUpdateArgs = new GameUpdateArgs(state);
             GameUpdate?.Invoke(Context, GameUpdateArgs);
+        }
+
+        public void OnGameDraw(DrawStates state)
+        {
+            var gameDrawArgs = new GameDrawArgs(state);
+            GameDraw?.Invoke(Context, gameDrawArgs);
         }
     }
 }

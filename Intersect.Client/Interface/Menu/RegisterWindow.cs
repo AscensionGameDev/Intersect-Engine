@@ -5,6 +5,7 @@ using System.Text;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -122,7 +123,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Registration.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mRegistrationPanel.IsHidden;

@@ -2,6 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 
@@ -32,7 +33,7 @@ namespace Intersect.Client.Interface.Game.Shop
             mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            mShopWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mShopWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
             InitItemContainer();
         }
@@ -65,7 +66,7 @@ namespace Intersect.Client.Interface.Game.Shop
                 Items[i].Container = new ImagePanel(mItemContainer, "ShopItem");
                 Items[i].Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
                 Items[i].LoadItem();
 

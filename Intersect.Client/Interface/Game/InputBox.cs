@@ -2,6 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -141,7 +142,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (!mInitialized)
             {
-                mMyWindow.LoadJsonUi(_uiStage, Graphics.Renderer.GetResolutionString(), true);
+                mMyWindow.LoadJsonUi(_uiStage, GameRenderer.Renderer.GetResolutionString(), true);
                 var text = Interface.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 var y = mPromptLabel.Y;
                 foreach (var s in text)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
   <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
@@ -70,6 +70,7 @@
     <Compile Include="Content\IContentManager.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
+    <Compile Include="General\DrawStates.cs" />
     <Compile Include="General\GameStates.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />

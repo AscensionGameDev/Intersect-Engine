@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
@@ -19,5 +20,7 @@ namespace Intersect.Client.Plugins
         /// The <see cref="IClientNetworkHelper"/> of the current plugin.
         /// </summary>
         IClientNetworkHelper Network { get; }
+
+        GameRenderer GameRenderer { get; }
     }
 }

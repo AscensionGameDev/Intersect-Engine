@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
@@ -101,10 +102,10 @@ namespace Intersect.Client.MonoGame
             Globals.InputManager = new MonoInput(this);
             GameClipboard.Instance = new MonoClipboard();
 
-            Core.Graphics.Renderer = renderer;
+            GameRenderer.Renderer = renderer;
 
             Globals.System = new MonoSystem();
-            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
+            Interface.Interface.GwenRenderer = new IntersectRenderer(null, GameRenderer.Renderer);
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
@@ -150,7 +151,7 @@ namespace Intersect.Client.MonoGame
 
         private void IntersectInit()
         {
-            (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+            (GameRenderer.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket(Context);
@@ -259,10 +260,10 @@ namespace Intersect.Client.MonoGame
                 {
                     if (updaterGraphicsReset == false)
                     {
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init();
-                        (Core.Graphics.Renderer as MonoRenderer)?.Begin();
-                        (Core.Graphics.Renderer as MonoRenderer)?.End();
+                        (GameRenderer.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+                        (GameRenderer.Renderer as MonoRenderer)?.Init();
+                        (GameRenderer.Renderer as MonoRenderer)?.Begin();
+                        (GameRenderer.Renderer as MonoRenderer)?.End();
                         updaterGraphicsReset = true;
                     }
                 }

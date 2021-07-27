@@ -23,6 +23,7 @@ using Intersect.Utilities;
 using Intersect.Client.Items;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Config.Guilds;
+using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Entities
 {
@@ -1928,7 +1929,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
+            var textSize = GameRenderer.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
 
             var x = (int)Math.Ceiling(GetCenterPos().X);
             var y = GetLabelLocation(LabelType.Guild);
@@ -1936,12 +1937,12 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
+                    GameRenderer.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
                     new Framework.GenericClasses.FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
+            GameRenderer.Renderer.DrawString(
                 Guild, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );

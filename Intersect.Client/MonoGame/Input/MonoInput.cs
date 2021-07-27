@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
@@ -189,8 +190,8 @@ namespace Intersect.Client.MonoGame.Input
 
                 if (state.X != mMouseX || state.Y != mMouseY)
                 {
-                    mMouseX = (int) (state.X * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().X);
-                    mMouseY = (int) (state.Y * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().Y);
+                    mMouseX = (int) (state.X * ((MonoRenderer) GameRenderer.Renderer).GetMouseOffset().X);
+                    mMouseY = (int) (state.Y * ((MonoRenderer) GameRenderer.Renderer).GetMouseOffset().Y);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
                             IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int) MouseButtons.None, Keys.Alt

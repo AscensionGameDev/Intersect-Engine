@@ -2,6 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Localization;
@@ -52,7 +53,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)

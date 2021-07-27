@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -177,7 +178,7 @@ namespace Intersect.Client.Interface.Menu
             mBackButton.SetText(Strings.CharacterCreation.back);
             mBackButton.Clicked += BackButton_Clicked;
 
-            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mCharCreationPanel.IsHidden;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -110,7 +111,7 @@ namespace Intersect.Client.Interface.Menu
             mLogoutButton.IsHidden = true;
             mLogoutButton.Clicked += mLogoutButton_Clicked;
 
-            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, GameRenderer.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mCharacterSelectionPanel.IsHidden;

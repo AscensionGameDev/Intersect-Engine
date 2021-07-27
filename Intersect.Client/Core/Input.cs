@@ -3,6 +3,7 @@
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
@@ -129,7 +130,7 @@ namespace Intersect.Client.Core
                         switch (control)
                         {
                             case Control.Screenshot:
-                                Graphics.Renderer?.RequestScreenshot();
+                                GameRenderer.Renderer?.RequestScreenshot();
 
                                 break;
 

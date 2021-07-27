@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -62,7 +63,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
 
-            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
             for (var i = 0; i < 2; i++)
             {

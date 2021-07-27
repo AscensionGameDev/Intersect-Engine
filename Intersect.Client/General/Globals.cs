@@ -78,6 +78,13 @@ namespace Intersect.Client.General
             );
         }
 
+        internal static void OnGameDraw(DrawStates state)
+        {
+            ClientLifecycleHelpers.ForEach(
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state)
+           );
+        }
+
         private static GameStates mGameState = GameStates.Intro;
 
         /// <see cref="GameStates" />

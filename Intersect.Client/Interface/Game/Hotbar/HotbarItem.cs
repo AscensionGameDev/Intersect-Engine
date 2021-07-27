@@ -4,6 +4,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -100,7 +101,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             mContentPanel.Clicked += pnl_Clicked;
 
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = GameRenderer.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;

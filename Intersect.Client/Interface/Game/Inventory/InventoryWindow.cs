@@ -3,6 +3,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -35,7 +36,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
-            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
         }
 
         //Location
@@ -103,11 +104,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameRenderer.Renderer.GetResolutionString());
 
                 if (Items[i].EquipPanel.Texture == null)
                 {
-                    Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                    Items[i].EquipPanel.Texture = GameRenderer.Renderer.GetWhiteTexture();
                 }
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;

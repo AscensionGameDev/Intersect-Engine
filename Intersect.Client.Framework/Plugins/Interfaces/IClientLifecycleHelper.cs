@@ -31,9 +31,24 @@ namespace Intersect.Client.Plugins.Interfaces
         }
     }
 
+    public class GameDrawArgs : EventArgs
+    {
+        public DrawStates State { get; }
+
+        public GameDrawArgs(DrawStates state)
+        {
+            State = state;
+        }
+    }
+
     public delegate void GameUpdateHandler(
         IClientPluginContext context,
         GameUpdateArgs gameUpdateArgs
+    );
+
+    public delegate void GameDrawHandler(
+        IClientPluginContext context,
+        GameDrawArgs drawGameArgs
     );
 
     /// <summary>
@@ -53,6 +68,11 @@ namespace Intersect.Client.Plugins.Interfaces
         event GameUpdateHandler GameUpdate;
 
         /// <summary>
+        /// Draw update event.
+        /// </summary>
+        event GameDrawHandler GameDraw;
+
+        /// <summary>
         /// A reference to the currently active interface if one is loaded.
         /// </summary>
         IMutableInterface Interface { get; }
@@ -68,5 +88,11 @@ namespace Intersect.Client.Plugins.Interfaces
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
         void OnGameUpdate(GameStates state);
+
+        /// <summary>
+        /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
+        /// </summary>
+        /// <param name="state">The new <see cref="DrawStates"/>.</param>
+        void OnGameDraw(DrawStates state);
     }
 }
