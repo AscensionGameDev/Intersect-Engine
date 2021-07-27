@@ -1,9 +1,11 @@
 ﻿using System;
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.General;
+using Intersect.Client.Plugins.Audio;
 using Intersect.Client.Plugins.Helpers;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Factories;
@@ -64,6 +66,9 @@ namespace Intersect.Client.Plugins.Contexts
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the game renderer before it was created."
                                                  );
+
+        /// <inheritdoc />
+        public IGameAudioManager GameAudioManager { get; } = new GameAudioManager();
 
         /// <inheritdoc />
         public override IClientLifecycleHelper Lifecycle { get; }

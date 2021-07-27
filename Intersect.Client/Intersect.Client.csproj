@@ -144,6 +144,7 @@
     <Compile Include="Interface\Menu\CreditsWindow.cs" />
     <Compile Include="Interface\Menu\ResetPasswordWindow.cs" />
     <Compile Include="Interface\Menu\ForgotPasswordWindow.cs" />
+    <Compile Include="Plugins\Audio\GameAudioManager.cs" />
     <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
     <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
     <Compile Include="Plugins\Helpers\ClientNetworkHelper.cs" />
