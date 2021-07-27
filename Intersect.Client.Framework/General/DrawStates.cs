@@ -9,5 +9,9 @@
         AbovePlayer,
 
         FringeLayers,
+
+        BeforeEntity,
+
+        AfterEntity,
     }
 }

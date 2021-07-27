@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
@@ -115,7 +117,7 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                var map = MapInstance.Get(CurrentMap);
+                var map = Maps.MapInstance.Get(CurrentMap);
                 LatestMap = map;
                 if (map == null || !map.InView())
                 {
@@ -158,7 +160,7 @@ namespace Intersect.Client.Entities
             return !IsDead;
         }
 
-        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        public override HashSet<IEntity> DetermineRenderOrder(HashSet<IEntity> renderList, IMapInstance map)
         {
             if (IsDead && !BaseResource.Exhausted.RenderBelowEntities)
             {
@@ -201,7 +203,7 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
-                            HashSet<Entity> renderSet;
+                            HashSet<IEntity> renderSet;
 
                             if (y == gridY - 1)
                             {

@@ -1,21 +1,21 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Items;
 using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Items
 {
 
-    public class Item
+    public class Item : IItem
     {
 
-        public Guid? BagId;
+        public Guid? BagId { get; set; }
 
-        public Guid ItemId;
+        public Guid ItemId { get; set; }
 
-        public int Quantity;
+        public int Quantity { get; set; }
 
-        public int[] StatBuffs = new int[(int) Stats.StatCount];
+        public int[] StatBuffs { get; set; } = new int[(int)Stats.StatCount];
 
         public ItemBase Base => ItemBase.Get(ItemId);
 
@@ -27,16 +27,15 @@ namespace Intersect.Client.Items
             StatBuffs = statBuffs;
         }
 
-        public Item Clone()
+        public IItem Clone()
         {
-            var newItem = new Item()
-            {
+            var newItem = new Item() {
                 ItemId = ItemId,
                 Quantity = Quantity,
                 BagId = BagId
             };
 
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 newItem.StatBuffs[i] = StatBuffs[i];
             }

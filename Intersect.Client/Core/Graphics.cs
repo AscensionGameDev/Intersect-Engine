@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -59,7 +60,7 @@ namespace Intersect.Client.Core
         public static ColorF PlayerLightColor = ColorF.White;
 
         //Cache the Y based rendering
-        public static HashSet<Entity>[,] RenderingEntities;
+        public static HashSet<IEntity>[,] RenderingEntities;
 
         private static GameContentManager sContentManager;
 
@@ -116,12 +117,12 @@ namespace Intersect.Client.Core
 
         public static void InitInGame()
         {
-            RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
+            RenderingEntities = new HashSet<IEntity>[6, Options.MapHeight * 5];
             for (var z = 0; z < 6; z++)
             {
                 for (var i = 0; i < Options.MapHeight * 5; i++)
                 {
-                    RenderingEntities[z, i] = new HashSet<Entity>();
+                    RenderingEntities[z, i] = new HashSet<IEntity>();
                 }
             }
         }
@@ -152,7 +153,7 @@ namespace Intersect.Client.Core
 
         public static void DrawInGame()
         {
-            var currentMap = Globals.Me.MapInstance;
+            var currentMap = Globals.Me.MapInstance as MapInstance;
             if (currentMap == null)
             {
                 return;
@@ -248,7 +249,14 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity);
+
                         EntitiesDrawn++;
                     }
 
@@ -301,7 +309,14 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity);
+
                         EntitiesDrawn++;
                     }
                 }

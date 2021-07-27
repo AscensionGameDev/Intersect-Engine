@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
@@ -82,6 +83,13 @@ namespace Intersect.Client.General
         {
             ClientLifecycleHelpers.ForEach(
                clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state)
+           );
+        }
+
+        internal static void OnGameDraw(DrawStates state, IEntity entity)
+        {
+            ClientLifecycleHelpers.ForEach(
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity)
            );
         }
 

@@ -24,6 +24,7 @@ using Intersect.Client.Items;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Config.Guilds;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Entities;
 
 namespace Intersect.Client.Entities
 {
@@ -139,14 +140,14 @@ namespace Intersect.Client.Entities
             {
                 if (value != base.CurrentMap)
                 {
-                    var oldMap = MapInstance.Get(base.CurrentMap);
-                    var newMap = MapInstance.Get(value);
+                    var oldMap = Maps.MapInstance.Get(base.CurrentMap);
+                    var newMap = Maps.MapInstance.Get(value);
                     base.CurrentMap = value;
                     if (Globals.Me == this)
                     {
-                        if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                        if (Maps.MapInstance.Get(Globals.Me.CurrentMap) != null)
                         {
-                            Audio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
+                            Audio.PlayMusic(Maps.MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
                         }
 
                         if (newMap != null && oldMap != null)
@@ -864,13 +865,13 @@ namespace Intersect.Client.Entities
             {
                 if (Y < Options.MapHeight && Y >= 0)
                 {
-                    if (MapInstance.Get(CurrentMap) != null && MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
+                    if (Maps.MapInstance.Get(CurrentMap) != null && Maps.MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
                     {
-                        if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type == MapAttributes.ZDimension)
+                        if (Maps.MapInstance.Get(CurrentMap).Attributes[X, Y].Type == MapAttributes.ZDimension)
                         {
-                            if (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
+                            if (((MapZDimensionAttribute)Maps.MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
                             {
-                                Z = (byte) (((MapZDimensionAttribute) MapInstance.Get(CurrentMap).Attributes[X, Y])
+                                Z = (byte) (((MapZDimensionAttribute)Maps.MapInstance.Get(CurrentMap).Attributes[X, Y])
                                             .GatewayTo -
                                             1);
                             }
@@ -963,8 +964,8 @@ namespace Intersect.Client.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Get(CurrentMap);
-                var targetMap = MapInstance.Get(target.CurrentMap);
+                var myMap = Maps.MapInstance.Get(CurrentMap);
+                var targetMap = Maps.MapInstance.Get(target.CurrentMap);
                 if (myMap != null && targetMap != null)
                 {
                     //Calculate World Tile of Me
@@ -1000,7 +1001,8 @@ namespace Intersect.Client.Entities
             {
                 return;
             }
-            var canTargetPlayers = Globals.Me.MapInstance.ZoneType == MapZones.Safe ? false : true;
+            var currentMap = Globals.Me.MapInstance as MapInstance;
+            var canTargetPlayers = currentMap.ZoneType == MapZones.Safe ? false : true;
 
             // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
             if (
@@ -1083,25 +1085,25 @@ namespace Intersect.Client.Entities
                 {
                     case (byte)Directions.Up:
                         validEntities = mlastTargetList.Where(en =>
-                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Left || en.Key.CurrentMap == MapInstance.Right) && en.Key.Y < Y) || en.Key.CurrentMap == MapInstance.Down)
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == currentMap.Left || en.Key.CurrentMap == currentMap.Right) && en.Key.Y < Y) || en.Key.CurrentMap == currentMap.Down)
                             .ToArray();
                         break;
 
                     case (byte)Directions.Down:
                         validEntities = mlastTargetList.Where(en =>
-                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Left || en.Key.CurrentMap == MapInstance.Right) && en.Key.Y > Y) || en.Key.CurrentMap == MapInstance.Up)
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == currentMap.Left || en.Key.CurrentMap == currentMap.Right) && en.Key.Y > Y) || en.Key.CurrentMap == currentMap.Up)
                             .ToArray();
                         break;
 
                     case (byte)Directions.Left:
                         validEntities = mlastTargetList.Where(en =>
-                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Up || en.Key.CurrentMap == MapInstance.Down) && en.Key.X < X) || en.Key.CurrentMap == MapInstance.Left)
+                            ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == currentMap.Up || en.Key.CurrentMap == currentMap.Down) && en.Key.X < X) || en.Key.CurrentMap == currentMap.Left)
                             .ToArray();
                         break;
 
                     case (byte)Directions.Right:
                         validEntities = mlastTargetList.Where(en =>
-                                    ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == MapInstance.Up || en.Key.CurrentMap == MapInstance.Down) && en.Key.X > X) || en.Key.CurrentMap == MapInstance.Right)
+                                    ((en.Key.CurrentMap == CurrentMap || en.Key.CurrentMap == currentMap.Up || en.Key.CurrentMap == currentMap.Down) && en.Key.X > X) || en.Key.CurrentMap == currentMap.Right)
                                     .ToArray();
                         break;
                 }
@@ -1290,7 +1292,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
@@ -1325,10 +1327,10 @@ namespace Intersect.Client.Entities
             var tmpX = x;
             var tmpY = y;
             var tmpI = -1;
-            if (MapInstance.Get(mapId) != null)
+            if (Maps.MapInstance.Get(mapId) != null)
             {
-                var gridX = MapInstance.Get(mapId).MapGridX;
-                var gridY = MapInstance.Get(mapId).MapGridY;
+                var gridX = Maps.MapInstance.Get(mapId).MapGridX;
+                var gridY = Maps.MapInstance.Get(mapId).MapGridY;
 
                 if (x < 0)
                 {
@@ -1356,7 +1358,7 @@ namespace Intersect.Client.Entities
 
                 if (gridX >= 0 && gridX < Globals.MapGridWidth && gridY >= 0 && gridY < Globals.MapGridHeight)
                 {
-                    if (MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
+                    if (Maps.MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
                     {
                         x = (byte) tmpX;
                         y = (byte) tmpY;
@@ -1389,7 +1391,7 @@ namespace Intersect.Client.Entities
             var bestAreaMatch = 0f;
 
 
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
                 if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
@@ -1421,7 +1423,7 @@ namespace Intersect.Client.Entities
                                 }
                             }
 
-                            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+                            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
                             {
                                 foreach (var en in eventMap.LocalEntities)
                                 {
@@ -1434,7 +1436,7 @@ namespace Intersect.Client.Entities
                                     if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
                                     {
                                         bestAreaMatch = intersectRect.Width * intersectRect.Height;
-                                        bestMatch = en.Value;
+                                        bestMatch = en.Value as Entity;
                                     }
                                 }
                             }
@@ -1544,7 +1546,7 @@ namespace Intersect.Client.Entities
         /// <returns></returns>
         public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new Guid(), bool firstOnly = false)
         {
-            var map = MapInstance.Get(mapId);
+            var map = Maps.MapInstance.Get(mapId);
             if (map == null || tileIndex < 0 || tileIndex >= Options.MapWidth * Options.MapHeight)
             {
                 return false;
@@ -1666,7 +1668,7 @@ namespace Intersect.Client.Entities
 
             var tmpX = (sbyte) X;
             var tmpY = (sbyte) Y;
-            Entity blockedBy = null;
+            IEntity blockedBy = null;
 
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
@@ -1735,8 +1737,8 @@ namespace Intersect.Client.Entities
                     {
                         if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
                         {
-                            var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                            var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                            var gridX = Maps.MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                            var gridY = Maps.MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                             if (tmpX < 0)
                             {
                                 gridX--;
@@ -1795,7 +1797,7 @@ namespace Intersect.Client.Entities
                         if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy.GetType() == typeof(Event))
                         {
                             PacketSender.SendBumpEvent(blockedBy.CurrentMap, blockedBy.Id);
-                            mLastBumpedEvent = blockedBy;
+                            mLastBumpedEvent = blockedBy as Entity;
                         }
                     }
                 }
@@ -1809,10 +1811,10 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+            if (Maps.MapInstance.Get(Globals.Me.CurrentMap) != null)
             {
-                var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                var gridX = Maps.MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                var gridY = Maps.MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                 for (var x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -1823,7 +1825,7 @@ namespace Intersect.Client.Entities
                             y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != Guid.Empty)
                         {
-                            if (MapInstance.Get(Globals.MapGrid[x, y]) == null)
+                            if (Maps.MapInstance.Get(Globals.MapGrid[x, y]) == null)
                             {
                                 PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                             }
@@ -1974,7 +1976,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
             {
                 foreach (var en in eventMap.LocalEntities)
                 {
@@ -1997,7 +1999,7 @@ namespace Intersect.Client.Entities
             }
 
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
                 if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
@@ -2027,7 +2029,7 @@ namespace Intersect.Client.Entities
                             }
                         }
 
-                        foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
                         {
                             foreach (var en in eventMap.LocalEntities)
                             {

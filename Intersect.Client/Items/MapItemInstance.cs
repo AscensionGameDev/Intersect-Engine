@@ -1,16 +1,17 @@
 ﻿using System;
+using Intersect.Client.Framework.Items;
 using Newtonsoft.Json;
 
 
 namespace Intersect.Client.Items
 {
 
-    public class MapItemInstance : Item
+    public class MapItemInstance : Item, IMapItemInstance
     {
         /// <summary>
         /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
         /// </summary>
-        public Guid UniqueId;
+        public Guid UniqueId { get; set; }
 
         public int X { get; set; }
 

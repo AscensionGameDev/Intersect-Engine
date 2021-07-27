@@ -1,24 +1,25 @@
-﻿using Intersect.Client.General;
+﻿using Intersect.Client.Framework.Maps;
+using Intersect.Client.General;
 
 namespace Intersect.Client.Maps
 {
 
-    public partial class ActionMessage
+    public partial class ActionMessage : IActionMessage
     {
 
-        public Color Clr = new Color();
+        public Color Clr { get; set; } = new Color();
 
-        public MapInstance Map;
+        public IMapInstance Map { get; set; }
 
-        public string Msg = "";
+        public string Msg { get; set; } = "";
 
-        public long TransmittionTimer;
+        public long TransmittionTimer { get; set; }
 
-        public int X;
+        public int X { get; set; }
 
-        public long XOffset;
+        public long XOffset { get; set; }
 
-        public int Y;
+        public int Y { get; set; }
 
         public ActionMessage(MapInstance map, int x, int y, string message, Color color)
         {

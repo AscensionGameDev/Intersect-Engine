@@ -1,4 +1,5 @@
-﻿using Intersect.Client.General;
+﻿using Intersect.Client.Framework.Entities;
+using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins.Helpers;
@@ -48,6 +49,12 @@ namespace Intersect.Client.Plugins.Helpers
         public void OnGameDraw(DrawStates state)
         {
             var gameDrawArgs = new GameDrawArgs(state);
+            GameDraw?.Invoke(Context, gameDrawArgs);
+        }
+
+        public void OnGameDraw(DrawStates state, IEntity entity)
+        {
+            var gameDrawArgs = new GameDrawArgs(state, entity);
             GameDraw?.Invoke(Context, gameDrawArgs);
         }
     }

@@ -1,4 +1,6 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.GameObjects;
@@ -6,13 +8,10 @@ using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Client.Entities
 {
-    public partial class Critter : Entity
+    public partial class Critter : Entity, ICritter
     {
         private MapCritterAttribute mAttribute;
         private long mLastMove = -1;
@@ -78,7 +77,7 @@ namespace Intersect.Client.Entities
             MoveDir = (byte)Globals.Random.Next(4);
             var tmpX = (sbyte)X;
             var tmpY = (sbyte)Y;
-            Entity blockedBy = null;
+            IEntity blockedBy = null;
 
             if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
             {
@@ -118,7 +117,7 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 3: // Right
-                        if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X+1, Y)))
+                        if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X + 1, Y)))
                         {
                             //If BlockPlayers then make sure there is no player here
                             tmpX++;
@@ -171,7 +170,7 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        public override HashSet<IEntity> DetermineRenderOrder(HashSet<IEntity> renderList, IMapInstance map)
         {
             if (mAttribute.Layer == 1)
             {
@@ -214,7 +213,7 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
-                            HashSet<Entity> renderSet = null;
+                            HashSet<IEntity> renderSet = null;
 
                             if (y == gridY - 2)
                             {

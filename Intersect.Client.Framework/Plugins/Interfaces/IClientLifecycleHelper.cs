@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Plugins.Interfaces;
@@ -35,9 +35,17 @@ namespace Intersect.Client.Plugins.Interfaces
     {
         public DrawStates State { get; }
 
+        public IEntity Entity { get; }
+
         public GameDrawArgs(DrawStates state)
         {
             State = state;
+        }
+
+        public GameDrawArgs(DrawStates state, IEntity entity)
+        {
+            State = state;
+            Entity = entity;
         }
     }
 
@@ -94,5 +102,12 @@ namespace Intersect.Client.Plugins.Interfaces
         /// </summary>
         /// <param name="state">The new <see cref="DrawStates"/>.</param>
         void OnGameDraw(DrawStates state);
+
+        /// <summary>
+        /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
+        /// </summary>
+        /// <param name="state">The new <see cref="DrawStates"/>.</param>
+        /// <param name="entity">The <see cref="IEntity"/> that is being drawn.</param>
+        void OnGameDraw(DrawStates state, IEntity entity);
     }
 }

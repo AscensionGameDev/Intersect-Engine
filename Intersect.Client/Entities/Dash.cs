@@ -1,12 +1,12 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 
 namespace Intersect.Client.Entities
 {
 
-    public partial class Dash
+    public partial class Dash : IDash
     {
 
         private int mChangeDirection = -1;
@@ -38,7 +38,7 @@ namespace Intersect.Client.Entities
             mDashTime = dashTime;
         }
 
-        public void Start(Entity en)
+        public void Start(IEntity en)
         {
             if (MapInstance.Get(en.CurrentMap) == null ||
                 MapInstance.Get(mEndMapId) == null ||
@@ -57,7 +57,7 @@ namespace Intersect.Client.Entities
                 mEndYCoord = endMap.GetY() + mEndY * Options.TileHeight - (startMap.GetY() + en.Y * Options.TileHeight);
                 if (mChangeDirection > -1)
                 {
-                    en.Dir = (byte) mChangeDirection;
+                    en.Dir = (byte)mChangeDirection;
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float) mDashTime);
+                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
             }
         }
 
@@ -82,11 +82,11 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float) mDashTime);
+                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
             }
         }
 
-        public bool Update(Entity en)
+        public bool Update(IEntity en)
         {
             if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
             {

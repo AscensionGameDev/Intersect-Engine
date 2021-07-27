@@ -269,7 +269,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 if (itmIndex > -1)
                 {
                     mInventoryItemIndex = itmIndex;
-                    mInventoryItem = Globals.Me.Inventory[itmIndex];
+                    mInventoryItem = Globals.Me.Inventory[itmIndex] as Item;
                 }
             }
             else if (mCurrentSpell != null)
@@ -277,7 +277,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 var splIndex = Globals.Me.FindHotbarSpell(slot);
                 if (splIndex > -1)
                 {
-                    mSpellBookItem = Globals.Me.Spells[splIndex];
+                    mSpellBookItem = Globals.Me.Spells[splIndex] as Spell;
                 }
             }
 

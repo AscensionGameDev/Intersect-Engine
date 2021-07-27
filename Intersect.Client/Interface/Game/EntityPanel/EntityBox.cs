@@ -489,7 +489,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status));
+                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status) as Status);
                 }
             }
 
@@ -500,7 +500,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 SpellStatus itm = null;
                 if (!mActiveStatuses.ContainsKey(id))
                 {
-                    itm = new SpellStatus(this, MyEntity.Status[i]);
+                    itm = new SpellStatus(this, MyEntity.Status[i] as Status);
                     if (PlayerBox)
                     {
                         itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
@@ -556,7 +556,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.MapInstance != null)
             {
-                EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
+                var currentMap = Globals.Me.MapInstance as MapInstance;
+                EntityMap.SetText(Strings.EntityBox.map.ToString(currentMap.Name));
             }
             else
             {

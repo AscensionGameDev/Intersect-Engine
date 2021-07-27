@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -65,7 +66,7 @@ namespace Intersect.Client.Entities
                 return 0f;
             }
 
-            var y = (int) Math.Ceiling(mOwner.GetLabelLocation(Entity.LabelType.ChatBubble));
+            var y = (int) Math.Ceiling(mOwner.GetLabelLocation(LabelType.ChatBubble));
 
             var x = (int) Math.Ceiling(mOwner.GetCenterPos().X);
             if (mTextureBounds.Width == 0)

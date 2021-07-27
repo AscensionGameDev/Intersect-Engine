@@ -2,6 +2,8 @@
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
@@ -378,7 +380,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en;
+            IEntity en;
             if (type != EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -551,7 +553,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en;
+            IEntity en;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -664,7 +666,7 @@ namespace Intersect.Client.Networking
 
             foreach (var en in packet.EntityUpdates)
             {
-                Entity entity = null;
+                IEntity entity = null;
 
                 if (en.Type < EntityTypes.Event)
                 {
@@ -714,7 +716,7 @@ namespace Intersect.Client.Networking
 
             foreach (var en in packet.EntityUpdates)
             {
-                Entity entity = null;
+                IEntity entity = null;
 
                 if (en.Type < EntityTypes.Event)
                 {
@@ -783,7 +785,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -867,7 +869,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -907,7 +909,7 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -949,7 +951,7 @@ namespace Intersect.Client.Networking
             var mapId = packet.MapId;
             var attackTimer = packet.AttackTimer;
 
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -994,7 +996,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -1098,7 +1100,7 @@ namespace Intersect.Client.Networking
                 
                 if (!map.MapItems.ContainsKey(mapItem.TileIndex))
                 {
-                    map.MapItems.Add(mapItem.TileIndex, new List<MapItemInstance>());
+                    map.MapItems.Add(mapItem.TileIndex, new List<IMapItemInstance>());
                 }
 
                 map.MapItems[mapItem.TileIndex].Add(mapItem);
@@ -1131,7 +1133,7 @@ namespace Intersect.Client.Networking
             {
                 if (!map.MapItems.ContainsKey(packet.TileIndex))
                 {
-                    map.MapItems.Add(packet.TileIndex, new List<MapItemInstance>());
+                    map.MapItems.Add(packet.TileIndex, new List<IMapItemInstance>());
                 }
 
                 // Check if the item already exists, if it does replace it. Otherwise just add it.
@@ -1711,7 +1713,7 @@ namespace Intersect.Client.Networking
             var id = packet.EntityId;
             var type = packet.Type;
             var mapId = packet.MapId;
-            Entity en = null;
+            IEntity en = null;
             if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
@@ -1730,8 +1732,8 @@ namespace Intersect.Client.Networking
                 }
 
                 if (!entityMap.LocalEntities.ContainsKey(id))
-                {
                     return;
+                {
                 }
 
                 en = entityMap.LocalEntities[id];

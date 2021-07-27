@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
@@ -84,13 +86,13 @@ namespace Intersect.Client.Entities.Events
         public override void Draw()
         {
             WorldPos.Reset();
-            if (MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
             {
                 return;
             }
             
 
-            var map = MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(CurrentMap);
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
             GameTexture srcTexture = null;
@@ -197,14 +199,12 @@ namespace Intersect.Client.Entities.Events
 
             destRectangle.X = (int) Math.Ceiling(destRectangle.X);
             destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-            destRectangle.Width = srcRectangle.Width;
-            destRectangle.Height = srcRectangle.Height;
+            destRectangle.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
+            destRectangle.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
 
             // Set up our targetting rectangle.
             // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
-            WorldPos.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
-            WorldPos.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
 
             if (srcTexture != null)
             {
@@ -212,7 +212,7 @@ namespace Intersect.Client.Entities.Events
             }
         }
 
-        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        public override HashSet<IEntity> DetermineRenderOrder(HashSet<IEntity> renderList, IMapInstance map)
         {
             if (RenderLevel == 1)
             {
@@ -255,7 +255,7 @@ namespace Intersect.Client.Entities.Events
                                 priority += 3;
                             }
 
-                            HashSet<Entity> renderSet = null;
+                            HashSet<IEntity> renderSet = null;
 
                             if (y == gridY - 2)
                             {
@@ -302,7 +302,7 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
             {
                 return;
             }
@@ -368,7 +368,7 @@ namespace Intersect.Client.Entities.Events
 
         protected override void CalculateCenterPos()
         {
-            var map = MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(CurrentMap);
             if (map == null)
             {
                 mCenterPos = Pointf.Empty;

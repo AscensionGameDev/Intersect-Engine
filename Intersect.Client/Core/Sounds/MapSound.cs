@@ -1,6 +1,6 @@
 ﻿using System;
-
-using Intersect.Client.Entities;
+using Intersect.Client.Framework.Core.Sounds;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
@@ -8,12 +8,12 @@ using Intersect.Client.Maps;
 namespace Intersect.Client.Core.Sounds
 {
 
-    public class MapSound : Sound
+    public class MapSound : Sound, IMapSound
     {
 
         private int mDistance;
 
-        private Entity mEntity;
+        private IEntity mEntity;
 
         private Guid mMapId;
 
@@ -29,7 +29,7 @@ namespace Intersect.Client.Core.Sounds
             bool loop,
             int loopInterval,
             int distance,
-            Entity parent = null
+            IEntity parent = null
         ) : base(filename, loop, loopInterval)
         {
             if (string.IsNullOrEmpty(filename) || mSound == null)
@@ -122,7 +122,7 @@ namespace Intersect.Client.Core.Sounds
                         volume = 0f;
                     }
 
-                    mSound.SetVolume((int) volume);
+                    mSound.SetVolume((int)volume);
                 }
                 else
                 {
@@ -146,24 +146,23 @@ namespace Intersect.Client.Core.Sounds
                 playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + 16;
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
-                    var player = new Point()
-                    {
-                        X = (int) playerx,
-                        Y = (int) playery
+                    var player = new Point() {
+                        X = (int)playerx,
+                        Y = (int)playery
                     };
 
                     var mapRect = new Rectangle(
-                        (int) map.GetX(), (int) map.GetY(), Options.MapWidth * Options.TileWidth,
+                        (int)map.GetX(), (int)map.GetY(), Options.MapWidth * Options.TileWidth,
                         Options.MapHeight * Options.TileHeight
                     );
 
-                    distance = (float) DistancePointToRectangle(player, mapRect) / 32f;
+                    distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
                 }
                 else
                 {
                     soundx = map.GetX() + mX * Options.TileWidth + 16;
                     soundy = map.GetY() + mY * Options.TileHeight + 16;
-                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
+                    distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
 
@@ -201,7 +200,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - rect.X;
                     point.Y = point.Y - rect.Y;
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
                 {
@@ -209,7 +208,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - rect.X;
                     point.Y = point.Y - (rect.Y + rect.Height);
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
                 {
@@ -226,7 +225,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - rect.Y;
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
                 {
@@ -234,7 +233,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - (rect.Y + rect.Height);
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
                 {
