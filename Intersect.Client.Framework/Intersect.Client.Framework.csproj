@@ -90,6 +90,7 @@
     <Compile Include="Graphics\GameTexturePack.cs" />
     <Compile Include="Graphics\GameTileBuffer.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Graphics\IGameRenderer.cs" />
     <Compile Include="Input\GameClipboard.cs" />
     <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="Input\GameInput.cs" />

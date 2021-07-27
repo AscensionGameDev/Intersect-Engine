@@ -46,8 +46,6 @@ namespace Intersect.Client.Plugins.Contexts
             }
         }
 
-        public GameRenderer GameRenderer => Graphics.Renderer;
-
         /// <inheritdoc />
         private ClientPluginContext(Plugin plugin, IPacketHelper packetHelper) : base(plugin)
         {
@@ -61,6 +59,11 @@ namespace Intersect.Client.Plugins.Contexts
                                                      @"Tried accessing the content manager before it was created."
                                                  );
 
+        /// <inheritdoc />
+        public IGameRenderer GameRenderer => Graphics.Renderer ??
+                                                 throw new InvalidOperationException(
+                                                     @"Tried accessing the game renderer before it was created."
+                                                 );
 
         /// <inheritdoc />
         public override IClientLifecycleHelper Lifecycle { get; }

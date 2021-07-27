@@ -7,7 +7,7 @@ using Intersect.Client.Framework.GenericClasses;
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameRenderer
+    public abstract class GameRenderer : IGameRenderer
     {
 
         public GameRenderer()
