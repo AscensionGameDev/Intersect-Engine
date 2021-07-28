@@ -17,34 +17,7 @@ namespace Intersect.Client.Framework.File_Management
     public abstract class GameContentManager : IContentManager
     {
 
-        public enum TextureType
-        {
-
-            Tileset = 0,
-
-            Item,
-
-            Entity,
-
-            Spell,
-
-            Animation,
-
-            Face,
-
-            Image,
-
-            Fog,
-
-            Resource,
-
-            Paperdoll,
-
-            Gui,
-
-            Misc,
-
-        }
+        
 
         public enum UI
         {

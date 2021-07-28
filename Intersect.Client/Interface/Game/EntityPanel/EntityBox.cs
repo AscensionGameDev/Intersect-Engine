@@ -805,7 +805,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateImage()
         {
-            var faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
+            var faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, MyEntity.Face);
             var entityTex = MyEntity.Texture;
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
@@ -905,7 +905,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
                         var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                            Framework.Content.TextureType.Paperdoll, paperdoll
                         );
 
                         PaperdollPanels[n].Texture = paperdollTex;

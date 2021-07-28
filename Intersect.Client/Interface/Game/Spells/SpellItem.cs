@@ -142,7 +142,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
-                    var spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+                    var spellTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
                     if (spellTex != null)
                     {
                         Pnl.Texture = spellTex;

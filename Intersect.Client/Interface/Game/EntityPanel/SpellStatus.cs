@@ -116,7 +116,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     if (spell != null)
                     {
                         var spellTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Spell, spell.Icon
+                            Framework.Content.TextureType.Spell, spell.Icon
                         );
 
                         if (spellTex != null)

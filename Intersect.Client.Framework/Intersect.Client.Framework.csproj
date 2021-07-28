@@ -69,6 +69,7 @@
     <Compile Include="Content\ContentTypesExtensions.cs" />
     <Compile Include="Content\IAsset.cs" />
     <Compile Include="Content\IContentManager.cs" />
+    <Compile Include="Content\TextureType.cs" />
     <Compile Include="Core\Sounds\IMapSound.cs" />
     <Compile Include="Core\Sounds\ISound.cs" />
     <Compile Include="Database\GameDatabase.cs" />

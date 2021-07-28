@@ -338,7 +338,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Item, mCurrentItem.Icon
+                        Framework.Content.TextureType.Item, mCurrentItem.Icon
                     );
 
                     if (mInventoryItemIndex > -1)
@@ -379,7 +379,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Spell, mCurrentSpell.Icon
+                        Framework.Content.TextureType.Spell, mCurrentSpell.Icon
                     );
 
                     EquipPanel.IsHidden = true;

@@ -95,7 +95,7 @@ namespace Intersect.Client.Interface.Game
                     mEventDialogArea.ScrollToTop();
                     mEventDialogWindow.BringToFront();
                     var faceTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Face, Globals.EventDialogs[0].Face
+                        Framework.Content.TextureType.Face, Globals.EventDialogs[0].Face
                     );
 
                     var responseCount = 0;

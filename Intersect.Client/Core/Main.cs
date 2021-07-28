@@ -116,7 +116,7 @@ namespace Intersect.Client.Core
             if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
                 GameTexture imageTex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                    Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
                 );
 
                 if (imageTex != null)

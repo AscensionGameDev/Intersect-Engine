@@ -2,8 +2,6 @@
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -174,7 +172,7 @@ namespace Intersect.Client.Interface.Game
             mSpriteDropdown = new ComboBox(mAdminWindow);
             mSpriteDropdown.SetBounds(6, 128, 80, 18);
             mSpriteDropdown.AddItem(Strings.Admin.none);
-            var sprites = Globals.ContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
+            var sprites = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
             {
@@ -203,7 +201,7 @@ namespace Intersect.Client.Interface.Game
             mFaceDropdown = new ComboBox(mAdminWindow);
             mFaceDropdown.SetBounds(6, 188, 80, 18);
             mFaceDropdown.AddItem(Strings.Admin.none);
-            var faces = Globals.ContentManager.GetTextureNames(GameContentManager.TextureType.Face);
+            var faces = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
             {
@@ -268,7 +266,7 @@ namespace Intersect.Client.Interface.Game
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
             SpritePanel.Texture = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Entity, mSpriteDropdown.Text
+                Framework.Content.TextureType.Entity, mSpriteDropdown.Text
             );
 
             if (SpritePanel.Texture != null)
@@ -283,7 +281,7 @@ namespace Intersect.Client.Interface.Game
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
             FacePanel.Texture = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Face, mFaceDropdown.Text
+                Framework.Content.TextureType.Face, mFaceDropdown.Text
             );
         }
 

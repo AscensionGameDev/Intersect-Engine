@@ -173,7 +173,7 @@ namespace Intersect.Client.Maps
                             if (tileset != null)
                             {
                                 var tilesetTex = Globals.ContentManager.GetTexture(
-                                    GameContentManager.TextureType.Tileset, tileset.Name
+                                    Framework.Content.TextureType.Tileset, tileset.Name
                                 );
 
                                 Layers[layer][x, y].TilesetTex = tilesetTex;
@@ -720,7 +720,7 @@ namespace Intersect.Client.Maps
                     // Set up all information we need to draw this name.
                     var itemBase = ItemBase.Get(tileItems[index].ItemId);
 
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
                         Graphics.DrawGameTexture(
@@ -1033,7 +1033,7 @@ namespace Intersect.Client.Maps
 
             if (Fog != null && Fog.Length > 0)
             {
-                var fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
+                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     var xCount = (int)(Options.MapWidth * Options.TileWidth * 3 / fogTex.GetWidth());
@@ -1177,7 +1177,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, Panorama);
+            var imageTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Image, Panorama);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
@@ -1211,7 +1211,7 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            var imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, OverlayGraphic);
+            var imageTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Image, OverlayGraphic);
             if (imageTex != null)
             {
                 Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
@@ -1224,7 +1224,7 @@ namespace Intersect.Client.Maps
             //Check if fogs the same
             if (tempMap.Fog == Fog)
             {
-                var fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
+                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
                 if (fogTex != null)
                 {
                     //Copy over fog values

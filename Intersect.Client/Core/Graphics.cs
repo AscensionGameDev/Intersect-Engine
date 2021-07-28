@@ -133,7 +133,7 @@ namespace Intersect.Client.Core
         public static void DrawIntro()
         {
             var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
             );
 
             if (imageTex != null)
@@ -145,7 +145,7 @@ namespace Intersect.Client.Core
         public static void DrawMenu()
         {
             var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
+                Framework.Content.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
             );
 
             if (imageTex != null)
@@ -509,7 +509,7 @@ namespace Intersect.Client.Core
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
 

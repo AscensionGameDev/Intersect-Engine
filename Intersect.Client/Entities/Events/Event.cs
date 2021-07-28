@@ -103,7 +103,7 @@ namespace Intersect.Client.Entities.Events
             {
                 case EventGraphicType.Sprite: //Sprite
                     var entityTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Graphic.Filename
+                        Framework.Content.TextureType.Entity, Graphic.Filename
                     );
 
                     if (entityTex != null)
@@ -163,7 +163,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 
@@ -314,7 +314,7 @@ namespace Intersect.Client.Entities.Events
             {
                 case EventGraphicType.Sprite: //Sprite
                     var entityTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Graphic.Filename
+                        Framework.Content.TextureType.Entity, Graphic.Filename
                     );
 
                     if (entityTex != null)
@@ -328,7 +328,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 
@@ -384,7 +384,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+                    var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, MySprite);
                     if (entityTex != null)
                     {
                         pos.Y += Options.TileHeight / 2;
@@ -397,7 +397,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 

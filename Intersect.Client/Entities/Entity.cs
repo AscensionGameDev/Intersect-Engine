@@ -223,12 +223,12 @@ namespace Intersect.Client.Entities
                     mTransformedSprite = value;
                     if (value == "")
                     {
-                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
+                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
                         LoadAnimationTextures(mMySprite);
                     }
                     else
                     {
-                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mTransformedSprite);
+                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mTransformedSprite);
                         LoadAnimationTextures(mTransformedSprite);
                     }
                 }
@@ -243,7 +243,7 @@ namespace Intersect.Client.Entities
                 if (mMySprite != value)
                 {
                     mMySprite = value;
-                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
+                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
                     LoadAnimationTextures(mMySprite);
                 }
             }
@@ -1100,14 +1100,14 @@ namespace Intersect.Client.Entities
             GameTexture paperdollTex = null;
             var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
             paperdollTex = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
+                Framework.Content.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
             );
 
             var spriteFrames = SpriteFrames;
 
             if (paperdollTex == null)
             {
-                paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, filename);
+                paperdollTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Paperdoll, filename);
                 spriteFrames = Options.Instance.Sprites.NormalFrames;
             }
 
@@ -1567,7 +1567,7 @@ namespace Intersect.Client.Entities
 
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
-            var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+            var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, MySprite);
             if (entityTex != null)
             {
                 y = y - (int)(entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
@@ -1575,12 +1575,12 @@ namespace Intersect.Client.Entities
             }
 
             var hpBackground = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Misc, "hpbackground.png"
+                Framework.Content.TextureType.Misc, "hpbackground.png"
             );
 
-            var hpForeground = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "hpbar.png");
+            var hpForeground = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "hpbar.png");
             var shieldForeground = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Misc, "shieldbar.png"
+                Framework.Content.TextureType.Misc, "shieldbar.png"
             );
 
             if (hpBackground != null)
@@ -1632,7 +1632,7 @@ namespace Intersect.Client.Entities
                 var castFillWidth = fillratio * width;
                 var y = (int)Math.Ceiling(GetCenterPos().Y);
                 var x = (int)Math.Ceiling(GetCenterPos().X);
-                var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+                var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, MySprite);
                 if (entityTex != null)
                 {
                     y = y + (int)(entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
@@ -1640,11 +1640,11 @@ namespace Intersect.Client.Entities
                 }
 
                 var castBackground = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Misc, "castbackground.png"
+                    Framework.Content.TextureType.Misc, "castbackground.png"
                 );
 
                 var castForeground = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Misc, "castbar.png"
+                    Framework.Content.TextureType.Misc, "castbar.png"
                 );
 
                 if (castBackground != null)
@@ -1682,7 +1682,7 @@ namespace Intersect.Client.Entities
 
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
-            var targetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "target.png");
+            var targetTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
             if (targetTex != null)
             {
                 destRectangle.X = GetCenterPos().X - (int)targetTex.GetWidth() / 4;
@@ -1871,7 +1871,7 @@ namespace Intersect.Client.Entities
             AnimatedTextures.Clear();
             foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
             {
-                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, $@"{file}_{anim}.png"));
+                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, $@"{file}_{anim}.png"));
             }
         }
 

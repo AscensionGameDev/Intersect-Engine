@@ -82,7 +82,7 @@ namespace Intersect.Client.Plugins.Contexts
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the input manager before it was created."
                                                  );
-
+        /// <inheritdoc />
         public Options Options => Options.Instance ??
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the options instance before it was created."

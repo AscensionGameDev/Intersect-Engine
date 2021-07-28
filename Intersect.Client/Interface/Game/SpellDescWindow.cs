@@ -253,7 +253,7 @@ namespace Intersect.Client.Interface.Game
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             spellDescText.IsHidden = true;
             spellStatsText.IsHidden = true;
-            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+            icon.Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
             spellStats.SizeToChildren(false, true);
             if (centerHorizontally)
             {

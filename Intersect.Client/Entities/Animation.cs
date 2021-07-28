@@ -150,7 +150,7 @@ namespace Intersect.Client.Entities
             {
                 //Draw Lower
                 var tex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Animation, MyBase.Lower.Sprite
+                    Framework.Content.TextureType.Animation, MyBase.Lower.Sprite
                 );
 
                 if (tex != null)
@@ -190,7 +190,7 @@ namespace Intersect.Client.Entities
             {
                 //Draw Upper
                 var tex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Animation, MyBase.Upper.Sprite
+                    Framework.Content.TextureType.Animation, MyBase.Upper.Sprite
                 );
 
                 if (tex != null)
@@ -384,7 +384,7 @@ namespace Intersect.Client.Entities
         {
             var size = new Point(0, 0);
 
-            var tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Lower.Sprite);
+            var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, MyBase.Lower.Sprite);
             if (tex != null)
             {
                 if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
@@ -403,7 +403,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, MyBase.Upper.Sprite);
+            tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, MyBase.Upper.Sprite);
             if (tex != null)
             {
                 if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)

@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.IO;
-
+using Intersect.Client.Framework.Graphics;
 using Intersect.Plugins;
 
 namespace Intersect.Client.Framework.Content
@@ -20,6 +20,8 @@ namespace Intersect.Client.Framework.Content
             ContentTypes contentType,
             string assetName
         ) where TAsset : class, IAsset;
+
+        GameTexture GetTexture(TextureType type, string name);
 
     }
 

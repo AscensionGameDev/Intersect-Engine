@@ -201,7 +201,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["NormalImage"]
                     ), (string) obj["NormalImage"], ControlState.Normal
                 );
             }
@@ -210,7 +210,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["HoveredImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["HoveredImage"]
                     ), (string) obj["HoveredImage"], ControlState.Hovered
                 );
             }
@@ -219,7 +219,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ClickedImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["ClickedImage"]
                     ), (string) obj["ClickedImage"], ControlState.Clicked
                 );
             }
@@ -228,7 +228,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["DisabledImage"]
                     ), (string) obj["DisabledImage"], ControlState.Disabled
                 );
             }
@@ -472,7 +472,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (texture == null && !string.IsNullOrWhiteSpace(fileName))
             {
-                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
             }
 
             switch (state)

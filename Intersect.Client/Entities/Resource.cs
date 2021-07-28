@@ -51,7 +51,7 @@ namespace Intersect.Client.Entities
                 {
                     if (GameContentManager.Current.TilesetsLoaded)
                     {
-                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, mMySprite);
+                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, mMySprite);
                     }
                     else
                     {
@@ -60,7 +60,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, mMySprite);
                 }
 
                 mHasRenderBounds = false;

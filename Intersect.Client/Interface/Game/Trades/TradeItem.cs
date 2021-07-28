@@ -146,7 +146,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 var item = ItemBase.Get(Globals.Trade[n, mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
