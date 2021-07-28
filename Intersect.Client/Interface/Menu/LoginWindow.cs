@@ -124,7 +124,7 @@ namespace Intersect.Client.Interface.Menu
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.InputManager.OpenKeyboard(
-                GameInput.KeyboardType.Normal, mUsernameTextbox.Text, false, false, false
+                KeyboardType.Normal, mUsernameTextbox.Text, false, false, false
             );
         }
 

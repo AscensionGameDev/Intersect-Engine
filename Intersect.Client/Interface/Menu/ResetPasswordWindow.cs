@@ -117,7 +117,7 @@ namespace Intersect.Client.Interface.Menu
         private void Textbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.InputManager.OpenKeyboard(
-                GameInput.KeyboardType.Normal, mCodeInputTextbox.Text, false, false, false
+                KeyboardType.Normal, mCodeInputTextbox.Text, false, false, false
             );
         }
 

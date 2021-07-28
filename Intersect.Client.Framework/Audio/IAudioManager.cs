@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Audio
     /// <summary>
     /// Manages game audio for the client instance.
     /// </summary>
-    public interface IGameAudioManager
+    public interface IAudioManager
     {
         IMapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int loopInterval, int distance, IEntity parent = null);
 

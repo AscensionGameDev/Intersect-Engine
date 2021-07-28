@@ -3,6 +3,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.General;
 using Intersect.Client.Plugins.Audio;
@@ -62,18 +63,29 @@ namespace Intersect.Client.Plugins.Contexts
                                                  );
 
         /// <inheritdoc />
-        public IGameRenderer GameRenderer => Graphics.Renderer ??
+        public IGameRenderer Graphics => Core.Graphics.Renderer ??
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the game renderer before it was created."
                                                  );
 
         /// <inheritdoc />
-        public IGameAudioManager GameAudioManager { get; } = new GameAudioManager();
+        public IAudioManager Audio { get; } = new AudioManager();
 
         /// <inheritdoc />
         public override IClientLifecycleHelper Lifecycle { get; }
         
         /// <inheritdoc />
         public IClientNetworkHelper Network { get; }
+
+        /// <inheritdoc />
+        public IGameInput Input => Globals.InputManager ??
+                                                 throw new InvalidOperationException(
+                                                     @"Tried accessing the input manager before it was created."
+                                                 );
+
+        public Options Options => Options.Instance ??
+                                                 throw new InvalidOperationException(
+                                                     @"Tried accessing the options instance before it was created."
+                                                 );
     }
 }

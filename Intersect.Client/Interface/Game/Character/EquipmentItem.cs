@@ -70,7 +70,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 return;
             }

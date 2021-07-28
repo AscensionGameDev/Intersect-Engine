@@ -293,22 +293,22 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void OnMouseDown(GameInput.MouseButtons btn)
+        public static void OnMouseDown(MouseButtons btn)
         {
             var key = Keys.None;
             switch (btn)
             {
-                case GameInput.MouseButtons.Left:
+                case MouseButtons.Left:
                     key = Keys.LButton;
 
                     break;
 
-                case GameInput.MouseButtons.Right:
+                case MouseButtons.Right:
                     key = Keys.RButton;
 
                     break;
 
-                case GameInput.MouseButtons.Middle:
+                case MouseButtons.Middle:
                     key = Keys.MButton;
 
                     break;
@@ -368,17 +368,17 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void OnMouseUp(GameInput.MouseButtons btn)
+        public static void OnMouseUp(MouseButtons btn)
         {
             var key = Keys.LButton;
             switch (btn)
             {
-                case GameInput.MouseButtons.Right:
+                case MouseButtons.Right:
                     key = Keys.RButton;
 
                     break;
 
-                case GameInput.MouseButtons.Middle:
+                case MouseButtons.Middle:
                     key = Keys.MButton;
 
                     break;
@@ -400,7 +400,7 @@ namespace Intersect.Client.Core
                 Globals.Me.StopBlocking();
             }
 
-            if (btn != GameInput.MouseButtons.Right)
+            if (btn != MouseButtons.Right)
             {
                 return;
             }

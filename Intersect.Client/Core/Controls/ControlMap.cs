@@ -38,21 +38,21 @@ namespace Intersect.Client.Core.Controls
             switch (Key1)
             {
                 case Keys.LButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         return true;
                     }
 
                     break;
                 case Keys.RButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
                     {
                         return true;
                     }
 
                     break;
                 case Keys.MButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Middle))
                     {
                         return true;
                     }
@@ -63,21 +63,21 @@ namespace Intersect.Client.Core.Controls
             switch (Key2)
             {
                 case Keys.LButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         return true;
                     }
 
                     break;
                 case Keys.RButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
                     {
                         return true;
                     }
 
                     break;
                 case Keys.MButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle))
+                    if (Globals.InputManager.MouseButtonDown(MouseButtons.Middle))
                     {
                         return true;
                     }
