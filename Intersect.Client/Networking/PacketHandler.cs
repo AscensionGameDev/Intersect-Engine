@@ -253,6 +253,7 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
+                en.Type = EntityTypes.Player;
                 if (packet.IsSelf)
                 {
                     Globals.Me = (Player) Globals.Entities[packet.EntityId];
@@ -275,12 +276,14 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
-                en.Type = packet.Aggression;
+                en.Aggression = packet.Aggression;
+                en.Type = EntityTypes.GlobalEntity;
             }
             else
             {
                 Globals.Entities.Add(packet.EntityId, new Entity(packet.EntityId, packet));
-                Globals.Entities[packet.EntityId].Type = packet.Aggression;
+                Globals.Entities[packet.EntityId].Aggression = packet.Aggression;
+                Globals.Entities[packet.EntityId].Type = EntityTypes.GlobalEntity;
             }
         }
 
@@ -291,10 +294,12 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
+                en.Type = EntityTypes.Resource;
             }
             else
             {
                 Globals.Entities.Add(packet.EntityId, new Resource(packet.EntityId, packet));
+                Globals.Entities[packet.EntityId].Type = EntityTypes.Resource;
             }
         }
 
@@ -305,10 +310,12 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
+                en.Type = EntityTypes.Projectile;
             }
             else
             {
                 Globals.Entities.Add(packet.EntityId, new Projectile(packet.EntityId, packet));
+                Globals.Entities[packet.EntityId].Type = EntityTypes.Projectile;
             }
         }
 
@@ -1853,7 +1860,7 @@ namespace Intersect.Client.Networking
         {
             if (Globals.Entities.ContainsKey(packet.EntityId))
             {
-                Globals.Entities[packet.EntityId].Type = packet.Aggression;
+                Globals.Entities[packet.EntityId].Aggression = packet.Aggression;
             }
         }
 

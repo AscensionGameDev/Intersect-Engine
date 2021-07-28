@@ -48,6 +48,7 @@ namespace Intersect.Client.Entities.Events
         public Event(Guid id, EventEntityPacket packet) : base(id, packet, true)
         {
             mRenderPriority = 1;
+            Type = EntityTypes.Event;
         }
 
         public override string ToString()

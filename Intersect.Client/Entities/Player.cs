@@ -237,7 +237,7 @@ namespace Intersect.Client.Entities
             var pkt = (PlayerEntityPacket) packet;
             Gender = pkt.Gender;
             Class = pkt.ClassId;
-            Type = pkt.AccessLevel;
+            Aggression = pkt.AccessLevel;
             CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
             Guild = pkt.Guild;
             Rank = pkt.GuildRank;
@@ -1854,13 +1854,13 @@ namespace Intersect.Client.Entities
         {
             if (textColor == null)
             {
-                if (Type == 1) //Mod
+                if (Aggression == 1) //Mod
                 {
                     textColor = CustomColors.Names.Players["Moderator"].Name;
                     borderColor = CustomColors.Names.Players["Moderator"].Outline;
                     backgroundColor = CustomColors.Names.Players["Moderator"].Background;
                 }
-                else if (Type == 2) //Admin
+                else if (Aggression == 2) //Admin
                 {
                     textColor = CustomColors.Names.Players["Admin"].Name;
                     borderColor = CustomColors.Names.Players["Admin"].Outline;

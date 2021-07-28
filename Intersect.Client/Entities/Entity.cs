@@ -155,7 +155,9 @@ namespace Intersect.Client.Entities
         public long LastActionTime { get; set; } = -1;
         #endregion
 
-        public int Type { get; set; }
+        public EntityTypes Type { get; set; }
+
+        public int Aggression { get; set; }
 
         public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
 
@@ -1341,7 +1343,7 @@ namespace Intersect.Client.Entities
             if (textColor == null)
             {
                 LabelColor? color = null;
-                switch (Type)
+                switch (Aggression)
                 {
                     case -1: //When entity has a target (showing aggression)
                         color = CustomColors.Names.Npcs["Aggressive"];

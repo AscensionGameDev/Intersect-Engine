@@ -67,13 +67,15 @@ namespace Intersect.Client.Framework.Entities
         int Target { get; set; }
         GameTexture Texture { get; set; }
         string TransformedSprite { get; set; }
-        int Type { get; set; }
+        EntityTypes Type { get; set; }
         int[] Vital { get; set; }
         int WalkFrame { get; set; }
         FloatRect WorldPos { get; set; }
         byte X { get; set; }
         byte Y { get; set; }
         byte Z { get; set; }
+
+        int Aggression { get; set; }
 
         void AddAnimations(List<AnimationBase> anims);
         void AddChatBubble(string text);

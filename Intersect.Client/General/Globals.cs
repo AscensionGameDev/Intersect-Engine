@@ -9,6 +9,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Client.Maps;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -74,8 +75,37 @@ namespace Intersect.Client.General
 
         internal static void OnGameUpdate()
         {
+            // Gather all known entities before passing them on to the plugins!
+            // The global entity list is incomplete and lacks events.
+            var knownEntities = new Dictionary<Guid, IEntity>();
+            foreach(var en in Entities)
+            {
+                if (!knownEntities.ContainsKey(en.Key))
+                {
+                    knownEntities.Add(en.Key, en.Value);
+                }
+            }
+
+            for (var x = 0; x < MapGridWidth; x++)
+            {
+                for (var y = 0; y < MapGridHeight; y++)
+                {
+                    var map = MapInstance.Get(MapGrid[x, y]);
+                    if (map != null)
+                    {
+                        foreach (var en in map.LocalEntities)
+                        {
+                            if (!knownEntities.ContainsKey(en.Key))
+                            {
+                                knownEntities.Add(en.Key, en.Value);
+                            }
+                        }
+                    }
+                }
+            }
+            
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, Globals.Entities)
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities)
             );
         }
 
