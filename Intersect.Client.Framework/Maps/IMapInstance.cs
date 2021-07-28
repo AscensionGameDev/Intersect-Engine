@@ -11,6 +11,7 @@ namespace Intersect.Client.Framework.Maps
 {
     public interface IMapInstance
     {
+        Guid Id { get; }
         List<IWeatherParticle> _removeParticles { get; set; }
         List<IWeatherParticle> _weatherParticles { get; set; }
         List<IActionMessage> ActionMsgs { get; set; }
