@@ -351,14 +351,15 @@ namespace Intersect.Client.MonoGame.File_Management
                 case ContentTypes.Spell:
                 case ContentTypes.TexturePack:
                 case ContentTypes.TileSet:
-                    return Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                    var asset = Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                    lookup?.Add(name, asset);
+                    return asset;
 
                 case ContentTypes.Font:
                     throw new NotImplementedException();
 
                 case ContentTypes.Shader:
                     throw new NotImplementedException();
-
                 case ContentTypes.Music:
                 case ContentTypes.Sound:
                     throw new NotImplementedException();
