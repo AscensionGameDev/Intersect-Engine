@@ -31,12 +31,11 @@ namespace Intersect.Client.Plugins.Interfaces
 
         public IReadOnlyDictionary<Guid, IEntity> KnownEntities { get; }
 
-        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
+        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime) : base(deltaTime)
         {
             State = state;
             Player = player;
             KnownEntities = knownEntities;
-            Delta = deltaTime;
         }
     }
 
@@ -46,17 +45,15 @@ namespace Intersect.Client.Plugins.Interfaces
 
         public IEntity Entity { get; }
 
-        public GameDrawArgs(DrawStates state, TimeSpan deltaTime)
+        public GameDrawArgs(DrawStates state, TimeSpan deltaTime) : base(deltaTime)
         {
             State = state;
-            Delta = deltaTime;
         }
 
-        public GameDrawArgs(DrawStates state, IEntity entity, TimeSpan deltaTime)
+        public GameDrawArgs(DrawStates state, IEntity entity, TimeSpan deltaTime) : base(deltaTime)
         {
             State = state;
             Entity = entity;
-            Delta = deltaTime;
         }
     }
 
@@ -65,7 +62,12 @@ namespace Intersect.Client.Plugins.Interfaces
         /// <summary>
         /// Time since the last update.
         /// </summary>
-        public TimeSpan Delta { get; protected set; }
+        public TimeSpan Delta { get; }
+
+        public TimedArgs(TimeSpan delta)
+        {
+            Delta = delta;
+        }
     }
 
     public delegate void GameUpdateHandler(
