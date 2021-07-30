@@ -6,6 +6,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;

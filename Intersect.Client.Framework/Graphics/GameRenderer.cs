@@ -49,6 +49,12 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract void SetView(FloatRect view);
 
+        public FloatRect CurrentView
+        {
+            get { return GetView(); }
+            set { SetView(value); }
+        }
+
         public abstract FloatRect GetView();
 
         public abstract GameFont LoadFont(string filename);
@@ -72,11 +78,19 @@ namespace Intersect.Client.Framework.Graphics
             bool drawImmediate = false
         );
 
+        public int Fps => GetFps();
+
         public abstract int GetFps();
+
+        public int ScreenWidth => GetScreenWidth();
 
         public abstract int GetScreenWidth();
 
+        public int ScreenHeight => GetScreenHeight();
+
         public abstract int GetScreenHeight();
+
+        public string ResolutionAsString => GetResolutionString();
 
         public abstract string GetResolutionString();
 
@@ -127,6 +141,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract void Close();
 
+        public List<string> ValidVideoModes => GetValidVideoModes();
         public abstract List<string> GetValidVideoModes();
 
         public abstract GameShader LoadShader(string shaderName);
