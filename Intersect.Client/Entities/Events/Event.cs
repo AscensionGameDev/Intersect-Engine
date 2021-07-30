@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
@@ -46,6 +48,7 @@ namespace Intersect.Client.Entities.Events
         public Event(Guid id, EventEntityPacket packet) : base(id, packet, true)
         {
             mRenderPriority = 1;
+            Type = EntityTypes.Event;
         }
 
         public override string ToString()
@@ -84,13 +87,13 @@ namespace Intersect.Client.Entities.Events
         public override void Draw()
         {
             WorldPos.Reset();
-            if (MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }
             
 
-            var map = MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(MapId);
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
             GameTexture srcTexture = null;
@@ -101,7 +104,7 @@ namespace Intersect.Client.Entities.Events
             {
                 case EventGraphicType.Sprite: //Sprite
                     var entityTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Graphic.Filename
+                        Framework.Content.TextureType.Entity, Graphic.Filename
                     );
 
                     if (entityTex != null)
@@ -161,7 +164,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 
@@ -197,14 +200,12 @@ namespace Intersect.Client.Entities.Events
 
             destRectangle.X = (int) Math.Ceiling(destRectangle.X);
             destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-            destRectangle.Width = srcRectangle.Width;
-            destRectangle.Height = srcRectangle.Height;
+            destRectangle.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
+            destRectangle.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
 
             // Set up our targetting rectangle.
             // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
-            WorldPos.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
-            WorldPos.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
 
             if (srcTexture != null)
             {
@@ -212,7 +213,7 @@ namespace Intersect.Client.Entities.Events
             }
         }
 
-        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
             if (RenderLevel == 1)
             {
@@ -225,8 +226,8 @@ namespace Intersect.Client.Entities.Events
                 return null;
             }
 
-            var gridX = Globals.Me.MapInstance.MapGridX;
-            var gridY = Globals.Me.MapInstance.MapGridY;
+            var gridX = Globals.Me.MapInstance.GridX;
+            var gridY = Globals.Me.MapInstance.GridY;
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -237,7 +238,7 @@ namespace Intersect.Client.Entities.Events
                         y < Globals.MapGridHeight &&
                         Globals.MapGrid[x, y] != Guid.Empty)
                     {
-                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        if (Globals.MapGrid[x, y] == MapId)
                         {
                             if (RenderLevel == 0)
                             {
@@ -302,7 +303,7 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }
@@ -314,7 +315,7 @@ namespace Intersect.Client.Entities.Events
             {
                 case EventGraphicType.Sprite: //Sprite
                     var entityTex = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Graphic.Filename
+                        Framework.Content.TextureType.Entity, Graphic.Filename
                     );
 
                     if (entityTex != null)
@@ -328,7 +329,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 
@@ -368,7 +369,7 @@ namespace Intersect.Client.Entities.Events
 
         protected override void CalculateCenterPos()
         {
-            var map = MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(MapId);
             if (map == null)
             {
                 mCenterPos = Pointf.Empty;
@@ -384,7 +385,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+                    var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
                     if (entityTex != null)
                     {
                         pos.Y += Options.TileHeight / 2;
@@ -397,7 +398,7 @@ namespace Intersect.Client.Entities.Events
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Tileset, Graphic.Filename
+                            Framework.Content.TextureType.Tileset, Graphic.Filename
                         );
                     }
 

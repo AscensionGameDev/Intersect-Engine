@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core.Sounds;
-using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Core.Sounds;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
-using Intersect.Compression;
 using Intersect.Logging;
 
 namespace Intersect.Client.Core
@@ -233,7 +233,7 @@ namespace Intersect.Client.Core
             bool loop,
             int loopInterval,
             int distance,
-            Entity parent = null
+            IEntity parent = null
         )
         {
             if (sGameSounds?.Count > 128)
@@ -260,7 +260,7 @@ namespace Intersect.Client.Core
             return sound;
         }
 
-        public static void StopSound(MapSound sound)
+        public static void StopSound(IMapSound sound)
         {
             sound?.Stop();
         }

@@ -184,7 +184,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["NormalImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["NormalImage"]
                     ), (string) obj["NormalImage"], ControlState.Normal
                 );
             }
@@ -193,7 +193,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["HoveredImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["HoveredImage"]
                     ), (string) obj["HoveredImage"], ControlState.Hovered
                 );
             }
@@ -202,7 +202,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ClickedImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["ClickedImage"]
                     ), (string) obj["ClickedImage"], ControlState.Clicked
                 );
             }
@@ -211,7 +211,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["DisabledImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["DisabledImage"]
                     ), (string) obj["DisabledImage"], ControlState.Disabled
                 );
             }

@@ -50,7 +50,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 return;
             }
 
-            Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.UniqueId);
+            Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.Id);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -74,7 +74,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 return;
             }
 
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 return;
             }
@@ -113,7 +113,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             var item = ItemBase.Get(MyItem.ItemId);
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.RenderColor = item.Color;

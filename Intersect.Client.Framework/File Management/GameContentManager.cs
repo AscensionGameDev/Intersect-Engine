@@ -17,34 +17,7 @@ namespace Intersect.Client.Framework.File_Management
     public abstract class GameContentManager : IContentManager
     {
 
-        public enum TextureType
-        {
-
-            Tileset = 0,
-
-            Item,
-
-            Entity,
-
-            Spell,
-
-            Animation,
-
-            Face,
-
-            Image,
-
-            Fog,
-
-            Resource,
-
-            Paperdoll,
-
-            Gui,
-
-            Misc,
-
-        }
+        
 
         public enum UI
         {
@@ -537,14 +510,27 @@ namespace Intersect.Client.Framework.File_Management
         ) where TAsset : class, IAsset;
 
         /// <inheritdoc />
-        public TAsset Load<TAsset>(ContentTypes contentType, string assetPath) where TAsset : class, IAsset
+        public TAsset Find<TAsset>(ContentTypes contentType, string assetName) where TAsset : class, IAsset
+        {
+            var assetLookup = GetAssetLookup(contentType);
+
+            if (assetLookup.TryGetValue(assetName, out var asset))
+            {
+                return asset as TAsset;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc />
+        public TAsset Load<TAsset>(ContentTypes contentType, string assetPath, string assetAlias) where TAsset : class, IAsset
         {
             if (!File.Exists(assetPath))
             {
                 throw new FileNotFoundException($@"Asset does not exist at '{assetPath}'.");
             }
 
-            return Load<TAsset>(contentType, assetPath, () => File.OpenRead(assetPath));
+            return Load<TAsset>(contentType, assetAlias.ToLower(), () => File.OpenRead(assetPath));
         }
 
         /// <inheritdoc />
@@ -567,6 +553,14 @@ namespace Intersect.Client.Framework.File_Management
         {
             var manifestResourceName = context.EmbeddedResources.Resolve(assetName);
             return Load<TAsset>(contentType, assetName, () => context.EmbeddedResources.Read(manifestResourceName));
+        }
+
+        /// <inheritdoc />
+        public TAsset LoadEmbedded<TAsset>(IPluginContext context, ContentTypes contentType, string assetName, string assetAlias)
+            where TAsset : class, IAsset
+        {
+            var manifestResourceName = context.EmbeddedResources.Resolve(assetName);
+            return Load<TAsset>(contentType, assetName, assetAlias);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Core;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -108,9 +109,9 @@ namespace Intersect.Client.Interface.Game
             mFpsLabel.Text = Strings.Debug.fps.ToString(Graphics.Renderer.GetFps());
             mPingLabel.Text = Strings.Debug.ping.ToString(Networking.Network.Ping);
             mDrawsLabel.Text = Strings.Debug.draws.ToString(Graphics.DrawCalls);
-            if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Get(Globals.Me.MapId) != null)
             {
-                mMapLabel.Text = Strings.Debug.map.ToString(MapInstance.Get(Globals.Me.CurrentMap).Name);
+                mMapLabel.Text = Strings.Debug.map.ToString(MapInstance.Get(Globals.Me.MapId).Name);
                 mXLabel.Text = Strings.Debug.x.ToString(Globals.Me.X);
                 mYLabel.Text = Strings.Debug.y.ToString(Globals.Me.Y);
                 mZLabel.Text = Strings.Debug.z.ToString(Globals.Me.Z);

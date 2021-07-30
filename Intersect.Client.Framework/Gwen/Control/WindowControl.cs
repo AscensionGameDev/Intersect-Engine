@@ -169,7 +169,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ActiveImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["ActiveImage"]
                     ), (string) obj["ActiveImage"], ControlState.Active
                 );
             }
@@ -178,7 +178,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["InactiveImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["InactiveImage"]
                     ), (string) obj["InactiveImage"], ControlState.Inactive
                 );
             }

@@ -70,7 +70,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 return;
             }
@@ -112,7 +112,7 @@ namespace Intersect.Client.Interface.Game.Character
                 var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         ContentPanel.Show();

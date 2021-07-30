@@ -4,6 +4,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -165,7 +166,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -268,7 +269,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 if (itmIndex > -1)
                 {
                     mInventoryItemIndex = itmIndex;
-                    mInventoryItem = Globals.Me.Inventory[itmIndex];
+                    mInventoryItem = Globals.Me.Inventory[itmIndex] as Item;
                 }
             }
             else if (mCurrentSpell != null)
@@ -276,7 +277,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 var splIndex = Globals.Me.FindHotbarSpell(slot);
                 if (splIndex > -1)
                 {
-                    mSpellBookItem = Globals.Me.Spells[splIndex];
+                    mSpellBookItem = Globals.Me.Spells[splIndex] as Spell;
                 }
             }
 
@@ -317,14 +318,14 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                 //Spell on cd
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs())
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs())
                 {
                     updateDisplay = true;
                 }
 
                 //Spell on cd and the fade is incorrect
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs() != mIsFaded)
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs() != mIsFaded)
                 {
                     updateDisplay = true;
                 }
@@ -337,7 +338,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Item, mCurrentItem.Icon
+                        Framework.Content.TextureType.Item, mCurrentItem.Icon
                     );
 
                     if (mInventoryItemIndex > -1)
@@ -378,7 +379,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Spell, mCurrentSpell.Icon
+                        Framework.Content.TextureType.Spell, mCurrentSpell.Icon
                     );
 
                     EquipPanel.IsHidden = true;
@@ -386,12 +387,12 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     if (mSpellBookItem != null)
                     {
-                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs();
+                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs();
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
                             var secondsRemaining =
-                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) -
+                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.Id) -
                                          Globals.System.GetTimeMs()) /
                                 1000f;
 
@@ -457,7 +458,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     if (mMouseOver)
                     {
-                        if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                        if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                         {
                             mCanDrag = true;
                             mMouseX = -1;

@@ -4,14 +4,18 @@ using System.Collections.Generic;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Client.Maps;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
+using Intersect.Utilities;
 
 namespace Intersect.Client.General
 {
@@ -71,11 +75,54 @@ namespace Intersect.Client.General
             );
         }
 
-        internal static void OnGameUpdate()
+        internal static void OnGameUpdate(TimeSpan deltaTime)
+        {
+            // Gather all known entities before passing them on to the plugins!
+            // The global entity list is incomplete and lacks events.
+            var knownEntities = new Dictionary<Guid, IEntity>();
+            foreach(var en in Entities)
+            {
+                if (!knownEntities.ContainsKey(en.Key))
+                {
+                    knownEntities.Add(en.Key, en.Value);
+                }
+            }
+
+            for (var x = 0; x < MapGridWidth; x++)
+            {
+                for (var y = 0; y < MapGridHeight; y++)
+                {
+                    var map = MapInstance.Get(MapGrid[x, y]);
+                    if (map != null)
+                    {
+                        foreach (var en in map.LocalEntities)
+                        {
+                            if (!knownEntities.ContainsKey(en.Key))
+                            {
+                                knownEntities.Add(en.Key, en.Value);
+                            }
+                        }
+                    }
+                }
+            }
+
+            ClientLifecycleHelpers.ForEach(
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, deltaTime)
+            );
+        }
+
+        internal static void OnGameDraw(DrawStates state, TimeSpan deltaTime)
         {
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState)
-            );
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, deltaTime)
+           );
+        }
+
+        internal static void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
+        {
+            ClientLifecycleHelpers.ForEach(
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity, deltaTime)
+           );
         }
 
         private static GameStates mGameState = GameStates.Intro;
@@ -166,7 +213,7 @@ namespace Intersect.Client.General
                 {
                     EntitiesToDispose.Remove(Entities[id].Id);
 
-                    return Entities[id];
+                    return Entities[id] as Entity;
                 }
 
                 Entities[id].Dispose();

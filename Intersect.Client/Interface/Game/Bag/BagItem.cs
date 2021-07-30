@@ -100,7 +100,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -143,7 +143,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 var item = ItemBase.Get(Globals.Bag[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -170,7 +170,7 @@ namespace Intersect.Client.Interface.Game.Bag
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;

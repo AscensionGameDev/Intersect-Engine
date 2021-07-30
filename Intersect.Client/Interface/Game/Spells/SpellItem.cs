@@ -99,7 +99,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -112,7 +112,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X, mSpellWindow.Y);
+            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
         }
 
         public FloatRect RenderBounds()
@@ -130,23 +130,23 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public void Update()
         {
-            var spell = SpellBase.Get(Globals.Me.Spells[mYindex].SpellId);
+            var spell = SpellBase.Get(Globals.Me.Spells[mYindex].Id);
             if (!IsDragging &&
                 (mTexLoaded != "" && spell == null ||
                  spell != null && mTexLoaded != spell.Icon ||
-                 mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
+                 mCurrentSpellId != Globals.Me.Spells[mYindex].Id ||
                  mIconCd !=
-                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs() ||
-                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs()))
+                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Globals.System.GetTimeMs() ||
+                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Globals.System.GetTimeMs()))
             {
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
-                    var spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+                    var spellTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
                     if (spellTex != null)
                     {
                         Pnl.Texture = spellTex;
-                        if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) >
+                        if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
                             Globals.System.GetTimeMs())
                         {
                             Pnl.RenderColor = new Color(100, 255, 255, 255);
@@ -165,15 +165,15 @@ namespace Intersect.Client.Interface.Game.Spells
                     }
 
                     mTexLoaded = spell.Icon;
-                    mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
-                    mIconCd = Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) >
+                    mCurrentSpellId = Globals.Me.Spells[mYindex].Id;
+                    mIconCd = Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
                               Globals.System.GetTimeMs();
 
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
                         var secondsRemaining =
-                            (float) (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) -
+                            (float) (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) -
                                      Globals.System.GetTimeMs()) /
                             1000f;
 
@@ -204,7 +204,7 @@ namespace Intersect.Client.Interface.Game.Spells
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;

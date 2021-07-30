@@ -3,6 +3,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -136,7 +137,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -255,7 +256,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -316,7 +317,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
