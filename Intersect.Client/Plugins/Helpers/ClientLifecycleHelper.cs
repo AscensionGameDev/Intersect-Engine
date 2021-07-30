@@ -43,23 +43,23 @@ namespace Intersect.Client.Plugins.Helpers
         }
 
         /// <inheritdoc />
-        public void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, long timeMs)
+        public void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
         {
-            var GameUpdateArgs = new GameUpdateArgs(state, player, knownEntities, timeMs);
+            var GameUpdateArgs = new GameUpdateArgs(state, player, knownEntities, deltaTime);
             GameUpdate?.Invoke(Context, GameUpdateArgs);
         }
 
         /// <inheritdoc />
-        public void OnGameDraw(DrawStates state, long timeMs)
+        public void OnGameDraw(DrawStates state, TimeSpan deltaTime)
         {
-            var gameDrawArgs = new GameDrawArgs(state, timeMs);
+            var gameDrawArgs = new GameDrawArgs(state, deltaTime);
             GameDraw?.Invoke(Context, gameDrawArgs);
         }
 
         /// <inheritdoc />
-        public void OnGameDraw(DrawStates state, IEntity entity, long timeMs)
+        public void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
         {
-            var gameDrawArgs = new GameDrawArgs(state, entity, timeMs);
+            var gameDrawArgs = new GameDrawArgs(state, entity, deltaTime);
             GameDraw?.Invoke(Context, gameDrawArgs);
         }
     }

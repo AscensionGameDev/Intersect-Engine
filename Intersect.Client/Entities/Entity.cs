@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 
@@ -60,7 +61,7 @@ namespace Intersect.Client.Entities
 
         public float elapsedtime { get; set; } //to be removed
 
-        int[] IEntity.EquipmentSlots => MyEquipment;
+        ImmutableList<int> IEntity.EquipmentSlots => ImmutableList.Create(MyEquipment);
 
         public Guid[] Equipment { get; set; } = new Guid[Options.EquipmentSlots.Count];
 
@@ -83,6 +84,8 @@ namespace Intersect.Client.Entities
         public Guid Id { get; set; }
 
         //Inventory/Spells/Equipment
+        ImmutableList<IItem> IEntity.Items => ImmutableList.Create(Inventory);
+
         public IItem[] Inventory { get; set; } = new IItem[Options.MaxInvItems];
 
         public bool InView { get; set; } = true;
@@ -97,6 +100,8 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
+        ImmutableList<int> IEntity.MaxVitals => ImmutableList.Create(MaxVital);
+
         public int[] MaxVital { get; set; } = new int[(int)Vitals.VitalCount];
 
         protected Pointf mCenterPos = Pointf.Empty;
@@ -141,9 +146,11 @@ namespace Intersect.Client.Entities
 
         public Guid SpellCast { get; set; }
 
-        List<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
+        ImmutableList<Guid> IEntity.Spells => ImmutableList.Create(Spells.Select(x => x.Id).ToArray());
 
         public Spell[] Spells { get; set; } = new Spell[Options.MaxPlayerSkills];
+
+        ImmutableList<int> IEntity.Stats => ImmutableList.Create(Stat);
 
         public int[] Stat { get; set; } = new int[(int)Stats.StatCount];
 
@@ -166,6 +173,8 @@ namespace Intersect.Client.Entities
         public EntityTypes Type { get; set; }
 
         public int Aggression { get; set; }
+
+        ImmutableList<int> IEntity.Vitals => ImmutableList.Create(Vital);
 
         public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
 
@@ -215,7 +224,11 @@ namespace Intersect.Client.Entities
         }
 
         //Status effects
+        ImmutableList<IStatus> IEntity.Status => ImmutableList.Create(Status.ToArray());
+
         public List<IStatus> Status { get; private set; } = new List<IStatus>();
+
+        public Pointf CenterPosition => GetCenterPos();
 
         public byte Dir
         {

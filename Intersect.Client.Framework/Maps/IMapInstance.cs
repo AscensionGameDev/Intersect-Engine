@@ -3,7 +3,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Network.Packets.Server;
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Intersect.Client.Framework.Maps
 {
@@ -11,13 +11,13 @@ namespace Intersect.Client.Framework.Maps
     {
         Guid Id { get; }
         string Name { get; }
-        List<IActionMessage> ActionMessages { get; }
-        List<IMapSound> AttributeSounds { get; }
+        ImmutableList<IActionMessage> ActionMessages { get; }
+        ImmutableList<IMapSound> AttributeSounds { get; }
         IMapSound BackgroundSound { get; }
-        List<IMapItemInstance> Items { get; }
-        List<IEntity> Entities { get; }
-        List<IMapAnimation> Animations { get; }
-        List<IEntity> Critters { get; }
+        ImmutableList<IMapItemInstance> Items { get; }
+        ImmutableList<IEntity> Entities { get; }
+        ImmutableList<IMapAnimation> Animations { get; }
+        ImmutableList<IEntity> Critters { get; }
         float X { get; }
         float Y { get; }
         int GridX { get; set; }

@@ -193,7 +193,7 @@ namespace Intersect.Client.Interface.Game.Character
                  }
              }
              else */
-            if (Globals.Me.Sprite != "" && Globals.Me.Sprite != mCurrentSprite && entityTex != null)
+            if (!string.IsNullOrWhiteSpace(Globals.Me.Sprite) && Globals.Me.Sprite != mCurrentSprite && entityTex != null)
             {
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {

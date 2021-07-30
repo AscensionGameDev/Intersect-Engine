@@ -155,7 +155,7 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawInGame()
+        public static void DrawInGame(TimeSpan deltaTime)
         {
             var currentMap = Globals.Me.MapInstance as MapInstance;
             if (currentMap == null)
@@ -190,9 +190,6 @@ namespace Intersect.Client.Core
                 currentMap.GridSwitched();
                 GridSwitched = false;
             }
-
-            // Get the current time so we can pass it on to every drawing plugin call.
-            var currentTime = Timing.Global.MillisecondsUTC;
 
             var animations = LiveAnimations.ToArray();
             foreach (var animInstance in animations)
@@ -240,7 +237,7 @@ namespace Intersect.Client.Core
             }
 
             // Handle our plugin drawing.
-            Globals.OnGameDraw(DrawStates.GroundLayers, currentTime);
+            Globals.OnGameDraw(DrawStates.GroundLayers, deltaTime);
 
             foreach (var animInstance in animations)
             {
@@ -248,7 +245,7 @@ namespace Intersect.Client.Core
             }
 
             // Handle our plugin drawing.
-            Globals.OnGameDraw(DrawStates.BelowPlayer, currentTime);
+            Globals.OnGameDraw(DrawStates.BelowPlayer, deltaTime);
 
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
@@ -257,12 +254,12 @@ namespace Intersect.Client.Core
                     foreach (var entity in RenderingEntities[x, y])
                     {
                         // Handle our plugin drawing.
-                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, currentTime);
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
 
                         entity.Draw();
 
                         // Handle our plugin drawing.
-                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, currentTime);
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
 
                         EntitiesDrawn++;
                     }
@@ -317,12 +314,12 @@ namespace Intersect.Client.Core
                     foreach (var entity in RenderingEntities[x, y])
                     {
                         // Handle our plugin drawing.
-                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, currentTime);
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
 
                         entity.Draw();
 
                         // Handle our plugin drawing.
-                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, currentTime);
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
 
                         EntitiesDrawn++;
                     }
@@ -330,7 +327,7 @@ namespace Intersect.Client.Core
             }
 
             // Handle our plugin drawing.
-            Globals.OnGameDraw(DrawStates.AbovePlayer, currentTime);
+            Globals.OnGameDraw(DrawStates.AbovePlayer, deltaTime);
 
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -347,7 +344,7 @@ namespace Intersect.Client.Core
                 }
             }
             // Handle our plugin drawing.
-            Globals.OnGameDraw(DrawStates.FringeLayers, currentTime);
+            Globals.OnGameDraw(DrawStates.FringeLayers, deltaTime);
 
             foreach (var animInstance in animations)
             {
@@ -447,7 +444,7 @@ namespace Intersect.Client.Core
         }
 
         //Game Rendering
-        public static void Render()
+        public static void Render(TimeSpan deltaTime)
         {
             var takingScreenshot = false;
             if (Renderer?.ScreenshotRequests.Count > 0)
@@ -492,7 +489,7 @@ namespace Intersect.Client.Core
                 case GameStates.Loading:
                     break;
                 case GameStates.InGame:
-                    DrawInGame();
+                    DrawInGame(deltaTime);
 
                     break;
                 case GameStates.Error:

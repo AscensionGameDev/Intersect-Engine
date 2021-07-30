@@ -229,7 +229,7 @@ namespace Intersect.Client.MonoGame
                     {
                         lock (Globals.GameLock)
                         {
-                            Main.Update();
+                            Main.Update(gameTime.ElapsedGameTime);
                         }
 
                         ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
@@ -278,7 +278,7 @@ namespace Intersect.Client.MonoGame
                 {
                     lock (Globals.GameLock)
                     {
-                        Core.Graphics.Render();
+                        Core.Graphics.Render(gameTime.ElapsedGameTime);
                     }
                 }
             }

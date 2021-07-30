@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Enums;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Intersect.Client.Framework.Entities
 {
@@ -26,6 +27,7 @@ namespace Intersect.Client.Framework.Entities
         FloatRect WorldPos { get; }
         float OffsetX { get; }
         float OffsetY { get; }
+        Pointf CenterPosition { get; }
         bool IsMoving { get; }
         bool IsStealthed { get; }
         bool IsBlocking { get; }
@@ -40,17 +42,16 @@ namespace Intersect.Client.Framework.Entities
         byte Y { get; }
         byte Z { get; }
         int Level { get; }
-        int[] Stat { get; }
-        int[] Vital { get; }
-        int[] MaxVital { get; }
-        IItem[] Inventory { get; }
-        int[] EquipmentSlots { get; }
-        List<Guid> Spells { get; }
-        List<IStatus> Status { get; }
+        ImmutableList<int> Stats { get; }
+        ImmutableList<int> Vitals { get; }
+        ImmutableList<int> MaxVitals { get; }
+        ImmutableList<IItem> Items { get; }
+        ImmutableList<int> EquipmentSlots { get; }
+        ImmutableList<Guid> Spells { get; }
+        ImmutableList<IStatus> Status { get; }
         int Aggression { get; }
 
         void AddChatBubble(string text);
-        Pointf GetCenterPos();
         float GetLabelLocation(LabelType type);
         float GetTopPos(int overrideHeight = 0);
     }

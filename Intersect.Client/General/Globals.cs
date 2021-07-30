@@ -75,7 +75,7 @@ namespace Intersect.Client.General
             );
         }
 
-        internal static void OnGameUpdate()
+        internal static void OnGameUpdate(TimeSpan deltaTime)
         {
             // Gather all known entities before passing them on to the plugins!
             // The global entity list is incomplete and lacks events.
@@ -106,25 +106,22 @@ namespace Intersect.Client.General
                 }
             }
 
-            // Get the current time so we pass the same to all plugins.
-            var currentTime = Timing.Global.MillisecondsUTC;
-
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, currentTime)
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, deltaTime)
             );
         }
 
-        internal static void OnGameDraw(DrawStates state, long timeMs)
+        internal static void OnGameDraw(DrawStates state, TimeSpan deltaTime)
         {
             ClientLifecycleHelpers.ForEach(
-               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, timeMs)
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, deltaTime)
            );
         }
 
-        internal static void OnGameDraw(DrawStates state, IEntity entity, long timeMs)
+        internal static void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime)
         {
             ClientLifecycleHelpers.ForEach(
-               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity, timeMs)
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity, deltaTime)
            );
         }
 

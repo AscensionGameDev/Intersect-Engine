@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -53,18 +54,22 @@ namespace Intersect.Client.Maps
         //Action Msg's
         public List<IActionMessage> ActionMessages { get; set; } = new List<IActionMessage>();
 
+        ImmutableList<IActionMessage> IMapInstance.ActionMessages => ImmutableList.Create(ActionMessages.ToArray());
+
+        ImmutableList<IMapSound> IMapInstance.AttributeSounds => ImmutableList.Create(AttributeSounds.ToArray());
+
         public List<IMapSound> AttributeSounds { get; set; } = new List<IMapSound>();
 
-        public List<IMapAnimation> Animations => LocalAnimations.Values.Select(x => x as IMapAnimation).ToList();
+        public ImmutableList<IMapAnimation> Animations => ImmutableList.Create(LocalAnimations.Values.Select(x => x as IMapAnimation).ToArray());
 
         //Map Animations
         public ConcurrentDictionary<Guid, MapAnimation> LocalAnimations { get; set; } = new ConcurrentDictionary<Guid, MapAnimation>();
 
-        public List<IEntity> Entities => LocalEntities.Values.Select(x => x as IEntity).ToList();
+        public ImmutableList<IEntity> Entities => ImmutableList.Create(LocalEntities.Values.Select(x => x as IEntity).ToArray());
 
         public Dictionary<Guid, Entity> LocalEntities { get; set; } = new Dictionary<Guid, Entity>();
 
-        public List<IEntity> Critters => LocalCritters.Values.Select(x => x as IEntity).ToList();
+        public ImmutableList<IEntity> Critters => ImmutableList.Create(LocalCritters.Values.Select(x => x as IEntity).ToArray());
 
         //Map Critters
         public Dictionary<Guid, Critter> LocalCritters { get; set; } = new Dictionary<Guid, Critter>();
@@ -72,7 +77,7 @@ namespace Intersect.Client.Maps
         //Map Players/Events/Npcs
         public List<Guid> LocalEntitiesToDispose { get; set; } = new List<Guid>();
 
-        public List<IMapItemInstance> Items => MapItems.Values.SelectMany(x => x).ToList();
+        public ImmutableList<IMapItemInstance> Items => ImmutableList.Create(MapItems.Values.SelectMany(x => x).ToArray());
 
         //Map Items
         public Dictionary<int, List<IMapItemInstance>> MapItems { get; set; } = new Dictionary<int, List<IMapItemInstance>>();
@@ -1328,6 +1333,17 @@ namespace Intersect.Client.Maps
         public new static MapInstance Get(Guid id)
         {
             return MapInstance.Lookup.Get<MapInstance>(id);
+        }
+
+        public static bool TryGet(Guid id, out MapInstance instance)
+        {
+            instance = MapInstance.Lookup.Get<MapInstance>(id);
+            if (instance == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override void Delete()

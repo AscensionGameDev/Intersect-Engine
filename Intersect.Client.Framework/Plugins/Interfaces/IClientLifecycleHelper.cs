@@ -23,7 +23,7 @@ namespace Intersect.Client.Plugins.Interfaces
         LifecycleChangeStateArgs lifecycleChangeStateArgs
     );
 
-    public class GameUpdateArgs : EventArgs
+    public class GameUpdateArgs : TimedArgs
     {
         public GameStates State { get; }
 
@@ -31,37 +31,41 @@ namespace Intersect.Client.Plugins.Interfaces
 
         public IReadOnlyDictionary<Guid, IEntity> KnownEntities { get; }
 
-        public long TimeMs { get; }
-
-        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, long timeMs)
+        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
         {
             State = state;
             Player = player;
             KnownEntities = knownEntities;
-            TimeMs = timeMs;
+            Delta = deltaTime;
         }
     }
 
-    public class GameDrawArgs : EventArgs
+    public class GameDrawArgs : TimedArgs
     {
         public DrawStates State { get; }
 
         public IEntity Entity { get; }
 
-        public long TimeMs { get; }
-
-        public GameDrawArgs(DrawStates state, long timeMs)
+        public GameDrawArgs(DrawStates state, TimeSpan deltaTime)
         {
             State = state;
-            TimeMs = timeMs;
+            Delta = deltaTime;
         }
 
-        public GameDrawArgs(DrawStates state, IEntity entity, long timeMs)
+        public GameDrawArgs(DrawStates state, IEntity entity, TimeSpan deltaTime)
         {
             State = state;
             Entity = entity;
-            TimeMs = timeMs;
+            Delta = deltaTime;
         }
+    }
+
+    public class TimedArgs : EventArgs
+    {
+        /// <summary>
+        /// Time since the last update.
+        /// </summary>
+        public TimeSpan Delta { get; protected set; }
     }
 
     public delegate void GameUpdateHandler(
@@ -110,22 +114,22 @@ namespace Intersect.Client.Plugins.Interfaces
         /// Invokes <see cref="GameUpdate"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
-        /// <param name="timeMs">The internal time of the engine.</param>
-        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, long timeMs);
+        /// <param name="deltaTime">Time passed since the last update.</param>
+        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="DrawStates"/>.</param>
-        /// <param name="timeMs">The internal time of the engine.</param>
-        void OnGameDraw(DrawStates state, long timeMs);
+        /// <param name="deltaTime">Time passed since the last update.</param>
+        void OnGameDraw(DrawStates state, TimeSpan deltaTime);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="DrawStates"/>.</param>
         /// <param name="entity">The <see cref="IEntity"/> that is being drawn.</param>
-        /// <param name="timeMs">The internal time of the engine.</param>
-        void OnGameDraw(DrawStates state, IEntity entity, long timeMs);
+        /// <param name="deltaTime">Time passed since the last update.</param>
+        void OnGameDraw(DrawStates state, IEntity entity, TimeSpan deltaTime);
     }
 }
