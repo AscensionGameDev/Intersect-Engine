@@ -127,7 +127,7 @@ namespace Intersect
         public static List<string> AnimatedSprites => Instance._animatedSprites;
 
         public static int RegenTime => Instance.CombatOpts.RegenTime;
-
+        
         public static int CombatTime => Instance.CombatOpts.CombatTime;
 
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
