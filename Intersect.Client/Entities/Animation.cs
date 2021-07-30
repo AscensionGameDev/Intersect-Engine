@@ -31,7 +31,7 @@ namespace Intersect.Client.Entities
 
         private long mLowerTimer;
 
-        private IEntity mParent;
+        private Entity mParent;
 
         private int mRenderDir;
 
@@ -55,6 +55,8 @@ namespace Intersect.Client.Entities
 
         public AnimationBase MyBase { get; set; }
 
+        public Point Size => CalculateAnimationSize();
+
         private int mZDimension = -1;
 
         public Animation(
@@ -62,7 +64,7 @@ namespace Intersect.Client.Entities
             bool loopForever,
             bool autoRotate = false,
             int zDimension = -1,
-            IEntity parent = null
+            Entity parent = null
         )
         {
             MyBase = animBase;
@@ -380,7 +382,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public Point AnimationSize()
+        public Point CalculateAnimationSize()
         {
             var size = new Point(0, 0);
 

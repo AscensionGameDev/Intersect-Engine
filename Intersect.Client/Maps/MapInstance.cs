@@ -51,20 +51,28 @@ namespace Intersect.Client.Maps
         private long _weatherParticleSpawnTime;
 
         //Action Msg's
-        public List<IActionMessage> ActionMsgs { get; set; } = new List<IActionMessage>();
+        public List<IActionMessage> ActionMessages { get; set; } = new List<IActionMessage>();
 
         public List<IMapSound> AttributeSounds { get; set; } = new List<IMapSound>();
 
-        //Map Animations
-        public ConcurrentDictionary<Guid, IMapAnimation> LocalAnimations { get; set; } = new ConcurrentDictionary<Guid, IMapAnimation>();
+        public List<IMapAnimation> Animations => LocalAnimations.Values.Select(x => x as IMapAnimation).ToList();
 
-        public Dictionary<Guid, IEntity> LocalEntities { get; set; } = new Dictionary<Guid, IEntity>();
+        //Map Animations
+        public ConcurrentDictionary<Guid, MapAnimation> LocalAnimations { get; set; } = new ConcurrentDictionary<Guid, MapAnimation>();
+
+        public List<IEntity> Entities => LocalEntities.Values.Select(x => x as IEntity).ToList();
+
+        public Dictionary<Guid, Entity> LocalEntities { get; set; } = new Dictionary<Guid, Entity>();
+
+        public List<IEntity> Critters => LocalCritters.Values.Select(x => x as IEntity).ToList();
 
         //Map Critters
-        public Dictionary<Guid, ICritter> Critters { get; set; } = new Dictionary<Guid, ICritter>();
+        public Dictionary<Guid, Critter> LocalCritters { get; set; } = new Dictionary<Guid, Critter>();
 
         //Map Players/Events/Npcs
         public List<Guid> LocalEntitiesToDispose { get; set; } = new List<Guid>();
+
+        public List<IMapItemInstance> Items => MapItems.Values.SelectMany(x => x).ToList();
 
         //Map Items
         public Dictionary<int, List<IMapItemInstance>> MapItems { get; set; } = new Dictionary<int, List<IMapItemInstance>>();
@@ -114,15 +122,15 @@ namespace Intersect.Client.Maps
             }
         }
 
-        public bool MapLoaded { get; private set; }
+        public bool IsLoaded { get; private set; }
 
         //Camera Locking Variables
         public bool[] CameraHolds { get; set; } = new bool[4];
 
         //World Position
-        public int MapGridX { get; set; }
+        public int GridX { get; set; }
 
-        public int MapGridY { get; set; }
+        public int GridY { get; set; }
 
         //Map Sounds
         public IMapSound BackgroundSound { get; set; }
@@ -137,7 +145,7 @@ namespace Intersect.Client.Maps
                 json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }
             );
 
-            MapLoaded = true;
+            IsLoaded = true;
             Autotiles = new MapAutotiles(this);
             OnMapLoaded -= HandleMapLoaded;
             OnMapLoaded += HandleMapLoaded;
@@ -202,7 +210,7 @@ namespace Intersect.Client.Maps
                 {
                     if (anim.Value.Disposed())
                     {
-                        LocalAnimations.TryRemove(anim.Key, out IMapAnimation removed);
+                        LocalAnimations.TryRemove(anim.Key, out MapAnimation removed);
                     }
                     else
                     {
@@ -256,8 +264,8 @@ namespace Intersect.Client.Maps
                 return true;
             }
 
-            var gridX = myMap.MapGridX;
-            var gridY = myMap.MapGridY;
+            var gridX = myMap.GridX;
+            var gridY = myMap.GridY;
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -279,17 +287,17 @@ namespace Intersect.Client.Maps
         {
             //See if this new map is on the same grid as us
             var updatedBuffers = new HashSet<GameTileBuffer>();
-            if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id) && MapLoaded)
+            if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id) && IsLoaded)
             {
                 var surroundingMaps = GenerateAutotileGrid();
-                if (map.MapGridX == MapGridX - 1)
+                if (map.GridX == GridX - 1)
                 {
-                    if (map.MapGridY == MapGridY - 1)
+                    if (map.GridY == GridY - 1)
                     {
                         //Check Northwest
                         updatedBuffers.UnionWith(CheckAutotile(0, 0, surroundingMaps));
                     }
-                    else if (map.MapGridY == MapGridY)
+                    else if (map.GridY == GridY)
                     {
                         //Check West
                         for (var y = 0; y < Options.MapHeight; y++)
@@ -297,15 +305,15 @@ namespace Intersect.Client.Maps
                             updatedBuffers.UnionWith(CheckAutotile(0, y, surroundingMaps));
                         }
                     }
-                    else if (map.MapGridY == MapGridY + 1)
+                    else if (map.GridY == GridY + 1)
                     {
                         //Check Southwest
                         updatedBuffers.UnionWith(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
                     }
                 }
-                else if (map.MapGridX == MapGridX)
+                else if (map.GridX == GridX)
                 {
-                    if (map.MapGridY == MapGridY - 1)
+                    if (map.GridY == GridY - 1)
                     {
                         //Check North
                         for (var x = 0; x < Options.MapWidth; x++)
@@ -313,7 +321,7 @@ namespace Intersect.Client.Maps
                             updatedBuffers.UnionWith(CheckAutotile(x, 0, surroundingMaps));
                         }
                     }
-                    else if (map.MapGridY == MapGridY + 1)
+                    else if (map.GridY == GridY + 1)
                     {
                         //Check South
                         for (var x = 0; x < Options.MapWidth; x++)
@@ -322,16 +330,16 @@ namespace Intersect.Client.Maps
                         }
                     }
                 }
-                else if (map.MapGridX == MapGridX + 1)
+                else if (map.GridX == GridX + 1)
                 {
-                    if (map.MapGridY == MapGridY - 1)
+                    if (map.GridY == GridY - 1)
                     {
                         //Check Northeast
                         updatedBuffers.UnionWith(
                             CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps)
                         );
                     }
-                    else if (map.MapGridY == MapGridY)
+                    else if (map.GridY == GridY)
                     {
                         //Check East
                         for (var y = 0; y < Options.MapHeight; y++)
@@ -339,7 +347,7 @@ namespace Intersect.Client.Maps
                             updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
                         }
                     }
-                    else if (map.MapGridY == MapGridY + 1)
+                    else if (map.GridY == GridY + 1)
                     {
                         //Check Southeast
                         updatedBuffers.UnionWith(
@@ -449,8 +457,8 @@ namespace Intersect.Client.Maps
                 {
                     for (var y = -1; y <= 1; y++)
                     {
-                        var x1 = MapGridX + x;
-                        var y1 = MapGridY + y;
+                        var x1 = GridX + x;
+                        var y1 = GridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGridWidth && y1 < Globals.MapGridHeight)
                         {
                             if (x == 0 && y == 0)
@@ -473,16 +481,20 @@ namespace Intersect.Client.Maps
             return mapBase;
         }
 
+        public float X => GetX();
+
         //Retreives the X Position of the Left side of the map in world space.
         public float GetX()
         {
-            return MapGridX * Options.MapWidth * Options.TileWidth;
+            return GridX * Options.MapWidth * Options.TileWidth;
         }
+
+        public float Y => GetY();
 
         //Retreives the Y Position of the Top side of the map in world space.
         public float GetY()
         {
-            return MapGridY * Options.MapHeight * Options.TileHeight;
+            return GridY * Options.MapHeight * Options.TileHeight;
         }
 
         //Attribute References
@@ -536,7 +548,7 @@ namespace Intersect.Client.Maps
                         if (!mAttributeCritterInstances.ContainsKey(att))
                         {
                             var critter = new Critter(this, (byte)x, (byte)y, critterAttribute);
-                            Critters.Add(critter.Id, critter);
+                            LocalCritters.Add(critter.Id, critter);
                             mAttributeCritterInstances.Add(att, critter);
                         }
 
@@ -558,7 +570,7 @@ namespace Intersect.Client.Maps
                 critter.Value.Dispose();
             }
 
-            Critters.Clear();
+            LocalCritters.Clear();
             mAttributeCritterInstances.Clear();
             mAttributeAnimInstances.Clear();
         }
@@ -606,7 +618,7 @@ namespace Intersect.Client.Maps
                 return;
             }
 
-            var anim = new MapAnimation(animBase, tileX, tileY, dir, owner);
+            var anim = new MapAnimation(animBase, tileX, tileY, dir, owner as Entity);
             LocalAnimations.TryAdd(anim.Id, anim);
             anim.SetPosition(
                 GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
@@ -662,7 +674,7 @@ namespace Intersect.Client.Maps
         //Rendering/Drawing Code
         public void Draw(int layer = 0) //Lower, Middle, Upper
         {
-            if (!MapLoaded)
+            if (!IsLoaded)
             {
                 return;
             }
@@ -990,14 +1002,14 @@ namespace Intersect.Client.Maps
         //Fogs/Panorama/Overlay
         public void DrawFog()
         {
-            if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null)
+            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null)
             {
                 return;
             }
 
             float ecTime = Globals.System.GetTimeMs() - mFogUpdateTime;
             mFogUpdateTime = Globals.System.GetTimeMs();
-            if (Id == Globals.Me.CurrentMap)
+            if (Id == Globals.Me.MapId)
             {
                 if (mCurFogIntensity != 1)
                 {
@@ -1092,7 +1104,7 @@ namespace Intersect.Client.Maps
         //Weather
         public void DrawWeather()
         {
-            if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null)
+            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null)
             {
                 return;
             }
@@ -1154,7 +1166,7 @@ namespace Intersect.Client.Maps
         {
             float ecTime = Globals.System.GetTimeMs() - mPanoramaUpdateTime;
             mPanoramaUpdateTime = Globals.System.GetTimeMs();
-            if (Id == Globals.Me.CurrentMap)
+            if (Id == Globals.Me.MapId)
             {
                 if (mPanoramaIntensity != 1)
                 {
@@ -1188,7 +1200,7 @@ namespace Intersect.Client.Maps
         {
             float ecTime = Globals.System.GetTimeMs() - mOverlayUpdateTime;
             mOverlayUpdateTime = Globals.System.GetTimeMs();
-            if (Id == Globals.Me.CurrentMap)
+            if (Id == Globals.Me.MapId)
             {
                 if (mOverlayIntensity != 1)
                 {
@@ -1237,16 +1249,16 @@ namespace Intersect.Client.Maps
                     {
                         mFogCurrentX -= Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
                     }
-                    else if (GetX() < oldMap.GetX())
+                    else if (GetX() < oldMap.X)
                     {
                         mFogCurrentX += Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
                     }
 
-                    if (GetY() > oldMap.GetY())
+                    if (GetY() > oldMap.Y)
                     {
                         mFogCurrentY -= Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
                     }
-                    else if (GetY() < oldMap.GetY())
+                    else if (GetY() < oldMap.Y)
                     {
                         mFogCurrentY += Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
                     }
@@ -1272,33 +1284,33 @@ namespace Intersect.Client.Maps
 
         public void DrawActionMsgs()
         {
-            for (var n = ActionMsgs.Count - 1; n > -1; n--)
+            for (var n = ActionMessages.Count - 1; n > -1; n--)
             {
                 var y = (int)Math.Ceiling(
                     GetY() +
-                    ActionMsgs[n].Y * Options.TileHeight -
+                    ActionMessages[n].Y * Options.TileHeight -
                     Options.TileHeight *
                     2 *
-                    (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMs())) /
+                    (1000 - (ActionMessages[n].TransmissionTimer - Globals.System.GetTimeMs())) /
                     1000
                 );
 
-                var x = (int)Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].XOffset);
-                var textWidth = Graphics.Renderer.MeasureText(ActionMsgs[n].Msg, Graphics.ActionMsgFont, 1).X;
+                var x = (int)Math.Ceiling(GetX() + ActionMessages[n].X * Options.TileWidth + ActionMessages[n].XOffset);
+                var textWidth = Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Graphics.ActionMsgFont, 1).X;
                 Graphics.Renderer.DrawString(
-                    ActionMsgs[n].Msg, Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMsgs[n].Clr,
+                    ActionMessages[n].Msg, Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMessages[n].Color,
                     true, null, new Color(40, 40, 40)
                 );
 
                 //Try to remove
-                ActionMsgs[n].TryRemove();
+                ActionMessages[n].TryRemove();
             }
         }
 
         //Events
         public void AddEvent(Guid evtId, EventEntityPacket packet)
         {
-            if (MapLoaded)
+            if (IsLoaded)
             {
                 if (LocalEntities.ContainsKey(evtId))
                 {
@@ -1329,7 +1341,7 @@ namespace Intersect.Client.Maps
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
         {
-            MapLoaded = false;
+            IsLoaded = false;
             OnMapLoaded -= HandleMapLoaded;
 
             foreach (var evt in mEvents)
@@ -1343,7 +1355,7 @@ namespace Intersect.Client.Maps
             {
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value.CurrentMap == Id)
+                    if (en.Value.MapId == Id)
                     {
                         Globals.EntitiesToDispose.Add(en.Key);
                     }

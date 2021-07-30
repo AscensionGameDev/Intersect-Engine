@@ -81,12 +81,12 @@ namespace Intersect.Client.Core.Sounds
                 return;
             }
 
-            var sameMap = mMapId == Globals.Me.CurrentMap;
+            var sameMap = mMapId == Globals.Me.MapId;
             var inGrid = sameMap;
             if (!inGrid && Globals.Me.MapInstance != null)
             {
-                var gridX = Globals.Me.MapInstance.MapGridX;
-                var gridY = Globals.Me.MapInstance.MapGridY;
+                var gridX = Globals.Me.MapInstance.GridX;
+                var gridY = Globals.Me.MapInstance.GridY;
                 for (var x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -139,7 +139,7 @@ namespace Intersect.Client.Core.Sounds
             float soundx = 0;
             float soundy = 0;
             var map = MapInstance.Get(mMapId);
-            var pMap = MapInstance.Get(Globals.Me.CurrentMap);
+            var pMap = MapInstance.Get(Globals.Me.MapId);
             if (map != null && pMap != null)
             {
                 playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + 16;

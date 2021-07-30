@@ -49,7 +49,7 @@ namespace Intersect.Client.Maps
             yVelocity = yvelocity;
 
             animInstance = new Animation(anim, true, false);
-            var animSize = animInstance.AnimationSize();
+            var animSize = animInstance.CalculateAnimationSize();
             partSize = animSize;
 
             if (xVelocity > 0)

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Intersect.Client.Entities
 {
-    public partial class Critter : Entity, ICritter
+    public partial class Critter : Entity
     {
         private MapCritterAttribute mAttribute;
         private long mLastMove = -1;
@@ -21,7 +21,7 @@ namespace Intersect.Client.Entities
             mAttribute = att;
 
             //setup Sprite & Animation
-            MySprite = att.Sprite;
+            Sprite = att.Sprite;
             var anim = AnimationBase.Get(att.AnimationId);
             if (anim != null)
             {
@@ -30,7 +30,7 @@ namespace Intersect.Client.Entities
             }
 
             //Define Location
-            CurrentMap = map.Id;
+            MapId = map.Id;
             X = x;
             Y = y;
 
@@ -84,7 +84,7 @@ namespace Intersect.Client.Entities
                 switch (MoveDir)
                 {
                     case 0: // Up
-                        if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X, Y - 1)))
+                        if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y - 1)))
                         {
                             tmpY--;
                             IsMoving = true;
@@ -95,7 +95,7 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 1: // Down
-                        if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y < Options.MapHeight - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X, Y + 1)))
+                        if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y < Options.MapHeight - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y + 1)))
                         {
                             tmpY++;
                             IsMoving = true;
@@ -106,7 +106,7 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 2: // Left
-                        if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X - 1, Y)))
+                        if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X - 1, Y)))
                         {
                             tmpX--;
                             IsMoving = true;
@@ -117,7 +117,7 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 3: // Right
-                        if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(CurrentMap, X + 1, Y)))
+                        if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X + 1, Y)))
                         {
                             //If BlockPlayers then make sure there is no player here
                             tmpX++;
@@ -157,7 +157,7 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
-                if (en.Value.CurrentMap == mapId &&
+                if (en.Value.MapId == mapId &&
                         en.Value.X == x &&
                         en.Value.Y == y)
                 {
@@ -170,7 +170,7 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public override HashSet<IEntity> DetermineRenderOrder(HashSet<IEntity> renderList, IMapInstance map)
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
             if (mAttribute.Layer == 1)
             {
@@ -183,8 +183,8 @@ namespace Intersect.Client.Entities
                 return null;
             }
 
-            var gridX = Globals.Me.MapInstance.MapGridX;
-            var gridY = Globals.Me.MapInstance.MapGridY;
+            var gridX = Globals.Me.MapInstance.GridX;
+            var gridY = Globals.Me.MapInstance.GridY;
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -195,7 +195,7 @@ namespace Intersect.Client.Entities
                         y < Globals.MapGridHeight &&
                         Globals.MapGrid[x, y] != Guid.Empty)
                     {
-                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        if (Globals.MapGrid[x, y] == MapId)
                         {
                             if (mAttribute.Layer == 0)
                             {
@@ -213,7 +213,7 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
-                            HashSet<IEntity> renderSet = null;
+                            HashSet<Entity> renderSet = null;
 
                             if (y == gridY - 2)
                             {

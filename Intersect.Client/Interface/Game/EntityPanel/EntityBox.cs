@@ -556,8 +556,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.MapInstance != null)
             {
-                var currentMap = Globals.Me.MapInstance as MapInstance;
-                EntityMap.SetText(Strings.EntityBox.map.ToString(currentMap.Name));
+                EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
             }
             else
             {
@@ -844,7 +843,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
-                    mCurrentSprite = MyEntity.MySprite;
+                    mCurrentSprite = MyEntity.Sprite;
                     EntityFace.IsHidden = false;
                 }
 
@@ -941,7 +940,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                 }
             }
-            else if (MyEntity.MySprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
+            else if (MyEntity.Sprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
             {
                 EntityFace.IsHidden = true;
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)

@@ -318,14 +318,14 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                 //Spell on cd
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs())
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs())
                 {
                     updateDisplay = true;
                 }
 
                 //Spell on cd and the fade is incorrect
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs() != mIsFaded)
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs() != mIsFaded)
                 {
                     updateDisplay = true;
                 }
@@ -387,12 +387,12 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     if (mSpellBookItem != null)
                     {
-                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs();
+                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Globals.System.GetTimeMs();
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
                             var secondsRemaining =
-                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) -
+                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.Id) -
                                          Globals.System.GetTimeMs()) /
                                 1000f;
 

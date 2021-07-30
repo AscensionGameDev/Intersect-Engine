@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Input
 {
     public interface IGameInput
     {
-        Pointf GetMousePosition();
+        Pointf MousePosition { get; }
         bool KeyDown(Keys key);
         bool MouseButtonDown(MouseButtons mb);
     }

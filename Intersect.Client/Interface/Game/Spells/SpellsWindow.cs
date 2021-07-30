@@ -61,7 +61,7 @@ namespace Intersect.Client.Interface.Game.Spells
             Y = mSpellWindow.Y;
             for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
-                if (Globals.Me.Spells[i].SpellId != Guid.Empty)
+                if (Globals.Me.Spells[i].Id != Guid.Empty)
                 {
                     Items[i].Pnl.IsHidden = false;
                     Items[i].Update();

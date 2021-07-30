@@ -7,13 +7,13 @@ namespace Intersect.Client.Maps
     public partial class ActionMessage : IActionMessage
     {
 
-        public Color Clr { get; set; } = new Color();
+        public Color Color { get; set; } = new Color();
 
         public IMapInstance Map { get; set; }
 
         public string Msg { get; set; } = "";
 
-        public long TransmittionTimer { get; set; }
+        public long TransmissionTimer { get; set; }
 
         public int X { get; set; }
 
@@ -27,16 +27,16 @@ namespace Intersect.Client.Maps
             X = x;
             Y = y;
             Msg = message;
-            Clr = color;
+            Color = color;
             XOffset = Globals.Random.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
-            TransmittionTimer = Globals.System.GetTimeMs() + 1000;
+            TransmissionTimer = Globals.System.GetTimeMs() + 1000;
         }
 
         public void TryRemove()
         {
-            if (TransmittionTimer <= Globals.System.GetTimeMs())
+            if (TransmissionTimer <= Globals.System.GetTimeMs())
             {
-                Map.ActionMsgs.Remove(this);
+                Map.ActionMessages.Remove(this);
             }
         }
 

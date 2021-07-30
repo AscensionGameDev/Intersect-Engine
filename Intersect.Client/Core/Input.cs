@@ -180,8 +180,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.PickUp:
-                                        var currentMap = Globals.Me.MapInstance as MapInstance;
-                                        Globals.Me?.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
+                                        Globals.Me?.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
 
                                         break;
 
@@ -342,8 +341,7 @@ namespace Intersect.Client.Core
 
             if (Controls.Controls.ControlHasKey(Control.PickUp, key))
             {
-                var currentMap = Globals.Me.MapInstance as MapInstance;
-                if (Globals.Me.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true))
+                if (Globals.Me.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true))
                 {
                     return;
                 }

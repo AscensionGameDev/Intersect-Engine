@@ -10,6 +10,8 @@ namespace Intersect.Client.Framework.Input
 
         public abstract bool KeyDown(Keys key);
 
+        public Pointf MousePosition => GetMousePosition();
+
         public abstract Pointf GetMousePosition();
 
         public abstract void Update();

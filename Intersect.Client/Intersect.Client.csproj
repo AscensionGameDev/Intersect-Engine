@@ -100,7 +100,6 @@
     <Compile Include="Entities\Events\Event.cs" />
     <Compile Include="Entities\Events\Dialog.cs" />
     <Compile Include="Entities\Events\Hold.cs" />
-    <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\PartyMember.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />

@@ -11,7 +11,7 @@ namespace Intersect.Client.Items
         /// <summary>
         /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
         /// </summary>
-        public Guid UniqueId { get; set; }
+        public Guid Id { get; set; }
 
         public int X { get; set; }
 
@@ -25,7 +25,7 @@ namespace Intersect.Client.Items
 
         public MapItemInstance(int tileIndex, Guid uniqueId, Guid itemId, Guid? bagId, int quantity, int[] statbuffs) : base()
         {
-            UniqueId = uniqueId;
+            Id = uniqueId;
             X = tileIndex % Options.MapWidth;
             Y = (int)Math.Floor(tileIndex / (float)Options.MapWidth);
             ItemId = itemId;

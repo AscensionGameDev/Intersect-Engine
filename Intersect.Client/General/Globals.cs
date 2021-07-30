@@ -15,6 +15,7 @@ using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
+using Intersect.Utilities;
 
 namespace Intersect.Client.General
 {
@@ -46,7 +47,7 @@ namespace Intersect.Client.General
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
-        public static Dictionary<Guid, IEntity> Entities = new Dictionary<Guid, IEntity>();
+        public static Dictionary<Guid, Entity> Entities = new Dictionary<Guid, Entity>();
 
         public static List<Guid> EntitiesToDispose = new List<Guid>();
 
@@ -104,23 +105,26 @@ namespace Intersect.Client.General
                     }
                 }
             }
-            
+
+            // Get the current time so we pass the same to all plugins.
+            var currentTime = Timing.Global.MillisecondsUTC;
+
             ClientLifecycleHelpers.ForEach(
-                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities)
+                clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, currentTime)
             );
         }
 
-        internal static void OnGameDraw(DrawStates state)
+        internal static void OnGameDraw(DrawStates state, long timeMs)
         {
             ClientLifecycleHelpers.ForEach(
-               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state)
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, timeMs)
            );
         }
 
-        internal static void OnGameDraw(DrawStates state, IEntity entity)
+        internal static void OnGameDraw(DrawStates state, IEntity entity, long timeMs)
         {
             ClientLifecycleHelpers.ForEach(
-               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity)
+               clientLifecycleHelper => clientLifecycleHelper?.OnGameDraw(state, entity, timeMs)
            );
         }
 

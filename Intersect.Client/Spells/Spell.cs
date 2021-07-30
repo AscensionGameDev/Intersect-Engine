@@ -1,18 +1,17 @@
-﻿using Intersect.Client.Framework.Spells;
-using System;
+﻿using System;
 
 namespace Intersect.Client.Spells
 {
 
-    public class Spell : ISpell
+    public class Spell
     {
 
-        public Guid SpellId { get; set; }
+        public Guid Id { get; set; }
 
-        public ISpell Clone()
+        public Spell Clone()
         {
             var newSpell = new Spell() {
-                SpellId = SpellId
+                Id = Id
             };
 
             return newSpell;
@@ -20,7 +19,7 @@ namespace Intersect.Client.Spells
 
         public void Load(Guid spellId)
         {
-            SpellId = spellId;
+            Id = spellId;
         }
 
     }

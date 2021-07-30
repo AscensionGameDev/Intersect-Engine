@@ -2,10 +2,10 @@
 {
     public interface IActionMessage
     {
-        Color Clr { get; set; }
+        Color Color { get; set; }
         IMapInstance Map { get; set; }
         string Msg { get; set; }
-        long TransmittionTimer { get; set; }
+        long TransmissionTimer { get; set; }
         int X { get; set; }
         long XOffset { get; set; }
         int Y { get; set; }

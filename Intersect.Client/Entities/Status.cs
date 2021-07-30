@@ -33,17 +33,9 @@ namespace Intersect.Client.Entities
             TimeRecevied = Globals.System.GetTimeMs();
         }
 
-        public bool IsActive()
-        {
-            return RemainingMs() > 0;
-        }
+        public bool IsActive => RemainingMs > 0;
 
-        public long RemainingMs()
-        {
-            var timeDiff = Globals.System.GetTimeMs() - TimeRecevied;
-
-            return TimeRemaining - timeDiff;
-        }
+        public long RemainingMs => TimeRemaining - (Globals.System.GetTimeMs() - TimeRecevied);
 
     }
 

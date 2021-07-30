@@ -2,9 +2,7 @@
 {
     public interface IDash
     {
-        float GetXOffset();
-        float GetYOffset();
-        void Start(IEntity en);
-        bool Update(IEntity en);
+        float OffsetX { get; }
+        float OffsetY { get; }
     }
 }

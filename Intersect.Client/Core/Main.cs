@@ -186,7 +186,7 @@ namespace Intersect.Client.Core
                 _loadedTilesets = true;
             }
 
-            Audio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
+            Audio.PlayMusic(MapInstance.Get(Globals.Me.MapId).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             Fade.FadeIn();
         }
@@ -209,10 +209,10 @@ namespace Intersect.Client.Core
             if (Globals.NeedsMaps)
             {
                 bool canShowWorld = true;
-                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                if (MapInstance.Get(Globals.Me.MapId) != null)
                 {
-                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = MapInstance.Get(Globals.Me.MapId).GridX;
+                    var gridY = MapInstance.Get(Globals.Me.MapId).GridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -226,7 +226,7 @@ namespace Intersect.Client.Core
                                 var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false)
+                                    if (map.IsLoaded == false)
                                     {
                                         canShowWorld = false;
                                     }
@@ -254,10 +254,10 @@ namespace Intersect.Client.Core
             }
             else
             {
-                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                if (MapInstance.Get(Globals.Me.MapId) != null)
                 {
-                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = MapInstance.Get(Globals.Me.MapId).GridX;
+                    var gridY = MapInstance.Get(Globals.Me.MapId).GridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)

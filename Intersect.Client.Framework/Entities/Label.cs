@@ -1,10 +1,9 @@
-﻿using Intersect.Client.Framework.Entities;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Intersect.Client.Entities
+namespace Intersect.Client.Framework.Entities
 {
 
-    public struct Label : ILabel
+    public class Label
     {
 
         [JsonProperty("Label")] public string Text { get; set; }

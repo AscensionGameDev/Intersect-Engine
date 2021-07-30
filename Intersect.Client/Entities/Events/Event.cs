@@ -87,13 +87,13 @@ namespace Intersect.Client.Entities.Events
         public override void Draw()
         {
             WorldPos.Reset();
-            if (Maps.MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }
             
 
-            var map = Maps.MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(MapId);
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
             GameTexture srcTexture = null;
@@ -213,7 +213,7 @@ namespace Intersect.Client.Entities.Events
             }
         }
 
-        public override HashSet<IEntity> DetermineRenderOrder(HashSet<IEntity> renderList, IMapInstance map)
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
             if (RenderLevel == 1)
             {
@@ -226,8 +226,8 @@ namespace Intersect.Client.Entities.Events
                 return null;
             }
 
-            var gridX = Globals.Me.MapInstance.MapGridX;
-            var gridY = Globals.Me.MapInstance.MapGridY;
+            var gridX = Globals.Me.MapInstance.GridX;
+            var gridY = Globals.Me.MapInstance.GridY;
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -238,7 +238,7 @@ namespace Intersect.Client.Entities.Events
                         y < Globals.MapGridHeight &&
                         Globals.MapGrid[x, y] != Guid.Empty)
                     {
-                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        if (Globals.MapGrid[x, y] == MapId)
                         {
                             if (RenderLevel == 0)
                             {
@@ -256,7 +256,7 @@ namespace Intersect.Client.Entities.Events
                                 priority += 3;
                             }
 
-                            HashSet<IEntity> renderSet = null;
+                            HashSet<Entity> renderSet = null;
 
                             if (y == gridY - 2)
                             {
@@ -303,7 +303,7 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (Maps.MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }
@@ -369,7 +369,7 @@ namespace Intersect.Client.Entities.Events
 
         protected override void CalculateCenterPos()
         {
-            var map = Maps.MapInstance.Get(CurrentMap);
+            var map = Maps.MapInstance.Get(MapId);
             if (map == null)
             {
                 mCenterPos = Pointf.Empty;
@@ -385,7 +385,7 @@ namespace Intersect.Client.Entities.Events
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, MySprite);
+                    var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
                     if (entityTex != null)
                     {
                         pos.Y += Options.TileHeight / 2;

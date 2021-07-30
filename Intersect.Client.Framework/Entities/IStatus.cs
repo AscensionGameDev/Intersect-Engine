@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Entities
         long TotalDuration { get; set; }
         StatusTypes Type { get; set; }
 
-        bool IsActive();
-        long RemainingMs();
+        bool IsActive { get; }
+        long RemainingMs { get; }
     }
 }

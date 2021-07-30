@@ -29,6 +29,10 @@ namespace Intersect.Client.Entities
 
         private float mStartYCoord;
 
+        public float OffsetX => GetXOffset();
+
+        public float OffsetY => GetYOffset();
+
         public Dash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, int changeDirection = -1)
         {
             mChangeDirection = changeDirection;
@@ -38,17 +42,17 @@ namespace Intersect.Client.Entities
             mDashTime = dashTime;
         }
 
-        public void Start(IEntity en)
+        public void Start(Entity en)
         {
-            if (MapInstance.Get(en.CurrentMap) == null ||
+            if (MapInstance.Get(en.MapId) == null ||
                 MapInstance.Get(mEndMapId) == null ||
-                mEndMapId == en.CurrentMap && mEndX == en.X && mEndY == en.Y)
+                mEndMapId == en.MapId && mEndX == en.X && mEndY == en.Y)
             {
                 en.Dashing = null;
             }
             else
             {
-                var startMap = MapInstance.Get(en.CurrentMap);
+                var startMap = MapInstance.Get(en.MapId);
                 var endMap = MapInstance.Get(mEndMapId);
                 mStartTime = Globals.System.GetTimeMs();
                 mStartXCoord = en.OffsetX;
@@ -86,14 +90,14 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public bool Update(IEntity en)
+        public bool Update(Entity en)
         {
             if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
             {
                 en.Dashing = null;
                 en.OffsetX = 0;
                 en.OffsetY = 0;
-                en.CurrentMap = mEndMapId;
+                en.MapId = mEndMapId;
                 en.X = mEndX;
                 en.Y = mEndY;
             }

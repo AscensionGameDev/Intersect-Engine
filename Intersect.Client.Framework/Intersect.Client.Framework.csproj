@@ -74,10 +74,9 @@
     <Compile Include="Core\Sounds\ISound.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="Entities\IAnimation.cs" />
-    <Compile Include="Entities\ICritter.cs" />
     <Compile Include="Entities\IDash.cs" />
-    <Compile Include="Entities\ILabel.cs" />
     <Compile Include="Entities\IStatus.cs" />
+    <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\LabelType.cs" />
     <Compile Include="Entities\SpriteAnimations.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
@@ -111,7 +110,6 @@
     <Compile Include="Plugins\IClientPluginContext.cs" />
     <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
     <Compile Include="Plugins\Interfaces\IClientNetworkHelper.cs" />
-    <Compile Include="Spells\ISpell.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />
@@ -261,6 +259,9 @@
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Spells\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

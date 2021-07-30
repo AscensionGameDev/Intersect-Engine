@@ -161,7 +161,7 @@ namespace Intersect.Client.Entities.Projectiles
                         {
                             var s = new ProjectileSpawns(
                                 FindProjectileRotationDir(Dir, d), X + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, CurrentMap, animBase,
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, MapId, animBase,
                                 mMyBase.Animations[spawn].AutoRotate, mMyBase, this
                             );
 
@@ -362,7 +362,7 @@ namespace Intersect.Client.Entities.Projectiles
             lock (mLock)
             {
                 var tmpI = -1;
-                var map = CurrentMap;
+                var map = MapId;
                 var y = Y;
 
                 if (!mDisposing && mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
@@ -387,7 +387,7 @@ namespace Intersect.Client.Entities.Projectiles
                                     Maps.MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
                                     Spawns[s].SpawnY * Options.TileHeight +
                                     Spawns[s].OffsetY +
-                                    Options.TileHeight / 2, X, Y, CurrentMap, Spawns[s].AutoRotate ? Spawns[s].Dir : 0,
+                                    Options.TileHeight / 2, X, Y, MapId, Spawns[s].AutoRotate ? Spawns[s].Dir : 0,
                                     Spawns[s].Z
                                 );
 
@@ -584,7 +584,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         public override void Draw()
         {
-            if (Maps.MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }

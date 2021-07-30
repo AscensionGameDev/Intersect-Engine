@@ -92,7 +92,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (mStatus != null)
             {
-                var remaining = mStatus.RemainingMs();
+                var remaining = mStatus.RemainingMs;
                 var spell = SpellBase.Get(mStatus.SpellId);
                 var secondsRemaining = (float) remaining / 1000f;
                 if (secondsRemaining > 10f)

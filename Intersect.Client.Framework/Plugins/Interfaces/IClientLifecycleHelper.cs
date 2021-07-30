@@ -29,13 +29,16 @@ namespace Intersect.Client.Plugins.Interfaces
 
         public IEntity Player { get; }
 
-        public Dictionary<Guid, IEntity> KnownEntities { get; }
+        public IReadOnlyDictionary<Guid, IEntity> KnownEntities { get; }
 
-        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities)
+        public long TimeMs { get; }
+
+        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, long timeMs)
         {
             State = state;
             Player = player;
             KnownEntities = knownEntities;
+            TimeMs = timeMs;
         }
     }
 
@@ -45,15 +48,19 @@ namespace Intersect.Client.Plugins.Interfaces
 
         public IEntity Entity { get; }
 
-        public GameDrawArgs(DrawStates state)
+        public long TimeMs { get; }
+
+        public GameDrawArgs(DrawStates state, long timeMs)
         {
             State = state;
+            TimeMs = timeMs;
         }
 
-        public GameDrawArgs(DrawStates state, IEntity entity)
+        public GameDrawArgs(DrawStates state, IEntity entity, long timeMs)
         {
             State = state;
             Entity = entity;
+            TimeMs = timeMs;
         }
     }
 
@@ -103,19 +110,22 @@ namespace Intersect.Client.Plugins.Interfaces
         /// Invokes <see cref="GameUpdate"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
-        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities);
+        /// <param name="timeMs">The internal time of the engine.</param>
+        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, long timeMs);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="DrawStates"/>.</param>
-        void OnGameDraw(DrawStates state);
+        /// <param name="timeMs">The internal time of the engine.</param>
+        void OnGameDraw(DrawStates state, long timeMs);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.
         /// </summary>
         /// <param name="state">The new <see cref="DrawStates"/>.</param>
         /// <param name="entity">The <see cref="IEntity"/> that is being drawn.</param>
-        void OnGameDraw(DrawStates state, IEntity entity);
+        /// <param name="timeMs">The internal time of the engine.</param>
+        void OnGameDraw(DrawStates state, IEntity entity, long timeMs);
     }
 }
