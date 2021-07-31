@@ -360,9 +360,16 @@ namespace Intersect.Client.MonoGame.File_Management
 
                 case ContentTypes.Shader:
                     throw new NotImplementedException();
+
                 case ContentTypes.Music:
+                    var music = new MonoMusicSource(createStream) as TAsset;
+                    lookup?.Add(RemoveExtension(name), music);
+                    return music;
+
                 case ContentTypes.Sound:
-                    throw new NotImplementedException();
+                    var sound = new MonoSoundSource(createStream, name) as TAsset;
+                    lookup?.Add(RemoveExtension(name), sound);
+                    return sound;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);

@@ -48,7 +48,7 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, IAsset> mMiscDict = new Dictionary<string, IAsset>();
 
-        protected Dictionary<string, GameAudioSource> mMusicDict = new Dictionary<string, GameAudioSource>();
+        protected Dictionary<string, IAsset> mMusicDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, IAsset> mPaperdollDict = new Dictionary<string, IAsset>();
 
@@ -56,7 +56,7 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, GameShader> mShaderDict = new Dictionary<string, GameShader>();
 
-        protected Dictionary<string, GameAudioSource> mSoundDict = new Dictionary<string, GameAudioSource>();
+        protected Dictionary<string, IAsset> mSoundDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<KeyValuePair<UI, string>, string> mUiDict = new Dictionary<KeyValuePair<UI, string>, string>();
 
@@ -321,7 +321,7 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music : null;
+            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music as GameAudioSource : null;
         }
 
         public virtual GameAudioSource GetSound(string name)
@@ -336,7 +336,7 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound : null;
+            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound as GameAudioSource : null;
         }
 
         public virtual string GetUIJson(UI stage, string name, string resolution, out bool loadedCachedJson)
@@ -494,8 +494,10 @@ namespace Intersect.Client.Framework.File_Management
                     throw new NotImplementedException();
 
                 case ContentTypes.Music:
+                    return mMusicDict;
+
                 case ContentTypes.Sound:
-                    throw new NotImplementedException();
+                    return mSoundDict;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);

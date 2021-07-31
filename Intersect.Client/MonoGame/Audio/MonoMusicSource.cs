@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
@@ -19,9 +20,9 @@ namespace Intersect.Client.MonoGame.Audio
 
     public class MonoMusicSource : GameAudioSource
     {
-
         private readonly string mPath;
         private readonly string mRealPath;
+        private readonly Func<Stream> mCreateStream;
 
         public VorbisReader Reader { get; set; }
         public DynamicSoundEffectInstance Instance { get; set; }
@@ -33,11 +34,25 @@ namespace Intersect.Client.MonoGame.Audio
 
         
 
-        public MonoMusicSource(string path, string realPath)
+        public MonoMusicSource(string path, string realPath, string name = "")
         {
+            Name = name;
             mPath = path;
             mRealPath = realPath;
 
+            InitializeThread();
+        }
+
+        public MonoMusicSource(Func<Stream> createStream, string name = "")
+        {
+            Name = name;
+            mCreateStream = createStream;
+
+            InitializeThread();
+        }
+
+        private void InitializeThread()
+        {
             if (mUnderlyingThread == null)
             {
                 mUnderlyingThread = new Thread(EnsureBuffersFilled)
@@ -71,6 +86,10 @@ namespace Intersect.Client.MonoGame.Audio
                             {
                                 // Read from cache, but close reader when we're done with it!
                                 Reader = new VorbisReader(Globals.ContentManager.MusicPacks.GetAsset(Path.GetFileName(mRealPath)), true);
+                            }
+                            else if (mCreateStream != null)
+                            {
+                                Reader = new VorbisReader(mCreateStream(), true);
                             }
                             else
                             {
