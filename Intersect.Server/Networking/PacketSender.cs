@@ -1362,7 +1362,7 @@ namespace Intersect.Server.Networking
             if (player.SpellCooldowns.ContainsKey(spellId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUTC);
+                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUtc);
                 player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
             }
         }
@@ -1374,7 +1374,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.SpellCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUtc);
                 }
 
                 player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
@@ -1387,7 +1387,7 @@ namespace Intersect.Server.Networking
             if (player.ItemCooldowns.ContainsKey(itemId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUTC);
+                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUtc);
                 player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);
             }
         }
@@ -1399,7 +1399,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.ItemCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUtc);
                 }
 
                 player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);

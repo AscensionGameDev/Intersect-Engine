@@ -34,7 +34,7 @@ namespace Intersect.Utilities
         /// <param name="remoteOffset">the offset from the remote</param>
         public void Synchronize(long remoteUtc, long remoteOffset)
         {
-            TicksOffset = remoteOffset + (TicksUTC - remoteUtc);
+            TicksOffset = remoteOffset + (TicksUtc - remoteUtc);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Intersect.Utilities
         public long Ticks
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => TicksUTC - TicksOffset;
+            get => TicksUtc - TicksOffset;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Intersect.Utilities
         /// <summary>
         /// Real-world unix time in ticks.
         /// </summary>
-        public long TicksUTC
+        public long TicksUtc
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -91,9 +91,9 @@ namespace Intersect.Utilities
         /// <summary>
         /// Gets the real-world unix time in milliseconds.
         /// </summary>
-        public long MillisecondsUTC
+        public long MillisecondsUtc
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUTC / TimeSpan.TicksPerMillisecond;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUtc / TimeSpan.TicksPerMillisecond;
         }
     }
 }

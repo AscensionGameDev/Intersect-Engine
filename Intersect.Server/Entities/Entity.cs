@@ -2119,7 +2119,7 @@ namespace Intersect.Server.Entities
                 else
                 {
                     SpellCooldowns[Spells[spellSlot].SpellId] =
-                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration);
+                    Globals.Timing.MillisecondsUtc + (int)(spellBase.CooldownDuration);
                 }
             }
         }
