@@ -327,10 +327,10 @@ namespace Intersect.Server.Networking
                                  configurableBaseDesyncForgiveness +
                                  errorRangeMaximum * configurablePingDesyncForgivenessFactor;
 
-                if (timeDesync && Globals.Timing.MillisecondsUTC > client.LastPacketDesyncForgiven)
+                if (timeDesync && Globals.Timing.MillisecondsUtc > client.LastPacketDesyncForgiven)
                 {
                     client.LastPacketDesyncForgiven =
-                        Globals.Timing.MillisecondsUTC + configurablePacketDesyncForgivenessInternal;
+                        Globals.Timing.MillisecondsUtc + configurablePacketDesyncForgivenessInternal;
 
                     PacketSender.SendPing(client, false);
                     timeDesync = false;
@@ -694,7 +694,7 @@ namespace Intersect.Server.Networking
                 if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
                 {
                     player.Move(packet.Dir, player, false);
-                    var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+                    var utcDeltaMs = (Timing.Global.TicksUtc - packet.UTC) / TimeSpan.TicksPerMillisecond;
                     var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
                     var currentMs = packet.ReceiveTime;
                     if (player.MoveTimer > currentMs)
@@ -741,10 +741,10 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (player.LastChatTime > Globals.Timing.MillisecondsUTC)
+            if (player.LastChatTime > Globals.Timing.MillisecondsUtc)
             {
                 PacketSender.SendChatMsg(player, Strings.Chat.toofast, ChatMessageType.Notice);
-                player.LastChatTime = Globals.Timing.MillisecondsUTC + Options.MinChatInterval;
+                player.LastChatTime = Globals.Timing.MillisecondsUtc + Options.MinChatInterval;
 
                 return;
             }
@@ -1088,7 +1088,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+            var utcDeltaMs = (Timing.Global.TicksUtc - packet.UTC) / TimeSpan.TicksPerMillisecond;
             var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
             //check if player is blinded or stunned or in stealth mode
