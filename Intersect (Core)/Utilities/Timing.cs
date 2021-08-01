@@ -8,10 +8,8 @@ namespace Intersect.Utilities
     /// </summary>
     public sealed class Timing
     {
-        private static int lastTicks = -1;
-        private static DateTime lastDateTime = DateTime.MinValue;
-        public static long Hits = 0;
-        public static long Misses = 0;
+        private int mLastTicks = -1;
+        private DateTime mLastDateTime = DateTime.MinValue;
 
         /// <summary>
         /// The global <see cref="Timing"/> instance.
@@ -32,7 +30,8 @@ namespace Intersect.Utilities
         ///
         /// Sets <see cref="TicksOffset"/>.
         /// </summary>
-        /// <param name="remoteOffset">a point in time to synchronize to in ticks</param>
+        /// <param name="remoteUtc">the current remote time</param>
+        /// <param name="remoteOffset">the offset from the remote</param>
         public void Synchronize(long remoteUtc, long remoteOffset)
         {
             TicksOffset = remoteOffset + (TicksUTC - remoteUtc);
@@ -60,17 +59,15 @@ namespace Intersect.Utilities
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                int tickCount = Environment.TickCount;
-                if (tickCount == lastTicks)
+                var tickCount = Environment.TickCount;
+                if (tickCount == mLastTicks)
                 {
-                    Hits++;
-                    return lastDateTime.Ticks;
+                    return mLastDateTime.Ticks;
                 }
-                Misses++;
-                DateTime dt = DateTime.UtcNow;
-                lastTicks = tickCount;
-                lastDateTime = dt;
-                return dt.Ticks;
+                var now = DateTime.UtcNow;
+                mLastTicks = tickCount;
+                mLastDateTime = now;
+                return now.Ticks;
             }
         }
 
