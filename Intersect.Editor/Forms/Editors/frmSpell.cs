@@ -1067,6 +1067,30 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
+        private void chkHOTDOTenableAnimation_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkHOTDOTenableAnimation.Checked)
+            {
+                cmbOverTimeAnimation.Enabled = true;
+            } else
+            {
+                cmbOverTimeAnimation.Enabled = false;
+            }
+        }
+
+        private void cmbOverTimeAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OverTimeAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbOverTimeAnimation.SelectedIndex - 1));
+        }
+
+        private void cmbOverTimeAnimation_EnabledChanged(object sender, EventArgs e)
+        {
+            if (!cmbOverTimeAnimation.Enabled)
+            {
+                mEditorItem.OverTimeAnimation = null;
+            }
+        }
     }
 
 }
