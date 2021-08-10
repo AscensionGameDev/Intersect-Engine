@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20210810154947_OverTimeAnimationMigration")]
-    partial class OverTimeAnimationMigration
+    [Migration("20210810194601_OverTimeSpellAnimationMigration")]
+    partial class OverTimeSpellAnimationMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
