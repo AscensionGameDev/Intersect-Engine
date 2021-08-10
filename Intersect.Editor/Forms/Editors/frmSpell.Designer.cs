@@ -111,7 +111,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblStr = new System.Windows.Forms.Label();
             this.grpHotDot = new DarkUI.Controls.DarkGroupBox();
             this.lblHOTDOTenableAnimation = new System.Windows.Forms.Label();
-            this.chkHOTDOTenableAnimation = new DarkUI.Controls.DarkCheckBox();
             this.cmbOverTimeAnimation = new DarkUI.Controls.DarkComboBox();
             this.nudTick = new DarkUI.Controls.DarkNumericUpDown();
             this.chkHOTDOT = new DarkUI.Controls.DarkCheckBox();
@@ -176,6 +175,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.lblOTanimationDisclaimer = new System.Windows.Forms.Label();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -975,7 +975,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpCombat.Location = new System.Drawing.Point(3, 513);
             this.grpCombat.Name = "grpCombat";
-            this.grpCombat.Size = new System.Drawing.Size(440, 524);
+            this.grpCombat.Size = new System.Drawing.Size(440, 500);
             this.grpCombat.TabIndex = 39;
             this.grpCombat.TabStop = false;
             this.grpCombat.Text = "Combat Spell";
@@ -1422,8 +1422,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpHotDot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpHotDot.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpHotDot.Controls.Add(this.lblOTanimationDisclaimer);
             this.grpHotDot.Controls.Add(this.lblHOTDOTenableAnimation);
-            this.grpHotDot.Controls.Add(this.chkHOTDOTenableAnimation);
             this.grpHotDot.Controls.Add(this.cmbOverTimeAnimation);
             this.grpHotDot.Controls.Add(this.nudTick);
             this.grpHotDot.Controls.Add(this.chkHOTDOT);
@@ -1431,7 +1431,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpHotDot.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpHotDot.Location = new System.Drawing.Point(6, 350);
             this.grpHotDot.Name = "grpHotDot";
-            this.grpHotDot.Size = new System.Drawing.Size(188, 166);
+            this.grpHotDot.Size = new System.Drawing.Size(194, 135);
             this.grpHotDot.TabIndex = 53;
             this.grpHotDot.TabStop = false;
             this.grpHotDot.Text = "Heal/Damage Over Time";
@@ -1439,21 +1439,11 @@ namespace Intersect.Editor.Forms.Editors
             // lblHOTDOTenableAnimation
             // 
             this.lblHOTDOTenableAnimation.AutoSize = true;
-            this.lblHOTDOTenableAnimation.Location = new System.Drawing.Point(2, 119);
+            this.lblHOTDOTenableAnimation.Location = new System.Drawing.Point(6, 89);
             this.lblHOTDOTenableAnimation.Name = "lblHOTDOTenableAnimation";
             this.lblHOTDOTenableAnimation.Size = new System.Drawing.Size(74, 13);
             this.lblHOTDOTenableAnimation.TabIndex = 56;
             this.lblHOTDOTenableAnimation.Text = "OT Animation:";
-            // 
-            // chkHOTDOTenableAnimation
-            // 
-            this.chkHOTDOTenableAnimation.Location = new System.Drawing.Point(5, 76);
-            this.chkHOTDOTenableAnimation.Name = "chkHOTDOTenableAnimation";
-            this.chkHOTDOTenableAnimation.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.chkHOTDOTenableAnimation.Size = new System.Drawing.Size(125, 24);
-            this.chkHOTDOTenableAnimation.TabIndex = 55;
-            this.chkHOTDOTenableAnimation.Text = "Separate Animation?";
-            this.chkHOTDOTenableAnimation.CheckedChanged += new System.EventHandler(this.chkHOTDOTenableAnimation_CheckedChanged);
             // 
             // cmbOverTimeAnimation
             // 
@@ -1468,14 +1458,13 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbOverTimeAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbOverTimeAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbOverTimeAnimation.FormattingEnabled = true;
-            this.cmbOverTimeAnimation.Location = new System.Drawing.Point(83, 116);
+            this.cmbOverTimeAnimation.Location = new System.Drawing.Point(86, 86);
             this.cmbOverTimeAnimation.Name = "cmbOverTimeAnimation";
             this.cmbOverTimeAnimation.Size = new System.Drawing.Size(96, 21);
             this.cmbOverTimeAnimation.TabIndex = 54;
             this.cmbOverTimeAnimation.Text = null;
             this.cmbOverTimeAnimation.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbOverTimeAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbOverTimeAnimation_SelectedIndexChanged);
-            this.cmbOverTimeAnimation.EnabledChanged += new System.EventHandler(this.cmbOverTimeAnimation_EnabledChanged);
             // 
             // nudTick
             // 
@@ -2353,6 +2342,15 @@ namespace Intersect.Editor.Forms.Editors
             this.lstGameObjects.Size = new System.Drawing.Size(191, 422);
             this.lstGameObjects.TabIndex = 32;
             // 
+            // lblOTanimationDisclaimer
+            // 
+            this.lblOTanimationDisclaimer.AutoSize = true;
+            this.lblOTanimationDisclaimer.Location = new System.Drawing.Point(0, 110);
+            this.lblOTanimationDisclaimer.Name = "lblOTanimationDisclaimer";
+            this.lblOTanimationDisclaimer.Size = new System.Drawing.Size(195, 13);
+            this.lblOTanimationDisclaimer.TabIndex = 57;
+            this.lblOTanimationDisclaimer.Text = "(Set to \"None\" to keep same animation)";
+            // 
             // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2582,7 +2580,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblCannotCast;
         private DarkTextBox txtCannotCast;
         private System.Windows.Forms.Label lblHOTDOTenableAnimation;
-        private DarkCheckBox chkHOTDOTenableAnimation;
         private DarkComboBox cmbOverTimeAnimation;
+        private System.Windows.Forms.Label lblOTanimationDisclaimer;
     }
 }

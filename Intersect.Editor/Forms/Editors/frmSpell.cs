@@ -105,6 +105,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
             cmbEvent.Items.AddRange(EventBase.Names);
+            cmbOverTimeAnimation.Items.Clear();
+            cmbOverTimeAnimation.Items.Add(Strings.General.none);
+            cmbOverTimeAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
@@ -213,6 +216,7 @@ namespace Intersect.Editor.Forms.Editors
             grpHotDot.Text = Strings.SpellEditor.hotdot;
             chkHOTDOT.Text = Strings.SpellEditor.ishotdot;
             lblTick.Text = Strings.SpellEditor.hotdottick;
+            lblOTanimationDisclaimer.Text = "(Set to " + Strings.General.none + " to keep same animation)";
 
             grpStats.Text = Strings.SpellEditor.stats;
             lblStr.Text = Strings.SpellEditor.attack;
@@ -284,6 +288,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
+                cmbOverTimeAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.OverTimeAnimationId) + 1;
 
                 chkBound.Checked = mEditorItem.Bound;
 
@@ -1068,28 +1073,9 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-        private void chkHOTDOTenableAnimation_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkHOTDOTenableAnimation.Checked)
-            {
-                cmbOverTimeAnimation.Enabled = true;
-            } else
-            {
-                cmbOverTimeAnimation.Enabled = false;
-            }
-        }
-
         private void cmbOverTimeAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.OverTimeAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbOverTimeAnimation.SelectedIndex - 1));
-        }
-
-        private void cmbOverTimeAnimation_EnabledChanged(object sender, EventArgs e)
-        {
-            if (!cmbOverTimeAnimation.Enabled)
-            {
-                mEditorItem.OverTimeAnimation = null;
-            }
         }
     }
 
