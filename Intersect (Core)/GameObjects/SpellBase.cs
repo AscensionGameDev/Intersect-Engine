@@ -63,6 +63,7 @@ namespace Intersect.GameObjects
         [Column("OverTimeAnimation")]
         public Guid OverTimeAnimationId { get; set; }
 
+        [NotMapped]
         [JsonIgnore]
         public AnimationBase OverTimeAnimation
         {

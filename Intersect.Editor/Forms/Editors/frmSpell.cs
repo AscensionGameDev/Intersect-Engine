@@ -216,7 +216,7 @@ namespace Intersect.Editor.Forms.Editors
             grpHotDot.Text = Strings.SpellEditor.hotdot;
             chkHOTDOT.Text = Strings.SpellEditor.ishotdot;
             lblTick.Text = Strings.SpellEditor.hotdottick;
-            lblOTanimationDisclaimer.Text = "(Set to " + Strings.General.none + " to keep same animation)";
+            lblOTanimationDisclaimer.Text = Strings.SpellEditor.overTimeDisclaimer1 + Strings.General.none + Strings.SpellEditor.overTimeDisclaimer2;
 
             grpStats.Text = Strings.SpellEditor.stats;
             lblStr.Text = Strings.SpellEditor.attack;
@@ -1075,7 +1075,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbOverTimeAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.OverTimeAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbOverTimeAnimation.SelectedIndex - 1));
+            Guid animationId = AnimationBase.IdFromList(cmbOverTimeAnimation.SelectedIndex - 1);
+            mEditorItem.OverTimeAnimation = AnimationBase.Get(animationId);
         }
     }
 

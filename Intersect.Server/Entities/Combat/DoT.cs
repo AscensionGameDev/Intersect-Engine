@@ -100,13 +100,10 @@ namespace Intersect.Server.Entities.Combat
             {
                 deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.OverTimeAnimationId, (sbyte)Directions.Up));
                 aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.OverTimeAnimationId, (sbyte)Directions.Up));
-            } else
+            } else if (SpellBase.HitAnimationId != Guid.Empty)
             {
-                if (SpellBase.HitAnimationId != Guid.Empty)
-                {
-                    deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
-                    aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
-                }
+                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up));
             }
             
 
