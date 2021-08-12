@@ -4641,9 +4641,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString warptomap = @"Warp Caster:";
 
-            public static LocalizedString overTimeDisclaimer1 = @"(Set to ";
-
-            public static LocalizedString overTimeDisclaimer2 = @" to keep same animation)";
+            public static LocalizedString overTimeDisclaimer = @"(Set to {00} to keep same animation)";
 
         }
 
