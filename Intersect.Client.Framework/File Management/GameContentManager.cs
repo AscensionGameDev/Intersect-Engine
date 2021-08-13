@@ -321,7 +321,7 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music as GameAudioSource : null;
+            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music as GameAudioSource : default;
         }
 
         public virtual GameAudioSource GetSound(string name)
@@ -336,7 +336,7 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound as GameAudioSource : null;
+            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound as GameAudioSource : default;
         }
 
         public virtual string GetUIJson(UI stage, string name, string resolution, out bool loadedCachedJson)

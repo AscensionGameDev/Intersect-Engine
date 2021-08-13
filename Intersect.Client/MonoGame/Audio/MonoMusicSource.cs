@@ -34,18 +34,18 @@ namespace Intersect.Client.MonoGame.Audio
 
         
 
-        public MonoMusicSource(string path, string realPath, string name = "")
+        public MonoMusicSource(string path, string realPath, string name = default)
         {
-            Name = name;
+            Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
             mPath = path;
             mRealPath = realPath;
 
             InitializeThread();
         }
 
-        public MonoMusicSource(Func<Stream> createStream, string name = "")
+        public MonoMusicSource(Func<Stream> createStream, string name = default)
         {
-            Name = name;
+            Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
             mCreateStream = createStream;
 
             InitializeThread();

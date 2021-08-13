@@ -23,18 +23,18 @@ namespace Intersect.Client.MonoGame.Audio
 
         private SoundEffect mSound;
 
-        public MonoSoundSource(string path, string realPath, string name = "")
+        public MonoSoundSource(string path, string realPath, string name = default)
         {
             
             mPath = path;
             mRealPath = realPath;
-            Name = name;
+            Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
         }
 
-        public MonoSoundSource(Func<Stream> createStream, string name = "")
+        public MonoSoundSource(Func<Stream> createStream, string name = default)
         {
             mCreateStream = createStream;
-            Name = name;
+            Name = string.IsNullOrWhiteSpace(name) ? string.Empty : name;
         }
 
         public SoundEffect Effect
