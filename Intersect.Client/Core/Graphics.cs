@@ -143,13 +143,28 @@ namespace Intersect.Client.Core
 
         public static void DrawMenu()
         {
-            var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
-            );
+            double scale = Math.Round((double)Renderer.GetScreenWidth() / Renderer.GetScreenHeight(), 2);
+            GameTexture imageTex;
+
+            if (scale >= 1.34)
+            {
+                imageTex = sContentManager.GetTexture(
+                   GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
+               );
+            }
+            else
+            {
+                imageTex = sContentManager.GetTexture(
+                    GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackgroundTall
+                );
+            }
 
             if (imageTex != null)
-            {
-                DrawFullScreenTexture(imageTex);
+            {              
+                if (ClientConfiguration.Instance.MenuBackgroundFitToScreen)
+                    DrawFullScreenTextureFitScreen(imageTex);
+                else
+                    DrawFullScreenTexture(imageTex);
             }
         }
 
@@ -714,6 +729,23 @@ namespace Intersect.Client.Core
                 tex, GetSourceRect(tex),
                 new FloatRect(
                     Renderer.GetView().X + offsetX, Renderer.GetView().Y, scaledWidth, Renderer.GetScreenHeight()
+                ), Color.White
+            );
+        }
+
+        public static void DrawFullScreenTextureFitScreen(GameTexture tex)
+        {
+            var scale = Renderer.GetScreenHeight() / (float)tex.GetHeight();
+            var scaledWidth = tex.GetWidth() * scale;
+            var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
+            scale = Renderer.GetScreenWidth() / (float)tex.GetWidth();
+            var scaledHeight = tex.GetHeight() * scale;
+            var offsetY = (Renderer.GetScreenHeight() - scaledHeight) / 2f;
+
+            DrawGameTexture(
+                tex, GetSourceRect(tex),
+                new FloatRect(
+                    Renderer.GetView().X + offsetX, Renderer.GetView().Y + offsetY, scaledWidth, scaledHeight
                 ), Color.White
             );
         }

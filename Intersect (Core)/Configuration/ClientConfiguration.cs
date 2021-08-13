@@ -46,7 +46,11 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_MENU_BACKGROUND = "background.png";
 
+        public const string DEFAULT_MENU_BACKGROUND_TALL = "background2.png";
+
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
+
+        public const bool DEFAULT_SCALE_BACKGROUND_IMAGE = false;
 
         #endregion
 
@@ -117,6 +121,17 @@ namespace Intersect.Configuration
         /// Menu background art
         /// </summary>
         public string MenuBackground { get; set; } = DEFAULT_MENU_BACKGROUND;
+
+
+        /// <summary>
+        /// Menu background art tall version
+        /// </summary>
+        public string MenuBackgroundTall { get; set; } = DEFAULT_MENU_BACKGROUND_TALL;
+
+        /// <summary>
+        /// Fits menu background to screen
+        /// </summary>
+        public bool MenuBackgroundFitToScreen { get; set; } = DEFAULT_SCALE_BACKGROUND_IMAGE;
 
         // TODO: What is this for?
         public List<string> IntroImages { get; set; } = new List<string>();
