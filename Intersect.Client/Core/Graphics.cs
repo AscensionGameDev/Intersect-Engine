@@ -769,6 +769,22 @@ namespace Intersect.Client.Core
             }
         }
 
+        public static void DrawFullScreenTextureFitScreen(GameTexture tex)
+        {
+            var scale = Renderer.GetScreenHeight() / (float)tex.GetHeight();
+            var scaledWidth = tex.GetWidth() * scale;
+            var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
+            scale = Renderer.GetScreenWidth() / (float)tex.GetWidth();
+            var scaledHeight = tex.GetHeight() * scale;
+            var offsetY = (Renderer.GetScreenHeight() - scaledHeight) / 2f;
+            DrawGameTexture(
+                tex, GetSourceRect(tex),
+                new FloatRect(
+                    Renderer.GetView().X + offsetX, Renderer.GetView().Y + offsetY, scaledWidth, scaledHeight
+                ), Color.White
+            );
+        }
+
         private static void UpdateView()
         {
             if (Globals.Me == null)
