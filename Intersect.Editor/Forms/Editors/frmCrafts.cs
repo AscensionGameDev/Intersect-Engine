@@ -122,6 +122,8 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
+
+                cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
             }
             else
             {
