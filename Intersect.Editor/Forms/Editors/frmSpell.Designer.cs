@@ -110,8 +110,8 @@ namespace Intersect.Editor.Forms.Editors
             this.lblMag = new System.Windows.Forms.Label();
             this.lblStr = new System.Windows.Forms.Label();
             this.grpHotDot = new DarkUI.Controls.DarkGroupBox();
-            this.lblHOTDOTenableAnimation = new System.Windows.Forms.Label();
-            this.cmbOverTimeAnimation = new DarkUI.Controls.DarkComboBox();
+            this.lblTickAnimation = new System.Windows.Forms.Label();
+            this.cmbTickAnimation = new DarkUI.Controls.DarkComboBox();
             this.nudTick = new DarkUI.Controls.DarkNumericUpDown();
             this.chkHOTDOT = new DarkUI.Controls.DarkCheckBox();
             this.lblTick = new System.Windows.Forms.Label();
@@ -175,7 +175,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
-            this.lblOTanimationDisclaimer = new System.Windows.Forms.Label();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -1422,9 +1421,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpHotDot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpHotDot.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpHotDot.Controls.Add(this.lblOTanimationDisclaimer);
-            this.grpHotDot.Controls.Add(this.lblHOTDOTenableAnimation);
-            this.grpHotDot.Controls.Add(this.cmbOverTimeAnimation);
+            this.grpHotDot.Controls.Add(this.lblTickAnimation);
+            this.grpHotDot.Controls.Add(this.cmbTickAnimation);
             this.grpHotDot.Controls.Add(this.nudTick);
             this.grpHotDot.Controls.Add(this.chkHOTDOT);
             this.grpHotDot.Controls.Add(this.lblTick);
@@ -1436,35 +1434,35 @@ namespace Intersect.Editor.Forms.Editors
             this.grpHotDot.TabStop = false;
             this.grpHotDot.Text = "Heal/Damage Over Time";
             // 
-            // lblHOTDOTenableAnimation
+            // lblTickAnimation
             // 
-            this.lblHOTDOTenableAnimation.AutoSize = true;
-            this.lblHOTDOTenableAnimation.Location = new System.Drawing.Point(6, 89);
-            this.lblHOTDOTenableAnimation.Name = "lblHOTDOTenableAnimation";
-            this.lblHOTDOTenableAnimation.Size = new System.Drawing.Size(74, 13);
-            this.lblHOTDOTenableAnimation.TabIndex = 56;
-            this.lblHOTDOTenableAnimation.Text = "OT Animation:";
+            this.lblTickAnimation.AutoSize = true;
+            this.lblTickAnimation.Location = new System.Drawing.Point(6, 89);
+            this.lblTickAnimation.Name = "lblTickAnimation";
+            this.lblTickAnimation.Size = new System.Drawing.Size(80, 13);
+            this.lblTickAnimation.TabIndex = 56;
+            this.lblTickAnimation.Text = "Tick Animation:";
             // 
-            // cmbOverTimeAnimation
+            // cmbTickAnimation
             // 
-            this.cmbOverTimeAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbOverTimeAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbOverTimeAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbOverTimeAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbOverTimeAnimation.DrawDropdownHoverOutline = false;
-            this.cmbOverTimeAnimation.DrawFocusRectangle = false;
-            this.cmbOverTimeAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbOverTimeAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbOverTimeAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbOverTimeAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbOverTimeAnimation.FormattingEnabled = true;
-            this.cmbOverTimeAnimation.Location = new System.Drawing.Point(86, 86);
-            this.cmbOverTimeAnimation.Name = "cmbOverTimeAnimation";
-            this.cmbOverTimeAnimation.Size = new System.Drawing.Size(96, 21);
-            this.cmbOverTimeAnimation.TabIndex = 54;
-            this.cmbOverTimeAnimation.Text = null;
-            this.cmbOverTimeAnimation.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbOverTimeAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbOverTimeAnimation_SelectedIndexChanged);
+            this.cmbTickAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbTickAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTickAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTickAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTickAnimation.DrawDropdownHoverOutline = false;
+            this.cmbTickAnimation.DrawFocusRectangle = false;
+            this.cmbTickAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTickAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTickAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTickAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbTickAnimation.FormattingEnabled = true;
+            this.cmbTickAnimation.Location = new System.Drawing.Point(86, 86);
+            this.cmbTickAnimation.Name = "cmbTickAnimation";
+            this.cmbTickAnimation.Size = new System.Drawing.Size(96, 21);
+            this.cmbTickAnimation.TabIndex = 54;
+            this.cmbTickAnimation.Text = null;
+            this.cmbTickAnimation.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbTickAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbTickAnimation_SelectedIndexChanged);
             // 
             // nudTick
             // 
@@ -2342,15 +2340,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lstGameObjects.Size = new System.Drawing.Size(191, 422);
             this.lstGameObjects.TabIndex = 32;
             // 
-            // lblOTanimationDisclaimer
-            // 
-            this.lblOTanimationDisclaimer.AutoSize = true;
-            this.lblOTanimationDisclaimer.Location = new System.Drawing.Point(0, 110);
-            this.lblOTanimationDisclaimer.Name = "lblOTanimationDisclaimer";
-            this.lblOTanimationDisclaimer.Size = new System.Drawing.Size(195, 13);
-            this.lblOTanimationDisclaimer.TabIndex = 57;
-            this.lblOTanimationDisclaimer.Text = "(Set to \"None\" to keep same animation)";
-            // 
             // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2579,8 +2568,7 @@ namespace Intersect.Editor.Forms.Editors
         private Controls.GameObjectList lstGameObjects;
         private System.Windows.Forms.Label lblCannotCast;
         private DarkTextBox txtCannotCast;
-        private System.Windows.Forms.Label lblHOTDOTenableAnimation;
-        private DarkComboBox cmbOverTimeAnimation;
-        private System.Windows.Forms.Label lblOTanimationDisclaimer;
+        private System.Windows.Forms.Label lblTickAnimation;
+        private DarkComboBox cmbTickAnimation;
     }
 }

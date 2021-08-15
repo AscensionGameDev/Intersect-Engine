@@ -600,9 +600,9 @@
     <Compile Include="Migrations\Game\20210703145618_AddingShopSoundEffects.designer.cs">
       <DependentUpon>20210703145618_AddingShopSoundEffects.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20210810154947_OverTimeAnimationMigration.cs" />
-    <Compile Include="Migrations\Game\20210810154947_OverTimeAnimationMigration.designer.cs">
-      <DependentUpon>20210810154947_OverTimeAnimationMigration.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20210815153451_TickAnimationMigration.cs" />
+    <Compile Include="Migrations\Game\20210815153451_TickAnimationMigration.designer.cs">
+      <DependentUpon>20210815153451_TickAnimationMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">

@@ -60,15 +60,15 @@ namespace Intersect.GameObjects
             set => HitAnimationId = value?.Id ?? Guid.Empty;
         }
 
-        [Column("OverTimeAnimation")]
-        public Guid OverTimeAnimationId { get; set; }
+        [Column("TickAnimation")]
+        public Guid TickAnimationId { get; set; }
 
         [NotMapped]
         [JsonIgnore]
-        public AnimationBase OverTimeAnimation
+        public AnimationBase TickAnimation
         {
-            get => AnimationBase.Get(OverTimeAnimationId);
-            set => OverTimeAnimationId = value?.Id ?? Guid.Empty;
+            get => AnimationBase.Get(TickAnimationId);
+            set => TickAnimationId = value?.Id ?? Guid.Empty;
         }
 
         //Spell Times

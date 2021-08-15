@@ -705,10 +705,10 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Name");
 
-                    b.Property<Guid>("OverTimeAnimationId")
-                        .HasColumnName("OverTimeAnimation");
-
                     b.Property<int>("SpellType");
+
+                    b.Property<Guid>("TickAnimationId")
+                        .HasColumnName("TickAnimation");
 
                     b.Property<long>("TimeCreated");
 
@@ -716,8 +716,6 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("VitalCost");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OverTimeAnimationId");
 
                     b.ToTable("Spells");
                 });
@@ -998,11 +996,6 @@ namespace Intersect.Server.Migrations.Game
 
             modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
                 {
-                    b.HasOne("Intersect.GameObjects.AnimationBase", "OverTimeAnimation")
-                        .WithMany()
-                        .HasForeignKey("OverTimeAnimationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
                         {
                             b1.Property<Guid>("SpellBaseId");

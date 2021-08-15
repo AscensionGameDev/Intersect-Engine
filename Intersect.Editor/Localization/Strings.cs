@@ -4566,6 +4566,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString ishotdot = @"HOT/DOT?";
 
+            public static LocalizedString tickanimation = @"Tick Animation:";
+
             public static LocalizedString magicresist = @"Magic Resist:";
 
             public static LocalizedString manacost = @"Mana Cost:";
@@ -4640,8 +4642,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString undotitle = @"Undo Changes";
 
             public static LocalizedString warptomap = @"Warp Caster:";
-
-            public static LocalizedString overTimeDisclaimer = @"(Set to {00} to keep same animation)";
 
         }
 

@@ -105,9 +105,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
             cmbEvent.Items.AddRange(EventBase.Names);
-            cmbOverTimeAnimation.Items.Clear();
-            cmbOverTimeAnimation.Items.Add(Strings.General.none);
-            cmbOverTimeAnimation.Items.AddRange(AnimationBase.Names);
+            cmbTickAnimation.Items.Clear();
+            cmbTickAnimation.Items.Add(Strings.General.none);
+            cmbTickAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
@@ -216,7 +216,7 @@ namespace Intersect.Editor.Forms.Editors
             grpHotDot.Text = Strings.SpellEditor.hotdot;
             chkHOTDOT.Text = Strings.SpellEditor.ishotdot;
             lblTick.Text = Strings.SpellEditor.hotdottick;
-            lblOTanimationDisclaimer.Text = Strings.SpellEditor.overTimeDisclaimer.ToString(Strings.General.none);
+            lblTickAnimation.Text = Strings.SpellEditor.tickanimation;
 
             grpStats.Text = Strings.SpellEditor.stats;
             lblStr.Text = Strings.SpellEditor.attack;
@@ -288,7 +288,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
-                cmbOverTimeAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.OverTimeAnimationId) + 1;
+                cmbTickAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.TickAnimationId) + 1;
 
                 chkBound.Checked = mEditorItem.Bound;
 
@@ -1073,10 +1073,10 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-        private void cmbOverTimeAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbTickAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Guid animationId = AnimationBase.IdFromList(cmbOverTimeAnimation.SelectedIndex - 1);
-            mEditorItem.OverTimeAnimation = AnimationBase.Get(animationId);
+            Guid animationId = AnimationBase.IdFromList(cmbTickAnimation.SelectedIndex - 1);
+            mEditorItem.TickAnimation = AnimationBase.Get(animationId);
         }
     }
 
