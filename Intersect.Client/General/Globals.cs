@@ -80,32 +80,39 @@ namespace Intersect.Client.General
             // Gather all known entities before passing them on to the plugins!
             // The global entity list is incomplete and lacks events.
             var knownEntities = new Dictionary<Guid, IEntity>();
-            foreach(var en in Entities)
+
+            if (Entities != null)
             {
-                if (!knownEntities.ContainsKey(en.Key))
+                foreach (var en in Entities)
                 {
-                    knownEntities.Add(en.Key, en.Value);
+                    if (!knownEntities.ContainsKey(en.Key))
+                    {
+                        knownEntities.Add(en.Key, en.Value);
+                    }
                 }
             }
-
-            for (var x = 0; x < MapGridWidth; x++)
+            
+            if (MapGrid != null)
             {
-                for (var y = 0; y < MapGridHeight; y++)
+                for (var x = 0; x < MapGridWidth; x++)
                 {
-                    var map = MapInstance.Get(MapGrid[x, y]);
-                    if (map != null)
+                    for (var y = 0; y < MapGridHeight; y++)
                     {
-                        foreach (var en in map.LocalEntities)
+                        var map = MapInstance.Get(MapGrid[x, y]);
+                        if (map != null)
                         {
-                            if (!knownEntities.ContainsKey(en.Key))
+                            foreach (var en in map.LocalEntities)
                             {
-                                knownEntities.Add(en.Key, en.Value);
+                                if (!knownEntities.ContainsKey(en.Key))
+                                {
+                                    knownEntities.Add(en.Key, en.Value);
+                                }
                             }
                         }
                     }
                 }
             }
-
+            
             ClientLifecycleHelpers.ForEach(
                 clientLifecycleHelper => clientLifecycleHelper?.OnGameUpdate(GameState, Globals.Me, knownEntities, deltaTime)
             );
