@@ -92,7 +92,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public string ResolutionAsString => GetResolutionString();
 
-        public void DrawTexture(
+         void IGameRenderer.DrawTexture(
             GameTexture tex,
             float sx,
             float sy,
