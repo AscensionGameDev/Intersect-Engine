@@ -92,6 +92,25 @@ namespace Intersect.Client.Framework.Graphics
 
         public string ResolutionAsString => GetResolutionString();
 
+         void IGameRenderer.DrawTexture(
+            GameTexture tex,
+            float sx,
+            float sy,
+            float sw,
+            float sh,
+            float tx,
+            float ty,
+            float tw,
+            float th,
+            Color renderColor,
+            GameRenderTexture renderTarget = null,
+            GameBlendModes blendMode = GameBlendModes.None,
+            GameShader shader = null,
+            float rotationDegrees = 0.0f
+        ) => DrawTexture(tex, sx, sy, sw, sh, tx, ty, tw, th, renderColor, renderTarget, blendMode, shader, rotationDegrees);
+
+        public GameRenderTexture CreateWhiteTexture() => GetWhiteTexture() as GameRenderTexture;
+
         public abstract string GetResolutionString();
 
         public abstract bool DisplayModeChanged();
