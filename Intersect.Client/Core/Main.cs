@@ -34,7 +34,7 @@ namespace Intersect.Client.Core
 
             //Load Sounds
             Audio.Init();
-            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
+            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
 
             //Init Network
             Networking.Network.InitNetwork(context);
@@ -186,7 +186,7 @@ namespace Intersect.Client.Core
                 _loadedTilesets = true;
             }
 
-            Audio.PlayMusic(MapInstance.Get(Globals.Me.MapId).Music, 3, 3, true);
+            Audio.PlayMusic(MapInstance.Get(Globals.Me.MapId).Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Globals.GameState = GameStates.InGame;
             Fade.FadeIn();
         }
@@ -352,12 +352,12 @@ namespace Intersect.Client.Core
         public static void JoinGame()
         {
             Globals.LoggedIn = true;
-            Audio.StopMusic(3f);
+            Audio.StopMusic(ClientConfiguration.Instance.MusicFadeTimer);
         }
 
         public static void Logout(bool characterSelect)
         {
-            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
+            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Fade.FadeOut();
             PacketSender.SendLogout(characterSelect);
             Globals.LoggedIn = false;

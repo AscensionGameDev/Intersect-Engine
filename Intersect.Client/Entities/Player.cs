@@ -25,6 +25,7 @@ using Intersect.Client.Interface.Game.Chat;
 using Intersect.Config.Guilds;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Entities;
+using Intersect.Configuration;
 
 namespace Intersect.Client.Entities
 {
@@ -147,7 +148,7 @@ namespace Intersect.Client.Entities
                     {
                         if (Maps.MapInstance.Get(Globals.Me.MapId) != null)
                         {
-                            Audio.PlayMusic(Maps.MapInstance.Get(Globals.Me.MapId).Music, 3, 3, true);
+                            Audio.PlayMusic(Maps.MapInstance.Get(Globals.Me.MapId).Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
                         }
 
                         if (newMap != null && oldMap != null)

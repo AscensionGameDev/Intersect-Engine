@@ -11,6 +11,7 @@ using Intersect.Client.Interface.Menu;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
+using Intersect.Configuration;
 using Intersect.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -206,7 +207,7 @@ namespace Intersect.Client.Networking
                 map.CreateMapSounds();
                 if (mapId == Globals.Me.MapId)
                 {
-                    Audio.PlayMusic(map.Music, 3, 3, true);
+                    Audio.PlayMusic(map.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
                 }
 
                 map.GridX = packet.GridX;
@@ -1450,13 +1451,13 @@ namespace Intersect.Client.Networking
         //PlayMusicPacket
         public void HandlePacket(IPacketSender packetSender, PlayMusicPacket packet)
         {
-            Audio.PlayMusic(packet.BGM, 1f, 1f, true);
+            Audio.PlayMusic(packet.BGM, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
         }
 
         //StopMusicPacket
         public void HandlePacket(IPacketSender packetSender, StopMusicPacket packet)
         {
-            Audio.StopMusic(3f);
+            Audio.StopMusic(ClientConfiguration.Instance.MusicFadeTimer);
         }
 
         //PlaySoundPacket
