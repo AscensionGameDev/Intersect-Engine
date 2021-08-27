@@ -1,22 +1,22 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
 
 namespace Intersect.Client.Entities
 {
 
-    public partial class PartyMember
+    public partial class PartyMember : IPartyMember
     {
 
-        public Guid Id;
+        public Guid Id { get; set; }
 
-        public int Level;
+        public int Level { get; set; }
 
-        public int[] MaxVital = new int[(int) Vitals.VitalCount];
+        public int[] MaxVital { get; set; } = new int[(int)Vitals.VitalCount];
 
-        public string Name;
+        public string Name { get; set; }
 
-        public int[] Vital = new int[(int) Vitals.VitalCount];
+        public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
 
         public PartyMember(Guid id, string name, int[] vital, int[] maxVital, int level)
         {

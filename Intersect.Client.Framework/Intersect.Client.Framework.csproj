@@ -91,6 +91,10 @@
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="Entities\IAnimation.cs" />
     <Compile Include="Entities\IDash.cs" />
+    <Compile Include="Entities\IFriendInstance.cs" />
+    <Compile Include="Entities\IHotbarInstance.cs" />
+    <Compile Include="Entities\IPartyMember.cs" />
+    <Compile Include="Entities\IPlayer.cs" />
     <Compile Include="Entities\IStatus.cs" />
     <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\LabelType.cs" />
