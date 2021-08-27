@@ -26,36 +26,42 @@ namespace Intersect.Client.Framework.Entities
         bool IsInGuild { get; }
         string GuildName { get; }
         GuildRank GuildRank { get; }
+        bool IsBusy { get; }
 
-        void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot);
-        void AutoTarget();
-        void ClearTarget();
-        int FindHotbarItem(IHotbarInstance hotbarInstance);
-        int FindHotbarSpell(IHotbarInstance hotbarInstance);
-        int FindItem(Guid itemId, int itemVal = 1);
-        long GetItemCooldown(Guid id);
-        bool GetRealLocation(ref int x, ref int y, ref Guid mapId);
-        long GetSpellCooldown(Guid id);
-        void HotbarSwap(byte index, byte swapIndex);
-        bool IsBusy();
-        bool IsEquipped(int slot);
-        bool IsInMyParty(Guid id);
-        bool IsInMyParty(IPlayer player); 
-        long ItemCdRemainder(int slot);
-        bool ItemOnCd(int slot);
-        void StopBlocking();
-        void SwapItems(int Label, int Color);
-        void SwapSpells(int spell1, int spell2);
-        bool TryAttack();
-        bool TryBlock();
-        void TryDepositItem(int index);
-        void TryDropItem(int index);
-        void TryForgetSpell(int index);
-        bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = default, bool firstOnly = false);
+        bool TryGetRealLocation(ref int x, ref int y, ref Guid mapId);
         bool TryTarget();
         bool TryTarget(IEntity entity, bool force = false);
+        void AutoTarget();
+        void ClearTarget();
+        void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot);
+        int FindHotbarItem(IHotbarInstance hotbarInstance);
+        int FindHotbarSpell(IHotbarInstance hotbarInstance);
+        void HotbarSwap(int index, int swapIndex);
+        int FindItem(Guid itemId, int itemVal = 1);
+        void SwapItems(int Label, int Color);
+        long GetItemCooldown(Guid id);
+        long GetItemRemainingCooldown(int slot);
+        bool IsItemOnCooldown(int slot);
+        void TryDropItem(int index);
         void TryUseItem(int index);
+        void SwapSpells(int spell1, int spell2);
+        long GetSpellCooldown(Guid id);
+        long GetSpellRemainingCooldown(int slot);
+        bool IsSpellOnCooldown(int slot);
+        void TryForgetSpell(int index);
         void TryUseSpell(Guid spellId);
         void TryUseSpell(int index);
+        bool IsEquipped(int slot);
+        bool IsInMyParty(Guid id);
+        bool IsInMyParty(IPlayer player);
+        void StopBlocking();
+        bool TryAttack();
+        bool TryBlock();
+
+
+
+
+        
+        
     }
 }

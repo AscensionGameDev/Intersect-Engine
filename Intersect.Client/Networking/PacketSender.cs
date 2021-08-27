@@ -161,7 +161,7 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new HotbarUpdatePacket(hotbarSlot, type, itemIndex));
         }
 
-        public static void SendHotbarSwap(byte index, byte swapIndex)
+        public static void SendHotbarSwap(int index, int swapIndex)
         {
             Network.SendPacket(new HotbarSwapPacket(index, swapIndex));
         }

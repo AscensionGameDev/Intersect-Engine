@@ -184,16 +184,13 @@ namespace Intersect.Client.Entities
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);
 
-        public bool IsBusy()
-        {
-            return !(Globals.EventHolds.Count == 0 &&
+        public bool IsBusy => !(Globals.EventHolds.Count == 0 &&
                      !Globals.MoveRouteActive &&
                      Globals.GameShop == null &&
                      Globals.InBank == false &&
                      Globals.InCraft == false &&
                      Globals.InTrade == false &&
                      !Interface.Interface.HasInputFocus());
-        }
 
         public override bool Update()
         {
@@ -204,7 +201,7 @@ namespace Intersect.Client.Entities
             }
 
 
-            if (!IsBusy())
+            if (!IsBusy)
             {
                 if (this == Globals.Me && IsMoving == false)
                 {
@@ -344,7 +341,7 @@ namespace Intersect.Client.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index) &&
+            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !IsItemOnCooldown(index) &&
                 index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
@@ -427,14 +424,14 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public bool ItemOnCd(int slot)
+        public bool IsItemOnCooldown(int slot)
         {
             if (Inventory[slot] != null)
             {
                 var itm = Inventory[slot];
                 if (itm.ItemId != Guid.Empty)
                 {
-                    if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Globals.System.GetTimeMs())
+                    if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Timing.Global.Milliseconds)
                     {
                         return true;
                     }
@@ -444,16 +441,50 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public long ItemCdRemainder(int slot)
+        public long GetItemRemainingCooldown(int slot)
         {
             if (Inventory[slot] != null)
             {
                 var itm = Inventory[slot];
                 if (itm.ItemId != Guid.Empty)
                 {
-                    if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Globals.System.GetTimeMs())
+                    if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Timing.Global.Milliseconds)
                     {
                         return ItemCooldowns[itm.ItemId] - Globals.System.GetTimeMs();
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public bool IsSpellOnCooldown(int slot)
+        {
+            if (Spells[slot] != null)
+            {
+                var spl = Spells[slot];
+                if (spl.Id != Guid.Empty)
+                {
+                    if (SpellCooldowns.ContainsKey(spl.Id) && SpellCooldowns[spl.Id] > Timing.Global.Milliseconds)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public long GetSpellRemainingCooldown(int slot)
+        {
+            if (Spells[slot] != null)
+            {
+                var spl = Spells[slot];
+                if (spl.Id != Guid.Empty)
+                {
+                    if (SpellCooldowns.ContainsKey(spl.Id) && SpellCooldowns[spl.Id] > Timing.Global.Milliseconds)
+                    {
+                        return ItemCooldowns[spl.Id] - Timing.Global.Milliseconds;
                     }
                 }
             }
@@ -857,7 +888,7 @@ namespace Intersect.Client.Entities
             PacketSender.SendHotbarUpdate(hotbarSlot, itemType, itemSlot);
         }
 
-        public void HotbarSwap(byte index, byte swapIndex)
+        public void HotbarSwap(int index, int swapIndex)
         {
             var itemId = Hotbar[index].ItemOrSpellId;
             var bagId = Hotbar[index].BagId;
@@ -1282,7 +1313,7 @@ namespace Intersect.Client.Entities
                     break;
             }
 
-            if (GetRealLocation(ref x, ref y, ref map))
+            if (TryGetRealLocation(ref x, ref y, ref map))
             {
                 foreach (var en in Globals.Entities)
                 {
@@ -1338,7 +1369,7 @@ namespace Intersect.Client.Entities
             return true;
         }
 
-        public bool GetRealLocation(ref int x, ref int y, ref Guid mapId)
+        public bool TryGetRealLocation(ref int x, ref int y, ref Guid mapId)
         {
             var tmpX = x;
             var tmpY = y;
@@ -1422,7 +1453,7 @@ namespace Intersect.Client.Entities
                         y /= Options.TileHeight;
                         var mapId = map.Id;
 
-                        if (GetRealLocation(ref x, ref y, ref mapId))
+                        if (TryGetRealLocation(ref x, ref y, ref mapId))
                         {
                             foreach (var en in Globals.Entities)
                             {
