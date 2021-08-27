@@ -156,7 +156,7 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new UpgradeStatPacket(stat));
         }
 
-        public static void SendHotbarUpdate(byte hotbarSlot, sbyte type, int itemIndex)
+        public static void SendHotbarUpdate(int hotbarSlot, sbyte type, int itemIndex)
         {
             Network.SendPacket(new HotbarUpdatePacket(hotbarSlot, type, itemIndex));
         }

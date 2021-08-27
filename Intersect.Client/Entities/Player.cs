@@ -863,7 +863,7 @@ namespace Intersect.Client.Entities
         }
 
         //Hotbar Processing
-        public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
+        public void AddToHotbar(int hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
             Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Stats.StatCount];
