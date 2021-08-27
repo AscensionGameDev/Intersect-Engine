@@ -38,7 +38,7 @@ namespace Intersect.Client.Framework.Entities
         int FindHotbarSpell(IHotbarInstance hotbarInstance);
         void HotbarSwap(int index, int swapIndex);
         int FindItem(Guid itemId, int itemVal = 1);
-        void SwapItems(int Label, int Color);
+        void SwapItems(int item1, int item2);
         long GetItemCooldown(Guid id);
         long GetItemRemainingCooldown(int slot);
         bool IsItemOnCooldown(int slot);

@@ -282,11 +282,11 @@ namespace Intersect.Client.Entities
         }
 
         //Item Processing
-        public void SwapItems(int Label, int Color)
+        public void SwapItems(int item1, int item2)
         {
-            var tmpInstance = Inventory[Color].Clone();
-            Inventory[Color] = Inventory[Label].Clone();
-            Inventory[Label] = tmpInstance.Clone();
+            var tmpInstance = Inventory[item2].Clone();
+            Inventory[item2] = Inventory[item1].Clone();
+            Inventory[item1] = tmpInstance.Clone();
         }
 
         public void TryDropItem(int index)
