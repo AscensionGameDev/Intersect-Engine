@@ -113,6 +113,8 @@ namespace Intersect
         public static int RequestTimeout => Instance.PlayerOpts.RequestTimeout;
 
         public static int TradeRange => Instance.PlayerOpts.TradeRange;
+        
+        public static int MaxHotbar => Instance.PlayerOpts.MaxHotbar;
 
         public static int WeaponIndex => Instance.EquipmentOpts.WeaponSlot;
 
@@ -295,8 +297,6 @@ namespace Intersect
 
         // TODO: Clean these up
         //Values that cannot easily be changed:
-
-        public const int MaxHotbar = 10;
 
         public const string DEFAULT_GAME_NAME = "Intersect";
 
