@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -12,7 +12,6 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
-using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData.Players;
@@ -23,7 +22,6 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
-using Newtonsoft.Json;
 
 namespace Intersect.Server.Networking
 {
@@ -1187,8 +1185,8 @@ namespace Intersect.Server.Networking
         //HotbarPacket
         public static void SendHotbarSlots(Player player)
         {
-            var hotbarData = new string[Options.MaxHotbar];
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            var hotbarData = new string[Options.Instance.PlayerOpts.MaxHotbar];
+            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
             {
                 hotbarData[i] = player.Hotbar[i].Data();
             }

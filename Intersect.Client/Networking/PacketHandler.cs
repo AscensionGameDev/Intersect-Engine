@@ -21,7 +21,6 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -1233,7 +1232,7 @@ namespace Intersect.Client.Networking
         //HotbarPacket
         public void HandlePacket(IPacketSender packetSender, HotbarPacket packet)
         {
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
             {
                 if (Globals.Me == null)
                 {

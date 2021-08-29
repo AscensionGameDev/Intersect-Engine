@@ -2,9 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -521,7 +519,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                         if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
-                            for (var i = 0; i < Options.MaxHotbar; i++)
+                            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
                             {
                                 if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {

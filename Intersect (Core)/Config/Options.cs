@@ -29,11 +29,9 @@ namespace Intersect
         [JsonProperty("OpenPortChecker", Order = 0)]
         protected bool _portChecker = true;
 
-        [JsonProperty("MaxClientConnections")]
-        protected int _maxConnections = 100;
+        [JsonProperty("MaxClientConnections")] protected int _maxConnections = 100;
 
-        [JsonProperty("MaximumLoggedinUsers")]
-        protected int _maxUsers = 50;
+        [JsonProperty("MaximumLoggedinUsers")] protected int _maxUsers = 50;
 
         [JsonProperty("UPnP", Order = -1)] protected bool _upnp = true;
 
@@ -84,7 +82,11 @@ namespace Intersect
         public bool SendingToClient { get; set; } = true;
 
         //Public Getters
-        public static ushort ServerPort { get => Instance._serverPort; set => Instance._serverPort = value; }
+        public static ushort ServerPort
+        {
+            get => Instance._serverPort;
+            set => Instance._serverPort = value;
+        }
 
         /// <summary>
         /// Defines the maximum amount of network connections our server is allowed to handle.
@@ -113,8 +115,6 @@ namespace Intersect
         public static int RequestTimeout => Instance.PlayerOpts.RequestTimeout;
 
         public static int TradeRange => Instance.PlayerOpts.TradeRange;
-        
-        public static int MaxHotbar => Instance.PlayerOpts.MaxHotbar;
 
         public static int WeaponIndex => Instance.EquipmentOpts.WeaponSlot;
 
@@ -129,7 +129,7 @@ namespace Intersect
         public static List<string> AnimatedSprites => Instance._animatedSprites;
 
         public static int RegenTime => Instance.CombatOpts.RegenTime;
-        
+
         public static int CombatTime => Instance.CombatOpts.CombatTime;
 
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
@@ -174,7 +174,11 @@ namespace Intersect
 
         public static int PasswordResetExpirationMinutes => Instance._passResetExpirationMin;
 
-        public static bool AdminOnly { get => Instance._adminOnly; set => Instance._adminOnly = value; }
+        public static bool AdminOnly
+        {
+            get => Instance._adminOnly;
+            set => Instance._adminOnly = value;
+        }
 
         public static bool BlockClientRegistrations
         {

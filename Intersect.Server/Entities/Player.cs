@@ -3,11 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Amib.Threading;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -202,10 +200,10 @@ namespace Intersect.Server.Entities
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
             changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
 
-            if (Hotbar.Count < Options.MaxHotbar)
+            if (Hotbar.Count < Options.Instance.PlayerOpts.MaxHotbar)
             {
                 Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
-                for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
+                for (var i = Hotbar.Count; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));
                 }

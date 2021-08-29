@@ -1,6 +1,8 @@
 ﻿namespace Intersect.Config
 {
-
+    /// <summary>
+    /// Contains configurable options pertaining to the way Players are handled by the engine.
+    /// </summary>
     public class PlayerOptions
     {
 
@@ -36,7 +38,8 @@
 
         /// <summary>
         /// Number of hotbar slots a player has.
-        /// Default value is 10. If you change this, make sure to properly modify the HotbarWindow layout at 'resources\gui\layouts\game\HotbarWindow.json'.
+        /// Default value is 10. If you change the default value (e.g. 16 slots), make sure to properly
+        /// modify the Client's HotbarWindow layout at: 'resources\gui\layouts\game\HotbarWindow.json'.
         /// </summary>
         public int MaxHotbar = 10;
 

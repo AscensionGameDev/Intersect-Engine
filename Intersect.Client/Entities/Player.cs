@@ -20,10 +20,8 @@ using Intersect.Network.Packets.Server;
 using Newtonsoft.Json;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Utilities;
-using Intersect.Client.Items;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Config.Guilds;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Entities;
 
 namespace Intersect.Client.Entities
@@ -42,7 +40,7 @@ namespace Intersect.Client.Entities
 
         public List<FriendInstance> Friends = new List<FriendInstance>();
 
-        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+        public HotbarInstance[] Hotbar = new HotbarInstance[Options.Instance.PlayerOpts.MaxHotbar];
 
         public InventoryUpdated InventoryUpdatedDelegate;
 
@@ -111,7 +109,7 @@ namespace Intersect.Client.Entities
 
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
             {
                 Hotbar[i] = new HotbarInstance();
             }
@@ -937,7 +935,7 @@ namespace Intersect.Client.Entities
             }
 
             var castInput = -1;
-            for (var barSlot = 0; barSlot < Options.MaxHotbar; barSlot++)
+            for (var barSlot = 0; barSlot < Options.Instance.PlayerOpts.MaxHotbar; barSlot++)
             {
                 if (!mLastHotbarUseTime.ContainsKey(barSlot))
                 {
