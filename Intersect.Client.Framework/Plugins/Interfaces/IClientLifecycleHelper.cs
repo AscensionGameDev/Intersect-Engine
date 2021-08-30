@@ -27,11 +27,11 @@ namespace Intersect.Client.Plugins.Interfaces
     {
         public GameStates State { get; }
 
-        public IEntity Player { get; }
+        public IPlayer Player { get; }
 
         public IReadOnlyDictionary<Guid, IEntity> KnownEntities { get; }
 
-        public GameUpdateArgs(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime) : base(deltaTime)
+        public GameUpdateArgs(GameStates state, IPlayer player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime) : base(deltaTime)
         {
             State = state;
             Player = player;
@@ -117,7 +117,7 @@ namespace Intersect.Client.Plugins.Interfaces
         /// </summary>
         /// <param name="state">The new <see cref="GameStates"/>.</param>
         /// <param name="deltaTime">Time passed since the last update.</param>
-        void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime);
+        void OnGameUpdate(GameStates state, IPlayer player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime);
 
         /// <summary>
         /// Invokes <see cref="GameDraw"/> handlers for <paramref name="state"/>.

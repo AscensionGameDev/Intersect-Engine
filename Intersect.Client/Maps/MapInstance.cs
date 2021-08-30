@@ -775,7 +775,7 @@ namespace Intersect.Client.Maps
             var mapId = Id;
 
             // Is this an actual location on this map?
-            if (Globals.Me.GetRealLocation(ref x, ref y, ref mapId) && mapId == Id)
+            if (Globals.Me.TryGetRealLocation(ref x, ref y, ref mapId) && mapId == Id)
             {
                 // Apparently it is! Do we have any items to render here?
                 var tileItems = new List<IMapItemInstance>();

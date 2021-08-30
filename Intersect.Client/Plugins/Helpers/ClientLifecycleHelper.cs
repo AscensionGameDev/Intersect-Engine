@@ -43,7 +43,7 @@ namespace Intersect.Client.Plugins.Helpers
         }
 
         /// <inheritdoc />
-        public void OnGameUpdate(GameStates state, IEntity player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
+        public void OnGameUpdate(GameStates state, IPlayer player, Dictionary<Guid, IEntity> knownEntities, TimeSpan deltaTime)
         {
             var GameUpdateArgs = new GameUpdateArgs(state, player, knownEntities, deltaTime);
             GameUpdate?.Invoke(Context, GameUpdateArgs);

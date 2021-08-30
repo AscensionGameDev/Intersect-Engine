@@ -296,13 +296,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 //We have it, and it's on cd
-                if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex))
+                if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex))
                 {
                     updateDisplay = true;
                 }
 
                 //We have it, and it's on cd, and the fade is incorrect
-                if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex) != mIsFaded)
+                if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex) != mIsFaded)
                 {
                     updateDisplay = true;
                 }
@@ -345,11 +345,11 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     {
                         EquipPanel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
                         EquipLabel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
-                        mIsFaded = Globals.Me.ItemOnCd(mInventoryItemIndex);
+                        mIsFaded = Globals.Me.IsItemOnCooldown(mInventoryItemIndex);
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
-                            var secondsRemaining = (float) Globals.Me.ItemCdRemainder(mInventoryItemIndex) / 1000f;
+                            var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex) / 1000f;
                             if (secondsRemaining > 10f)
                             {
                                 mCooldownLabel.Text =
