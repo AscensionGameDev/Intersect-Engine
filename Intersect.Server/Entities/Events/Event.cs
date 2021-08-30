@@ -9,6 +9,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Events
 {
@@ -154,7 +155,7 @@ namespace Intersect.Server.Entities.Events
                         }
 
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer &&
-                            WaitTimer < Globals.Timing.Milliseconds)
+                            WaitTimer < Timing.Global.Milliseconds)
                         {
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }
@@ -169,7 +170,7 @@ namespace Intersect.Server.Entities.Events
                                 if (curStack.WaitingForRoute == Player.Id)
                                 {
                                     if (Player.MoveRoute == null ||
-                                        Player.MoveRoute.Complete && Player.MoveTimer < Globals.Timing.Milliseconds)
+                                        Player.MoveRoute.Complete && Player.MoveTimer < Timing.Global.Milliseconds)
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -214,7 +215,7 @@ namespace Intersect.Server.Entities.Events
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Globals.Timing.Milliseconds)
+                                    if (WaitTimer < Timing.Global.Milliseconds)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command, Player, this);
                                         commandsExecuted++;
@@ -264,7 +265,7 @@ namespace Intersect.Server.Entities.Events
                     }
                     else
                     {
-                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Globals.Timing.Milliseconds)
+                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Timing.Global.Milliseconds)
                         {
                             var newStack = new CommandInstance(PageInstance.MyPage);
                             CallStack.Push(newStack);

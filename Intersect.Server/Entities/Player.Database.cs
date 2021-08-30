@@ -10,6 +10,7 @@ using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ namespace Intersect.Server.Entities
         public virtual User User { get; private set; }
 
         [NotMapped, JsonIgnore]
-        public long SaveTimer { get; set; } = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
+        public long SaveTimer { get; set; } = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
 
         #endregion
 

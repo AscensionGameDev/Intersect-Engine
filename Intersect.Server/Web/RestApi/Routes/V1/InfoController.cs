@@ -5,6 +5,7 @@ using System.Web.Http;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Server.Web.RestApi.Attributes;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -56,7 +57,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             return new
             {
-                uptime = Globals.Timing.Milliseconds,
+                uptime = Timing.Global.Milliseconds,
                 cps = Globals.Cps,
                 connectedClients = Globals.Clients?.Count,
                 onlineCount = Globals.OnlineList?.Count
