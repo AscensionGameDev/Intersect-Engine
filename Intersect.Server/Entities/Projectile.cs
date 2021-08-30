@@ -10,6 +10,7 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities
 {
@@ -118,7 +119,7 @@ namespace Intersect.Server.Entities
             }
 
             mQuantity++;
-            mSpawnTime = Globals.Timing.Milliseconds + Base.Delay;
+            mSpawnTime = Timing.Global.Milliseconds + Base.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -234,7 +235,7 @@ namespace Intersect.Server.Entities
 
         public void Update(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
         {
-            if (mQuantity < Base.Quantity && Globals.Timing.Milliseconds > mSpawnTime)
+            if (mQuantity < Base.Quantity && Timing.Global.Milliseconds > mSpawnTime)
             {
                 AddProjectileSpawns(spawnDeaths);
             }
@@ -298,7 +299,7 @@ namespace Intersect.Server.Entities
                     var spawn = Spawns[i];
                     if (spawn != null)
                     {
-                        while (Globals.Timing.Milliseconds > spawn.TransmittionTimer && Spawns[i] != null)
+                        while (Timing.Global.Milliseconds > spawn.TransmittionTimer && Spawns[i] != null)
                         {
                             var x = spawn.X;
                             var y = spawn.Y;

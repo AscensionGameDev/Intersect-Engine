@@ -6,6 +6,7 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities
 {
@@ -23,7 +24,7 @@ namespace Intersect.Server.Entities
 
         public ProjectileBase ProjectileBase;
 
-        public long TransmittionTimer = Globals.Timing.Milliseconds;
+        public long TransmittionTimer = Timing.Global.Milliseconds;
 
         public float X;
 
@@ -52,7 +53,7 @@ namespace Intersect.Server.Entities
             Dir = dir;
             ProjectileBase = projectileBase;
             Parent = parent;
-            TransmittionTimer = Globals.Timing.Milliseconds +
+            TransmittionTimer = Timing.Global.Milliseconds +
                                 (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
         }
 
