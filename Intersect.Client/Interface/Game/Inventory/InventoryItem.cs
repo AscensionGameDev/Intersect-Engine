@@ -407,7 +407,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxHotbar; i++)
+                        for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

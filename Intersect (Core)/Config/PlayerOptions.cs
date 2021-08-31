@@ -1,8 +1,25 @@
 ﻿namespace Intersect.Config
 {
-
+    /// <summary>
+    /// Contains configurable options pertaining to the way Players are handled by the engine.
+    /// </summary>
     public class PlayerOptions
     {
+
+        /// <summary>
+        /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
+        /// </summary>
+        public bool AllowCombatMovement = true;
+
+        /// <summary>
+        /// If true, it will remove the associated exp, otherwise players will lose experience based on the amount required to level up.
+        /// </summary>
+        public bool ExpLossFromCurrentExp = true;
+
+        /// <summary>
+        /// A percentage between 0 and 100 which determines the experience that players will lose when they die.
+        /// </summary>
+        public int ExpLossOnDeathPercent = 0;
 
         /// <summary>
         /// A percentage between 0 and 100 which determines the chance in which they will lose any given item in their inventory when killed.
@@ -18,6 +35,13 @@
         /// Number of characters an account may create.
         /// </summary>
         public int MaxCharacters = 1;
+
+        /// <summary>
+        /// Number of hotbar slots a player has.
+        /// Default value is 10. If you change the default value (e.g. 16 slots), make sure to properly
+        /// modify the Client's HotbarWindow layout at: 'resources\gui\layouts\game\HotbarWindow.json'.
+        /// </summary>
+        public int MaxHotbar = 10;
 
         /// <summary>
         /// Number of inventory slots a player has.
@@ -45,29 +69,14 @@
         public int RequestTimeout = 300000;
 
         /// <summary>
-        /// Distance (in tiles) between players in which a trade offer can be sent and accepted.
-        /// </summary>
-        public int TradeRange = 6;
-
-        /// <summary>
-        /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
-        /// </summary>
-        public bool AllowCombatMovement = true;
-
-        /// <summary>
         /// Configures whether or not the level of a player is shown next to their name.
         /// </summary>
         public bool ShowLevelByName = false;
 
         /// <summary>
-        /// First thanks for letting me share an idea, of losing XP when dying <3
+        /// Distance (in tiles) between players in which a trade offer can be sent and accepted.
         /// </summary>
-        public int ExpLossOnDeathPercent = 0;
-
-        /// <summary>
-        /// If true, it will remove the associated exp, otherwise you will lose the exp based on the exp required to level up.
-        /// </summary>
-        public bool ExpLossFromCurrentExp = true;
+        public int TradeRange = 6;
 
     }
 
