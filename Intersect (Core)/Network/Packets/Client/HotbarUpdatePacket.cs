@@ -12,7 +12,7 @@ namespace Intersect.Network.Packets.Client
         {
         }
 
-        public HotbarUpdatePacket(byte slot, sbyte type, int itemIndex)
+        public HotbarUpdatePacket(int slot, sbyte type, int itemIndex)
         {
             HotbarSlot = slot;
             Type = type;
@@ -20,7 +20,7 @@ namespace Intersect.Network.Packets.Client
         }
 
         [Key(0)]
-        public byte HotbarSlot { get; set; } //Hotbar Slot
+        public int HotbarSlot { get; set; } //Hotbar Slot
 
         [Key(1)]
         public sbyte Type { get; set; }

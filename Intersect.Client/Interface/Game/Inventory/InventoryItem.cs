@@ -245,8 +245,8 @@ namespace Intersect.Client.Interface.Game.Inventory
                 equipped != mIsEquipped ||
                 item == null && mTexLoaded != "" ||
                 item != null && mTexLoaded != item.Icon ||
-                mIconCd != Globals.Me.ItemOnCd(mMySlot) ||
-                Globals.Me.ItemOnCd(mMySlot))
+                mIconCd != Globals.Me.IsItemOnCooldown(mMySlot) ||
+                Globals.Me.IsItemOnCooldown(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
@@ -260,7 +260,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
-                        if (Globals.Me.ItemOnCd(mMySlot))
+                        if (Globals.Me.IsItemOnCooldown(mMySlot))
                         {
                             Pnl.RenderColor = new Color(100, item.Color.R, item.Color.G, item.Color.B);
                         }
@@ -278,11 +278,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
 
                     mTexLoaded = item.Icon;
-                    mIconCd = Globals.Me.ItemOnCd(mMySlot);
+                    mIconCd = Globals.Me.IsItemOnCooldown(mMySlot);
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
-                        var secondsRemaining = (float) Globals.Me.ItemCdRemainder(mMySlot) / 1000f;
+                        var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mMySlot) / 1000f;
                         if (secondsRemaining > 10f)
                         {
                             mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));

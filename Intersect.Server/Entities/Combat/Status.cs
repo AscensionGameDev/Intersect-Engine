@@ -190,7 +190,7 @@ namespace Intersect.Server.Entities.Combat
 
         public void TryRemoveStatus()
         {
-            if (Duration <= Globals.Timing.Milliseconds) //Check the timer
+            if (Duration <= Timing.Global.Milliseconds) //Check the timer
             {
                 RemoveStatus();
             }

@@ -432,7 +432,7 @@ namespace Intersect.Client.Core
                 y /= Options.TileHeight;
                 var mapNum = map.Id;
 
-                if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
+                if (Globals.Me.TryGetRealLocation(ref x, ref y, ref mapNum))
                 {
                     PacketSender.SendAdminAction(new WarpToLocationAction(map.Id, (byte) x, (byte) y));
                 }
