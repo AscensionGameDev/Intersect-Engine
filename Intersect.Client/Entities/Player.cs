@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -13,6 +14,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Enums;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -23,7 +25,6 @@ using Intersect.Utilities;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Config.Guilds;
 using Intersect.Client.Framework.Entities;
-using System.Collections.ObjectModel;
 
 namespace Intersect.Client.Entities
 {
@@ -161,7 +162,7 @@ namespace Intersect.Client.Entities
                     {
                         if (Maps.MapInstance.Get(Globals.Me.MapId) != null)
                         {
-                            Audio.PlayMusic(Maps.MapInstance.Get(Globals.Me.MapId).Music, 3, 3, true);
+                            Audio.PlayMusic(Maps.MapInstance.Get(Globals.Me.MapId).Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
                         }
 
                         if (newMap != null && oldMap != null)

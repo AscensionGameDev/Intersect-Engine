@@ -128,6 +128,11 @@ namespace Intersect.Configuration
         /// </summary>
         public string MouseCursor { get; set; } = "";
 
+        /// <summary>
+        /// Determines the time it takes to fade-in or fade-out a song when no other instructions are given.
+        /// </summary>
+        public int MusicFadeTimer { get; set; } = 1500;
+
         #endregion
 
         #region Serialization Hooks
