@@ -202,10 +202,10 @@ namespace Intersect.Server.Entities
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
             changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
 
-            if (Hotbar.Count < Options.Instance.PlayerOpts.MaxHotbar)
+            if (Hotbar.Count < Options.Instance.PlayerOpts.HotbarSlotCount)
             {
                 Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
-                for (var i = Hotbar.Count; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
+                for (var i = Hotbar.Count; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));
                 }

@@ -41,7 +41,7 @@
         /// Default value is 10. If you change the default value (e.g. 16 slots), make sure to properly
         /// modify the Client's HotbarWindow layout at: 'resources\gui\layouts\game\HotbarWindow.json'.
         /// </summary>
-        public int MaxHotbar = 10;
+        public int HotbarSlotCount = 10;
 
         /// <summary>
         /// Number of inventory slots a player has.

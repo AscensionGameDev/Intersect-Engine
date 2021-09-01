@@ -1233,7 +1233,7 @@ namespace Intersect.Client.Networking
         //HotbarPacket
         public void HandlePacket(IPacketSender packetSender, HotbarPacket packet)
         {
-            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 if (Globals.Me == null)
                 {

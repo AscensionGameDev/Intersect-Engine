@@ -45,7 +45,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<IHotbarInstance> IPlayer.HotbarSlots => Hotbar.ToList();
 
-        public HotbarInstance[] Hotbar { get; set; } = new HotbarInstance[Options.Instance.PlayerOpts.MaxHotbar];
+        public HotbarInstance[] Hotbar { get; set; } = new HotbarInstance[Options.Instance.PlayerOpts.HotbarSlotCount];
 
         public InventoryUpdated InventoryUpdatedDelegate { get; set; }
 
@@ -124,7 +124,7 @@ namespace Intersect.Client.Entities
 
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
-            for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 Hotbar[i] = new HotbarInstance();
             }
@@ -984,7 +984,7 @@ namespace Intersect.Client.Entities
             }
 
             var castInput = -1;
-            for (var barSlot = 0; barSlot < Options.Instance.PlayerOpts.MaxHotbar; barSlot++)
+            for (var barSlot = 0; barSlot < Options.Instance.PlayerOpts.HotbarSlotCount; barSlot++)
             {
                 if (!mLastHotbarUseTime.ContainsKey(barSlot))
                 {

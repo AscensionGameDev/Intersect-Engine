@@ -297,7 +297,7 @@ namespace Intersect.Client.Interface.Game.Spells
                     }
                     else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.Instance.PlayerOpts.MaxHotbar; i++)
+                        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
