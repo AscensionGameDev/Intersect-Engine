@@ -7,21 +7,6 @@
     {
 
         /// <summary>
-        /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
-        /// </summary>
-        public bool AllowCombatMovement = true;
-
-        /// <summary>
-        /// If true, it will remove the associated exp, otherwise players will lose experience based on the amount required to level up.
-        /// </summary>
-        public bool ExpLossFromCurrentExp = true;
-
-        /// <summary>
-        /// A percentage between 0 and 100 which determines the experience that players will lose when they die.
-        /// </summary>
-        public int ExpLossOnDeathPercent = 0;
-
-        /// <summary>
         /// A percentage between 0 and 100 which determines the chance in which they will lose any given item in their inventory when killed.
         /// </summary>
         public int ItemDropChance = 0;
@@ -35,13 +20,6 @@
         /// Number of characters an account may create.
         /// </summary>
         public int MaxCharacters = 1;
-
-        /// <summary>
-        /// Number of hotbar slots a player has.
-        /// Default value is 10. If you change the default value (e.g. 16 slots), make sure to properly
-        /// modify the Client's HotbarWindow layout at: 'resources\gui\layouts\game\HotbarWindow.json'.
-        /// </summary>
-        public int HotbarSlotCount = 10;
 
         /// <summary>
         /// Number of inventory slots a player has.
@@ -69,14 +47,34 @@
         public int RequestTimeout = 300000;
 
         /// <summary>
+        /// Distance (in tiles) between players in which a trade offer can be sent and accepted.
+        /// </summary>
+        public int TradeRange = 6;
+
+        /// <summary>
+        /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
+        /// </summary>
+        public bool AllowCombatMovement = true;
+
+        /// <summary>
         /// Configures whether or not the level of a player is shown next to their name.
         /// </summary>
         public bool ShowLevelByName = false;
 
         /// <summary>
-        /// Distance (in tiles) between players in which a trade offer can be sent and accepted.
+        /// A percentage between 0 and 100 which determines the experience that players will lose when they die.
         /// </summary>
-        public int TradeRange = 6;
+        public int ExpLossOnDeathPercent = 0;
+
+        /// <summary>
+        /// If true, it will remove the associated exp, otherwise you will lose the exp based on the exp required to level up.
+        /// </summary>
+        public bool ExpLossFromCurrentExp = true;
+        
+        /// <summary>
+        /// Number of hotbar slots a player has.
+        /// </summary>
+        public int HotbarSlotCount { get; set; } = 10;
 
     }
 
