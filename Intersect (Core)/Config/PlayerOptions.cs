@@ -1,6 +1,8 @@
 ﻿namespace Intersect.Config
 {
-
+    /// <summary>
+    /// Contains configurable options pertaining to the way Players are handled by the engine.
+    /// </summary>
     public class PlayerOptions
     {
 
@@ -60,7 +62,7 @@
         public bool ShowLevelByName = false;
 
         /// <summary>
-        /// First thanks for letting me share an idea, of losing XP when dying <3
+        /// A percentage between 0 and 100 which determines the experience that players will lose when they die.
         /// </summary>
         public int ExpLossOnDeathPercent = 0;
 
@@ -68,6 +70,11 @@
         /// If true, it will remove the associated exp, otherwise you will lose the exp based on the exp required to level up.
         /// </summary>
         public bool ExpLossFromCurrentExp = true;
+        
+        /// <summary>
+        /// Number of hotbar slots a player has.
+        /// </summary>
+        public int HotbarSlotCount { get; set; } = 10;
 
     }
 

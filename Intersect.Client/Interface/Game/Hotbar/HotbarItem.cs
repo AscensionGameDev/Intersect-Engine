@@ -521,7 +521,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                         if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
-                            for (var i = 0; i < Options.MaxHotbar; i++)
+                            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                             {
                                 if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {

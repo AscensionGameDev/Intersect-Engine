@@ -1187,8 +1187,8 @@ namespace Intersect.Server.Networking
         //HotbarPacket
         public static void SendHotbarSlots(Player player)
         {
-            var hotbarData = new string[Options.MaxHotbar];
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            var hotbarData = new string[Options.Instance.PlayerOpts.HotbarSlotCount];
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 hotbarData[i] = player.Hotbar[i].Data();
             }
