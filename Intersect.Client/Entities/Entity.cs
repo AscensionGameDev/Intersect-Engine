@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 
@@ -61,9 +60,9 @@ namespace Intersect.Client.Entities
 
         public float elapsedtime { get; set; } //to be removed
 
-        ImmutableList<int> IEntity.EquipmentSlots => ImmutableList.Create(MyEquipment);
-
         public Guid[] Equipment { get; set; } = new Guid[Options.EquipmentSlots.Count];
+
+        IReadOnlyList<int> IEntity.EquipmentSlots => MyEquipment.ToList();
 
         public Animation[] EquipmentAnimations { get; set; } = new Animation[Options.EquipmentSlots.Count];
 
@@ -84,9 +83,9 @@ namespace Intersect.Client.Entities
         public Guid Id { get; set; }
 
         //Inventory/Spells/Equipment
-        ImmutableList<IItem> IEntity.Items => ImmutableList.Create(Inventory);
-
         public IItem[] Inventory { get; set; } = new IItem[Options.MaxInvItems];
+
+        IReadOnlyList<IItem> IEntity.Items => Inventory.ToList();
 
         public bool InView { get; set; } = true;
 
@@ -100,9 +99,9 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
-        ImmutableList<int> IEntity.MaxVitals => ImmutableList.Create(MaxVital);
-
         public int[] MaxVital { get; set; } = new int[(int)Vitals.VitalCount];
+
+        IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
 
         protected Pointf mCenterPos = Pointf.Empty;
 
@@ -146,13 +145,13 @@ namespace Intersect.Client.Entities
 
         public Guid SpellCast { get; set; }
 
-        ImmutableList<Guid> IEntity.Spells => ImmutableList.Create(Spells.Select(x => x.Id).ToArray());
-
         public Spell[] Spells { get; set; } = new Spell[Options.MaxPlayerSkills];
 
-        ImmutableList<int> IEntity.Stats => ImmutableList.Create(Stat);
+        IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
         public int[] Stat { get; set; } = new int[(int)Stats.StatCount];
+
+        IReadOnlyList<int> IEntity.Stats => Stat.ToList();
 
         public int Target { get; set; } = -1;
 
@@ -174,9 +173,9 @@ namespace Intersect.Client.Entities
 
         public int Aggression { get; set; }
 
-        ImmutableList<int> IEntity.Vitals => ImmutableList.Create(Vital);
-
         public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
+
+        IReadOnlyList<int> IEntity.Vitals => Vital.ToList();
 
         public int WalkFrame { get; set; }
 
@@ -224,9 +223,9 @@ namespace Intersect.Client.Entities
         }
 
         //Status effects
-        ImmutableList<IStatus> IEntity.Status => ImmutableList.Create(Status.ToArray());
-
         public List<IStatus> Status { get; private set; } = new List<IStatus>();
+
+        IReadOnlyList<IStatus> IEntity.Status => Status;
 
         public Pointf CenterPosition => GetCenterPos();
 

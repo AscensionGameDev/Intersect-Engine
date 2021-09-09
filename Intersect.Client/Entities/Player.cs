@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -19,7 +18,6 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 
-using Newtonsoft.Json;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Utilities;
 using Intersect.Client.Interface.Game.Chat;

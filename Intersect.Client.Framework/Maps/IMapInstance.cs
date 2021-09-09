@@ -1,9 +1,10 @@
-﻿using Intersect.Client.Framework.Core.Sounds;
+﻿using System;
+using System.Collections.Generic;
+
+using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;
 using Intersect.Network.Packets.Server;
-using System;
-using System.Collections.Immutable;
 
 namespace Intersect.Client.Framework.Maps
 {
@@ -11,13 +12,13 @@ namespace Intersect.Client.Framework.Maps
     {
         Guid Id { get; }
         string Name { get; }
-        ImmutableList<IActionMessage> ActionMessages { get; }
-        ImmutableList<IMapSound> AttributeSounds { get; }
+        IReadOnlyList<IActionMessage> ActionMessages { get; }
+        IReadOnlyList<IMapSound> AttributeSounds { get; }
         IMapSound BackgroundSound { get; }
-        ImmutableList<IMapItemInstance> Items { get; }
-        ImmutableList<IEntity> Entities { get; }
-        ImmutableList<IMapAnimation> Animations { get; }
-        ImmutableList<IEntity> Critters { get; }
+        IReadOnlyList<IMapItemInstance> Items { get; }
+        IReadOnlyList<IEntity> Entities { get; }
+        IReadOnlyList<IMapAnimation> Animations { get; }
+        IReadOnlyList<IEntity> Critters { get; }
         float X { get; }
         float Y { get; }
         int GridX { get; set; }
