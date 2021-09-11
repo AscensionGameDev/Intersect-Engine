@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+
 using Intersect.Client.Core;
-using Intersect.Client.Core.Sounds;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Core.Sounds;
@@ -54,33 +52,34 @@ namespace Intersect.Client.Maps
         //Action Msg's
         public List<IActionMessage> ActionMessages { get; set; } = new List<IActionMessage>();
 
-        ImmutableList<IActionMessage> IMapInstance.ActionMessages => ImmutableList.Create(ActionMessages.ToArray());
+        IReadOnlyList<IActionMessage> IMapInstance.ActionMessages => ActionMessages;
 
-        ImmutableList<IMapSound> IMapInstance.AttributeSounds => ImmutableList.Create(AttributeSounds.ToArray());
-
+        //Attribute Sounds
         public List<IMapSound> AttributeSounds { get; set; } = new List<IMapSound>();
 
-        public ImmutableList<IMapAnimation> Animations => ImmutableList.Create(LocalAnimations.Values.Select(x => x as IMapAnimation).ToArray());
+        IReadOnlyList<IMapSound> IMapInstance.AttributeSounds => AttributeSounds;
 
         //Map Animations
         public ConcurrentDictionary<Guid, MapAnimation> LocalAnimations { get; set; } = new ConcurrentDictionary<Guid, MapAnimation>();
 
-        public ImmutableList<IEntity> Entities => ImmutableList.Create(LocalEntities.Values.Select(x => x as IEntity).ToArray());
+        IReadOnlyList<IMapAnimation> IMapInstance.Animations => LocalAnimations.Values.ToList();
 
         public Dictionary<Guid, Entity> LocalEntities { get; set; } = new Dictionary<Guid, Entity>();
 
-        public ImmutableList<IEntity> Critters => ImmutableList.Create(LocalCritters.Values.Select(x => x as IEntity).ToArray());
+        IReadOnlyList<IEntity> IMapInstance.Entities => LocalEntities.Values.ToList();
 
         //Map Critters
         public Dictionary<Guid, Critter> LocalCritters { get; set; } = new Dictionary<Guid, Critter>();
 
+        IReadOnlyList<IEntity> IMapInstance.Critters => LocalCritters.Values.ToList();
+
         //Map Players/Events/Npcs
         public List<Guid> LocalEntitiesToDispose { get; set; } = new List<Guid>();
 
-        public ImmutableList<IMapItemInstance> Items => ImmutableList.Create(MapItems.Values.SelectMany(x => x).ToArray());
-
         //Map Items
         public Dictionary<int, List<IMapItemInstance>> MapItems { get; set; } = new Dictionary<int, List<IMapItemInstance>>();
+
+        IReadOnlyList<IMapItemInstance> IMapInstance.Items => MapItems.Values.SelectMany(x => x).ToList();
 
         //Map Attributes
         private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();

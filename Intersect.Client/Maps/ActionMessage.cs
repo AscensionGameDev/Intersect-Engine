@@ -36,7 +36,7 @@ namespace Intersect.Client.Maps
         {
             if (TransmissionTimer <= Globals.System.GetTimeMs())
             {
-                Map.ActionMessages.Remove(this);
+                (Map as MapInstance).ActionMessages.Remove(this);
             }
         }
 

@@ -5,7 +5,6 @@ using Intersect.Client.Framework.Maps;
 using Intersect.Enums;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
 namespace Intersect.Client.Framework.Entities
 {
@@ -42,13 +41,13 @@ namespace Intersect.Client.Framework.Entities
         byte Y { get; }
         byte Z { get; }
         int Level { get; }
-        ImmutableList<int> Stats { get; }
-        ImmutableList<int> Vitals { get; }
-        ImmutableList<int> MaxVitals { get; }
-        ImmutableList<IItem> Items { get; }
-        ImmutableList<int> EquipmentSlots { get; }
-        ImmutableList<Guid> Spells { get; }
-        ImmutableList<IStatus> Status { get; }
+        IReadOnlyList<int> Stats { get; }
+        IReadOnlyList<int> Vitals { get; }
+        IReadOnlyList<int> MaxVitals { get; }
+        IReadOnlyList<IItem> Items { get; }
+        IReadOnlyList<int> EquipmentSlots { get; }
+        IReadOnlyList<Guid> Spells { get; }
+        IReadOnlyList<IStatus> Status { get; }
         int Aggression { get; }
 
         void AddChatBubble(string text);
