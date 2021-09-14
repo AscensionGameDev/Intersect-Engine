@@ -122,6 +122,7 @@ namespace Intersect.Client.Interface.Game
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
             mMapItemWindow = new MapItemWindow(GameCanvas);
+            mBankWindow = new BankWindow(GameCanvas);
         }
 
         //Chatbox
@@ -206,9 +207,7 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenBank()
         {
-            mBankWindow?.Close();
-
-            mBankWindow = new BankWindow(GameCanvas);
+            mBankWindow.Open();
             mShouldOpenBank = false;
             Globals.InBank = true;
         }
@@ -401,20 +400,16 @@ namespace Intersect.Client.Interface.Game
                 OpenBank();
                 GameMenu.OpenInventory();
             }
-
-            if (mBankWindow != null)
+            else if (mShouldCloseBank)
             {
-                if (!mBankWindow.IsVisible() || mShouldCloseBank)
-                {
-                    CloseBank();
-                }
-                else
-                {
-                    mBankWindow.Update();
-                }
+                CloseBank();
+            }
+            else
+            { 
+                mBankWindow.Update();
             }
 
-            mShouldCloseBank = false;
+            
 
             //Bag Update
             if (mShouldOpenBag)
@@ -529,10 +524,10 @@ namespace Intersect.Client.Interface.Game
 
         private void CloseBank()
         {
-            mBankWindow?.Close();
-            mBankWindow = null;
+            mBankWindow.Close();
             Globals.InBank = false;
             PacketSender.SendCloseBank();
+            mShouldCloseBank = false;
         }
 
         private void CloseBagWindow()
