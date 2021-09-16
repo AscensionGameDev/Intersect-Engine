@@ -15,6 +15,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Chat
 {
@@ -372,25 +373,26 @@ namespace Intersect.Client.Interface.Game.Chat
 
         void TrySendMessage()
         {
-            if (mLastChatTime > Globals.System.GetTimeMs())
-            {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));
-                mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
-
-                return;
-            }
-
-            mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
-
-            if (mChatboxInput.Text.Trim().Length <= 0 || mChatboxInput.Text == GetDefaultInputText())
+            var msg = mChatboxInput.Text.Trim();
+            if (string.IsNullOrWhiteSpace(msg) || string.Equals(msg, GetDefaultInputText(), StringComparison.Ordinal))
             {
                 mChatboxInput.Text = GetDefaultInputText();
 
                 return;
             }
+            
+            if (mLastChatTime > Timing.Global.MillisecondsUtc)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));
+                mLastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
+
+                return;
+            }
+
+            mLastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
 
             PacketSender.SendChatMsg(
-                mChatboxInput.Text.Trim(), byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString())
+                msg, byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString())
             );
 
             mChatboxInput.Text = GetDefaultInputText();
