@@ -4,8 +4,10 @@ using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.General;
+using Intersect.Client.Maps;
 using Intersect.Client.Plugins.Audio;
 using Intersect.Client.Plugins.Helpers;
 using Intersect.Client.Plugins.Interfaces;
@@ -87,5 +89,7 @@ namespace Intersect.Client.Plugins.Contexts
                                                  throw new InvalidOperationException(
                                                      @"Tried accessing the options instance before it was created."
                                                  );
+
+        public IMapGrid MapGrid { get; } = new MapGrid();
     }
 }

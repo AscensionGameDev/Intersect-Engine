@@ -124,6 +124,7 @@
     <Compile Include="Maps\IActionMessage.cs" />
     <Compile Include="Maps\IMapAnimation.cs" />
     <Compile Include="Maps\IMapInstance.cs" />
+    <Compile Include="Maps\IMapGrid.cs" />
     <Compile Include="Maps\IWeatherParticle.cs" />
     <Compile Include="Network\GameSocket.cs" />
     <Compile Include="Plugins\ClientPluginEntry.cs" />

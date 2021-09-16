@@ -2,6 +2,7 @@
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins;
@@ -37,6 +38,11 @@ namespace Intersect.Client.Plugins
         /// The current <see cref="IGameInput"/> of the current client instance.
         /// </summary>
         IGameInput Input { get; }
+
+        /// <summary>
+        /// The current <see cref="IMapGrid"/> of the current client instance.
+        /// </summary>
+        IMapGrid MapGrid { get; }
 
         /// <summary>
         /// The current <see cref="Options"/> of the current client instance.

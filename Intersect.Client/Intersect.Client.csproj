@@ -121,6 +121,7 @@
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Maps\ActionMessage.cs" />
     <Compile Include="Maps\MapAnimation.cs" />
+    <Compile Include="Maps\MapGrid.cs" />
     <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\WeatherParticle.cs" />
     <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
