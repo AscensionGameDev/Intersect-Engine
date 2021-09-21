@@ -39,7 +39,7 @@ namespace Intersect.Editor.Forms
             this.pnlMapContainer = new System.Windows.Forms.Panel();
             this.pnlMap = new System.Windows.Forms.Panel();
             this.grpMapList = new DarkUI.Controls.DarkGroupBox();
-            this.chkChronological = new DarkUI.Controls.DarkCheckBox();
+            this.chkAlphabetical = new DarkUI.Controls.DarkCheckBox();
             this.mapTreeList1 = new Intersect.Editor.Forms.Controls.MapTreeList();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnOk = new DarkUI.Controls.DarkButton();
@@ -125,7 +125,7 @@ namespace Intersect.Editor.Forms
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grpMapList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpMapList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpMapList.Controls.Add(this.chkChronological);
+            this.grpMapList.Controls.Add(this.chkAlphabetical);
             this.grpMapList.Controls.Add(this.mapTreeList1);
             this.grpMapList.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpMapList.Location = new System.Drawing.Point(6, 22);
@@ -137,13 +137,13 @@ namespace Intersect.Editor.Forms
             // 
             // chkChronological
             // 
-            this.chkChronological.AutoSize = true;
-            this.chkChronological.Location = new System.Drawing.Point(136, 13);
-            this.chkChronological.Name = "chkChronological";
-            this.chkChronological.Size = new System.Drawing.Size(90, 17);
-            this.chkChronological.TabIndex = 1;
-            this.chkChronological.Text = "Chronological";
-            this.chkChronological.CheckedChanged += new System.EventHandler(this.chkChronological_CheckedChanged);
+            this.chkAlphabetical.AutoSize = true;
+            this.chkAlphabetical.Location = new System.Drawing.Point(136, 13);
+            this.chkAlphabetical.Name = "chkChronological";
+            this.chkAlphabetical.Size = new System.Drawing.Size(90, 17);
+            this.chkAlphabetical.TabIndex = 1;
+            this.chkAlphabetical.Text = "Chronological";
+            this.chkAlphabetical.CheckedChanged += new System.EventHandler(this.chkChronological_CheckedChanged);
             // 
             // mapTreeList1
             // 
@@ -207,7 +207,7 @@ namespace Intersect.Editor.Forms
         private System.Windows.Forms.Panel pnlMapContainer;
         private System.Windows.Forms.Panel pnlMap;
         private DarkGroupBox grpMapList;
-        private DarkCheckBox chkChronological;
+        private DarkCheckBox chkAlphabetical;
         private Controls.MapTreeList mapTreeList1;
         private DarkButton btnCancel;
         private DarkButton btnOk;

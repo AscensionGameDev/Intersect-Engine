@@ -5,6 +5,7 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -41,7 +42,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         private void InitHotbarItems()
         {
             var x = 12;
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 Items.Add(new HotbarItem((byte) i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
@@ -63,7 +64,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 return;
             }
 
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 Items[i].Update();
             }

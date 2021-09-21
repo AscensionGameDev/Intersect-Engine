@@ -5,6 +5,7 @@ using System.Text;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Input;
@@ -123,7 +124,7 @@ namespace Intersect.Client.Interface.Menu
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.InputManager.OpenKeyboard(
-                GameInput.KeyboardType.Normal, mUsernameTextbox.Text, false, false, false
+                KeyboardType.Normal, mUsernameTextbox.Text, false, false, false
             );
         }
 

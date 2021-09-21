@@ -139,7 +139,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["BackgroundImage"]
                     ), (string) obj["BackgroundImage"]
                 );
             }

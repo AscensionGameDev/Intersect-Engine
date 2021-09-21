@@ -44,8 +44,8 @@ namespace Intersect.Core
         /// </summary>
         /// <param name="startupOptions">the <typeparamref name="TStartupOptions"/> the application was started with</param>
         /// <param name="logger">the application-level <see cref="Logger"/></param>
-        /// <param name="networkHelper"></param>
-        protected ApplicationContext(TStartupOptions startupOptions, Logger logger, INetworkHelper networkHelper)
+        /// <param name="packetHelper"></param>
+        protected ApplicationContext(TStartupOptions startupOptions, Logger logger, IPacketHelper packetHelper)
         {
             mDisposeLock = new object();
             mShutdownLock = new object();
@@ -54,7 +54,7 @@ namespace Intersect.Core
 
             StartupOptions = startupOptions;
             Logger = logger;
-            NetworkHelper = networkHelper;
+            PacketHelper = packetHelper;
 
             ConcurrentInstance.Set(This);
         }
@@ -68,7 +68,7 @@ namespace Intersect.Core
         public Logger Logger { get; }
 
         /// <inheritdoc />
-        public INetworkHelper NetworkHelper { get; }
+        public IPacketHelper PacketHelper { get; }
 
         #region Lifecycle Properties
 
@@ -213,7 +213,7 @@ namespace Intersect.Core
             {
                 BootstrapServices();
 
-                PackedIntersectPacket.AddKnownTypes(NetworkHelper.AvailablePacketTypes);
+                PackedIntersectPacket.AddKnownTypes(PacketHelper.AvailablePacketTypes);
 
                 try
                 {

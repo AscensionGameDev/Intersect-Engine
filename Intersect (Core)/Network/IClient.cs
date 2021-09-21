@@ -3,7 +3,8 @@
 
     public interface IClient : INetwork
     {
-
+        IConnection Connection { get; }
+        
         bool IsConnected { get; }
 
         bool IsServerOnline { get; }

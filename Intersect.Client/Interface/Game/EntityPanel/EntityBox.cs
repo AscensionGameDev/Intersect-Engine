@@ -7,6 +7,7 @@ using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -488,7 +489,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status));
+                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status) as Status);
                 }
             }
 
@@ -499,7 +500,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 SpellStatus itm = null;
                 if (!mActiveStatuses.ContainsKey(id))
                 {
-                    itm = new SpellStatus(this, MyEntity.Status[i]);
+                    itm = new SpellStatus(this, MyEntity.Status[i] as Status);
                     if (PlayerBox)
                     {
                         itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
@@ -803,7 +804,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateImage()
         {
-            var faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
+            var faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, MyEntity.Face);
             var entityTex = MyEntity.Texture;
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
@@ -842,7 +843,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
-                    mCurrentSprite = MyEntity.MySprite;
+                    mCurrentSprite = MyEntity.Sprite;
                     EntityFace.IsHidden = false;
                 }
 
@@ -903,7 +904,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
                         var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                            Framework.Content.TextureType.Paperdoll, paperdoll
                         );
 
                         PaperdollPanels[n].Texture = paperdollTex;
@@ -939,7 +940,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     }
                 }
             }
-            else if (MyEntity.MySprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
+            else if (MyEntity.Sprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
             {
                 EntityFace.IsHidden = true;
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)

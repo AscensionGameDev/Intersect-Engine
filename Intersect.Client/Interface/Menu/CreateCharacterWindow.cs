@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -229,13 +230,13 @@ namespace Intersect.Client.Interface.Menu
                     if (mMaleChk.IsChecked)
                     {
                         mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
+                            Framework.Content.TextureType.Face, mMaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.Texture == null)
                         {
                             mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                                GameContentManager.TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
+                                Framework.Content.TextureType.Entity, mMaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
                             isFace = false;
@@ -244,13 +245,13 @@ namespace Intersect.Client.Interface.Menu
                     else
                     {
                         mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
+                            Framework.Content.TextureType.Face, mFemaleSprites[mDisplaySpriteIndex].Value.Face
                         );
 
                         if (mCharacterPortrait.Texture == null)
                         {
                             mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                                GameContentManager.TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
+                                Framework.Content.TextureType.Entity, mFemaleSprites[mDisplaySpriteIndex].Value.Sprite
                             );
 
                             isFace = false;

@@ -45,7 +45,7 @@ namespace Intersect.Network
 
             Adjusted = Timing.Global.Ticks;
             Offset = Timing.Global.TicksOffset;
-            UTC = Timing.Global.TicksUTC;
+            UTC = Timing.Global.TicksUtc;
         }
 
         [IgnoreMember]

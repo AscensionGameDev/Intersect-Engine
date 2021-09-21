@@ -1,16 +1,17 @@
 ﻿using System;
 
 using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
 
 namespace Intersect.Client.Core.Sounds
 {
 
-    public class Sound
+    public class Sound : ISound
     {
 
-        public bool Loaded;
+        public bool Loaded { get; set; }
 
         protected string mFilename;
 
@@ -39,7 +40,7 @@ namespace Intersect.Client.Core.Sounds
             {
                 mSound = sound.CreateInstance();
                 mSound.IsLooping = mLoop && mLoopInterval <= 0;
-               
+
                 mSound.SetVolume(Globals.Database.SoundVolume);
                 mSound.Play();
                 Loaded = true;

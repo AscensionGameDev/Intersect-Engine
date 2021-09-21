@@ -6,13 +6,12 @@ namespace Intersect.Client.Spells
     public class Spell
     {
 
-        public Guid SpellId;
+        public Guid Id { get; set; }
 
         public Spell Clone()
         {
-            var newSpell = new Spell()
-            {
-                SpellId = SpellId
+            var newSpell = new Spell() {
+                Id = Id
             };
 
             return newSpell;
@@ -20,7 +19,7 @@ namespace Intersect.Client.Spells
 
         public void Load(Guid spellId)
         {
-            SpellId = spellId;
+            Id = spellId;
         }
 
     }

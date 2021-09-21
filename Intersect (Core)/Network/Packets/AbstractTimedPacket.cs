@@ -26,7 +26,7 @@ namespace Intersect.Network.Packets
         {
             Adjusted = Timing.Global.Ticks;
             Offset = Timing.Global.TicksOffset;
-            UTC = Timing.Global.TicksUTC;
+            UTC = Timing.Global.TicksUtc;
         }
 
         [Key(0)]

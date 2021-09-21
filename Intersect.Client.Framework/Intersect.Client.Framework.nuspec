@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AscensionGameDev.Intersect.Client.Framework</id>
-    <version>0.7.0.4-beta</version>
+    <version>0.7.0.123-beta</version>
     <title>Intersect Client Framework</title>
     <description>Library for the public Intersect Client API</description>
     <authors>Ascension Game Dev</authors>
@@ -22,6 +22,8 @@
       <group targetFramework="net461">
         <dependency id="Ceras" version="4.0.40" />
         <dependency id="CommandLineParser" version="2.7.82" />
+        <dependency id="MessagePack" version="2.2.85" />
+        <dependency id="MessagePack.Annotations" version="2.2.85" />
         <dependency id="Newtonsoft.Json" version="12.0.3" />
         <dependency id="Semver" version="2.0.6" />
       </group>
@@ -38,6 +40,7 @@
     <file src="LICENSE.md" target="" />
     <file src="..\assets\Intersect.png" target="assets" />
     <file src="..\targets\FindIntersect.targets" target="build" />
+    <file src="..\targets\AscensionGameDev.Intersect.CommonVariables.targets" target="build" />
     <file src="..\targets\AscensionGameDev.Intersect.Client.Framework.targets" target="build" />
     <file src="..\build\release\clientextras\Intersect Core.dll" target="lib\net461" />
     <file src="..\build\release\clientextras\Intersect Client Framework.dll" target="lib\net461" />

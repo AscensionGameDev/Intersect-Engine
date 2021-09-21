@@ -1,27 +1,27 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Enums;
 
 namespace Intersect.Client.Entities
 {
 
-    public partial class Status
+    public partial class Status : IStatus
     {
 
-        public string Data = "";
+        public string Data { get; set; } = "";
 
-        public int[] Shield = new int[(int) Vitals.VitalCount];
+        public int[] Shield { get; set; } = new int[(int)Vitals.VitalCount];
 
-        public Guid SpellId;
+        public Guid SpellId { get; set; }
 
-        public long TimeRecevied = 0;
+        public long TimeRecevied { get; set; } = 0;
 
-        public long TimeRemaining = 0;
+        public long TimeRemaining { get; set; } = 0;
 
-        public long TotalDuration = 1;
+        public long TotalDuration { get; set; } = 1;
 
-        public StatusTypes Type;
+        public StatusTypes Type { get; set; }
 
         public Status(Guid spellId, StatusTypes type, string data, long timeRemaining, long totalDuration)
         {
@@ -33,17 +33,9 @@ namespace Intersect.Client.Entities
             TimeRecevied = Globals.System.GetTimeMs();
         }
 
-        public bool IsActive()
-        {
-            return RemainingMs() > 0;
-        }
+        public bool IsActive => RemainingMs > 0;
 
-        public long RemainingMs()
-        {
-            var timeDiff = Globals.System.GetTimeMs() - TimeRecevied;
-
-            return TimeRemaining - timeDiff;
-        }
+        public long RemainingMs => TimeRemaining - (Globals.System.GetTimeMs() - TimeRecevied);
 
     }
 

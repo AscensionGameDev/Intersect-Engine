@@ -202,10 +202,10 @@ namespace Intersect.Server.Entities
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
             changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
 
-            if (Hotbar.Count < Options.MaxHotbar)
+            if (Hotbar.Count < Options.Instance.PlayerOpts.HotbarSlotCount)
             {
                 Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
-                for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
+                for (var i = Hotbar.Count; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));
                 }
@@ -311,7 +311,7 @@ namespace Intersect.Server.Entities
                 LoginTime = null;
             }
 
-            if (CombatTimer < Globals.Timing.Milliseconds || force)
+            if (CombatTimer < Timing.Global.Milliseconds || force)
             {
                 Logout();
             }
@@ -381,7 +381,7 @@ namespace Intersect.Server.Entities
             var keys = SpellCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (SpellCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
+                if (SpellCooldowns.TryGetValue(key, out var time) && time < Timing.Global.MillisecondsUtc)
                 {
                     SpellCooldowns.TryRemove(key, out _);
                 }
@@ -390,7 +390,7 @@ namespace Intersect.Server.Entities
             keys = ItemCooldowns.Keys.ToArray();
             foreach (var key in keys)
             {
-                if (ItemCooldowns.TryGetValue(key, out var time) && time < Globals.Timing.MillisecondsUTC)
+                if (ItemCooldowns.TryGetValue(key, out var time) && time < Timing.Global.MillisecondsUtc)
                 {
                     ItemCooldowns.TryRemove(key, out _);
                 }
@@ -447,7 +447,7 @@ namespace Intersect.Server.Entities
                 {
                     if (Client == null) //Client logged out
                     {
-                        if (CombatTimer < Globals.Timing.Milliseconds)
+                        if (CombatTimer < Timing.Global.Milliseconds)
                         {
                             Logout();
 
@@ -456,14 +456,14 @@ namespace Intersect.Server.Entities
                     }
                     else
                     {
-                        if (SaveTimer < Globals.Timing.Milliseconds)
+                        if (SaveTimer < Timing.Global.Milliseconds)
                         {
                             var user = User;
                             if (user != null)
                             {
                                 DbInterface.Pool.QueueWorkItem(user.Save, false);
                             }
-                            SaveTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
+                            SaveTimer = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                         }
                     }
 
@@ -492,7 +492,7 @@ namespace Intersect.Server.Entities
 
                     base.Update(timeMs);
 
-                    if (mAutorunCommonEventTimer < Globals.Timing.Milliseconds)
+                    if (mAutorunCommonEventTimer < Timing.Global.Milliseconds)
                     {
                         var autorunEvents = 0;
                         //Check for autorun common events and run them
@@ -509,7 +509,7 @@ namespace Intersect.Server.Entities
                             }
                         }
 
-                        mAutorunCommonEventTimer = Globals.Timing.Milliseconds + Options.Instance.Processing.CommonEventAutorunStartInterval;
+                        mAutorunCommonEventTimer = Timing.Global.Milliseconds + Options.Instance.Processing.CommonEventAutorunStartInterval;
                         CommonAutorunEvents = autorunEvents;
                     }
 
@@ -732,9 +732,9 @@ namespace Intersect.Server.Entities
                 pkt.AccessLevel = 0;
             }
 
-            if (CombatTimer > Globals.Timing.Milliseconds)
+            if (CombatTimer > Timing.Global.Milliseconds)
             {
-                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.Milliseconds;
+                pkt.CombatTimeRemaining = CombatTimer - Timing.Global.Milliseconds;
             }
 
             if (forPlayer != null && GetType() == typeof(Player))
@@ -1221,7 +1221,7 @@ namespace Intersect.Server.Entities
 
         public void TryAttack(Entity target)
         {
-            if (CastTime >= Globals.Timing.Milliseconds)
+            if (CastTime >= Timing.Global.Milliseconds)
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
@@ -1768,8 +1768,10 @@ namespace Intersect.Server.Entities
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
         /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
+        /// <param name="overflowTileX">The x coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
+        /// <param name="overflowTileY">The y coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true)
+        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true, int overflowTileX = -1, int overflowTileY = -1)
         {
             // Is this a valid item?
             if (item.Descriptor == null)
@@ -1821,8 +1823,8 @@ namespace Intersect.Server.Entities
                     // Do we have any items to spawn to the map?
                     if (spawnAmount > 0)
                     {
-                        Map.SpawnItem(X, Y, item, spawnAmount, Id);
-                        return true;
+                        Map.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                        return spawnAmount != item.Quantity;
                     }
 
                     break;
@@ -2142,7 +2144,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.MillisecondsUTC)
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Timing.Global.MillisecondsUtc)
                 {
                     //Cooldown warning!
                     PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
@@ -3532,7 +3534,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.FriendRequests.Remove(this);
             }
 
-            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.Milliseconds))
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Timing.Global.Milliseconds))
             {
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
@@ -3582,7 +3584,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.Trading.Requests.Remove(this);
             }
 
-            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.Milliseconds)
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Timing.Global.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Trading.alreadydenied, ChatMessageType.Trading, CustomColors.Alerts.Error);
             }
@@ -3869,7 +3871,7 @@ namespace Intersect.Server.Entities
                 fromPlayer.PartyRequests.Remove(this);
             }
 
-            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.Milliseconds)
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Timing.Global.Milliseconds)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Parties.alreadydenied, ChatMessageType.Party, CustomColors.Alerts.Error);
             }
@@ -4387,11 +4389,11 @@ namespace Intersect.Server.Entities
             }
 
             if (!SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId) ||
-                SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.MillisecondsUTC)
+                SpellCooldowns[Spells[spellSlot].SpellId] < Timing.Global.MillisecondsUtc)
             {
                 if (CastTime == 0)
                 {
-                    CastTime = Globals.Timing.Milliseconds + spell.CastDuration;
+                    CastTime = Timing.Global.Milliseconds + spell.CastDuration;
 
                     //Remove stealth status.
                     foreach (var status in CachedStatuses)
@@ -4425,7 +4427,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if cast should be instance
-                    if (Globals.Timing.Milliseconds >= CastTime)
+                    if (Timing.Global.Milliseconds >= CastTime)
                     {
                         //Cast now!
                         CastTime = 0;
@@ -5890,7 +5892,7 @@ namespace Intersect.Server.Entities
                 // No, handle singular cooldown as normal.
 
                 var cooldownReduction = 1 - (item.IgnoreCooldownReduction ? 0 : this.GetCooldownReduction() / 100);
-                AssignItemCooldown(item.Id, Globals.Timing.MillisecondsUTC + (long)(item.Cooldown * cooldownReduction));
+                AssignItemCooldown(item.Id, Timing.Global.MillisecondsUtc + (long)(item.Cooldown * cooldownReduction));
                 PacketSender.SendItemCooldown(this, item.Id);
             }
         }
@@ -5916,7 +5918,7 @@ namespace Intersect.Server.Entities
             {
                 // No, handle singular cooldown as normal.
                 var cooldownReduction = 1 - (spell.IgnoreCooldownReduction ? 0 : this.GetCooldownReduction() / 100);
-                AssignSpellCooldown(spell.Id, Globals.Timing.MillisecondsUTC + (long)(spell.CooldownDuration * cooldownReduction));
+                AssignSpellCooldown(spell.Id, Timing.Global.MillisecondsUtc + (long)(spell.CooldownDuration * cooldownReduction));
                 PacketSender.SendSpellCooldown(this, spell.Id);
             }
         }
@@ -5935,7 +5937,7 @@ namespace Intersect.Server.Entities
 
             // Calculate our global cooldown.
             var cooldownReduction = 1 - this.GetCooldownReduction() / 100;
-            var cooldown = Globals.Timing.MillisecondsUTC + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+            var cooldown = Timing.Global.MillisecondsUtc + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
 
             // Go through each item and spell to assign this cooldown.
             // Do not allow this to overwrite things that are still on a cooldown above our new cooldown though, don't want us to lower cooldowns!
@@ -6015,7 +6017,7 @@ namespace Intersect.Server.Entities
             }
 
             // Set the cooldown for all items matching this cooldown group.
-            var baseTime = Globals.Timing.MillisecondsUTC;
+            var baseTime = Timing.Global.MillisecondsUtc;
             if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
             {
                 foreach (var item in matchingItems)
@@ -6024,7 +6026,7 @@ namespace Intersect.Server.Entities
                     var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : item.Cooldown;
 
                     // Asign it! Assuming our cooldown isn't already going..
-                    if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Globals.Timing.MillisecondsUTC)
+                    if (!ItemCooldowns.ContainsKey(item.Id) || ItemCooldowns[item.Id] < Timing.Global.MillisecondsUtc)
                     {
                         AssignItemCooldown(item.Id, baseTime + (long)(tempCooldown * cooldownReduction));
                         itemsUpdated = true;
@@ -6041,7 +6043,7 @@ namespace Intersect.Server.Entities
                     var tempCooldown = Options.Combat.MatchGroupCooldowns ? matchedCooldowntime : spell.CooldownDuration;
 
                     // Asign it! Assuming our cooldown isn't already going...
-                    if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Globals.Timing.MillisecondsUTC)
+                    if (!SpellCooldowns.ContainsKey(spell.Id) || SpellCooldowns[spell.Id] < Timing.Global.MillisecondsUtc)
                     {
                         AssignSpellCooldown(spell.Id, baseTime + (long)(tempCooldown * cooldownReduction));
                         spellsUpdated = true;

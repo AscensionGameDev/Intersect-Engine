@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -11,6 +12,7 @@ using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -132,7 +134,7 @@ namespace Intersect.Client.Core
         public static void DrawIntro()
         {
             var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
             );
 
             if (imageTex != null)
@@ -144,7 +146,7 @@ namespace Intersect.Client.Core
         public static void DrawMenu()
         {
             var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
+                Framework.Content.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
             );
 
             if (imageTex != null)
@@ -153,9 +155,9 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawInGame()
+        public static void DrawInGame(TimeSpan deltaTime)
         {
-            var currentMap = Globals.Me.MapInstance;
+            var currentMap = Globals.Me.MapInstance as MapInstance;
             if (currentMap == null)
             {
                 return;
@@ -200,8 +202,8 @@ namespace Intersect.Client.Core
 
             ClearDarknessTexture();
 
-            var gridX = currentMap.MapGridX;
-            var gridY = currentMap.MapGridY;
+            var gridX = currentMap.GridX;
+            var gridY = currentMap.GridY;
 
             //Draw Panoramas First...
             for (var x = gridX - 1; x <= gridX + 1; x++)
@@ -234,10 +236,16 @@ namespace Intersect.Client.Core
                 }
             }
 
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.GroundLayers, deltaTime);
+
             foreach (var animInstance in animations)
             {
                 animInstance.Draw(false);
             }
+
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.BelowPlayer, deltaTime);
 
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
@@ -245,7 +253,14 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
+
                         EntitiesDrawn++;
                     }
 
@@ -298,11 +313,21 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
+
                         EntitiesDrawn++;
                     }
                 }
             }
+
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.AbovePlayer, deltaTime);
 
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -318,6 +343,8 @@ namespace Intersect.Client.Core
                     }
                 }
             }
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.FringeLayers, deltaTime);
 
             foreach (var animInstance in animations)
             {
@@ -417,7 +444,7 @@ namespace Intersect.Client.Core
         }
 
         //Game Rendering
-        public static void Render()
+        public static void Render(TimeSpan deltaTime)
         {
             var takingScreenshot = false;
             if (Renderer?.ScreenshotRequests.Count > 0)
@@ -462,7 +489,7 @@ namespace Intersect.Client.Core
                 case GameStates.Loading:
                     break;
                 case GameStates.InGame:
-                    DrawInGame();
+                    DrawInGame(deltaTime);
 
                     break;
                 case GameStates.Error:
@@ -483,10 +510,10 @@ namespace Intersect.Client.Core
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
-            
+
             Renderer.End();
 
             if (takingScreenshot)
@@ -535,7 +562,7 @@ namespace Intersect.Client.Core
 
         public static void DrawOverlay()
         {
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMs() - sOverlayUpdate;
@@ -752,7 +779,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
                 var en = Globals.Me;
@@ -838,7 +865,7 @@ namespace Intersect.Client.Core
 
         private static void GenerateLightMap()
         {
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map == null)
             {
                 return;
@@ -938,7 +965,7 @@ namespace Intersect.Client.Core
         public static void UpdatePlayerLight()
         {
             //Draw Light Around Player
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMs() - sLightUpdate;

@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
@@ -228,7 +229,7 @@ namespace Intersect.Client.MonoGame
                     {
                         lock (Globals.GameLock)
                         {
-                            Main.Update();
+                            Main.Update(gameTime.ElapsedGameTime);
                         }
 
                         ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
@@ -277,7 +278,7 @@ namespace Intersect.Client.MonoGame
                 {
                     lock (Globals.GameLock)
                     {
-                        Core.Graphics.Render();
+                        Core.Graphics.Render(gameTime.ElapsedGameTime);
                     }
                 }
             }

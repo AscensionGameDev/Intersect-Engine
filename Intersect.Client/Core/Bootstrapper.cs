@@ -46,8 +46,8 @@ namespace Intersect.Client.Core
             }
 
             var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
-            var networkHelper = new NetworkHelper(packetTypeRegistry, packetHandlerRegistry);
-            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser, networkHelper));
+            var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
+            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser, packetHelper));
 
             var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
                 .MapResult(HandleParsedArguments, HandleParserErrors);
@@ -61,7 +61,7 @@ namespace Intersect.Client.Core
                 }
             }
 
-            Context = new ClientContext(commandLineOptions, logger, networkHelper);
+            Context = new ClientContext(commandLineOptions, logger, packetHelper);
             Context.Start();
         }
 

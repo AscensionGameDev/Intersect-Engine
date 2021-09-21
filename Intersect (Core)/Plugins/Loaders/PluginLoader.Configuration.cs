@@ -47,7 +47,9 @@ namespace Intersect.Plugins.Loaders
         )
         {
             var configurationFilePath = plugin.Reference.ConfigurationFile;
-            var configuration = new PluginConfiguration {IsEnabled = true};
+            var configuration = Activator.CreateInstance(plugin.Reference.ConfigurationType) as PluginConfiguration;
+            configuration.IsEnabled = true;
+
             string serializedOldConfiguration = null;
             try
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -212,13 +213,13 @@ namespace Intersect.Client.Interface.Menu
                 }
 
                 mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Face, Characters[mSelectedChar].Face
+                    Framework.Content.TextureType.Face, Characters[mSelectedChar].Face
                 );
 
                 if (mCharacterPortrait.Texture == null)
                 {
                     mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite
+                        Framework.Content.TextureType.Entity, Characters[mSelectedChar].Sprite
                     );
 
                     isFace = false;
@@ -269,7 +270,7 @@ namespace Intersect.Client.Interface.Menu
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
                                 mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
-                                    GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
+                                    Framework.Content.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
                                 );
 
                                 if (mPaperdollPortraits[i].Texture != null)

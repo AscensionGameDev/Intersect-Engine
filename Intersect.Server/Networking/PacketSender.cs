@@ -49,10 +49,10 @@ namespace Intersect.Server.Networking
         //PingPacket
         public static void SendPing(Client client, bool request = true)
         {
-            if (client != null && client.LastPing + 250 < Globals.Timing.Milliseconds)
+            if (client != null && client.LastPing + 250 < Timing.Global.Milliseconds)
             {
                 client.Send(new PingPacket(request), TransmissionMode.Any);
-                client.LastPing = Globals.Timing.Milliseconds;
+                client.LastPing = Timing.Global.Milliseconds;
             }
         }
 
@@ -227,7 +227,7 @@ namespace Intersect.Server.Networking
             {
                 if (sentMaps.TryGetValue(mapId, out var sentMap))
                 {
-                    if (sentMap.Item1 > Globals.Timing.Milliseconds && sentMap.Item2 == map.Revision)
+                    if (sentMap.Item1 > Timing.Global.Milliseconds && sentMap.Item2 == map.Revision)
                     {
                         return;
                     }
@@ -237,7 +237,7 @@ namespace Intersect.Server.Networking
 
                 try
                 {
-                    sentMaps.Add(mapId, new Tuple<long, int>(Globals.Timing.Milliseconds + 5000, map.Revision));
+                    sentMaps.Add(mapId, new Tuple<long, int>(Timing.Global.Milliseconds + 5000, map.Revision));
                 }
                 catch (Exception exception)
                 {
@@ -809,7 +809,7 @@ namespace Intersect.Server.Networking
         {
             return new EntityVitalsPacket(
                 en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets(),
-                en.CombatTimer - Globals.Timing.Milliseconds
+                en.CombatTimer - Timing.Global.Milliseconds
             );
         }
 
@@ -1187,8 +1187,8 @@ namespace Intersect.Server.Networking
         //HotbarPacket
         public static void SendHotbarSlots(Player player)
         {
-            var hotbarData = new string[Options.MaxHotbar];
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            var hotbarData = new string[Options.Instance.PlayerOpts.HotbarSlotCount];
+            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
                 hotbarData[i] = player.Hotbar[i].Data();
             }
@@ -1362,7 +1362,7 @@ namespace Intersect.Server.Networking
             if (player.SpellCooldowns.ContainsKey(spellId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(spellId, player.SpellCooldowns[spellId] - Globals.Timing.MillisecondsUTC);
+                cds.Add(spellId, player.SpellCooldowns[spellId] - Timing.Global.MillisecondsUtc);
                 player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
             }
         }
@@ -1374,7 +1374,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.SpellCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
+                    cds.Add(cd.Key, cd.Value - Timing.Global.MillisecondsUtc);
                 }
 
                 player.SendPacket(new SpellCooldownPacket(cds), TransmissionMode.All);
@@ -1387,7 +1387,7 @@ namespace Intersect.Server.Networking
             if (player.ItemCooldowns.ContainsKey(itemId))
             {
                 var cds = new Dictionary<Guid, long>();
-                cds.Add(itemId, player.ItemCooldowns[itemId] - Globals.Timing.MillisecondsUTC);
+                cds.Add(itemId, player.ItemCooldowns[itemId] - Timing.Global.MillisecondsUtc);
                 player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);
             }
         }
@@ -1399,7 +1399,7 @@ namespace Intersect.Server.Networking
                 var cds = new Dictionary<Guid, long>();
                 foreach (var cd in player.ItemCooldowns)
                 {
-                    cds.Add(cd.Key, cd.Value - Globals.Timing.MillisecondsUTC);
+                    cds.Add(cd.Key, cd.Value - Timing.Global.MillisecondsUtc);
                 }
 
                 player.SendPacket(new ItemCooldownPacket(cds), TransmissionMode.All);

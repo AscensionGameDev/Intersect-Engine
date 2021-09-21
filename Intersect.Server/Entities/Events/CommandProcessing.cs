@@ -305,7 +305,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Health, -command.Amount);
-                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
+                player.CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
                 if (player.GetVital(Vitals.Health) <= 0)
                 {
                     lock (player.EntityLock)
@@ -336,7 +336,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Mana, -command.Amount);
-                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
+                player.CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
             }
             else
             {
@@ -1110,7 +1110,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            instance.WaitTimer = Globals.Timing.Milliseconds + command.Time;
+            instance.WaitTimer = Timing.Global.Milliseconds + command.Time;
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Timer;
         }
 

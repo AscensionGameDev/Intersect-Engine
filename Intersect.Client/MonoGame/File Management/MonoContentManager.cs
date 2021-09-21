@@ -351,7 +351,9 @@ namespace Intersect.Client.MonoGame.File_Management
                 case ContentTypes.Spell:
                 case ContentTypes.TexturePack:
                 case ContentTypes.TileSet:
-                    return Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                    var asset = Core.Graphics.Renderer.LoadTexture(name, createStream) as TAsset;
+                    lookup?.Add(name, asset);
+                    return asset;
 
                 case ContentTypes.Font:
                     throw new NotImplementedException();
@@ -360,8 +362,14 @@ namespace Intersect.Client.MonoGame.File_Management
                     throw new NotImplementedException();
 
                 case ContentTypes.Music:
+                    var music = new MonoMusicSource(createStream) as TAsset;
+                    lookup?.Add(RemoveExtension(name), music);
+                    return music;
+
                 case ContentTypes.Sound:
-                    throw new NotImplementedException();
+                    var sound = new MonoSoundSource(createStream, name) as TAsset;
+                    lookup?.Add(RemoveExtension(name), sound);
+                    return sound;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);

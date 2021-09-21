@@ -5,6 +5,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Classes.Maps
 {
@@ -33,7 +34,7 @@ namespace Intersect.Server.Classes.Maps
         {
             Owner = owner;
             ParentSpell = parentSpell;
-            Duration = Globals.Timing.Milliseconds + ParentSpell.Combat.TrapDuration;
+            Duration = Timing.Global.Milliseconds + ParentSpell.Combat.TrapDuration;
             MapId = mapId;
             X = x;
             Y = y;
@@ -76,7 +77,7 @@ namespace Intersect.Server.Classes.Maps
                 MapInstance.Get(MapId).RemoveTrap(this);
             }
 
-            if (Globals.Timing.Milliseconds > Duration)
+            if (Timing.Global.Milliseconds > Duration)
             {
                 MapInstance.Get(MapId).RemoveTrap(this);
             }

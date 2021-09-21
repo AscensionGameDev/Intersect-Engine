@@ -3,6 +3,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -136,7 +137,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -244,8 +245,8 @@ namespace Intersect.Client.Interface.Game.Inventory
                 equipped != mIsEquipped ||
                 item == null && mTexLoaded != "" ||
                 item != null && mTexLoaded != item.Icon ||
-                mIconCd != Globals.Me.ItemOnCd(mMySlot) ||
-                Globals.Me.ItemOnCd(mMySlot))
+                mIconCd != Globals.Me.IsItemOnCooldown(mMySlot) ||
+                Globals.Me.IsItemOnCooldown(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
@@ -255,11 +256,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
-                        if (Globals.Me.ItemOnCd(mMySlot))
+                        if (Globals.Me.IsItemOnCooldown(mMySlot))
                         {
                             Pnl.RenderColor = new Color(100, item.Color.R, item.Color.G, item.Color.B);
                         }
@@ -277,11 +278,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
 
                     mTexLoaded = item.Icon;
-                    mIconCd = Globals.Me.ItemOnCd(mMySlot);
+                    mIconCd = Globals.Me.IsItemOnCooldown(mMySlot);
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
-                        var secondsRemaining = (float) Globals.Me.ItemCdRemainder(mMySlot) / 1000f;
+                        var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mMySlot) / 1000f;
                         if (secondsRemaining > 10f)
                         {
                             mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
@@ -316,7 +317,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
@@ -406,7 +407,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxHotbar; i++)
+                        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

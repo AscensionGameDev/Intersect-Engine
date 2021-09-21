@@ -2,6 +2,7 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -252,7 +253,7 @@ namespace Intersect.Client.Interface.Game
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             spellDescText.IsHidden = true;
             spellStatsText.IsHidden = true;
-            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+            icon.Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
             spellStats.SizeToChildren(false, true);
             if (centerHorizontally)
             {

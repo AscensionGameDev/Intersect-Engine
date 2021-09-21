@@ -3,6 +3,7 @@
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
@@ -291,22 +292,22 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void OnMouseDown(GameInput.MouseButtons btn)
+        public static void OnMouseDown(MouseButtons btn)
         {
             var key = Keys.None;
             switch (btn)
             {
-                case GameInput.MouseButtons.Left:
+                case MouseButtons.Left:
                     key = Keys.LButton;
 
                     break;
 
-                case GameInput.MouseButtons.Right:
+                case MouseButtons.Right:
                     key = Keys.RButton;
 
                     break;
 
-                case GameInput.MouseButtons.Middle:
+                case MouseButtons.Middle:
                     key = Keys.MButton;
 
                     break;
@@ -365,17 +366,17 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void OnMouseUp(GameInput.MouseButtons btn)
+        public static void OnMouseUp(MouseButtons btn)
         {
             var key = Keys.LButton;
             switch (btn)
             {
-                case GameInput.MouseButtons.Right:
+                case MouseButtons.Right:
                     key = Keys.RButton;
 
                     break;
 
-                case GameInput.MouseButtons.Middle:
+                case MouseButtons.Middle:
                     key = Keys.MButton;
 
                     break;
@@ -397,7 +398,7 @@ namespace Intersect.Client.Core
                 Globals.Me.StopBlocking();
             }
 
-            if (btn != GameInput.MouseButtons.Right)
+            if (btn != MouseButtons.Right)
             {
                 return;
             }
@@ -431,7 +432,7 @@ namespace Intersect.Client.Core
                 y /= Options.TileHeight;
                 var mapNum = map.Id;
 
-                if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
+                if (Globals.Me.TryGetRealLocation(ref x, ref y, ref mapNum))
                 {
                     PacketSender.SendAdminAction(new WarpToLocationAction(map.Id, (byte) x, (byte) y));
                 }

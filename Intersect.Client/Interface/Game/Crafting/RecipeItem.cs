@@ -60,7 +60,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 

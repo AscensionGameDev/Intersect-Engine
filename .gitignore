@@ -215,3 +215,4 @@ pip-log.txt
 packages/
 
 .vs/
+.idea

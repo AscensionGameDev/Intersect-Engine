@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -95,7 +96,7 @@ namespace Intersect.Client.Interface.Menu
 
         private void Textbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, mInputTextbox.Text, false, false, false);
+            Globals.InputManager.OpenKeyboard(KeyboardType.Normal, mInputTextbox.Text, false, false, false);
         }
 
         //Methods

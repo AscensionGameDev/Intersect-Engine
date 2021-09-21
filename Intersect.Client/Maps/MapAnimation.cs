@@ -1,11 +1,13 @@
 ﻿using Intersect.Client.Entities;
+using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Maps;
 using Intersect.GameObjects;
 using System;
 
 namespace Intersect.Client.Maps
 {
 
-    public partial class MapAnimation : Animation
+    public partial class MapAnimation : Animation, IMapAnimation
     {
         public Guid Id { get; } = Guid.NewGuid();
 

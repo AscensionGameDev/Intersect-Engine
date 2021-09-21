@@ -1,4 +1,4 @@
-﻿namespace Intersect.Client.Entities
+﻿namespace Intersect.Client.Framework.Entities
 {
     public enum SpriteAnimations
     {
@@ -9,6 +9,4 @@
         Cast,
         Weapon,
     }
-
-
 }

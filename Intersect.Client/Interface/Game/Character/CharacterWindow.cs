@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -174,9 +175,9 @@ namespace Intersect.Client.Interface.Game.Character
             );
 
             //Load Portrait
-            //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
+            //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, Globals.Me.Face);
             var entityTex = Globals.ContentManager.GetTexture(
-                GameContentManager.TextureType.Entity, Globals.Me.MySprite
+                Framework.Content.TextureType.Entity, Globals.Me.Sprite
             );
 
             /* UNCOMMENT THIS BLOCK IF YOU"D RATHER HAVE A FACE HERE if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
@@ -192,7 +193,7 @@ namespace Intersect.Client.Interface.Game.Character
                  }
              }
              else */
-            if (Globals.Me.MySprite != "" && Globals.Me.MySprite != mCurrentSprite && entityTex != null)
+            if (!string.IsNullOrWhiteSpace(Globals.Me.Sprite) && Globals.Me.Sprite != mCurrentSprite && entityTex != null)
             {
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
@@ -241,7 +242,7 @@ namespace Intersect.Client.Interface.Game.Character
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
                         var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                            Framework.Content.TextureType.Paperdoll, paperdoll
                         );
 
                         PaperdollPanels[z].Texture = paperdollTex;
@@ -271,7 +272,7 @@ namespace Intersect.Client.Interface.Game.Character
                     }
                 }
             }
-            else if (Globals.Me.MySprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
+            else if (Globals.Me.Sprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
             {
                 mCharacterPortrait.IsHidden = true;
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)

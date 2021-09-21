@@ -49,7 +49,23 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.7.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
@@ -63,13 +79,28 @@
   <ItemGroup>
     <Compile Include="Audio\GameAudioInstance.cs" />
     <Compile Include="Audio\GameAudioSource.cs" />
+    <Compile Include="Audio\IAudioManager.cs" />
     <Compile Include="Content\AssetTypeAttribute.cs" />
     <Compile Include="Content\ContentTypes.cs" />
     <Compile Include="Content\ContentTypesExtensions.cs" />
     <Compile Include="Content\IAsset.cs" />
     <Compile Include="Content\IContentManager.cs" />
+    <Compile Include="Content\TextureType.cs" />
+    <Compile Include="Core\Sounds\IMapSound.cs" />
+    <Compile Include="Core\Sounds\ISound.cs" />
     <Compile Include="Database\GameDatabase.cs" />
+    <Compile Include="Entities\IAnimation.cs" />
+    <Compile Include="Entities\IDash.cs" />
+    <Compile Include="Entities\IFriendInstance.cs" />
+    <Compile Include="Entities\IHotbarInstance.cs" />
+    <Compile Include="Entities\IPartyMember.cs" />
+    <Compile Include="Entities\IPlayer.cs" />
+    <Compile Include="Entities\IStatus.cs" />
+    <Compile Include="Entities\Label.cs" />
+    <Compile Include="Entities\LabelType.cs" />
+    <Compile Include="Entities\SpriteAnimations.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
+    <Compile Include="Graphics\DrawStates.cs" />
     <Compile Include="General\GameStates.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />
@@ -79,14 +110,27 @@
     <Compile Include="Graphics\GameTexture.cs" />
     <Compile Include="Graphics\GameTexturePack.cs" />
     <Compile Include="Graphics\GameTileBuffer.cs" />
+    <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Graphics\IGameRenderer.cs" />
     <Compile Include="Input\GameClipboard.cs" />
     <Compile Include="Graphics\Resolution.cs" />
     <Compile Include="Input\GameInput.cs" />
+    <Compile Include="Input\IGameInput.cs" />
+    <Compile Include="Input\KeyboardType.cs" />
+    <Compile Include="Input\MouseButtons.cs" />
     <Compile Include="Interface\IMutableInterface.cs" />
+    <Compile Include="Items\IItem.cs" />
+    <Compile Include="Items\IMapItemInstance.cs" />
+    <Compile Include="Maps\IActionMessage.cs" />
+    <Compile Include="Maps\IMapAnimation.cs" />
+    <Compile Include="Maps\IMapInstance.cs" />
+    <Compile Include="Maps\IMapGrid.cs" />
+    <Compile Include="Maps\IWeatherParticle.cs" />
     <Compile Include="Network\GameSocket.cs" />
     <Compile Include="Plugins\ClientPluginEntry.cs" />
     <Compile Include="Plugins\IClientPluginContext.cs" />
     <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
+    <Compile Include="Plugins\Interfaces\IClientNetworkHelper.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />
@@ -236,6 +280,9 @@
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Spells\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -62,7 +62,7 @@ namespace Intersect.Client.Interface
             {
                 Skin = new TexturedBase(
                     GwenRenderer,
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png")
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Gui, "defaultskin.png")
                 )
                 {
                     DefaultFont = Graphics.UIFont

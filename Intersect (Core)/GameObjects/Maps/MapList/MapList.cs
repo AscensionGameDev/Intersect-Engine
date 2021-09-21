@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Linq;
 using Intersect.Collections;
 
 using Newtonsoft.Json;
@@ -341,9 +341,10 @@ namespace Intersect.GameObjects.Maps.MapList
         public Guid FindFirstMap()
         {
             var lowestMap = Guid.Empty;
+
             if (OrderedMaps.Count > 0)
             {
-                lowestMap = OrderedMaps[0].MapId;
+                lowestMap = OrderedMaps.OrderBy(m => m.TimeCreated).FirstOrDefault().MapId;
             }
 
             return lowestMap;

@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -206,7 +207,7 @@ namespace Intersect.Client.Interface.Game
 
                 //Load Again for positioning purposes.
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;

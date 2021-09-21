@@ -43,7 +43,7 @@ namespace Intersect.Client.Networking
 
         public static void SendMove()
         {
-            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
+            Network.SendPacket(new MovePacket(Globals.Me.MapId, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
 
         public static void SendChatMsg(string msg, byte channel)
@@ -156,12 +156,12 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new UpgradeStatPacket(stat));
         }
 
-        public static void SendHotbarUpdate(byte hotbarSlot, sbyte type, int itemIndex)
+        public static void SendHotbarUpdate(int hotbarSlot, sbyte type, int itemIndex)
         {
             Network.SendPacket(new HotbarUpdatePacket(hotbarSlot, type, itemIndex));
         }
 
-        public static void SendHotbarSwap(byte index, byte swapIndex)
+        public static void SendHotbarSwap(int index, int swapIndex)
         {
             Network.SendPacket(new HotbarSwapPacket(index, swapIndex));
         }

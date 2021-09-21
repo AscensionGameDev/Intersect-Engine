@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Utilities;
@@ -104,7 +106,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                             {
                                 Items[itemSlot].TileIndex = tileIndex;
                                 Items[itemSlot].MapId = map.Key.Id;
-                                Items[itemSlot].MyItem = mapItem;
+                                Items[itemSlot].MyItem = mapItem as MapItemInstance;
                                 Items[itemSlot].Pnl.IsHidden = false;
                                 if (finalItem.IsStackable)
                                 {
@@ -196,7 +198,8 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
 
             // Try and pick up everything on our location.
-            Globals.Me.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
+            var currentMap = Globals.Me.MapInstance as MapInstance;
+            Globals.Me.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
             
         }
 
@@ -209,7 +212,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 for (var y = 0 - distance; y <= distance; y++)
                 {
                     // Use these to keep track of our translation.
-                    var currentMap = Globals.Me.MapInstance;
+                    var currentMap = Globals.Me.MapInstance as MapInstance;
                     var currentX = myX + x;
                     var currentY = myY + y;
 

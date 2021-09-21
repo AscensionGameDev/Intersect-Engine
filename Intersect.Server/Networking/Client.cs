@@ -15,6 +15,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Metrics;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Networking
 {
@@ -56,8 +57,8 @@ namespace Intersect.Server.Networking
         public Client(IApplicationContext applicationContext, IConnection connection = null)
         {
             this.mConnection = connection;
-            mConnectTime = Globals.Timing.Milliseconds;
-            mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
+            mConnectTime = Timing.Global.Milliseconds;
+            mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
 
             PacketSender.SendServerConfig(this);
             PacketSender.SendPing(this);
@@ -158,7 +159,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
+                mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
             }
         }
 
@@ -271,7 +272,7 @@ namespace Intersect.Server.Networking
 
         public void ResetTimeout()
         {
-            TimeoutMs = Globals.Timing.Milliseconds + 5000;
+            TimeoutMs = Timing.Global.Milliseconds + 5000;
             if (AccountAttempts > 3)
             {
                 TimeoutMs += 1000 * AccountAttempts;
@@ -303,7 +304,7 @@ namespace Intersect.Server.Networking
                             PacketSender.SentPacketTypes[packet.GetType().Name]++;
                             PacketSender.SentPackets++;
                             PacketSender.SentBytes += packet.Data.Length;
-                            MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Globals.Timing.Milliseconds - tuple.Item3);
+                            MetricsRoot.Instance.Network.TotalSentPacketProcessingTime.Record(Timing.Global.Milliseconds - tuple.Item3);
                         }
                     }
                     catch (Exception exception)
@@ -371,7 +372,7 @@ namespace Intersect.Server.Networking
                                 PacketHandler.Instance.ProcessPacket(packet, this);
                                 if (Options.Instance.Metrics.Enable)
                                 {
-                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Globals.Timing.Milliseconds - packet.ReceiveTime);
+                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Timing.Global.Milliseconds - packet.ReceiveTime);
                                 }
                             }
                             catch (Exception exception)
@@ -418,7 +419,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Globals.Timing.Milliseconds));
+                mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Timing.Global.Milliseconds));
                 lock (mSendPacketQueue)
                 {
                     if (!PacketSendingQueued)

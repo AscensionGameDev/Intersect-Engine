@@ -18,7 +18,7 @@ namespace Intersect.Plugins
         public static PluginInstance Create([ValidatedNotNull] Plugin plugin)
         {
             var bootstrapContext = FactoryRegistry<IPluginBootstrapContext>.Create(plugin);
-            var context = FactoryRegistry<IPluginContext>.Create(plugin);
+            var context = FactoryRegistry<IPluginContext>.Create(plugin, bootstrapContext.Packet);
             var entry = plugin.Reference.CreateInstance();
             return new PluginInstance(entry, bootstrapContext, context);
         }

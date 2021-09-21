@@ -981,7 +981,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 GameTexture texture = null;
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                    texture = GameContentManager.Current?.GetTexture(Framework.Content.TextureType.Gui, fileName);
                 }
 
                 mToolTipBackgroundFilename = fileName;

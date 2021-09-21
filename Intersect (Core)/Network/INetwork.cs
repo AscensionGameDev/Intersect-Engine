@@ -11,7 +11,7 @@ namespace Intersect.Network
 
         NetworkConfiguration Configuration { get; }
 
-        INetworkHelper Helper { get; }
+        IPacketHelper Helper { get; }
 
         Guid Guid { get; }
 

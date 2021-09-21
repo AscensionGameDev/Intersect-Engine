@@ -194,7 +194,7 @@ namespace Intersect.Server.Networking
 
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
-            packet.ReceiveTime = Globals.Timing.Milliseconds;
+            packet.ReceiveTime = Timing.Global.Milliseconds;
 
             var client = Client.FindBeta4Client(connection);
             if (client == null)
@@ -327,10 +327,10 @@ namespace Intersect.Server.Networking
                                  configurableBaseDesyncForgiveness +
                                  errorRangeMaximum * configurablePingDesyncForgivenessFactor;
 
-                if (timeDesync && Globals.Timing.MillisecondsUTC > client.LastPacketDesyncForgiven)
+                if (timeDesync && Timing.Global.MillisecondsUtc > client.LastPacketDesyncForgiven)
                 {
                     client.LastPacketDesyncForgiven =
-                        Globals.Timing.MillisecondsUTC + configurablePacketDesyncForgivenessInternal;
+                        Timing.Global.MillisecondsUtc + configurablePacketDesyncForgivenessInternal;
 
                     PacketSender.SendPing(client, false);
                     timeDesync = false;
@@ -363,7 +363,7 @@ namespace Intersect.Server.Networking
                         //    Log.Warn(
                         //        "Dropping Packet. Time desync? Debug Info:\n\t" +
                         //        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
-                        //        $"Server Time[Ticks={Globals.Timing.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Globals.Timing.TicksUTC}, Offset={Globals.Timing.TicksOffset}]\n\t" +
+                        //        $"Server Time[Ticks={Timing.Global.Ticks}, AdjustedMs={localAdjustedMs}, TicksUTC={Timing.Global.TicksUTC}, Offset={Timing.Global.TicksOffset}]\n\t" +
                         //        $"Client Time[Ticks={timedPacket.Adjusted}, AdjustedMs={remoteAdjustedMs}, TicksUTC={timedPacket.UTC}, Offset={timedPacket.Offset}]\n\t" +
                         //        $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
                         //        $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
@@ -497,7 +497,7 @@ namespace Intersect.Server.Networking
         //LoginPacket
         public void HandlePacket(Client client, LoginPacket packet)
         {
-            if (client.AccountAttempts > 3 && client.TimeoutMs > Globals.Timing.Milliseconds)
+            if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
             {
                 PacketSender.SendError(client, Strings.Errors.errortimeout);
                 client.ResetTimeout();
@@ -694,7 +694,7 @@ namespace Intersect.Server.Networking
                 if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
                 {
                     player.Move(packet.Dir, player, false);
-                    var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+                    var utcDeltaMs = (Timing.Global.TicksUtc - packet.UTC) / TimeSpan.TicksPerMillisecond;
                     var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
                     var currentMs = packet.ReceiveTime;
                     if (player.MoveTimer > currentMs)
@@ -734,6 +734,12 @@ namespace Intersect.Server.Networking
 
             var msg = packet.Message;
             var channel = packet.Channel;
+            
+            if (string.IsNullOrWhiteSpace(msg))
+            {
+                return;
+            }
+            
             if (client?.User.IsMuted ?? false) //Don't let the tongueless toxic kids speak.
             {
                 PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason, ChatMessageType.Notice);
@@ -741,10 +747,10 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (player.LastChatTime > Globals.Timing.MillisecondsUTC)
+            if (player.LastChatTime > Timing.Global.MillisecondsUtc)
             {
                 PacketSender.SendChatMsg(player, Strings.Chat.toofast, ChatMessageType.Notice);
-                player.LastChatTime = Globals.Timing.MillisecondsUTC + Options.MinChatInterval;
+                player.LastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
 
                 return;
             }
@@ -1073,12 +1079,12 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (player.AttackTimer > Globals.Timing.Milliseconds)
+            if (player.AttackTimer > Timing.Global.Milliseconds)
             {
                 return;
             }
 
-            if (player.CastTime > Globals.Timing.Milliseconds)
+            if (player.CastTime > Timing.Global.Milliseconds)
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
@@ -1088,7 +1094,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var utcDeltaMs = (Timing.Global.TicksUTC - packet.UTC) / TimeSpan.TicksPerMillisecond;
+            var utcDeltaMs = (Timing.Global.TicksUtc - packet.UTC) / TimeSpan.TicksPerMillisecond;
             var latencyAdjustmentMs = -(client.Ping + Math.Max(0, utcDeltaMs));
 
             //check if player is blinded or stunned or in stealth mode
@@ -1232,7 +1238,7 @@ namespace Intersect.Server.Networking
                                 (byte)player.Dir, null
                             );
 
-                        player.AttackTimer = Globals.Timing.Milliseconds +
+                        player.AttackTimer = Timing.Global.Milliseconds +
                                              latencyAdjustmentMs +
                                              player.CalculateAttackTime();
 
@@ -1292,9 +1298,9 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            if (player.AttackTimer > Globals.Timing.Milliseconds)
+            if (player.AttackTimer > Timing.Global.Milliseconds)
             {
-                player.AttackTimer = Globals.Timing.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
+                player.AttackTimer = Timing.Global.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
             }
         }
 
@@ -1350,7 +1356,7 @@ namespace Intersect.Server.Networking
         //CreateAccountPacket
         public void HandlePacket(Client client, CreateAccountPacket packet)
         {
-            if (client.TimeoutMs > Globals.Timing.Milliseconds)
+            if (client.TimeoutMs > Timing.Global.Milliseconds)
             {
                 PacketSender.SendError(client, Strings.Errors.errortimeout);
                 client.ResetTimeout();
@@ -1595,7 +1601,7 @@ namespace Intersect.Server.Networking
 
                     var canTake = false;
                     // Can we actually take this item?
-                    if (mapItem.Owner == Guid.Empty || Globals.Timing.Milliseconds > mapItem.OwnershipTime)
+                    if (mapItem.Owner == Guid.Empty || Timing.Global.Milliseconds > mapItem.OwnershipTime)
                     {
                         // The ownership time has run out, or there's no owner!
                         canTake = true;
@@ -1614,18 +1620,17 @@ namespace Intersect.Server.Networking
 
                     if (canTake)
                     {
+                        //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
+                        tempMap.RemoveItem(mapItem);
+
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
                             {
                                 PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
                             }
-
-                            // Mark this item for map removal.
-                            // If we remove them right now we'll cause an exception because the collection changed. :) Bad voodoo mon
-                            toRemove.Add(mapItem);
                         }
                         else
                         {
@@ -1882,7 +1887,7 @@ namespace Intersect.Server.Networking
             }
 
             player.CraftId = packet.CraftId;
-            player.CraftTimer = Globals.Timing.Milliseconds;
+            player.CraftTimer = Timing.Global.Milliseconds;
         }
 
         //CloseBankPacket
@@ -1984,12 +1989,12 @@ namespace Intersect.Server.Networking
                     if (player.PartyRequests.ContainsKey(player.PartyRequester))
                     {
                         player.PartyRequests[player.PartyRequester] =
-                            Globals.Timing.Milliseconds + Options.RequestTimeout;
+                            Timing.Global.Milliseconds + Options.RequestTimeout;
                     }
                     else
                     {
                         player.PartyRequests.Add(
-                            player.PartyRequester, Globals.Timing.Milliseconds + Options.RequestTimeout
+                            player.PartyRequester, Timing.Global.Milliseconds + Options.RequestTimeout
                         );
                     }
                 }
@@ -2127,12 +2132,12 @@ namespace Intersect.Server.Networking
                         if (player.Trading.Requests.ContainsKey(player.Trading.Requester))
                         {
                             player.Trading.Requests[player.Trading.Requester] =
-                                Globals.Timing.Milliseconds + Options.RequestTimeout;
+                                Timing.Global.Milliseconds + Options.RequestTimeout;
                         }
                         else
                         {
                             player.Trading.Requests.Add(
-                                player.Trading.Requester, Globals.Timing.Milliseconds + Options.RequestTimeout
+                                player.Trading.Requester, Timing.Global.Milliseconds + Options.RequestTimeout
                             );
                         }
                     }
@@ -2310,7 +2315,7 @@ namespace Intersect.Server.Networking
                     var target = Player.FindOnline(packet.Name);
                     if (target != null)
                     {
-                        if (target.CombatTimer < Globals.Timing.Milliseconds)
+                        if (target.CombatTimer < Timing.Global.Milliseconds)
                         {
                             target.FriendRequest(client.Entity);
                         }
@@ -2400,12 +2405,12 @@ namespace Intersect.Server.Networking
                         if (player.FriendRequests.ContainsKey(player.FriendRequester))
                         {
                             player.FriendRequests[player.FriendRequester] =
-                                Globals.Timing.Milliseconds + Options.RequestTimeout;
+                                Timing.Global.Milliseconds + Options.RequestTimeout;
                         }
                         else
                         {
                             player.FriendRequests.Add(
-                                client.Entity.FriendRequester, Globals.Timing.Milliseconds + Options.RequestTimeout
+                                client.Entity.FriendRequester, Timing.Global.Milliseconds + Options.RequestTimeout
                             );
                         }
                     }
@@ -2497,7 +2502,7 @@ namespace Intersect.Server.Networking
         //RequestPasswordResetPacket
         public void HandlePacket(Client client, RequestPasswordResetPacket packet)
         {
-            if (client.TimeoutMs > Globals.Timing.Milliseconds)
+            if (client.TimeoutMs > Timing.Global.Milliseconds)
             {
                 PacketSender.SendError(client, Strings.Errors.errortimeout);
                 client.ResetTimeout();
@@ -2533,7 +2538,7 @@ namespace Intersect.Server.Networking
         {
             //Find account with that name or email
 
-            if (client.TimeoutMs > Globals.Timing.Milliseconds)
+            if (client.TimeoutMs > Timing.Global.Milliseconds)
             {
                 PacketSender.SendError(client, Strings.Errors.errortimeout);
                 client.ResetTimeout();
@@ -2882,7 +2887,7 @@ namespace Intersect.Server.Networking
         //LoginPacket
         public void HandlePacket(Client client, Network.Packets.Editor.LoginPacket packet)
         {
-            if (client.AccountAttempts > 3 && client.TimeoutMs > Globals.Timing.Milliseconds)
+            if (client.AccountAttempts > 3 && client.TimeoutMs > Timing.Global.Milliseconds)
             {
                 PacketSender.SendError(client, Strings.Errors.errortimeout);
                 client.ResetTimeout();
