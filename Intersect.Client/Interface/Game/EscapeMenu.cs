@@ -2,12 +2,12 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game
 {
@@ -116,7 +116,7 @@ namespace Intersect.Client.Interface.Game
                 BringToFront();
             }
 
-            mGoToCharacterSelect.IsDisabled = Globals.Me?.CombatTimer > Globals.System.GetTimeMs();
+            mGoToCharacterSelect.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
         }
 
         private void Options_Clicked(Base sender, ClickedEventArgs arguments)
@@ -175,7 +175,7 @@ namespace Intersect.Client.Interface.Game
         private void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(
@@ -192,7 +192,7 @@ namespace Intersect.Client.Interface.Game
         private void Logout_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(
@@ -209,7 +209,7 @@ namespace Intersect.Client.Interface.Game
         private void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleHidden();
-            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(

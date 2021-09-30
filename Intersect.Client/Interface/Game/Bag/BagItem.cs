@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -9,6 +8,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Bag
 {
@@ -76,7 +76,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -175,7 +175,7 @@ namespace Intersect.Client.Interface.Game.Bag
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
                             //Globals.Me.TryUseItem(_mySlot);
                             mClickTime = 0;

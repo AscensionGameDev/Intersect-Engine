@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Maps
 {
@@ -29,12 +30,12 @@ namespace Intersect.Client.Maps
             Msg = message;
             Color = color;
             XOffset = Globals.Random.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
-            TransmissionTimer = Globals.System.GetTimeMs() + 1000;
+            TransmissionTimer = Timing.Global.Milliseconds + 1000;
         }
 
         public void TryRemove()
         {
-            if (TransmissionTimer <= Globals.System.GetTimeMs())
+            if (TransmissionTimer <= Timing.Global.Milliseconds)
             {
                 (Map as MapInstance).ActionMessages.Remove(this);
             }

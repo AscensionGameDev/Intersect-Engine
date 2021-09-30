@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
-using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -565,7 +564,7 @@ namespace Intersect.Client.Core
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMs() - sOverlayUpdate;
+                float ecTime = Timing.Global.Milliseconds - sOverlayUpdate;
 
                 if (OverlayColor.A != map.AHue ||
                     OverlayColor.R != map.RHue ||
@@ -671,7 +670,7 @@ namespace Intersect.Client.Core
             }
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
-            sOverlayUpdate = Globals.System.GetTimeMs();
+            sOverlayUpdate = Timing.Global.Milliseconds;
         }
 
         public static FloatRect GetSourceRect(GameTexture gameTexture)
@@ -968,7 +967,7 @@ namespace Intersect.Client.Core
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMs() - sLightUpdate;
+                float ecTime = Timing.Global.Milliseconds - sLightUpdate;
                 var valChange = 255 * ecTime / 2000f;
                 var brightnessTarget = (byte) (map.Brightness / 100f * 255);
                 if (BrightnessLevel < brightnessTarget)
@@ -1147,7 +1146,7 @@ namespace Intersect.Client.Core
                     }
                 }
 
-                sLightUpdate = Globals.System.GetTimeMs();
+                sLightUpdate = Timing.Global.Milliseconds;
             }
         }
 
