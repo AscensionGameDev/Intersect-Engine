@@ -221,6 +221,11 @@ namespace Intersect.Client.Entities
 
             if (TargetBox != null)
             {
+                if (!Globals.Entities.TryGetValue(TargetIndex, out var en) || (en.IsHidden || en.IsStealthed))
+                {
+                    ClearTarget();
+                }
+
                 TargetBox.Update();
             }
             else if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
@@ -2014,11 +2019,6 @@ namespace Intersect.Client.Entities
                             en.Value.DrawTarget((int)TargetTypes.Selected);
                         }
                     }
-                }
-                else
-                {
-                    //TODO: Completely wipe the stealthed player from memory and have server re-send once stealth ends.
-                    ClearTarget();
                 }
             }
 
