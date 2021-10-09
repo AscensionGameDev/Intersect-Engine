@@ -22,6 +22,8 @@ namespace Intersect.Client.Entities
 
         public ResourceBase BaseResource { get; set; }
 
+        bool IResource.IsDepleted => IsDead;
+
         public bool IsDead { get; set; }
 
         FloatRect mDestRectangle = FloatRect.Empty;
