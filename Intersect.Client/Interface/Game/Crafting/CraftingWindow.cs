@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -12,6 +11,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Crafting
 {
@@ -417,7 +417,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             if (CanCraft())
             {
                 Crafting = true;
-                mBarTimer = Globals.System.GetTimeMs();
+                mBarTimer = Timing.Global.Milliseconds;
                 PacketSender.SendCraftItem(mCraftId);
                 mCraftWindow.IsClosable = false;
                 mCraftAll.Hide();
@@ -497,7 +497,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 return;
             }
 
-            var delta = Globals.System.GetTimeMs() - mBarTimer;
+            var delta = Timing.Global.Milliseconds - mBarTimer;
             if (delta > craft.Time)
             {
                 delta = craft.Time;

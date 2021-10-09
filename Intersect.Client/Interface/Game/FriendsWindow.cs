@@ -2,12 +2,12 @@
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game
 {
@@ -114,7 +114,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (mSearchTextbox.Text.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                 {
                     PacketSender.SendAddFriend(mSearchTextbox.Text);
                 }
@@ -171,7 +171,7 @@ namespace Intersect.Client.Interface.Game
             var ibox = (InputBox) sender;
             if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                 {
                     PacketSender.SendAddFriend(ibox.TextValue);
                 }

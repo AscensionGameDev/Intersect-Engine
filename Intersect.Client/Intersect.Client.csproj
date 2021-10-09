@@ -164,7 +164,6 @@
     <Compile Include="MonoGame\Graphics\MonoShader.cs" />
     <Compile Include="MonoGame\Graphics\MonoTexture.cs" />
     <Compile Include="MonoGame\Input\MonoInput.cs" />
-    <Compile Include="MonoGame\System\MonoSystem.cs" />
     <Compile Include="Networking\Network.cs" />
     <Compile Include="Networking\PacketHandler.cs" />
     <Compile Include="Networking\PacketSender.cs" />

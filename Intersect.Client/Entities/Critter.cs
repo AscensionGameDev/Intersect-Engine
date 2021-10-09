@@ -52,7 +52,7 @@ namespace Intersect.Client.Entities
         {
             if (base.Update())
             {
-                if (mLastMove < Globals.System.GetTimeMs())
+                if (mLastMove < Timing.Global.Milliseconds)
                 {
                     switch (mAttribute.Movement)
                     {
@@ -65,7 +65,7 @@ namespace Intersect.Client.Entities
 
                     }
 
-                    mLastMove = Globals.System.GetTimeMs() + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
+                    mLastMove = Timing.Global.Milliseconds + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
                 }
                 return true;
             }

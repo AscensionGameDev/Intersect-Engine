@@ -12,6 +12,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Shared
 {
@@ -273,7 +274,7 @@ namespace Intersect.Client.Interface.Shared
                 mEdittingControl = ((KeyValuePair<Control, int>) sender.UserData).Key;
                 mEdittingButton = sender;
                 Interface.GwenInput.HandleInput = false;
-                mListeningTimer = Globals.System.GetTimeMs() + 3000;
+                mListeningTimer = Timing.Global.Milliseconds + 3000;
             }
         }
 
@@ -393,7 +394,7 @@ namespace Intersect.Client.Interface.Shared
         //Methods
         public void Update()
         {
-            if (mOptionsPanel.IsVisible && mEdittingButton != null && mListeningTimer < Globals.System.GetTimeMs())
+            if (mOptionsPanel.IsVisible && mEdittingButton != null && mListeningTimer < Timing.Global.Milliseconds)
             {
                 OnKeyDown(Keys.None);
             }

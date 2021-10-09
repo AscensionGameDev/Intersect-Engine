@@ -143,8 +143,6 @@ namespace Intersect.Editor.General
         //Selection Moving Copying and Pasting
         public static int SelectionType = (int) SelectionTypes.AllLayers;
 
-        public static Core.Sys System = new Core.Sys();
-
         public static int TileDragX = 0;
 
         public static int TileDragY = 0;

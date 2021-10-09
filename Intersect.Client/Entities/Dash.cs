@@ -1,7 +1,7 @@
 ﻿using System;
 using Intersect.Client.Framework.Entities;
-using Intersect.Client.General;
 using Intersect.Client.Maps;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Entities
 {
@@ -54,7 +54,7 @@ namespace Intersect.Client.Entities
             {
                 var startMap = MapInstance.Get(en.MapId);
                 var endMap = MapInstance.Get(mEndMapId);
-                mStartTime = Globals.System.GetTimeMs();
+                mStartTime = Timing.Global.Milliseconds;
                 mStartXCoord = en.OffsetX;
                 mStartYCoord = en.OffsetY;
                 mEndXCoord = endMap.GetX() + mEndX * Options.TileWidth - (startMap.GetX() + en.X * Options.TileWidth);
@@ -68,31 +68,31 @@ namespace Intersect.Client.Entities
 
         public float GetXOffset()
         {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
+            if (Timing.Global.Milliseconds > mStartTime + mDashTime)
             {
                 return mEndXCoord;
             }
             else
             {
-                return (mEndXCoord - mStartXCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
+                return (mEndXCoord - mStartXCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)mDashTime);
             }
         }
 
         public float GetYOffset()
         {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
+            if (Timing.Global.Milliseconds > mStartTime + mDashTime)
             {
                 return mEndYCoord;
             }
             else
             {
-                return (mEndYCoord - mStartYCoord) * ((Globals.System.GetTimeMs() - mStartTime) / (float)mDashTime);
+                return (mEndYCoord - mStartYCoord) * ((Timing.Global.Milliseconds - mStartTime) / (float)mDashTime);
             }
         }
 
         public bool Update(Entity en)
         {
-            if (Globals.System.GetTimeMs() > mStartTime + mDashTime)
+            if (Timing.Global.Milliseconds > mStartTime + mDashTime)
             {
                 en.Dashing = null;
                 en.OffsetX = 0;
