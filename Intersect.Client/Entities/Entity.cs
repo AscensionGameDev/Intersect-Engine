@@ -1987,7 +1987,7 @@ namespace Intersect.Client.Entities
                             {
                                 if (en.Value.GetType() == typeof(Resource))
                                 {
-                                    var resourceBase = ((Resource)en.Value).GetResourceBase();
+                                    var resourceBase = ((Resource)en.Value).BaseResource;
                                     if (resourceBase != null)
                                     {
                                         if (!ignoreAliveResources && !((Resource)en.Value).IsDead)

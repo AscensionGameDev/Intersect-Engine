@@ -95,6 +95,7 @@
     <Compile Include="Entities\IHotbarInstance.cs" />
     <Compile Include="Entities\IPartyMember.cs" />
     <Compile Include="Entities\IPlayer.cs" />
+    <Compile Include="Entities\IResource.cs" />
     <Compile Include="Entities\IStatus.cs" />
     <Compile Include="Entities\Label.cs" />
     <Compile Include="Entities\LabelType.cs" />
