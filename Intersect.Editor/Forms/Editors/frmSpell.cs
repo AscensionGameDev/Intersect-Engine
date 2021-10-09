@@ -324,6 +324,9 @@ namespace Intersect.Editor.Forms.Editors
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
+            // Reset our combat data location, since event type spells can move it.
+            grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y);
+
             if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell ||
                 cmbType.SelectedIndex == (int) SpellTypes.WarpTo ||
                 cmbType.SelectedIndex == (int) SpellTypes.Event)
@@ -393,6 +396,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+                // Move our combat data down a little bit, it's not a very clean solution but it'll let us display it properly.
+                grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y + grpEvent.Size.Height + 5);
             }
 
             if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
