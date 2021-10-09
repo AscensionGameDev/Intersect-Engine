@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Intersect.Utilities;
+
 namespace Intersect.Client.General
 {
 
@@ -28,21 +30,21 @@ namespace Intersect.Client.General
 
         public static void Update()
         {
-            if (sUpdateTime < Globals.System.GetTimeMs())
+            if (sUpdateTime < Timing.Global.Milliseconds)
             {
                 var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * sRate));
                 sServerTime = sServerTime.Add(ts);
-                sUpdateTime = Globals.System.GetTimeMs() + 1000;
+                sUpdateTime = Timing.Global.Milliseconds + 1000;
             }
 
-            float ecTime = Globals.System.GetTimeMs() - sColorUpdate;
+            float ecTime = Timing.Global.Milliseconds - sColorUpdate;
             var valChange = 255 * ecTime / 10000f;
             sCurrentColor.A = LerpVal(sCurrentColor.A, sTargetColor.A, valChange);
             sCurrentColor.R = LerpVal(sCurrentColor.R, sTargetColor.R, valChange);
             sCurrentColor.G = LerpVal(sCurrentColor.G, sTargetColor.G, valChange);
             sCurrentColor.B = LerpVal(sCurrentColor.B, sTargetColor.B, valChange);
 
-            sColorUpdate = Globals.System.GetTimeMs();
+            sColorUpdate = Timing.Global.Milliseconds;
         }
 
         private static float LerpVal(float val, float target, float amt)

@@ -4,6 +4,7 @@ using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.General;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core.Sounds
 {
@@ -71,11 +72,11 @@ namespace Intersect.Client.Core.Sounds
             {
                 if (mStoppedTime == -1)
                 {
-                    mStoppedTime = Globals.System.GetTimeMs();
+                    mStoppedTime = Timing.Global.Milliseconds;
                 }
                 else
                 {
-                    if (mStoppedTime + mLoopInterval < Globals.System.GetTimeMs())
+                    if (mStoppedTime + mLoopInterval < Timing.Global.Milliseconds)
                     {
                         mSound.Play();
                         mStoppedTime = -1;

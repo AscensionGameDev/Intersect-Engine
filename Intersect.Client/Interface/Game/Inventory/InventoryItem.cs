@@ -1,9 +1,7 @@
 ﻿using System;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
@@ -12,6 +10,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Inventory
 {
@@ -89,7 +88,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -322,7 +321,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
                             Globals.Me.TryUseItem(mMySlot);
                             mClickTime = 0;

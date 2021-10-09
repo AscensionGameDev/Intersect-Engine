@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Maps
 {
@@ -42,7 +42,7 @@ namespace Intersect.Client.Maps
 
         public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
         {
-            TransmittionTimer = Globals.System.GetTimeMs();
+            TransmittionTimer = Timing.Global.Milliseconds;
             bounds = new Rectangle(0, 0, Graphics.Renderer.GetScreenWidth(), Graphics.Renderer.GetScreenHeight());
 
             xVelocity = xvelocity;
@@ -139,8 +139,8 @@ namespace Intersect.Client.Maps
             }
             else
             {
-                X = originalX + xVelocity * (int)((Globals.System.GetTimeMs() - TransmittionTimer) / 10f);
-                Y = originalY + yVelocity * (int)((Globals.System.GetTimeMs() - TransmittionTimer) / 10f);
+                X = originalX + xVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
+                Y = originalY + yVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
                 animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, -1, 0);
                 animInstance.Update();
             }

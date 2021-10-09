@@ -2,8 +2,8 @@
 using System.Drawing;
 
 using Intersect.Editor.Content;
-using Intersect.Editor.General;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 using Microsoft.Xna.Framework.Graphics;
 
@@ -44,8 +44,8 @@ namespace Intersect.Editor.Entities
             MyBase = animBase;
             mLowerLoop = animBase.Lower.LoopCount;
             mUpperLoop = animBase.Upper.LoopCount;
-            mLowerTimer = Globals.System.GetTimeMs() + animBase.Lower.FrameSpeed;
-            mUpperTimer = Globals.System.GetTimeMs() + animBase.Upper.FrameSpeed;
+            mLowerTimer = Timing.Global.Milliseconds + animBase.Lower.FrameSpeed;
+            mUpperTimer = Timing.Global.Milliseconds + animBase.Upper.FrameSpeed;
             mInfiniteLoop = loopForever;
         }
 
@@ -158,7 +158,7 @@ namespace Intersect.Editor.Entities
 
         public void Update()
         {
-            if (mLowerTimer < Globals.System.GetTimeMs() && mShowLower)
+            if (mLowerTimer < Timing.Global.Milliseconds && mShowLower)
             {
                 mLowerFrame++;
                 if (mLowerFrame >= MyBase.Lower.FrameCount)
@@ -178,10 +178,10 @@ namespace Intersect.Editor.Entities
                     }
                 }
 
-                mLowerTimer = Globals.System.GetTimeMs() + MyBase.Lower.FrameSpeed;
+                mLowerTimer = Timing.Global.Milliseconds + MyBase.Lower.FrameSpeed;
             }
 
-            if (mUpperTimer < Globals.System.GetTimeMs() && mShowUpper)
+            if (mUpperTimer < Timing.Global.Milliseconds && mShowUpper)
             {
                 mUpperFrame++;
                 if (mUpperFrame >= MyBase.Upper.FrameCount)
@@ -201,7 +201,7 @@ namespace Intersect.Editor.Entities
                     }
                 }
 
-                mUpperTimer = Globals.System.GetTimeMs() + MyBase.Upper.FrameSpeed;
+                mUpperTimer = Timing.Global.Milliseconds + MyBase.Upper.FrameSpeed;
             }
         }
 

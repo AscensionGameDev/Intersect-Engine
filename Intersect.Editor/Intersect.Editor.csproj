@@ -90,7 +90,6 @@
     <Compile Include="Core\Database.cs" />
     <Compile Include="Core\Graphics.cs" />
     <Compile Include="Core\Main.cs" />
-    <Compile Include="Core\Sys.cs" />
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\Animation.cs" />

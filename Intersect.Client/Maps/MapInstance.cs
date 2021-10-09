@@ -15,7 +15,6 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
-using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
@@ -203,7 +202,7 @@ namespace Intersect.Client.Maps
         {
             if (isLocal)
             {
-                mLastUpdateTime = Globals.System.GetTimeMs() + 10000;
+                mLastUpdateTime = Timing.Global.Milliseconds + 10000;
                 UpdateMapAttributes();
                 if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
@@ -251,7 +250,7 @@ namespace Intersect.Client.Maps
             }
             else
             {
-                if (Globals.System.GetTimeMs() > mLastUpdateTime)
+                if (Timing.Global.Milliseconds > mLastUpdateTime)
                 {
                     Dispose();
                 }
@@ -1011,8 +1010,8 @@ namespace Intersect.Client.Maps
                 return;
             }
 
-            float ecTime = Globals.System.GetTimeMs() - mFogUpdateTime;
-            mFogUpdateTime = Globals.System.GetTimeMs();
+            float ecTime = Timing.Global.Milliseconds - mFogUpdateTime;
+            mFogUpdateTime = Timing.Global.Milliseconds;
             if (Id == Globals.Me.MapId)
             {
                 if (mCurFogIntensity != 1)
@@ -1124,7 +1123,7 @@ namespace Intersect.Client.Maps
 
             if ((WeatherXSpeed != 0 || WeatherYSpeed != 0) && Globals.Me.MapInstance == this)
             {
-                if (Globals.System.GetTimeMs() > _weatherParticleSpawnTime)
+                if (Timing.Global.Milliseconds > _weatherParticleSpawnTime)
                 {
                     _weatherParticles.Add(new WeatherParticle(_removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
                     var spawnTime = 25 + (int)(475 * (float)(1f - (float)(WeatherIntensity / 100f)));
@@ -1132,7 +1131,7 @@ namespace Intersect.Client.Maps
                                        (480000f /
                                         (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
 
-                    _weatherParticleSpawnTime = Globals.System.GetTimeMs() + spawnTime;
+                    _weatherParticleSpawnTime = Timing.Global.Milliseconds + spawnTime;
                 }
             }
 
@@ -1168,8 +1167,8 @@ namespace Intersect.Client.Maps
 
         public void DrawPanorama()
         {
-            float ecTime = Globals.System.GetTimeMs() - mPanoramaUpdateTime;
-            mPanoramaUpdateTime = Globals.System.GetTimeMs();
+            float ecTime = Timing.Global.Milliseconds - mPanoramaUpdateTime;
+            mPanoramaUpdateTime = Timing.Global.Milliseconds;
             if (Id == Globals.Me.MapId)
             {
                 if (mPanoramaIntensity != 1)
@@ -1202,8 +1201,8 @@ namespace Intersect.Client.Maps
 
         public void DrawOverlayGraphic()
         {
-            float ecTime = Globals.System.GetTimeMs() - mOverlayUpdateTime;
-            mOverlayUpdateTime = Globals.System.GetTimeMs();
+            float ecTime = Timing.Global.Milliseconds - mOverlayUpdateTime;
+            mOverlayUpdateTime = Timing.Global.Milliseconds;
             if (Id == Globals.Me.MapId)
             {
                 if (mOverlayIntensity != 1)
@@ -1295,7 +1294,7 @@ namespace Intersect.Client.Maps
                     ActionMessages[n].Y * Options.TileHeight -
                     Options.TileHeight *
                     2 *
-                    (1000 - (ActionMessages[n].TransmissionTimer - Globals.System.GetTimeMs())) /
+                    (1000 - (ActionMessages[n].TransmissionTimer - Timing.Global.Milliseconds)) /
                     1000
                 );
 

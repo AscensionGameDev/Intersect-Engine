@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -12,6 +11,7 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Utilities;
 
 // ReSharper disable All
 
@@ -69,7 +69,6 @@ namespace Intersect.Client.Core
             lock (Globals.GameLock)
             {
                 Networking.Network.Update();
-                Globals.System.Update();
                 Fade.Update();
                 Interface.Interface.ToggleInput(Globals.GameState != GameStates.Intro);
 
@@ -127,7 +126,7 @@ namespace Intersect.Client.Core
                         {
                             if (Globals.IntroComing)
                             {
-                                Globals.IntroStartTime = Globals.System.GetTimeMs();
+                                Globals.IntroStartTime = Timing.Global.Milliseconds;
                             }
                             else
                             {
@@ -139,7 +138,7 @@ namespace Intersect.Client.Core
                     }
                     else
                     {
-                        if (Globals.System.GetTimeMs() > Globals.IntroStartTime + Globals.IntroDelay)
+                        if (Timing.Global.Milliseconds > Globals.IntroStartTime + Globals.IntroDelay)
                         {
                             //If we have shown an image long enough, fade to black -- keep track that the image is going
                             Fade.FadeOut();
@@ -270,7 +269,7 @@ namespace Intersect.Client.Core
                             {
                                 if (!MapInstance.TryGet(Globals.MapGrid[x, y], out var _) &&
                                     (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
-                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMs()))
+                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Timing.Global.Milliseconds))
                                 {
                                     //Send for the map
                                     PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
@@ -318,7 +317,7 @@ namespace Intersect.Client.Core
             }
 
             //Update Game Animations
-            if (_animTimer < Globals.System.GetTimeMs())
+            if (_animTimer < Timing.Global.Milliseconds)
             {
                 Globals.AnimFrame++;
                 if (Globals.AnimFrame == 3)
@@ -326,7 +325,7 @@ namespace Intersect.Client.Core
                     Globals.AnimFrame = 0;
                 }
 
-                _animTimer = Globals.System.GetTimeMs() + 500;
+                _animTimer = Timing.Global.Milliseconds + 500;
             }
 
             //Remove Event Holds If Invalid

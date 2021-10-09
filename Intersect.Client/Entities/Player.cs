@@ -221,6 +221,11 @@ namespace Intersect.Client.Entities
 
             if (TargetBox != null)
             {
+                if (!Globals.Entities.TryGetValue(TargetIndex, out var en) || (en.IsHidden || en.IsStealthed))
+                {
+                    ClearTarget();
+                }
+
                 TargetBox.Update();
             }
             else if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
@@ -250,7 +255,7 @@ namespace Intersect.Client.Entities
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Aggression = pkt.AccessLevel;
-            CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
+            CombatTimer = pkt.CombatTimeRemaining + Timing.Global.Milliseconds;
             Guild = pkt.Guild;
             Rank = pkt.GuildRank;
 
@@ -449,7 +454,7 @@ namespace Intersect.Client.Entities
                 {
                     if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Timing.Global.Milliseconds)
                     {
-                        return ItemCooldowns[itm.ItemId] - Globals.System.GetTimeMs();
+                        return ItemCooldowns[itm.ItemId] - Timing.Global.Milliseconds;
                     }
                 }
             }
@@ -804,7 +809,7 @@ namespace Intersect.Client.Entities
         {
             if (Spells[index].Id != Guid.Empty &&
                 (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].Id) ||
-                 Globals.Me.SpellCooldowns[Spells[index].Id] < Globals.System.GetTimeMs()))
+                 Globals.Me.SpellCooldowns[Spells[index].Id] < Timing.Global.Milliseconds))
             {
                 var spellBase = SpellBase.Get(Spells[index].Id);
 
@@ -1702,7 +1707,7 @@ namespace Intersect.Client.Entities
             }
 
             //Check if the player is dashing, if so don't let them move.
-            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMs())
+            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Timing.Global.Milliseconds)
             {
                 return;
             }
@@ -1719,7 +1724,7 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || CastTime < Globals.System.GetTimeMs()))
+                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || CastTime < Timing.Global.Milliseconds))
                 {
                     if (Options.Combat.MovementCancelsCast)
                     {
@@ -2014,11 +2019,6 @@ namespace Intersect.Client.Entities
                             en.Value.DrawTarget((int)TargetTypes.Selected);
                         }
                     }
-                }
-                else
-                {
-                    //TODO: Completely wipe the stealthed player from memory and have server re-send once stealth ends.
-                    ClearTarget();
                 }
             }
 

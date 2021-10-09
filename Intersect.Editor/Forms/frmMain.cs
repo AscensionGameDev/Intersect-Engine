@@ -516,8 +516,8 @@ namespace Intersect.Editor.Forms
                 redoToolStripMenuItem.Enabled = false;
             }
 
-            //Process the Fill/Erase Buttons
-            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+            //Process the Fill/Erase Buttons, these should display for all valid map layers as well as Attributes.
+            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
             {
                 toolStripBtnFill.Enabled = true;
                 fillToolStripMenuItem.Enabled = true;

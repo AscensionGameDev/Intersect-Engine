@@ -5,20 +5,17 @@ using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
-using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
-using Intersect.Client.Interface.Game.Character;
 using Intersect.Client.Localization;
-using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
@@ -222,7 +219,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EntityWindow.Hide();
 
-            mLastUpdateTime = Globals.System.GetTimeMs();
+            mLastUpdateTime = Timing.Global.Milliseconds;
         }
 
         public void SetEntity(Entity entity)
@@ -405,7 +402,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             UpdateSpellStatus();
 
             //Time since this window was last updated (for bar animations)
-            var elapsedTime = (Globals.System.GetTimeMs() - mLastUpdateTime) / 1000.0f;
+            var elapsedTime = (Timing.Global.Milliseconds - mLastUpdateTime) / 1000.0f;
 
             //Update the event/entity face.
             UpdateImage();
@@ -463,7 +460,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 itm.Value.Update();
             }
 
-            mLastUpdateTime = Globals.System.GetTimeMs();
+            mLastUpdateTime = Timing.Global.Milliseconds;
         }
 
         public void UpdateSpellStatus()
@@ -967,7 +964,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
-                if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                 {
                     PacketSender.SendPartyInvite(Globals.Me.TargetIndex);
                 }
@@ -983,7 +980,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
-                if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                 {
                     PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
                 }
@@ -999,7 +996,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
-                if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                 {
                     PacketSender.SendAddFriend(MyEntity.Name);
                 }
@@ -1019,7 +1016,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 {
                     if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
                     {
-                        if (Globals.Me.CombatTimer < Globals.System.GetTimeMs())
+                        if (Globals.Me.CombatTimer < Timing.Global.Milliseconds)
                         {
                             PacketSender.SendInviteGuild(MyEntity.Name);
                         }
