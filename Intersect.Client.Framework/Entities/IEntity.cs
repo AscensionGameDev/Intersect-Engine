@@ -19,7 +19,6 @@ namespace Intersect.Client.Framework.Entities
         Label HeaderLabel { get; }
         bool IsHidden { get; }
         string Sprite { get; }
-        string TransformedSprite { get; }
         string Face { get; }
         GameTexture Texture { get; }
         Color Color { get; }
@@ -31,6 +30,7 @@ namespace Intersect.Client.Framework.Entities
         bool IsStealthed { get; }
         bool IsBlocking { get; }
         bool IsDashing { get; }
+        bool IsTransformed { get; }
         IDash CurrentDash { get; }
         bool IsCasting { get; }
         bool InView { get; }

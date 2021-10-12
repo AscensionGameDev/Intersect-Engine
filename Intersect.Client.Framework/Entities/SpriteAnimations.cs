@@ -8,5 +8,8 @@
         Shoot,
         Cast,
         Weapon,
+
+        // Always keep at the bottom if you value your sanity.
+        Count
     }
 }

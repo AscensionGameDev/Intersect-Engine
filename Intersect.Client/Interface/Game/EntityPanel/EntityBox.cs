@@ -92,10 +92,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public Entity MyEntity;
 
-        public ImagePanel[] PaperdollPanels;
-
-        public string[] PaperdollTextures;
-
         public Button PartyLabel;
 
         public bool PlayerBox;
@@ -130,27 +126,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EntityMap = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityMapLabel");
 
-            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
-            PaperdollTextures = new string[Options.EquipmentSlots.Count];
-            var i = 0;
-            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-            {
-                if (Options.PaperdollOrder[1][z] == "Player")
-                {
-                    EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
+            EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
 
-                    EntityFace = new ImagePanel(EntityFaceContainer);
-                    EntityFace.SetSize(64, 64);
-                    EntityFace.AddAlignment(Alignments.Center);
-                }
-                else
-                {
-                    PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
-                    PaperdollTextures[i] = "";
-                    PaperdollPanels[i].Hide();
-                    i++;
-                }
-            }
+            EntityFace = new ImagePanel(EntityFaceContainer);
+            EntityFace.SetSize(64, 64);
+            EntityFace.AddAlignment(Alignments.Center);
 
             EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
 
@@ -203,20 +183,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             UpdateSpellStatus();
 
-            i = 0;
-            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-            {
-                if (Options.PaperdollOrder[1][z] == "Player")
-                {
-                    EntityFace.RenderColor = EntityFaceContainer.RenderColor;
-                }
-                else
-                {
-                    PaperdollPanels[i].RenderColor = EntityFaceContainer.RenderColor;
-                    i++;
-                }
-            }
-
+            EntityFace.RenderColor = EntityFaceContainer.RenderColor;
             EntityWindow.Hide();
 
             mLastUpdateTime = Timing.Global.Milliseconds;
@@ -802,7 +769,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateImage()
         {
             var faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, MyEntity.Face);
-            var entityTex = MyEntity.Texture;
+            MyEntity.TextureCache.TryGetValue(Framework.Entities.SpriteAnimations.Normal, out var entityTex);
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
                 EntityFace.Texture = faceTex;
@@ -812,138 +779,22 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
-                var i = 0;
-                for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-                {
-                    if (Options.PaperdollOrder[1][z] != "Player")
-                    {
-                        if (PaperdollPanels == null)
-                        {
-                            Log.Warn($@"{nameof(PaperdollPanels)} is null.");
-                        }
-                        else if (PaperdollPanels[i] == null)
-                        {
-                            Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
-                        }
-
-                        PaperdollPanels?[i]?.Hide();
-                        i++;
-                    }
-                }
             }
             else if (entityTex != null && faceTex == null || faceTex != null && faceTex != EntityFace.Texture)
             {
                 if (entityTex != EntityFace.Texture)
                 {
                     EntityFace.Texture = entityTex;
-                    EntityFace.RenderColor = MyEntity.Color ?? new Color(255, 255, 255, 255);
                     EntityFace.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
                     EntityFace.SizeToContents();
                     Align.Center(EntityFace);
                     mCurrentSprite = MyEntity.Sprite;
                     EntityFace.IsHidden = false;
                 }
-
-                var equipment = MyEntity.Equipment;
-                if (MyEntity == Globals.Me)
-                {
-                    for (var i = 0; i < MyEntity.MyEquipment.Length; i++)
-                    {
-                        var eqp = MyEntity.MyEquipment[i];
-                        if (eqp > -1 && eqp < Options.MaxInvItems)
-                        {
-                            equipment[i] = MyEntity.Inventory[eqp].ItemId;
-                        }
-                        else
-                        {
-                            equipment[i] = Guid.Empty;
-                        }
-                    }
-                }
-
-                var n = 0;
-                for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-                {
-                    var paperdoll = "";
-                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
-                        equipment.Length == Options.EquipmentSlots.Count)
-                    {
-                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] != Guid.Empty)
-                        {
-                            var itemId = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
-                            if (ItemBase.Get(itemId) != null)
-                            {
-                                var itemdata = ItemBase.Get(itemId);
-                                if (MyEntity.Gender == 0)
-                                {
-                                    paperdoll = itemdata.MalePaperdoll;
-                                }
-                                else
-                                {
-                                    paperdoll = itemdata.FemalePaperdoll;
-                                }
-                            }
-                        }
-                    }
-
-                    //Check for Player layer
-                    if (Options.PaperdollOrder[1][z] == "Player")
-                    {
-                        continue;
-                    }
-
-                    if (paperdoll == "" && PaperdollTextures[n] != "")
-                    {
-                        PaperdollPanels[n].Texture = null;
-                        PaperdollPanels[n].Hide();
-                        PaperdollTextures[n] = "";
-                    }
-                    else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
-                    {
-                        var paperdollTex = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Paperdoll, paperdoll
-                        );
-
-                        PaperdollPanels[n].Texture = paperdollTex;
-                        if (paperdollTex != null)
-                        {
-                            PaperdollPanels[n]
-                                .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
-                                );
-
-                            PaperdollPanels[n]
-                                .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
-                                );
-
-                            PaperdollPanels[n]
-                                .SetPosition(
-                                    EntityFaceContainer.Width / 2 - PaperdollPanels[n].Width / 2,
-                                    EntityFaceContainer.Height / 2 - PaperdollPanels[n].Height / 2
-                                );
-                        }
-
-                        PaperdollPanels[n].Show();
-                        PaperdollTextures[n] = paperdoll;
-                    }
-
-                    //Check for Player layer
-                    if (Options.PaperdollOrder[1][z] != "Player")
-                    {
-                        n++;
-                    }
-                }
             }
             else if (MyEntity.Sprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
             {
                 EntityFace.IsHidden = true;
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    PaperdollPanels[i]?.Hide();
-                }
             }
 
             if (EntityFace.RenderColor != MyEntity.Color)

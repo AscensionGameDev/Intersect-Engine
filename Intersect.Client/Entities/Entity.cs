@@ -235,41 +235,44 @@ namespace Intersect.Client.Entities
             set => mDir = (byte)((value + 4) % 4);
         }
 
-        public virtual string TransformedSprite
-        {
-            get => mTransformedSprite;
-            set
-            {
-                if (mTransformedSprite != value)
-                {
-                    mTransformedSprite = value;
-                    if (value == "")
-                    {
-                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
-                        LoadAnimationTextures(mMySprite);
-                    }
-                    else
-                    {
-                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mTransformedSprite);
-                        LoadAnimationTextures(mTransformedSprite);
-                    }
-                }
-            }
-        }
-
         public virtual string Sprite
         {
-            get => mMySprite;
+            get
+            {
+                var sprite = mMySprite;
+
+                //If the entity has transformed, apply that sprite instead.
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == StatusTypes.Transform)
+                    {
+                        sprite = Status[n].Data;
+                    }
+                }
+
+                if (sprite != mPrevSprite)
+                {
+                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, sprite);
+                    LoadAnimationTextures(mMySprite);
+                    ClearTextureCaches();
+                }
+
+                return sprite;
+            }
             set
             {
                 if (mMySprite != value)
                 {
                     mMySprite = value;
+                    mPrevSprite = value;
                     Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
                     LoadAnimationTextures(mMySprite);
+                    ClearTextureCaches();
                 }
             }
         }
+
+        string mPrevSprite = string.Empty;
 
         public virtual int SpriteFrames
         {
@@ -295,6 +298,8 @@ namespace Intersect.Client.Entities
 
             }
         }
+
+        public Dictionary<SpriteAnimations, GameRenderTexture> TextureCache { get; set; } = new Dictionary<SpriteAnimations, GameRenderTexture>();
 
         public IMapInstance MapInstance => Maps.MapInstance.Get(MapId);
 
@@ -796,14 +801,25 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (this == Globals.Me)
-                {
-                    return false;
-                }
-
                 for (var n = 0; n < Status.Count; n++)
                 {
                     if (Status[n].Type == StatusTypes.Stealth)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        public virtual bool IsTransformed
+        {
+            get
+            {
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == StatusTypes.Transform)
                     {
                         return true;
                     }
@@ -875,11 +891,6 @@ namespace Intersect.Client.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            if (IsHidden)
-            {
-                return; //Don't draw if the entity is hidden
-            }
-
             WorldPos.Reset();
             var map = Maps.MapInstance.Get(MapId);
             if (map == null || !Globals.GridMaps.Contains(MapId))
@@ -887,56 +898,37 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            // Do we have cached textures? If not, create them.
+            if (TextureCache.Count < 1)
+            {
+                for (var animation = 0; animation < (int) SpriteAnimations.Count; animation++)
+                {
+                    DrawTextureCache((SpriteAnimations) animation);
+                }
+            }
+
+            // Set up some values we'll be using further down.
+            var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
             var srcRectangle = new FloatRect();
             var destRectangle = new FloatRect();
             var d = 0;
+            TextureCache.TryGetValue(SpriteAnimation, out var texture);
 
-            var sprite = "";
-            // Copy the actual render color, because we'll be editing it later and don't want to overwrite it.
-            var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
-
-            string transformedSprite = "";
-
-            //If the entity has transformed, apply that sprite instead.
-            for (var n = 0; n < Status.Count; n++)
+            // Are we hidden and ourselves? Fade out a bit.. If we are not our current player and not in the current player's party just skip rendering altogether.
+            if (IsHidden || IsStealthed)
             {
-                if (Status[n].Type == StatusTypes.Transform)
+                if (Globals.Me != this && !Globals.Me.IsInMyParty(Id))
                 {
-                    sprite = Status[n].Data;
-                    transformedSprite = sprite;
+                    return;
                 }
 
-                //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
-                {
-                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        renderColor.A /= 2;
-                    }
-                }
+                renderColor.A /= 2;
             }
 
-            if (transformedSprite != TransformedSprite)
-            {
-                TransformedSprite = transformedSprite;
-            }
-
-            //Check if there is no transformed sprite set
-            if (string.IsNullOrEmpty(sprite))
-            {
-                sprite = Sprite;
-                Sprite = sprite;
-            }
-
-
-            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
-
+            // Do we have a texture? Great! We should actually draw it.
             if (texture != null)
             {
+                // Is our sprite taller than a tile? If so try to keep its feet on the ground!
                 if (texture.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
                 {
                     destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
@@ -948,7 +940,10 @@ namespace Intersect.Client.Entities
                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
 
+                // Keep our sprite centered horizontally.
                 destRectangle.X -= texture.GetWidth() / (SpriteFrames * 2);
+
+                // Get the position of our current direction on the sprite sheet.
                 switch (Dir)
                 {
                     case 0:
@@ -974,9 +969,12 @@ namespace Intersect.Client.Entities
                         break;
                 }
 
+                // Convert the location to an integer location rather than a floating point.. We can't draw halfway through a pixel.
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (Options.AnimatedSprites.Contains(sprite.ToLower()))
+
+                // Is our sprite always animated? if so animate it always. If not, get what we're supposed to animate it like right now.
+                if (Options.AnimatedSprites.Contains(Sprite.ToLower()))
                 {
                     srcRectangle = new FloatRect(
                         AnimationFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
@@ -1016,59 +1014,11 @@ namespace Intersect.Client.Entities
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
 
+                // Set our world position for targeting.
                 WorldPos = destRectangle;
 
-                //Order the layers of paperdolls and sprites
-                for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
-                {
-                    var paperdoll = Options.PaperdollOrder[Dir][z];
-                    var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
-
-                    //Check for player
-                    if (paperdoll == "Player")
-                    {
-                        Graphics.DrawGameTexture(
-                            texture, srcRectangle, destRectangle, renderColor
-                        );
-                    }
-                    else if (equipSlot > -1)
-                    {
-                        //Don't render the paperdolls if they have transformed.
-                        if (sprite == Sprite && Equipment.Length == Options.EquipmentSlots.Count)
-                        {
-                            if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
-                                MyEquipment[equipSlot] < Options.MaxInvItems)
-                            {
-                                var itemId = Guid.Empty;
-                                if (this == Globals.Me)
-                                {
-                                    var slot = MyEquipment[equipSlot];
-                                    if (slot > -1)
-                                    {
-                                        itemId = Inventory[slot].ItemId;
-                                    }
-                                }
-                                else
-                                {
-                                    itemId = Equipment[equipSlot];
-                                }
-
-                                var item = ItemBase.Get(itemId);
-                                if (item != null)
-                                {
-                                    if (Gender == 0)
-                                    {
-                                        DrawEquipment(item.MalePaperdoll, renderColor.A);
-                                    }
-                                    else
-                                    {
-                                        DrawEquipment(item.FemalePaperdoll, renderColor.A);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                // Finally draw ourselves to the screen.
+                Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor);
             }
             else
             {
@@ -1078,6 +1028,75 @@ namespace Intersect.Client.Entities
                     map.GetY() + Y * Options.TileHeight + OffsetY,
                     Options.TileWidth,
                     Options.TileHeight);
+            }
+        }
+
+        public virtual void ClearTextureCaches()
+        {
+            foreach(var texture in TextureCache.Values)
+            {
+                texture.Dispose();
+            }
+            TextureCache.Clear();
+        }
+
+        public virtual void DrawTextureCache(SpriteAnimations animation)
+        {
+            // If we do not have this texture cache created yet but there is a texture we need to store for this animation create a cache for it@
+            if (!TextureCache.ContainsKey(animation))
+            {
+                var tex = AnimatedTextures[animation] ?? Texture;
+                TextureCache.Add(animation, Graphics.Renderer.CreateRenderTexture(tex.Width, tex.Height));
+            }
+
+            // Clear our cached texture.
+            TextureCache[animation].Clear(Color.Transparent);
+            var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
+
+            var source = AnimatedTextures[SpriteAnimation] ?? Texture;
+            var dest = TextureCache[animation];
+
+            //Order the layers of paperdolls and sprites
+            for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
+            {
+                var paperdoll = Options.PaperdollOrder[Dir][z];
+                var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
+
+                //Check for player
+                if (paperdoll == "Player")
+                {
+                    Graphics.DrawGameTexture(source, 0, 0, Color, dest);
+                }
+                else if (equipSlot > -1)
+                {
+                    //Don't render the paperdolls if they have transformed.
+                    if (!IsTransformed && Equipment.Length == Options.EquipmentSlots.Count)
+                    {
+                        if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
+                            MyEquipment[equipSlot] < Options.MaxInvItems)
+                        {
+                            var itemId = Guid.Empty;
+                            if (this == Globals.Me)
+                            {
+                                var slot = MyEquipment[equipSlot];
+                                if (slot > -1)
+                                {
+                                    itemId = Inventory[slot].ItemId;
+                                }
+                            }
+                            else
+                            {
+                                itemId = Equipment[equipSlot];
+                            }
+
+                            var item = ItemBase.Get(itemId);
+                            if (item != null)
+                            {
+                                DrawEquipmentToCache(item, dest);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1109,103 +1128,33 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public virtual void DrawEquipment(string filename, int alpha)
+        public virtual void DrawEquipmentToCache(ItemBase itemBase, GameRenderTexture cacheTexture)
         {
-            var map = Maps.MapInstance.Get(MapId);
-            if (map == null)
+            // Get what file were supposed to be rendering.
+            var file = Path.GetFileNameWithoutExtension(
+                Gender == Gender.Male ? itemBase.MalePaperdoll 
+                : itemBase.FemalePaperdoll
+            );
+
+            // Exit out when empty.
+            if (string.IsNullOrWhiteSpace(file))
             {
                 return;
             }
 
-            var srcRectangle = new FloatRect();
-            var destRectangle = new FloatRect();
-            var d = 0;
+            // Get our actual texture to render.
+            var texture = 
+            Globals.ContentManager.GetTexture(Framework.Content.TextureType.Paperdoll, $"{file}_{SpriteAnimation.ToString()}.png")
+            ??
+            Globals.ContentManager.GetTexture(Framework.Content.TextureType.Paperdoll, $"{file}.png");
 
-            GameTexture paperdollTex = null;
-            var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
-            paperdollTex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
-            );
-
-            var spriteFrames = SpriteFrames;
-
-            if (paperdollTex == null)
+            // If we still haven't found a texture.. just exit out!
+            if (texture == null)
             {
-                paperdollTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Paperdoll, filename);
-                spriteFrames = Options.Instance.Sprites.NormalFrames;
+                return;
             }
 
-            if (paperdollTex != null)
-            {
-                if (paperdollTex.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                    destRectangle.Y = GetCenterPos().Y - paperdollTex.GetHeight() / (Options.Instance.Sprites.Directions * 2);
-                }
-                else
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
-                }
-
-                if (paperdollTex.GetWidth() / spriteFrames > Options.TileWidth)
-                {
-                    destRectangle.X -= (paperdollTex.GetWidth() / spriteFrames - Options.TileWidth) / 2;
-                }
-
-                switch (Dir)
-                {
-                    case 0:
-                        d = 3;
-
-                        break;
-                    case 1:
-                        d = 0;
-
-                        break;
-                    case 2:
-                        d = 1;
-
-                        break;
-                    case 3:
-                        d = 2;
-
-                        break;
-                }
-
-                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
-                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (SpriteAnimation == SpriteAnimations.Normal)
-                {
-                    if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking)
-                    {
-                        srcRectangle = new FloatRect(
-                            3 * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                        );
-                    }
-                    else
-                    {
-                        srcRectangle = new FloatRect(
-                            WalkFrame * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                        );
-                    }
-                }
-                else
-                {
-                    srcRectangle = new FloatRect(
-                        SpriteFrame * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                        (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                    );
-                }
-
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
-                Graphics.DrawGameTexture(
-                    paperdollTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
-                );
-            }
+            Graphics.DrawGameTexture(texture, 0, 0, itemBase.Color, cacheTexture);
         }
 
         protected virtual void CalculateCenterPos()

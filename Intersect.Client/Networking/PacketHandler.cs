@@ -1212,10 +1212,12 @@ namespace Intersect.Client.Networking
                     if (entity == Globals.Me && packet.InventorySlots != null)
                     {
                         entity.MyEquipment = packet.InventorySlots;
+                        entity.ClearTextureCaches();
                     }
                     else if (packet.ItemIds != null)
                     {
                         entity.Equipment = packet.ItemIds;
+                        entity.ClearTextureCaches();
                     }
                 }
             }

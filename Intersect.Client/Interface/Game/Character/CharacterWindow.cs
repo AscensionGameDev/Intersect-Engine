@@ -62,10 +62,6 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mSpeedLabel;
 
-        public ImagePanel[] PaperdollPanels;
-
-        public string[] PaperdollTextures;
-
         //Location
         public int X;
 
@@ -86,15 +82,6 @@ namespace Intersect.Client.Interface.Game.Character
             mCharacterContainer = new ImagePanel(mCharacterWindow, "CharacterContainer");
 
             mCharacterPortrait = new ImagePanel(mCharacterContainer);
-
-            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count + 1];
-            PaperdollTextures = new string[Options.EquipmentSlots.Count + 1];
-            for (var i = 0; i <= Options.EquipmentSlots.Count; i++)
-            {
-                PaperdollPanels[i] = new ImagePanel(mCharacterContainer);
-                PaperdollTextures[i] = "";
-                PaperdollPanels[i].Hide();
-            }
 
             var equipmentLabel = new Label(mCharacterWindow, "EquipmentLabel");
             equipmentLabel.SetText(Strings.Character.equipment);
@@ -176,9 +163,7 @@ namespace Intersect.Client.Interface.Game.Character
 
             //Load Portrait
             //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Face, Globals.Me.Face);
-            var entityTex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Entity, Globals.Me.Sprite
-            );
+            Globals.Me.TextureCache.TryGetValue(Framework.Entities.SpriteAnimations.Normal, out var entityTex);
 
             /* UNCOMMENT THIS BLOCK IF YOU"D RATHER HAVE A FACE HERE if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
              {
@@ -187,98 +172,21 @@ namespace Intersect.Client.Interface.Game.Character
                  _characterPortrait.SizeToContents();
                  Align.Center(_characterPortrait);
                  _characterPortrait.IsHidden = false;
-                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-                 {
-                     _paperdollPanels[i].Hide();
-                 }
              }
              else */
-            if (!string.IsNullOrWhiteSpace(Globals.Me.Sprite) && Globals.Me.Sprite != mCurrentSprite && entityTex != null)
+            if (entityTex != null && mCharacterPortrait.Texture != entityTex)
             {
-                for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-                {
-                    var paperdoll = "";
-                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
-                    {
-                        var equipment = Globals.Me.MyEquipment;
-                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                            Options.MaxInvItems)
-                        {
-                            var itemNum = Globals.Me
-                                .Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
-                                .ItemId;
+                mCharacterPortrait.Texture = entityTex;
+                mCharacterPortrait.SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
+                mCharacterPortrait.SizeToContents();
+                Align.Center(mCharacterPortrait);
+                mCurrentSprite = Globals.Me.Sprite;
+                mCharacterPortrait.IsHidden = false;
 
-                            if (ItemBase.Get(itemNum) != null)
-                            {
-                                var itemdata = ItemBase.Get(itemNum);
-                                if (Globals.Me.Gender == 0)
-                                {
-                                    paperdoll = itemdata.MalePaperdoll;
-                                }
-                                else
-                                {
-                                    paperdoll = itemdata.FemalePaperdoll;
-                                }
-                            }
-                        }
-                    }
-                    else if (Options.PaperdollOrder[1][z] == "Player")
-                    {
-                        PaperdollPanels[z].Show();
-                        PaperdollPanels[z].Texture = entityTex;
-                        PaperdollPanels[z].SetTextureRect(0, 0, entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, entityTex.GetHeight() / Options.Instance.Sprites.Directions);
-                        PaperdollPanels[z].SizeToContents();
-                        PaperdollPanels[z].RenderColor = Globals.Me.Color;
-                        Align.Center(PaperdollPanels[z]);
-                    }
-
-                    if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.PaperdollOrder[1][z] != "Player")
-                    {
-                        PaperdollPanels[z].Texture = null;
-                        PaperdollPanels[z].Hide();
-                        PaperdollTextures[z] = "";
-                    }
-                    else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
-                    {
-                        var paperdollTex = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Paperdoll, paperdoll
-                        );
-
-                        PaperdollPanels[z].Texture = paperdollTex;
-                        if (paperdollTex != null)
-                        {
-                            PaperdollPanels[z]
-                                .SetTextureRect(
-                                    0, 0, PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
-                                );
-
-                            PaperdollPanels[z]
-                                .SetSize(
-                                    PaperdollPanels[z].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[z].Texture.GetHeight() / Options.Instance.Sprites.Directions
-                                );
-
-                            PaperdollPanels[z]
-                                .SetPosition(
-                                    mCharacterContainer.Width / 2 - PaperdollPanels[z].Width / 2,
-                                    mCharacterContainer.Height / 2 - PaperdollPanels[z].Height / 2
-                                );
-                        }
-
-                        PaperdollPanels[z].Show();
-                        PaperdollTextures[z] = paperdoll;
-                    }
-                }
             }
             else if (Globals.Me.Sprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
             {
                 mCharacterPortrait.IsHidden = true;
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    PaperdollPanels[i].Hide();
-                }
             }
 
             mAttackLabel.SetText(

@@ -266,10 +266,12 @@ namespace Intersect.Client.Entities
                 if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
                     this.MyEquipment = playerPacket.Equipment.InventorySlots;
+                    ClearTextureCaches();
                 }
                 else if (playerPacket.Equipment.ItemIds != null)
                 {
                     this.Equipment = playerPacket.Equipment.ItemIds;
+                    ClearTextureCaches();
                 }
             }
 
@@ -1884,20 +1886,6 @@ namespace Intersect.Client.Entities
                     }
                 }
             }
-        }
-
-        public override void DrawEquipment(string filename, int alpha)
-        {
-            //check if player is stunned or snared, if so don't let them move.
-            for (var n = 0; n < Status.Count; n++)
-            {
-                if (Status[n].Type == StatusTypes.Transform)
-                {
-                    return;
-                }
-            }
-
-            base.DrawEquipment(filename, alpha);
         }
 
         //Override of the original function, used for rendering the color of a player based on rank
