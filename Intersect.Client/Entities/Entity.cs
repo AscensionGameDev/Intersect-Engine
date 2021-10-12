@@ -301,6 +301,8 @@ namespace Intersect.Client.Entities
 
         public Dictionary<SpriteAnimations, GameRenderTexture> TextureCache { get; set; } = new Dictionary<SpriteAnimations, GameRenderTexture>();
 
+        IReadOnlyDictionary<SpriteAnimations, GameRenderTexture> IEntity.TextureCache => TextureCache;
+
         public IMapInstance MapInstance => Maps.MapInstance.Get(MapId);
 
         public virtual Guid MapId { get; set; }

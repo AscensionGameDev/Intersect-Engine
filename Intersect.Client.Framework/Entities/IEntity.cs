@@ -48,6 +48,7 @@ namespace Intersect.Client.Framework.Entities
         IReadOnlyList<int> EquipmentSlots { get; }
         IReadOnlyList<Guid> Spells { get; }
         IReadOnlyList<IStatus> Status { get; }
+        IReadOnlyDictionary<SpriteAnimations, GameRenderTexture> TextureCache { get; }
         int Aggression { get; }
 
         void AddChatBubble(string text);
