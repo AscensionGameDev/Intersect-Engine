@@ -1698,8 +1698,8 @@ namespace Intersect.Server.Entities
             bool isAutoAttack = false
         )
         {
-            var originalBaseDamage = baseDamage;
             var damagingAttack = baseDamage > 0;
+
             if (enemy == null)
             {
                 return;
@@ -1718,21 +1718,18 @@ namespace Intersect.Server.Entities
                 isCrit = true;
             }
 
+            //If the enemy is a resource, the original base damage value will be used on "Calculate Damages", if not, we need change...
+            if (!(enemy is Resource))
+            {
+                baseDamage = Formulas.CalculateDamage(
+                baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
+            );
+            }
+
             //Calculate Damages
             if (baseDamage != 0)
             {
 
-                if (enemy is Resource)
-                {
-                    baseDamage = originalBaseDamage;
-                }
-                else
-                {
-                    baseDamage = Formulas.CalculateDamage(
-                    baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
-                );
-                }
-                
                 if (baseDamage < 0 && damagingAttack)
                 {
                     baseDamage = 0;
