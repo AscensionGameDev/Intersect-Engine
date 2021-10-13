@@ -1954,7 +1954,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, FriendRequestPacket packet)
         {
             var iBox = new InputBox(
-                Strings.Friends.request, Strings.Friends.requestprompt.ToString(packet.FriendName), true,
+                Strings.Friends.Request, Strings.Friends.RequestPrompt.ToString(packet.FriendName), true,
                 InputBox.InputType.YesNo, PacketSender.SendFriendRequestAccept, PacketSender.SendFriendRequestDecline,
                 packet.FriendId
             );

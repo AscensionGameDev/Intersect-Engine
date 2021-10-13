@@ -111,6 +111,7 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Interface\Game\AnnouncementWindow.cs" />
+    <Compile Include="Interface\Game\Friends\FriendsRow.cs" />
     <Compile Include="Interface\Game\GuildWindow.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
@@ -181,7 +182,7 @@
     <Compile Include="Interface\Game\Draggable.cs" />
     <Compile Include="Interface\Game\EntityPanel\EntityBox.cs" />
     <Compile Include="Interface\Game\EventWindow.cs" />
-    <Compile Include="Interface\Game\FriendsWindow.cs" />
+    <Compile Include="Interface\Game\Friends\FriendsWindow.cs" />
     <Compile Include="Interface\Game\GameInterface.cs" />
     <Compile Include="Interface\Game\Menu.cs" />
     <Compile Include="Interface\Game\Hotbar\HotBar.cs" />
