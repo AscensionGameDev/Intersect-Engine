@@ -78,7 +78,7 @@ namespace Intersect.Client.Interface.Game
                 }
                 mRows.Clear();
             }
-            else
+            else if (mRows == null)
             {
                 mRows = new List<FriendsRow>();
             }
