@@ -968,6 +968,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString Forget = @"Forget {00}";
         }
 
+        public struct BankContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Withdraw {00}";
+        }
+
         public struct ItemDesc
         {
 

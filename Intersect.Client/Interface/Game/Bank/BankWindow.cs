@@ -36,6 +36,11 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private bool mOpen;
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mWithdrawContextItem;
+
         //Init
         public BankWindow(Canvas gameCanvas)
         {
@@ -49,6 +54,44 @@ namespace Intersect.Client.Interface.Game.Bank
             mBankWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             InitItemContainer();
             Close();
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BankContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mWithdrawContextItem = mContextMenu.AddItem(Strings.BankContextMenu.Withdraw);
+            mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        public void OpenContextMenu(int slot)
+        {
+            var item = ItemBase.Get(Globals.Bank[slot].ItemId);
+
+            // No point showing a menu for blank space.
+            if (item == null)
+            {
+                return;
+            }
+
+            mWithdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = slot;
+
+            mContextMenu.IsHidden = false;
+            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+            mContextMenu.SizeToChildren();
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
+        }
+
+        private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            Globals.Me.TryWithdrawItem(slot);
         }
 
         public void Close()
