@@ -149,6 +149,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 mContextMenu.IsHidden = false;
                 mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+                mContextMenu.SizeToChildren();
                 mContextMenu.Open(Framework.Gwen.Pos.None);
                 mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
             }
