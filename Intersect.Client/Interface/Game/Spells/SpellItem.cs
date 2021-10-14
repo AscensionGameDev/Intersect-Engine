@@ -63,9 +63,15 @@ namespace Intersect.Client.Interface.Game.Spells
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
+        }
+
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.Me.TryUseSpell(mYindex);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -218,7 +224,6 @@ namespace Intersect.Client.Interface.Game.Spells
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseSpell(mYindex);
                             mClickTime = 0;
                         }
                     }
