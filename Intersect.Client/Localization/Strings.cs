@@ -950,13 +950,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString Sell = @"Sell {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Bank = @"Move {00} to Bank";
+            public static LocalizedString Bank = @"Bank {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Bag = @"Move {00} to Bag";
+            public static LocalizedString Bag = @"Bag {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Trade = @"Move {00} to Trade";
+            public static LocalizedString Trade = @"Trade {00}";
         }
 
         public struct SpellContextMenu
