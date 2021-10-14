@@ -625,7 +625,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public void TryWithdrawItem(int index)
+        public void TryWithdrawItem(int index, int invSlot = -1)
         {
             if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
             {
@@ -642,15 +642,17 @@ namespace Intersect.Client.Entities
 
                 if (Globals.Bank[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, invSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index, Globals.Bank[index].Quantity
+                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendWithdrawItem(index, 1);
+                    PacketSender.SendWithdrawItem(index, 1, invSlot);
                 }
             }
         }
@@ -660,7 +662,8 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
             }
         }
 

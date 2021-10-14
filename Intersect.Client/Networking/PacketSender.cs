@@ -194,9 +194,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new DepositItemPacket(slot, amount, bankSlot));
         }
 
-        public static void SendWithdrawItem(int slot, int amount)
+        public static void SendWithdrawItem(int slot, int amount, int invSlot = -1)
         {
-            Network.SendPacket(new WithdrawItemPacket(slot, amount));
+            Network.SendPacket(new WithdrawItemPacket(slot, amount, invSlot));
         }
 
         public static void SendCloseBank()

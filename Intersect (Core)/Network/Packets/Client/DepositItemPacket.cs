@@ -11,7 +11,7 @@ namespace Intersect.Network.Packets.Client
         {
         }
 
-        public DepositItemPacket(int slot, int quantity, int bankSlot) : base(slot, quantity)
+        public DepositItemPacket(int slot, int quantity, int bankSlot = -1) : base(slot, quantity)
         {
             BankSlot = bankSlot;
         }

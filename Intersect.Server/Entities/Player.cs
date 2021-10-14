@@ -1608,6 +1608,42 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="itemId">The item Id to check if the player can receive.</param>
         /// <param name="quantity">The amount of this item to check if the player can receive.</param>
+        /// <param name="slot">The inventory slot to check against.</param>
+        /// <returns></returns>
+        public bool CanGiveItem(Guid itemId, int quantity, int slot) => CanGiveItem(new Item(itemId, quantity), slot);
+
+        /// <summary>
+        /// Checks whether a player can or can not receive the specified item and its quantity.
+        /// </summary>
+        /// <param name="item">The <see cref="Item"/> to check if this player can receive.</param>
+        /// /// <param name="slot">The inventory slot to check against.</param>
+        /// <returns></returns>
+        public bool CanGiveItem(Item item, int slot)
+        {
+            // Is this a valid item and slot?
+            if (slot >= 0 && slot < Items.Count)
+            {
+                // Is this slot empty?
+                if (Items[slot] != null && Items[slot].ItemId == Guid.Empty)
+                {
+                    // It is! Can we store the full quantity of this item though?
+                    return CanGiveItem(item);
+                }
+            }
+            else
+            {
+                // Not a valid slot, just treat it as a normal query.
+                return CanGiveItem(item);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks whether a player can or can not receive the specified item and its quantity.
+        /// </summary>
+        /// <param name="itemId">The item Id to check if the player can receive.</param>
+        /// <param name="quantity">The amount of this item to check if the player can receive.</param>
         /// <returns></returns>
         public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity));
 
@@ -1722,8 +1758,9 @@ namespace Intersect.Server.Entities
         /// Attempts to give the player an item. Returns whether or not it succeeds.
         /// </summary>
         /// <param name="item">The <see cref="Item"/> to give to the player.</param>
+        /// <param name="slot">The inventory slot to put this item into.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Item item) => TryGiveItem(item, ItemHandling.Normal, false, true);
+        public bool TryGiveItem(Item item, int slot = -1) => TryGiveItem(item, ItemHandling.Normal, false, slot, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1731,7 +1768,7 @@ namespace Intersect.Server.Entities
         /// <param name="item">The <see cref="Item"/> to give to the player.</param>
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Item item, ItemHandling handler) => TryGiveItem(item, handler, false, true);
+        public bool TryGiveItem(Item item, ItemHandling handler) => TryGiveItem(item, handler, false, -1, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1739,7 +1776,7 @@ namespace Intersect.Server.Entities
         /// <param name="itemId">The Id for the item to be handed out to the player.</param>
         /// <param name="quantity">The quantity of items to be handed out to the player.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Guid itemId, int quantity) => TryGiveItem(new Item(itemId, quantity), ItemHandling.Normal, false, true);
+        public bool TryGiveItem(Guid itemId, int quantity) => TryGiveItem(new Item(itemId, quantity), ItemHandling.Normal, false, -1, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1748,7 +1785,7 @@ namespace Intersect.Server.Entities
         /// <param name="quantity">The quantity of items to be handed out to the player.</param>
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler) => TryGiveItem(new Item(itemId, quantity), handler, false, true);
+        public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler) => TryGiveItem(new Item(itemId, quantity), handler, false, -1, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1757,9 +1794,10 @@ namespace Intersect.Server.Entities
         /// <param name="quantity">The quantity of items to be handed out to the player.</param>
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
+        /// <param name="slot">The inventory slot to put this item into.</param>
         /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler, bool bankOverflow = false, bool sendUpdate = true) => TryGiveItem(new Item(itemId, quantity), handler, bankOverflow, sendUpdate);
+        public bool TryGiveItem(Guid itemId, int quantity, ItemHandling handler, bool bankOverflow = false, int slot = -1, bool sendUpdate = true) => TryGiveItem(new Item(itemId, quantity), handler, bankOverflow, slot, sendUpdate);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1767,11 +1805,12 @@ namespace Intersect.Server.Entities
         /// <param name="item">The <see cref="Item"/> to give to the player.</param>
         /// <param name="handler">The way to handle handing out this item.</param>
         /// <param name="bankOverflow">Should we allow the items to overflow into the player's bank when their inventory is full.</param>
+        /// <param name="slot">The inventory slot to put this item into.</param>
         /// <param name="sendUpdate">Should we send an inventory update when we are done changing the player's items.</param>
         /// <param name="overflowTileX">The x coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
         /// <param name="overflowTileY">The y coordinate of the tile in which overflow should spawn on, if the player cannot hold the full amount.</param>
         /// <returns>Whether the player received the item or not.</returns>
-        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true, int overflowTileX = -1, int overflowTileY = -1)
+        public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, int slot = -1, bool sendUpdate = true, int overflowTileX = -1, int overflowTileY = -1)
         {
             // Is this a valid item?
             if (item.Descriptor == null)
@@ -1793,9 +1832,9 @@ namespace Intersect.Server.Entities
             {
                 // Handle this item like normal, there's no special rules attached to this method.
                 case ItemHandling.Normal:
-                    if (CanGiveItem(item)) // Can receive item under regular rules.
+                    if (CanGiveItem(item, slot)) // Can receive item under regular rules.
                     {
-                        GiveItem(item, sendUpdate);
+                        GiveItem(item, slot, sendUpdate);
                         return true;
                     }
 
@@ -1803,7 +1842,7 @@ namespace Intersect.Server.Entities
                 case ItemHandling.Overflow:
                     if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
-                        GiveItem(item, sendUpdate);
+                        GiveItem(item, slot, sendUpdate);
                         return true;
                     }
                     else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
@@ -1816,7 +1855,7 @@ namespace Intersect.Server.Entities
                         if (openSlots > 0)
                         {
                             item.Quantity = openSlots;
-                            GiveItem(item, sendUpdate);
+                            GiveItem(item, slot, sendUpdate);
                         }
                     }
 
@@ -1829,15 +1868,15 @@ namespace Intersect.Server.Entities
 
                     break;
                 case ItemHandling.UpTo:
-                    if (CanGiveItem(item)) // Can receive item under regular rules.
+                    if (CanGiveItem(item, slot)) // Can receive item under regular rules.
                     {
-                        GiveItem(item, sendUpdate);
+                        GiveItem(item, slot, sendUpdate);
                         return true;
                     }
                     else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
-                        GiveItem(item, sendUpdate);
+                        GiveItem(item, slot, sendUpdate);
                         return true;
                     }
 
@@ -1848,7 +1887,7 @@ namespace Intersect.Server.Entities
             }
 
             var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
-            return bankOverflow && bankInterface.TryDepositItem(item, -1, sendUpdate);
+            return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
 
 
@@ -1858,7 +1897,7 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="item"></param>
         /// <param name="sendUpdate"></param>
-        private void GiveItem(Item item, bool sendUpdate)
+        private void GiveItem(Item item, int destSlot, bool sendUpdate)
         {
 
             // Decide how we're going to handle this item.
@@ -1880,7 +1919,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
                     if (canAdd > toGive)
                     {
                         slot.Quantity += toGive;
@@ -1898,6 +1937,23 @@ namespace Intersect.Server.Entities
                 // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!
                 if (toGive > 0)
                 {
+                    // Are we trying to put the item into a specific slot? If so, put as much in as possible!
+                    if (destSlot != -1)
+                    {
+                        if (toGive > item.Descriptor.MaxInventoryStack)
+                        {
+                            Items[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxInventoryStack));
+                            updateSlots.Add(destSlot);
+                            toGive -= item.Descriptor.MaxInventoryStack;
+                        }
+                        else
+                        {
+                            Items[destSlot].Set(new Item(item.ItemId, toGive));
+                            updateSlots.Add(destSlot);
+                            toGive = 0;
+                        }
+                    }
+
                     var openSlots = FindOpenInventorySlots();
                     var total = toGive; // Copy this as we're going to be editing toGive.
                     for (var slot = 0; slot < Math.Ceiling((double)total / item.Descriptor.MaxInventoryStack); slot++)
@@ -1914,8 +1970,16 @@ namespace Intersect.Server.Entities
             }
             else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
             {
+                var toGive = item.Quantity;
+                if (destSlot != -1)
+                {
+                    Items[destSlot].Set(new Item(item.ItemId, 1));
+                    updateSlots.Add(destSlot);
+                    toGive -= 1;
+                }
+
                 var openSlots = FindOpenInventorySlots();
-                for (var slot = 0; slot < item.Quantity; slot++)
+                for (var slot = 0; slot < toGive; slot++)
                 {
                     openSlots[slot].Set(new Item(item.ItemId, 1));
                     updateSlots.Add(openSlots[slot].Slot);
@@ -1926,14 +1990,30 @@ namespace Intersect.Server.Entities
                 // If the item is not stackable, or the amount is below our stack cap just blindly hand it out.
                 if (!item.Descriptor.Stackable || item.Quantity < item.Descriptor.MaxInventoryStack)
                 {
-                    var newSlot = FindOpenInventorySlot();
-                    newSlot.Set(item);
-                    updateSlots.Add(newSlot.Slot);
+                    if (destSlot != -1)
+                    {
+                        Items[destSlot].Set(item);
+                        updateSlots.Add(destSlot);
+                    }
+                    else
+                    {
+                        var newSlot = FindOpenInventorySlot();
+                        newSlot.Set(item);
+                        updateSlots.Add(newSlot.Slot);
+                    }
                 }
                 // The item is above our stack cap.. Let's start handing them phat stacks out!
                 else
                 {
                     var toGive = item.Quantity;
+
+                    if (destSlot != -1)
+                    {
+                        Items[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxInventoryStack));
+                        updateSlots.Add(destSlot);
+                        toGive -= item.Descriptor.MaxInventoryStack;
+                    }
+
                     var openSlots = FindOpenInventorySlots();
                     for (var slot = 0; slot < Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack); slot++)
                     {
@@ -3825,7 +3905,7 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                if (!TryGiveItem(offer))
+                if (!TryGiveItem(offer, -1))
                 {
                     MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity, Id);
                     PacketSender.SendChatMsg(this, Strings.Trading.itemsdropped, ChatMessageType.Inventory, CustomColors.Alerts.Error);

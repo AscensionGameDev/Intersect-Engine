@@ -287,6 +287,34 @@ namespace Intersect.Client.Interface.Game.Bank
                             }
                         }
                     }
+                    else
+                    {
+                        var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
+                        if (invWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Me.Inventory.Length; i++)
+                            {
+                                if (invWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryWithdrawItem(mMySlot, bestIntersectIndex);
+                            }
+                        }
+                    }
 
                     mDragIcon.Dispose();
                 }

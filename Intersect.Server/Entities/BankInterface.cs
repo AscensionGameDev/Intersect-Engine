@@ -394,7 +394,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool TryDepositItem(Item item, int destSlot = -1, bool sendUpdate = true)
+        public bool TryDepositItem(Item item, bool sendUpdate = true)
         {
             //Permission Check
             if (mGuild != null)
@@ -424,9 +424,9 @@ namespace Intersect.Server.Entities
 
                 lock (mLock)
                 {
-                    if (CanStoreItem(item, destSlot))
+                    if (CanStoreItem(item))
                     {
-                        PutItem(item, destSlot, sendUpdate);
+                        PutItem(item, -1, sendUpdate);
                         return true;
                     }
                     else
@@ -448,7 +448,7 @@ namespace Intersect.Server.Entities
         /// Use TryDepositItem where possible!
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="destSlot"></param>
+        /// <param name="destSlot">Set to -1 to ignore</param>
         /// <param name="sendUpdate"></param>
         private void PutItem(Item item, int destSlot, bool sendUpdate)
         {
@@ -599,7 +599,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void WithdrawItem(int slot, int amount)
+        public void WithdrawItem(int slot, int amount, int invSlot = -1)
         {
             //Permission Check
             if (mGuild != null)
@@ -623,7 +623,6 @@ namespace Intersect.Server.Entities
             }
 
             var itemBase = bankSlotItem.Descriptor;
-            var inventorySlot = -1;
             if (itemBase == null)
             {
                 return;
@@ -645,7 +644,7 @@ namespace Intersect.Server.Entities
                         amount = 1;
                     }
 
-                    if (!mPlayer.CanGiveItem(itemBase.Id, amount))
+                    if (!mPlayer.CanGiveItem(itemBase.Id, amount, invSlot))
                     {
                         PacketSender.SendChatMsg(mPlayer, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                         return;
@@ -654,7 +653,7 @@ namespace Intersect.Server.Entities
                     var toTake = amount;
                     if (itemBase.IsStackable)
                     {
-                        mPlayer.TryGiveItem(itemBase.Id, amount, ItemHandling.Normal, false, true);
+                        mPlayer.TryGiveItem(itemBase.Id, amount, ItemHandling.Normal, false, invSlot, true);
 
                         // Go through our bank and take what we need!
                         foreach (var s in FindItemSlots(itemBase.Id))
@@ -679,7 +678,7 @@ namespace Intersect.Server.Entities
                     }
                     else
                     {
-                        mPlayer.TryGiveItem(mBank[slot]);
+                        mPlayer.TryGiveItem(mBank[slot], invSlot);
                         mBank[slot].Set(Item.None);
                         SendBankUpdate(slot);
                     }

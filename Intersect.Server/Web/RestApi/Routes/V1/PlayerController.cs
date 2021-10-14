@@ -671,7 +671,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, true))
+            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
             {
                 return Request.CreateErrorResponse(
                     HttpStatusCode.InternalServerError,

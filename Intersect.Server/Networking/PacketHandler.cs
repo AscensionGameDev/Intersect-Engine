@@ -1527,7 +1527,7 @@ namespace Intersect.Server.Networking
                 if (ItemBase.Get(item.Id) != null)
                 {
                     var tempItem = new Item(item.Id, item.Quantity);
-                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
+                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, -1, false);
                 }
             }
 
@@ -1624,7 +1624,7 @@ namespace Intersect.Server.Networking
                         tempMap.RemoveItem(mapItem);
 
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
@@ -1923,7 +1923,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity, packet.InvSlot);
         }
 
         //MoveBankItemPacket
