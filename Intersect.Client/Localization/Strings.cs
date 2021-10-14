@@ -974,6 +974,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString Withdraw = @"Withdraw {00}";
         }
 
+        public struct BagContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Withdraw {00}";
+        }
+
         public struct ItemDesc
         {
 
