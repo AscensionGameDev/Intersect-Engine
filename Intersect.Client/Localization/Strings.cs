@@ -986,6 +986,21 @@ namespace Intersect.Client.Localization
             public static LocalizedString Withdraw = @"Revoke {00}";
         }
 
+        public struct ChatContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PM = @"PM {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FriendInvite = @"Friend Invite {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PartyInvite = @"Party Invite {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildInvite = @"Guild Invite {00}";
+        }
+
         public struct ItemDesc
         {
 

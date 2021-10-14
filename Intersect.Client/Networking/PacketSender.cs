@@ -224,6 +224,11 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new PartyInvitePacket(targetId));
         }
 
+        public static void SendPartyInvite(string target)
+        {
+            Network.SendPacket(new PartyInvitePacket(target));
+        }
+
         public static void SendPartyKick(Guid targetId)
         {
             Network.SendPacket(new PartyKickPacket(targetId));

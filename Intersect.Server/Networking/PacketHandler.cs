@@ -1947,7 +1947,9 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var target = Player.FindOnline(packet.TargetId);
+            var target = packet.TargetId != Guid.Empty ? 
+                Player.FindOnline(packet.TargetId) : 
+                Player.FindOnline(packet.Target.Trim());
 
             if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.Party.InviteRange))
             {
