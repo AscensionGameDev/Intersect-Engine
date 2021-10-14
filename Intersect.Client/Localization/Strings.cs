@@ -906,19 +906,57 @@ namespace Intersect.Client.Localization
 
         public struct Inventory
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cooldown = "{00}s";
 
-            public static LocalizedString cooldown = "{00}s";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropItemTitle = @"Drop Item";
 
-            public static LocalizedString dropitem = @"Drop Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropItemPrompt = @"How many/much {00} do you want to drop?";
 
-            public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropPrompt = @"Do you wish to drop the item: {00}?";
 
-            public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EquippedSymbol = "E";
 
-            public static LocalizedString equippedicon = "E";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Inventory";
 
-            public static LocalizedString title = @"Inventory";
+        }
 
+        public struct ItemContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UseItemContextItem = @"Use {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OpenItemContextItem = @"Open {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EquipItemContextItem = @"Equip {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnequipItemContextItem = @"Unequip {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LearnItemContextItem = @"Learn {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropItemContextItem = @"Drop {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SellItemContextItem = @"Sell {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BankItemContextItem = @"Move {00} to Bank";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BagItemContextItem = @"Move {00} to Bag";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TradeItemContextItem = @"Move {00} to Trade";
         }
 
         public struct ItemDesc

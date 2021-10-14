@@ -79,7 +79,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
             mCooldownLabel.IsHidden = true;
@@ -93,26 +93,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.GameShop != null)
-            {
-                Globals.Me.TrySellItem(mMySlot);
-            }
-            else if (Globals.InBank)
-            {
-                Globals.Me.TryDepositItem(mMySlot);
-            }
-            else if (Globals.InBag)
-            {
-                Globals.Me.TryStoreBagItem(mMySlot, -1);
-            }
-            else if (Globals.InTrade)
-            {
-                Globals.Me.TryTradeItem(mMySlot);
-            }
-            else
-            {
-                Globals.Me.TryDropItem(mMySlot);
-            }
+            mInventoryWindow.OpenContextMenu(mMySlot);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -284,11 +265,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                         var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mMySlot) / 1000f;
                         if (secondsRemaining > 10f)
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                         }
                         else
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                 secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                             );
                         }

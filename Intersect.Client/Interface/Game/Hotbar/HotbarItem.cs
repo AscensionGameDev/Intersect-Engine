@@ -103,7 +103,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
             mCooldownLabel.IsHidden = true;
@@ -352,11 +352,11 @@ namespace Intersect.Client.Interface.Game.Hotbar
                             if (secondsRemaining > 10f)
                             {
                                 mCooldownLabel.Text =
-                                    Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                                    Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                             }
                             else
                             {
-                                mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                                mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                     secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                                 );
                             }

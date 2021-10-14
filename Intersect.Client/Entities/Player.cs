@@ -300,16 +300,16 @@ namespace Intersect.Client.Entities
                 if (Inventory[index].Quantity > 1)
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.YesNo, DropInputBoxOkay, null, index
                     );
                 }
@@ -345,7 +345,7 @@ namespace Intersect.Client.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !IsItemOnCooldown(index) &&
+            if (!IsItemOnCooldown(index) &&
                 index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
