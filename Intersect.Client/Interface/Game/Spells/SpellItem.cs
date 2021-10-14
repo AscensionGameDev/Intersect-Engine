@@ -75,7 +75,14 @@ namespace Intersect.Client.Interface.Game.Spells
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            mSpellWindow.OpenContextMenu(mYindex);
+            if (Globals.Database.EnableContextMenus)
+            {
+                mSpellWindow.OpenContextMenu(mYindex);
+            }
+            else
+            {
+                Globals.Me.TryForgetSpell(mYindex);
+            }   
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

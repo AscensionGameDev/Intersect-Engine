@@ -93,7 +93,33 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            mInventoryWindow.OpenContextMenu(mMySlot);
+            if (Globals.Database.EnableContextMenus)
+            {
+                mInventoryWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                if (Globals.GameShop != null)
+                {
+                    Globals.Me.TrySellItem(mMySlot);
+                }
+                else if (Globals.InBank)
+                {
+                    Globals.Me.TryDepositItem(mMySlot);
+                }
+                else if (Globals.InBag)
+                {
+                    Globals.Me.TryStoreBagItem(mMySlot, -1);
+                }
+                else if (Globals.InTrade)
+                {
+                    Globals.Me.TryTradeItem(mMySlot);
+                }
+                else
+                {
+                    Globals.Me.TryDropItem(mMySlot);
+                }
+            }
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
