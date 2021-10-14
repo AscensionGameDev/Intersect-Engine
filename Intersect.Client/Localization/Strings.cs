@@ -1001,6 +1001,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString GuildInvite = @"Guild Invite {00}";
         }
 
+        public struct ShopContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Buy = @"Buy {00}";
+        }
+
         public struct ItemDesc
         {
 

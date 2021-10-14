@@ -5,6 +5,8 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Localization;
+using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Shop
 {
@@ -23,6 +25,11 @@ namespace Intersect.Client.Interface.Game.Shop
         //Controls
         private WindowControl mShopWindow;
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mBuyContextItem;
+
         //Init
         public ShopWindow(Canvas gameCanvas)
         {
@@ -36,6 +43,44 @@ namespace Intersect.Client.Interface.Game.Shop
             mShopWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
             InitItemContainer();
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BagContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mBuyContextItem = mContextMenu.AddItem(Strings.ShopContextMenu.Buy);
+            mBuyContextItem.Clicked += MBuyContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        public void OpenContextMenu(int slot)
+        {
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
+
+            // No point showing a menu for blank space.
+            if (item == null)
+            {
+                return;
+            }
+
+            mBuyContextItem.SetText(Strings.ShopContextMenu.Buy.ToString(item.Name));
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = slot;
+
+            mContextMenu.IsHidden = false;
+            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+            mContextMenu.SizeToChildren();
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
+        }
+
+        private void MBuyContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int) sender.Parent.UserData;
+            Globals.Me.TryBuyItem(slot);
         }
 
         //Location

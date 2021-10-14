@@ -567,6 +567,35 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public void TryBuyItem(int slot)
+        {
+            //Confirm the purchase
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
+            if (item != null)
+            {
+                if (item.IsStackable)
+                {
+                    var iBox = new InputBox(
+                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
+                        InputBox.InputType.NumericInput, BuyItemInputBoxOkay, null, slot
+                    );
+                }
+                else
+                {
+                    PacketSender.SendBuyItem(slot, 1);
+                }
+            }
+        }
+
+        private void BuyItemInputBoxOkay(object sender, EventArgs e)
+        {
+            var value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
+            }
+        }
+
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)((InputBox)sender).Value;
