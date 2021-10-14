@@ -89,6 +89,19 @@ namespace Intersect.Server.Entities
         }
 
 
+        public bool IsSlotOpen(int slot)
+        {
+            if (slot >= 0 && slot < mMaxSlots)
+            {
+                if (mBank[slot].ItemId == Guid.Empty)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Retrieves a list of open bank slots for this instance.
         /// </summary>
@@ -233,6 +246,33 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
+        /// Checks whether or not the bank instance can store this item in a specific slot.
+        /// </summary>
+        /// <param name="item">The <see cref="Item"/> to check for.</param>
+        /// <param name="slot">The bank slot to check against.</param>
+        /// <returns>Returns whether or not the bank instance can store this item, if an invalid slot is provided it will instead check with <see cref="CanStoreItem(Item)"/></returns>
+        public bool CanStoreItem(Item item, int slot)
+        {
+            // Is this a valid item and slot?
+            if (slot >= 0 && slot < mMaxSlots)
+            {
+                // Is this slot empty?
+                if (IsSlotOpen(slot))
+                {
+                    // It is! Can we store the full quantity of this item though?
+                    return CanStoreItem(item);
+                }
+            }
+            else
+            {
+                // Not a valid slot, just treat it as a normal query.
+                return CanStoreItem(item);
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Find the amount of a specific item this bank instance has.
         /// </summary>
         /// <param name="itemId">The item Id to look for.</param>
@@ -266,7 +306,7 @@ namespace Intersect.Server.Entities
         /// <returns>Whether or not the item can be taken away from the bank in the requested quantity.</returns>
         public bool CanTakeItem(Guid itemId, int quantity) => FindItemQuantity(itemId) >= quantity;
 
-        public bool TryDepositItem(int slot, int amount, bool sendUpdate = true)
+        public bool TryDepositItem(int slot, int amount, int destSlot = -1, bool sendUpdate = true)
         {
             //Permission Check
             if (mGuild != null)
@@ -305,11 +345,11 @@ namespace Intersect.Server.Entities
                             amount = 1;
                         }
 
-                        if (CanStoreItem(new Item(itemBase.Id, amount)))
+                        if (CanStoreItem(new Item(itemBase.Id, amount), destSlot))
                         {
                             if (itemBase.IsStackable)
                             {
-                                PutItem(new Item(itemBase.Id, amount), sendUpdate);
+                                PutItem(new Item(itemBase.Id, amount), destSlot, sendUpdate);
                                 mPlayer.TryTakeItem(itemBase.Id, amount, ItemHandling.Normal, sendUpdate);
 
                                 if (mGuild != null)
@@ -321,7 +361,7 @@ namespace Intersect.Server.Entities
                             }
                             else
                             {
-                                PutItem(mPlayer.Items[slot], sendUpdate);
+                                PutItem(mPlayer.Items[slot], destSlot, sendUpdate);
 
                                 mPlayer.Items[slot].Set(Item.None);
                                 mPlayer.EquipmentProcessItemLoss(slot);
@@ -354,7 +394,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool TryDepositItem(Item item, bool sendUpdate = true)
+        public bool TryDepositItem(Item item, int destSlot = -1, bool sendUpdate = true)
         {
             //Permission Check
             if (mGuild != null)
@@ -384,9 +424,9 @@ namespace Intersect.Server.Entities
 
                 lock (mLock)
                 {
-                    if (CanStoreItem(item))
+                    if (CanStoreItem(item, destSlot))
                     {
-                        PutItem(item, sendUpdate);
+                        PutItem(item, destSlot, sendUpdate);
                         return true;
                     }
                     else
@@ -408,13 +448,14 @@ namespace Intersect.Server.Entities
         /// Use TryDepositItem where possible!
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="destSlot"></param>
         /// <param name="sendUpdate"></param>
-        private void PutItem(Item item, bool sendUpdate)
+        private void PutItem(Item item, int destSlot, bool sendUpdate)
         {
             // Decide how we're going to handle this item.
             var existingSlots = FindItemSlots(item.Descriptor.Id);
             var updateSlots = new List<int>();
-            if (item.Descriptor.Stackable && existingSlots.Count > 0) // Stackable, but already exists in the inventory.
+            if (item.Descriptor.Stackable && existingSlots.Count > 0) // Stackable, but already exists in the bank.
             {
                 // So this gets complicated.. First let's hand out the quantity we can hand out before we hit a stack limit.
                 var toGive = item.Quantity;
@@ -449,6 +490,24 @@ namespace Intersect.Server.Entities
                 // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!
                 if (toGive > 0)
                 {
+                    // Are we trying to put the item into a specific slot? If so, put as much in as possible!
+                    if (destSlot != -1)
+                    {
+                        if (toGive > item.Descriptor.MaxBankStack)
+                        {
+                            mBank[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxBankStack));
+                            updateSlots.Add(destSlot);
+                            toGive -= item.Descriptor.MaxBankStack;
+                        }
+                        else
+                        {
+                            
+                            mBank[destSlot].Set(new Item(item.ItemId, toGive));
+                            updateSlots.Add(destSlot);
+                            toGive = 0;
+                        }
+                    }
+
                     var openSlots = FindOpenSlots();
                     var total = toGive; // Copy this as we're going to be editing toGive.
                     for (var slot = 0; slot < Math.Ceiling((double)total / item.Descriptor.MaxBankStack); slot++)
@@ -465,8 +524,16 @@ namespace Intersect.Server.Entities
             }
             else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
             {
+                var toGive = item.Quantity;
+                if (destSlot != -1)
+                {
+                    mBank[destSlot].Set(new Item(item.ItemId, 1));
+                    updateSlots.Add(destSlot);
+                    toGive -= 1;
+                }
+
                 var openSlots = FindOpenSlots();
-                for (var slot = 0; slot < item.Quantity; slot++)
+                for (var slot = 0; slot < toGive; slot++)
                 {
                     mBank[openSlots[slot]].Set(new Item(item.ItemId, 1));
                     updateSlots.Add(openSlots[slot]);
@@ -477,14 +544,31 @@ namespace Intersect.Server.Entities
                 // If the item is not stackable, or the amount is below our stack cap just blindly hand it out.
                 if (!item.Descriptor.Stackable || item.Quantity < item.Descriptor.MaxBankStack)
                 {
-                    var newSlot = FindOpenSlot();
-                    mBank[newSlot].Set(item);
-                    updateSlots.Add(newSlot);
+                    if (destSlot != -1)
+                    {
+                        mBank[destSlot].Set(item);
+                        updateSlots.Add(destSlot);
+                    }
+                    else
+                    {
+                        var newSlot = FindOpenSlot();
+                        mBank[newSlot].Set(item);
+                        updateSlots.Add(newSlot);
+                    }
+                    
                 }
                 // The item is above our stack cap.. Let's start handing them phat stacks out!
                 else
                 {
                     var toGive = item.Quantity;
+
+                    if (destSlot != -1)
+                    {
+                        mBank[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxBankStack));
+                        updateSlots.Add(destSlot);
+                        toGive -= item.Descriptor.MaxBankStack;
+                    }
+
                     var openSlots = FindOpenSlots();
                     for (var slot = 0; slot < Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack); slot++)
                     {

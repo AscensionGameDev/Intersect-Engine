@@ -1848,7 +1848,7 @@ namespace Intersect.Server.Entities
             }
 
             var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
-            return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
+            return bankOverflow && bankInterface.TryDepositItem(item, -1, sendUpdate);
         }
 
 

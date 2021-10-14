@@ -1911,7 +1911,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity, packet.BankSlot);
         }
 
         //WithdrawItemPacket

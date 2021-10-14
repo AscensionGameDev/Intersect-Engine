@@ -89,7 +89,26 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryUseItem(mMySlot);
+            if (Globals.GameShop != null)
+            {
+                Globals.Me.TrySellItem(mMySlot);
+            }
+            else if (Globals.InBank)
+            {
+                Globals.Me.TryDepositItem(mMySlot);
+            }
+            else if (Globals.InBag)
+            {
+                Globals.Me.TryStoreBagItem(mMySlot, -1);
+            }
+            else if (Globals.InTrade)
+            {
+                Globals.Me.TryTradeItem(mMySlot);
+            }
+            else
+            {
+                Globals.Me.TryUseItem(mMySlot);
+            }
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -448,7 +467,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Globals.InBag)
                     {
-                        var bagWindow = Interface.GameUi.GetBag();
+                        var bagWindow = Interface.GameUi.GetBagWindow();
                         if (bagWindow.RenderBounds().IntersectsWith(dragRect))
                         {
                             for (var i = 0; i < Globals.Bag.Length; i++)
@@ -471,6 +490,34 @@ namespace Intersect.Client.Interface.Game.Inventory
                             if (bestIntersectIndex > -1)
                             {
                                 Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                            }
+                        }
+                    }
+                    else if (Globals.InBank)
+                    {
+                        var bankWindow = Interface.GameUi.GetBankWindow();
+                        if (bankWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Bank.Length; i++)
+                            {
+                                if (bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryDepositItem(mMySlot, bestIntersectIndex);
                             }
                         }
                     }

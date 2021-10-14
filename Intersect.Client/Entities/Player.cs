@@ -582,7 +582,7 @@ namespace Intersect.Client.Entities
         }
 
         //bank
-        public void TryDepositItem(int index)
+        public void TryDepositItem(int index, int bankSlot = -1)
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
@@ -599,15 +599,17 @@ namespace Intersect.Client.Entities
 
                 if (Inventory[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, bankSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendDepositItem(index, 1);
+                    PacketSender.SendDepositItem(index, 1, bankSlot);
                 }
             }
         }
@@ -617,7 +619,9 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+
+                PacketSender.SendDepositItem(userData[0], value, userData[1]);
             }
         }
 
