@@ -75,6 +75,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
@@ -84,6 +85,11 @@ namespace Intersect.Client.Interface.Game.Inventory
             mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
+        }
+
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.Me.TryUseItem(mMySlot);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -330,7 +336,6 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseItem(mMySlot);
                             mClickTime = 0;
                         }
                     }
