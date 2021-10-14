@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -76,7 +77,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 return;
             }
 
-            if (Globals.Database.EnableContextMenus)
+            if (ClientConfiguration.Instance.EnableContextMenus)
             {
                 mTradeWindow.OpenContextMenu(mMySide, mMySlot);
             }

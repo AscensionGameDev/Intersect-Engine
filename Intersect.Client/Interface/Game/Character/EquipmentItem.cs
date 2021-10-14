@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Character
@@ -51,7 +52,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Database.EnableContextMenus)
+            if (ClientConfiguration.Instance.EnableContextMenus)
             {
                 var window = Interface.GameUi.GameMenu.GetInventoryWindow();
                 if (window != null)

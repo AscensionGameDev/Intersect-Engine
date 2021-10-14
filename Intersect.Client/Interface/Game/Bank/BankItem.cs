@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -71,7 +72,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Database.EnableContextMenus)
+            if (ClientConfiguration.Instance.EnableContextMenus)
             {
                 mBankWindow.OpenContextMenu(mMySlot);
             }

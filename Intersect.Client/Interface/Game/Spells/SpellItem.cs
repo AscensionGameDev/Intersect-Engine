@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -81,7 +82,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Database.EnableContextMenus)
+            if (ClientConfiguration.Instance.EnableContextMenus)
             {
                 mSpellWindow.OpenContextMenu(mYindex);
             }

@@ -23,9 +23,6 @@ namespace Intersect.Client.Framework.Database
 
         public bool StickyTarget { get; set; }
 
-        // TODO: Expose through client options
-        public bool EnableContextMenus { get; set; }
-
         //Saving password, other stuff we don't want in the games directory
         public abstract void SavePreference(string key, object value);
 
@@ -53,7 +50,6 @@ namespace Intersect.Client.Framework.Database
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
             TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
             StickyTarget = LoadPreference("StickyTarget", true);
-            EnableContextMenus = LoadPreference("EnableContextMenus", true);
         }
 
         public virtual void SavePreferences()
@@ -66,7 +62,6 @@ namespace Intersect.Client.Framework.Database
             SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
             SavePreference("TargetAccountDirection", TargetAccountDirection.ToString());
             SavePreference("StickyTarget", StickyTarget.ToString());
-            SavePreference("EnableContextMenus", EnableContextMenus.ToString());
         }
 
         public abstract bool LoadConfig();

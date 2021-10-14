@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -68,7 +69,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Database.EnableContextMenus)
+            if (ClientConfiguration.Instance.EnableContextMenus)
             {
                 mBagWindow.OpenContextMenu(mMySlot);
             }

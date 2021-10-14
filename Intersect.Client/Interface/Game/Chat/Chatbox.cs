@@ -406,7 +406,7 @@ namespace Intersect.Client.Interface.Game.Chat
 
             if (!string.IsNullOrWhiteSpace(target) && target != Globals.Me.Name)
             {
-                if (Globals.Database.EnableContextMenus)
+                if (ClientConfiguration.Instance.EnableContextMenus)
                 {
                     OpenContextMenu(target);
                 } 
