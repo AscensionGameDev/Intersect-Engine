@@ -703,7 +703,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData
+                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
                     );
                 }
                 else
