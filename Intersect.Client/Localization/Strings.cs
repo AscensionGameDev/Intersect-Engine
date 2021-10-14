@@ -956,7 +956,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Bag = @"Bag {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Trade = @"Trade {00}";
+            public static LocalizedString Trade = @"Offer {00}";
         }
 
         public struct SpellContextMenu
@@ -978,6 +978,12 @@ namespace Intersect.Client.Localization
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Withdraw = @"Withdraw {00}";
+        }
+
+        public struct TradeContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Revoke {00}";
         }
 
         public struct ItemDesc

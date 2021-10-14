@@ -69,7 +69,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 return;
             }
 
-            mWithdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
+            mWithdrawContextItem.SetText(Strings.BagContextMenu.Withdraw.ToString(item.Name));
 
             // Set our spell slot as userdata for future reference.
             mContextMenu.UserData = slot;
