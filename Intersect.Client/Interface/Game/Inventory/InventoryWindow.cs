@@ -52,11 +52,11 @@ namespace Intersect.Client.Interface.Game.Inventory
             mContextMenu.IconMarginDisabled = true;
             //TODO: Is this a memory leak?
             mContextMenu.Children.Clear();
-            mUseItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.UseItemContextItem);
+            mUseItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Use);
             mUseItemContextItem.Clicked += MUseItemContextItem_Clicked;
-            mDropItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.DropItemContextItem);
+            mDropItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Drop);
             mDropItemContextItem.Clicked += MDropItemContextItem_Clicked;
-            mActionItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.BankItemContextItem);
+            mActionItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Bank);
             mActionItemContextItem.Clicked += MActionItemContextItem_Clicked;
             mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
@@ -83,18 +83,18 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 case Enums.ItemTypes.Spell:
                     mContextMenu.AddChild(mUseItemContextItem);
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.LearnItemContextItem.ToString(item.Name));
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Learn.ToString(item.Name));
                     break;
 
                 case Enums.ItemTypes.Event:
                 case Enums.ItemTypes.Consumable:
                     mContextMenu.AddChild(mUseItemContextItem);
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.UseItemContextItem.ToString(item.Name));
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Use.ToString(item.Name));
                     break;
 
                 case Enums.ItemTypes.Bag:
                     mContextMenu.AddChild(mUseItemContextItem);
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.OpenItemContextItem.ToString(item.Name));
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Open.ToString(item.Name));
                     break;
 
                 case Enums.ItemTypes.Equipment:
@@ -102,11 +102,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                     // Show the correct equip/unequip prompts.
                     if (Globals.Me.MyEquipment.Contains(slot))
                     {
-                        mUseItemContextItem.SetText(Strings.ItemContextMenu.UnequipItemContextItem.ToString(item.Name));
+                        mUseItemContextItem.SetText(Strings.ItemContextMenu.Unequip.ToString(item.Name));
                     }
                     else
                     {
-                        mUseItemContextItem.SetText(Strings.ItemContextMenu.EquipItemContextItem.ToString(item.Name));
+                        mUseItemContextItem.SetText(Strings.ItemContextMenu.Equip.ToString(item.Name));
                     }
                     
                     break;
@@ -116,29 +116,29 @@ namespace Intersect.Client.Interface.Game.Inventory
             if (Globals.InBag && item.CanBag)
             {
                 mContextMenu.AddChild(mActionItemContextItem);
-                mActionItemContextItem.SetText(Strings.ItemContextMenu.BagItemContextItem.ToString(item.Name));
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Bag.ToString(item.Name));
             }
             else if (Globals.InBank && (item.CanBank || item.CanGuildBank))
             {
                 mContextMenu.AddChild(mActionItemContextItem);
-                mActionItemContextItem.SetText(Strings.ItemContextMenu.BankItemContextItem.ToString(item.Name));
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Bank.ToString(item.Name));
             }
             else if (Globals.InTrade && item.CanTrade)
             {
                 mContextMenu.AddChild(mActionItemContextItem);
-                mActionItemContextItem.SetText(Strings.ItemContextMenu.TradeItemContextItem.ToString(item.Name));
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Trade.ToString(item.Name));
             }
             else if (Globals.GameShop != null && item.CanSell)
             {
                 mContextMenu.AddChild(mActionItemContextItem);
-                mActionItemContextItem.SetText(Strings.ItemContextMenu.SellItemContextItem.ToString(item.Name));
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Sell.ToString(item.Name));
             }
 
             // Can we drop this item? if so show the user!
             if (item.CanDrop)
             {
                 mContextMenu.AddChild(mDropItemContextItem);
-                mDropItemContextItem.SetText(Strings.ItemContextMenu.DropItemContextItem.ToString(item.Name));
+                mDropItemContextItem.SetText(Strings.ItemContextMenu.Drop.ToString(item.Name));
             }
 
             // Set our Inventory slot as userdata for future reference.

@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game.Spells
 {
@@ -32,6 +33,13 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public int Y;
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mUseSpellContextItem;
+
+        private MenuItem mForgetSpellContextItem;
+
         //Init
         public SpellsWindow(Canvas gameCanvas)
         {
@@ -41,6 +49,65 @@ namespace Intersect.Client.Interface.Game.Spells
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
             mItemContainer.EnableScroll(false, true);
             mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "SpellContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mUseSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Cast);
+            mUseSpellContextItem.Clicked += MUseSpellContextItem_Clicked;
+            mForgetSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Forget);
+            mForgetSpellContextItem.Clicked += MForgetSpellContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        public void OpenContextMenu(int slot)
+        {
+            // Clear out the old options.
+            mContextMenu.RemoveChild(mUseSpellContextItem, false);
+            mContextMenu.RemoveChild(mForgetSpellContextItem, false);
+            mContextMenu.Children.Clear();
+
+            var spell = SpellBase.Get(Globals.Me.Spells[slot].Id);
+
+            // No point showing a menu for blank space.
+            if (spell == null)
+            {
+                return;
+            }
+
+            // Add our use spell option.
+            mContextMenu.AddChild(mUseSpellContextItem);
+            mUseSpellContextItem.SetText(Strings.SpellContextMenu.Cast.ToString(spell.Name));
+
+            // If this spell is not bound, allow users to forget it!
+            if (!spell.Bound)
+            {
+                mContextMenu.AddChild(mForgetSpellContextItem);
+                mForgetSpellContextItem.SetText(Strings.SpellContextMenu.Forget.ToString(spell.Name));
+            }
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = slot;
+
+            mContextMenu.IsHidden = false;
+            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
+        }
+
+        private void MForgetSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            Globals.Me.TryForgetSpell(slot);
+        }
+
+        private void MUseSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            Globals.Me.TryUseSpell(slot);
         }
 
         //Methods
