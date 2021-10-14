@@ -92,11 +92,8 @@ namespace Intersect.Client.Interface.Game.Spells
             // Set our spell slot as userdata for future reference.
             mContextMenu.UserData = slot;
 
-            mContextMenu.IsHidden = false;
-            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
             mContextMenu.SizeToChildren();
             mContextMenu.Open(Framework.Gwen.Pos.None);
-            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
         }
 
         private void MForgetSpellContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)

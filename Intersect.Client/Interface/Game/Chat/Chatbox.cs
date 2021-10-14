@@ -225,11 +225,8 @@ namespace Intersect.Client.Interface.Game.Chat
             // Set our spell slot as userdata for future reference.
             mContextMenu.UserData = name;
 
-            mContextMenu.IsHidden = false;
-            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
             mContextMenu.SizeToChildren();
             mContextMenu.Open(Framework.Gwen.Pos.None);
-            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
         }
 
         private void MGuildInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)

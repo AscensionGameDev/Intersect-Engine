@@ -147,11 +147,8 @@ namespace Intersect.Client.Interface.Game.Inventory
             // Display our menu.. If we have anything to display.
             if (mContextMenu.Children.Count > 0)
             {
-                mContextMenu.IsHidden = false;
-                mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
                 mContextMenu.SizeToChildren();
                 mContextMenu.Open(Framework.Gwen.Pos.None);
-                mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
             }
         }
 
