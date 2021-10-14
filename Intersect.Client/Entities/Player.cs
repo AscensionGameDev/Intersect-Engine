@@ -641,7 +641,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index, Globals.Bank[index].Quantity
                     );
                 }
                 else
