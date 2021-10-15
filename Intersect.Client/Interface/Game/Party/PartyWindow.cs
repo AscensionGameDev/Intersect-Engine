@@ -30,9 +30,6 @@ namespace Intersect.Client.Interface.Game
 
         private List<PartyMemberRow> mMembers;
 
-        
-        private int mPrePartyCount = 0;
-
         public PartyWindow(Canvas gameCanvas)
         {
             mCanvas = gameCanvas;
@@ -59,6 +56,8 @@ namespace Intersect.Client.Interface.Game
             mLeaveButton.Clicked += MLeaveButton_Clicked;
 
             mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+            // TODO: Add context menu Needs https://github.com/AscensionGameDev/Intersect-Engine/pull/959
         }
 
         private void GenerateMemberList()
@@ -88,7 +87,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (Globals.Me.IsPartyLeader)
             {
-                // TODO: Add invite option
+                // TODO: Add invite option, requires https://github.com/AscensionGameDev/Intersect-Engine/pull/959
             }
         }
 

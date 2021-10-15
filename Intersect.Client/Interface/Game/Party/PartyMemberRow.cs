@@ -133,6 +133,8 @@ namespace Intersect.Client.Interface.Game
                     mKickButton.Hide();
                 }
             }
+
+            // TODO: Show/hide kick button based on context menu enabled. Needs https://github.com/AscensionGameDev/Intersect-Engine/pull/959
         }
 
         private void UpdateName()
