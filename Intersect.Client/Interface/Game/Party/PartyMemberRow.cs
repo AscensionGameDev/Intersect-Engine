@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Party;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -47,7 +48,7 @@ namespace Intersect.Client.Interface.Game
 
         private Base mParent;
 
-        private GameRenderTexture mCurrentTex;
+        private Dictionary<Guid, SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
 
         public int Index { get; private set; }
 
@@ -114,6 +115,7 @@ namespace Intersect.Client.Interface.Game
             UpdateName();
             UpdateSprite();
             UpdateVitalBars();
+            UpdateStatusDisplay();
 
             // Set up leader and kick buttons.. Index 0 is always party leader!
             if (Index == 0)
@@ -135,6 +137,99 @@ namespace Intersect.Client.Interface.Game
             }
 
             // TODO: Show/hide kick button based on context menu enabled. Needs https://github.com/AscensionGameDev/Intersect-Engine/pull/959
+
+            
+
+
+        }
+
+        private void UpdateStatusDisplay()
+        {
+            var entity = GetEntity();
+            if (entity != null)
+            {
+                UpdateSpellStatus();
+                foreach (var itm in mActiveStatuses)
+                {
+                    itm.Value.Update();
+                }
+            }
+            else
+            {
+                foreach(var itm in mActiveStatuses.ToArray())
+                {
+                    RemoveStatus(itm.Key);
+                }
+            }
+        }
+
+        private void RemoveStatus(Guid status)
+        {
+            var s = mActiveStatuses[status];
+            s.Pnl.Texture = null;
+            s.Container.Hide();
+            s.Container.Texture = null;
+            mStatusContainer.RemoveChild(s.Container, true);
+            mActiveStatuses.Remove(status);
+        }
+
+        private void UpdateSpellStatus()
+        {
+            var entity = GetEntity();
+            if (entity == null)
+            {
+                return;
+            }
+
+            //Remove 'Dead' Statuses
+            var statuses = mActiveStatuses.Keys.ToArray();
+            foreach (var status in statuses)
+            {
+                if (!entity.StatusActive(status))
+                {
+                    RemoveStatus(status);
+                }
+                else
+                {
+                    mActiveStatuses[status].UpdateStatus(entity.GetStatus(status) as Status);
+                }
+            }
+
+            //Add all of the spell status effects
+            for (var i = 0; i < entity.Status.Count; i++)
+            {
+                var id = entity.Status[i].SpellId;
+                SpellStatus itm = null;
+                if (!mActiveStatuses.ContainsKey(id))
+                {
+                    itm = new SpellStatus(mStatusContainer, entity.Status[i] as Status);
+                    itm.Container = new ImagePanel(mStatusContainer, "PartyStatusIcon");
+                    itm.Setup();
+
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    itm.Container.Name = "";
+                    mActiveStatuses.Add(id, itm);
+                }
+                else
+                {
+                    itm = mActiveStatuses[id];
+                }
+
+                var xPadding = itm.Container.Margin.Left + itm.Container.Margin.Right;
+                var yPadding = itm.Container.Margin.Top + itm.Container.Margin.Bottom;
+
+                itm.Container.SetPosition(
+                    i %
+                    (mStatusContainer.Width /
+                     Math.Max(1, mStatusContainer.Width / (itm.Container.Width + xPadding))) *
+                    (itm.Container.Width + xPadding) +
+                    xPadding,
+                    i /
+                    Math.Max(1, mStatusContainer.Width / (itm.Container.Width + xPadding)) *
+                    (itm.Container.Height + yPadding) +
+                    yPadding
+                );
+            }
         }
 
         private void UpdateName()
