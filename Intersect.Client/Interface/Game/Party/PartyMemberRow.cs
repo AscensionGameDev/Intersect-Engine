@@ -147,7 +147,7 @@ namespace Intersect.Client.Interface.Game
             var entity = GetEntity();
             if (entity != null)
             {
-                // TODO: Add sprite renderer
+                // TODO: Add sprite renderer. Requires https://github.com/AscensionGameDev/Intersect-Engine/pull/952
             }
             else
             {
