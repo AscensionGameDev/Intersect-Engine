@@ -45,7 +45,7 @@ namespace Intersect.Client.Interface.Game.Shop
             InitItemContainer();
 
             // Generate our context menu with basic options.
-            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BagContextMenu");
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "ShopContextMenu");
             mContextMenu.IsHidden = true;
             mContextMenu.IconMarginDisabled = true;
             //TODO: Is this a memory leak?
