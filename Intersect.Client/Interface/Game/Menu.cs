@@ -260,7 +260,7 @@ namespace Intersect.Client.Interface.Game
 
         public void TogglePartyWindow()
         {
-            if (mPartyWindow.IsVisible())
+            if (mPartyWindow.IsVisible)
             {
                 mPartyWindow.Hide();
             }
@@ -343,7 +343,7 @@ namespace Intersect.Client.Interface.Game
                 windowsOpen = true;
             }
 
-            if (mPartyWindow.IsVisible())
+            if (mPartyWindow.IsVisible)
             {
                 windowsOpen = true;
             }

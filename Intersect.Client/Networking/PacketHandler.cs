@@ -1709,7 +1709,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, PartyInvitePacket packet)
         {
             var iBox = new InputBox(
-                Strings.Parties.partyinvite, Strings.Parties.inviteprompt.ToString(packet.LeaderName), true,
+                Strings.Parties.InviteTitle, Strings.Parties.InvitePrompt.ToString(packet.LeaderName), true,
                 InputBox.InputType.YesNo, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, packet.LeaderId
             );
         }

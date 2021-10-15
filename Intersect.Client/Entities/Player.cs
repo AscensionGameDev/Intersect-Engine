@@ -179,6 +179,8 @@ namespace Intersect.Client.Entities
             return Party.Count > 0;
         }
 
+        public bool IsPartyLeader => IsInParty() && Party[0].Id == Id;
+
         public bool IsInMyParty(IPlayer player) => IsInMyParty(player.Id);
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);

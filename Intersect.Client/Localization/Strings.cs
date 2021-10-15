@@ -1274,35 +1274,27 @@ namespace Intersect.Client.Localization
 
         public struct Parties
         {
-            public static LocalizedString infight = @"You are currently fighting!";
+            public static LocalizedString InFight = @"You are currently fighting!";
 
-            public static LocalizedString inviteprompt = @"{00} has invited you to their party. Do you accept?";
+            public static LocalizedString InviteTitle = @"Party Invite";
 
-            public static LocalizedString kick = @"Kick {00}";
+            public static LocalizedString InvitePrompt = @"{00} has invited you to their party. Do you accept?";
 
-            public static LocalizedString kicklbl = @"Kick";
+            public static LocalizedString Kick = @"Kick {00}";
 
-            public static LocalizedString leader = @"Leader";
+            public static LocalizedString KickButton = @"Kick";
 
-            public static LocalizedString leadertip = @"Party Leader";
+            public static LocalizedString LeaveButton = @"Leave";
 
-            public static LocalizedString leave = @"Leave Party";
+            public static LocalizedString Name = @"{00} - Lv. {01}";
 
-            public static LocalizedString leavetip = @"Leave Tip";
+            public static LocalizedString InviteButton = @"Invite";
 
-            public static LocalizedString name = @"{00} - Lv. {01}";
+            public static LocalizedString Title = @"Party";
 
-            public static LocalizedString partyinvite = @"Party Invite";
+            public static LocalizedString Health = @"{00} / {01}";
 
-            public static LocalizedString title = @"Party";
-
-            public static LocalizedString vital0 = @"HP:";
-
-            public static LocalizedString vital0val = @"{00} / {01}";
-
-            public static LocalizedString vital1 = @"MP:";
-
-            public static LocalizedString vital1val = @"{00} / {01}";
+            public static LocalizedString Mana = @"{00} / {01}";
 
         }
 
