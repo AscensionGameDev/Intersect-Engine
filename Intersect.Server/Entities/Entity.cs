@@ -1699,7 +1699,8 @@ namespace Intersect.Server.Entities
         )
         {
             var damagingAttack = baseDamage > 0;
-
+            var secondaryDamagingAttack = secondaryDamage > 0;
+            
             if (enemy == null)
             {
                 return;
@@ -1805,7 +1806,7 @@ namespace Intersect.Server.Entities
                     secondaryDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
                 );
 
-                if (secondaryDamage < 0 && damagingAttack)
+                if (secondaryDamage < 0 && secondaryDamagingAttack)
                 {
                     secondaryDamage = 0;
                 }
