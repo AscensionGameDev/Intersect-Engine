@@ -112,10 +112,11 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
+            var entity = GetEntity();
             UpdateName();
-            UpdateSprite();
-            UpdateVitalBars();
-            UpdateStatusDisplay();
+            UpdateSprite(entity);
+            UpdateVitalBars(entity);
+            UpdateStatusDisplay(entity);
 
             // Set up leader and kick buttons.. Index 0 is always party leader!
             if (Index == 0)
@@ -143,12 +144,11 @@ namespace Intersect.Client.Interface.Game
 
         }
 
-        private void UpdateStatusDisplay()
+        private void UpdateStatusDisplay(Entity entity)
         {
-            var entity = GetEntity();
             if (entity != null)
             {
-                UpdateSpellStatus();
+                UpdateSpellStatus(entity);
                 foreach (var itm in mActiveStatuses)
                 {
                     itm.Value.Update();
@@ -173,9 +173,8 @@ namespace Intersect.Client.Interface.Game
             mActiveStatuses.Remove(status);
         }
 
-        private void UpdateSpellStatus()
+        private void UpdateSpellStatus(Entity entity)
         {
-            var entity = GetEntity();
             if (entity == null)
             {
                 return;
@@ -237,9 +236,8 @@ namespace Intersect.Client.Interface.Game
             mNameLabel.SetText(Strings.Parties.Name.ToString(Globals.Me.Party[Index].Name, Globals.Me.Party[Index].Level));
         }
 
-        private void UpdateSprite()
+        private void UpdateSprite(Entity entity)
         {
-            var entity = GetEntity();
             if (entity != null)
             {
                 // TODO: Add sprite renderer. Requires https://github.com/AscensionGameDev/Intersect-Engine/pull/952
@@ -250,7 +248,7 @@ namespace Intersect.Client.Interface.Game
             }
         }
 
-        private void UpdateVitalBars()
+        private void UpdateVitalBars(Entity entity)
         {
             var health = Globals.Me.Party[Index].Vital[(int) Vitals.Health];
             var maxHealth = Globals.Me.Party[Index].MaxVital[(int) Vitals.Health];
@@ -266,7 +264,6 @@ namespace Intersect.Client.Interface.Game
             mMana.SetSize(manaSize, mManaContainer.Height);
             mManaLabel.SetText(Strings.Parties.Mana.ToString(mana, maxMana));
 
-            var entity = GetEntity();
             if (entity != null)
             {
                 var shield = entity.GetShieldSize();
