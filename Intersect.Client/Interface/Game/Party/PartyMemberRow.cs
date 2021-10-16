@@ -20,6 +20,8 @@ namespace Intersect.Client.Interface.Game
     {
         private ImagePanel mMemberContainer;
 
+        private ImagePanel mTarget;
+
         private ImagePanel mSpriteContainer;
 
         private ImagePanel mSprite;
@@ -63,6 +65,7 @@ namespace Intersect.Client.Interface.Game
         private void GenerateControls()
         {
             mMemberContainer = new ImagePanel(mParent, "PartyMember");
+            mTarget = new ImagePanel(mMemberContainer, "TargetDisplay");
             mSpriteContainer = new ImagePanel(mMemberContainer, "SpriteContainer");
             mSprite = new ImagePanel(mSpriteContainer, "Sprite");
             mNameLabel = new Label(mMemberContainer, "Name");
@@ -116,6 +119,7 @@ namespace Intersect.Client.Interface.Game
             UpdateName();
             UpdateSprite(entity);
             UpdateVitalBars(entity);
+            UpdateTargetDisplay(entity);
             UpdateStatusDisplay(entity);
 
             // Set up leader and kick buttons.. Index 0 is always party leader!
@@ -138,10 +142,18 @@ namespace Intersect.Client.Interface.Game
             }
 
             // TODO: Show/hide kick button based on context menu enabled. Needs https://github.com/AscensionGameDev/Intersect-Engine/pull/959
+        }
 
-            
-
-
+        private void UpdateTargetDisplay(Entity entity)
+        {
+            if (entity != null && Globals.Me.TargetIndex == entity.Id)
+            {
+                mTarget.Show();
+            }
+            else
+            {
+                mTarget.Hide();
+            }
         }
 
         private void UpdateStatusDisplay(Entity entity)
