@@ -838,7 +838,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     ProcessAlignments();
                 }
 
-                if (cacheUsed)
+                if (obj == null || cacheUsed)
                 {
                     saveOutput = false;
                 }
