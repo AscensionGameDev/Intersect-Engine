@@ -24,8 +24,6 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly EscapeMenu mEscapeMenu;
 
-        private bool mOpenedOnKeyPressed;
-
         // Settings Window.
         private readonly Label mSettingsHeader;
 
@@ -102,6 +100,9 @@ namespace Intersect.Client.Interface.Shared
         private int mKeyEdit = -1;
 
         private readonly Dictionary<Control, Button[]> mKeybindingBtns = new Dictionary<Control, Button[]>();
+
+        // Open settings
+        private bool mReturnToMenu;
 
         // Initialize.
         public SettingsWindow(Canvas parent, MainMenu mainMenu, EscapeMenu escapeMenu)
@@ -489,9 +490,10 @@ namespace Intersect.Client.Interface.Shared
             }
         }
 
-        public void Show()
+        public void Show(bool returnToMenu = false)
         {
-            if (mMainMenu == null)
+            // Take over all input when we're in-game.
+            if (Globals.GameState == GameStates.InGame)
             {
                 mSettingsPanel.MakeModal(true);
             }
@@ -567,32 +569,40 @@ namespace Intersect.Client.Interface.Shared
             mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int) mSoundSlider.Value);
 
             // Settings Window is not hidden anymore.
-            mSettingsPanel.IsHidden = false;
+            mSettingsPanel.Show();
             
-            // We normally show up the Settings Window from EscapeMenu and MainMenu.
-            mOpenedOnKeyPressed = false;
-
             // Load every GUI element to their default state when showing up the settings window (pressed tabs, containers, etc.)
             LoadSettingsWindow();
-        }
 
-        public void ShowOnKeyPressed()
-        {
-            Show();
-            // Let's change what the cancel and apply buttons do when accessing the Settings Window by pressing a configured key.
-            mOpenedOnKeyPressed = true;
+            // Set up whether we're supposed to return to the previous menu.
+            mReturnToMenu = returnToMenu;
         }
 
         public bool IsVisible() => !mSettingsPanel.IsHidden;
 
         public void Hide()
         {
-            if (mMainMenu == null)
-            {
-                mSettingsPanel.RemoveModal();
-            }
+            // Hide the current window.
+            mSettingsPanel.Hide();
+            mSettingsPanel.RemoveModal();
 
-            mSettingsPanel.IsHidden = true;
+            // Return to our previous menus (or not) depending on gamestate and the method we'd been opened.
+            if (mReturnToMenu)
+            {
+                switch (Globals.GameState)
+                {
+                    case GameStates.Menu:
+                        mMainMenu?.Show();
+                        break;
+
+                    case GameStates.InGame:
+                        mEscapeMenu?.Show();
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }    
         }
 
         // Input Handlers
@@ -706,25 +716,8 @@ namespace Intersect.Client.Interface.Shared
                 Graphics.Renderer.Init();
             }
 
-            // Since we've accessed the Settings Window from the MainMenu, lets show that menu back up.
-            if (Globals.GameState == GameStates.Menu)
-            {
-                Hide();
-                mMainMenu.Show();
-            }
-
-            // Since we've accessed the Settings Window from the EscapeMenu while in game, lets show that menu back up.
-            if (Globals.GameState == GameStates.InGame && !mOpenedOnKeyPressed)
-            {
-                Hide();
-                mEscapeMenu.Show();
-            }
-
-            // Since we've accessed the Settings Window by pressing a configured key, lets hide it right away.
-            else if (Globals.GameState == GameStates.InGame && mOpenedOnKeyPressed)
-            {
-                Hide();
-            }
+            // Hide our current window.
+            Hide();
         }
 
         private void SettingsCancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -735,25 +728,8 @@ namespace Intersect.Client.Interface.Shared
             Audio.UpdateGlobalVolume();
             mKeybindingEditControls = new Controls(Controls.ActiveControls);
 
-            // Since we've accessed the Settings Window from the MainMenu, lets show that menu back up.
-            if (Globals.GameState == GameStates.Menu)
-            {
-                Hide();
-                mMainMenu.Show();
-            }
-
-            // Since we've accessed the Settings Window from the EscapeMenu while in game, lets show that menu back up.
-            if (Globals.GameState == GameStates.InGame && !mOpenedOnKeyPressed)
-            {
-                Hide();
-                mEscapeMenu.Show();
-            }
-
-            // Since we've accessed the Settings Window by pressing a configured key, lets hide it right away.
-            else if (Globals.GameState == GameStates.InGame && mOpenedOnKeyPressed)
-            {
-                Hide();
-            }
+            // Hide our current window.
+            Hide();
         }
     }
 }

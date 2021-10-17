@@ -307,7 +307,7 @@ namespace Intersect.Client.Interface.Menu
         void SettingsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
-            mSettingsWindow.Show();
+            mSettingsWindow.Show(true);
         }
 
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)

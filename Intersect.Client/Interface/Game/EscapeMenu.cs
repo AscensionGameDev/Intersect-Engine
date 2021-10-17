@@ -121,13 +121,13 @@ namespace Intersect.Client.Interface.Game
 
         private void Settings_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mSettingsWindow.Show();
+            mSettingsWindow.Show(true);
             Interface.GameUi?.EscapeMenu?.Hide();
         }
 
         public void OpenSettingsWindow()
         {
-            mSettingsWindow.ShowOnKeyPressed();
+            mSettingsWindow.Show();
             Interface.GameUi?.EscapeMenu?.Hide();
         }
 
