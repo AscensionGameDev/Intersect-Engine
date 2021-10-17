@@ -236,7 +236,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.OpenSettings:
-                                        Interface.Interface.GameUi?.EscapeMenu?.OpenSettings();
+                                        Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
 
                                         break;
 
