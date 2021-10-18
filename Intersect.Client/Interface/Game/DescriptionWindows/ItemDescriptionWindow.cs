@@ -6,6 +6,7 @@ using Intersect.Client.Core;
 using Intersect.Enums;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 using System.Collections.Generic;
+using System;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -212,8 +213,6 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 // Commbine our lovely limitations to a single line and display them.
                 mItemLimits.SetText(Strings.ItemDescription.ItemLimits.ToString(string.Join(", ", limits)), Color.White);
             }
-
-            
         }
 
         protected void SetupDescription()
@@ -257,6 +256,51 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     mDetailRows.AddKeyValueRow(Strings.ItemDescription.CritChance, Strings.ItemDescription.Percentage.ToString(mItem.CritChance));
                     mDetailRows.AddKeyValueRow(Strings.ItemDescription.CritMultiplier, Strings.ItemDescription.Multiplier.ToString(mItem.CritMultiplier));
                 }
+
+                // Attack Speed
+                // Are we supposed to change our attack time based on a modifier?
+                if (mItem.AttackSpeedModifier == 0)
+                {
+                    // No modifier, assuming base attack rate? We have to calculate the speed stat manually here though..!
+                    var speed = Globals.Me.Stat[(int)Stats.Speed];
+
+                    // Remove currently equipped weapon stats.. We want to create a fair display!
+                    var weaponSlot = Globals.Me.MyEquipment[Options.WeaponIndex];
+                    if (weaponSlot != -1)
+                    {
+                        var statBuffs = Globals.Me.Inventory[weaponSlot].StatBuffs;
+                        var weapon = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.WeaponIndex]].ItemId);
+                        if (weapon != null && statBuffs != null)
+                        {
+                            speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stats.Speed]) / 100f));
+                            speed -= weapon.StatsGiven[(int)Stats.Speed];
+                            speed -= statBuffs[(int)Stats.Speed];
+                        }
+                    }
+
+                    // Add current item's speed stats!
+                    if (mStatBuffs != null)
+                    {
+                        speed += mItem.StatsGiven[(int) Stats.Speed];
+                        speed += mStatBuffs[(int) Stats.Speed];
+                        speed += (int) Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stats.Speed] / 100f));
+                    }
+
+                    // Display the actual speed this weapon would have based off of our calculated speed stat.
+                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Milliseconds.ToString(Globals.Me.CalculateAttackTime(speed)));
+                }
+                else if (mItem.AttackSpeedModifier == 1)
+                {
+                    // Static, so this weapon's attack speed.
+                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Milliseconds.ToString(mItem.AttackSpeedValue));
+                }
+                else if (mItem.AttackSpeedModifier == 2)
+                {
+                    // Percentage based.
+                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Percentage.ToString(mItem.AttackSpeedValue));
+                }
+                
+
             }
 
             // Vitals
@@ -403,8 +447,8 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Adjust all components.
             mHeader?.CorrectWidth();
-            mItemLimits?.CorrectWidth();
             mDivider1?.CorrectWidth();
+            mItemLimits?.CorrectWidth();
             mDivider2?.CorrectWidth();
             mDescription?.CorrectWidth();
             mDivider3?.CorrectWidth();

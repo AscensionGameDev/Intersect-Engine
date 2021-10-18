@@ -1680,6 +1680,19 @@ namespace Intersect.Client.Entities
             return attackTime;
         }
 
+        /// <summary>
+        /// Calculate the attack time for the player as if they have a specified speed stat.
+        /// </summary>
+        /// <param name="speed"></param>
+        /// <returns></returns>
+        public virtual int CalculateAttackTime(int speed)
+        {
+            return (int)(Options.MaxAttackRate +
+                          (float)((Options.MinAttackRate - Options.MaxAttackRate) *
+                                   (((float)Options.MaxStatValue - speed) /
+                                    (float)Options.MaxStatValue)));
+        }
+
         //Movement Processing
         private void ProcessDirectionalInput()
         {

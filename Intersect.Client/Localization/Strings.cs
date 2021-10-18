@@ -940,6 +940,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString CritMultiplier = @"Critical Multiplier:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AttackSpeed = @"Attack Speed:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Milliseconds = @"{00}ms";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Percentage = @"{00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -993,11 +999,12 @@ namespace Intersect.Client.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> BonusEffects = new Dictionary<int, LocalizedString>
             {
-                {0, @"Cooldown Reduction:"},
-                {1, @"Lifesteal:"},
-                {2, @"Tenacity:"},
-                {3, @"Luck:"},
-                {4, @"Bonus Experience:"},
+                {0, @""},
+                {1, @"Cooldown Reduction:"},
+                {2, @"Lifesteal:"},
+                {3, @"Tenacity:"},
+                {4, @"Luck:"},
+                {5, @"Bonus Experience:"},
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
