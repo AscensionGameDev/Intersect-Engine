@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
@@ -37,7 +38,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -118,7 +119,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
             if (Globals.Bank[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.Bank[mMySlot].Base, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
                     Globals.Bank[mMySlot].StatBuffs
                 );
