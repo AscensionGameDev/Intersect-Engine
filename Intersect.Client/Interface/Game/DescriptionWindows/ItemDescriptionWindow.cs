@@ -26,8 +26,6 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected string mValueLabel;
 
-        protected bool mCenterHorizontally;
-
         protected HeaderComponent mHeader;
 
         protected DividerComponent mDivider1;
@@ -46,7 +44,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected RowContainerComponent mValueInfo;
 
-        protected SpellDescWindow mSpellDescWindow;
+        protected SpellDescriptionWindow mSpellDescWindow;
 
         public ItemDescriptionWindow(
             ItemBase item,
@@ -122,7 +120,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // If a spell, also display the spell description!
             if (mItem.ItemType == ItemTypes.Spell)
             {
-                mSpellDescWindow = new SpellDescWindow(mItem.SpellId, mX, mContainer.Bottom);
+                mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, mX, mContainer.Bottom);
             }
         }
 
@@ -131,21 +129,17 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Create our header, but do not load our layout yet since we're adding components manually.
             mHeader = AddHeader();
 
-            // Set up the header as the item name.
-            CustomColors.Items.Rarities.TryGetValue(mItem.Rarity, out var rarityColor);
-            var name = !string.IsNullOrWhiteSpace(mTitleOverride) ? mTitleOverride : mItem.Name;
-            mHeader.SetTitle(name, rarityColor ?? Color.White);
-
-            // Set up the item rarity label.
-            Strings.ItemDescription.Rarity.TryGetValue(mItem.Rarity, out var rarityDesc);
-            mHeader.SetDescription(rarityDesc, rarityColor ?? Color.White);
-
             // Set up the icon, if we can load it.
             var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, mItem.Icon);
             if (tex != null)
             {
                 mHeader.SetIcon(tex, mItem.Color);
             }
+
+            // Set up the header as the item name.
+            CustomColors.Items.Rarities.TryGetValue(mItem.Rarity, out var rarityColor);
+            var name = !string.IsNullOrWhiteSpace(mTitleOverride) ? mTitleOverride : mItem.Name;
+            mHeader.SetTitle(name, rarityColor ?? Color.White);
 
             // Set up the description telling us what type of item this is.
             // if equipment, also list what kind.
@@ -164,6 +158,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 mHeader.SetSubtitle(typeDesc, Color.White);
             }
+
+            // Set up the item rarity label.
+            Strings.ItemDescription.Rarity.TryGetValue(mItem.Rarity, out var rarityDesc);
+            mHeader.SetDescription(rarityDesc, rarityColor ?? Color.White);
 
             mHeader.SizeToChildren(true, false);
         }
@@ -283,12 +281,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     }
 
                     // Display the actual speed this weapon would have based off of our calculated speed stat.
-                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Milliseconds.ToString(Globals.Me.CalculateAttackTime(speed)));
+                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(Globals.Me.CalculateAttackTime(speed) / 1000f));
                 }
                 else if (mItem.AttackSpeedModifier == 1)
                 {
                     // Static, so this weapon's attack speed.
-                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Milliseconds.ToString(mItem.AttackSpeedValue));
+                    mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(mItem.AttackSpeedValue / 1000f));
                 }
                 else if (mItem.AttackSpeedModifier == 2)
                 {
@@ -469,14 +467,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected void PositionWindow()
         {
-            if (mCenterHorizontally)
-            {
-                mContainer.MoveTo(mX - mContainer.Width / 2, mY + mContainer.Padding.Top);
-            }
-            else
-            {
-                mContainer.MoveTo(mX - mContainer.Width - mContainer.Padding.Right, mY + mContainer.Padding.Top);
-            }
+            mContainer.MoveTo(mX - mContainer.Width - mContainer.Padding.Right, mY + mContainer.Padding.Top);
         }
 
         public override void Dispose()

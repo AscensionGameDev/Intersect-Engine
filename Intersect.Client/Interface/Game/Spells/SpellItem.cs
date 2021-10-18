@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
@@ -29,7 +30,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         private Guid mCurrentSpellId;
 
-        private SpellDescWindow mDescWindow;
+        private SpellDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -112,7 +113,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
+            mDescWindow = new SpellDescriptionWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
         }
 
         public FloatRect RenderBounds()

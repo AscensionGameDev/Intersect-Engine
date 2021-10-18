@@ -76,7 +76,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private Spell mSpellBookItem = null;
 
-        private SpellDescWindow mSpellDescWindow;
+        private SpellDescriptionWindow mSpellDescWindow;
 
         private bool mTexLoaded;
 
@@ -194,8 +194,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mSpellDescWindow = null;
                 }
 
-                mSpellDescWindow = new SpellDescWindow(
-                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, true
+                mSpellDescWindow = new SpellDescriptionWindow(
+                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2
                 );
             }
         }
