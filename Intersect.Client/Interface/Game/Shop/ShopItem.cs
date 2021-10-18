@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
@@ -22,7 +23,7 @@ namespace Intersect.Client.Interface.Game.Shop
 
         private int mCurrentItem = -2;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private bool mIsEquipped;
 
@@ -135,7 +136,7 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "",
                     Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
                 );
