@@ -89,7 +89,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 SetupDescription();
             }
 
-            // Set up information depending on the item time.
+            // Set up information depending on the item type.
             switch (mItem.ItemType)
             {
                 case ItemTypes.Equipment:
