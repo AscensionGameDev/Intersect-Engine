@@ -1,12 +1,11 @@
-﻿using Intersect.GameObjects;
+﻿using System;
+using System.Collections.Generic;
+
+using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Core;
-using Intersect.Enums;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
-using System.Collections.Generic;
-using System;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
