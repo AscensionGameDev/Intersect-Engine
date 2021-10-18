@@ -55,7 +55,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             int[] statBuffs,
             string titleOverride = "",
             string valueLabel = ""
-        ) : base(Interface.GameUi.GameCanvas, "ItemDescriptionWindow")
+        ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
         {
             mItem = item;
             mAmount = amount;
@@ -204,10 +204,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             if (limits.Count > 0)
             {
                 // Add a divider.
-                mDivider1 = AddDivider("DescriptionWindowDivider");
+                mDivider1 = AddDivider();
 
                 // Add the actual description.
-                mItemLimits = AddDescription("DescriptionWindowDescription");
+                mItemLimits = AddDescription();
 
                 // Commbine our lovely limitations to a single line and display them.
                 mItemLimits.SetText(Strings.ItemDescription.ItemLimits.ToString(string.Join(", ", limits)), Color.White);
@@ -219,20 +219,20 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupDescription()
         {
             // Add a divider.
-            mDivider2 = AddDivider("DescriptionWindowDivider");
+            mDivider2 = AddDivider();
 
             // Add the actual description.
-            mDescription = AddDescription("DescriptionWindowDescription");
+            mDescription = AddDescription();
             mDescription.SetText(Strings.ItemDescription.Description.ToString(mItem.Description), Color.White);
         }
 
         protected void SetupEquipmentInfo()
         {
             // Add a divider.
-            mDivider3 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider();
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowRows");
+            mDetailRows = AddRowContainer();
 
             // Is this a weapon?
             if (mItem.EquipmentSlot == Options.WeaponIndex)
@@ -310,10 +310,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupConsumableInfo()
         {
             // Add a divider.
-            mDivider3 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider();
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowRows");
+            mDetailRows = AddRowContainer();
 
             // Consumable data.
             if (mItem.Consumable != null)
@@ -339,10 +339,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupSpellInfo()
         {
             // Add a divider.
-            mDivider3 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider();
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowRows");
+            mDetailRows = AddRowContainer();
 
             // Spell data.
             if (mItem.Spell != null)
@@ -369,10 +369,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupBagInfo()
         {
             // Add a divider.
-            mDivider3 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider();
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowRows");
+            mDetailRows = AddRowContainer();
 
             // Bag data.
             mDetailRows.AddKeyValueRow(Strings.ItemDescription.BagSlots, mItem.SlotCount.ToString());
@@ -384,10 +384,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupValueInfo()
         {
             // Add a divider.
-            mDivider4 = AddDivider("DescriptionWindowDivider");
+            mDivider4 = AddDivider();
 
             // Add a row component.
-            mValueInfo = AddRowContainer("DescriptionWindowRows");
+            mValueInfo = AddRowContainer();
 
             // Display shop value.
             mValueInfo.AddKeyValueRow(mValueLabel, string.Empty);

@@ -21,7 +21,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             LoadLayout();
         }
 
-        public HeaderComponent AddHeader(string name, bool loadLayout = true)
+        public HeaderComponent AddHeader(string name = "DescriptionWindowHeader", bool loadLayout = true)
         {
             var component = new HeaderComponent(mContainer, name);
             if (loadLayout)
@@ -31,7 +31,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             return component;
         }
 
-        public DividerComponent AddDivider(string name, bool loadLayout = true)
+        public DividerComponent AddDivider(string name = "DescriptionWindowDivider", bool loadLayout = true)
         {
             var component = new DividerComponent(mContainer, name);
             if (loadLayout)
@@ -41,7 +41,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             return component;
         }
 
-        public DescriptionComponent AddDescription(string name, bool loadLayout = true)
+        public DescriptionComponent AddDescription(string name = "DescriptionWindowDescription", bool loadLayout = true)
         {
             var component = new DescriptionComponent(mContainer, name);
             if (loadLayout)
@@ -51,7 +51,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             return component;
         }
 
-        public RowContainerComponent AddRowContainer(string name)
+        public RowContainerComponent AddRowContainer(string name = "DescriptionWindowRowContainer")
         {
             return new RowContainerComponent(mContainer, name);
         }
