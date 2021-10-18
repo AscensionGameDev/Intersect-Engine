@@ -10,7 +10,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 
         protected ImagePanel mIcon;
 
-        protected Label mHeader;
+        protected Label mTitle;
+
+        protected Label mSubtitle;
 
         protected Label mDescription;
 
@@ -25,7 +27,8 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 
             mIconContainer = new ImagePanel(mContainer, "IconContainer");
             mIcon = new ImagePanel(mIconContainer, "Icon");
-            mHeader = new Label(mContainer, "Header");
+            mTitle = new Label(mContainer, "Title");
+            mSubtitle = new Label(mContainer, "Subtitle");
             mDescription = new Label(mContainer, "Description");
         }
 
@@ -37,13 +40,19 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             Align.Center(mIcon);
         }
 
-        public void SetHeaderText(string header, Color color)
+        public void SetTitle(string title, Color color)
         {
-            mHeader.SetText(header);
-            mHeader.SetTextColor(color, Label.ControlState.Normal);
+            mTitle.SetText(title);
+            mTitle.SetTextColor(color, Label.ControlState.Normal);
         }
 
-        public void SetDescriptionText(string description, Color color)
+        public void SetSubtitle(string subtitle, Color color)
+        {
+            mSubtitle.SetText(subtitle);
+            mSubtitle.SetTextColor(color, Label.ControlState.Normal);
+        }
+
+        public void SetDescription(string description, Color color)
         {
             mDescription.SetText(description);
             mDescription.SetTextColor(color, Label.ControlState.Normal);

@@ -129,20 +129,16 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupHeader()
         {
             // Create our header, but do not load our layout yet since we're adding components manually.
-            mHeader = AddHeader("ItemDescriptionWindowHeader", false);
-
-            // Generate additional components as required, then load in our layout file and set our position.
-            var rarity = new Label(mHeader.Container, "Rarity");
-            mHeader.LoadLayout();
+            mHeader = AddHeader();
 
             // Set up the header as the item name.
-            CustomColors.Items.Rarities.TryGetValue(mItem.Rarity, out var headerColor);
+            CustomColors.Items.Rarities.TryGetValue(mItem.Rarity, out var rarityColor);
             var name = !string.IsNullOrWhiteSpace(mTitleOverride) ? mTitleOverride : mItem.Name;
-            mHeader.SetHeaderText(name, headerColor ?? Color.White);
+            mHeader.SetTitle(name, rarityColor ?? Color.White);
 
             // Set up the item rarity label.
             Strings.ItemDescription.Rarity.TryGetValue(mItem.Rarity, out var rarityDesc);
-            rarity.SetText(rarityDesc);
+            mHeader.SetDescription(rarityDesc, rarityColor ?? Color.White);
 
             // Set up the icon, if we can load it.
             var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, mItem.Icon);
@@ -158,15 +154,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 var equipSlot = Options.Equipment.Slots[mItem.EquipmentSlot];
                 var extraInfo = equipSlot;
-                if (equipSlot == "Weapon" && mItem.TwoHanded)
+                if (mItem.EquipmentSlot == Options.WeaponIndex && mItem.TwoHanded)
                 {
                     extraInfo = $"{Strings.ItemDescription.TwoHand} {equipSlot}";
                 }
-                mHeader.SetDescriptionText($"{typeDesc} - {extraInfo}", Color.White);
+                mHeader.SetSubtitle($"{typeDesc} - {extraInfo}", Color.White);
             }
             else
             {
-                mHeader.SetDescriptionText(typeDesc, Color.White);
+                mHeader.SetSubtitle(typeDesc, Color.White);
             }
 
             mHeader.SizeToChildren(true, false);
