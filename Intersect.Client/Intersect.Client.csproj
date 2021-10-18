@@ -111,6 +111,13 @@
     <Compile Include="General\Time.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Interface\Game\AnnouncementWindow.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\Components\ComponentBase.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\Components\DescriptionComponent.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\Components\DividerComponent.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\Components\HeaderComponent.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\Components\RowContainerComponent.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\DescriptionWindowBase.cs" />
+    <Compile Include="Interface\Game\DescriptionWindows\ItemDescriptionWindow.cs" />
     <Compile Include="Interface\Game\GuildWindow.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
     <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
@@ -188,7 +195,6 @@
     <Compile Include="Interface\Game\Hotbar\HotBar.cs" />
     <Compile Include="Interface\Game\InputBox.cs" />
     <Compile Include="Interface\Game\Inventory\InventoryWindow.cs" />
-    <Compile Include="Interface\Game\ItemDescWindow.cs" />
     <Compile Include="Interface\Game\PartyWindow.cs" />
     <Compile Include="Interface\Game\QuestOfferWindow.cs" />
     <Compile Include="Interface\Game\QuestsWindow.cs" />

@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -34,7 +35,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -115,7 +116,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
             if (Globals.Bag[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.Bag[mMySlot].Base, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
                     Globals.Bag[mMySlot].StatBuffs
                 );

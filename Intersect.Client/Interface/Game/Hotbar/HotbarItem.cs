@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
@@ -64,7 +65,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private bool mIsFaded;
 
-        private ItemDescWindow mItemDescWindow;
+        private ItemDescriptionWindow mItemDescWindow;
 
         //Mouse Event Variables
         private bool mMouseOver;
@@ -180,9 +181,9 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mItemDescWindow = null;
                 }
 
-                mItemDescWindow = new ItemDescWindow(
+                mItemDescWindow = new ItemDescriptionWindow(
                     mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2,
-                    mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
+                    mInventoryItem?.StatBuffs, mCurrentItem.Name, ""
                 );
             }
             else if (mCurrentSpell != null)

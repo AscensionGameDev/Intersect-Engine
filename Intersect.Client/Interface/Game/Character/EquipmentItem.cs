@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
@@ -22,7 +23,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private int[] mStatBoost = new int[(int) Enums.Stats.StatCount];
 
@@ -87,7 +88,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
+            mDescWindow = new ItemDescriptionWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()
