@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Core;
 using Intersect.Enums;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
+using System.Collections.Generic;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -33,6 +34,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected DividerComponent mDivider2;
 
         protected DividerComponent mDivider3;
+
+        protected DividerComponent mDivider4;
+
+        protected DescriptionComponent mItemLimits;
 
         protected DescriptionComponent mDescription;
 
@@ -71,12 +76,19 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 return;
             }
 
+            // Set up our header information.
             SetupHeader();
+
+            // Set up our item limit information.
+            SetupItemLimits();
+
+            // if we have a description, set that up.
             if (!string.IsNullOrWhiteSpace(mItem.Description))
             {
                 SetupDescription();
             }
 
+            // Set up information depending on the item time.
             switch (mItem.ItemType)
             {
                 case ItemTypes.Equipment:
@@ -96,6 +108,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     break;
             }
 
+            // if we've been passed a value label, set that up.
             if (!string.IsNullOrWhiteSpace(mValueLabel))
             {
                 SetupValueInfo();
@@ -158,10 +171,55 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             mHeader.SizeToChildren(true, false);
         }
 
+        protected void SetupItemLimits()
+        {
+            // Gather up what limitations apply to this item.
+            var limits = new List<string>();
+            if (!mItem.CanBank)
+            {
+                limits.Add(Strings.ItemDescription.Banked);
+            }
+            if (!mItem.CanGuildBank)
+            {
+                limits.Add(Strings.ItemDescription.GuildBanked);
+            }
+            if (!mItem.CanBag)
+            {
+                limits.Add(Strings.ItemDescription.Bagged);
+            }
+            if (!mItem.CanTrade)
+            {
+                limits.Add(Strings.ItemDescription.Traded);
+            }
+            if (!mItem.CanDrop)
+            {
+                limits.Add(Strings.ItemDescription.Dropped);
+            }
+            if (!mItem.CanSell)
+            {
+                limits.Add(Strings.ItemDescription.Sold);
+            }
+
+            // Do we have any limitations? If so, generate a display for it.
+            if (limits.Count > 0)
+            {
+                // Add a divider.
+                mDivider1 = AddDivider("DescriptionWindowDivider");
+
+                // Add the actual description.
+                mItemLimits = AddDescription("DescriptionWindowDescription");
+
+                // Commbine our lovely limitations to a single line and display them.
+                mItemLimits.SetText(Strings.ItemDescription.ItemLimits.ToString(string.Join(", ", limits)), Color.White);
+            }
+
+            
+        }
+
         protected void SetupDescription()
         {
             // Add a divider.
-            mDivider1 = AddDivider("DescriptionWindowDivider");
+            mDivider2 = AddDivider("DescriptionWindowDivider");
 
             // Add the actual description.
             mDescription = AddDescription("DescriptionWindowDescription");
@@ -171,10 +229,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupEquipmentInfo()
         {
             // Add a divider.
-            mDivider2 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider("DescriptionWindowDivider");
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowStatRows");
+            mDetailRows = AddRowContainer("DescriptionWindowRows");
 
             // Is this a weapon?
             if (mItem.EquipmentSlot == Options.WeaponIndex)
@@ -252,10 +310,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupConsumableInfo()
         {
             // Add a divider.
-            mDivider2 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider("DescriptionWindowDivider");
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowStatRows");
+            mDetailRows = AddRowContainer("DescriptionWindowRows");
 
             // Consumable data.
             if (mItem.Consumable != null)
@@ -281,10 +339,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupSpellInfo()
         {
             // Add a divider.
-            mDivider2 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider("DescriptionWindowDivider");
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowStatRows");
+            mDetailRows = AddRowContainer("DescriptionWindowRows");
 
             // Spell data.
             if (mItem.Spell != null)
@@ -311,10 +369,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupBagInfo()
         {
             // Add a divider.
-            mDivider2 = AddDivider("DescriptionWindowDivider");
+            mDivider3 = AddDivider("DescriptionWindowDivider");
 
             // Add a row component.
-            mDetailRows = AddRowContainer("DescriptionWindowStatRows");
+            mDetailRows = AddRowContainer("DescriptionWindowRows");
 
             // Bag data.
             mDetailRows.AddKeyValueRow(Strings.ItemDescription.BagSlots, mItem.SlotCount.ToString());
@@ -326,10 +384,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         protected void SetupValueInfo()
         {
             // Add a divider.
-            mDivider3 = AddDivider("DescriptionWindowDivider");
+            mDivider4 = AddDivider("DescriptionWindowDivider");
 
             // Add a row component.
-            mValueInfo = AddRowContainer("DescriptionWindowStatRows");
+            mValueInfo = AddRowContainer("DescriptionWindowRows");
 
             // Display shop value.
             mValueInfo.AddKeyValueRow(mValueLabel, string.Empty);
@@ -345,20 +403,24 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Adjust all components.
             mHeader?.CorrectWidth();
+            mItemLimits?.CorrectWidth();
             mDivider1?.CorrectWidth();
-            mDescription?.CorrectWidth();
             mDivider2?.CorrectWidth();
-            mDetailRows?.CorrectWidth();
+            mDescription?.CorrectWidth();
             mDivider3?.CorrectWidth();
+            mDetailRows?.CorrectWidth();
+            mDivider4?.CorrectWidth();
             mValueInfo?.CorrectWidth();
 
             // Position all components.
             PositionComponent(mHeader);
             PositionComponent(mDivider1);
-            PositionComponent(mDescription);
+            PositionComponent(mItemLimits);
             PositionComponent(mDivider2);
-            PositionComponent(mDetailRows);
+            PositionComponent(mDescription);
             PositionComponent(mDivider3);
+            PositionComponent(mDetailRows);
+            PositionComponent(mDivider4);
             PositionComponent(mValueInfo);
 
             // Set the correct height.
