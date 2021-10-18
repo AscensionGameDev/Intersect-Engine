@@ -48,6 +48,14 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mComponentY += component.Height;
         }
 
+        public override void CorrectWidth()
+        {
+            base.CorrectWidth();
+            var margins = mContainer.Margin;
+
+            mContainer.SetSize(mContainer.Width, mContainer.Height + margins.Bottom);
+        }
+
         public KeyvalueRowComponent AddKeyValueRow(string key, string value)
         {
             var row = new KeyvalueRowComponent(mContainer, key, value);

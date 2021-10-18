@@ -28,8 +28,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         public override void CorrectWidth()
         {
             base.CorrectWidth();
-            mDescription.SetSize(mContainer.InnerWidth - mDescription.Margin.Right, mContainer.InnerHeight);
+            var margins = mDescription.Margin;
+
+            mDescription.SetSize(mContainer.InnerWidth - margins.Right, mContainer.InnerHeight);
             mDescription.SizeToChildren(false, true);
+            mDescription.SetSize(mDescription.Width, mDescription.Height + margins.Bottom);
             mContainer.SizeToChildren(false, true);
         }
     }
