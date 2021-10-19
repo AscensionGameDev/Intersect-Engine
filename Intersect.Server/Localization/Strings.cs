@@ -176,8 +176,11 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString pmcmd = @"/pm";
 
-            [JsonProperty("private", NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString Private = @"[PM] {00}: {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PrivateTo = @"[PM] To {00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PrivateFrom = @"[PM] From {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString rcmd = @"/r";
