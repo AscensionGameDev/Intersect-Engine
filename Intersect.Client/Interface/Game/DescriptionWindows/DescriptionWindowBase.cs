@@ -8,9 +8,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
     public class DescriptionWindowBase : ComponentBase
     {
         // Track current Y height for placing components.
-        protected int mComponentY = 0;
+        private int mComponentY = 0;
 
-        protected List<ComponentBase> mComponents;
+        // Our internal list of components.
+        private List<ComponentBase> mComponents;
 
         public DescriptionWindowBase(Base parent, string name) : base(parent, name)
         {
@@ -95,7 +96,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         /// Positions a component correctly on the current window.
         /// </summary>
         /// <param name="component">The <see cref="ComponentBase"/> to place.</param>
-        protected void PositionComponent(ComponentBase component)
+        private void PositionComponent(ComponentBase component)
         {
             if (component == null)
             {

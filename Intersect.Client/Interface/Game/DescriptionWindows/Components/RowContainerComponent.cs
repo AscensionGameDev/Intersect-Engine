@@ -12,7 +12,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 
         protected JObject KeyValueRowLayout;
 
-        protected int mComponentY = 0;
+        private int mComponentY = 0;
 
         public RowContainerComponent(Base parent, string name) : base(parent, name)
         {
@@ -29,17 +29,17 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mKeyValueRow = new KeyValueRowComponent(mContainer);
         }
 
-        protected void GetLayoutTemplates()
+        private void GetLayoutTemplates()
         {
             KeyValueRowLayout = mKeyValueRow.GetJson();
         }
 
-        protected void DestroyLayoutComponents()
+        private void DestroyLayoutComponents()
         {
             mKeyValueRow.Dispose();
         }
 
-        protected void PositionComponent(ComponentBase component)
+        private void PositionComponent(ComponentBase component)
         {
             component.SetPosition(component.X, mComponentY);
             mComponentY += component.Height;
