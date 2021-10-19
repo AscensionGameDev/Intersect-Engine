@@ -11,20 +11,13 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
     {
         protected SpellBase mSpell;
 
-        protected int mAmount;
-
-        protected int mX;
-
-        protected int mY;
-
         public SpellDescriptionWindow(Guid spellId, int x, int y) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
         {
             mSpell = SpellBase.Get(spellId);
-            mX = x;
-            mY = y;
 
             GenerateComponents();
             SetupDescriptionWindow();
+            SetPosition(x, y);
         }
 
         protected void SetupDescriptionWindow()
@@ -58,14 +51,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     break;
             }
 
-            if (mSpell.Bound)
-            {
-                SetupExtraInfo();
-            }
+            // Set up bind info, if applicable.
+            SetupExtraInfo();
+            
 
             // Resize the container, correct the display and position our window.
             FinalizeWindow();
-            SetPosition(mX, mY);
         }
 
         protected void SetupHeader()
@@ -333,17 +324,21 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected void SetupExtraInfo()
         {
-            // Add a divider.
-            AddDivider();
+            // Display only if this item is bound.
+            if (mSpell.Bound)
+            {
+                // Add a divider.
+                AddDivider();
 
-            // Add a row component.
-            var rows = AddRowContainer();
+                // Add a row component.
+                var rows = AddRowContainer();
 
-            // Display shop value.
-            rows.AddKeyValueRow(Strings.SpellDescription.Bound, string.Empty);
+                // Display shop value.
+                rows.AddKeyValueRow(Strings.SpellDescription.Bound, string.Empty);
 
-            // Resize and position the container.
-            rows.SizeToChildren(true, true);
+                // Resize and position the container.
+                rows.SizeToChildren(true, true);
+            }
         }
     }
 }

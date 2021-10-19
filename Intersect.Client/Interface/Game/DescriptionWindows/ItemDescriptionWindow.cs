@@ -14,10 +14,6 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected int mAmount;
 
-        protected int mX;
-
-        protected int mY;
-
         protected int[] mStatBuffs;
 
         protected string mTitleOverride;
@@ -38,14 +34,19 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         {
             mItem = item;
             mAmount = amount;
-            mX = x;
-            mY = y;
             mStatBuffs = statBuffs;
             mTitleOverride = titleOverride;
             mValueLabel = valueLabel;
 
             GenerateComponents();
             SetupDescriptionWindow();
+            SetPosition(x, y);
+
+            // If a spell, also display the spell description!
+            if (mItem.ItemType == ItemTypes.Spell)
+            {
+                mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, mContainer.Bottom);
+            }
         }
 
         protected void SetupDescriptionWindow()
@@ -87,21 +88,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     break;
             }
 
-            // if we've been passed a value label, set that up.
-            if (!string.IsNullOrWhiteSpace(mValueLabel))
-            {
-                SetupValueInfo();
-            }
+            // Set up additional information such as amounts and shop values.
+            SetupExtraInfo();
 
             // Resize the container, correct the display and position our window.
             FinalizeWindow();
-            SetPosition(mX, mY);
-
-            // If a spell, also display the spell description!
-            if (mItem.ItemType == ItemTypes.Spell)
-            {
-                mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, mX, mContainer.Bottom);
-            }
         }
 
         protected void SetupHeader()
@@ -397,19 +388,40 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             rows.SizeToChildren(true, true);
         }
 
-        protected void SetupValueInfo()
+        protected void SetupExtraInfo()
         {
-            // Add a divider.
-            AddDivider();
+            // Our list of data to add, should we need to.
+            var data = new List<Tuple<string, string>>();
 
-            // Add a row component.
-            var rows = AddRowContainer();
+            // Display our amount, but only if we are stackable and have more than one.
+            if (mItem.IsStackable && mAmount > 1)
+            {
+                data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, mAmount.ToString("N0").Replace(",", Strings.Numbers.comma)));
+            }
 
-            // Display shop value.
-            rows.AddKeyValueRow(mValueLabel, string.Empty);
+            // Display shop value if we have one.
+            if (!string.IsNullOrWhiteSpace(mValueLabel))
+            {
+                data.Add(new Tuple<string, string>(mValueLabel, string.Empty));
+            }
 
-            // Resize and position the container.
-            rows.SizeToChildren(true, true);
+            // Do we have any data to display? If so, generate the element and add the data to it.
+            if (data.Count > 0)
+            {
+                // Add a divider.
+                AddDivider();
+
+                // Add a row component.
+                var rows = AddRowContainer();
+
+                foreach (var item in data)
+                {
+                    rows.AddKeyValueRow(item.Item1, item.Item2);
+                }
+
+                // Resize and position the container.
+                rows.SizeToChildren(true, true);
+            }
         }
 
         /// <inheritdoc/>
