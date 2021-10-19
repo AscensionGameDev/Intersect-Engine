@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             mHeader.SetTitle(mSpell.Name, Color.White);
 
             // Set up the spell type description.
-            Strings.SpellDesc.SpellTypes.TryGetValue((int) mSpell.SpellType, out var spellType);
+            Strings.SpellDescription.SpellTypes.TryGetValue((int) mSpell.SpellType, out var spellType);
             mHeader.SetSubtitle(spellType, Color.White);
 
             // Set up the spelldescription based on what kind of spell it is.
@@ -113,11 +113,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 if (mSpell.Combat.TargetType == SpellTargetTypes.Projectile)
                 {
                     var proj = ProjectileBase.Get(mSpell.Combat.ProjectileId);
-                    mHeader.SetDescription(Strings.SpellDesc.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);
+                    mHeader.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);
                 }
                 else
                 {
-                    mHeader.SetDescription(Strings.SpellDesc.TargetTypes[(int)mSpell.Combat.TargetType].ToString(mSpell.Combat.CastRange, mSpell.Combat.HitRadius), Color.White);
+                    mHeader.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(mSpell.Combat.CastRange, mSpell.Combat.HitRadius), Color.White);
                 }
             }
 
@@ -137,53 +137,53 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 if (mSpell.Combat.Friendly)
                 {
-                    mSpellInfo.AddKeyValueRow(Strings.SpellDesc.Friendly, string.Empty);
+                    mSpellInfo.AddKeyValueRow(Strings.SpellDescription.Friendly, string.Empty);
                 }
                 else
                 {
-                    mSpellInfo.AddKeyValueRow(Strings.SpellDesc.Unfriendly, string.Empty);
+                    mSpellInfo.AddKeyValueRow(Strings.SpellDescription.Unfriendly, string.Empty);
                 }
             }
 
             // Add cast time
-            var castTime = Strings.SpellDesc.Instant;
+            var castTime = Strings.SpellDescription.Instant;
             if (mSpell.CastDuration > 0)
             {
-                castTime = Strings.SpellDesc.Seconds.ToString(mSpell.CastDuration / 1000f);
+                castTime = Strings.SpellDescription.Seconds.ToString(mSpell.CastDuration / 1000f);
             }
-            mSpellInfo.AddKeyValueRow(Strings.SpellDesc.CastTime, castTime);
+            mSpellInfo.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
             // Add Vital Costs
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 if (mSpell.VitalCost[i] > 0)
                 {
-                    mSpellInfo.AddKeyValueRow(Strings.SpellDesc.VitalCosts[i], mSpell.VitalCost[i].ToString());
+                    mSpellInfo.AddKeyValueRow(Strings.SpellDescription.VitalCosts[i], mSpell.VitalCost[i].ToString());
                 }
             }
 
             // Add Cooldown time
             if (mSpell.CooldownDuration > 0)
             {
-                mSpellInfo.AddKeyValueRow(Strings.SpellDesc.Cooldown, Strings.SpellDesc.Seconds.ToString(mSpell.CooldownDuration / 1000f));
+                mSpellInfo.AddKeyValueRow(Strings.SpellDescription.Cooldown, Strings.SpellDescription.Seconds.ToString(mSpell.CooldownDuration / 1000f));
             }
 
             // Add Cooldown Group
             if (!string.IsNullOrWhiteSpace(mSpell.CooldownGroup))
             {
-                mSpellInfo.AddKeyValueRow(Strings.SpellDesc.CooldownGroup, mSpell.CooldownGroup);
+                mSpellInfo.AddKeyValueRow(Strings.SpellDescription.CooldownGroup, mSpell.CooldownGroup);
             }
 
             // Ignores global cooldown if enabled?
             if (Options.Instance.CombatOpts.EnableGlobalCooldowns && mSpell.IgnoreGlobalCooldown)
             {
-                mSpellInfo.AddKeyValueRow(Strings.SpellDesc.IgnoreGlobalCooldown, string.Empty);
+                mSpellInfo.AddKeyValueRow(Strings.SpellDescription.IgnoreGlobalCooldown, string.Empty);
             }
 
             // Ignore cooldown reduction stat?
             if (mSpell.IgnoreCooldownReduction)
             {
-                mSpellInfo.AddKeyValueRow(Strings.SpellDesc.IgnoreCooldownReduction, string.Empty);
+                mSpellInfo.AddKeyValueRow(Strings.SpellDescription.IgnoreCooldownReduction, string.Empty);
             }
 
             // Resize the container.
@@ -216,32 +216,32 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 if (mSpell.Combat.VitalDiff[i] < 0)
                 {
-                    mDetailRows.AddKeyValueRow(Strings.SpellDesc.VitalRecovery[i], Math.Abs(mSpell.Combat.VitalDiff[i]).ToString());
+                    mDetailRows.AddKeyValueRow(Strings.SpellDescription.VitalRecovery[i], Math.Abs(mSpell.Combat.VitalDiff[i]).ToString());
                     isHeal = true;
                 }
                 else if (mSpell.Combat.VitalDiff[i] > 0)
                 {
-                    mDetailRows.AddKeyValueRow(Strings.SpellDesc.VitalDamage[i], mSpell.Combat.VitalDiff[i].ToString());
+                    mDetailRows.AddKeyValueRow(Strings.SpellDescription.VitalDamage[i], mSpell.Combat.VitalDiff[i].ToString());
                     isDamage = true;
                 }
             }
 
             // Damage Type:
-            Strings.SpellDesc.DamageTypes.TryGetValue(mSpell.Combat.DamageType, out var damageType);
-            mDetailRows.AddKeyValueRow(Strings.SpellDesc.DamageType, damageType);
+            Strings.SpellDescription.DamageTypes.TryGetValue(mSpell.Combat.DamageType, out var damageType);
+            mDetailRows.AddKeyValueRow(Strings.SpellDescription.DamageType, damageType);
 
             if (mSpell.Combat.Scaling > 0)
             {
-                Strings.SpellDesc.Stats.TryGetValue(mSpell.Combat.ScalingStat, out var stat);
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.ScalingStat, stat);
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.ScalingPercentage, Strings.SpellDesc.Percentage.ToString(mSpell.Combat.Scaling));
+                Strings.SpellDescription.Stats.TryGetValue(mSpell.Combat.ScalingStat, out var stat);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.ScalingStat, stat);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.ScalingPercentage, Strings.SpellDescription.Percentage.ToString(mSpell.Combat.Scaling));
             }
 
             // Crit Chance
             if (mSpell.Combat.CritChance > 0)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.CritChance, Strings.SpellDesc.Percentage.ToString(mSpell.Combat.CritChance));
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.CritMultiplier, Strings.SpellDesc.Multiplier.ToString(mSpell.Combat.CritMultiplier));
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.CritChance, Strings.SpellDescription.Percentage.ToString(mSpell.Combat.CritChance));
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.CritMultiplier, Strings.SpellDescription.Multiplier.ToString(mSpell.Combat.CritMultiplier));
             }
 
             var showDuration = false;
@@ -252,15 +252,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 Tuple<string, string> data = null;
                 if (mSpell.Combat.StatDiff[i] > 0 && mSpell.Combat.PercentageStatDiff[i] > 0)
                 {
-                    data = new Tuple<string, string>(Strings.SpellDesc.StatCounts[i], Strings.SpellDesc.RegularAndPercentage.ToString(mSpell.Combat.StatDiff[i], mSpell.Combat.PercentageStatDiff[i]));
+                    data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.SpellDescription.RegularAndPercentage.ToString(mSpell.Combat.StatDiff[i], mSpell.Combat.PercentageStatDiff[i]));
                 }
                 else if (mSpell.Combat.StatDiff[i] > 0)
                 {
-                    data = new Tuple<string, string>(Strings.SpellDesc.StatCounts[i], mSpell.Combat.StatDiff[i].ToString());
+                    data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], mSpell.Combat.StatDiff[i].ToString());
                 }
                 else if (mSpell.Combat.PercentageStatDiff[i] > 0)
                 {
-                    data = new Tuple<string, string>(Strings.SpellDesc.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mSpell.Combat.PercentageStatDiff[i]));
+                    data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mSpell.Combat.PercentageStatDiff[i]));
                 }
 
                 // Make sure we only add a blank row the first time we add a stat row.
@@ -269,7 +269,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     if (!blankAdded)
                     {
                         mDetailRows.AddKeyValueRow(string.Empty, string.Empty);
-                        mDetailRows.AddKeyValueRow(Strings.SpellDesc.StatBuff, string.Empty);
+                        mDetailRows.AddKeyValueRow(Strings.SpellDescription.StatBuff, string.Empty);
                         blankAdded = true;
                     }
 
@@ -285,13 +285,13 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 mDetailRows.AddKeyValueRow(string.Empty, string.Empty);
                 if (isHeal)
                 {
-                    mDetailRows.AddKeyValueRow(Strings.SpellDesc.HoT, string.Empty);
+                    mDetailRows.AddKeyValueRow(Strings.SpellDescription.HoT, string.Empty);
                 } 
                 else if (isDamage)
                 {
-                    mDetailRows.AddKeyValueRow(Strings.SpellDesc.DoT, string.Empty);
+                    mDetailRows.AddKeyValueRow(Strings.SpellDescription.DoT, string.Empty);
                 }
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.Tick, Strings.SpellDesc.Seconds.ToString(mSpell.Combat.HotDotInterval / 1000f));
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.Tick, Strings.SpellDescription.Seconds.ToString(mSpell.Combat.HotDotInterval / 1000f));
             }
 
             // Handle effect display.
@@ -299,13 +299,13 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 showDuration = true;
                 mDetailRows.AddKeyValueRow(string.Empty, string.Empty);
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.Effect, Strings.SpellDesc.Effects[(int) mSpell.Combat.Effect]);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.Effect, Strings.SpellDescription.Effects[(int) mSpell.Combat.Effect]);
             }
 
             // Show Stat Buff / Effect / HoT / DoT duration.
             if (showDuration)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.Duration, Strings.SpellDesc.Seconds.ToString(mSpell.Combat.Duration / 1000f));
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.Duration, Strings.SpellDescription.Seconds.ToString(mSpell.Combat.Duration / 1000f));
             }
 
             // Resize and position the container.
@@ -321,30 +321,30 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             mDetailRows = AddRowContainer();
 
             // Dash Distance Information.
-            mDetailRows.AddKeyValueRow(Strings.SpellDesc.Distance, Strings.SpellDesc.Tiles.ToString(mSpell.Combat.CastRange));
+            mDetailRows.AddKeyValueRow(Strings.SpellDescription.Distance, Strings.SpellDescription.Tiles.ToString(mSpell.Combat.CastRange));
 
             // Ignore map blocks?
             if (mSpell.Dash.IgnoreMapBlocks)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.IgnoreMapBlock, String.Empty);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.IgnoreMapBlock, String.Empty);
             }
 
             // Ignore resource blocks?
             if (mSpell.Dash.IgnoreActiveResources)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.IgnoreResourceBlock, String.Empty);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.IgnoreResourceBlock, String.Empty);
             }
 
             // Ignore inactive resource blocks?
             if (mSpell.Dash.IgnoreInactiveResources)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.IgnoreConsumedResourceBlock, String.Empty);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.IgnoreConsumedResourceBlock, String.Empty);
             }
 
             // Ignore Z-Dimension?
             if (Options.Map.ZDimensionVisible && mSpell.Dash.IgnoreZDimensionAttributes)
             {
-                mDetailRows.AddKeyValueRow(Strings.SpellDesc.IgnoreZDimension, String.Empty);
+                mDetailRows.AddKeyValueRow(Strings.SpellDescription.IgnoreZDimension, String.Empty);
             }
 
             // Resize and position the container.
@@ -360,7 +360,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             mExtraInfo = AddRowContainer();
 
             // Display shop value.
-            mExtraInfo.AddKeyValueRow(Strings.SpellDesc.Bound, string.Empty);
+            mExtraInfo.AddKeyValueRow(Strings.SpellDescription.Bound, string.Empty);
 
             // Resize and position the container.
             mExtraInfo.SizeToChildren(true, true);
