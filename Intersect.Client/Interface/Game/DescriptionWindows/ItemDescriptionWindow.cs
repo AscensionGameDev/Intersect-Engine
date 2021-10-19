@@ -176,7 +176,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 var description = AddDescription();
 
                 // Commbine our lovely limitations to a single line and display them.
-                description.SetText(Strings.ItemDescription.ItemLimits.ToString(string.Join(", ", limits)), Color.White);
+                description.AddText(Strings.ItemDescription.ItemLimits.ToString(string.Join(", ", limits)), Color.White);
             }
         }
 
@@ -187,7 +187,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Add the actual description.
             var description = AddDescription();
-            description.SetText(Strings.ItemDescription.Description.ToString(mItem.Description), Color.White);
+            description.AddText(Strings.ItemDescription.Description.ToString(mItem.Description), Color.White);
         }
 
         protected void SetupEquipmentInfo()

@@ -168,7 +168,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Add the actual description.
             var description = AddDescription();
-            description.SetText(Strings.ItemDescription.Description.ToString(mSpell.Description), Color.White);
+            description.AddText(Strings.ItemDescription.Description.ToString(mSpell.Description), Color.White);
         }
 
         protected void SetupCombatInfo()
