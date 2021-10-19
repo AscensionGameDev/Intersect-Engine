@@ -399,6 +399,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, mAmount.ToString("N0").Replace(",", Strings.Numbers.comma)));
             }
 
+            // Display item drop chance if configured.
+            if (mItem.DropChanceOnDeath > 0)
+            {
+                data.Add(new Tuple<string, string>(Strings.ItemDescription.DropOnDeath, Strings.ItemDescription.Percentage.ToString(mItem.DropChanceOnDeath)));
+            }
+
             // Display shop value if we have one.
             if (!string.IsNullOrWhiteSpace(mValueLabel))
             {

@@ -1071,6 +1071,9 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Amount = @"Amount:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropOnDeath = @"Drop chance on death:";
         }
 
         public struct Keys
