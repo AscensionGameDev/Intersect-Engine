@@ -1011,7 +1011,7 @@ namespace Intersect.Server.Entities
 
         public void GiveExperience(long amount)
         {
-            Exp += (int) (amount * GetEquipmentBonusEffect(EffectType.EXP, 100) / 100);
+            Exp += (int) Math.Round(amount + (amount * (GetEquipmentBonusEffect(EffectType.EXP) / 100f)));
             if (Exp < 0)
             {
                 Exp = 0;
@@ -2615,14 +2615,13 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Gets the value of a bonus effect as granted by the currently equipped gear.
+        /// Gets the percentage value of a bonus effect as granted by the currently equipped gear.
         /// </summary>
         /// <param name="effect">The <see cref="EffectType"/> to retrieve the amount for.</param>
-        /// <param name="startValue">The starting value to which we're adding our gear amount.</param>
         /// <returns></returns>
-        public int GetEquipmentBonusEffect(EffectType effect, int startValue = 0)
+        public int GetEquipmentBonusEffect(EffectType effect)
         {
-            var value = startValue;
+            var value = 0;
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
