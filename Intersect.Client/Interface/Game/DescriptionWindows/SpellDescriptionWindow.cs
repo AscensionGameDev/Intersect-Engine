@@ -324,7 +324,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected void SetupExtraInfo()
         {
-            // Display only if this item is bound.
+            // Display only if this spell is bound.
             if (mSpell.Bound)
             {
                 // Add a divider.
