@@ -60,19 +60,10 @@ namespace Intersect.Server.Entities.Combat
             if (en is Player player)
             {
                 // Get our player's Tenacity stat!
-                if (!Status.TenacityExcluded.Contains(type))
+                if (!TenacityExcluded.Contains(type))
                 {
                     tenacity = player.GetTenacity();
-                }
-
-                // Interrupt their spellcast if we are running a Silence, Sleep or Stun!
-                if (Status.InterruptStatusses.Contains(type))
-                {
-                    player.CastTime = 0;
-                    player.CastTarget = null;
-                    player.SpellCastSlot = -1;
-                    PacketSender.SendEntityCancelCast(player);
-                }
+                } 
             }
 
             // Handle Npc specific stuff, such as loot tables!
@@ -86,6 +77,16 @@ namespace Intersect.Server.Entities.Combat
                 }
             }
 
+            // Interrupt their spellcast if we are running a Silence, Sleep or Stun!
+            if (InterruptStatusses.Contains(type))
+            {
+                en.CastTime = 0;
+                en.CastTarget = null;
+                en.SpellCastSlot = -1;
+                PacketSender.SendEntityCancelCast(en);
+            }
+
+            // If we're adding a shield, actually add that according to the settings.
             if (type == StatusTypes.Shield)
             {
                 for (var i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
@@ -97,7 +98,7 @@ namespace Intersect.Server.Entities.Combat
                 }
             }
 
-            //If new Cleanse spell, remove all opposite statusses. (ie friendly dispels unfriendly and vice versa)
+            // If new Cleanse spell, remove all opposite statusses. (ie friendly dispels unfriendly and vice versa)
             if (Type == StatusTypes.Cleanse)
             {
                 foreach (var status in en.CachedStatuses)
