@@ -10,8 +10,13 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         // Track current Y height for placing components.
         protected int mComponentY = 0;
 
+        protected List<ComponentBase> mComponents;
+
         public DescriptionWindowBase(Base parent, string name) : base(parent, name)
         {
+            // Set up our internal component list we use for re-ordering.
+            mComponents = new List<ComponentBase>();
+
             GenerateComponents();
         }
 
@@ -36,6 +41,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 component.LoadLayout();
             }
+            mComponents.Add(component);
             return component;
         }
 
@@ -52,6 +58,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 component.LoadLayout();
             }
+            mComponents.Add(component);
             return component;
         }
 
@@ -68,6 +75,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 component.LoadLayout();
             }
+            mComponents.Add(component);
             return component;
         }
 
@@ -78,7 +86,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         /// <returns>Returns a new instance of the <see cref="DescriptionComponent"/> class</returns>
         public RowContainerComponent AddRowContainer(string name = "DescriptionWindowRowContainer")
         {
-            return new RowContainerComponent(mContainer, name);
+            var component = new RowContainerComponent(mContainer, name);
+            mComponents.Add(component);
+            return component;
         }
 
         /// <summary>
@@ -94,6 +104,56 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             component.SetPosition(component.X, mComponentY);
             mComponentY += component.Height;
+        }
+
+        /// <summary>
+        /// Position and resize all components properly for display.
+        /// </summary>
+        protected void FinalizeWindow()
+        {
+            // Reset our componentY so we start from scratch!
+            mComponentY = 0;
+
+            // Correctly set our container width to the largest child start with, this way our other child components will have a width to work with.
+            mContainer.SizeToChildren(true, false);
+
+            // Resize and relocate our components to properly display on our window.
+            foreach (var component in mComponents)
+            {
+                component.CorrectWidth();
+                PositionComponent(component);
+            }
+
+            // Correctly set our container height so we display everything.
+            mContainer.SizeToChildren(false, true);
+        }
+
+        /// <inheritdoc/>
+        public override void SetPosition(int x, int y)
+        {
+            // Do not allow it to render outside of the screen canvas.
+            var newX = x - mContainer.Width - mContainer.Padding.Right;
+            var newY = y + mContainer.Padding.Top;
+
+            if (newX < 0)
+            {
+                newX = 0;
+            }
+            else if (newX > mContainer.Canvas.Width - mContainer.Width)
+            {
+                newX = mContainer.Canvas.Width - mContainer.Width;
+            }
+
+            if (newY < 0)
+            {
+                newY = 0;
+            }
+            else if (newY > mContainer.Canvas.Height - mContainer.Height)
+            {
+                newY = mContainer.Canvas.Height - mContainer.Height;
+            }
+
+            mContainer.MoveTo(newX, newY);
         }
     }
 }
