@@ -5,7 +5,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {

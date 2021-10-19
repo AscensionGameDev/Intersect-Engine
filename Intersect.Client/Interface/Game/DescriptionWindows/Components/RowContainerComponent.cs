@@ -1,11 +1,8 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+﻿using System;
 
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
