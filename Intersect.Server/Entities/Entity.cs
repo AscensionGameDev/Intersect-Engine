@@ -1927,30 +1927,114 @@ namespace Intersect.Server.Entities
         {
         }
 
-        public bool CanCastSpell(Guid spellId, Entity target)
+        public virtual bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
         {
-            return CanCastSpell(SpellBase.Get(spellId), target);
-        }
-
-        public virtual bool CanCastSpell(SpellBase spellDescriptor, Entity target)
-        {
-            if (spellDescriptor == null)
+            // Is this a valid spell?
+            if (spell == null)
             {
+                reason = SpellCastFailureReason.InvalidSpell;
                 return false;
             }
 
-            var spellCombat = spellDescriptor.Combat;
-            if (spellDescriptor.SpellType != SpellTypes.CombatSpell && spellDescriptor.SpellType != SpellTypes.Event ||
-                spellCombat == null)
+            // Is this spell on cooldown?
+            if (SpellCooldowns.ContainsKey(spell.Id) && SpellCooldowns[spell.Id] > Timing.Global.MillisecondsUtc)
             {
-                return true;
+                reason = SpellCastFailureReason.OnCooldown;
+                return false;
             }
 
-            if (spellCombat.TargetType == SpellTargetTypes.Single)
+                // Do we meet the vital requirements?
+                if (checkVitalReqs)
             {
-                return target == null || InRangeOf(target, spellCombat.CastRange);
+                if (spell.VitalCost[(int)Vitals.Mana] > GetVital(Vitals.Mana))
+                {
+                    reason = SpellCastFailureReason.InsufficientMP;
+                    return false;
+                }
+
+                if (spell.VitalCost[(int)Vitals.Health] > GetVital(Vitals.Health))
+                {
+                    reason = SpellCastFailureReason.InsufficientHP;
+                    return false;
+                }
             }
 
+            if (!CanAttack(target, spell))
+            {
+                reason = SpellCastFailureReason.InvalidTarget;
+                return false;
+            }
+
+            // Check if the caster has any status effects that need to apply.
+            // Ignore if the current spell is a Cleanse, this will ignore any and all status effects.
+            if (spell.Combat.Effect != StatusTypes.Cleanse)
+            {
+                foreach (var status in CachedStatuses)
+                {
+                    if (status.Type == StatusTypes.Silence)
+                    {
+                        reason = SpellCastFailureReason.Silenced;
+                        return false;
+                    }
+
+                    if (status.Type == StatusTypes.Stun)
+                    {
+                        reason = SpellCastFailureReason.Stunned;
+                        return false;
+                    }
+
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        reason = SpellCastFailureReason.Asleep;
+                        return false;
+                    }
+
+                    if (status.Type == StatusTypes.Snare)
+                    {
+                        // If this spell is NOT a Dash or Warp type ability, we can not use it while snared.
+                        if (spell.SpellType != SpellTypes.Dash && spell.SpellType != SpellTypes.Warp && spell.SpellType != SpellTypes.WarpTo)
+                        {
+                            reason = SpellCastFailureReason.Snared;
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
+            if (target == null && singleTargetSpell)
+            {
+                reason = SpellCastFailureReason.InvalidTarget;
+                return false;
+            }
+
+            if (target == this && spell.SpellType == SpellTypes.WarpTo)
+            {
+                reason = SpellCastFailureReason.InvalidTarget;
+                return false;
+            }
+
+            if (target != null && singleTargetSpell)
+            {
+                if (spell.Combat.Friendly != IsAllyOf(target))
+                {
+                    reason = SpellCastFailureReason.InvalidTarget;
+                    return false;
+                }
+            }
+
+            //Check for range of a single target spell
+            if (singleTargetSpell && target != this)
+            {
+                if (!InRangeOf(target, spell.Combat.CastRange))
+                {
+                    reason = SpellCastFailureReason.OutOfRange;
+                    return false;
+                }
+            }
+
+            // We have no reason to stop the entity from casting!
+            reason = SpellCastFailureReason.None;
             return true;
         }
 
@@ -1962,7 +2046,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!CanCastSpell(spellBase, CastTarget))
+            if (!CanCastSpell(spellBase, CastTarget, false, out var _))
             {
                 return;
             }
