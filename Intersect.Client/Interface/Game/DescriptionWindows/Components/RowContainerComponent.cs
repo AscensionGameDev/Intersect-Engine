@@ -11,7 +11,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
     public class RowContainerComponent : ComponentBase
     {
-        protected KeyvalueRowComponent mKeyValueRow;
+        protected KeyValueRowComponent mKeyValueRow;
 
         protected JObject KeyValueRowLayout;
 
@@ -29,7 +29,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         {
             base.GenerateComponents();
 
-            mKeyValueRow = new KeyvalueRowComponent(mContainer);
+            mKeyValueRow = new KeyValueRowComponent(mContainer);
         }
 
         protected void GetLayoutTemplates()
@@ -48,6 +48,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mComponentY += component.Height;
         }
 
+        /// <inheritdoc/>
         public override void CorrectWidth()
         {
             base.CorrectWidth();
@@ -56,9 +57,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mContainer.SetSize(mContainer.Width, mContainer.Height + margins.Bottom);
         }
 
-        public KeyvalueRowComponent AddKeyValueRow(string key, string value)
+        /// <summary>
+        /// Add a new <see cref="KeyValueRowComponent"/> row to the container.
+        /// </summary>
+        /// <param name="key">The key to display.</param>
+        /// <param name="value">The value to display.</param>
+        /// <returns>Returns a new instance of <see cref="KeyValueRowComponent"/> with the provided settings.</returns>
+        public KeyValueRowComponent AddKeyValueRow(string key, string value)
         {
-            var row = new KeyvalueRowComponent(mContainer, key, value);
+            var row = new KeyValueRowComponent(mContainer, key, value);
 
             // Since we're pulling some trickery here, catch any errors doing this ourselves and log them.
             try
@@ -76,18 +83,17 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         }
     }
 
-    public class KeyvalueRowComponent : ComponentBase
+    public class KeyValueRowComponent : ComponentBase
     {
         protected Label mKeyLabel;
 
         protected Label mValueLabel;
 
-        public KeyvalueRowComponent(Base parent) : this(parent, string.Empty, string.Empty)
+        public KeyValueRowComponent(Base parent) : this(parent, string.Empty, string.Empty)
         {
         }
 
-
-        public KeyvalueRowComponent(Base parent, string key, string value) : base(parent, "KeyValueRow")
+        public KeyValueRowComponent(Base parent, string key, string value) : base(parent, "KeyValueRow")
         {
             GenerateComponents();
             mKeyLabel.SetText(key);
@@ -102,8 +108,28 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mValueLabel = new Label(mContainer, "Value");
         }
 
+        /// <summary>
+        /// Set the <see cref="Color"/> of the key text.
+        /// </summary>
+        /// <param name="color">The <see cref="Color"/> to draw the key text in.</param>
+        public void SetKeyTextColor(Color color) => mKeyLabel.SetTextColor(color, Label.ControlState.Normal);
+
+        /// <summary>
+        /// Set the <see cref="Color"/> of the value text.
+        /// </summary>
+        /// <param name="color">The <see cref="Color"/> to draw the value text in.</param>
+        public void SetValueTextColor(Color color) => mValueLabel.SetTextColor(color, Label.ControlState.Normal);
+
+        /// <summary>
+        /// Get the Json layout of the current component.
+        /// </summary>
+        /// <returns>Returns a <see cref="JObject"/> containing the layout of the current component.</returns>
         public JObject GetJson() => mContainer.GetJson();
 
+        /// <summary>
+        /// Set the Json layout of the current component.
+        /// </summary>
+        /// <param name="json">The new layout to apply to this component in <see cref="JObject"/> format.</param>
         public void LoadJson(JObject json) => mContainer.LoadJson(json);
     }
 }

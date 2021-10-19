@@ -262,7 +262,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     if (weaponSlot != -1)
                     {
                         var statBuffs = Globals.Me.Inventory[weaponSlot].StatBuffs;
-                        var weapon = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.WeaponIndex]].ItemId);
+                        var weapon = ItemBase.Get(Globals.Me.Inventory[weaponSlot].ItemId);
                         if (weapon != null && statBuffs != null)
                         {
                             speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stats.Speed]) / 100f));
@@ -292,8 +292,6 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     // Percentage based.
                     mDetailRows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Percentage.ToString(mItem.AttackSpeedValue));
                 }
-                
-
             }
 
             // Vitals

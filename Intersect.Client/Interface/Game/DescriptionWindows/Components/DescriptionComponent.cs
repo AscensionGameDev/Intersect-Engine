@@ -18,6 +18,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mDescription = new RichLabel(mContainer, "Description");
         }
 
+        /// <summary>
+        /// Set the text of this component.
+        /// </summary>
+        /// <param name="description">The description to place on this component.</param>
+        /// <param name="color">The <see cref="Color"/> the description text should render with.</param>
         public void SetText(string description, Color color)
         {
             mDescription.AddText(description, color);
@@ -25,6 +30,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
             mContainer.SizeToChildren(false, true);
         }
 
+        /// <inheritdoc/>
         public override void CorrectWidth()
         {
             base.CorrectWidth();

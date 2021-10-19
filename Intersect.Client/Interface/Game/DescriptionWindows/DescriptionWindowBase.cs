@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Core;
+﻿using System.Collections.Generic;
+
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
