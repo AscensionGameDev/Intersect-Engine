@@ -1321,7 +1321,6 @@ namespace Intersect.Server.Entities
         {
             // If self-cast, AoE, Projectile or Dash.. always accept.
             if (spell?.Combat.TargetType == SpellTargetTypes.Self ||
-                spell?.Combat.TargetType == SpellTargetTypes.AoE ||
                 spell?.Combat.TargetType == SpellTargetTypes.Projectile ||
                 spell?.SpellType == SpellTypes.Dash
                 )
