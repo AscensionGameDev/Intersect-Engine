@@ -302,7 +302,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Inventory.DropItemTitle,
                         Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -545,7 +545,7 @@ namespace Intersect.Client.Entities
                         var iBox = new InputBox(
                             Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
+                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
                         );
                     }
                     else
@@ -577,7 +577,7 @@ namespace Intersect.Client.Entities
                 {
                     var iBox = new InputBox(
                         Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
-                        InputBox.InputType.NumericInput, BuyItemInputBoxOkay, null, slot
+                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot
                     );
                 }
                 else
@@ -633,7 +633,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
                     );
                 }
                 else
@@ -676,7 +676,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
+                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
                     );
                 }
                 else
@@ -708,7 +708,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
                         Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
                     );
                 }
                 else
@@ -739,7 +739,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
                     );
                 }
                 else
@@ -769,7 +769,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -797,7 +797,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.revokeitem,
                         Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, RevokeItemInputBoxOkay, null, index
+                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index
                     );
                 }
                 else
