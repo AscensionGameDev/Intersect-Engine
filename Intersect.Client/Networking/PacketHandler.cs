@@ -1922,7 +1922,7 @@ namespace Intersect.Client.Networking
         //FriendsPacket
         public void HandlePacket(IPacketSender packetSender, FriendsPacket packet)
         {
-            Globals.Me.Friends.Clear();
+            Globals.Me?.Friends.Clear();
 
             foreach (var friend in packet.OnlineFriends)
             {
@@ -1933,7 +1933,7 @@ namespace Intersect.Client.Networking
                     Online = true
                 };
 
-                Globals.Me.Friends.Add(f);
+                Globals.Me?.Friends.Add(f);
             }
 
             foreach (var friend in packet.OfflineFriends)
@@ -1944,10 +1944,10 @@ namespace Intersect.Client.Networking
                     Online = false
                 };
 
-                Globals.Me.Friends.Add(f);
+                Globals.Me?.Friends.Add(f);
             }
 
-            Interface.Interface.GameUi.NotifyUpdateFriendsList();
+            Interface.Interface.GameUi?.NotifyUpdateFriendsList();
         }
 
         //FriendRequestPacket

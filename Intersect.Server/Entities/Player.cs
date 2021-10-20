@@ -258,7 +258,7 @@ namespace Intersect.Server.Entities
             {
                 if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
                 {
-                    itm.Set(new Item());
+                    itm.Set(Item.None);
                 }
             }
 
@@ -266,7 +266,7 @@ namespace Intersect.Server.Entities
             {
                 if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
                 {
-                    itm.Set(new Item());
+                    itm.Set(Item.None);
                 }
             }
 
@@ -274,7 +274,7 @@ namespace Intersect.Server.Entities
             {
                 if (spl.SpellId != Guid.Empty && SpellBase.Get(spl.SpellId) == null)
                 {
-                    spl.Set(new Spell());
+                    spl.Set(Spell.None);
                 }
             }
 
@@ -283,6 +283,19 @@ namespace Intersect.Server.Entities
 
             //Send guild list update to all members when coming online
             Guild?.UpdateMemberList();
+
+            // If we are configured to do so, send a notification of us logging in to all online friends.
+            if (Options.Player.EnableFriendLoginNotifications)
+            {
+                foreach (var friend in CachedFriends)
+                {
+                    var onlineFriend = Player.FindOnline(friend.Key);
+                    if (onlineFriend != null)
+                    {
+                        PacketSender.SendChatMsg(onlineFriend, Strings.Friends.LoggedIn.ToString(Name), ChatMessageType.Friend, CustomColors.Alerts.Info, Name);
+                    }
+                }
+            }
         }
 
         public void SendPacket(IPacket packet, TransmissionMode mode = TransmissionMode.All)

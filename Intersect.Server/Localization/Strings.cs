@@ -633,6 +633,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString sent = @"Friend request sent.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString LoggedIn = @"{00} has logged in.";
+
         }
 
         public sealed class GeneralNamespace : LocaleNamespace
