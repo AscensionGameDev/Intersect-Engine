@@ -950,13 +950,13 @@ namespace Intersect.Server.Networking
                 if (target != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.PrivateTo.ToString(target.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(target.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
                         target, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     target.ChatTarget = player;
@@ -978,13 +978,13 @@ namespace Intersect.Server.Networking
                 if (player.ChatTarget != null && Player.FindOnline(player.ChatTarget.Id) != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.PrivateTo.ToString(player.ChatTarget.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(player.ChatTarget.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
                         player.ChatTarget, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     player.ChatTarget.ChatTarget = player;
