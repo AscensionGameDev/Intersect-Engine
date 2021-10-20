@@ -1188,7 +1188,7 @@ namespace Intersect.Server.Entities
         {
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
-            if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius) || forceDistance))
+            if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) || forceDistance))
             {
                 ResetNpc(Options.Npc.ResetVitalsAndStatusses);
 
