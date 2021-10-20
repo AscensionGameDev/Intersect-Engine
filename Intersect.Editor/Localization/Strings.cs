@@ -1524,9 +1524,11 @@ Tick timer saved in server config.json.";
 
             public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
             {
-                {0, @"Player"},
+                {0, @"Player / System"},
                 {1, @"Local"},
                 {2, @"Global"},
+                {3, @"Party"},
+                {4, @"Guild"},
             };
 
             public static LocalizedString color = @"Color:";
