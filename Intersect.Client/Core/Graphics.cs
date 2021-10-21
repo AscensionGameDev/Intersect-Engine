@@ -199,11 +199,8 @@ namespace Intersect.Client.Core
                 }
             }
 
-            // Only perform this action when lighting is enabled.
-            if (Globals.Database.EnableLighting)
-            {
-                ClearDarknessTexture();
-            }
+            // Clear our previous darkness texture.
+            ClearDarknessTexture();
             
             var gridX = currentMap.GridX;
             var gridY = currentMap.GridY;
@@ -382,12 +379,9 @@ namespace Intersect.Client.Core
 
             DrawOverlay();
 
-            // Draw lighting effects when enabled.
-            if (Globals.Database.EnableLighting)
-            {
-                GenerateLightMap();
-                DrawDarkness();
-            }
+            // Draw lighting effects.
+            GenerateLightMap();
+            DrawDarkness();
             
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
@@ -862,6 +856,12 @@ namespace Intersect.Client.Core
         //Lighting
         private static void ClearDarknessTexture()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             if (sDarknessTexture == null)
             {
                 sDarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
@@ -872,6 +872,12 @@ namespace Intersect.Client.Core
 
         private static void GenerateLightMap()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map == null)
             {
@@ -924,6 +930,12 @@ namespace Intersect.Client.Core
 
         public static void DrawDarkness()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
@@ -933,6 +945,12 @@ namespace Intersect.Client.Core
 
         public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             if (size == 0)
             {
                 return;
@@ -944,6 +962,12 @@ namespace Intersect.Client.Core
 
         private static void DrawLights()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
@@ -971,6 +995,12 @@ namespace Intersect.Client.Core
 
         public static void UpdatePlayerLight()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             //Draw Light Around Player
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)

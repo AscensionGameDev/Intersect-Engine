@@ -181,15 +181,11 @@ namespace Intersect.Client.Entities
                     new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
-                // Only perform with Lighting enabled.
-                if (Globals.Database.EnableLighting)
-                {
-                    Graphics.AddLight(
-                        (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Lower.Lights[mLowerFrame].Size,
-                        MyBase.Lower.Lights[mLowerFrame].Intensity, MyBase.Lower.Lights[mLowerFrame].Expand,
-                        MyBase.Lower.Lights[mLowerFrame].Color
-                    );
-                }
+                Graphics.AddLight(
+                    (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Lower.Lights[mLowerFrame].Size,
+                    MyBase.Lower.Lights[mLowerFrame].Intensity, MyBase.Lower.Lights[mLowerFrame].Expand,
+                    MyBase.Lower.Lights[mLowerFrame].Color
+                );
             }
 
             if (upper && mShowUpper && mZDimension != 0 || upper && mShowUpper && mZDimension == 0)
@@ -226,15 +222,11 @@ namespace Intersect.Client.Entities
                     new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
-                // Only perform with Lighting enabled.
-                if (Globals.Database.EnableLighting)
-                {
-                    Graphics.AddLight(
-                        (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Upper.Lights[mUpperFrame].Size,
-                        MyBase.Upper.Lights[mUpperFrame].Intensity, MyBase.Upper.Lights[mUpperFrame].Expand,
-                        MyBase.Upper.Lights[mUpperFrame].Color
-                    );
-                }
+                Graphics.AddLight(
+                    (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Upper.Lights[mUpperFrame].Size,
+                    MyBase.Upper.Lights[mUpperFrame].Intensity, MyBase.Upper.Lights[mUpperFrame].Expand,
+                    MyBase.Upper.Lights[mUpperFrame].Color
+                );
             }
         }
 

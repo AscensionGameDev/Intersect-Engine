@@ -749,17 +749,13 @@ namespace Intersect.Client.Maps
                 }
             }
 
-            // Only perform with Lighting enabled.
-            if (Globals.Database.EnableLighting)
+            //Add lights to our darkness texture
+            foreach (var light in Lights)
             {
-                //Add lights to our darkness texture
-                foreach (var light in Lights)
-                {
-                    double w = light.Size;
-                    var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
-                    var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
-                    Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
-                }
+                double w = light.Size;
+                var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
+                var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
+                Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
             }
         }
 
