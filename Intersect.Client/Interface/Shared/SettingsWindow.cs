@@ -73,6 +73,8 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mFullscreenCheckbox;
 
+        private readonly LabeledCheckBox mLightingEnabledCheckbox;
+
         // Audio Settings.
         private readonly HorizontalSlider mMusicSlider;
 
@@ -199,6 +201,12 @@ namespace Intersect.Client.Interface.Shared
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "AutoCloseWindowsCheckbox")
             {
                 Text = Strings.Settings.AutoCloseWindows
+            };
+
+            // Video Settinbgs - Enable Lighting Checkbox
+            mLightingEnabledCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "EnableLightingCheckbox")
+            {
+                Text = Strings.Settings.EnableLighting
             };
 
             #endregion
@@ -559,6 +567,7 @@ namespace Intersect.Client.Interface.Shared
             // Video Settings.
             mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
+            mLightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
 
             // Audio Settings.
             mPreviousMusicVolume = Globals.Database.MusicVolume;
@@ -700,6 +709,8 @@ namespace Intersect.Client.Interface.Shared
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
             }
+
+            Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;
 
             // Save Settings.
             Globals.Database.MusicVolume = (int) mMusicSlider.Value;

@@ -199,8 +199,12 @@ namespace Intersect.Client.Core
                 }
             }
 
-            ClearDarknessTexture();
-
+            // Only perform this action when lighting is enabled.
+            if (Globals.Database.EnableLighting)
+            {
+                ClearDarknessTexture();
+            }
+            
             var gridX = currentMap.GridX;
             var gridY = currentMap.GridY;
 
@@ -378,9 +382,13 @@ namespace Intersect.Client.Core
 
             DrawOverlay();
 
-            GenerateLightMap();
-            DrawDarkness();
-
+            // Draw lighting effects when enabled.
+            if (Globals.Database.EnableLighting)
+            {
+                GenerateLightMap();
+                DrawDarkness();
+            }
+            
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (var x = 0; x < 3; x++)
