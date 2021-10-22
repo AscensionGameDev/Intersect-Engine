@@ -150,6 +150,14 @@ namespace Intersect.Server.Core
                                 if (!processedMaps.Contains(map))
                                 {
                                     ActiveMaps.Remove(map);
+                                    
+                                    // Reset all Npcs and resources so nothing is half-destroyed or gets stuck at the entrance/exit to an area while we're not processing..
+                                    var mapInstance = MapInstance.Get(map);
+                                    if (mapInstance != null)
+                                    {
+                                        mapInstance.DespawnEverything();
+                                        mapInstance.RespawnEverything();
+                                    }
                                 }
                             }
 
