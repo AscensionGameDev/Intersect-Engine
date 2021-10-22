@@ -2594,7 +2594,7 @@ namespace Intersect.Server.Entities
             return Dead;
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {

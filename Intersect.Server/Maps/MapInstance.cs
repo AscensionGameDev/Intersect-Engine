@@ -629,9 +629,6 @@ namespace Intersect.Server.Maps
 
         private void SpawnMapNpc(int i)
         {
-            byte x = 0;
-            byte y = 0;
-            byte dir = 0;
             var npcBase = NpcBase.Get(Spawns[i].NpcId);
             if (npcBase != null)
             {
@@ -646,35 +643,45 @@ namespace Intersect.Server.Maps
                     NpcSpawnInstances.TryAdd(Spawns[i], npcSpawnInstance);
                 }
 
-                if (Spawns[i].Direction != NpcSpawnDirection.Random)
-                {
-                    dir = (byte) (Spawns[i].Direction - 1);
-                }
-                else
-                {
-                    dir = (byte)Randomization.Next(0, 4);
-                }
+                FindNpcSpawnLocation(Spawns[i], out var x, out var y, out var dir);
 
-                if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
+                npcSpawnInstance.Entity = SpawnNpc((byte) x, (byte) y, dir, Spawns[i].NpcId);
+            }
+        }
+
+        private void FindNpcSpawnLocation(NpcSpawn spawn, out int x, out int y, out byte dir)
+        {
+            dir = 0;
+            x = 0;
+            y = 0;
+
+            if (spawn.Direction != NpcSpawnDirection.Random)
+            {
+                dir = (byte)(spawn.Direction - 1);
+            }
+            else
+            {
+                dir = (byte)Randomization.Next(0, 4);
+            }
+
+            if (spawn.X >= 0 && spawn.Y >= 0)
+            {
+                x = spawn.X;
+                y = spawn.Y;
+            }
+            else
+            {
+                for (var n = 0; n < 100; n++)
                 {
-                    npcSpawnInstance.Entity = SpawnNpc((byte) Spawns[i].X, (byte) Spawns[i].Y, dir, Spawns[i].NpcId);
-                }
-                else
-                {
-                    for (var n = 0; n < 100; n++)
+                    x = (byte)Randomization.Next(0, Options.MapWidth);
+                    y = (byte)Randomization.Next(0, Options.MapHeight);
+                    if (Attributes[x, y] == null || Attributes[x, y].Type == (int)MapAttributes.Walkable)
                     {
-                        x = (byte)Randomization.Next(0, Options.MapWidth);
-                        y = (byte)Randomization.Next(0, Options.MapHeight);
-                        if (Attributes[x, y] == null || Attributes[x, y].Type == (int) MapAttributes.Walkable)
-                        {
-                            break;
-                        }
-
-                        x = 0;
-                        y = 0;
+                        break;
                     }
 
-                    npcSpawnInstance.Entity = SpawnNpc(x, y, dir, Spawns[i].NpcId);
+                    x = 0;
+                    y = 0;
                 }
             }
         }
@@ -1308,12 +1315,39 @@ namespace Intersect.Server.Maps
         }
 
         /// <summary>
-        /// Despawn and respawn all map Npcs to fully reset them on this map.
+        /// Forcibly reset all Npcs originating from this map.
         /// </summary>
         public void ResetNpcSpawns()
         {
-            DespawnNpcs();
-            SpawnMapNpcs();
+            //Kill all npcs spawned from this map
+            lock (GetMapLock())
+            {
+                foreach (var npcSpawn in NpcSpawnInstances)
+                {
+                    lock (npcSpawn.Value.Entity.EntityLock)
+                    {
+                        var npc = npcSpawn.Value.Entity as Npc;
+                        if (!npc.Dead)
+                        {
+                            // If we keep track of reset radiuses, just reset it to that value.
+                            if (Options.Npc.AllowResetRadius)
+                            {
+                                npc.Reset();
+                            }
+                            // If we don't.. Kill and respawn the Npc assuming it's in combat.
+                            else
+                            {
+                                if (npc.Target != null || npc.CombatTimer > Timing.Global.Milliseconds)
+                                {
+                                    npc.Die(false);
+                                    FindNpcSpawnLocation(npcSpawn.Key, out var x, out var y, out var dir);
+                                    npcSpawn.Value.Entity = SpawnNpc((byte)x, (byte)y, dir, npcSpawn.Key.NpcId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 
