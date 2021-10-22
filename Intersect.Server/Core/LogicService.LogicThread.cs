@@ -155,8 +155,8 @@ namespace Intersect.Server.Core
                                     var mapInstance = MapInstance.Get(map);
                                     if (mapInstance != null)
                                     {
-                                        mapInstance.DespawnEverything();
-                                        mapInstance.RespawnEverything();
+                                        mapInstance.DespawnNpcs();
+                                        mapInstance.SpawnMapNpcs();
                                     }
                                 }
                             }

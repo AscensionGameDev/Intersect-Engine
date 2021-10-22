@@ -619,7 +619,7 @@ namespace Intersect.Server.Maps
         }
 
         //Npcs
-        private void SpawnMapNpcs()
+        public void SpawnMapNpcs()
         {
             for (var i = 0; i < Spawns.Count; i++)
             {
@@ -679,7 +679,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        private void DespawnNpcs()
+        public void DespawnNpcs()
         {
             //Kill all npcs spawned from this map
             lock (GetMapLock())
@@ -1306,6 +1306,8 @@ namespace Intersect.Server.Maps
             SpawnMapNpcs();
             SpawnMapResources();
         }
+
+
 
         public static MapInstance Get(Guid id)
         {
