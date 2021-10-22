@@ -151,12 +151,11 @@ namespace Intersect.Server.Core
                                 {
                                     ActiveMaps.Remove(map);
                                     
-                                    // Reset all Npcs and resources so nothing is half-destroyed or gets stuck at the entrance/exit to an area while we're not processing..
+                                    // Reset all Npcs so none of them get stuck at the entrance/exit to an area while we're not processing.
                                     var mapInstance = MapInstance.Get(map);
                                     if (mapInstance != null)
                                     {
-                                        mapInstance.DespawnNpcs();
-                                        mapInstance.SpawnMapNpcs();
+                                        mapInstance.ResetNpcSpawns();
                                     }
                                 }
                             }
