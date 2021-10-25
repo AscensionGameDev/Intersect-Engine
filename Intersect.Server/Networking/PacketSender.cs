@@ -1503,18 +1503,28 @@ namespace Intersect.Server.Networking
         }
 
         //CraftingTablePacket
-        public static void SendOpenCraftingTable(Player player, CraftingTableBase table)
+        public static void SendOpenCraftingTable(Player player, CraftingTableBase table, bool update = false)
         {
             if (table != null)
             {
-                player.SendPacket(new CraftingTablePacket(table.JsonData, false));
+                table.HiddenCrafts.Clear();
+                foreach (Guid craftId in table.Crafts)
+                {
+                    CraftBase craft = CraftBase.Get(craftId);
+                    if (!Conditions.MeetsConditionLists(craft.Requirements, player, null))
+                    {
+                        table.HiddenCrafts.Add(craftId);
+                    }
+                }
+                
+                player.SendPacket(new CraftingTablePacket(table.JsonData, false, false));
             }
         }
 
         //CraftingTablePacket
         public static void SendCloseCraftingTable(Player player)
         {
-            player.SendPacket(new CraftingTablePacket(null, true));
+            player.SendPacket(new CraftingTablePacket(null, true, false));
         }
 
         //GameObjectPacket

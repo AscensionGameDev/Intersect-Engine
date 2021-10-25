@@ -1847,6 +1847,16 @@ namespace Intersect.Server.Entities
                     throw new NotImplementedException();
             }
 
+            if (success)
+            {
+                if (CraftingTableId != Guid.Empty) // Update our crafting table if we have one
+                {
+                    PacketSender.SendOpenCraftingTable(this, CraftingTableBase.Get(this.CraftingTableId), true);
+                }
+
+                return true;
+            }
+
             var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
             return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
@@ -2073,6 +2083,10 @@ namespace Intersect.Server.Entities
             UpdateGatherItemQuests(itemDescriptor.Id);
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
 
+            if (CraftingTableId != Guid.Empty) // Update our crafting table if we have one
+            {
+                PacketSender.SendOpenCraftingTable(this, CraftingTableBase.Get(this.CraftingTableId), true);
+            }
             return true;
         }
 

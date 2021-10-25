@@ -1175,6 +1175,9 @@ Tick timer saved in server config.json.";
             
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString commonevent = @"Common Event:";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString requirementsbutton = @"Crafting Requirements:";
 
         }
 
@@ -1233,6 +1236,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString instructionsspell =
                 @"Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.";
+
+            public static LocalizedString craft =
+                @"Below are condition lists. If conditions are met on any of the lists then the player can view this craft within a crafting table.";
 
             public static LocalizedString listname = @"Desc:";
 

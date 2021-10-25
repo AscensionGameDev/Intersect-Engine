@@ -45,6 +45,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
             cmbEvent.Items.AddRange(EventBase.Names);
+            btnDynamicRequirements.Click += buttonRequirements_clicked;
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
         }
@@ -457,6 +458,12 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        }
+
+        private void buttonRequirements_clicked(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(mEditorItem.Requirements, RequirementType.Craft);
+            frm.ShowDialog();
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

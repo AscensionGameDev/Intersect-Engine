@@ -457,6 +457,11 @@ namespace Intersect.Client.Interface.Game.Crafting
                         continue;
                     }
 
+                    if (Globals.ActiveCraftingTable.HiddenCrafts.Contains(activeCraft.Id))
+                    {
+                        continue;
+                    }
+
                     var tmpRow = mRecipes?.AddRow(i + 1 + ") " + activeCraft.Name);
                     if (tmpRow == null)
                     {

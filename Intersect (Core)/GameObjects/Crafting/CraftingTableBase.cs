@@ -5,6 +5,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.Models;
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Intersect.GameObjects
 {
@@ -13,6 +14,8 @@ namespace Intersect.GameObjects
     {
 
         [NotMapped] public DbList<CraftBase> Crafts = new DbList<CraftBase>();
+
+        [NotMapped] public List<Guid> HiddenCrafts = new List<Guid>();
 
         [JsonConstructor]
         public CraftingTableBase(Guid id) : base(id)

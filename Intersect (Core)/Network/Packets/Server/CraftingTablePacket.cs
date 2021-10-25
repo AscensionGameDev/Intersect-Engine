@@ -10,10 +10,11 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public CraftingTablePacket(string tableData, bool close)
+        public CraftingTablePacket(string tableData, bool close, bool update)
         {
             TableData = tableData;
             Close = close;
+            Update = update;
         }
 
         [Key(0)]
@@ -21,6 +22,9 @@ namespace Intersect.Network.Packets.Server
 
         [Key(1)]
         public bool Close { get; set; }
+
+        [Key(2)]
+        public bool Update { get; set; }
 
     }
 
