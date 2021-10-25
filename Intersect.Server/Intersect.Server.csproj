@@ -600,39 +600,10 @@
     <Compile Include="Migrations\Game\20210703145618_AddingShopSoundEffects.designer.cs">
       <DependentUpon>20210703145618_AddingShopSoundEffects.cs</DependentUpon>
     </Compile>
-<<<<<<< HEAD
-=======
-    <Compile Include="Migrations\Game\20210810194601_OverTimeSpellAnimationMigration.cs" />
-    <Compile Include="Migrations\Game\20210810194601_OverTimeSpellAnimationMigration.Designer.cs" />
-    <Compile Include="Migrations\Game\20210826154714_AnimationBrightnessThreshold.cs" />
-    <Compile Include="Migrations\Game\20210826154714_AnimationBrightnessThreshold.designer.cs">
-      <DependentUpon>20210826154714_AnimationBrightnessThreshold.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210830230045_ComboEquipmentMigration.cs" />
-    <Compile Include="Migrations\Game\20210830230045_ComboEquipmentMigration.designer.cs">
-      <DependentUpon>20210830230045_ComboEquipmentMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210831005144_ComboEquipmentMigrationTwo.cs" />
-    <Compile Include="Migrations\Game\20210831005144_ComboEquipmentMigrationTwo.designer.cs">
-      <DependentUpon>20210831005144_ComboEquipmentMigrationTwo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210906022027_AddNewHelmetFields.cs" />
-    <Compile Include="Migrations\Game\20210906022027_AddNewHelmetFields.designer.cs">
-      <DependentUpon>20210906022027_AddNewHelmetFields.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210923215946_ProjectileGroundedMigration.cs" />
-    <Compile Include="Migrations\Game\20210923215946_ProjectileGroundedMigration.designer.cs">
-      <DependentUpon>20210923215946_ProjectileGroundedMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20211017155639_QuestListMigration.cs" />
-    <Compile Include="Migrations\Game\20211017155639_QuestListMigration.designer.cs">
-      <DependentUpon>20211017155639_QuestListMigration.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Game\20211025205347_CraftRequirementMigration.cs" />
-    <Compile Include="Migrations\Game\20211025205347_CraftRequirementMigration.designer.cs">
-      <DependentUpon>20211025205347_CraftRequirementMigration.cs</DependentUpon>
-    </Compile>
->>>>>>> 3fe5c5ce... Alex: Conditions can now be placed on crafts
+	<Compile Include="Migrations\Game\20211025205347_CraftRequirementMigration.designer.cs">
+		<DependentUpon>20211025205347_CraftRequirementMigration.cs</DependentUpon>
+	</Compile>
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>

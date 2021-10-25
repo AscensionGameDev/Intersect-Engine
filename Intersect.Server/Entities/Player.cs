@@ -1773,15 +1773,17 @@ namespace Intersect.Server.Entities
         /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Item item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true, int overflowTileX = -1, int overflowTileY = -1)
         {
+            var success = false;
+
             // Is this a valid item?
             if (item.Descriptor == null)
             {
-                return false;
+                success = true;
             }
 
             if (item.Quantity <= 0)
             {
-                return true;
+                success = true;
             }
 
             // Get this information so we can use it later.
@@ -1796,7 +1798,7 @@ namespace Intersect.Server.Entities
                     if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
-                        return true;
+                        success = true;
                     }
 
                     break;
@@ -1804,7 +1806,7 @@ namespace Intersect.Server.Entities
                     if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
-                        return true;
+                        success = true;
                     }
                     else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
                     {
@@ -1824,7 +1826,7 @@ namespace Intersect.Server.Entities
                     if (spawnAmount > 0)
                     {
                         Map.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
-                        return spawnAmount != item.Quantity;
+                        success = spawnAmount != item.Quantity;
                     }
 
                     break;
@@ -1832,13 +1834,13 @@ namespace Intersect.Server.Entities
                     if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
                         GiveItem(item, sendUpdate);
-                        return true;
+                        success = true;
                     }
                     else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
                         GiveItem(item, sendUpdate);
-                        return true;
+                        success = true;
                     }
 
                     break;
@@ -1851,7 +1853,7 @@ namespace Intersect.Server.Entities
             {
                 if (CraftingTableId != Guid.Empty) // Update our crafting table if we have one
                 {
-                    PacketSender.SendOpenCraftingTable(this, CraftingTableBase.Get(this.CraftingTableId), true);
+                    UpdateCraftingTable(CraftingTableId);
                 }
 
                 return true;
@@ -2085,7 +2087,7 @@ namespace Intersect.Server.Entities
 
             if (CraftingTableId != Guid.Empty) // Update our crafting table if we have one
             {
-                PacketSender.SendOpenCraftingTable(this, CraftingTableBase.Get(this.CraftingTableId), true);
+                UpdateCraftingTable(CraftingTableId);
             }
             return true;
         }
@@ -2990,17 +2992,16 @@ namespace Intersect.Server.Entities
         }
 
         //Crafting
-        public bool OpenCraftingTable(CraftingTableBase table)
+        public bool OpenCraftingTable(Guid tableId)
         {
             if (IsBusy())
             {
                 return false;
             }
 
-            if (table != null)
+            if (tableId != null && tableId != Guid.Empty)
             {
-                CraftingTableId = table.Id;
-                PacketSender.SendOpenCraftingTable(this, table);
+                UpdateCraftingTable(tableId);
             }
 
             return true;
@@ -3013,6 +3014,37 @@ namespace Intersect.Server.Entities
                 CraftingTableId = Guid.Empty;
                 PacketSender.SendCloseCraftingTable(this);
             }
+        }
+
+        public void UpdateCraftingTable(Guid tableId)
+        {
+            var table = CraftingTableBase.Get(tableId);
+
+            table.HiddenCrafts.Clear();
+            foreach (Guid craftId in table.Crafts)
+            {
+                CraftBase craft = CraftBase.Get(craftId);
+                if (!Conditions.MeetsConditionLists(craft.Requirements, this, null))
+                {
+                    table.HiddenCrafts.Add(craftId);
+                }
+            }
+
+            if (CanOpenCraftingTable(table))
+            {
+                CraftingTableId = table.Id;
+                PacketSender.SendOpenCraftingTable(this, table);
+            }
+            else
+            {
+                PacketSender.SendChatMsg(this, Strings.Player.noviablecrafts, ChatMessageType.Local, Color.Red);
+                PacketSender.SendCloseCraftingTable(this);
+            }
+        }
+
+        public bool CanOpenCraftingTable(CraftingTableBase table)
+        {
+            return table.HiddenCrafts.Count < table.Crafts.Count;
         }
 
         //Craft a new item

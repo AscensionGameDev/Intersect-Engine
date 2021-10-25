@@ -449,6 +449,7 @@ namespace Intersect.Client.Interface.Game.Crafting
         {
             if (!mInitialized)
             {
+                var displayIndex = 0;
                 for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
                 {
                     var activeCraft = CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]);
@@ -462,7 +463,8 @@ namespace Intersect.Client.Interface.Game.Crafting
                         continue;
                     }
 
-                    var tmpRow = mRecipes?.AddRow(i + 1 + ") " + activeCraft.Name);
+                    displayIndex++;
+                    var tmpRow = mRecipes?.AddRow(Strings.Crafting.recipe.ToString(displayIndex, activeCraft.Name));
                     if (tmpRow == null)
                     {
                         continue;

@@ -1073,6 +1073,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString noviablecrafts = @"You can not craft any of the crafts on this table!";
         }
 
         public sealed class PortcheckingNamespace : LocaleNamespace
