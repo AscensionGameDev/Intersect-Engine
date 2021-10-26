@@ -20,7 +20,11 @@ namespace Intersect.GameObjects
         /// <summary>
         /// Whether the NPC can be affected by knockback
         /// </summary>
-        Knockback = 0,
+        None = 0,
+        /// <summary>
+        /// Whether the NPC can be affected by knockback
+        /// </summary>
+        Knockback,
         /// <summary>
         /// Whether the NPC can be affected by silence
         /// </summary>

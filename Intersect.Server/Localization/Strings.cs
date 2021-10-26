@@ -344,6 +344,9 @@ namespace Intersect.Server.Localization
             );
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString immunetoeffect = @"IMMUNE!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunattacking = @"You are stunned and can't attack.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
