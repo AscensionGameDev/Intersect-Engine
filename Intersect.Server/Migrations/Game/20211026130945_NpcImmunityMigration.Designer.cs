@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20211026130945_NpcImmunityMigration")]
+    partial class NpcImmunityMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +22,8 @@ namespace Intersect.Server.Migrations.Game
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BrightnessThreshold");
 
                     b.Property<bool>("CompleteSound");
 
@@ -134,6 +138,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<Guid>("ItemId");
 
+                    b.Property<string>("JsonRequirements")
+                        .HasColumnName("Requirements");
+
                     b.Property<string>("Name");
 
                     b.Property<int>("Quantity");
@@ -225,6 +232,15 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("CannotUseMessage");
 
+                    b.Property<int>("ComboExpBoost")
+                        .HasColumnName("ComboExpBoost");
+
+                    b.Property<int>("ComboInterval")
+                        .HasColumnName("ComboInterval");
+
+                    b.Property<Guid>("ComboSpellId")
+                        .HasColumnName("ComboSpell");
+
                     b.Property<int>("Cooldown");
 
                     b.Property<string>("CooldownGroup");
@@ -252,6 +268,12 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("FemalePaperdoll");
 
                     b.Property<string>("Folder");
+
+                    b.Property<bool>("HideBeard");
+
+                    b.Property<bool>("HideExtra");
+
+                    b.Property<bool>("HideHair");
 
                     b.Property<string>("Icon");
 
@@ -484,6 +506,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("GrappleHook");
 
+                    b.Property<bool>("Grounded");
+
                     b.Property<bool>("IgnoreActiveResources");
 
                     b.Property<bool>("IgnoreExhaustedResources");
@@ -569,6 +593,47 @@ namespace Intersect.Server.Migrations.Game
                     b.HasKey("Id");
 
                     b.ToTable("Quests");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.QuestBoard.QuestBoardBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("QuestListsJson")
+                        .HasColumnName("QuestLists");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestBoards");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.QuestList.QuestListBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("JsonRequirements")
+                        .HasColumnName("Requirements");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("QuestsJson")
+                        .HasColumnName("Quests");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestLists");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
@@ -707,6 +772,9 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("CastRequirements");
 
                     b.Property<string>("Name");
+
+                    b.Property<Guid>("OverTimeAnimationId")
+                        .HasColumnName("OverTimeAnimation");
 
                     b.Property<int>("SpellType");
 

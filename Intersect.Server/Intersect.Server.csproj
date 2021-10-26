@@ -604,6 +604,10 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
     </Compile>
+	<Compile Include="Migrations\Game\20211026130945_NpcImmunityMigration.cs" />
+	<Compile Include="Migrations\Game\20211026130945_NpcImmunityMigration.designer.cs">
+		<DependentUpon>20211026130945_NpcImmunityMigration.cs</DependentUpon>
+	</Compile>
     <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.cs" />
     <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.Designer.cs">
       <DependentUpon>20210414222302_AddedChatLogging.cs</DependentUpon>

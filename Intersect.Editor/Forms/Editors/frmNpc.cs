@@ -238,6 +238,17 @@ namespace Intersect.Editor.Forms.Editors
             txtSearch.Text = Strings.NpcEditor.searchplaceholder;
             lblFolder.Text = Strings.NpcEditor.folderlabel;
 
+            grpImmunities.Text = Strings.NpcEditor.immunities;
+            chkKnockback.Text = Strings.NpcEditor.knockback;
+            chkSilence.Text = Strings.NpcEditor.silence;
+            chkStun.Text = Strings.NpcEditor.stun;
+            chkSnare.Text = Strings.NpcEditor.snare;
+            chkBlind.Text = Strings.NpcEditor.blind;
+            chkTransform.Text = Strings.NpcEditor.transform;
+            chkTaunt.Text = Strings.NpcEditor.taunt;
+            chkSleep.Text = Strings.NpcEditor.sleep;
+            lblTenacity.Text = Strings.NpcEditor.tenacity;
+
             btnSave.Text = Strings.NpcEditor.save;
             btnCancel.Text = Strings.NpcEditor.cancel;
         }
@@ -352,6 +363,11 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
+
+                // Tenacity and immunities
+                nudTenacity.Value = (decimal) mEditorItem.Tenacity;
+
+                UpdateImmunities();
             }
             else
             {
@@ -578,6 +594,29 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstGameObjects.Focused;
             toolStripItemDelete.Enabled = mEditorItem != null && lstGameObjects.Focused;
             toolStripItemUndo.Enabled = mEditorItem != null && lstGameObjects.Focused;
+        }
+
+        private void UpdateImmunities()
+        {
+            chkKnockback.Checked = GetImmunityValue(Immunities.Knockback);
+            chkSilence.Checked = GetImmunityValue(Immunities.Silence);
+            chkSnare.Checked = GetImmunityValue(Immunities.Snare);
+            chkStun.Checked = GetImmunityValue(Immunities.Stun);
+            chkSleep.Checked = GetImmunityValue(Immunities.Sleep);
+            chkTransform.Checked = GetImmunityValue(Immunities.Transform);
+            chkTaunt.Checked = GetImmunityValue(Immunities.Taunt);
+            chkBlind.Checked = GetImmunityValue(Immunities.Blind);
+        }
+
+        private bool GetImmunityValue(Immunities immunity)
+        {
+            // TODO debugging
+            if (immunity == Immunities.Knockback)
+            {
+                mEditorItem.Immunities.TryGetValue(immunity, out var y);
+                var x = y;
+            }
+            return mEditorItem.Immunities.TryGetValue(immunity, out var immunityVal) ? immunityVal : false;
         }
 
         private void form_KeyDown(object sender, KeyEventArgs e)
@@ -1012,6 +1051,51 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
+        private void chkKnockback_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Knockback] = chkKnockback.Checked;
+        }
+
+        private void chkSilence_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Silence] = chkSilence.Checked;
+        }
+
+        private void chkStun_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Stun] = chkStun.Checked;
+        }
+
+        private void chkSnare_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Snare] = chkSnare.Checked;
+        }
+
+        private void chkBlind_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Blind] = chkBlind.Checked;
+        }
+
+        private void chkTransform_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Transform] = chkTransform.Checked;
+        }
+
+        private void chkSleep_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Sleep] = chkSleep.Checked;
+        }
+
+        private void chkTaunt_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Immunities[Immunities.Taunt] = chkTaunt.Checked;
+        }
+
+        private void nudTenacity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Tenacity = (double)nudTenacity.Value;
+        }
     }
 
 }

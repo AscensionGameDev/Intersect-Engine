@@ -12,6 +12,44 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
+    /// <summary>
+    /// Enumeration of the different immunity options
+    /// </summary>
+    public enum Immunities
+    {
+        /// <summary>
+        /// Whether the NPC can be affected by knockback
+        /// </summary>
+        Knockback = 0,
+        /// <summary>
+        /// Whether the NPC can be affected by silence
+        /// </summary>
+        Silence,
+        /// <summary>
+        /// Whether the NPC can be affected by stun
+        /// </summary>
+        Stun,
+        /// <summary>
+        /// Whether the NPC can be affected by snare
+        /// </summary>
+        Snare,
+        /// <summary>
+        /// Whether the NPC can be affected by blind
+        /// </summary>
+        Blind,
+        /// <summary>
+        /// Whether the NPC can be affected by transform
+        /// </summary>
+        Transform,
+        /// <summary>
+        /// Whether the NPC can be affected by sleep
+        /// </summary>
+        Sleep,
+        /// <summary>
+        /// Whether the NPC can be affected by taunt
+        /// </summary>
+        Taunt
+    }
 
     public class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
@@ -29,6 +67,24 @@ namespace Intersect.GameObjects
         [NotMapped] public int[] Stats = new int[(int) Enums.Stats.StatCount];
 
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
+
+        [NotMapped]
+        public Dictionary<Immunities, bool> Immunities = new Dictionary<Immunities, bool>();
+
+        [JsonIgnore]
+        [Column("Immunities")]
+        public string ImmunitiesJson
+        {
+            get => JsonConvert.SerializeObject(Immunities);
+            set
+            {
+                Immunities = JsonConvert.DeserializeObject<Dictionary<Immunities, bool>>(value ?? "");
+                if (Immunities == null)
+                {
+                    Immunities = new Dictionary<Immunities, bool>();
+                }
+            }
+        }
 
         [JsonConstructor]
         public NpcBase(Guid id) : base(id)
@@ -112,6 +168,8 @@ namespace Intersect.GameObjects
         public int CritChance { get; set; }
 
         public double CritMultiplier { get; set; } = 1.5;
+
+        public double Tenacity { get; set; } = 0.0;
 
         public int AttackSpeedModifier { get; set; }
 

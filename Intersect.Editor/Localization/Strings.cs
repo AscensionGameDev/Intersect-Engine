@@ -3943,6 +3943,26 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString immunities = @"Immunities";
+
+            public static LocalizedString knockback = @"Knockback";
+            
+            public static LocalizedString silence = @"Silence";
+            
+            public static LocalizedString stun = @"Stun";
+
+            public static LocalizedString snare = @"Snare";
+
+            public static LocalizedString blind = @"Blind";
+
+            public static LocalizedString transform = @"Transform";
+
+            public static LocalizedString sleep = @"Sleep";
+
+            public static LocalizedString taunt = @"Taunt";
+
+            public static LocalizedString tenacity = @"Tenacity (%):";
+
         }
 
         public struct NpcSpawns
