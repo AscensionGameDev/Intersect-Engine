@@ -73,6 +73,13 @@ namespace Intersect.Server.Entities.Combat
                     player.SpellCastSlot = -1;
                     PacketSender.SendEntityCancelCast(player);
                 }
+            } else if (en is Npc thisNpc)
+            {
+                // Get our NPC's Tenacity stat
+                if (!Status.TenacityExcluded.Contains(type))
+                {
+                    tenacity = (float)thisNpc.Base.Tenacity;
+                }
             }
 
             // Handle Npc specific stuff, such as loot tables!
