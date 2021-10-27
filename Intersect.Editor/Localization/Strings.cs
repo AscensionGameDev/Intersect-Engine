@@ -2181,6 +2181,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MapZoneTypeLabel = @"Zone Type:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString checkbank = @"Check Bank?";
         }
 
         public struct EventConditionDesc

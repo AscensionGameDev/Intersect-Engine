@@ -122,6 +122,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbEquippedItem = new DarkUI.Controls.DarkComboBox();
             this.lblEquippedItem = new System.Windows.Forms.Label();
             this.grpInventoryConditions = new DarkUI.Controls.DarkGroupBox();
+            this.chkBank = new DarkUI.Controls.DarkCheckBox();
             this.grpVariableAmount = new DarkUI.Controls.DarkGroupBox();
             this.cmbInvVariable = new DarkUI.Controls.DarkComboBox();
             this.lblInvVariable = new System.Windows.Forms.Label();
@@ -1520,6 +1521,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpInventoryConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpInventoryConditions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpInventoryConditions.Controls.Add(this.chkBank);
             this.grpInventoryConditions.Controls.Add(this.grpVariableAmount);
             this.grpInventoryConditions.Controls.Add(this.grpManualAmount);
             this.grpInventoryConditions.Controls.Add(this.grpAmountType);
@@ -1528,10 +1530,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpInventoryConditions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpInventoryConditions.Location = new System.Drawing.Point(9, 40);
             this.grpInventoryConditions.Name = "grpInventoryConditions";
-            this.grpInventoryConditions.Size = new System.Drawing.Size(262, 179);
+            this.grpInventoryConditions.Size = new System.Drawing.Size(262, 202);
             this.grpInventoryConditions.TabIndex = 25;
             this.grpInventoryConditions.TabStop = false;
             this.grpInventoryConditions.Text = "Has Item";
+            // 
+            // chkBank
+            // 
+            this.chkBank.Location = new System.Drawing.Point(152, 174);
+            this.chkBank.Name = "chkBank";
+            this.chkBank.Size = new System.Drawing.Size(98, 17);
+            this.chkBank.TabIndex = 59;
+            this.chkBank.Text = "Check Bank?";
             // 
             // grpVariableAmount
             // 
@@ -1878,5 +1888,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpMapZoneType;
         private System.Windows.Forms.Label lblMapZoneType;
         private DarkComboBox cmbMapZoneType;
+        private DarkCheckBox chkBank;
     }
 }
