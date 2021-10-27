@@ -5,8 +5,6 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-
-using JetBrains.Annotations;
 using System;
 
 namespace Intersect.Server.Core.Commands
@@ -59,5 +57,4 @@ namespace Intersect.Server.Core.Commands
             }
         }
     }
-
 }
