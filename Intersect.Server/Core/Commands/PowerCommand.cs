@@ -6,6 +6,9 @@ using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
+using JetBrains.Annotations;
+using System;
+
 namespace Intersect.Server.Core.Commands
 {
 
@@ -37,18 +40,24 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            var power = result.Find(Power);
-            DbInterface.SetPlayerPower(target.Name, power.AsUserRights());
-            PacketSender.SendEntityDataToProximity(target.Entity);
-            PacketSender.SendGlobalMsg(
-                power != Access.None
-                    ? Strings.Player.admin.ToString(target.Entity.Name)
-                    : Strings.Player.deadmin.ToString(target.Entity.Name)
-            );
+            try
+            {
+                var power = result.Find(Power);
+                DbInterface.SetPlayerPower(target.Name, power.AsUserRights());
+                PacketSender.SendEntityDataToProximity(target.Entity);
+                PacketSender.SendGlobalMsg(
+                    power != Access.None
+                        ? Strings.Player.admin.ToString(target.Entity.Name)
+                        : Strings.Player.deadmin.ToString(target.Entity.Name)
+                );
 
-            Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target.Entity.Name)}");
+                Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target.Entity.Name)}");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine($@"{ex.Message}");
+            }
         }
-
     }
 
 }
