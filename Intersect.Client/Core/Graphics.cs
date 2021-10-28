@@ -376,6 +376,9 @@ namespace Intersect.Client.Core
             //Draw the players targets
             Globals.Me.DrawTargets();
 
+            // Draw Overhead Information while hovering the cursor on specific entities when their info is set to be hidden.
+            Globals.Me.DrawOverheadInfoOnHover();
+
             DrawOverlay();
 
             GenerateLightMap();
@@ -387,7 +390,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        DrawOverheadInfo(entity);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -405,7 +408,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        DrawOverheadInfo(entity);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -439,6 +442,88 @@ namespace Intersect.Client.Core
             foreach (var animInstance in animations)
             {
                 animInstance.EndDraw();
+            }
+        }
+
+        // Draw Entities Overhead Information.
+        private static void DrawOverheadInfo(Entity entity)
+        {
+            // Who's who.
+            var isEvent = entity is Event;
+            var isMe = entity.GetType() == typeof(Player) && entity.Id == Globals.Me.Id;
+            var isNpc = entity.GetType() != typeof(Player);
+            var isPlayer = entity.GetType() == typeof(Player) && entity.Id != Globals.Me.Id;
+            var isFriend = entity is Player possiblyFriend &&
+                           Globals.Me.IsFriend(possiblyFriend) &&
+                           !isMe;
+            var isGuildMate = entity is Player possiblyGuildMate &&
+                              Globals.Me.IsGuildMate(possiblyGuildMate) &&
+                              !isMe;
+            var isPartyMate = entity is Player possiblyPartyMate &&
+                              Globals.Me.IsInMyParty(possiblyPartyMate) &&
+                              !isMe;
+
+            // Events have their own handler for hiding names within the DrawName virtual void in the Entity class.
+            if (isEvent)
+            {
+                entity.DrawName(null);
+            }
+
+            // If MyOverheadInfo is toggled on always draw the local player's info.
+            if (Globals.Database.MyOverheadInfo && isMe)
+            {
+                entity.DrawName(null);
+            }
+
+            // If NpcOverheadInfo is toggled on, always draw npc names.
+            if (Globals.Database.NpcOverheadInfo && isNpc)
+            {
+                entity.DrawName(null);
+            }
+
+            // If PlayerOverheadInfo is toggled on, always draw other player's info.
+            if (Globals.Database.PlayerOverheadInfo && isPlayer &&
+                !isFriend && !isGuildMate && !isPartyMate)
+            {
+                entity.DrawName(null);
+            }
+
+            // If PartyMemberOverheadInfo is toggled on, always draw party members info.
+            if (Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+            {
+                entity.DrawName(null);
+            }
+
+            // If FriendOverheadInfo & GuildMemberOverheadInfo are on, let's prevent double draw.
+            if (Globals.Database.FriendOverheadInfo && isFriend &&
+                Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+            {
+                entity.DrawName(null);
+                return;
+            }
+
+            // If FriendOverheadInfo is toggled on, always draw friend's info.
+            if (Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+            {
+                // Skip if Friend is GuildMate in order to prevent double draw / overlapping.
+                if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
+                {
+                    return;
+                }
+
+                entity.DrawName(null);
+            }
+
+            // If GuildMemberOverheadInfo is toggled on, always draw guild members info.
+            if (Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+            {
+                // Skip if GuildMate is Friend in order to prevent double draw.
+                if (Globals.Database.FriendOverheadInfo && isFriend)
+                {
+                    return;
+                }
+
+                entity.DrawName(null);
             }
         }
 
