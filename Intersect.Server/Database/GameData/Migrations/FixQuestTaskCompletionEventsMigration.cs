@@ -31,6 +31,8 @@ namespace Intersect.Server.Database.GameData.Migrations
                     if (incorrectEventId && foundEvent == null)
                     {
                         var ev = new EventBase(task.Id, Guid.Empty, 0, 0, false);
+                        ev.CommonEvent = false;
+                        ev.Name = $"Quest: {quest.Name} - Task Completion Event";
                         context.Events.Add(ev);
                         EventBase.Lookup.Set(ev.Id, ev);
                         task.CompletionEventId = task.Id;
