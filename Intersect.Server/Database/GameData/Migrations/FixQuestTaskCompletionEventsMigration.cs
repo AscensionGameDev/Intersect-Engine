@@ -1,6 +1,8 @@
-﻿using Intersect.Enums;
-using Intersect.GameObjects.Events;
+﻿using System;
+using System.Linq;
+
 using Intersect.Logging;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
@@ -27,7 +29,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                         Log.Warn($"Quest {quest.Name} ({quest.Name}) has task {task.Id} with broken CompletionEvent, attempting to fix..");
 
                         // Can we find the event detached somewhere?
-                        var foundEvent = EventBase.Get(task.Id);
+                        var foundEvent = context.Events.Where(e => e.Id == task.Id).FirstOrDefault();
                         if (foundEvent != null)
                         {
                             // We can! Link it up again!
@@ -37,9 +39,13 @@ namespace Intersect.Server.Database.GameData.Migrations
                         else
                         {
                             // Somehow this event doesn't exist.. Recreate it!
-                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, task.Id);
-                            task.CompletionEvent = evtb;
-                            Log.Info($"Fixed quest {quest.Name} ({quest.Name}) task {task.Id}, created new event {evtb.Id}.");
+                            var ev = new  EventBase(task.Id, Guid.Empty, 0, 0, false);
+                            context.Events.Add(ev);
+                            EventBase.Lookup.Set(ev.Id, ev);
+
+                            // Set it up correctly on our quest!
+                            task.CompletionEventId = task.Id;
+                            Log.Info($"Fixed quest {quest.Name} ({quest.Name}) task {task.Id}, created new event {task.Id}.");
                         }
                     }
                 }
