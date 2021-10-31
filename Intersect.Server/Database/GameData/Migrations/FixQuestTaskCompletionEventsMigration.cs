@@ -16,37 +16,33 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         public static void FixQuestTaskCompletionEvents(GameContext context)
         {
-            Log.Info("Checking for broken Quest Task Completion Events..");
+            Log.Info("Checking for broken Quest Task Completion Events, this process might take several minutes depending on your quest count!");
 
             // Go through each and every quest to check if all the tasks have valid events.
             foreach (var quest in context.Quests)
             {
                 foreach(var task in quest.Tasks)
                 {
-                    // Is the completion event non-existent? If so, try and fix it!
-                    if (task.CompletionEvent == null)
+                    // Determine whether the event Id is incorrect and if we can find an event with the task Id as intended.
+                    var incorrectEventId = task.CompletionEventId == null || task.CompletionEventId == Guid.Empty || context.Events.Where(e => e.Id == task.CompletionEventId).FirstOrDefault() == null;
+                    var foundEvent = context.Events.Where(e => e.Id == task.Id).FirstOrDefault();
+
+                    // If the event Id is incorrect and we can't find the event.. recreate it!
+                    if (incorrectEventId && foundEvent == null)
                     {
-                        Log.Warn($"Quest {quest.Name} ({quest.Name}) has task {task.Id} with broken CompletionEvent, attempting to fix..");
+                        var ev = new EventBase(task.Id, Guid.Empty, 0, 0, false);
+                        context.Events.Add(ev);
+                        EventBase.Lookup.Set(ev.Id, ev);
+                        task.CompletionEventId = task.Id;
 
-                        // Can we find the event detached somewhere?
-                        var foundEvent = context.Events.Where(e => e.Id == task.Id).FirstOrDefault();
-                        if (foundEvent != null)
-                        {
-                            // We can! Link it up again!
-                            task.CompletionEvent = foundEvent;
-                            Log.Info($"Fixed quest {quest.Name} ({quest.Name}) task {task.Id}, linked up old event {foundEvent.Id}.");
-                        }
-                        else
-                        {
-                            // Somehow this event doesn't exist.. Recreate it!
-                            var ev = new  EventBase(task.Id, Guid.Empty, 0, 0, false);
-                            context.Events.Add(ev);
-                            EventBase.Lookup.Set(ev.Id, ev);
+                        Log.Info($"Fixed quest {quest.Name} ({quest.Id}) task {task.Id}, created new event {task.Id}.");
+                    }
+                    // if the Event ID is incorrect but we CAN find the event, link it!
+                    else if (incorrectEventId && foundEvent != null)
+                    {
+                        task.CompletionEventId = foundEvent.Id;
 
-                            // Set it up correctly on our quest!
-                            task.CompletionEventId = task.Id;
-                            Log.Info($"Fixed quest {quest.Name} ({quest.Name}) task {task.Id}, created new event {task.Id}.");
-                        }
+                        Log.Info($"Fixed quest {quest.Name} ({quest.Id}) task {task.Id}, linked up old event {foundEvent.Id}.");
                     }
                 }
             }
