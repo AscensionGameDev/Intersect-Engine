@@ -30,42 +30,44 @@ namespace Intersect.Client.Core.Controls
             }
 
             // Check to see if our modifier and real key are pressed!
-            if (IsMouseKey)
+            if (modifier)
             {
-                switch (Key)
+                if (IsMouseKey)
                 {
-                    case Keys.LButton:
-                        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
-                        {
-                            return true;
-                        }
+                    switch (Key)
+                    {
+                        case Keys.LButton:
+                            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
+                            {
+                                return true;
+                            }
 
-                        break;
-                    case Keys.RButton:
-                        if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
-                        {
-                            return true;
-                        }
+                            break;
+                        case Keys.RButton:
+                            if (Globals.InputManager.MouseButtonDown(MouseButtons.Right))
+                            {
+                                return true;
+                            }
 
-                        break;
-                    case Keys.MButton:
-                        if (Globals.InputManager.MouseButtonDown(MouseButtons.Middle))
-                        {
-                            return true;
-                        }
+                            break;
+                        case Keys.MButton:
+                            if (Globals.InputManager.MouseButtonDown(MouseButtons.Middle))
+                            {
+                                return true;
+                            }
 
-                        break;
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                if (modifier && KeyDown(Key))
+                else
                 {
-                    return true;
+                    if (KeyDown(Key))
+                    {
+                        return true;
+                    }
                 }
             }
            
-
             // If we get this far, clearly our buttons aren't pressed.
             return false;
         }
