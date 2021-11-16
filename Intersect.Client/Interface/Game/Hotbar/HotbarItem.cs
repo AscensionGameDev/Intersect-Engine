@@ -54,7 +54,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         //Textures
         private Base mHotbarWindow;
 
-        private Keys mHotKey;
+        private ControlValue mHotKey;
 
         private Item mInventoryItem = null;
 
@@ -220,17 +220,25 @@ namespace Intersect.Client.Interface.Game.Hotbar
             }
 
             //See if Label Should be changed
-            if (mHotKey != Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1)
+            var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+            if (mHotKey == null || mHotKey.Modifier != keybind.Modifier || mHotKey.Key != keybind.Key)
             {
-                KeyLabel.SetText(
-                    Strings.Keys.keydict[
-                        Enum.GetName(
-                                typeof(Keys), Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1
-                            )
-                            .ToLower()]
-                );
+                if (keybind.Modifier != Keys.None)
+                {
+                    KeyLabel.SetText(string.Format("{00} + {01}",
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    ));
+                }
+                else
+                {
+                    KeyLabel.SetText(
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    );
+                }
+                
 
-                mHotKey = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+                mHotKey = keybind;
             }
 
             var slot = Globals.Me.Hotbar[mYindex];

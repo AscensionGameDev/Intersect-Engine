@@ -81,6 +81,7 @@
     <Compile Include="Core\Bootstrapper.cs" />
     <Compile Include="Core\ClientContext.cs" />
     <Compile Include="Core\ClientCommandLineOptions.cs" />
+    <Compile Include="Core\Controls\ControlValue.cs" />
     <Compile Include="Core\Controls\ControlEnum.cs" />
     <Compile Include="Core\Controls\ControlMap.cs" />
     <Compile Include="Core\Controls\Controls.cs" />
