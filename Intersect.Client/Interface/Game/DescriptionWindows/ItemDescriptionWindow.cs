@@ -269,15 +269,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Vitals
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                if (mItem.VitalsGiven[i] > 0 && mItem.PercentageVitalsGiven[i] > 0)
+                if (mItem.VitalsGiven[i] != 0 && mItem.PercentageVitalsGiven[i] != 0)
                 {
                     rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.RegularAndPercentage.ToString(mItem.VitalsGiven[i], mItem.PercentageVitalsGiven[i]));
                 }
-                else if (mItem.VitalsGiven[i] > 0)
+                else if (mItem.VitalsGiven[i] != 0)
                 {
                     rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], mItem.VitalsGiven[i].ToString());
                 }
-                else if (mItem.PercentageVitalsGiven[i] > 0)
+                else if (mItem.PercentageVitalsGiven[i] != 0)
                 {
                     rows.AddKeyValueRow(Strings.ItemDescription.Vitals[i], Strings.ItemDescription.Percentage.ToString(mItem.PercentageVitalsGiven[i]));
                 }
@@ -289,15 +289,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 for (var i = 0; i < (int)Stats.StatCount; i++)
                 {
                     var flatStat = mItem.StatsGiven[i] + mStatBuffs[i];
-                    if (flatStat > 0 && mItem.PercentageStatsGiven[i] > 0)
+                    if (flatStat != 0 && mItem.PercentageStatsGiven[i] != 0)
                     {
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(flatStat, mItem.PercentageStatsGiven[i]));
                     }
-                    else if (flatStat > 0)
+                    else if (flatStat != 0)
                     {
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], flatStat.ToString());
                     }
-                    else if (mItem.PercentageStatsGiven[i] > 0)
+                    else if (mItem.PercentageStatsGiven[i] != 0)
                     {
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mItem.PercentageStatsGiven[i]));
                     }
@@ -305,7 +305,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Bonus Effect
-            if (mItem.Effect.Type != EffectType.None && mItem.Effect.Percentage > 0)
+            if (mItem.Effect.Type != EffectType.None && mItem.Effect.Percentage != 0)
             {
                 rows.AddKeyValueRow(Strings.ItemDescription.BonusEffects[(int) mItem.Effect.Type], Strings.ItemDescription.Percentage.ToString(mItem.Effect.Percentage));
             }

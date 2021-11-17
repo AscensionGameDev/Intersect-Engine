@@ -127,7 +127,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Add Vital Costs
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                if (mSpell.VitalCost[i] > 0)
+                if (mSpell.VitalCost[i] != 0)
                 {
                     rows.AddKeyValueRow(Strings.SpellDescription.VitalCosts[i], mSpell.VitalCost[i].ToString());
                 }
@@ -221,15 +221,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 Tuple<string, string> data = null;
-                if (mSpell.Combat.StatDiff[i] > 0 && mSpell.Combat.PercentageStatDiff[i] > 0)
+                if (mSpell.Combat.StatDiff[i] != 0 && mSpell.Combat.PercentageStatDiff[i] != 0)
                 {
                     data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.SpellDescription.RegularAndPercentage.ToString(mSpell.Combat.StatDiff[i], mSpell.Combat.PercentageStatDiff[i]));
                 }
-                else if (mSpell.Combat.StatDiff[i] > 0)
+                else if (mSpell.Combat.StatDiff[i] != 0)
                 {
                     data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], mSpell.Combat.StatDiff[i].ToString());
                 }
-                else if (mSpell.Combat.PercentageStatDiff[i] > 0)
+                else if (mSpell.Combat.PercentageStatDiff[i] != 0)
                 {
                     data = new Tuple<string, string>(Strings.SpellDescription.StatCounts[i], Strings.ItemDescription.Percentage.ToString(mSpell.Combat.PercentageStatDiff[i]));
                 }
