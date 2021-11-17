@@ -1959,12 +1959,6 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (!CanAttack(target, spell))
-            {
-                reason = SpellCastFailureReason.InvalidTarget;
-                return false;
-            }
-
             // Check if the caster has any status effects that need to apply.
             // Ignore if the current spell is a Cleanse, this will ignore any and all status effects.
             if (spell.Combat.Effect != StatusTypes.Cleanse)
@@ -2001,6 +1995,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            // Check for target validity
             var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
             if (target == null && singleTargetSpell)
             {
@@ -2016,7 +2011,7 @@ namespace Intersect.Server.Entities
 
             if (target != null && singleTargetSpell)
             {
-                if (spell.Combat.Friendly != IsAllyOf(target))
+                if ((spell.Combat.Friendly != IsAllyOf(target)) || !CanAttack(target, spell))
                 {
                     reason = SpellCastFailureReason.InvalidTarget;
                     return false;

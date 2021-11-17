@@ -1320,8 +1320,8 @@ namespace Intersect.Server.Entities
         public override bool CanAttack(Entity entity, SpellBase spell)
         {
             // If self-cast, AoE, Projectile or Dash.. always accept.
-            if (spell?.Combat.TargetType == SpellTargetTypes.Self ||
-                spell?.Combat.TargetType == SpellTargetTypes.Projectile ||
+            if (spell?.Combat?.TargetType == SpellTargetTypes.Self ||
+                spell?.Combat?.TargetType == SpellTargetTypes.Projectile ||
                 spell?.SpellType == SpellTypes.Dash
                 )
             {
@@ -1348,7 +1348,7 @@ namespace Intersect.Server.Entities
 
                 // Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 // Projectiles are ignored here, because we can always fire those.. Whether they hit or not is a problem for later.
-                if (!friendly && (spell.Combat.TargetType != SpellTargetTypes.Self && spell.Combat.TargetType != SpellTargetTypes.AoE && spell.SpellType == SpellTypes.CombatSpell))
+                if (!friendly && (spell?.Combat?.TargetType != SpellTargetTypes.Self && spell?.Combat?.TargetType != SpellTargetTypes.AoE && spell?.SpellType == SpellTypes.CombatSpell))
                 {
                     // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                     if (MapInstance.Get(MapId).ZoneType == MapZones.Safe || MapInstance.Get(player.MapId).ZoneType == MapZones.Safe)
