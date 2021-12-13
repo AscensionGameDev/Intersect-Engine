@@ -162,7 +162,7 @@ namespace Intersect.Compression
 		/// <param name="indexName">The filename for the index file.</param>
 		/// <param name="packPrefix">The file prefix for each asset pack.</param>
 		/// <param name="packExt">The file extension for each asset pack.</param>
-		/// <param name="batchSize">The maximum size in bytes of combined files to pack up in each asset pack.</param>
+		/// <param name="batchSize">The maximum size in Megabytes of combined files to pack up in each asset pack.</param>
 		public static void PackageAssets(string inputDir, string inputFilter, string outputDir, string indexName, string packPrefix, string packExt, int batchSize)
 		{
 			// We can't do less than one MB at a time.
