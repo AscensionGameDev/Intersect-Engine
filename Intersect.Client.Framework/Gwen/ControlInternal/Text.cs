@@ -204,7 +204,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <returns>Character position in local coordinates.</returns>
         public Point GetCharacterPosition(int index)
         {
-            if (Length == 0 || index == 0)
+            if (Length == 0 || index == 0 || index < 0 || index > (TextOverride ?? String).Length)
             {
                 return new Point(0, 0);
             }
