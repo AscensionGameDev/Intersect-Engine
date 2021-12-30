@@ -2425,7 +2425,8 @@ namespace Intersect.Server.Entities
 
                     // Spawn the actual item!
                     var map = MapInstance.Get(MapId);
-                    map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+                    var randomQuantity = Randomization.Next(0, item.Quantity + 1);
+                    map?.SpawnItem(X, Y, item, randomQuantity, lootOwner, sendUpdate);
 
                     // Remove the item from inventory if a player.
                     var player = this as Player;
