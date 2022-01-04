@@ -130,6 +130,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private object mUserData;
 
+        private Audio.GameAudioInstance mSoundInstance;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
@@ -2172,11 +2174,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             var sound = GameContentManager.Current.GetSound(filename);
             if (sound != null)
             {
-                var soundInstance = sound.CreateInstance();
-                if (soundInstance != null)
+                mSoundInstance = sound.CreateInstance();
+                if (mSoundInstance != null)
                 {
-                    soundInstance.SetVolume(100, false);
-                    soundInstance.Play();
+                    mSoundInstance.SetVolume(100, false);
+                    mSoundInstance.Play();
                 }
             }
         }
@@ -2736,6 +2738,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             UpdateColors();
             mCacheTextureDirty = true;
             mParent?.Redraw();
+            if (mSoundInstance?.State == Audio.GameAudioInstance.AudioInstanceState.Stopped)
+            {
+                mSoundInstance.Dispose();
+            }
         }
 
         /// <summary>
