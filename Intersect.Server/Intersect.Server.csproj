@@ -438,6 +438,7 @@
   <ItemGroup>
     <Compile Include="Admin\Actions\ActionProcessing.cs" />
     <Compile Include="Core\Commands\MetricsCommand.cs" />
+    <Compile Include="Core\Commands\SetVarCommand.cs" />
     <Compile Include="Core\IServerContext.cs" />
     <Compile Include="Core\LogicService.cs" />
     <Compile Include="Core\LogicService.LogicThread.cs" />

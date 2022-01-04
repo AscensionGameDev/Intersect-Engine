@@ -109,6 +109,16 @@ namespace Intersect.Server.Localization
                 Help = @"kicks a player from the server"
             };
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand SetVar = new LocaleCommand
+            {
+                Name = @"setvar",
+                Description =
+                    @"Sets a server variable via GUID to a valid value",
+                Help = @"Sets a server variable value via GUID; ex: setvar <guid> true"
+            };
+
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocaleCommand Kill = new LocaleCommand
             {
                 Name = @"kill",
@@ -362,6 +372,21 @@ namespace Intersect.Server.Localization
                     Name = @"player-name",
                     Description = @"the name of the player to unmute"
                 };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument VarGUID = new LocaleArgument
+                {
+                    Name = @"GUID",
+                    Description = @"The GUID of the server var to set"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument VarValue = new LocaleArgument
+                {
+                    Name = @"Value",
+                    Description = @"The value to set the server var to"
+                };
+
 
             }
 

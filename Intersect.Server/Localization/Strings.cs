@@ -399,6 +399,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString variablechanged = @"Variable {00} has been set to {01} from {02}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString variablenotfound = @"Variable {00} is not a valid server variable GUID";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString variableexception = @"Variable {00} threw exception while attempting to modify: {00}";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString gametime = @"Game time is now: {00}";
