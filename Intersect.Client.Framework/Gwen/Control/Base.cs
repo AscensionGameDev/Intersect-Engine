@@ -131,8 +131,6 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private object mUserData;
 
-        private Dictionary<string, GameAudioInstance> mSounds;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
@@ -170,8 +168,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             BoundsOutlineColor = Color.Red;
             MarginOutlineColor = Color.Green;
             PaddingOutlineColor = Color.Blue;
-
-            mSounds = new Dictionary<string, GameAudioInstance>();
         }
 
         /// <summary>
@@ -2178,15 +2174,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (sound != null)
             {
                 var soundInstance = sound.CreateInstance();
-                // If this sound file hasn't been played by this UI element before
-                if (!mSounds.ContainsKey(filename))
+                if (soundInstance != null)
                 {
-                    // Add it to the list of playing sounds
-                    mSounds.Add(filename, soundInstance);
+                    Canvas.PlayAndAddSound(soundInstance);
                 }
-                // And play the sound
-                mSounds[filename].SetVolume(100, false);
-                mSounds[filename].Play();
             }
         }
 
@@ -2745,20 +2736,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             UpdateColors();
             mCacheTextureDirty = true;
             mParent?.Redraw();
-
-            var keysToRemove = new List<string>();
-            foreach(var sound in mSounds.Keys)
-            {
-                if(mSounds[sound]?.State == GameAudioInstance.AudioInstanceState.Stopped)
-                {
-                    mSounds[sound].Dispose();
-                    keysToRemove.Add(sound);
-                }
-            }
-            foreach(var filename in keysToRemove)
-            {
-                mSounds.Remove(filename);
-            }
         }
 
         /// <summary>
