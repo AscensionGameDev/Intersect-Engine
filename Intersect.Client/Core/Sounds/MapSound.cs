@@ -169,99 +169,34 @@ namespace Intersect.Client.Core.Sounds
             return distance;
         }
 
-        //Code Courtesy of  Philip Peterson. -- Released under MIT license.
-        //Obtained, 06/27/2015 from http://wiki.unity3d.com/index.php/Distance_from_a_point_to_a_rectangle
-        public static float DistancePointToRectangle(Point point, Rectangle rect)
+        private static float DistancePointToRectangle(Point p, Rectangle r)
         {
-            //  Calculate a distance between a point and a rectangle.
-            //  The area around/in the rectangle is defined in terms of
-            //  several regions:
-            //
-            //  O--x
-            //  |
-            //  y
-            //
-            //
-            //        I   |    II    |  III
-            //      ======+==========+======   --yMin
-            //       VIII |  IX (in) |  IV
-            //      ======+==========+======   --yMax
-            //       VII  |    VI    |   V
-            //
-            //
-            //  Note that the +y direction is down because of Unity's GUI coordinates.
-
-            if (point.X < rect.X)
+            var distance = 0f;
+            var x = p.X;
+            var y = p.Y;
+            var left = r.X;
+            var top = r.Y;
+            var right = r.X + r.Width;
+            var bottom = r.Y + r.Height;
+            if (x < left)
             {
-                // Region I, VIII, or VII
-                if (point.Y < rect.Y)
-                {
-                    // I
-                    point.X = point.X - rect.X;
-                    point.Y = point.Y - rect.Y;
-
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
-                }
-                else if (point.Y > rect.Y + rect.Height)
-                {
-                    // VII
-                    point.X = point.X - rect.X;
-                    point.Y = point.Y - (rect.Y + rect.Height);
-
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
-                }
-                else
-                {
-                    // VIII
-                    return rect.X - point.X;
-                }
+                distance += left - x;
             }
-            else if (point.X > rect.X + rect.Width)
+            else if (x > right)
             {
-                // Region III, IV, or V
-                if (point.Y < rect.Y)
-                {
-                    // III
-                    point.X = point.X - (rect.X + rect.Width);
-                    point.Y = point.Y - rect.Y;
-
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
-                }
-                else if (point.Y > rect.Y + rect.Height)
-                {
-                    // V
-                    point.X = point.X - (rect.X + rect.Width);
-                    point.Y = point.Y - (rect.Y + rect.Height);
-
-                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
-                }
-                else
-                {
-                    // IV
-                    return point.X - (rect.X + rect.Width);
-                }
+                distance += x - right;
             }
-            else
+
+            if (y < top)
             {
-                // Region II, IX, or VI
-                if (point.Y < rect.Y)
-                {
-                    // II
-                    return rect.Y - point.Y;
-                }
-                else if (point.Y > rect.Y + rect.Height)
-                {
-                    // VI
-                    return point.Y - (rect.Y + rect.Height);
-                }
-                else
-                {
-                    // IX
-                    return 0f;
-                }
+                distance += top - y;
             }
+            else if (y > bottom)
+            {
+                distance += y - bottom;
+            }
+
+            return distance;
         }
-
     }
-
 }
