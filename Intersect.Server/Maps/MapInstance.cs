@@ -1101,6 +1101,8 @@ namespace Intersect.Server.Maps
                 mActionMessages.SendPackets(nearbyPlayers);
                 mMapAnimations.SendPackets(nearbyPlayers);
 
+                UpdateProcessingInstances(Globals.Timing.Milliseconds);
+
                 LastUpdateTime = timeMs;
             }
         }
@@ -1175,58 +1177,6 @@ namespace Intersect.Server.Maps
             return mPlayers.Values;
         }
 
-        public bool HasPlayersOnMap()
-        {
-            return !mPlayers.IsEmpty;
-        }
-
-        public MapProcessingLayer GetRelevantProcessingLayer(Guid instanceLayer)
-        {
-            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
-            {
-                return processingLayer;
-            } else
-            {
-                CreateProcessingInstance(Guid.Empty);
-                return mMapProcessingLayers[Guid.Empty];
-            }
-        }
-
-        public void PlayerEnteredMap(Player player)
-        {
-            //Send Entity Info to Everyone and Everyone to the Entity
-            SendMapEntitiesTo(player);
-            player.Client?.SentMaps?.Clear();
-            PacketSender.SendMapItems(player, Id);
-
-            AddEntity(player);
-
-            player.LastMapEntered = Id;
-            if (SurroundingMaps.Length <= 0)
-            {
-                return;
-            }
-
-            foreach (var t in SurroundingMaps)
-            {
-                t.SendMapEntitiesTo(player);
-                PacketSender.SendMapItems(player, t.Id);
-            }
-
-            PacketSender.SendEntityDataToProximity(player, player);
-        }
-
-        public void SendMapEntitiesTo(Player player)
-        {
-            if (player != null)
-            {
-                PacketSender.SendMapEntitiesTo(player, mEntities);
-                if (player.MapId == Id)
-                {
-                    player.SendEvents();
-                }
-            }
-        }
 
         public void ClearConnections(int side = -1)
         {
@@ -1463,6 +1413,36 @@ namespace Intersect.Server.Maps
             foreach(var instance in mMapProcessingLayers.Keys)
             {
                 mMapProcessingLayers[instance].Update(timeMs);
+            }
+            // No longer process any processing layer that doesn't have players on it
+            RemoveDeadProcessingLayers();
+        }
+
+        public MapProcessingLayer GetRelevantProcessingLayer(Guid instanceLayer)
+        {
+            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
+            {
+                return processingLayer;
+            }
+            else
+            {
+                CreateProcessingInstance(Guid.Empty);
+                return mMapProcessingLayers[Guid.Empty];
+            }
+        }
+
+        public void RemoveDeadProcessingLayers()
+        {
+            // Removes all processing layers that don't have any active players
+            foreach (var instance in mMapProcessingLayers.Keys)
+            {
+                // TODO Alex: This will probably have to take into account connecting maps
+                if (!mMapProcessingLayers[instance].HasPlayersOnMap())
+                {
+                    // Todo Alex Console
+                    Console.WriteLine("Cleaning up MPL {0}", instance);
+                    mMapProcessingLayers.Remove(instance);
+                }
             }
         }
 

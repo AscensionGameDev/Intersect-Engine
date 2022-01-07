@@ -366,7 +366,6 @@ namespace Intersect.Server.Core
                         else
                         {
                             map.Update(Globals.Timing.Milliseconds);
-                            map.UpdateProcessingInstances(Globals.Timing.Milliseconds);
                         }
                     }
                 }

@@ -39,6 +39,12 @@ namespace Intersect.Server.Maps
 
         private MapInstance mMap;
 
+        private long LastUpdateTime;
+        
+        private MapEntityMovements mEntityMovements = new MapEntityMovements();
+        private MapActionMessages mActionMessages = new MapActionMessages();
+        private MapAnimations mMapAnimations = new MapAnimations();
+
         public MapProcessingLayer(MapInstance map, Guid instanceLayer)
         {
             mMap = map;
@@ -56,9 +62,18 @@ namespace Intersect.Server.Maps
             }
         }
 
+        public bool HasPlayersOnMap()
+        {
+            return !mPlayers.IsEmpty;
+        }
+
         public void Update(long timeMs)
         {
-            Console.WriteLine("Updating map processing layer with InstanceLayer: {0}", InstanceLayer);
+            UpdateEntities(timeMs);
+
+            SendBatchedPacketsToPlayers();
+
+            LastUpdateTime = timeMs;
         }
 
         public void AddEntity(Entity en)
@@ -77,6 +92,16 @@ namespace Intersect.Server.Maps
             }
         }
 
+        public void RemoveEntity(Entity en)
+        {
+            mEntities.TryRemove(en.Id, out var result);
+            if (mPlayers.ContainsKey(en.Id))
+            {
+                mPlayers.TryRemove(en.Id, out var pResult);
+            }
+            mCachedEntities = mEntities.Values.ToArray();
+        }
+
         public void PlayerEnteredMap(Player player)
         {
             //Send Entity Info to Everyone and Everyone to the Entity
@@ -87,6 +112,7 @@ namespace Intersect.Server.Maps
             AddEntity(player);
 
             player.LastMapEntered = mMap.Id;
+            PacketSender.SendEntityDataToProximity(player, player);
             return; // TODO Alex - Support connecting maps
 
             /*
@@ -115,5 +141,102 @@ namespace Intersect.Server.Maps
                 }
             }
         }
+
+        public ICollection<Player> GetPlayersOnMap()
+        {
+            return mPlayers.Values;
+        }
+
+        #region Updates
+        private void UpdateEntities(long timeMs)
+        {
+            // Keep a list of all entities with changed vitals and statusses.
+            var vitalUpdates = new List<Entity>();
+            var statusUpdates = new List<Entity>();
+
+            foreach (var en in mEntities)
+            {
+                //Let's see if and how long this map has been inactive, if longer than 30 seconds, regenerate everything on the map
+                //TODO, take this 30 second value and throw it into the server config after I switch everything to json
+                if (timeMs > LastUpdateTime + 30000)
+                {
+                    //Regen Everything & Forget Targets
+                    if (en.Value is Resource || en.Value is Npc)
+                    {
+                        en.Value.RestoreVital(Vitals.Health);
+                        en.Value.RestoreVital(Vitals.Mana);
+
+                        if (en.Value is Npc npc)
+                        {
+                            npc.AssignTarget(null);
+                        }
+                        else
+                        {
+                            en.Value.Target = null;
+                        }
+                    }
+                }
+
+                en.Value.Update(timeMs);
+
+                // Check to see if we need to send any entity vital and status updates for this entity.
+                if (en.Value.VitalsUpdated)
+                {
+                    vitalUpdates.Add(en.Value);
+
+                    // Send a party update if we're a player with a party.
+                    if (en.Value is Player player)
+                    {
+                        for (var i = 0; i < player.Party.Count; i++)
+                        {
+                            PacketSender.SendPartyUpdateTo(player.Party[i], player);
+                        }
+                    }
+
+                    en.Value.VitalsUpdated = false;
+                }
+
+                if (en.Value.StatusesUpdated)
+                {
+                    statusUpdates.Add(en.Value);
+
+                    en.Value.StatusesUpdated = false;
+                }
+            }
+
+            if (vitalUpdates.Count > 0)
+            {
+                PacketSender.SendMapEntityVitalUpdate(mMap, vitalUpdates.ToArray());
+            }
+
+            if (statusUpdates.Count > 0)
+            {
+                PacketSender.SendMapEntityStatusUpdate(mMap, statusUpdates.ToArray());
+            }
+        }
+
+        private void SendBatchedPacketsToPlayers()
+        {
+            //Send Batched Movement Packet
+            var nearbyPlayers = new HashSet<Player>();
+
+            // TODO Alex: Surrounding maps ;_;
+            /*foreach (var map in surrMaps)
+            {
+                foreach (var plyr in map.GetPlayersOnMap())
+                {
+                    nearbyPlayers.Add(plyr);
+                }
+            }*/
+            foreach (var player in GetPlayersOnMap())
+            {
+                nearbyPlayers.Add(player);
+            }
+
+            mEntityMovements.SendPackets(nearbyPlayers);
+            mActionMessages.SendPackets(nearbyPlayers);
+            mMapAnimations.SendPackets(nearbyPlayers);
+        }
+        #endregion
     }
 }

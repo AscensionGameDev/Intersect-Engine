@@ -375,11 +375,13 @@ namespace Intersect.Server.Networking
         //MapEntitiesPacket
         public static void SendMapEntitiesTo(Player player, ConcurrentDictionary<Guid, Entity> entities)
         {
+            if (player == null) return;
+
             var sendEntities = new List<Entity>();
 
             foreach (var en in entities)
             {
-                if (en.Value != null && en.Value != player)
+                if (en.Value != null && en.Value != player && en.Value.InstanceLayer == player.InstanceLayer)
                 {
                     sendEntities.Add(en.Value);
                 }
@@ -437,7 +439,7 @@ namespace Intersect.Server.Networking
                 {
                     foreach (var player in map.GetPlayersOnMap())
                     {
-                        if (player != except)
+                        if (player != except && player.InstanceLayer == en.InstanceLayer)
                         {
                             SendEntityDataTo(player, en);
                         }
