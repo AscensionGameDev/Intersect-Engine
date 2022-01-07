@@ -122,6 +122,7 @@ namespace Intersect.Server.Core
                                 var plyrMap = player?.MapId ?? Guid.Empty;
                                 if (plyrMap != Guid.Empty && !sourceMaps.Contains(plyrMap))
                                 {
+                                    // Todo Alex: This is where cleaning up of cloned maps would take place - but it might happen by default since we only ever check players map ids after clearing the maps processed
                                     var mapInstance = MapInstance.Get(plyrMap);
                                     if (mapInstance != null)
                                     {
