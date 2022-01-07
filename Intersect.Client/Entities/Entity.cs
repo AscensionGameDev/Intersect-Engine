@@ -188,8 +188,6 @@ namespace Intersect.Client.Entities
 
         public byte Z { get; set; }
 
-        public Guid InstanceLayer;
-
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
@@ -339,7 +337,6 @@ namespace Intersect.Client.Entities
             NameColor = packet.NameColor;
             HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
             FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
-            InstanceLayer = packet.InstanceLayer;
 
             var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();
