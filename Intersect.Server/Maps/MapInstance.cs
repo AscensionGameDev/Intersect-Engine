@@ -27,10 +27,9 @@ namespace Intersect.Server.Maps
 
     public partial class MapInstance : MapBase
     {
+        private Dictionary<Guid, MapProcessingLayer> mMapProcessingLayers = new Dictionary<Guid, MapProcessingLayer>();
 
         private static MapInstances sLookup;
-
-        [NotMapped] public Guid InstanceLayer;
 
         [NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
 
@@ -391,7 +390,6 @@ namespace Intersect.Server.Maps
                 }
                 PacketSender.SendMapItemsToProximity(Id);
             }
-            
         }
 
         private void SpawnAttributeItem(int x, int y)
@@ -845,7 +843,7 @@ namespace Intersect.Server.Maps
         //Entity Processing
         public void AddEntity(Entity en)
         {
-            if (en != null && !en.IsDead() && en.InstanceLayer == InstanceLayer)
+            if (en != null && !en.IsDead())
             {
                 if (!mEntities.ContainsKey(en.Id))
                 {
@@ -1182,6 +1180,18 @@ namespace Intersect.Server.Maps
             return !mPlayers.IsEmpty;
         }
 
+        public MapProcessingLayer GetRelevantProcessingLayer(Guid instanceLayer)
+        {
+            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
+            {
+                return processingLayer;
+            } else
+            {
+                CreateProcessingInstance(Guid.Empty);
+                return mMapProcessingLayers[Guid.Empty];
+            }
+        }
+
         public void PlayerEnteredMap(Player player)
         {
             //Send Entity Info to Everyone and Everyone to the Entity
@@ -1438,6 +1448,22 @@ namespace Intersect.Server.Maps
             }
 
             return locations;
+        }
+
+        public void CreateProcessingInstance(Guid processingLayerId)
+        {
+            if (!mMapProcessingLayers.ContainsKey(processingLayerId))
+            {
+                mMapProcessingLayers[processingLayerId] = new MapProcessingLayer(this, processingLayerId);
+            }
+        }
+
+        public void UpdateProcessingInstances(long timeMs)
+        {
+            foreach(var instance in mMapProcessingLayers.Keys)
+            {
+                mMapProcessingLayers[instance].Update(timeMs);
+            }
         }
 
         #region"Packet Batching"
