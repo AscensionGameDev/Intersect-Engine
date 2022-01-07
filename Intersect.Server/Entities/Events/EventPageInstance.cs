@@ -123,6 +123,7 @@ namespace Intersect.Server.Entities.Events
             SendToPlayer();
         }
 
+        // TODO Alex - This is probably not right
         public EventPageInstance(
             EventBase myEvent,
             EventPage myPage,
@@ -131,7 +132,7 @@ namespace Intersect.Server.Entities.Events
             Event eventIndex,
             Player player,
             EventPageInstance globalClone
-        ) : base(instanceId, Guid.Empty) // TODO Alex - This is probably not right
+        ) : base(instanceId, Guid.Empty)
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
