@@ -30,6 +30,8 @@ namespace Intersect.Server.Maps
 
         private static MapInstances sLookup;
 
+        [NotMapped] public Guid InstanceLayer;
+
         [NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
 
         private Entity[] mCachedEntities = new Entity[0];
@@ -843,7 +845,7 @@ namespace Intersect.Server.Maps
         //Entity Processing
         public void AddEntity(Entity en)
         {
-            if (en != null && !en.IsDead())
+            if (en != null && !en.IsDead() && en.InstanceLayer == InstanceLayer)
             {
                 if (!mEntities.ContainsKey(en.Id))
                 {
@@ -1309,7 +1311,7 @@ namespace Intersect.Server.Maps
 
         public static MapInstance Get(Guid id)
         {
-            return MapInstance.Lookup.Get<MapInstance>(id);
+            return Lookup.Get<MapInstance>(id);
         }
 
         public void DestroyOrphanedLayers()

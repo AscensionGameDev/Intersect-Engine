@@ -1532,18 +1532,19 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            X = (int)newX;
-            Y = (int)newY;
-            Z = zOverride;
-            Dir = newDir;
-            var newSurroundingMaps = map.GetSurroundingMapIds(true);
-            foreach (var evt in EventLookup)
-            {
-                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                X = (int)newX;
+                Y = (int)newY;
+                Z = zOverride;
+                Dir = newDir;
+                InstanceLayer = Guid.NewGuid(); // TODO Alex: Literally always warp to a unique instance for testing
+                var newSurroundingMaps = map.GetSurroundingMapIds(true);
+                foreach (var evt in EventLookup)
                 {
-                    RemoveEvent(evt.Value.Id, false);
+                    if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                    {
+                        RemoveEvent(evt.Value.Id, false);
+                    }
                 }
-            }
 
             if (newMapId != MapId || mSentMap == false)
             {
