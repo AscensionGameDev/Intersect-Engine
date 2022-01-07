@@ -81,7 +81,7 @@ namespace Intersect.Server.Networking
 
             client.TimedBufferPacketsRemaining = 5;
             client.Send(new JoinGamePacket());
-            PacketSender.SendGameData(client);
+            SendGameData(client);
 
             if (!client.IsEditor)
             {
@@ -435,13 +435,27 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                foreach (var map in en.Map.GetSurroundingMaps(true))
+                // TODO Alex this should be done for ALL entities
+                if (en is Player plyr) 
                 {
-                    foreach (var player in map.GetPlayersOnMap())
+                    foreach (var map in plyr.Map.GetSurroundingMaps(true))
                     {
-                        if (player != except && player.InstanceLayer == en.InstanceLayer)
+                        foreach (Player entityToSendTo in en.Map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
                         {
-                            SendEntityDataTo(player, en);
+                            SendEntityDataTo(entityToSendTo, en);
+                        }
+                    }
+                } else
+                {
+                    foreach (var map in en.Map.GetSurroundingMaps(true))
+                    {
+                        // TODO Alex: We don't want to do this once we've migrated everything over to the map processor
+                        foreach (var player in map.GetPlayersOnAllLayers())
+                        {
+                            if (player != except && player.InstanceLayer == en.InstanceLayer)
+                            {
+                                SendEntityDataTo(player, en);
+                            }
                         }
                     }
                 }

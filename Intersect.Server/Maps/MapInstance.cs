@@ -1174,9 +1174,19 @@ namespace Intersect.Server.Maps
 
         public ICollection<Player> GetPlayersOnMap()
         {
-            return mPlayers.Values;
+            return GetPlayersOnAllLayers(); // TODO Alex: Players are no longer held here
         }
 
+        // TODO Alex: I think this method will eventually be invalidated
+        public ICollection<Player> GetPlayersOnAllLayers()
+        {
+            var players = new List<Player>();
+            foreach (var layer in mMapProcessingLayers.Keys)
+            {
+                players.AddRange(mMapProcessingLayers[layer].GetPlayersOnMap());
+            }
+            return players;
+        }
 
         public void ClearConnections(int side = -1)
         {
@@ -1444,6 +1454,24 @@ namespace Intersect.Server.Maps
                     mMapProcessingLayers.Remove(instance);
                 }
             }
+        }
+
+        public List<Player> GetPlayersOnSharedLayers(Guid instanceLayer, Entity except)
+        {
+            var entitiesOnSharedLayer = new List<Player>();
+
+            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var layer))
+            {
+                foreach (var player in layer.GetPlayersOnMap())
+                {
+                    if (player != except && player.InstanceLayer == instanceLayer)
+                    {
+                        entitiesOnSharedLayer.Add(player);
+                    }
+                }
+            }
+
+            return entitiesOnSharedLayer;
         }
 
         #region"Packet Batching"
