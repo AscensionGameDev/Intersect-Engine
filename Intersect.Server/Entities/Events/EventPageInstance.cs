@@ -58,7 +58,7 @@ namespace Intersect.Server.Entities.Events
             Guid mapId,
             Event eventIndex,
             Player player
-        ) : base(Guid.NewGuid())
+        ) : base()
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -131,7 +131,7 @@ namespace Intersect.Server.Entities.Events
             Event eventIndex,
             Player player,
             EventPageInstance globalClone
-        ) : base(instanceId)
+        ) : base(instanceId, Guid.Empty) // TODO Alex - This is probably not right
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;

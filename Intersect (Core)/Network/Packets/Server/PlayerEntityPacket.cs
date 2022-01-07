@@ -14,31 +14,31 @@ namespace Intersect.Network.Packets.Server
         }
 
 
-        [Key(24)]
+        [Key(25)]
         public int AccessLevel { get; set; }
 
 
-        [Key(25)]
+        [Key(26)]
         public Gender Gender { get; set; }
 
 
-        [Key(26)]
+        [Key(27)]
         public Guid ClassId { get; set; }
 
 
-        [Key(27)]
+        [Key(28)]
         public EquipmentPacket Equipment { get; set; }
 
-
-        [Key(28)]
+    
+        [Key(29)]
         public long CombatTimeRemaining { get; set; }
 
 
-        [Key(29)]
+        [Key(30)]
         public string Guild { get; set; }
 
 
-        [Key(30)]
+        [Key(31)]
         public int GuildRank { get; set; }
     }
 

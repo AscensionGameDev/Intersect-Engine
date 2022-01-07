@@ -188,10 +188,17 @@ namespace Intersect.Client.Entities
 
         public byte Z { get; set; }
 
+        public Guid InstanceLayer;
+
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
+<<<<<<< HEAD
             MapId = Guid.Empty;
+=======
+            InstanceLayer = packet.InstanceLayer;
+            CurrentMap = Guid.Empty;
+>>>>>>> Alex: Adding an InstanceLayer property to server and client entities that is passed around
             if (id != Guid.Empty && !isEvent)
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)
@@ -329,6 +336,7 @@ namespace Intersect.Client.Entities
             NameColor = packet.NameColor;
             HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
             FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
+            InstanceLayer = packet.InstanceLayer;
 
             var animsToClear = new List<Animation>();
             var animsToAdd = new List<AnimationBase>();

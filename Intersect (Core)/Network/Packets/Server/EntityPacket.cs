@@ -81,6 +81,9 @@ namespace Intersect.Network.Packets.Server
         [Key(23)]
         public Color Color { get; set; }
 
+        [Key(24)]
+        public Guid InstanceLayer { get; set; }
+
     }
 
 }

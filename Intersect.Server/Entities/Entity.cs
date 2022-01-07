@@ -33,18 +33,20 @@ namespace Intersect.Server.Entities
         //Instance Values
         private Guid _id;
 
+        public Guid InstanceLayer = Guid.Empty;
+
         [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
 
         [NotMapped, JsonIgnore] public Stat[] Stat = new Stat[(int) Stats.StatCount];
 
         [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
 
-        public Entity() : this(Guid.NewGuid())
+        public Entity() : this(Guid.NewGuid(), Guid.Empty)
         {
         }
 
         //Initialization
-        public Entity(Guid instanceId)
+        public Entity(Guid instanceId, Guid instanceLayer)
         {
             if (!(this is EventPageInstance) && !(this is Projectile))
             {
@@ -53,6 +55,7 @@ namespace Intersect.Server.Entities
                     Stat[i] = new Stat((Stats)i, this);
                 }
             }
+            InstanceLayer = instanceLayer;
 
             Id = instanceId;
         }
@@ -2651,6 +2654,7 @@ namespace Intersect.Server.Entities
             packet.NameColor = NameColor;
             packet.HeaderLabel = new LabelPacket(HeaderLabel.Text, HeaderLabel.Color);
             packet.FooterLabel = new LabelPacket(FooterLabel.Text, FooterLabel.Color);
+            packet.InstanceLayer = InstanceLayer;
 
             return packet;
         }
