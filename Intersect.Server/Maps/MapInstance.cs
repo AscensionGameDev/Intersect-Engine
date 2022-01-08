@@ -1434,18 +1434,17 @@ namespace Intersect.Server.Maps
             }
             else
             {
-                CreateProcessingInstance(Guid.Empty);
-                return mMapProcessingLayers[Guid.Empty];
+                CreateProcessingInstance(instanceLayer);
+                return mMapProcessingLayers[instanceLayer];
             }
         }
 
         public void RemoveDeadProcessingLayers()
         {
-            // Removes all processing layers that don't have any active players
-            foreach (var instance in mMapProcessingLayers.Where(kv => kv.Value.GetPlayersOnMap().Count <= 0).ToList())
+            // Removes all processing layers that don't have active players on themselves or any adjoining layers
+            foreach (var instance in mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList())
             {
-                // Todo Alex Console
-                Console.WriteLine("Cleaning up MPL {0}", instance);
+                Log.Debug($"Cleaning up MPL {instance}")
                 mMapProcessingLayers.Remove(instance.Key);
             }
         }

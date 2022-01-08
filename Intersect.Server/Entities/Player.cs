@@ -1536,7 +1536,7 @@ namespace Intersect.Server.Entities
                 Y = (int)newY;
                 Z = zOverride;
                 Dir = newDir;
-                InstanceLayer = Guid.NewGuid(); // TODO Alex: Literally always warp to a unique instance for testing
+                InstanceLayer = Guid.Empty; // TODO Alex: Literally always warp to a unique instance for testing
                 map.CreateProcessingInstance(InstanceLayer);
                 // Todo Alex Remove this
                 PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);

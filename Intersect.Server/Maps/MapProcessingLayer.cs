@@ -109,15 +109,16 @@ namespace Intersect.Server.Maps
             foreach (var en in mEntities)
                 entities.Add(en.Value);
 
-            // TODO Alex: Support grid
             // ReSharper disable once InvertIf
-            /*if (includeSurroundingMaps)
+            if (includeSurroundingMaps)
             {
-                foreach (var map in GetSurroundingMaps(false))
+                foreach (var map in mMap.GetSurroundingMaps(false))
                 {
+                    // TODO Alex: Support all entities with one call
+                    entities.AddRange(map.GetRelevantProcessingLayer(InstanceLayer).GetEntities());
                     entities.AddRange(map.GetEntities());
                 }
-            }*/
+            }
 
             return entities;
         }
@@ -138,21 +139,19 @@ namespace Intersect.Server.Maps
 
             player.LastMapEntered = mMap.Id;
             PacketSender.SendEntityDataToProximity(player, player);
-            return; // TODO Alex - Support connecting maps
 
-            /*
-            if (SurroundingMaps.Length <= 0)
+            var surroundingMaps = mMap.GetSurroundingMaps();
+            if (surroundingMaps.Length <= 0)
             {
                 return;
             }
 
-            foreach (var t in SurroundingMaps)
+            foreach (var map in surroundingMaps)
             {
-                t.SendMapEntitiesTo(player);
-                PacketSender.SendMapItems(player, t.Id);
+                map.GetRelevantProcessingLayer(InstanceLayer).SendMapEntitiesTo(player);
+                PacketSender.SendMapItems(player, map.Id);
             }
             PacketSender.SendEntityDataToProximity(player, player);
-            */
         }
 
         public void SendMapEntitiesTo(Player player)
@@ -170,6 +169,18 @@ namespace Intersect.Server.Maps
         public ICollection<Player> GetPlayersOnMap()
         {
             return mPlayers.Values;
+        }
+
+        public ICollection<Player> GetAllRelevantPlayers()
+        {
+            var allPlayers = new List<Player>();
+            var surroundingMaps = mMap.GetSurroundingMaps();
+            foreach (var map in surroundingMaps)
+            {
+                allPlayers.AddRange(map.GetRelevantProcessingLayer(InstanceLayer).GetPlayersOnMap());
+            }
+            allPlayers.AddRange(GetPlayersOnMap());
+            return allPlayers;
         }
 
         #region Updates
@@ -242,22 +253,25 @@ namespace Intersect.Server.Maps
 
         private void SendBatchedPacketsToPlayers()
         {
-            //Send Batched Movement Packet
+            var surrMaps = mMap.GetSurroundingMaps(true);
             var nearbyPlayers = new HashSet<Player>();
 
-            // TODO Alex: Surrounding maps ;_;
-            /*foreach (var map in surrMaps)
+            // Get all players in surrounding maps
+            foreach (var map in surrMaps)
             {
-                foreach (var plyr in map.GetPlayersOnMap())
+                foreach (var plyr in map.GetRelevantProcessingLayer(InstanceLayer).GetPlayersOnMap())
                 {
                     nearbyPlayers.Add(plyr);
                 }
-            }*/
+            }
+            
+            // And all players in the current map
             foreach (var player in GetPlayersOnMap())
             {
                 nearbyPlayers.Add(player);
             }
 
+            // And send batched packets out to all nearby players
             mEntityMovements.SendPackets(nearbyPlayers);
             mActionMessages.SendPackets(nearbyPlayers);
             mMapAnimations.SendPackets(nearbyPlayers);
