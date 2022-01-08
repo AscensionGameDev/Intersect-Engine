@@ -313,7 +313,14 @@ namespace Intersect.Server.Networking
             var map = MapInstance.Get(mapId);
             if (map != null)
             {
-                var entities = map.GetEntities(false);
+                // todo Alex replace this nonsense with one call when all is consolidated into MPL
+                var entities = new List<Entity>();
+                if (forPlayer != null)
+                {
+                    entities.AddRange(map.GetRelevantProcessingLayer(forPlayer.InstanceLayer).GetEntities(false));
+                }
+                
+                entities.AddRange(map.GetEntities(false));
                 var sendEntities = new List<Entity>();
                 for (var i = 0; i < entities.Count; i++)
                 {

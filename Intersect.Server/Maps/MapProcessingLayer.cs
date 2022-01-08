@@ -102,6 +102,31 @@ namespace Intersect.Server.Maps
             mCachedEntities = mEntities.Values.ToArray();
         }
 
+        public List<Entity> GetEntities(bool includeSurroundingMaps = false)
+        {
+            var entities = new List<Entity>();
+
+            foreach (var en in mEntities)
+                entities.Add(en.Value);
+
+            // TODO Alex: Support grid
+            // ReSharper disable once InvertIf
+            /*if (includeSurroundingMaps)
+            {
+                foreach (var map in GetSurroundingMaps(false))
+                {
+                    entities.AddRange(map.GetEntities());
+                }
+            }*/
+
+            return entities;
+        }
+
+        public Entity[] GetCachedEntities()
+        {
+            return mCachedEntities;
+        }
+
         public void PlayerEnteredMap(Player player)
         {
             //Send Entity Info to Everyone and Everyone to the Entity
