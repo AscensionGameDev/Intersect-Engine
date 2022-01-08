@@ -872,8 +872,16 @@ namespace Intersect.Server.Entities
                     if (MapId != tile.GetMapId())
                     {
                         var oldMap = MapInstance.Get(MapId);
-                        oldMap?.RemoveEntity(this);
-                        currentMap?.AddEntity(this);
+                        // Todo Alex this should be done regardless of entity status
+                        if (this is Player)
+                        {
+                            oldMap?.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
+                            currentMap?.GetRelevantProcessingLayer(InstanceLayer).AddEntity(this);
+                        } else 
+                        {
+                            oldMap?.RemoveEntity(this);
+                            currentMap?.AddEntity(this);
+                        }
 
                         //Send Left Map Packet To the Maps that we are no longer with
                         var oldMaps = oldMap?.GetSurroundingMaps(true);

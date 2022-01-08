@@ -1424,8 +1424,6 @@ namespace Intersect.Server.Maps
             {
                 mMapProcessingLayers[instance].Update(timeMs);
             }
-            // No longer process any processing layer that doesn't have players on it
-            RemoveDeadProcessingLayers();
         }
 
         public MapProcessingLayer GetRelevantProcessingLayer(Guid instanceLayer)
@@ -1444,15 +1442,11 @@ namespace Intersect.Server.Maps
         public void RemoveDeadProcessingLayers()
         {
             // Removes all processing layers that don't have any active players
-            foreach (var instance in mMapProcessingLayers.Keys)
+            foreach (var instance in mMapProcessingLayers.Where(kv => kv.Value.GetPlayersOnMap().Count <= 0).ToList())
             {
-                // TODO Alex: This will probably have to take into account connecting maps
-                if (!mMapProcessingLayers[instance].HasPlayersOnMap())
-                {
-                    // Todo Alex Console
-                    Console.WriteLine("Cleaning up MPL {0}", instance);
-                    mMapProcessingLayers.Remove(instance);
-                }
+                // Todo Alex Console
+                Console.WriteLine("Cleaning up MPL {0}", instance);
+                mMapProcessingLayers.Remove(instance.Key);
             }
         }
 

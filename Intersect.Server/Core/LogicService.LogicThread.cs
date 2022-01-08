@@ -122,7 +122,6 @@ namespace Intersect.Server.Core
                                 var plyrMap = player?.MapId ?? Guid.Empty;
                                 if (plyrMap != Guid.Empty && !sourceMaps.Contains(plyrMap))
                                 {
-                                    // Todo Alex: This is where cleaning up of cloned maps would take place - but it might happen by default since we only ever check players map ids after clearing the maps processed
                                     var mapInstance = MapInstance.Get(plyrMap);
                                     if (mapInstance != null)
                                     {
@@ -145,11 +144,15 @@ namespace Intersect.Server.Core
                                 }
                             }
 
-                            //Remove any Active Maps that we didn't deem neccessarry of processing
+                            //Refresh list of active maps & their processing layers
                             foreach (var map in ActiveMaps.ToArray())
                             {
+                                // Remove any processing layers ("instances") that no players are on
+                                MapInstance.Get(map).RemoveDeadProcessingLayers();
+                                // If no players are on a map at all,
                                 if (!processedMaps.Contains(map))
                                 {
+                                    // Remove the map entirely from the update queue
                                     ActiveMaps.Remove(map);
                                 }
                             }
@@ -352,7 +355,6 @@ namespace Intersect.Server.Core
                             MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - map.UpdateQueueStart);
 
                             map.Update(Globals.Timing.Milliseconds);
-                            map.UpdateProcessingInstances(Globals.Timing.Milliseconds);
 
                             var timeAfterUpdate = Timing.Global.Milliseconds;
                             MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);

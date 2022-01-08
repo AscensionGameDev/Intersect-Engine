@@ -320,7 +320,7 @@ namespace Intersect.Server.Entities
         private void Logout()
         {
             var map = MapInstance.Get(MapId);
-            map?.RemoveEntity(this);
+            map.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
 
             //Update parties
             LeaveParty();
@@ -554,7 +554,7 @@ namespace Intersect.Server.Entities
                     {
                         if (MapInstance.Get(LastMapEntered) != null)
                         {
-                            MapInstance.Get(LastMapEntered).RemoveEntity(this);
+                            MapInstance.Get(LastMapEntered).GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
                         }
 
                         if (MapId != Guid.Empty)
@@ -1549,13 +1549,13 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-            if (newMapId != MapId || mSentMap == false)
-            {
-                var oldMap = MapInstance.Get(MapId);
-                if (oldMap != null)
+                if (newMapId != MapId || mSentMap == false)
                 {
-                    oldMap.RemoveEntity(this);
-                }
+                    var oldMap = MapInstance.Get(MapId);
+                    if (oldMap != null)
+                    {
+                        oldMap.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
+                    }
 
                     PacketSender.SendEntityLeave(this);
                     MapId = newMapId;
