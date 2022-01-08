@@ -1444,7 +1444,7 @@ namespace Intersect.Server.Maps
             // Removes all processing layers that don't have active players on themselves or any adjoining layers
             foreach (var instance in mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList())
             {
-                Log.Debug($"Cleaning up MPL {instance}")
+                Log.Debug($"Cleaning up MPL {instance}");
                 mMapProcessingLayers.Remove(instance.Key);
             }
         }
