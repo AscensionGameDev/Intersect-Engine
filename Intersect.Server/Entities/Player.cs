@@ -1536,10 +1536,17 @@ namespace Intersect.Server.Entities
                 Y = (int)newY;
                 Z = zOverride;
                 Dir = newDir;
+
+                var onNewInstance = false;
                 InstanceLayer = Guid.NewGuid(); // TODO Alex: Literally always warp to a unique instance for testing
-                map.CreateProcessingInstance(InstanceLayer);
-                // Todo Alex Remove this
-                PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
+                if (InstanceLayer != LastInstanceLayer)
+                {
+                    onNewInstance = true;
+                    Log.Debug($"Player {Name} has joined layer ${InstanceLayer} of map: {map.Name}");
+                    // Todo Alex Remove this
+                    PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
+                }
+
                 var newSurroundingMaps = map.GetSurroundingMapIds(true);
                 foreach (var evt in EventLookup)
                 {
@@ -1549,7 +1556,16 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (newMapId != MapId || mSentMap == false)
+                if (onNewInstance) // Player requested a new map processing layer?
+                {
+                    // Remove from old instance
+                    map.GetRelevantProcessingLayer(LastInstanceLayer).RemoveEntity(this);
+                    // Add to new instance
+                    map.GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
+                    PacketSender.SendEntityDataToProximity(this);
+                    PacketSender.SendEntityPositionToAll(this);
+                }
+                if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
                 {
                     var oldMap = MapInstance.Get(MapId);
                     if (oldMap != null)
@@ -1569,12 +1585,15 @@ namespace Intersect.Server.Entities
                     PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
                 }
 
-                mSentMap = true;
-            }
-            else
-            {
-                PacketSender.SendEntityPositionToAll(this);
-                PacketSender.SendEntityStats(this);
+                    mSentMap = true;
+                    
+                    StartCommonEventsWithTrigger(CommonEventTrigger.MapChanged);
+                }
+                else // Player moved on same map?
+                {
+                    PacketSender.SendEntityPositionToAll(this);
+                    PacketSender.SendEntityStats(this);
+                }
             }
         }
 

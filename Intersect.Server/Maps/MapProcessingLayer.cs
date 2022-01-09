@@ -30,6 +30,8 @@ namespace Intersect.Server.Maps
 {
     public class MapProcessingLayer : IDisposable
     {
+        public Guid Id;
+
         //SyncLock
         [JsonIgnore] [NotMapped] protected object mMapProcessLock = new object();
 
@@ -59,6 +61,9 @@ namespace Intersect.Server.Maps
         {
             mMap = map;
             InstanceLayer = instanceLayer;
+            Id = Guid.NewGuid();
+
+            Initialize();
         }
 
         [NotMapped, JsonIgnore]
@@ -236,7 +241,11 @@ namespace Intersect.Server.Maps
             var surroundingMaps = mMap.GetSurroundingMaps();
             foreach (var map in surroundingMaps)
             {
-                allPlayers.AddRange(map.GetRelevantProcessingLayer(InstanceLayer).GetPlayersOnMap());
+                var adjoiningPlayers = map.GetRelevantProcessingLayer(InstanceLayer, false)?.GetPlayersOnMap();
+                if (adjoiningPlayers != null)
+                {
+                    allPlayers.AddRange(adjoiningPlayers);
+                }
             }
             allPlayers.AddRange(GetPlayersOnMap());
             return allPlayers;
