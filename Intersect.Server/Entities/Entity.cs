@@ -495,7 +495,10 @@ namespace Intersect.Server.Entities
             if (!Passable)
             {
                 var targetMap = mapInstance;
-                var mapEntities = mapInstance.GetCachedEntities();
+                // TODO Alex Nah
+                var mapEntities = new List<Entity>();
+                mapEntities.AddRange(mapInstance.GetCachedEntities());
+                mapEntities.AddRange(mapInstance.GetRelevantProcessingLayer(InstanceLayer).GetCachedEntities());
                 foreach (var en in mapEntities)
                 {
                     if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
@@ -873,11 +876,11 @@ namespace Intersect.Server.Entities
                     {
                         var oldMap = MapInstance.Get(MapId);
                         // Todo Alex this should be done regardless of entity status
-                        if (this is Player)
+                        if (this is Player || this is Npc)
                         {
                             oldMap?.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
                             currentMap?.GetRelevantProcessingLayer(InstanceLayer).AddEntity(this);
-                        } else 
+                        } else
                         {
                             oldMap?.RemoveEntity(this);
                             currentMap?.AddEntity(this);
@@ -1604,7 +1607,7 @@ namespace Intersect.Server.Entities
         {
             foreach (var anim in animations)
             {
-                PacketSender.SendAnimationToProximity(anim.Key, 1, target.Id, target.MapId, 0, 0, anim.Value);
+                PacketSender.SendAnimationToProximity(anim.Key, 1, target.Id, target.MapId, 0, 0, anim.Value, InstanceLayer);
             }
         }
 
@@ -1895,7 +1898,7 @@ namespace Intersect.Server.Entities
                     foreach (var anim in deadAnimations)
                     {
                         PacketSender.SendAnimationToProximity(
-                            anim.Key, -1, Id, enemy.MapId, (byte) enemy.X, (byte) enemy.Y, anim.Value
+                            anim.Key, -1, Id, enemy.MapId, (byte) enemy.X, (byte) enemy.Y, anim.Value, InstanceLayer
                         );
                     }
                 }
@@ -2007,7 +2010,7 @@ namespace Intersect.Server.Entities
                             if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusTypes.OnHit)
                             {
                                 PacketSender.SendAnimationToProximity(
-                                    spellBase.HitAnimationId, 1, Id, MapId, 0, 0, (sbyte) Dir
+                                    spellBase.HitAnimationId, 1, Id, MapId, 0, 0, (sbyte) Dir, InstanceLayer
                                 ); //Target Type 1 will be global entity
                             }
 
@@ -2151,7 +2154,7 @@ namespace Intersect.Server.Entities
                     var surroundingMaps = startMap.GetSurroundingMaps(true);
                     foreach (var map in surroundingMaps)
                     {
-                        foreach (var entity in map.GetCachedEntities())
+                        foreach (var entity in map.GetRelevantProcessingLayer(InstanceLayer).GetCachedEntities())
                         {
                             if (entity != null && (entity is Player || entity is Npc))
                             {
@@ -2183,7 +2186,7 @@ namespace Intersect.Server.Entities
 
         private int[] GetPositionNearTarget(Guid mapId, int x, int y)
         {
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(InstanceLayer);
             if (map == null)
             {
                 return new int[] { x, y };
@@ -2510,7 +2513,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var map in currentMap.GetSurroundingMaps(true))
                 {
-                    map.ClearEntityTargetsOf(this);
+                    map.GetRelevantProcessingLayer(InstanceLayer).ClearEntityTargetsOf(this);
                 }
             }
 

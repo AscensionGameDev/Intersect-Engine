@@ -308,16 +308,16 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId, Player forPlayer = null)
+        public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId, Player forPlayer)
         {
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(forPlayer.InstanceLayer);
             if (map != null)
             {
                 // todo Alex replace this nonsense with one call when all is consolidated into MPL
                 var entities = new List<Entity>();
                 if (forPlayer != null)
                 {
-                    entities.AddRange(map.GetRelevantProcessingLayer(forPlayer.InstanceLayer).GetEntities(false));
+                    entities.AddRange(map.GetEntities(false));
                 }
                 
                 entities.AddRange(map.GetEntities(false));
@@ -442,14 +442,27 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                // TODO Alex this should be done for ALL entities
-                if (en is Player plyr) 
+                // TODO Alex this should be done for ALL entities - we won't need all these elses once we've migrated things.
+                // Essentially, anything on this list is not yet processable by a map layer
+                if (en is Player) // Players are instanced
                 {
-                    foreach (var map in plyr.Map.GetSurroundingMaps(true))
+                    foreach (var map in en.Map.GetSurroundingMaps(true))
                     {
                         foreach (Player entityToSendTo in en.Map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
                         {
                             SendEntityDataTo(entityToSendTo, en);
+                        }
+                    }
+                } else if (en is Npc npc) // NPCs are instanced
+                {
+                    foreach (var map in npc.Map.GetSurroundingMaps(true))
+                    {
+                        foreach (var player in map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
+                        {
+                            if (player != except && player.InstanceLayer == en.InstanceLayer)
+                            {
+                                SendEntityDataTo(player, en);
+                            }
                         }
                     }
                 } else
@@ -1443,7 +1456,8 @@ namespace Intersect.Server.Networking
             Guid mapId,
             byte x,
             byte y,
-            sbyte direction
+            sbyte direction,
+            Guid instanceLayer
         )
         {
             var map = MapInstance.Get(mapId);
@@ -1451,7 +1465,7 @@ namespace Intersect.Server.Networking
             {
                 if (Options.Instance.Packets.BatchAnimationPackets)
                 {
-                    map.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+                    map.GetRelevantProcessingLayer(instanceLayer).AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
                 }
                 else
                 {

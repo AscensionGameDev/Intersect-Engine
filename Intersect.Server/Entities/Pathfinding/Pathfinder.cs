@@ -185,7 +185,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                 if (tmpMap != null)
                                                 {
                                                     //Copy the cached array of tile blocks
-                                                    var blocks = tmpMap.GetCachedBlocks(
+                                                    var blocks = tmpMap?.GetRelevantProcessingLayer(mEntity.InstanceLayer).GetCachedBlocks(
                                                         mEntity.GetType() == typeof(Player)
                                                     );
 
@@ -197,7 +197,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     }
 
                                                     //Block of Players, Npcs, and Resources
-                                                    foreach (var en in tmpMap.GetEntities())
+                                                    foreach (var en in tmpMap.GetRelevantProcessingLayer(mEntity.InstanceLayer).GetEntities())
                                                     {
                                                         if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
                                                         {
@@ -208,6 +208,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     }
 
                                                     //Block Global Events if they are not passable.
+                                                    // TODO Alex come back to this after doing events
                                                     foreach (var en in tmpMap.GlobalEventInstances)
                                                     {
                                                         if (en.Value != null && en.Value.X > -1 && en.Value.X < Options.MapWidth && en.Value.Y > -1 && en.Value.Y < Options.MapHeight)

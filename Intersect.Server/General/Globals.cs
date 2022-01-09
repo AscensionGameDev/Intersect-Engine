@@ -40,7 +40,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnNpcsOf(npc);
+                map?.DespawnNpcsOfAcrossLayers(npc);
             }
         }
 

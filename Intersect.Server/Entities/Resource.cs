@@ -68,7 +68,7 @@ namespace Intersect.Server.Entities
                 if (Base.AnimationId != Guid.Empty)
                 {
                     PacketSender.SendAnimationToProximity(
-                        Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, (int)Directions.Up
+                        Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, (int)Directions.Up, InstanceLayer
                     );
                 }
             }
@@ -120,7 +120,7 @@ namespace Intersect.Server.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.Get(tileHelper.GetMapId());
+                        var map = MapInstance.Get(tileHelper.GetMapId())?.GetRelevantProcessingLayer(InstanceLayer);
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))

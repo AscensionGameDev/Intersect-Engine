@@ -831,7 +831,7 @@ namespace Intersect.Server.Entities.Events
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                var npc = MapInstance.Get(mapId).SpawnNpc((byte) tileX, (byte) tileY, direction, npcId, true);
+                var npc = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(player.InstanceLayer).SpawnNpc((byte) tileX, (byte) tileY, direction, npcId, true);
                 player.SpawnedNpcs.Add((Npc) npc);
             }
         }
@@ -913,7 +913,7 @@ namespace Intersect.Server.Entities.Events
                         //Attach to entity instead of playing on tile
                         PacketSender.SendAnimationToProximity(
                             animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id,
-                            targetEntity.MapId, 0, 0, 0
+                            targetEntity.MapId, 0, 0, 0, targetEntity.InstanceLayer
                         );
 
                         return;
@@ -962,7 +962,7 @@ namespace Intersect.Server.Entities.Events
             if (tile.TryFix())
             {
                 PacketSender.SendAnimationToProximity(
-                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte) direction
+                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte) direction, player.InstanceLayer
                 );
             }
         }

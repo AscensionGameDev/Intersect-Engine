@@ -134,7 +134,9 @@ namespace Intersect.Server.Core
                                                     AddToQueue(map);
                                                 }
                                                 
+                                                // TODO Alex: Only one call
                                                 globalEntities += map.GetCachedEntities().Length;
+                                                globalEntities += map.GetCachedEntitiesOnAllLayers().Length;
 
                                                 processedMaps.Add(map.Id);
                                             }
@@ -147,9 +149,6 @@ namespace Intersect.Server.Core
                             //Refresh list of active maps & their processing layers
                             foreach (var map in ActiveMaps.ToArray())
                             {
-                                // Remove any processing layers ("instances") that no players are on
-                                MapInstance.Get(map).RemoveDeadProcessingLayers();
-                                // If no players are on a map at all,
                                 if (!processedMaps.Contains(map))
                                 {
                                     // Remove the map entirely from the update queue
@@ -354,7 +353,7 @@ namespace Intersect.Server.Core
                             var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
                             MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - map.UpdateQueueStart);
 
-                            map.Update(Globals.Timing.Milliseconds);
+                            map.Update(Timing.Global.Milliseconds);
 
                             var timeAfterUpdate = Timing.Global.Milliseconds;
                             MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
@@ -367,7 +366,7 @@ namespace Intersect.Server.Core
                         }
                         else
                         {
-                            map.Update(Globals.Timing.Milliseconds);
+                            map.Update(Timing.Global.Milliseconds);
                         }
                     }
                 }
