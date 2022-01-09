@@ -1205,7 +1205,7 @@ namespace Intersect.Server.Maps
         {
             foreach (var instance in mMapProcessingLayers.Keys.ToList())
             {
-                mMapProcessingLayers[instance].Update(timeMs);
+                mMapProcessingLayers[instance]?.Update(timeMs);
             }
         }
 
@@ -1237,13 +1237,13 @@ namespace Intersect.Server.Maps
         {
             foreach(var map in GetSurroundingMaps(true))
             {
-                map.RemoveEntityFromAllMapsInLayer(entity, instanceLayer);
+                map?.RemoveEntityFromAllMapsInLayer(entity, instanceLayer);
             }
         }
 
         public void RemoveEntityFromAllMapsInLayer(Entity entity, Guid instanceLayer)
         {
-            GetRelevantProcessingLayer(instanceLayer, false).RemoveEntity(entity);
+            GetRelevantProcessingLayer(instanceLayer, false)?.RemoveEntity(entity);
         }
 
         public void RemoveDeadProcessingLayers()

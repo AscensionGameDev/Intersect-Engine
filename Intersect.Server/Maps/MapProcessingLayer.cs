@@ -216,6 +216,11 @@ namespace Intersect.Server.Maps
         {
             if (player != null)
             {
+                foreach (var x in mEntities.Values)
+                {
+                    Log.Debug(x.Name);
+                }
+
                 PacketSender.SendMapEntitiesTo(player, mEntities);
                 if (player.MapId == mMap.Id && player.InstanceLayer == InstanceLayer)
                 {
