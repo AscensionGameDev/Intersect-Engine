@@ -803,7 +803,7 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(Entity en, bool correction = false)
         {
-            var map = en?.Map;
+            var map = en?.Map?.GetRelevantProcessingLayer(en.InstanceLayer);
             if (map != null)
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
@@ -823,7 +823,7 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
-            var map = en?.Map;
+            var map = en?.Map?.GetRelevantProcessingLayer(en.InstanceLayer);
             if (map != null)
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
@@ -1765,7 +1765,7 @@ namespace Intersect.Server.Networking
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {
-            var map = en?.Map;
+            var map = en?.Map.GetRelevantProcessingLayer(en.InstanceLayer);
             if (map == null)
             {
                 return;

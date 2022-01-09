@@ -70,8 +70,6 @@ namespace Intersect.Server.Maps
         private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
         private MapInstance[] mSurroundingMaps = new MapInstance[0];
         private MapInstance[] mSurroundingMapsWithSelf = new MapInstance[0];
-        private MapEntityMovements mEntityMovements = new MapEntityMovements();
-        private MapActionMessages mActionMessages = new MapActionMessages();
 
         [JsonIgnore]
         [NotMapped]
@@ -899,9 +897,6 @@ namespace Intersect.Server.Maps
                     }
                 }
 
-                mEntityMovements.SendPackets(nearbyPlayers);
-                mActionMessages.SendPackets(nearbyPlayers);
-
                 UpdateProcessingInstances(Timing.Global.Milliseconds);
 
                 LastUpdateTime = timeMs;
@@ -1250,19 +1245,5 @@ namespace Intersect.Server.Maps
 
             return entitiesOnSharedLayer;
         }
-
-        #region"Packet Batching"
-        public void AddBatchedMovement(Entity en, bool correction, Player forPlayer)
-        {
-            mEntityMovements.Add(en, correction, forPlayer);
-        }
-
-        public void AddBatchedActionMessage(ActionMsgPacket packet)
-        {
-            mActionMessages.Add(packet);
-        }
-
-        #endregion
     }
-
 }

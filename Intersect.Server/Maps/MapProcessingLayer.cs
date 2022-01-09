@@ -422,10 +422,20 @@ namespace Intersect.Server.Maps
         }
         #endregion
 
-        #region Animations
+        #region Packet Batching
         public void AddBatchedAnimation(PlayAnimationPacket packet)
         {
             mMapAnimations.Add(packet);
+        }
+
+        public void AddBatchedMovement(Entity en, bool correction, Player forPlayer)
+        {
+            mEntityMovements.Add(en, correction, forPlayer);
+        }
+
+        public void AddBatchedActionMessage(ActionMsgPacket packet)
+        {
+            mActionMessages.Add(packet);
         }
         #endregion
 
