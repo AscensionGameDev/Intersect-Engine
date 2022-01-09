@@ -1233,26 +1233,36 @@ namespace Intersect.Server.Maps
             }
         }
 
+        public void RemoveEntityFromAllRelevantMapsInLayer(Entity entity, Guid instanceLayer)
+        {
+            foreach(var map in GetSurroundingMaps(true))
+            {
+                map.RemoveEntityFromAllMapsInLayer(entity, instanceLayer);
+            }
+        }
+
+        public void RemoveEntityFromAllMapsInLayer(Entity entity, Guid instanceLayer)
+        {
+            GetRelevantProcessingLayer(instanceLayer, false).RemoveEntity(entity);
+        }
+
         public void RemoveDeadProcessingLayers()
         {
-            lock (GetMapLock())
+            // Removes all processing layers that don't have active players on themselves or any adjoining layers
+            var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList();
+            var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
+            foreach (var instance in deadLayers)
             {
-                // Removes all processing layers that don't have active players on themselves or any adjoining layers
-                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList();
-                var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
-                foreach (var instance in deadLayers)
+                if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
                 {
-                    if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
-                    {
-                        removedLayer.Dispose();
-                        Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
-                    }
+                    removedLayer.Dispose();
+                    Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
                 }
+            }
 
-                if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
-                {
-                    Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
-                }
+            if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
+            {
+                Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
             }
         }
 
@@ -1272,6 +1282,11 @@ namespace Intersect.Server.Maps
             }
 
             return entitiesOnSharedLayer;
+        }
+
+        public void ClearAllProcessingLayers()
+        {
+            mMapProcessingLayers.Clear();
         }
     }
 }

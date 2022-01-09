@@ -154,6 +154,7 @@ namespace Intersect.Server.Core
                                 {
                                     // Remove the map entirely from the update queue
                                     ActiveMaps.Remove(map);
+                                    MapInstance.Get(map).ClearAllProcessingLayers();
                                 }
                             }
 

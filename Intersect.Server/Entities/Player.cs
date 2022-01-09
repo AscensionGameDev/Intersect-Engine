@@ -1537,12 +1537,28 @@ namespace Intersect.Server.Entities
                 Z = zOverride;
                 Dir = newDir;
 
+                // TODO Alex: Control when we change layers
+                if (adminWarp)
+                {
+                    if (InstanceLayer == Guid.Empty)
+                    {
+                        InstanceLayer = Guid.NewGuid();
+                    } else
+                    {
+                        InstanceLayer = Guid.Empty;
+                    }
+                }
+
                 var onNewInstance = false;
-                InstanceLayer = Guid.NewGuid(); // TODO Alex: Literally always warp to a unique instance for testing
+
+                // If we've changed instance layers
                 if (InstanceLayer != LastInstanceLayer)
                 {
                     onNewInstance = true;
-                    Log.Debug($"Player {Name} has joined layer ${InstanceLayer} of map: {map.Name}");
+                    // Remove any trace of our player from the old layer
+                    map.RemoveEntityFromAllRelevantMapsInLayer(this, LastInstanceLayer);
+                    Log.Debug($"Player {Name} has joined layer {InstanceLayer} of map: {map.Name}");
+                    Log.Info($"Previous layer was {LastInstanceLayer}");
                     // Todo Alex Remove this
                     PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
                 }
@@ -1556,15 +1572,6 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (onNewInstance) // Player requested a new map processing layer?
-                {
-                    // Remove from old instance
-                    map.GetRelevantProcessingLayer(LastInstanceLayer).RemoveEntity(this);
-                    // Add to new instance
-                    map.GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
-                    PacketSender.SendEntityDataToProximity(this);
-                    PacketSender.SendEntityPositionToAll(this);
-                }
                 if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
                 {
                     var oldMap = MapInstance.Get(MapId);
@@ -1591,6 +1598,12 @@ namespace Intersect.Server.Entities
                 }
                 else // Player moved on same map?
                 {
+                    if (onNewInstance)
+                    {
+                        PacketSender.SendEntityLeave(this);
+                        // And add to the new layer
+                        map.GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
+                    }
                     PacketSender.SendEntityPositionToAll(this);
                     PacketSender.SendEntityStats(this);
                 }
