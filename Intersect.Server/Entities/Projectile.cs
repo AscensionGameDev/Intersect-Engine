@@ -388,9 +388,9 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (!killSpawn && map != null)
+            if (!killSpawn && map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
             {
-                var entities = map.GetEntities();
+                var entities = mapProcessingLayer.GetEntities();
                 for (var z = 0; z < entities.Count; z++)
                 {
                     if (entities[z] != null &&
@@ -503,7 +503,12 @@ namespace Intersect.Server.Entities
                 Spawns[i] = null;
             }
 
-            MapInstance.Get(MapId).RemoveProjectile(this);
+            var map = MapInstance.Get(MapId);
+
+            if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+            {
+                mapProcessingLayer.RemoveProjectile(this);
+            }
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

@@ -44,21 +44,12 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] [NotMapped] public long UpdateQueueStart = -1;
 
-        [JsonIgnore] [NotMapped] public long LastProjectileUpdateTime = -1;
-
         //Location of Map in the current grid
         [JsonIgnore] [NotMapped] public int MapGrid;
 
         [JsonIgnore] [NotMapped] public int MapGridX = -1;
 
         [JsonIgnore] [NotMapped] public int MapGridY = -1;
-
-        //Traps
-        [JsonIgnore] [NotMapped] public ConcurrentDictionary<Guid, MapTrapInstance> MapTraps = new ConcurrentDictionary<Guid, MapTrapInstance>();
-
-        [JsonIgnore]
-        [NotMapped]
-        public MapTrapInstance[] MapTrapsCached = new MapTrapInstance[0];
 
         private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
 
@@ -136,15 +127,6 @@ namespace Intersect.Server.Maps
         [JsonIgnore]
         [NotMapped]
         public ConcurrentDictionary<Guid, MapItem> AllMapItems { get; } = new ConcurrentDictionary<Guid, MapItem>();
-
-        //Projectiles
-        [JsonIgnore]
-        [NotMapped]
-        public ConcurrentDictionary<Guid, Projectile> MapProjectiles { get; } = new ConcurrentDictionary<Guid, Projectile>();
-
-        [JsonIgnore]
-        [NotMapped]
-        public Projectile[] MapProjectilesCached = new Projectile[0];
 
         public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
 
@@ -432,12 +414,12 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void DespawnProjectilesOf(ProjectileBase projectileBase)
+        public void DespawnProjectilesOfAcrossLayers(ProjectileBase projectileBase)
         {
             var guids = new List<Guid>();
-            foreach (var entity in mEntities)
+            foreach (var entity in GetEntitiesOnAllLayers())
             {
-                if (entity.Value is Projectile proj && proj.Base == projectileBase)
+                if (entity is Projectile proj && proj.Base == projectileBase)
                 {
                     lock (proj.EntityLock)
                     {
@@ -521,55 +503,6 @@ namespace Intersect.Server.Maps
             return false;
         }
 
-        //Spawn a projectile
-        public void SpawnMapProjectile(
-            Entity owner,
-            ProjectileBase projectile,
-            SpellBase parentSpell,
-            ItemBase parentItem,
-            Guid mapId,
-            byte x,
-            byte y,
-            byte z,
-            byte direction,
-            Entity target
-        )
-        {
-            var proj = new Projectile(owner, parentSpell, parentItem, projectile, Id, x, y, z, direction, target);
-            MapProjectiles.TryAdd(proj.Id, proj);
-            MapProjectilesCached = MapProjectiles.Values.ToArray();
-            PacketSender.SendEntityDataToProximity(proj);
-        }
-
-        public void DespawnProjectiles()
-        {
-            var guids = new List<Guid>();
-            foreach (var proj in MapProjectiles)
-            {
-                if (proj.Value != null)
-                {
-                    guids.Add(proj.Value.Id);
-                    proj.Value.Die();
-                }
-            }
-            PacketSender.SendRemoveProjectileSpawns(Id, guids.ToArray(), null);
-            MapProjectiles.Clear();
-            MapProjectilesCached = new Projectile[0];
-        }
-
-        public void SpawnTrap(Entity owner, SpellBase parentSpell, byte x, byte y, byte z)
-        {
-            var trap = new MapTrapInstance(owner, parentSpell, Id, x, y, z);
-            MapTraps.TryAdd(trap.Id,trap);
-            MapTrapsCached = MapTraps.Values.ToArray();
-        }
-
-        public void DespawnTraps()
-        {
-            MapTraps.Clear();
-            MapTrapsCached = new MapTrapInstance[0];
-        }
-
         //Entity Processing
         public void AddEntity(Entity en)
         {
@@ -597,29 +530,12 @@ namespace Intersect.Server.Maps
             mCachedEntities = mEntities.Values.ToArray();
         }
 
-        public void RemoveProjectile(Projectile en)
-        {
-            MapProjectiles.TryRemove(en.Id, out Projectile removed);
-            MapProjectilesCached = MapProjectiles.Values.ToArray();
-        }
-
-        public void RemoveTrap(MapTrapInstance trap)
-        {
-            MapTraps.TryRemove(trap.Id, out MapTrapInstance removed);
-            MapTrapsCached = MapTraps.Values.ToArray();
-        }
-
         //Update + Related Functions
         public void Update(long timeMs)
         {
             lock (GetMapLock())
             {
                 var surrMaps = GetSurroundingMaps(true);
-
-                if (Options.Instance.Processing.MapUpdateInterval == Options.Instance.Processing.ProjectileUpdateInterval)
-                {
-                    UpdateProjectiles(timeMs);
-                }
 
                 //Process Items
                 foreach (var mapItem in AllMapItems.Values)
@@ -733,17 +649,7 @@ namespace Intersect.Server.Maps
                     }
                 }
 
-                //Send Batched Movement Packet
-                var nearbyPlayers = new HashSet<Player>();
-                foreach (var map in surrMaps)
-                {
-                    foreach (var plyr in map.GetPlayersOnMap())
-                    {
-                        nearbyPlayers.Add(plyr);
-                    }
-                }
-
-                UpdateProcessingInstances(Timing.Global.Milliseconds);
+                UpdateProcessingInstances(Globals.Timing.Milliseconds);
 
                 LastUpdateTime = timeMs;
             }
@@ -751,27 +657,11 @@ namespace Intersect.Server.Maps
 
         public void UpdateProjectiles(long timeMs)
         {
-            var spawnDeaths = new List<KeyValuePair<Guid, int>>();
-            var projDeaths = new List<Guid>();
-
-            //Process all of the projectiles
-            foreach (var proj in MapProjectilesCached)
+            // TODO Alex I don't think this will be necessary once processing layers are handled in their own jobs
+            mMapProcessingLayers.Values.ToList().ForEach((mpl) =>
             {
-                proj.Update(projDeaths, spawnDeaths);
-            }
-
-            if (projDeaths.Count > 0 || spawnDeaths.Count > 0)
-            {
-                PacketSender.SendRemoveProjectileSpawns(Id, projDeaths.ToArray(), spawnDeaths.ToArray());
-            }
-
-            //Process all of the traps
-            foreach (var trap in MapTrapsCached)
-            {
-                trap.Update();
-            }
-
-            LastProjectileUpdateTime = timeMs;
+                mpl.UpdateProjectiles(timeMs);
+            });
         }
 
         public MapInstance[] GetSurroundingMaps(bool includingSelf = false)
@@ -882,8 +772,6 @@ namespace Intersect.Server.Maps
                 kv.Value.DespawnEverything();
             }
             DespawnItems();
-            DespawnProjectiles();
-            DespawnTraps();
             DespawnGlobalEvents();
         }
 

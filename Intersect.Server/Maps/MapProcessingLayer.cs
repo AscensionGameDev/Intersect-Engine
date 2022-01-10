@@ -53,6 +53,12 @@ namespace Intersect.Server.Maps
         public ConcurrentDictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances = new ConcurrentDictionary<ResourceSpawn, MapResourceSpawn>();
         public ConcurrentDictionary<Guid, ResourceSpawn> ResourceSpawns { get; set; } = new ConcurrentDictionary<Guid, ResourceSpawn>();
 
+        public ConcurrentDictionary<Guid, Projectile> MapProjectiles { get; } = new ConcurrentDictionary<Guid, Projectile>();
+        public Projectile[] MapProjectilesCached = new Projectile[0];
+        public long LastProjectileUpdateTime = -1;
+        public ConcurrentDictionary<Guid, MapTrapInstance> MapTraps = new ConcurrentDictionary<Guid, MapTrapInstance>();
+        public MapTrapInstance[] MapTrapsCached = new MapTrapInstance[0];
+
         private MapEntityMovements mEntityMovements = new MapEntityMovements();
         private MapActionMessages mActionMessages = new MapActionMessages();
         private MapAnimations mMapAnimations = new MapAnimations();
@@ -119,6 +125,8 @@ namespace Intersect.Server.Maps
         {
             DespawnNpcs();
             DespawnResources();
+            DespawnProjectiles();
+            DespawnTraps();
         }
 
         public void RespawnEverything()
@@ -132,6 +140,11 @@ namespace Intersect.Server.Maps
         {
             lock (GetMapProcessLock())
             {
+                if (Options.Instance.Processing.MapUpdateInterval == Options.Instance.Processing.ProjectileUpdateInterval)
+                {
+                    UpdateProjectiles(timeMs);
+                }
+
                 UpdateEntities(timeMs);
                 ProcessNpcRespawns();
                 ProcessResourceRespawns();
@@ -498,6 +511,71 @@ namespace Intersect.Server.Maps
         }
         #endregion
 
+        #region Projectiles & Traps
+        //Spawn a projectile
+        public void SpawnMapProjectile(
+            Entity owner,
+            ProjectileBase projectile,
+            SpellBase parentSpell,
+            ItemBase parentItem,
+            Guid mapId,
+            byte x,
+            byte y,
+            byte z,
+            byte direction,
+            Entity target
+        )
+        {
+            var proj = new Projectile(owner, parentSpell, parentItem, projectile, mMap.Id, x, y, z, direction, target);
+            proj.InstanceLayer = InstanceLayer;
+            MapProjectiles.TryAdd(proj.Id, proj);
+            MapProjectilesCached = MapProjectiles.Values.ToArray();
+            PacketSender.SendEntityDataToProximity(proj);
+        }
+
+        public void DespawnProjectiles()
+        {
+            var guids = new List<Guid>();
+            foreach (var proj in MapProjectiles)
+            {
+                if (proj.Value != null)
+                {
+                    guids.Add(proj.Value.Id);
+                    proj.Value.Die();
+                }
+            }
+            PacketSender.SendRemoveProjectileSpawns(Id, guids.ToArray(), null);
+            MapProjectiles.Clear();
+            MapProjectilesCached = new Projectile[0];
+        }
+
+        public void RemoveProjectile(Projectile en)
+        {
+            MapProjectiles.TryRemove(en.Id, out Projectile removed);
+            MapProjectilesCached = MapProjectiles.Values.ToArray();
+        }
+
+        public void SpawnTrap(Entity owner, SpellBase parentSpell, byte x, byte y, byte z)
+        {
+            var trap = new MapTrapInstance(owner, parentSpell, mMap.Id, InstanceLayer, x, y, z);
+            MapTraps.TryAdd(trap.Id, trap);
+            MapTrapsCached = MapTraps.Values.ToArray();
+        }
+
+        public void DespawnTraps()
+        {
+            MapTraps.Clear();
+            MapTrapsCached = new MapTrapInstance[0];
+        }
+
+        public void RemoveTrap(MapTrapInstance trap)
+        {
+            MapTraps.TryRemove(trap.Id, out MapTrapInstance removed);
+            MapTrapsCached = MapTraps.Values.ToArray();
+        }
+
+        #endregion
+
         #region Collision
         public bool TileBlocked(int x, int y)
         {
@@ -746,6 +824,31 @@ namespace Intersect.Server.Maps
                     }
                 }
             }
+        }
+
+        public void UpdateProjectiles(long timeMs)
+        {
+            var spawnDeaths = new List<KeyValuePair<Guid, int>>();
+            var projDeaths = new List<Guid>();
+
+            //Process all of the projectiles
+            foreach (var proj in MapProjectilesCached)
+            {
+                proj.Update(projDeaths, spawnDeaths);
+            }
+
+            if (projDeaths.Count > 0 || spawnDeaths.Count > 0)
+            {
+                PacketSender.SendRemoveProjectileSpawns(Id, projDeaths.ToArray(), spawnDeaths.ToArray());
+            }
+
+            //Process all of the traps
+            foreach (var trap in MapTrapsCached)
+            {
+                trap.Update();
+            }
+
+            LastProjectileUpdateTime = timeMs;
         }
 
         private void SendBatchedPacketsToPlayers()

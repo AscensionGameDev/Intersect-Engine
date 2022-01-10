@@ -48,7 +48,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnProjectilesOf(projectile);
+                map?.DespawnProjectilesOfAcrossLayers(projectile);
             }
         }
 

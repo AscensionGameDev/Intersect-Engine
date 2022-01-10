@@ -1231,7 +1231,10 @@ namespace Intersect.Server.Networking
                                     ChatMessageType.Inventory, CustomColors.NoAmmo);
                             }
 #endif
-                        MapInstance.Get(player.MapId)
+                        var map = MapInstance.Get(player.MapId);
+                        if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+                        {
+                            mapProcessingLayer
                             .SpawnMapProjectile(
                                 player, projectileBase, null, weaponItem, player.MapId,
                                 (byte)player.X, (byte)player.Y, (byte)player.Z,
