@@ -313,14 +313,9 @@ namespace Intersect.Server.Networking
             var map = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(forPlayer.InstanceLayer);
             if (map != null)
             {
-                // todo Alex replace this nonsense with one call when all is consolidated into MPL
                 var entities = new List<Entity>();
-                if (forPlayer != null)
-                {
-                    entities.AddRange(map.GetEntities(false));
-                }
-                
                 entities.AddRange(map.GetEntities(false));
+
                 var sendEntities = new List<Entity>();
                 for (var i = 0; i < entities.Count; i++)
                 {
@@ -411,6 +406,20 @@ namespace Intersect.Server.Networking
                     SendNpcAggressionTo(player, (Npc) sendEntities[i]);
                 }
             }
+        }
+
+        public static void SendMapLayerChangedPacketTo(Player player, MapInstance map, Guid oldLayer)
+        {
+            // Sends a packet to the client telling it that the player has been warped to a new instance and that it should
+            // clear its local entities
+            var entitiesToDispose = map.GetRelevantProcessingLayer(oldLayer).GetEntities();
+            var enPackets = new List<EntityPacket>();
+            for (var i = 0; i < entitiesToDispose.Count; i++)
+            {
+                enPackets.Add(entitiesToDispose[i].EntityPacket(null, player));
+            }
+
+            player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray()));
         }
 
         public static void SendMapEntityEquipmentTo(Player player, List<Entity> entities)
