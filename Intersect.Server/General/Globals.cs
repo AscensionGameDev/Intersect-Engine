@@ -32,7 +32,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnResourcesOf(resource);
+                map?.DespawnResourcesOfAcrossLayers(resource);
             }
         }
 

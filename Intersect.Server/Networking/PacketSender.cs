@@ -454,9 +454,10 @@ namespace Intersect.Server.Networking
             }
             else
             {
+                // TODO ALEX THIS IS THE BIG GUY
                 // TODO Alex this should be done for ALL entities - we won't need all these elses once we've migrated things.
                 // Essentially, anything on this list is not yet processable by a map layer
-                if (en is Player) // Players are instanced
+                if (en is Player || en is Npc || en is Resource)
                 {
                     foreach (var map in en.Map.GetSurroundingMaps(true))
                     {
@@ -465,19 +466,7 @@ namespace Intersect.Server.Networking
                             SendEntityDataTo(entityToSendTo, en);
                         }
                     }
-                } else if (en is Npc npc) // NPCs are instanced
-                {
-                    foreach (var map in npc.Map.GetSurroundingMaps(true))
-                    {
-                        foreach (var player in map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
-                        {
-                            if (player != except && player.InstanceLayer == en.InstanceLayer)
-                            {
-                                SendEntityDataTo(player, en);
-                            }
-                        }
-                    }
-                } else
+                }  else
                 {
                     foreach (var map in en.Map.GetSurroundingMaps(true))
                     {

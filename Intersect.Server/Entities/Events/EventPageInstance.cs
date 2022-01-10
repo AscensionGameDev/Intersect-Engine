@@ -123,7 +123,7 @@ namespace Intersect.Server.Entities.Events
             SendToPlayer();
         }
 
-        // TODO Alex - This is probably not right
+        // TODO Alex - Events, This is probably not right
         public EventPageInstance(
             EventBase myEvent,
             EventPage myPage,

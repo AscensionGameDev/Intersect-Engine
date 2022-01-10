@@ -62,9 +62,6 @@ namespace Intersect.Server.Maps
 
         private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
 
-        [JsonIgnore] [NotMapped]
-        public ConcurrentDictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances = new ConcurrentDictionary<ResourceSpawn, MapResourceSpawn>();
-
         //Temporary Values
         private Guid[] mSurroundingMapIds = new Guid[0];
         private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
@@ -149,10 +146,6 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public Projectile[] MapProjectilesCached = new Projectile[0];
 
-        [NotMapped]
-        [JsonIgnore]
-        public ConcurrentDictionary<Guid, ResourceSpawn> ResourceSpawns { get; set; } = new ConcurrentDictionary<Guid, ResourceSpawn>();
-
         public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
 
         //GameObject Functions
@@ -200,29 +193,6 @@ namespace Intersect.Server.Maps
                 if (keepRevision > -1)
                 {
                     Revision = keepRevision;
-                }
-            }
-        }
-
-        //Items & Resources
-        private void SpawnAttributeItems()
-        {
-            ResourceSpawns.Clear();
-            for (byte x = 0; x < Options.MapWidth; x++)
-            {
-                for (byte y = 0; y < Options.MapHeight; y++)
-                {
-                    if (Attributes[x, y] != null)
-                    {
-                        if (Attributes[x, y].Type == MapAttributes.Item)
-                        {
-                            SpawnAttributeItem(x, y);
-                        }
-                        else if (Attributes[x, y].Type == MapAttributes.Resource)
-                        {
-                            SpawnAttributeResource(x, y);
-                        }
-                    }
                 }
             }
         }
@@ -448,11 +418,11 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void DespawnResourcesOf(ResourceBase resourceBase)
+        public void DespawnResourcesOfAcrossLayers(ResourceBase resourceBase)
         {
-            foreach (var entity in mEntities)
+            foreach (var entity in GetEntitiesOnAllLayers())
             {
-                if (entity.Value is Resource res && res.Base == resourceBase)
+                if (entity is Resource res && res.Base == resourceBase)
                 {
                     lock (res.EntityLock)
                     {
@@ -487,88 +457,6 @@ namespace Intersect.Server.Maps
                 {
                     RemoveItem(item);
                 }
-            }
-        }
-
-        // Resources
-        private void SpawnAttributeResource(byte x, byte y)
-        {
-            var tempResource = new ResourceSpawn()
-            {
-                ResourceId = ((MapResourceAttribute) Attributes[x, y]).ResourceId,
-                X = x,
-                Y = y,
-                Z = ((MapResourceAttribute) Attributes[x, y]).SpawnLevel
-            };
-
-            ResourceSpawns.TryAdd(tempResource.Id, tempResource);
-        }
-
-        private void SpawnMapResources()
-        {
-            foreach (var spawn in ResourceSpawns)
-            {
-                SpawnMapResource(spawn.Value);
-            }
-        }
-
-        private void SpawnMapResource(ResourceSpawn spawn)
-        {
-            int x = spawn.X;
-            int y = spawn.Y;
-            var id = Guid.Empty;
-            MapResourceSpawn resourceSpawnInstance;
-            if (ResourceSpawnInstances.ContainsKey(spawn))
-            {
-                resourceSpawnInstance = ResourceSpawnInstances[spawn];
-            }
-            else
-            {
-                resourceSpawnInstance = new MapResourceSpawn();
-                ResourceSpawnInstances.TryAdd(spawn, resourceSpawnInstance);
-            }
-
-            if (resourceSpawnInstance.Entity == null)
-            {
-                var resourceBase = ResourceBase.Get(spawn.ResourceId);
-                if (resourceBase != null)
-                {
-                    var res = new Resource(resourceBase);
-                    resourceSpawnInstance.Entity = res;
-                    res.X = spawn.X;
-                    res.Y = spawn.Y;
-                    res.Z = spawn.Z;
-                    res.MapId = Id;
-                    id = res.Id;
-                    AddEntity(res);
-                }
-            }
-            else
-            {
-                id = resourceSpawnInstance.Entity.Id;
-            }
-
-            if (id != Guid.Empty)
-            {
-                resourceSpawnInstance.Entity.Spawn();
-            }
-        }
-
-        private void DespawnResources()
-        {
-            //Kill all resources spawned from this map
-            lock (GetMapLock())
-            {
-                foreach (var resourceSpawn in ResourceSpawnInstances)
-                {
-                    if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
-                    {
-                        resourceSpawn.Value.Entity.Destroy();
-                        RemoveEntity(resourceSpawn.Value.Entity);
-                    }
-                }
-
-                ResourceSpawnInstances.Clear();
             }
         }
 
@@ -816,48 +704,6 @@ namespace Intersect.Server.Maps
                     PacketSender.SendMapEntityStatusUpdate(this, statusUpdates.ToArray());
                 }
 
-                //Process Resource Respawns
-                foreach (var spawn in ResourceSpawns)
-                {
-                    if (ResourceSpawnInstances.ContainsKey(spawn.Value))
-                    {
-                        var resourceSpawnInstance = ResourceSpawnInstances[spawn.Value];
-                        if (resourceSpawnInstance.Entity != null && resourceSpawnInstance.Entity.IsDead())
-                        {
-                            if (resourceSpawnInstance.RespawnTime == -1)
-                            {
-                                resourceSpawnInstance.RespawnTime = Timing.Global.Milliseconds +
-                                                                    resourceSpawnInstance.Entity.Base.SpawnDuration;
-                            }
-                            else if (resourceSpawnInstance.RespawnTime < Timing.Global.Milliseconds)
-                            {
-                                // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
-                                // Unless of course the resource is walkable regardless.
-                                var canSpawn = false;
-                                if (resourceSpawnInstance.Entity.Base.WalkableBefore)
-                                {
-                                    canSpawn = true;
-                                }
-                                else
-                                {
-                                    // Check if this resource is currently stepped on
-                                    var spawnBlockers = GetEntities().Where(x => x is Player || x is Npc).ToArray();
-                                    if (!spawnBlockers.Any(e => e.X == resourceSpawnInstance.Entity.X && e.Y == resourceSpawnInstance.Entity.Y))
-                                    {
-                                        canSpawn = true;
-                                    }
-                                }
-
-                                if (canSpawn)
-                                {
-                                    SpawnMapResource(spawn.Value);
-                                    resourceSpawnInstance.RespawnTime = -1;
-                                }
-                            }
-                        }
-                    }
-                }
-
                 //Process all global events
                 var evts = GlobalEventInstances.Values.ToList();
                 for (var i = 0; i < evts.Count; i++)
@@ -1036,7 +882,6 @@ namespace Intersect.Server.Maps
                 kv.Value.DespawnEverything();
             }
             DespawnItems();
-            DespawnResources();
             DespawnProjectiles();
             DespawnTraps();
             DespawnGlobalEvents();
@@ -1048,9 +893,7 @@ namespace Intersect.Server.Maps
             {
                 kv.Value.RespawnEverything();
             }
-            SpawnAttributeItems();
             SpawnGlobalEvents();
-            SpawnMapResources();
         }
 
         public static MapInstance Get(Guid id)
@@ -1202,6 +1045,18 @@ namespace Intersect.Server.Maps
                     return true;
                 }
 
+                return false;
+            }
+        }
+
+        public bool TryUpdateProcessingLayer(Guid instanceId, long timeMs)
+        {
+            if (mMapProcessingLayers.TryGetValue(instanceId, out var mpl))
+            {
+                mpl.Update(timeMs);
+                return true;
+            } else
+            {
                 return false;
             }
         }

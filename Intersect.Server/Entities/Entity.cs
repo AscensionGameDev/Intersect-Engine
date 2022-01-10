@@ -505,7 +505,7 @@ namespace Intersect.Server.Entities
                 mapEntities.AddRange(mapInstance.GetCachedEntities());
                 if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
-                    mapProcessingLayer.GetCachedEntities();
+                    mapEntities.AddRange(mapProcessingLayer.GetCachedEntities());
                 }
                 foreach (var en in mapEntities)
                 {
@@ -884,7 +884,7 @@ namespace Intersect.Server.Entities
                     {
                         var oldMap = MapInstance.Get(MapId);
                         // Todo Alex this should be done regardless of entity status
-                        if (this is Player || this is Npc)
+                        if (this is Player || this is Npc || this is Resource)
                         {
                             if (oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer)) {
                                 oldMapProcessingLayer.RemoveEntity(this);
