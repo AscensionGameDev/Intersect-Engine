@@ -1288,13 +1288,16 @@ namespace Intersect.Server.Networking
             foreach (var map in player.Map.GetSurroundingMaps(true))
             {
                 // TODO Alex Consolidate
-                foreach (var entity in map.GetRelevantProcessingLayer(player.InstanceLayer).GetEntities())
+                if (map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
                 {
-                    if (entity.Id == target)
+                    foreach (var entity in mapProcessingLayer.GetEntities())
                     {
-                        player.TryAttack(entity);
+                        if (entity.Id == target)
+                        {
+                            player.TryAttack(entity);
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
@@ -1688,13 +1691,16 @@ namespace Intersect.Server.Networking
                 // TODO Alex: Consolidate, and also maybe refactor all this to a method
                 foreach (var map in player.Map.GetSurroundingMaps(true))
                 {
-                    foreach (var en in map.GetRelevantProcessingLayer(player.InstanceLayer).GetEntities())
+                    if (map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
                     {
-                        if (en.Id == packet.TargetId)
+                        foreach (var en in mapProcessingLayer.GetEntities())
                         {
-                            target = en;
+                            if (en.Id == packet.TargetId)
+                            {
+                                target = en;
 
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1743,14 +1749,17 @@ namespace Intersect.Server.Networking
                 // TODO Alex: Simplify with a method?
                 foreach (var map in player.Map.GetSurroundingMaps(true))
                 {
-                    foreach (var en in map.GetRelevantProcessingLayer(player.InstanceLayer).GetEntities())
+                    if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
                     {
-                        if (en.Id == packet.TargetId)
+                        foreach (var en in mapProcessingLayer.GetEntities())
                         {
-                            player.UseSpell(packet.Slot, en);
-                            casted = true;
+                            if (en.Id == packet.TargetId)
+                            {
+                                player.UseSpell(packet.Slot, en);
+                                casted = true;
 
-                            break;
+                                break;
+                            }
                         }
                     }
                 }

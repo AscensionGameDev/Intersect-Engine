@@ -1189,16 +1189,21 @@ namespace Intersect.Server.Maps
         /// </summary>
         /// <param name="processingLayerId"></param>
         /// <returns>Whether or not we needed to create a new processing layer</returns>
-        public bool CreateProcessingInstance(Guid processingLayerId)
+        public bool TryCreateProcessingInstance(Guid processingLayerId, out MapProcessingLayer newLayer)
         {
-            if (!mMapProcessingLayers.ContainsKey(processingLayerId))
+            newLayer = null;
+            lock (GetMapLock())
             {
-                Log.Debug($"Creating new processing layer {processingLayerId} for map {Name}");
-                mMapProcessingLayers[processingLayerId] = new MapProcessingLayer(this, processingLayerId);
-                return true;
+                if (!mMapProcessingLayers.ContainsKey(processingLayerId))
+                {
+                    Log.Debug($"Creating new processing layer {processingLayerId} for map {Name}");
+                    mMapProcessingLayers[processingLayerId] = new MapProcessingLayer(this, processingLayerId);
+                    newLayer = mMapProcessingLayers[processingLayerId];
+                    return true;
+                }
+
+                return false;
             }
-            
-            return false;
         }
 
         public void UpdateProcessingInstances(long timeMs)
@@ -1212,28 +1217,26 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public MapProcessingLayer GetRelevantProcessingLayer(Guid instanceLayer, bool createIfNew = true)
+        public bool TryGetRelevantProcessingLayer(Guid instanceLayer, out MapProcessingLayer mpl, bool createIfNew = true)
         {
+            mpl = null;
             if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
             {
-                return processingLayer;
+                mpl = processingLayer;
+                return true;
             }
             else
             {
                 if (createIfNew)
                 {
-                    if (CreateProcessingInstance(instanceLayer))
+                    if (TryCreateProcessingInstance(instanceLayer, out var newProcessingLayer))
                     {
-                        return mMapProcessingLayers[instanceLayer];
-                    } else
-                    {
-                        return null;
+                        mpl = newProcessingLayer;
+                        return true;
                     }
-                } else
-                {
-                    return null;
                 }
             }
+            return false;
         }
 
         public void RemoveEntityFromAllRelevantMapsInLayer(Entity entity, Guid instanceLayer)
@@ -1244,28 +1247,35 @@ namespace Intersect.Server.Maps
             }
         }
 
+        // TODO Alex rename
         public void RemoveEntityFromAllMapsInLayer(Entity entity, Guid instanceLayer)
         {
-            GetRelevantProcessingLayer(instanceLayer, false)?.RemoveEntity(entity);
+            if (TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
+            {
+                mapProcessingLayer.RemoveEntity(entity);
+            }
         }
 
         public void RemoveDeadProcessingLayers()
         {
-            // Removes all processing layers that don't have active players on themselves or any adjoining layers
-            var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList();
-            var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
-            foreach (var instance in deadLayers)
+            lock (GetMapLock())
             {
-                if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
+                // Removes all processing layers that don't have active players on themselves or any adjoining layers
+                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList();
+                var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
+                foreach (var instance in deadLayers)
                 {
-                    removedLayer.Dispose();
-                    Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
+                    if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
+                    {
+                        removedLayer.Dispose();
+                        Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
+                    }
                 }
-            }
 
-            if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
-            {
-                Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
+                if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
+                {
+                    Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
+                }
             }
         }
 

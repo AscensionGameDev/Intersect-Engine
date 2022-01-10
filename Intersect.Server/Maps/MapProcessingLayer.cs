@@ -178,7 +178,10 @@ namespace Intersect.Server.Maps
                 foreach (var map in mMap.GetSurroundingMaps(false))
                 {
                     // TODO Alex: Support all entities with one call
-                    entities.AddRange(map.GetRelevantProcessingLayer(InstanceLayer).GetEntities());
+                    if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                    {
+                        entities.AddRange(mapProcessingLayer.GetEntities());
+                    }
                     entities.AddRange(map.GetEntities());
                 }
             }
@@ -206,7 +209,10 @@ namespace Intersect.Server.Maps
 
             foreach (var map in surroundingMaps)
             {
-                map.GetRelevantProcessingLayer(InstanceLayer).SendMapEntitiesTo(player);
+                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                {
+                    mapProcessingLayer.SendMapEntitiesTo(player);
+                }
                 PacketSender.SendMapItems(player, map.Id);
             }
             PacketSender.SendEntityDataToProximity(player, player);
@@ -241,10 +247,13 @@ namespace Intersect.Server.Maps
             var surroundingMaps = mMap.GetSurroundingMaps();
             foreach (var map in surroundingMaps)
             {
-                var adjoiningPlayers = map.GetRelevantProcessingLayer(InstanceLayer, false)?.GetPlayersOnMap();
-                if (adjoiningPlayers != null)
+                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer, false))
                 {
-                    allPlayers.AddRange(adjoiningPlayers);
+                    var adjoiningPlayers = mapProcessingLayer.GetPlayersOnMap();
+                    if (adjoiningPlayers != null)
+                    {
+                        allPlayers.AddRange(adjoiningPlayers);
+                    }
                 }
             }
             allPlayers.AddRange(GetPlayersOnMap());
@@ -593,9 +602,12 @@ namespace Intersect.Server.Maps
             // Get all players in surrounding maps
             foreach (var map in surrMaps)
             {
-                foreach (var plyr in map.GetRelevantProcessingLayer(InstanceLayer).GetPlayersOnMap())
+                if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
-                    nearbyPlayers.Add(plyr);
+                    foreach (var plyr in mapProcessingLayer.GetPlayersOnMap())
+                    {
+                        nearbyPlayers.Add(plyr);
+                    }
                 }
             }
             

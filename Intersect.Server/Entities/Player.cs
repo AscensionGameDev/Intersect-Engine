@@ -320,7 +320,10 @@ namespace Intersect.Server.Entities
         private void Logout()
         {
             var map = MapInstance.Get(MapId);
-            map.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
+            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+            {
+                mapProcessingLayer.RemoveEntity(this);
+            }
 
             //Update parties
             LeaveParty();
@@ -554,7 +557,10 @@ namespace Intersect.Server.Entities
                     {
                         if (MapInstance.Get(LastMapEntered) != null)
                         {
-                            MapInstance.Get(LastMapEntered).GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
+                            if (MapInstance.Get(LastMapEntered).TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            {
+                                mapProcessingLayer.RemoveEntity(this);
+                            }
                         }
 
                         if (MapId != Guid.Empty)
@@ -565,7 +571,13 @@ namespace Intersect.Server.Entities
                             }
                             else
                             {
-                                MapInstance.Get(MapId).GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
+                                if (MapInstance.Get(MapId) != null)
+                                {
+                                    if (MapInstance.Get(LastMapEntered).TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                                    {
+                                        mapProcessingLayer.PlayerEnteredMap(this);
+                                    }
+                                }
                             }
                         }
                     }
@@ -799,13 +811,16 @@ namespace Intersect.Server.Entities
             var mapList = Map.GetSurroundingMaps(true).ToArray();
             foreach(var map in mapList)
             {
-                foreach(var entity in map.GetRelevantProcessingLayer(InstanceLayer).GetCachedEntities())
+                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
-                    if (entity is Npc npc)
+                    foreach (var entity in mapProcessingLayer.GetCachedEntities())
                     {
-                        npc.RemoveFromDamageMap(this);
+                        if (entity is Npc npc)
+                        {
+                            npc.RemoveFromDamageMap(this);
+                        }
                     }
-                }
+                }   
             }
             
             lock (EntityLock)
@@ -1366,9 +1381,12 @@ namespace Intersect.Server.Entities
 
         public override void NotifySwarm(Entity attacker)
         {
-            MapInstance.Get(MapId).GetRelevantProcessingLayer(InstanceLayer)
-                ?.GetEntities(true)
-                .ForEach(
+            var mapInstance = MapInstance.Get(MapId);
+            if (mapInstance == null) return;
+
+            if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+            {
+                mapProcessingLayer.GetEntities(true).ForEach(
                     entity =>
                     {
                         if (entity is Npc npc &&
@@ -1380,6 +1398,7 @@ namespace Intersect.Server.Entities
                         }
                     }
                 );
+            }
         }
 
         public override int CalculateAttackTime()
@@ -1537,6 +1556,8 @@ namespace Intersect.Server.Entities
                 Z = zOverride;
                 Dir = newDir;
 
+                // TODO Alex this method could be refactored - mostly removing and consolidating calls to getting relevant insatnce
+
                 // TODO Alex: Control when we change layers
                 if (adminWarp)
                 {
@@ -1576,14 +1597,17 @@ namespace Intersect.Server.Entities
 
                 if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
                 {
-                    if (oldMap != null)
+                    if (oldMap != null && oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer))
                     {
-                        oldMap.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
+                        oldMapProcessingLayer.RemoveEntity(this);
                     }
 
                     PacketSender.SendEntityLeave(this);
                     MapId = newMapId;
-                    map.GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
+                    if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                    {
+                        mapProcessingLayer.PlayerEnteredMap(this);
+                    }
                     PacketSender.SendEntityDataToProximity(this);
                     PacketSender.SendEntityPositionToAll(this);
 
@@ -1603,7 +1627,10 @@ namespace Intersect.Server.Entities
                     {
                         PacketSender.SendEntityLeave(this);
                         // And add to the new layer
-                        map.GetRelevantProcessingLayer(InstanceLayer).PlayerEnteredMap(this);
+                        if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                        {
+                            mapProcessingLayer.PlayerEnteredMap(this);
+                        }
                     }
                     PacketSender.SendEntityPositionToAll(this);
                     PacketSender.SendEntityStats(this);

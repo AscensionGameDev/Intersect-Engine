@@ -503,7 +503,10 @@ namespace Intersect.Server.Entities
                 // TODO Alex Nah
                 var mapEntities = new List<Entity>();
                 mapEntities.AddRange(mapInstance.GetCachedEntities());
-                mapEntities.AddRange(mapInstance.GetRelevantProcessingLayer(InstanceLayer).GetCachedEntities());
+                if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                {
+                    mapProcessingLayer.GetCachedEntities();
+                }
                 foreach (var en in mapEntities)
                 {
                     if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
@@ -883,8 +886,14 @@ namespace Intersect.Server.Entities
                         // Todo Alex this should be done regardless of entity status
                         if (this is Player || this is Npc)
                         {
-                            oldMap?.GetRelevantProcessingLayer(InstanceLayer).RemoveEntity(this);
-                            currentMap?.GetRelevantProcessingLayer(InstanceLayer).AddEntity(this);
+                            if (oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer)) {
+                                oldMapProcessingLayer.RemoveEntity(this);
+                            }
+
+                            if (currentMap.TryGetRelevantProcessingLayer(InstanceLayer, out var currentMapProcessingLayer))
+                            {
+                                currentMapProcessingLayer.AddEntity(this);
+                            }
                         } else
                         {
                             oldMap?.RemoveEntity(this);
@@ -2159,25 +2168,27 @@ namespace Intersect.Server.Entities
                     var surroundingMaps = startMap.GetSurroundingMaps(true);
                     foreach (var map in surroundingMaps)
                     {
-                        foreach (var entity in map.GetRelevantProcessingLayer(InstanceLayer).GetCachedEntities())
+                        if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                         {
-                            if (entity != null && (entity is Player || entity is Npc))
+                            foreach (var entity in mapProcessingLayer.GetCachedEntities())
                             {
-                                if (spellTarget == null || spellTarget == entity)
+                                if (entity != null && (entity is Player || entity is Npc))
                                 {
-                                    if (entity.GetDistanceTo(startMap,startX,startY) <= range)
+                                    if (spellTarget == null || spellTarget == entity)
                                     {
-                                        //Check to handle a warp to spell
-                                        if (spellBase.SpellType == SpellTypes.WarpTo)
+                                        if (entity.GetDistanceTo(startMap, startX, startY) <= range)
                                         {
-                                            if (spellTarget != null)
+                                            //Check to handle a warp to spell
+                                            if (spellBase.SpellType == SpellTypes.WarpTo)
                                             {
-                                                //Spelltarget used to be Target. I don't know if this is correct or not.
-                                                int[] position = GetPositionNearTarget(spellTarget.MapId, spellTarget.X, spellTarget.Y);
-                                                Warp(spellTarget.MapId, (byte)position[0], (byte)position[1], (byte)Dir);
-                                                ChangeDir(DirToEnemy(spellTarget));
+                                                if (spellTarget != null)
+                                                {
+                                                    //Spelltarget used to be Target. I don't know if this is correct or not.
+                                                    int[] position = GetPositionNearTarget(spellTarget.MapId, spellTarget.X, spellTarget.Y);
+                                                    Warp(spellTarget.MapId, (byte)position[0], (byte)position[1], (byte)Dir);
+                                                    ChangeDir(DirToEnemy(spellTarget));
+                                                }
                                             }
-                                        }
 
                                         TryAttack(entity, spellBase); //Handle damage
                                     }
@@ -2191,68 +2202,74 @@ namespace Intersect.Server.Entities
 
         private int[] GetPositionNearTarget(Guid mapId, int x, int y)
         {
-            var map = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(InstanceLayer);
-            if (map == null)
+            var mapInstance = MapInstance.Get(mapId);
+            
+            if (mapInstance == null)
             {
                 return new int[] { x, y };
             }
-
-            List<int[]> validPosition = new List<int[]>();
-
-            // Start by north, west, est and south
-            for (int col = -1; col < 2; col++)
+            if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var map))
             {
-                for (int row = -1; row < 2; row++)
-                {
-                    if (Math.Abs(col % 2) != Math.Abs(row % 2))
-                    {
-                        int newX = x + row;
-                        int newY = y + col;
+                List<int[]> validPosition = new List<int[]>();
 
-                        if (newX >= 0 && newX <= Options.MapWidth &&
-                            newY >= 0 && newY <= Options.MapHeight &&
-                            !map.TileBlocked(newX, newY))
+                // Start by north, west, est and south
+                for (int col = -1; col < 2; col++)
+                {
+                    for (int row = -1; row < 2; row++)
+                    {
+                        if (Math.Abs(col % 2) != Math.Abs(row % 2))
                         {
-                            validPosition.Add(new int[] { newX, newY });
+                            int newX = x + row;
+                            int newY = y + col;
+
+                            if (newX >= 0 && newX <= Options.MapWidth &&
+                                newY >= 0 && newY <= Options.MapHeight &&
+                                !map.TileBlocked(newX, newY))
+                            {
+                                validPosition.Add(new int[] { newX, newY });
+                            }
                         }
                     }
                 }
-            }
 
-            if (validPosition.Count > 0)
-            {
-                return validPosition[Randomization.Next(0, validPosition.Count)];
-            }
-
-            // If nothing found, diagonal direction
-            for (int col = -1; col < 2; col++)
-            {
-                for (int row = -1; row < 2; row++)
+                if (validPosition.Count > 0)
                 {
-                    if (Math.Abs(col % 2) == Math.Abs(row % 2))
-                    {
-                        int newX = x + row;
-                        int newY = y + col;
+                    return validPosition[Randomization.Next(0, validPosition.Count)];
+                }
 
-                        // Tile must not be the target position
-                        if (newX >= 0 && newX <= Options.MapWidth &&
-                            newY >= 0 && newY <= Options.MapHeight &&
-                            !(x + row == x && y + col == y) &&
-                            !map.TileBlocked(newX, newY))
+                // If nothing found, diagonal direction
+                for (int col = -1; col < 2; col++)
+                {
+                    for (int row = -1; row < 2; row++)
+                    {
+                        if (Math.Abs(col % 2) == Math.Abs(row % 2))
                         {
-                            validPosition.Add(new int[] { newX, newY });
+                            int newX = x + row;
+                            int newY = y + col;
+
+                            // Tile must not be the target position
+                            if (newX >= 0 && newX <= Options.MapWidth &&
+                                newY >= 0 && newY <= Options.MapHeight &&
+                                !(x + row == x && y + col == y) &&
+                                !map.TileBlocked(newX, newY))
+                            {
+                                validPosition.Add(new int[] { newX, newY });
+                            }
                         }
                     }
                 }
-            }
 
-            if (validPosition.Count > 0)
+                if (validPosition.Count > 0)
+                {
+                    return validPosition[Randomization.Next(0, validPosition.Count)];
+                }
+
+                // If nothing found, return target position
+                return new int[] { x, y };
+            } else
             {
-                return validPosition[Randomization.Next(0, validPosition.Count)];
+                return new int[] { x, y };
             }
-
-            // If nothing found, return target position
-            return new int[] { x, y };
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
@@ -2518,7 +2535,10 @@ namespace Intersect.Server.Entities
             {
                 foreach (var map in currentMap.GetSurroundingMaps(true))
                 {
-                    map.GetRelevantProcessingLayer(InstanceLayer).ClearEntityTargetsOf(this);
+                    if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                    {
+                        mapProcessingLayer.ClearEntityTargetsOf(this);
+                    }
                 }
             }
 

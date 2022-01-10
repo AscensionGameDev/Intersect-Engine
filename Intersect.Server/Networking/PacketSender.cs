@@ -310,11 +310,11 @@ namespace Intersect.Server.Networking
         //MapEntitiesPacket
         public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId, Player forPlayer)
         {
-            var map = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(forPlayer.InstanceLayer);
-            if (map != null)
+            var map = MapInstance.Get(mapId);
+            if (map != null && map.TryGetRelevantProcessingLayer(forPlayer.InstanceLayer, out var mapProcessingLayer))
             {
                 var entities = new List<Entity>();
-                entities.AddRange(map.GetEntities(false));
+                entities.AddRange(mapProcessingLayer.GetEntities(false));
 
                 var sendEntities = new List<Entity>();
                 for (var i = 0; i < entities.Count; i++)
@@ -412,14 +412,17 @@ namespace Intersect.Server.Networking
         {
             // Sends a packet to the client telling it that the player has been warped to a new instance and that it should
             // clear its local entities
-            var entitiesToDispose = map.GetRelevantProcessingLayer(oldLayer).GetEntities();
-            var enPackets = new List<EntityPacket>();
-            for (var i = 0; i < entitiesToDispose.Count; i++)
+            if (map.TryGetRelevantProcessingLayer(oldLayer, out var oldMapLayerProcesser))
             {
-                enPackets.Add(entitiesToDispose[i].EntityPacket(null, player));
-            }
+                var entitiesToDispose = oldMapLayerProcesser.GetEntities();
+                var enPackets = new List<EntityPacket>();
+                for (var i = 0; i < entitiesToDispose.Count; i++)
+                {
+                    enPackets.Add(entitiesToDispose[i].EntityPacket(null, player));
+                }
 
-            player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray()));
+                player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray()));
+            }
         }
 
         public static void SendMapEntityEquipmentTo(Player player, List<Entity> entities)
@@ -812,8 +815,8 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(Entity en, bool correction = false)
         {
-            var map = en?.Map?.GetRelevantProcessingLayer(en.InstanceLayer);
-            if (map != null)
+            var map = en?.Map;
+            if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
                 {
@@ -825,15 +828,15 @@ namespace Intersect.Server.Networking
                     );
                     return;
                 }
-                map.AddBatchedMovement(en, correction, null);
+                mapProcessingLayer.AddBatchedMovement(en, correction, null);
             }
         }
 
         //EntityMovePacket
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
-            var map = en?.Map?.GetRelevantProcessingLayer(en.InstanceLayer);
-            if (map != null)
+            var map = en?.Map;
+            if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
                 {
@@ -844,7 +847,7 @@ namespace Intersect.Server.Networking
                     );
                     return;
                 }
-                map.AddBatchedMovement(en, correction, player);
+                mapProcessingLayer.AddBatchedMovement(en, correction, player);
                 return;
             }
         }
@@ -1474,7 +1477,10 @@ namespace Intersect.Server.Networking
             {
                 if (Options.Instance.Packets.BatchAnimationPackets)
                 {
-                    map.GetRelevantProcessingLayer(instanceLayer).AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+                    if (map.TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
+                    {
+                        mapProcessingLayer.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+                    }
                 }
                 else
                 {
@@ -1774,19 +1780,20 @@ namespace Intersect.Server.Networking
         //ActionMsgPacket
         public static void SendActionMsg(Entity en, string message, Color color)
         {
-            var map = en?.Map.GetRelevantProcessingLayer(en.InstanceLayer);
+            var map = en?.Map;
             if (map == null)
             {
                 return;
-            }
-
-            if (Options.Instance.Packets.BatchActionMessagePackets)
+            } else if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
             {
-                map.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
-            }
-            else
-            {
-                SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+                if (Options.Instance.Packets.BatchActionMessagePackets)
+                {
+                    mapProcessingLayer.AddBatchedActionMessage(new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+                }
+                else
+                {
+                    SendDataToProximity(en.MapId, new ActionMsgPacket(en.MapId, en.X, en.Y, message, color));
+                }
             }
         }
 

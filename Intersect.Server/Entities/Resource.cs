@@ -120,8 +120,8 @@ namespace Intersect.Server.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.Get(tileHelper.GetMapId())?.GetRelevantProcessingLayer(InstanceLayer);
-                        if (map != null)
+                        var mapInstance = MapInstance.Get(tileHelper.GetMapId());
+                        if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var map))
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
                             {

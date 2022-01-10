@@ -168,7 +168,10 @@ namespace Intersect.Server.Entities
                 AggroCenterY = 0;
                 AggroCenterZ = 0;
 
-                MapInstance.Get(MapId)?.GetRelevantProcessingLayer(InstanceLayer)?.RemoveEntity(this);
+                var map = MapInstance.Get(MapId);
+                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer)) {
+                    mapProcessingLayer.RemoveEntity(this);
+                }
                 PacketSender.SendEntityDie(this);
                 PacketSender.SendEntityLeave(this);
             }
@@ -1165,12 +1168,20 @@ namespace Intersect.Server.Entities
                     {
                         if (curMapLink == Guid.Empty)
                         {
-                            MapInstance.Get(curMapLink)?.GetRelevantProcessingLayer(InstanceLayer)?.RemoveEntity(this);
+                            var map = MapInstance.Get(curMapLink);
+                            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            {
+                                mapProcessingLayer.RemoveEntity(this);
+                            }
                         }
 
                         if (MapId != Guid.Empty)
                         {
-                            MapInstance.Get(MapId)?.GetRelevantProcessingLayer(InstanceLayer)?.AddEntity(this);
+                            var map = MapInstance.Get(MapId);
+                            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            {
+                                mapProcessingLayer.AddEntity(this);
+                            }
                         }
                     }
                 }
@@ -1237,17 +1248,21 @@ namespace Intersect.Server.Entities
 
         public override void NotifySwarm(Entity attacker)
         {
-            var mapEntities = MapInstance.Get(MapId).GetRelevantProcessingLayer(InstanceLayer).GetEntities(true);
-            foreach (var en in mapEntities)
+            var map = MapInstance.Get(MapId);
+            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
             {
-                if (en.GetType() == typeof(Npc))
+                var mapEntities = mapProcessingLayer.GetEntities(true);
+                foreach (var en in mapEntities)
                 {
-                    var npc = (Npc) en;
-                    if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
+                    if (en.GetType() == typeof(Npc))
                     {
-                        if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                        var npc = (Npc)en;
+                        if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
                         {
-                            npc.AssignTarget(attacker);
+                            if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                            {
+                                npc.AssignTarget(attacker);
+                            }
                         }
                     }
                 }
@@ -1391,35 +1406,38 @@ namespace Intersect.Server.Entities
             // Scan for nearby targets
             foreach (var map in maps)
             {
-                foreach (var entity in map.GetRelevantProcessingLayer(InstanceLayer)?.GetCachedEntities())
+                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
-                    if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
+                    foreach (var entity in mapProcessingLayer.GetCachedEntities())
                     {
-                        //TODO Check if NPC is allowed to attack player with new conditions
-                        if (entity.GetType() == typeof(Player))
+                        if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
                         {
-                            // Are we aggressive towards this player or have they hit us?
-                            if (ShouldAttackPlayerOnSight((Player)entity) || DamageMap.ContainsKey(entity))
+                            //TODO Check if NPC is allowed to attack player with new conditions
+                            if (entity.GetType() == typeof(Player))
                             {
-                                var dist = GetDistanceTo(entity);
-                                if (dist <= Range && dist < closestRange)
+                                // Are we aggressive towards this player or have they hit us?
+                                if (ShouldAttackPlayerOnSight((Player)entity) || DamageMap.ContainsKey(entity))
                                 {
-                                    possibleTargets.Add(entity);
-                                    closestIndex = possibleTargets.Count - 1;
-                                    closestRange = dist;
+                                    var dist = GetDistanceTo(entity);
+                                    if (dist <= Range && dist < closestRange)
+                                    {
+                                        possibleTargets.Add(entity);
+                                        closestIndex = possibleTargets.Count - 1;
+                                        closestRange = dist;
+                                    }
                                 }
                             }
-                        }
-                        else if (entity.GetType() == typeof(Npc))
-                        {
-                            if (Base.Aggressive && Base.AggroList.Contains(((Npc)entity).Base.Id))
+                            else if (entity.GetType() == typeof(Npc))
                             {
-                                var dist = GetDistanceTo(entity);
-                                if (dist <= Range && dist < closestRange)
+                                if (Base.Aggressive && Base.AggroList.Contains(((Npc)entity).Base.Id))
                                 {
-                                    possibleTargets.Add(entity);
-                                    closestIndex = possibleTargets.Count - 1;
-                                    closestRange = dist;
+                                    var dist = GetDistanceTo(entity);
+                                    if (dist <= Range && dist < closestRange)
+                                    {
+                                        possibleTargets.Add(entity);
+                                        closestIndex = possibleTargets.Count - 1;
+                                        closestRange = dist;
+                                    }
                                 }
                             }
                         }
@@ -1522,8 +1540,13 @@ namespace Intersect.Server.Entities
             bool mapSave = false
         )
         {
-            var map = MapInstance.Get(newMapId)?.GetRelevantProcessingLayer(InstanceLayer);
-            if (map == null)
+            var mapInstance = MapInstance.Get(newMapId);
+            if (mapInstance == null)
+            {
+                return;
+            }
+            MapProcessingLayer map;
+            if (!mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out map))
             {
                 return;
             }
@@ -1534,10 +1557,13 @@ namespace Intersect.Server.Entities
             Dir = newDir;
             if (newMapId != MapId)
             {
-                var oldMap = MapInstance.Get(MapId)?.GetRelevantProcessingLayer(InstanceLayer);
-                if (oldMap != null)
+                var oldMapInstance = MapInstance.Get(MapId);
+                if (oldMapInstance != null)
                 {
-                    oldMap.RemoveEntity(this);
+                    if (oldMapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMap))
+                    {
+                        oldMap.RemoveEntity(this);
+                    }
                 }
 
                 PacketSender.SendEntityLeave(this);

@@ -831,8 +831,12 @@ namespace Intersect.Server.Entities.Events
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                var npc = MapInstance.Get(mapId)?.GetRelevantProcessingLayer(player.InstanceLayer).SpawnNpc((byte) tileX, (byte) tileY, direction, npcId, true);
-                player.SpawnedNpcs.Add((Npc) npc);
+                var npcMapInstance = MapInstance.Get(mapId);
+                if (npcMapInstance != null && npcMapInstance.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+                {
+                    var npc = mapProcessingLayer.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
+                    player.SpawnedNpcs.Add((Npc)npc);
+                }
             }
         }
 

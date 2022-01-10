@@ -182,10 +182,11 @@ namespace Intersect.Server.Entities.Pathfinding
                                             if (grid.MyGrid[x, y] != Guid.Empty)
                                             {
                                                 var tmpMap = MapInstance.Get(grid.MyGrid[x, y]);
-                                                if (tmpMap != null)
+                                                if (tmpMap != null && tmpMap.TryGetRelevantProcessingLayer(mEntity.InstanceLayer, out var mapProcessingLayer))
                                                 {
                                                     //Copy the cached array of tile blocks
-                                                    var blocks = tmpMap?.GetRelevantProcessingLayer(mEntity.InstanceLayer).GetCachedBlocks(
+
+                                                    var blocks = mapProcessingLayer.GetCachedBlocks(
                                                         mEntity.GetType() == typeof(Player)
                                                     );
 
@@ -197,7 +198,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     }
 
                                                     //Block of Players, Npcs, and Resources
-                                                    foreach (var en in tmpMap.GetRelevantProcessingLayer(mEntity.InstanceLayer).GetEntities())
+                                                    foreach (var en in mapProcessingLayer.GetEntities())
                                                     {
                                                         if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
                                                         {
