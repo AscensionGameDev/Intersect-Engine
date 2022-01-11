@@ -1556,9 +1556,14 @@ namespace Intersect.Server.Networking
             }
 
             var map = MapInstance.Get(packet.MapId);
-
+            
             // Is this a valid map?
             if (map == null)
+            {
+                return;
+            }
+
+            if(!map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
             {
                 return;
             }
@@ -1584,14 +1589,14 @@ namespace Intersect.Server.Networking
 
                     foreach(var itemLoc in itemMap.Value)
                     {
-                        giveItems[tempMap].AddRange(tempMap.FindItemsAt(itemLoc));
+                        giveItems[tempMap].AddRange(mapProcessingLayer.FindItemsAt(itemLoc));
                     }
                 }
             }
             else
             {
                 // One specific item.
-                giveItems.Add(map, new List<MapItem>() { map.FindItem(packet.UniqueId) });
+                giveItems.Add(map, new List<MapItem>() { mapProcessingLayer.FindItem(packet.UniqueId) });
             }
 
             // Go through each item we're trying to give our player and see if we can do so.
@@ -1620,7 +1625,7 @@ namespace Intersect.Server.Networking
                     }
 
                     // Does this item still exist, or did it somehow get picked up before we got there?
-                    if (tempMap.FindItem(mapItem.UniqueId) == null)
+                    if (mapProcessingLayer.FindItem(mapItem.UniqueId) == null)
                     {
                         continue;
                     }
@@ -1628,7 +1633,7 @@ namespace Intersect.Server.Networking
                     if (canTake)
                     {
                         //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
-                        tempMap.RemoveItem(mapItem);
+                        mapProcessingLayer.RemoveItem(mapItem);
 
                         // Try to give the item to our player.
                         if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
@@ -1650,7 +1655,7 @@ namespace Intersect.Server.Networking
                 // Remove all items that were picked up.
                 foreach (var item in toRemove)
                 {
-                    tempMap.RemoveItem(item);
+                    mapProcessingLayer.RemoveItem(item);
                 }
             }
         }

@@ -1029,19 +1029,25 @@ namespace Intersect.Server.Networking
         public static MapItemsPacket GenerateMapItemsPacket(Player player, Guid mapId)
         {
             var map = MapInstance.Get(mapId);
-
-            var items = new List<MapItemUpdatePacket>();
-
-            // Generate our data to be send to the client.
-            foreach (var item in map.AllMapItems.Values)
+            if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
             {
-                if (item.VisibleToAll || item.Owner == player?.Id)
-                {
-                    items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
-                }
-            }
+                var items = new List<MapItemUpdatePacket>();
 
-            return new MapItemsPacket(mapId, items.ToArray());
+                // Generate our data to be send to the client.
+                foreach (var item in mapProcessingLayer.AllMapItems.Values)
+                {
+                    if (item.VisibleToAll || item.Owner == player?.Id)
+                    {
+                        items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
+                    }
+                }
+
+                return new MapItemsPacket(mapId, items.ToArray());
+            } else
+            {
+                return null;
+                Log.Error($"Failed to generate map items packet for '{player.Name}' - could not get map instance layer ${player.InstanceLayer}");
+            }
         }
 
         //MapItemsPacket
@@ -1051,19 +1057,13 @@ namespace Intersect.Server.Networking
         }
 
         //MapItemsPacket
-        public static void SendMapItemsToProximity(Guid mapId)
+        public static void SendMapItemsToProximity(Guid mapId, MapProcessingLayer mapProcessingLayer)
         {
-            var map = MapInstance.Get(mapId);
-            if (map == null)
-            {
-                return;
-            }
-
             // Collect a list of all players in the surrounding.
             var playerList = new List<Player>();
-            playerList.AddRange(map.GetPlayersOnMap());
+            playerList.AddRange(mapProcessingLayer.GetPlayersOnMap());
 
-            foreach (var surrMap in map.SurroundingMaps)
+            foreach (var surrMap in mapProcessingLayer.GetMapInstance().SurroundingMaps)
             {
                 playerList.AddRange(surrMap.GetPlayersOnMap());
             }
@@ -1075,26 +1075,24 @@ namespace Intersect.Server.Networking
             }
         }
 
-        // TODO Alex: Refactor this to only send updates per layer
         /// <summary>
         /// Send a map item update to the relevant players.
         /// </summary>
-        /// <param name="mapId">The Id of the <see cref="MapInstance"/> we are sending the item update for.</param>
+        /// <param name="mapId">The Id of the <see cref="MapInstance"/> containing the relevant processing layer.</param>
+        /// <param name="instanceLayer">The instance layer ID of the <see cref="MapProcessingLayer"/> we are sending the item update for.</param>
         /// <param name="uniqueId">The Id for the <see cref="MapItem"/> we are sending the item update for.</param>
         /// <param name="itemRef">The map item that we are sending (or null if removing), passing this saves us a lookup for it.</param>
         /// <param name="sendToAll">If we are removing the item from the map, do we send this data to everyone?</param>
         /// <param name="owner">The previous owner of an item being removed when the data is not send to everyone.</param>
-        public static void SendMapItemUpdate(Guid mapId, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
+        public static void SendMapItemUpdate(Guid mapId, Guid instanceLayer, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
         {
-            var map = MapInstance.Get(mapId);
-
             // Does the item exist? If not, send a delete notification. If it does, send an update.
             if (removing)
             {
                 // Are we to send the removal to all players?
                 if (sendToAll)
                 {
-                    SendDataToProximityAcrossAllLayers(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    SendDataToProximityOnLayer(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
                 }
                 else
                 {
@@ -1107,7 +1105,7 @@ namespace Intersect.Server.Networking
                     else
                     {
                         // Uh, our player doesn't exist.. send it to everyone anyway.
-                        SendDataToProximityAcrossAllLayers(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                        SendDataToProximityOnLayer(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
                     }
                 }
                 
@@ -1125,7 +1123,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    SendDataToProximityAcrossAllLayers(mapId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                    SendDataToProximityOnLayer(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
                 }
             }
         }

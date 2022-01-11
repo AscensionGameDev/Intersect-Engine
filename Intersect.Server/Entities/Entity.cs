@@ -2625,7 +2625,10 @@ namespace Intersect.Server.Entities
 
                 // Spawn the actual item!
                 var map = MapInstance.Get(MapId);
-                map?.SpawnItem(X, Y, item, item.Quantity, lootOwner, sendUpdate);
+                if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                {
+                    mapProcessingLayer.SpawnItem(X, Y, item, item.Quantity, lootOwner, sendUpdate);
+                }
 
                 // Remove the item from inventory if a player.
                 var player = this as Player;

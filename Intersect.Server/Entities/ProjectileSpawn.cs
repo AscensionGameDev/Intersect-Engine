@@ -34,6 +34,8 @@ namespace Intersect.Server.Entities
 
         public bool Dead;
 
+        public Guid InstanceLayer;
+
         private List<Guid> mEntitiesCollided = new List<Guid>();
 
         public ProjectileSpawn(
@@ -48,6 +50,7 @@ namespace Intersect.Server.Entities
         )
         {
             MapId = mapId;
+            InstanceLayer = instanceLayer;
             X = x;
             Y = y;
             Z = z;

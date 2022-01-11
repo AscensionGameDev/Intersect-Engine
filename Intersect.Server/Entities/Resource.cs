@@ -166,8 +166,11 @@ namespace Intersect.Server.Entities
                 {
                     if (ItemBase.Get(item.ItemId) != null)
                     {
-                        MapInstance.Get(selectedTile.GetMapId())
-                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
+                        var map = MapInstance.Get(selectedTile.GetMapId());
+                        if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                        {
+                            mapProcessingLayer.SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
+                        }
                     }
                 }
             }
