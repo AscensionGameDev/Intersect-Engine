@@ -459,10 +459,8 @@ namespace Intersect.Server.Networking
                 {
                     foreach (var map in en.Map.GetSurroundingMaps(true))
                     {
-                        Log.Debug($"Sending entity data to {map.Name}");
                         foreach (Player entityToSendTo in map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
                         {
-                            Log.Debug($"Sending ${en.Name} to layer ${entityToSendTo.Name}");
                             SendEntityDataTo(entityToSendTo, en);
                         }
                     }
