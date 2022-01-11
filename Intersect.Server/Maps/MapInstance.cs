@@ -693,6 +693,7 @@ namespace Intersect.Server.Maps
             return mCachedEntities;
         }
 
+        // TODO Alex; Rename this
         public ICollection<Player> GetPlayersOnMap()
         {
             return GetPlayersOnAllLayers(); // TODO Alex: Players are no longer held here
@@ -989,7 +990,25 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void RemoveDeadProcessingLayers()
+        public void CleanUpLayerIfInactive(Guid instanceLayer)
+        {
+            lock (GetMapLock())
+            {
+                if (mMapProcessingLayers[instanceLayer] != null && mMapProcessingLayers[instanceLayer].GetAllRelevantPlayers().Count <= 0)
+                {
+                    mMapProcessingLayers[instanceLayer].Dispose();
+                    if (!mMapProcessingLayers.TryRemove(instanceLayer, out var removedLayer))
+                    {
+                        Log.Error($"Failed to cleanup layer {instanceLayer} of map {Name}");
+                    } else
+                    {
+                        Log.Debug($"Cleaned up layer {instanceLayer} of map {Name}");
+                    }
+                }
+            }
+        }
+
+        public void TryRemoveDeadProcessingLayers()
         {
             lock (GetMapLock())
             {

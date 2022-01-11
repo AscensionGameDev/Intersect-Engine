@@ -557,9 +557,10 @@ namespace Intersect.Server.Entities
                     //If we switched maps, lets update the maps
                     if (LastMapEntered != MapId)
                     {
-                        if (MapInstance.Get(LastMapEntered) != null)
+                        var lastMap = MapInstance.Get(LastMapEntered);
+                        if (lastMap != null)
                         {
-                            if (MapInstance.Get(LastMapEntered).TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            if (lastMap.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                             {
                                 mapProcessingLayer.RemoveEntity(this);
                             }
@@ -594,7 +595,14 @@ namespace Intersect.Server.Entities
 
                         // TODO Alex - Events
                         // If the map does not yet have a processing layer for this player's instance, create one.
-                        surrMap.TryCreateProcessingInstance(InstanceLayer, out var mapProcessingLayer);
+                        lock (EntityLock)
+                        {
+                            MapProcessingLayer mapProcessingLayer;
+                            if (!surrMap.TryGetRelevantProcessingLayer(InstanceLayer, out mapProcessingLayer))
+                            {
+                                surrMap.TryCreateProcessingInstance(InstanceLayer, out mapProcessingLayer);
+                            }
+                        }
 
                         //Check to see if we can spawn events, if already spawned.. update them.
                         lock (mEventLock)
@@ -1580,14 +1588,18 @@ namespace Intersect.Server.Entities
                 var newSurroundingMaps = map.GetSurroundingMapIds(true);
                 var onNewInstance = InstanceLayer != LastInstanceLayer;
                 var oldMap = MapInstance.Get(MapId);
+                oldMap.TryGetRelevantProcessingLayer(LastInstanceLayer, out var oldMapsProcessingLayer);
 
                 MapProcessingLayer newMapsProcessingLayer;
                 // Ensure there exists a map processing layer. A player is the sole entity that can create new layers
-                if (!map.TryGetRelevantProcessingLayer(InstanceLayer, out newMapsProcessingLayer))
+                lock (EntityLock)
                 {
-                    foreach (var allMaps in newSurroundingMaps)
+                    if (!map.TryGetRelevantProcessingLayer(InstanceLayer, out newMapsProcessingLayer))
                     {
-                        MapInstance.Get(allMaps).TryCreateProcessingInstance(InstanceLayer, out newMapsProcessingLayer);
+                        foreach (var allMaps in newSurroundingMaps)
+                        {
+                            MapInstance.Get(allMaps).TryCreateProcessingInstance(InstanceLayer, out newMapsProcessingLayer);
+                        }
                     }
                 }
 
@@ -1605,6 +1617,11 @@ namespace Intersect.Server.Entities
                     onNewInstance = true;
                     // Refresh the client's entity list
                     PacketSender.SendMapLayerChangedPacketTo(this, oldMap, LastInstanceLayer);
+                    if (oldMapsProcessingLayer != null)
+                    {
+                        // Remove targets of this entity
+                        oldMapsProcessingLayer.ClearEntityTargetsOf(this);
+                    }
                     Log.Debug($"Player {Name} has joined layer {InstanceLayer} of map: {map.Name}");
                     Log.Info($"Previous layer was {LastInstanceLayer}");
                     // Todo Alex Remove this
@@ -1626,9 +1643,9 @@ namespace Intersect.Server.Entities
                 if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
                 {
                     // Remove the entity from the old map's processing layer
-                    if (oldMap != null && oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer))
+                    if (oldMap != null && oldMapsProcessingLayer != null)
                     {
-                        oldMapProcessingLayer.RemoveEntity(this);
+                        oldMapsProcessingLayer.RemoveEntity(this);
                     }
                     
                     PacketSender.SendEntityLeave(this); // We simply changed maps - leave the old one

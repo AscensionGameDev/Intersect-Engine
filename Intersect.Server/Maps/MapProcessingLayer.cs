@@ -198,6 +198,7 @@ namespace Intersect.Server.Maps
                     {
                         entities.AddRange(mapProcessingLayer.GetEntities());
                     }
+                    // Pickup entities that haven't been converted
                     entities.AddRange(map.GetEntities());
                 }
             }

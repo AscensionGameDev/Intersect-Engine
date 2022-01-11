@@ -510,6 +510,7 @@ namespace Intersect.Server.Networking
             }
             else
             {
+                // TODO Alex there are a few calls here that don't care about instance layers
                 foreach (var player in map.GetPlayersOnMap())
                 {
                     if (player != except)
@@ -576,10 +577,13 @@ namespace Intersect.Server.Networking
             var map = en.Map;
             foreach (var mp in en.Map.GetSurroundingMaps(true))
             {
-                var players = mp.GetPlayersOnMap();
-                foreach (var pl in players)
+                if (mp.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
                 {
-                    SendNpcAggressionTo(pl, en);
+                    var players = mapProcessingLayer.GetPlayersOnMap();
+                    foreach (var pl in players)
+                    {
+                        SendNpcAggressionTo(pl, en);
+                    }
                 }
             }
         }

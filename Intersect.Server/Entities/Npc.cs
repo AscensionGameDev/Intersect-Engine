@@ -46,7 +46,8 @@ namespace Intersect.Server.Entities
                 Entity top = null;
                 foreach (var pair in DamageMap)
                 {
-                    if (pair.Value > damage)
+                    // Only include players on the current instance
+                    if (pair.Value > damage && pair.Key.InstanceLayer == InstanceLayer)
                     {
                         top = pair.Key;
                         damage = pair.Value;
@@ -1386,6 +1387,12 @@ namespace Intersect.Server.Entities
                         continue;   
                     }
 
+                    // Is this entity on our instance anymore? If not skip it, but don't remove it in case they come back and need item drop determined
+                    if (en.Key.InstanceLayer != InstanceLayer)
+                    {
+                        continue;
+                    }
+
                     // Are we at a valid distance? (9999 means not on this map or somehow null!)
                     if (GetDistanceTo(en.Key) != 9999)
                     {
@@ -1416,7 +1423,7 @@ namespace Intersect.Server.Entities
                             if (entity.GetType() == typeof(Player))
                             {
                                 // Are we aggressive towards this player or have they hit us?
-                                if (ShouldAttackPlayerOnSight((Player)entity) || DamageMap.ContainsKey(entity))
+                                if (ShouldAttackPlayerOnSight((Player)entity) || (DamageMap.ContainsKey(entity) && entity.InstanceLayer == InstanceLayer))
                                 {
                                     var dist = GetDistanceTo(entity);
                                     if (dist <= Range && dist < closestRange)
