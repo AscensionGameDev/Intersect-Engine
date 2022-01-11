@@ -541,7 +541,7 @@ namespace Intersect.Server.Maps
                     proj.Value.Die();
                 }
             }
-            PacketSender.SendRemoveProjectileSpawns(Id, InstanceLayer, guids.ToArray(), null);
+            PacketSender.SendRemoveProjectileSpawns(mMap.Id, InstanceLayer, guids.ToArray(), null);
             MapProjectiles.Clear();
             MapProjectilesCached = new Projectile[0];
         }
@@ -836,7 +836,7 @@ namespace Intersect.Server.Maps
 
             if (projDeaths.Count > 0 || spawnDeaths.Count > 0)
             {
-                PacketSender.SendRemoveProjectileSpawns(Id, InstanceLayer, projDeaths.ToArray(), spawnDeaths.ToArray());
+                PacketSender.SendRemoveProjectileSpawns(mMap.Id, InstanceLayer, projDeaths.ToArray(), spawnDeaths.ToArray());
             }
 
             //Process all of the traps
