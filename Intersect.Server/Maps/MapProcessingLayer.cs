@@ -208,27 +208,23 @@ namespace Intersect.Server.Maps
         public void PlayerEnteredMap(Player player)
         {
             //Send Entity Info to Everyone and Everyone to the Entity
-            SendMapEntitiesTo(player);
             player.Client?.SentMaps?.Clear();
             PacketSender.SendMapItems(player, mMap.Id);
 
             AddEntity(player);
 
             player.LastMapEntered = mMap.Id;
-            PacketSender.SendEntityDataToProximity(player, player);
-
-            var surroundingMaps = mMap.GetSurroundingMaps();
-            if (surroundingMaps.Length <= 0)
+            var relevantMaps = mMap.GetSurroundingMaps(true);
+            foreach (var map in relevantMaps)
             {
-                return;
-            }
-
-            foreach (var map in surroundingMaps)
-            {
-                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                if (map.Id == mMap.Id) // Map player is in
+                {
+                    SendMapEntitiesTo(player);
+                } else if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer)) // Surrounding maps
                 {
                     mapProcessingLayer.SendMapEntitiesTo(player);
                 }
+                // TODO Alex Items
                 PacketSender.SendMapItems(player, map.Id);
             }
             PacketSender.SendEntityDataToProximity(player, player);
@@ -544,7 +540,7 @@ namespace Intersect.Server.Maps
                     proj.Value.Die();
                 }
             }
-            PacketSender.SendRemoveProjectileSpawns(Id, guids.ToArray(), null);
+            PacketSender.SendRemoveProjectileSpawns(Id, InstanceLayer, guids.ToArray(), null);
             MapProjectiles.Clear();
             MapProjectilesCached = new Projectile[0];
         }
@@ -747,12 +743,12 @@ namespace Intersect.Server.Maps
 
             if (vitalUpdates.Count > 0)
             {
-                PacketSender.SendMapEntityVitalUpdate(mMap, vitalUpdates.ToArray());
+                PacketSender.SendMapEntityVitalUpdate(mMap, vitalUpdates.ToArray(), InstanceLayer);
             }
 
             if (statusUpdates.Count > 0)
             {
-                PacketSender.SendMapEntityStatusUpdate(mMap, statusUpdates.ToArray());
+                PacketSender.SendMapEntityStatusUpdate(mMap, statusUpdates.ToArray(), InstanceLayer);
             }
         }
 
@@ -839,7 +835,7 @@ namespace Intersect.Server.Maps
 
             if (projDeaths.Count > 0 || spawnDeaths.Count > 0)
             {
-                PacketSender.SendRemoveProjectileSpawns(Id, projDeaths.ToArray(), spawnDeaths.ToArray());
+                PacketSender.SendRemoveProjectileSpawns(Id, InstanceLayer, projDeaths.ToArray(), spawnDeaths.ToArray());
             }
 
             //Process all of the traps
@@ -856,7 +852,7 @@ namespace Intersect.Server.Maps
             var surrMaps = mMap.GetSurroundingMaps(true);
             var nearbyPlayers = new HashSet<Player>();
 
-            // Get all players in surrounding maps
+            // Get all players in surrounding and current maps
             foreach (var map in surrMaps)
             {
                 if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
@@ -866,12 +862,6 @@ namespace Intersect.Server.Maps
                         nearbyPlayers.Add(plyr);
                     }
                 }
-            }
-            
-            // And all players in the current map
-            foreach (var player in GetPlayersOnMap())
-            {
-                nearbyPlayers.Add(player);
             }
 
             // And send batched packets out to all nearby players

@@ -35,8 +35,6 @@ namespace Intersect.Server.Entities
 
         public Guid InstanceLayer = Guid.Empty;
 
-        public Guid LastInstanceLayer = Guid.Empty;
-
         [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
 
         [NotMapped, JsonIgnore] public Stat[] Stat = new Stat[(int) Stats.StatCount];
@@ -58,7 +56,6 @@ namespace Intersect.Server.Entities
                 }
             }
             InstanceLayer = instanceLayer;
-            LastInstanceLayer = InstanceLayer;
 
             Id = instanceId;
         }
@@ -343,8 +340,6 @@ namespace Intersect.Server.Entities
                     {
                         status.TryRemoveStatus();
                     }
-
-                    LastInstanceLayer = InstanceLayer;
                 }
             }
             finally

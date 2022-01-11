@@ -149,7 +149,7 @@ namespace Intersect.Server.Core
                             //Refresh list of active maps & their processing layers
                             foreach (var map in ActiveMaps.ToArray())
                             {
-                                MapInstance.Get(map).RemoveDeadProcessingLayers();
+                                //MapInstance.Get(map).RemoveDeadProcessingLayers();
                                 if (!processedMaps.Contains(map))
                                 {
                                     // Remove the map entirely from the update queue
