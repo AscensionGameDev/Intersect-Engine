@@ -47,6 +47,9 @@ namespace Intersect.Server.Maps
         private BytePoint[] mMapBlocks = Array.Empty<BytePoint>();
         private BytePoint[] mNpcMapBlocks = Array.Empty<BytePoint>();
 
+        public ConcurrentDictionary<EventBase, Event> GlobalEventInstances = new ConcurrentDictionary<EventBase, Event>();
+        public List<EventBase> EventsCache = new List<EventBase>();
+
         private long LastUpdateTime;
 
         public ConcurrentDictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new ConcurrentDictionary<NpcSpawn, MapNpcSpawn>();
@@ -86,10 +89,8 @@ namespace Intersect.Server.Maps
                 DespawnEverything();
                 RespawnEverything();
 
-                // TODO Alex: Events
-                /*
                 var events = new List<EventBase>();
-                foreach (var evt in EventIds)
+                foreach (var evt in mMap.EventIds)
                 {
                     var itm = EventBase.Get(evt);
                     if (itm != null)
@@ -97,8 +98,7 @@ namespace Intersect.Server.Maps
                         events.Add(itm);
                     }
                 }
-                EventsCache = events;
-                */
+                EventsCache = events;   
             }
         }
 
@@ -132,6 +132,7 @@ namespace Intersect.Server.Maps
             DespawnProjectiles();
             DespawnTraps();
             DespawnItems();
+            DespawnGlobalEvents();
         }
 
         public void RespawnEverything()
@@ -139,6 +140,7 @@ namespace Intersect.Server.Maps
             SpawnMapNpcs();
             SpawnAttributeItems(); // This must be done before spawning items or resources
             SpawnMapResources();
+            SpawnGlobalEvents();
         }
 
         public void Update(long timeMs)
@@ -154,6 +156,7 @@ namespace Intersect.Server.Maps
                 UpdateEntities(timeMs);
                 ProcessNpcRespawns();
                 ProcessResourceRespawns();
+                UpdateGlobalEvents(timeMs);
 
                 SendBatchedPacketsToPlayers();
 
@@ -199,13 +202,10 @@ namespace Intersect.Server.Maps
             {
                 foreach (var map in mMap.GetSurroundingMaps(false))
                 {
-                    // TODO Alex: Support all entities with one call
                     if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                     {
                         entities.AddRange(mapProcessingLayer.GetEntities());
                     }
-                    // Pickup entities that haven't been converted
-                    entities.AddRange(map.GetEntities());
                 }
             }
 
@@ -799,6 +799,62 @@ namespace Intersect.Server.Maps
 
         #endregion
 
+        #region Events
+        private void SpawnGlobalEvents()
+        {
+            GlobalEventInstances.Clear();
+            foreach (var id in mMap.EventIds)
+            {
+                var evt = EventBase.Get(id);
+                if (evt != null && evt.Global)
+                {
+                    GlobalEventInstances.TryAdd(evt, new Event(evt.Id, evt, mMap, InstanceLayer));
+                }
+            }
+        }
+
+        private void DespawnGlobalEvents()
+        {
+            //Kill global events on map (make sure processing stops for online players)
+            //Gonna rely on GC for now
+            foreach (var evt in GlobalEventInstances.ToArray())
+            {
+                foreach (var player in GetAllRelevantPlayers())
+                {
+                    player.RemoveEvent(evt.Value.BaseEvent.Id);
+                }
+            }
+
+            GlobalEventInstances.Clear();
+        }
+
+        public Event GetGlobalEventInstance(EventBase baseEvent)
+        {
+            if (GlobalEventInstances.ContainsKey(baseEvent))
+            {
+                return GlobalEventInstances[baseEvent];
+            }
+
+            return null;
+        }
+
+        public bool FindEvent(EventBase baseEvent, EventPageInstance globalClone)
+        {
+            if (GlobalEventInstances.ContainsKey(baseEvent))
+            {
+                for (var i = 0; i < GlobalEventInstances[baseEvent].GlobalPageInstance.Length; i++)
+                {
+                    if (GlobalEventInstances[baseEvent].GlobalPageInstance[i] == globalClone)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        #endregion
+
         #region Collision
         public bool TileBlocked(int x, int y)
         {
@@ -831,8 +887,6 @@ namespace Intersect.Server.Maps
             }
 
             //Check Global Events
-            // TODO Alex: Global Events
-            /*
             foreach (var globalEvent in GlobalEventInstances)
             {
                 if (globalEvent.Value != null && globalEvent.Value.PageInstance != null)
@@ -845,7 +899,6 @@ namespace Intersect.Server.Maps
                     }
                 }
             }
-            */
 
             return false;
         }
@@ -1098,6 +1151,34 @@ namespace Intersect.Server.Maps
                 {
                     SpawnAttributeItem(itemRespawn.AttributeSpawnX, itemRespawn.AttributeSpawnY);
                     ItemRespawns.TryRemove(itemRespawn.Id, out MapItemSpawn spawn);
+                }
+            }
+        }
+
+        private void UpdateGlobalEvents(long timeMs)
+        {
+            var evts = GlobalEventInstances.Values.ToList();
+            for (var i = 0; i < evts.Count; i++)
+            {
+                //Only do movement processing on the first page.
+                //This is because global events need to keep all of their pages at the same tile
+                //Think about a global event moving randomly that needed to turn into a warewolf and back (separate pages)
+                //If they were in different tiles the transition would make the event jump
+                //Something like described here: https://www.ascensiongamedev.com/community/bug_tracker/intersect/events-randomly-appearing-and-disappearing-r983/
+                for (var x = 0; x < evts[i].GlobalPageInstance.Length; x++)
+                {
+                    //Gotta figure out if any players are interacting with this event.
+                    var active = false;
+                    foreach (var player in GetAllRelevantPlayers())
+                    {
+                        var eventInstance = player.FindGlobalEventInstance(evts[i].GlobalPageInstance[x]);
+                        if (eventInstance != null && eventInstance.CallStack.Count > 0)
+                        {
+                            active = true;
+                        }
+                    }
+
+                    evts[i].GlobalPageInstance[x].Update(active, timeMs);
                 }
             }
         }

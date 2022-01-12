@@ -495,9 +495,7 @@ namespace Intersect.Server.Entities
             if (!Passable)
             {
                 var targetMap = mapInstance;
-                // TODO Alex Nah
                 var mapEntities = new List<Entity>();
-                mapEntities.AddRange(mapInstance.GetCachedEntities());
                 if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
                     mapEntities.AddRange(mapProcessingLayer.GetCachedEntities());
@@ -539,9 +537,9 @@ namespace Intersect.Server.Entities
                 }
 
                 //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-                if (!(this is Player))
+                if (!(this is Player) && mapProcessingLayer != null)
                 {
-                    foreach (var evt in mapInstance.GlobalEventInstances)
+                    foreach (var evt in mapProcessingLayer.GlobalEventInstances)
                     {
                         foreach (var en in evt.Value.GlobalPageInstance)
                         {
@@ -878,21 +876,13 @@ namespace Intersect.Server.Entities
                     if (MapId != tile.GetMapId())
                     {
                         var oldMap = MapInstance.Get(MapId);
-                        // Todo Alex this should be done regardless of entity status
-                        if (this is Player || this is Npc || this is Resource || this is Projectile)
-                        {
-                            if (oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer)) {
-                                oldMapProcessingLayer.RemoveEntity(this);
-                            }
+                        if (oldMap.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMapProcessingLayer)) {
+                            oldMapProcessingLayer.RemoveEntity(this);
+                        }
 
-                            if (currentMap.TryGetRelevantProcessingLayer(InstanceLayer, out var currentMapProcessingLayer))
-                            {
-                                currentMapProcessingLayer.AddEntity(this);
-                            }
-                        } else
+                        if (currentMap.TryGetRelevantProcessingLayer(InstanceLayer, out var currentMapProcessingLayer))
                         {
-                            oldMap?.RemoveEntity(this);
-                            currentMap?.AddEntity(this);
+                            currentMapProcessingLayer.AddEntity(this);
                         }
 
                         //Send Left Map Packet To the Maps that we are no longer with

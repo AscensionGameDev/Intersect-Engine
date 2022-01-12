@@ -134,8 +134,6 @@ namespace Intersect.Server.Core
                                                     AddToQueue(map);
                                                 }
                                                 
-                                                // TODO Alex: Only one call
-                                                globalEntities += map.GetCachedEntities().Length;
                                                 globalEntities += map.GetCachedEntitiesOnAllLayers().Length;
 
                                                 processedMaps.Add(map.Id);

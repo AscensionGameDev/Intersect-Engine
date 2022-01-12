@@ -213,9 +213,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                         }
                                                     }
 
-                                                    //Block Global Events if they are not passable.
-                                                    // TODO Alex come back to this after doing events
-                                                    foreach (var en in tmpMap.GlobalEventInstances)
+                                                    foreach (var en in mapProcessingLayer.GlobalEventInstances)
                                                     {
                                                         if (en.Value != null && en.Value.X > -1 && en.Value.X < Options.MapWidth && en.Value.Y > -1 && en.Value.Y < Options.MapHeight)
                                                         {

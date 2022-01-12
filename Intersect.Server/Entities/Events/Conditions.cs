@@ -265,13 +265,18 @@ namespace Intersect.Server.Entities.Events
             {
                 if (eventInstance.Global)
                 {
-                    if (MapInstance.Get(eventInstance.MapId).GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
+                    var map = MapInstance.Get(eventInstance.MapId);
+                    if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
                     {
-                        if (evt != null)
+                        if (mapProcessingLayer.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
                         {
-                            return evt.SelfSwitch[condition.SwitchIndex] == condition.Value;
+                            if (evt != null)
+                            {
+                                return evt.SelfSwitch[condition.SwitchIndex] == condition.Value;
+                            }
                         }
                     }
+                        
                 }
                 else
                 {

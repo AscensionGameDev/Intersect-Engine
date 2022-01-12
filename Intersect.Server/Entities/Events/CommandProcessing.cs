@@ -166,12 +166,16 @@ namespace Intersect.Server.Entities.Events
         {
             if (instance.Global)
             {
-                var evts = MapInstance.Get(instance.MapId).GlobalEventInstances.Values.ToList();
-                for (var i = 0; i < evts.Count; i++)
+                var map = MapInstance.Get(instance.MapId);
+                if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
                 {
-                    if (evts[i] != null && evts[i].BaseEvent == instance.BaseEvent)
+                    var evts = mapProcessingLayer.GlobalEventInstances.Values.ToList();
+                    for (var i = 0; i < evts.Count; i++)
                     {
-                        evts[i].SelfSwitch[command.SwitchId] = command.Value;
+                        if (evts[i] != null && evts[i].BaseEvent == instance.BaseEvent)
+                        {
+                            evts[i].SelfSwitch[command.SwitchId] = command.Value;
+                        }
                     }
                 }
             }

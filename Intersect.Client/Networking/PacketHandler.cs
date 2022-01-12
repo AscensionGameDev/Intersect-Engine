@@ -395,6 +395,17 @@ namespace Intersect.Client.Networking
             {
                 Globals.EntitiesToDispose.Add(entity);
             }
+
+            foreach (var mapId in packet.MapIdsToRefresh)
+            {
+                var map = MapInstance.Get(mapId);
+                if (map != null)
+                {
+                    Globals.EntitiesToDispose.AddRange(map.LocalEntities.Values
+                        .ToList()
+                        .Select(en => en.Id));
+                }
+            }
         }
 
         //EntityPositionPacket

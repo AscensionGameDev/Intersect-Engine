@@ -412,16 +412,18 @@ namespace Intersect.Server.Networking
         {
             // Sends a packet to the client telling it that the player has been warped to a new instance and that it should
             // clear its local entities
-            if (map.TryGetRelevantProcessingLayer(oldLayer, out var oldMapLayerProcesser))
+            if (map != null && map.TryGetRelevantProcessingLayer(oldLayer, out var oldMapLayerProcesser))
             {
                 var entitiesToDispose = oldMapLayerProcesser.GetEntities();
+                var effectedMaps = oldMapLayerProcesser.GetMapInstance().GetSurroundingMapIds(true);
+                
                 var enPackets = new List<EntityPacket>();
                 for (var i = 0; i < entitiesToDispose.Count; i++)
                 {
                     enPackets.Add(entitiesToDispose[i].EntityPacket(null, player));
                 }
 
-                player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray()));
+                player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray(), effectedMaps.ToList()));
             }
         }
 
@@ -454,28 +456,11 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                // TODO Alex this should be done for ALL entities - we won't need all these elses once we've migrated things.
-                if (en is Player || en is Npc || en is Resource)
+                foreach (var map in en.Map.GetSurroundingMaps(true))
                 {
-                    foreach (var map in en.Map.GetSurroundingMaps(true))
+                    foreach (Player entityToSendTo in map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
                     {
-                        foreach (Player entityToSendTo in map.GetPlayersOnSharedLayers(en.InstanceLayer, except))
-                        {
-                            SendEntityDataTo(entityToSendTo, en);
-                        }
-                    }
-                }  else
-                {
-                    foreach (var map in en.Map.GetSurroundingMaps(true))
-                    {
-                        // TODO Alex: We don't want to do this once we've migrated everything over to the map processor
-                        foreach (var player in map.GetPlayersOnAllLayers())
-                        {
-                            if (player != except && player.InstanceLayer == en.InstanceLayer)
-                            {
-                                SendEntityDataTo(player, en);
-                            }
-                        }
+                        SendEntityDataTo(entityToSendTo, en);
                     }
                 }
             }
@@ -497,7 +482,7 @@ namespace Intersect.Server.Networking
         //EntityDataPacket
         public static void SendEntityDataToMap(Entity en, MapInstance map, Player except = null)
         {
-            if (en == null)
+            if (en == null || map == null || !map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
             {
                 return;
             }
@@ -508,8 +493,7 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                // TODO Alex there are a few calls here that don't care about instance layers
-                foreach (var player in map.GetPlayersOnMap())
+                foreach (var player in mapProcessingLayer.GetPlayersOnMap())
                 {
                     if (player != except)
                     {
@@ -757,7 +741,6 @@ namespace Intersect.Server.Networking
             return SendProximityMsg(message, type, mapId, CustomColors.Chat.ProximityMsg);
         }
 
-        // TODO Alex: Chat messages
         /// <summary>
         /// Sends a chat message to the proximity of a specified map.
         /// </summary>
@@ -770,6 +753,21 @@ namespace Intersect.Server.Networking
         public static bool SendProximityMsg(string message, ChatMessageType type, Guid mapId, Color color, string target = "")
         {
             return SendDataToProximityAcrossAllLayers(mapId, new ChatMsgPacket(message, type, color, target));
+        }
+
+        /// <summary>
+        /// Sends a chat message to the proximity of a specified map.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="type">The type of message we are sending.</param>
+        /// <param name="mapId">The Map we are sending this message to (and its surroundings).</param>
+        /// <param name="instanceLayer">The ID of the layer to send the message to.</param>
+        /// <param name="color">The color assigned to this message.</param>
+        /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
+        /// <returns></returns>
+        public static bool SendProximityMsgToLayer(string message, ChatMessageType type, Guid mapId, Guid instanceLayer, Color color, string target = "")
+        {
+            return SendDataToProximityOnLayer(mapId, instanceLayer, new ChatMsgPacket(message, type, color, target));
         }
 
         /// <summary>
@@ -1029,10 +1027,9 @@ namespace Intersect.Server.Networking
         public static MapItemsPacket GenerateMapItemsPacket(Player player, Guid mapId)
         {
             var map = MapInstance.Get(mapId);
+            var items = new List<MapItemUpdatePacket>();
             if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
             {
-                var items = new List<MapItemUpdatePacket>();
-
                 // Generate our data to be send to the client.
                 foreach (var item in mapProcessingLayer.AllMapItems.Values)
                 {
@@ -1040,14 +1037,9 @@ namespace Intersect.Server.Networking
                     {
                         items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
                     }
-                }
-
-                return new MapItemsPacket(mapId, items.ToArray());
-            } else
-            {
-                return null;
-                Log.Error($"Failed to generate map items packet for '{player.Name}' - could not get map instance layer ${player.InstanceLayer}");
+                }   
             }
+            return new MapItemsPacket(mapId, items.ToArray());
         }
 
         //MapItemsPacket
@@ -1059,17 +1051,8 @@ namespace Intersect.Server.Networking
         //MapItemsPacket
         public static void SendMapItemsToProximity(Guid mapId, MapProcessingLayer mapProcessingLayer)
         {
-            // Collect a list of all players in the surrounding.
-            var playerList = new List<Player>();
-            playerList.AddRange(mapProcessingLayer.GetPlayersOnMap());
-
-            foreach (var surrMap in mapProcessingLayer.GetMapInstance().SurroundingMaps)
-            {
-                playerList.AddRange(surrMap.GetPlayersOnMap());
-            }
-
-            // Send them all a map item update.
-            foreach(var player in playerList)
+            // Send all players on a map instance and its surrounding instances a map item update.
+            foreach(var player in mapProcessingLayer.GetAllRelevantPlayers())
             {
                 player.SendPacket(GenerateMapItemsPacket(player, mapId));
             }
@@ -1891,11 +1874,10 @@ namespace Intersect.Server.Networking
             player.SendPacket(new PartyInvitePacket(leader.Name, leader.Id));
         }
 
-        // Todo Alex: Chat
         //ChatBubblePacket
-        public static void SendChatBubble(Guid entityId, EntityTypes type, string text, Guid mapId)
+        public static void SendChatBubble(Guid entityId, Guid instanceLayer, EntityTypes type, string text, Guid mapId)
         {
-            SendDataToProximityAcrossAllLayers(mapId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
+            SendDataToProximityOnLayer(mapId, instanceLayer, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }
 
         //QuestOfferPacket
@@ -2103,8 +2085,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var players = MapInstance.Get(mapId).GetPlayersOnMap();
-            foreach (var player in players)
+            foreach (var player in MapInstance.Get(mapId).GetPlayersOnAllLayers())
             {
                 if (player != null && player != except)
                 {

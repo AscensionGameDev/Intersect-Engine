@@ -56,6 +56,7 @@ namespace Intersect.Server.Entities.Events
             EventBase myEvent,
             EventPage myPage,
             Guid mapId,
+            Guid instanceLayer,
             Event eventIndex,
             Player player
         ) : base()
@@ -64,6 +65,7 @@ namespace Intersect.Server.Entities.Events
             Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
+            InstanceLayer = instanceLayer;
             X = eventIndex.X;
             Y = eventIndex.Y;
             Name = myEvent.Name;
@@ -123,12 +125,12 @@ namespace Intersect.Server.Entities.Events
             SendToPlayer();
         }
 
-        // TODO Alex - Events, This is probably not right
         public EventPageInstance(
             EventBase myEvent,
             EventPage myPage,
             Guid instanceId,
             Guid mapId,
+            Guid instanceLayer,
             Event eventIndex,
             Player player,
             EventPageInstance globalClone
@@ -139,6 +141,7 @@ namespace Intersect.Server.Entities.Events
             GlobalClone = globalClone;
             MyPage = myPage;
             MapId = mapId;
+            InstanceLayer = instanceLayer;
             X = globalClone.X;
             Y = globalClone.Y;
             Name = myEvent.Name;
@@ -351,12 +354,15 @@ namespace Intersect.Server.Entities.Events
 
             if (this.Trigger == EventTrigger.PlayerCollide && Passable)
             {
-                var players = Map.GetPlayersOnMap();
-                foreach (var player in players)
+                if (Map != null && Map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
                 {
-                    if (player.X == X && player.Y == Y && player.Z == Z)
+                    var players = mapProcessingLayer.GetPlayersOnMap();
+                    foreach (var player in players)
                     {
-                        player.HandleEventCollision(this.MyEventIndex, mPageNum);
+                        if (player.X == X && player.Y == Y && player.Z == Z)
+                        {
+                            player.HandleEventCollision(this.MyEventIndex, mPageNum);
+                        }
                     }
                 }
             }
@@ -810,9 +816,15 @@ namespace Intersect.Server.Entities.Events
             {
                 //Removing this line because the global clone MUST be on the same map and its hindering performance.
                 //var map = MapInstance.Get(GlobalClone.MapId);
-                if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone))
+                if (map == null)
                 {
                     return true;
+                } else if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                {
+                    if (!mapProcessingLayer.FindEvent(GlobalClone.BaseEvent, GlobalClone))
+                    {
+                        return true;
+                    }
                 }
             }
 

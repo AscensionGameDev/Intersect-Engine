@@ -31,6 +31,8 @@ namespace Intersect.Server.Entities.Events
 
         public Guid MapId;
 
+        public Guid InstanceLayer;
+
         public MapInstance MapInstance;
 
         private Dictionary<string, string> mParams = new Dictionary<string, string>();
@@ -57,6 +59,7 @@ namespace Intersect.Server.Entities.Events
         public Event(Guid instanceId, MapInstance map, Player player, EventBase baseEvent)
         {
             Id = instanceId;
+            InstanceLayer = player.InstanceLayer;
             MapId = map?.Id ?? Guid.Empty;
             MapInstance = map;
             Player = player;
@@ -66,9 +69,10 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
         }
 
-        public Event(Guid instanceId, EventBase baseEvent, MapInstance map) //Global constructor
+        public Event(Guid instanceId, EventBase baseEvent, MapInstance map, Guid instanceLayer) //Global constructor
         {
             Id = instanceId;
+            InstanceLayer = instanceLayer;
             Global = true;
             MapId = map?.Id ?? Guid.Empty;
             MapInstance = map;
@@ -79,7 +83,7 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
             for (var i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, null);
+                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, instanceLayer, this, null);
             }
         }
 
@@ -283,26 +287,29 @@ namespace Intersect.Server.Entities.Events
                     {
                         if (Global)
                         {
-                            var globalEvent = MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent);
-                            if (globalEvent != null)
+                            if (map != null && map.TryGetRelevantProcessingLayer(Player.InstanceLayer, out var mapProcessingLayer))
                             {
-                                PageInstance = new EventPageInstance(
-                                    BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, this, Player,
-                                    globalEvent.GlobalPageInstance[i]
-                                );
-
-                                if (PageInstance.GlobalClone != null)
+                                var globalEvent = mapProcessingLayer.GetGlobalEventInstance(BaseEvent);
+                                if (globalEvent != null)
                                 {
-                                    Player.GlobalPageInstanceLookup.AddOrUpdate(globalEvent.GlobalPageInstance[i], this, (key, oldValue) => this);
-                                }
+                                    PageInstance = new EventPageInstance(
+                                        BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, Player.InstanceLayer, this, Player,
+                                        globalEvent.GlobalPageInstance[i]
+                                    );
 
-                                sendLeave = false;
-                                PageIndex = i;
+                                    if (PageInstance.GlobalClone != null)
+                                    {
+                                        Player.GlobalPageInstanceLookup.AddOrUpdate(globalEvent.GlobalPageInstance[i], this, (key, oldValue) => this);
+                                    }
+
+                                    sendLeave = false;
+                                    PageIndex = i;
+                                }
                             }
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, Player);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, Player.InstanceLayer, this, Player);
                             sendLeave = false;
                             PageIndex = i;
                         }

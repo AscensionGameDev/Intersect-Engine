@@ -31,13 +31,6 @@ namespace Intersect.Server.Maps
 
         private static MapInstances sLookup;
 
-        [NotMapped] private readonly ConcurrentDictionary<Guid,Entity> mEntities = new ConcurrentDictionary<Guid, Entity>();
-
-        private Entity[] mCachedEntities = new Entity[0];
-
-        [JsonIgnore] [NotMapped]
-        public ConcurrentDictionary<EventBase, Event> GlobalEventInstances = new ConcurrentDictionary<EventBase, Event>();
-
         [JsonIgnore] [NotMapped] public long LastUpdateTime = -1;
 
         [JsonIgnore] [NotMapped] public long UpdateQueueStart = -1;
@@ -48,8 +41,6 @@ namespace Intersect.Server.Maps
         [JsonIgnore] [NotMapped] public int MapGridX = -1;
 
         [JsonIgnore] [NotMapped] public int MapGridY = -1;
-
-        private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
 
         //Temporary Values
         private Guid[] mSurroundingMapIds = new Guid[0];
@@ -138,21 +129,6 @@ namespace Intersect.Server.Maps
             {
                 DespawnEverything();
                 RespawnEverything();
-
-                var events = new List<EventBase>();
-                foreach (var evt in EventIds)
-                {
-                    var itm = EventBase.Get(evt);
-                    if (itm != null)
-                    {
-                        events.Add(itm);
-                    }
-                }
-                EventsCache = events;
-                foreach (var kv in mMapProcessingLayers)
-                {
-                    kv.Value.Initialize();
-                }
             }
         }
 
@@ -228,186 +204,20 @@ namespace Intersect.Server.Maps
             }
         }
 
-        //Events
-        private void SpawnGlobalEvents()
-        {
-            GlobalEventInstances.Clear();
-            foreach (var id in EventIds)
-            {
-                var evt = EventBase.Get(id);
-                if (evt != null && evt.Global)
-                {
-                    GlobalEventInstances.TryAdd(evt, new Event(evt.Id, evt, this));
-                }
-            }
-        }
-
-        private void DespawnGlobalEvents()
-        {
-            //Kill global events on map (make sure processing stops for online players)
-            //Gonna rely on GC for now
-            var players = new List<Player>();
-            foreach (var map in GetSurroundingMaps(true))
-            {
-                players.AddRange(map.GetPlayersOnMap().ToArray());
-            }
-
-            foreach (var evt in GlobalEventInstances.ToArray())
-            {
-                foreach (var player in players)
-                {
-                    player.RemoveEvent(evt.Value.BaseEvent.Id);
-                }
-            }
-
-            GlobalEventInstances.Clear();
-        }
-
-        public Event GetGlobalEventInstance(EventBase baseEvent)
-        {
-            if (GlobalEventInstances.ContainsKey(baseEvent))
-            {
-                return GlobalEventInstances[baseEvent];
-            }
-
-            return null;
-        }
-
-        public bool FindEvent(EventBase baseEvent, EventPageInstance globalClone)
-        {
-            if (GlobalEventInstances.ContainsKey(baseEvent))
-            {
-                for (var i = 0; i < GlobalEventInstances[baseEvent].GlobalPageInstance.Length; i++)
-                {
-                    if (GlobalEventInstances[baseEvent].GlobalPageInstance[i] == globalClone)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        //Entity Processing
-        public void AddEntity(Entity en)
-        {
-            if (en != null && !en.IsDead())
-            {
-                if (!mEntities.ContainsKey(en.Id))
-                {
-                    mEntities.TryAdd(en.Id, en);
-                    if (en is Player plyr)
-                    {
-                        mPlayers.TryAdd(plyr.Id, plyr);
-                    }
-                    mCachedEntities = mEntities.Values.ToArray();
-                }
-            }
-        }
-
-        public void RemoveEntity(Entity en)
-        {
-            mEntities.TryRemove(en.Id, out var result);
-            if (mPlayers.ContainsKey(en.Id))
-            {
-                mPlayers.TryRemove(en.Id, out var pResult);
-            }
-            mCachedEntities = mEntities.Values.ToArray();
-        }
-
         //Update + Related Functions
         public void Update(long timeMs)
         {
             lock (GetMapLock())
             {
                 var surrMaps = GetSurroundingMaps(true);
-
-                // Keep a list of all entities with changed vitals and statusses.
-                var vitalUpdates = new List<Entity>();
-                var statusUpdates = new List<Entity>();
-
-                //Process All Entites
-                foreach (var en in mEntities)
-                {
-                    //Let's see if and how long this map has been inactive, if longer than 30 seconds, regenerate everything on the map
-                    //TODO, take this 30 second value and throw it into the server config after I switch everything to json
-                    if (timeMs > LastUpdateTime + 30000)
-                    {
-                        //Regen Everything & Forget Targets
-                        if (en.Value is Resource)
-                        {
-                            en.Value.RestoreVital(Vitals.Health);
-                            en.Value.RestoreVital(Vitals.Mana);
-                            en.Value.Target = null;
-                        }
-                    }
-
-                    en.Value.Update(timeMs);
-
-                    // Check to see if we need to send any entity vital and status updates for this entity.
-                    if (en.Value.VitalsUpdated)
-                    { 
-                        vitalUpdates.Add(en.Value);
-
-                        // Send a party update if we're a player with a party.
-                        if (en.Value is Player player)
-                        {
-                            for (var i = 0; i < player.Party.Count; i++)
-                            {
-                                PacketSender.SendPartyUpdateTo(player.Party[i], player);
-                            }
-                        }
-
-                        en.Value.VitalsUpdated = false;
-                    }
-
-                    if (en.Value.StatusesUpdated)
-                    {
-                        statusUpdates.Add(en.Value);
-
-                        en.Value.StatusesUpdated = false;
-                    }
-                }
-
-                //Process all global events
-                var evts = GlobalEventInstances.Values.ToList();
-                for (var i = 0; i < evts.Count; i++)
-                {
-                        //Only do movement processing on the first page.
-                    //This is because global events need to keep all of their pages at the same tile
-                    //Think about a global event moving randomly that needed to turn into a warewolf and back (separate pages)
-                    //If they were in different tiles the transition would make the event jump
-                    //Something like described here: https://www.ascensiongamedev.com/community/bug_tracker/intersect/events-randomly-appearing-and-disappearing-r983/
-                    for (var x = 0; x < evts[i].GlobalPageInstance.Length; x++)
-                    {
-                        //Gotta figure out if any players are interacting with this event.
-                        var active = false;
-                        foreach (var map in GetSurroundingMaps(true))
-                        {
-                            foreach (var player in map.GetPlayersOnMap())
-                            {
-                                var eventInstance = player.FindGlobalEventInstance(evts[i].GlobalPageInstance[x]);
-                                if (eventInstance != null && eventInstance.CallStack.Count > 0)
-                                {
-                                    active = true;
-                                }
-                            }
-                        }
-
-                        evts[i].GlobalPageInstance[x].Update(active, timeMs);
-                    }
-                }
-
                 UpdateProcessingInstances(Globals.Timing.Milliseconds);
-
                 LastUpdateTime = timeMs;
             }
         }
 
+        // TODO Alex I don't think this will be necessary once processing layers are handled in their own jobs
         public void UpdateProjectiles(long timeMs)
         {
-            // TODO Alex I don't think this will be necessary once processing layers are handled in their own jobs
             mMapProcessingLayers.Values.ToList().ForEach((mpl) =>
             {
                 mpl.UpdateProjectiles(timeMs);
@@ -424,39 +234,15 @@ namespace Intersect.Server.Maps
             return includingSelf ? mSurroundingMapsIdsWithSelf : mSurroundingMapIds;
         }
 
-        public ConcurrentDictionary<Guid, Entity> GetLocalEntities()
-        {
-            return mEntities;
-        }
-
-        public List<Entity> GetEntities(bool includeSurroundingMaps = false)
-        {
-            var entities = new List<Entity>();
-
-            foreach (var en in mEntities)
-                entities.Add(en.Value);
-
-            // ReSharper disable once InvertIf
-            if (includeSurroundingMaps)
-            {
-                foreach (var map in GetSurroundingMaps(false))
-                {
-                    entities.AddRange(map.GetEntities());
-                }
-            }
-
-            return entities;
-        }
-
-        public Entity[] GetCachedEntities()
-        {
-            return mCachedEntities;
-        }
-
         // TODO Alex; Rename this
-        public ICollection<Player> GetPlayersOnMap()
+        public ICollection<Player> GetPlayersOnAllLayers()
         {
-            return GetPlayersOnAllLayers(); // TODO Alex: Players are no longer held here
+            var players = new List<Player>();
+            foreach (var layer in mMapProcessingLayers.Keys.ToList())
+            {
+                players.AddRange(mMapProcessingLayers[layer].GetPlayersOnMap());
+            }
+            return players;
         }
 
         public ICollection<Entity> GetEntitiesOnAllLayers()
@@ -477,17 +263,6 @@ namespace Intersect.Server.Maps
                 entities.AddRange(mpl.Value.GetCachedEntities());
             }
             return entities.ToArray();
-        }
-
-        // TODO Alex: I think this method will eventually be invalidated
-        public ICollection<Player> GetPlayersOnAllLayers()
-        {
-            var players = new List<Player>();
-            foreach (var layer in mMapProcessingLayers.Keys.ToList())
-            {
-                players.AddRange(mMapProcessingLayers[layer].GetPlayersOnMap());
-            }
-            return players;
         }
 
         public void ClearConnections(int side = -1)
@@ -518,20 +293,18 @@ namespace Intersect.Server.Maps
         //Map Reseting Functions
         public void DespawnEverything()
         {
-            foreach (var kv in mMapProcessingLayers)
+            foreach (var mpl in mMapProcessingLayers.Values)
             {
-                kv.Value.DespawnEverything();
+                mpl.DespawnEverything();
             }
-            DespawnGlobalEvents();
         }
 
         public void RespawnEverything()
         {
-            foreach (var kv in mMapProcessingLayers)
+            foreach (var mpl in mMapProcessingLayers.Values)
             {
-                kv.Value.RespawnEverything();
+                mpl.RespawnEverything();
             }
-            SpawnGlobalEvents();
         }
 
         public static MapInstance Get(Guid id)
@@ -811,6 +584,11 @@ namespace Intersect.Server.Maps
         public void ClearAllProcessingLayers()
         {
             mMapProcessingLayers.Clear();
+        }
+
+        ~MapInstance()
+        {
+            ClearAllProcessingLayers();
         }
     }
 }
