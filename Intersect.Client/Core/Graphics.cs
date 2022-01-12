@@ -54,6 +54,10 @@ namespace Intersect.Client.Core
 
         public static int MapsDrawn;
 
+        private static int animTextureFrame;
+
+        private static long animTextureTime;
+
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
 
@@ -144,13 +148,53 @@ namespace Intersect.Client.Core
 
         public static void DrawMenu()
         {
-            var imageTex = sContentManager.GetTexture(
-                Framework.Content.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
-            );
-
-            if (imageTex != null)
+            // Draw an animated background in the main menu.
+            if (ClientConfiguration.Instance.AnimatedMenuBgEnabled)
             {
-                DrawFullScreenTexture(imageTex);
+                // Draw the animation frames stretched to game window size.
+                if (ClientConfiguration.Instance.AnimatedMenuBgStretched)
+                {
+                    DrawFullScreenAnimatedTextureStretched(
+                        ClientConfiguration.Instance.AnimatedMenuBgTexture,
+                        ClientConfiguration.Instance.AnimatedMenuBgFrameCount,
+                        ClientConfiguration.Instance.AnimatedMenuBgFrameSpeed
+                    );
+                }
+
+                // Draw the animation frames with their original size.
+                else
+                {
+                    DrawFullScreenAnimatedTexture(
+                        ClientConfiguration.Instance.AnimatedMenuBgTexture,
+                        ClientConfiguration.Instance.AnimatedMenuBgFrameCount,
+                        ClientConfiguration.Instance.AnimatedMenuBgFrameSpeed
+                    );
+                }
+            }
+
+            // Draw an static background in the main menu.
+            else
+            {
+                var imageTex = sContentManager.GetTexture(
+                    Framework.Content.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
+                );
+
+                if (imageTex == null)
+                {
+                    return;
+                }
+
+                // Draw the static background stretched to game window size.
+                if (ClientConfiguration.Instance.MenuBackgroundStretched)
+                {
+                    DrawFullScreenTextureStretched(imageTex);
+                }
+
+                // Draw the static background with it's original size.
+                else
+                {
+                    DrawFullScreenTexture(imageTex);
+                }
             }
         }
 
@@ -768,6 +812,76 @@ namespace Intersect.Client.Core
             }
         }
 
+        private static void DrawFullScreenAnimatedTexture(
+            string animFrameName,
+            int animFrameCount,
+            long animFrameSpeed
+        )
+        {
+            if (animTextureTime < Timing.Global.Milliseconds)
+            {
+                animTextureFrame += 1;
+                animTextureTime = Timing.Global.Milliseconds + animFrameSpeed;
+            }
+
+            if (animTextureFrame >= animFrameCount - 1)
+            {
+                animTextureFrame = 0;
+            }
+
+            var animTex = Globals.ContentManager.GetTexture(
+                Framework.Content.TextureType.Animation, animFrameName + "_" + animTextureFrame + ".png"
+            );
+
+            if (animTex == null)
+            {
+                return;
+            }
+
+            var destRectangle = new FloatRect();
+            var srcRectangle = new FloatRect(0, 0, animTex.Width, animTex.Height);
+            destRectangle.X = 0;
+            destRectangle.Y = 0;
+            destRectangle.Width = srcRectangle.Width;
+            destRectangle.Height = srcRectangle.Height;
+            DrawGameTexture(animTex, srcRectangle, destRectangle, new Color(255, 255, 255, 255));
+        }
+
+        private static void DrawFullScreenAnimatedTextureStretched(
+            string animFrameName,
+            int animFrameCount,
+            long animFrameSpeed
+        )
+        {
+            if (animTextureTime < Timing.Global.Milliseconds)
+            {
+                animTextureFrame += 1;
+                animTextureTime = Timing.Global.Milliseconds + animFrameSpeed;
+            }
+
+            if (animTextureFrame >= animFrameCount - 1)
+            {
+                animTextureFrame = 0;
+            }
+
+            var animTex = Globals.ContentManager.GetTexture(
+                Framework.Content.TextureType.Animation, animFrameName + "_" + animTextureFrame + ".png"
+            );
+
+            if (animTex == null)
+            {
+                return;
+            }
+
+            var destRectangle = new FloatRect();
+            var srcRectangle = new FloatRect(0, 0, animTex.Width, animTex.Height);
+            destRectangle.X = 0;
+            destRectangle.Y = 0;
+            destRectangle.Width = Renderer.GetScreenWidth();
+            destRectangle.Height = Renderer.GetScreenHeight();
+            DrawGameTexture(animTex, srcRectangle, destRectangle, new Color(255, 255, 255, 255));
+        }
+        
         private static void UpdateView()
         {
             if (Globals.Me == null)

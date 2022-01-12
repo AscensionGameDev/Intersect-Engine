@@ -46,6 +46,18 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_MENU_BACKGROUND = "background.png";
 
+        public const bool DEFAULT_MENUBG_STRETCH = true;
+
+        public const bool DEFAULT_ANIM_MENUBG_TOGGLE = false;
+
+        public const bool DEFAULT_ANIM_MENUBG_STRETCH = true;
+
+        public const string DEFAULT_ANIM_MENUBG_TEXTURE = "main_menu";
+
+        public const int DEFAULT_ANIM_MENUBG_FRAMECOUNT = 11;
+
+        public const long DEFAULT_ANIM_MENUBG_FRAMESPEED = 50;
+
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
         #endregion
@@ -69,58 +81,98 @@ namespace Intersect.Configuration
         #region Options
 
         /// <summary>
-        /// Hostname of the server to connect to
+        /// Hostname of the server that the client will connect to.
         /// </summary>
         public string Host { get; set; } = DEFAULT_HOST;
 
         /// <summary>
-        /// Port of the server to connect to
+        /// Port of the server that the client will connect to.
         /// </summary>
         public ushort Port { get; set; } = DEFAULT_PORT;
 
         /// <summary>
-        /// The font family to use on misc non-ui rendering
+        /// The font family to use on misc non-ui rendering.
         /// </summary>
         public string GameFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
-        /// The font family to use on entity names
+        /// The font family to use on entity names.
         /// </summary>
         public string EntityNameFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
-        /// The font family to use on chat bubbles
+        /// The font family to use on chat bubbles.
         /// </summary>
         public string ChatBubbleFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
-        /// The font family to use on action messages
+        /// The font family to use on action messages.
         /// </summary>
         public string ActionMsgFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
-        /// The font family to use on unstyled windows such as the debug menu/admin window
+        /// The font family to use on un-styled windows such as the debug menu/admin window.
         /// </summary>
         public string UIFont { get; set; } = DEFAULT_UI_FONT;
 
         /// <summary>
-        /// Number of lines to save for chat scrollback
+        /// Number of lines to save for chat scrollback.
         /// </summary>
         public int ChatLines { get; set; } = DEFAULT_CHAT_LINES;
 
         /// <summary>
-        /// Menu music file name
+        /// Sets a music file to be played in the main menu.
         /// </summary>
         public string MenuMusic { get; set; } = DEFAULT_MENU_MUSIC;
 
         /// <summary>
-        /// Menu background art
+        /// Sets a list from which introductory images will be drawn when the game client starts.
+        /// </summary>
+        public List<string> IntroImages { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Sets a texture to be used as static background in the main menu.
         /// </summary>
         public string MenuBackground { get; set; } = DEFAULT_MENU_BACKGROUND;
 
-        // TODO: What is this for?
-        public List<string> IntroImages { get; set; } = new List<string>();
+        /// <summary>
+        /// Toggles the ability to stretch the static background in the main menu.
+        /// </summary>
+        public bool MenuBackgroundStretched { get; set; } = DEFAULT_MENUBG_STRETCH;
 
+        /// <summary>
+        /// Toggles the ability to draw an animated background in the main menu.
+        /// When enabled, the static background in the main menu won't be drawn.
+        /// </summary>
+        public bool AnimatedMenuBgEnabled { get; set; } = DEFAULT_ANIM_MENUBG_TOGGLE;
+
+        /// <summary>
+        /// Toggles the ability to stretch the animated background in the main menu.
+        /// </summary>
+        public bool AnimatedMenuBgStretched { get; set; } = DEFAULT_ANIM_MENUBG_STRETCH;
+
+        /// <summary>
+        /// Sets the base name for the files to be used as frames in the animated background of the main menu.
+        /// ie: if you set "main_menu", you will need to place your animation frames inside the animation folder
+        /// and name them like this:  "main_menu_0.png, main_menu_1.png, main_menu_2.png, etc".
+        /// </summary>
+        public string AnimatedMenuBgTexture { get; set; } = DEFAULT_ANIM_MENUBG_TEXTURE;
+
+        /// <summary>
+        /// Sets the frame count of the animated background in the main menu.
+        /// Make sure to set this value depending on the amount of files to be used from the animation resources.
+        /// </summary>
+        public int AnimatedMenuBgFrameCount { get; set; } = DEFAULT_ANIM_MENUBG_FRAMECOUNT;
+
+        /// <summary>
+        /// Sets the frame speed (milliseconds) of the animated background in the main menu.
+        /// </summary>
+        public long AnimatedMenuBgFrameSpeed { get; set; } = DEFAULT_ANIM_MENUBG_FRAMESPEED;
+
+        /// <summary>
+        /// Optional - built in updater system.
+        /// Sets an URL to Package Updates (ie: https://freemmorpgmaker.com/updater/update.json).
+        /// </summary>
         public string UpdateUrl { get; set; } = "";
 
         /// <summary>
