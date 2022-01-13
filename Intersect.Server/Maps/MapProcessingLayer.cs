@@ -971,12 +971,24 @@ namespace Intersect.Server.Maps
             MapProjectilesCached = new Projectile[0];
         }
 
+        /// <summary>
+        /// Removes a given projectile from the map layer
+        /// </summary>
+        /// <param name="en">Projectile entity to get rid of</param>
         public void RemoveProjectile(Projectile en)
         {
             MapProjectiles.TryRemove(en.Id, out Projectile removed);
             MapProjectilesCached = MapProjectiles.Values.ToArray();
         }
 
+        /// <summary>
+        /// Spawns a "trap" on this layer
+        /// </summary>
+        /// <param name="owner">The person who cast the trap</param>
+        /// <param name="parentSpell">The spell associated with the trap to trigger on contact</param>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="z">Z</param>
         public void SpawnTrap(Entity owner, SpellBase parentSpell, byte x, byte y, byte z)
         {
             var trap = new MapTrapInstance(owner, parentSpell, mMapInstance.Id, InstanceLayer, x, y, z);
@@ -984,12 +996,19 @@ namespace Intersect.Server.Maps
             MapTrapsCached = MapTraps.Values.ToArray();
         }
 
+        /// <summary>
+        /// Removes all traps, and clears the trap cache of, this layer.
+        /// </summary>
         public void DespawnTraps()
         {
             MapTraps.Clear();
             MapTrapsCached = new MapTrapInstance[0];
         }
 
+        /// <summary>
+        /// Removes the given trap from this layer
+        /// </summary>
+        /// <param name="trap">The trap to get rid of</param>
         public void RemoveTrap(MapTrapInstance trap)
         {
             MapTraps.TryRemove(trap.Id, out MapTrapInstance removed);
@@ -999,6 +1018,9 @@ namespace Intersect.Server.Maps
         #endregion
 
         #region Events
+        /// <summary>
+        /// Spawns all global events for processing between players on the same layer
+        /// </summary>
         private void SpawnGlobalEvents()
         {
             GlobalEventInstances.Clear();
@@ -1012,9 +1034,12 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Despawns all global events on this layer
+        /// </summary>
         private void DespawnGlobalEvents()
         {
-            //Kill global events on map (make sure processing stops for online players)
+            //Kill global events on layer (make sure processing stops for online players)
             //Gonna rely on GC for now
             foreach (var evt in GlobalEventInstances.ToArray())
             {
@@ -1027,6 +1052,11 @@ namespace Intersect.Server.Maps
             GlobalEventInstances.Clear();
         }
 
+        /// <summary>
+        /// Gets the requested global event base
+        /// </summary>
+        /// <param name="baseEvent">The event to find</param>
+        /// <returns>The global event requested to find on the layer</returns>
         public Event GetGlobalEventInstance(EventBase baseEvent)
         {
             if (GlobalEventInstances.ContainsKey(baseEvent))
@@ -1037,6 +1067,12 @@ namespace Intersect.Server.Maps
             return null;
         }
 
+        /// <summary>
+        /// Finds some requested event that's processing on the layer
+        /// </summary>
+        /// <param name="baseEvent">The event ot find</param>
+        /// <param name="globalClone">The global version of the event</param>
+        /// <returns>The global event version of some event</returns>
         public bool FindEvent(EventBase baseEvent, EventPageInstance globalClone)
         {
             if (GlobalEventInstances.ContainsKey(baseEvent))
@@ -1053,6 +1089,9 @@ namespace Intersect.Server.Maps
             return false;
         }
 
+        /// <summary>
+        /// Refreshes the events cache, essentially refreshing event positions on the map for the calling entity.
+        /// </summary>
         public void RefreshEventsCache()
         {
             var events = new List<EventBase>();
@@ -1069,6 +1108,13 @@ namespace Intersect.Server.Maps
         #endregion
 
         #region Collision
+        /// <summary>
+        /// Checks with our <see cref="mMapInstance"/>, as well as our blockable entities/resources, to see if some requested
+        /// tile is blocked from someone moving on.
+        /// </summary>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <returns>True if the tile is blocked</returns>
         public bool TileBlocked(int x, int y)
         {
             if (mMapInstance.Attributes == null ||
