@@ -191,15 +191,7 @@ namespace Intersect.Client.Entities
         public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
-<<<<<<< HEAD
-<<<<<<< HEAD
             MapId = Guid.Empty;
-=======
-            InstanceLayer = packet.InstanceLayer;
-=======
->>>>>>> Alex: Hummina
-            CurrentMap = Guid.Empty;
->>>>>>> Alex: Adding an InstanceLayer property to server and client entities that is passed around
             if (id != Guid.Empty && !isEvent)
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)

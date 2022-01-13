@@ -1564,97 +1564,97 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-                X = (int)newX;
-                Y = (int)newY;
-                Z = zOverride;
-                Dir = newDir;
+            X = (int)newX;
+            Y = (int)newY;
+            Z = zOverride;
+            Dir = newDir;
 
-                // TODO Alex this method could be refactored - mostly removing and consolidating calls to getting relevant insatnce
+            // TODO Alex this method could be refactored - mostly removing and consolidating calls to getting relevant insatnce
 
-                // TODO Alex: Control when we change layers
-                LastInstanceLayer = InstanceLayer;
-                if (adminWarp)
+            // TODO Alex: Control when we change layers
+            LastInstanceLayer = InstanceLayer;
+            if (adminWarp)
+            {
+                if (InstanceLayer == Guid.Empty)
                 {
-                    if (InstanceLayer == Guid.Empty)
+                    InstanceLayer = Guid.NewGuid();
+                }
+                else
+                {
+                    InstanceLayer = Guid.Empty;
+                }
+            }
+
+            var newSurroundingMaps = map.GetSurroundingMapIds(true);
+            var onNewInstance = InstanceLayer != LastInstanceLayer;
+
+            MapProcessingLayer newMapsProcessingLayer;
+            // Ensure there exists a map processing layer. A player is the sole entity that can create new layers
+            lock (EntityLock)
+            {
+                if (!map.TryGetProcesingLayerWithId(InstanceLayer, out newMapsProcessingLayer))
+                {
+                    foreach (var allMaps in newSurroundingMaps)
                     {
-                        InstanceLayer = Guid.NewGuid();
-                    } else
-                    {
-                        InstanceLayer = Guid.Empty;
+                        MapInstance.Get(allMaps).TryCreateProcessingLayer(InstanceLayer, out newMapsProcessingLayer);
                     }
                 }
+            }
 
-                var newSurroundingMaps = map.GetSurroundingMapIds(true);
-                var onNewInstance = InstanceLayer != LastInstanceLayer;
+            if (newMapsProcessingLayer == null)
+            {
+                Log.Error($"Player {Name} requested a new map processing layer and failed to get it.");
+                WarpToSpawn();
+
+                return;
+            }
+
+            // If we've changed instance layers
+            if (onNewInstance)
+            {
+                onNewInstance = true;
+                // Refresh the client's entity list
                 var oldMap = MapInstance.Get(MapId);
-                oldMap.TryGetProcesingLayerWithId(LastInstanceLayer, out var oldMapsProcessingLayer);
-
-                MapProcessingLayer newMapsProcessingLayer;
-                // Ensure there exists a map processing layer. A player is the sole entity that can create new layers
-                lock (EntityLock)
+                if (oldMap != null && oldMap.TryGetProcesingLayerWithId(LastInstanceLayer, out var oldMapsProcessingLayer))
                 {
-                    if (!map.TryGetProcesingLayerWithId(InstanceLayer, out newMapsProcessingLayer))
-                    {
-                        foreach (var allMaps in newSurroundingMaps)
-                        {
-                            MapInstance.Get(allMaps).TryCreateProcessingLayer(InstanceLayer, out newMapsProcessingLayer);
-                        }
-                    }
-                }
-
-                if (newMapsProcessingLayer == null)
-                {
-                    Log.Error($"Player {Name} requested a new map processing layer and failed to get it.");
-                    WarpToSpawn();
-
-                    return;
-                }
-
-                // If we've changed instance layers
-                if (onNewInstance)
-                {
-                    onNewInstance = true;
-                    // Refresh the client's entity list
                     PacketSender.SendMapLayerChangedPacketTo(this, oldMap, LastInstanceLayer);
-                    if (oldMapsProcessingLayer != null)
-                    {
-                        // Remove targets of this entity
-                        oldMapsProcessingLayer.ClearEntityTargetsOf(this);
-                    }
-                    // Clear events - we'll get them again from the map layer's event cache
-                    EventTileLookup.Clear();
-                    EventLookup.Clear();
-                    EventBaseIdLookup.Clear();
-                    Log.Debug($"Player {Name} has joined layer {InstanceLayer} of map: {map.Name}");
-                    Log.Info($"Previous layer was {LastInstanceLayer}");
-                    // Todo Alex Remove this
-                    PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
-                    // We changed maps AND instance layers - remove from the old map's old layer
-                    PacketSender.SendEntityLeaveLayerOnMap(this, oldMap.Id, LastInstanceLayer);
-                    // Remove any trace of our player from the old layer's processing
-                    map.RemoveEntityFromAllSurroundingMapsInLayer(this, LastInstanceLayer);
+                    oldMapsProcessingLayer.ClearEntityTargetsOf(this); // Remove targets of this entity
+                }
+                // Clear events - we'll get them again from the map layer's event cache
+                EventTileLookup.Clear();
+                EventLookup.Clear();
+                EventBaseIdLookup.Clear();
+                Log.Debug($"Player {Name} has joined layer {InstanceLayer} of map: {map.Name}");
+                Log.Info($"Previous layer was {LastInstanceLayer}");
+                // Todo Alex Remove this
+                PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
+                // We changed maps AND instance layers - remove from the old map's old layer
+                PacketSender.SendEntityLeaveLayerOnMap(this, oldMap.Id, LastInstanceLayer);
+                // Remove any trace of our player from the old layer's processing
+                map.RemoveEntityFromAllSurroundingMapsInLayer(this, LastInstanceLayer);
+            }
+
+            foreach (var evt in EventLookup)
+            {
+                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                {
+                    RemoveEvent(evt.Value.Id, false);
+                }
+            }
+
+            if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
+            {
+                // Remove the entity from the old map's processing layer
+                var oldMap = MapInstance.Get(MapId);
+                if (oldMap != null && oldMap.TryGetProcesingLayerWithId(LastInstanceLayer, out var oldMapsProcessingLayer))
+                {
+                    oldMapsProcessingLayer.RemoveEntity(this);
                 }
 
-                foreach (var evt in EventLookup)
-                {
-                    if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
-                    {
-                        RemoveEvent(evt.Value.Id, false);
-                    }
-                }
-
-                if (newMapId != MapId || mSentMap == false) // Player walked to a new map?
-                {
-                    // Remove the entity from the old map's processing layer
-                    if (oldMap != null && oldMapsProcessingLayer != null)
-                    {
-                        oldMapsProcessingLayer.RemoveEntity(this);
-                    }
-                    
-                    PacketSender.SendEntityLeave(this); // We simply changed maps - leave the old one
-                    MapId = newMapId;
-                    newMapsProcessingLayer.PlayerEnteredMap(this);
-                    PacketSender.SendEntityPositionToAll(this);
+                PacketSender.SendEntityLeave(this); // We simply changed maps - leave the old one
+                MapId = newMapId;
+                newMapsProcessingLayer.PlayerEnteredMap(this);
+                PacketSender.SendEntityPositionToAll(this);
 
                 //If map grid changed then send the new map grid
                 if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
@@ -1662,22 +1662,20 @@ namespace Intersect.Server.Entities
                     PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
                 }
 
-                    mSentMap = true;
-                    
-                    StartCommonEventsWithTrigger(CommonEventTrigger.MapChanged);
-                }
-                else // Player moved on same map?
+                mSentMap = true;
+            }
+            else // Player moved on same map?
+            {
+                if (onNewInstance)
                 {
-                    if (onNewInstance)
-                    {
-                        // And add to the new layer (will also send stats thru SendEntityDataToProximity)
-                        newMapsProcessingLayer.PlayerEnteredMap(this);
-                    } else
-                    {
-                        PacketSender.SendEntityStats(this);
-                    }
-                    PacketSender.SendEntityPositionToAll(this);
+                    // And add to the new layer (will also send stats thru SendEntityDataToProximity)
+                    newMapsProcessingLayer.PlayerEnteredMap(this);
                 }
+                else
+                {
+                    PacketSender.SendEntityStats(this);
+                }
+                PacketSender.SendEntityPositionToAll(this);
             }
         }
 
@@ -1933,7 +1931,7 @@ namespace Intersect.Server.Entities
                         if (Map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer)) 
                         {
                             mapProcessingLayer.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
-                            success = spawnAmount != item.Quantity;
+                            return spawnAmount != item.Quantity;
                         }
                     }
 

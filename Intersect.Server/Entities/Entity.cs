@@ -2187,7 +2187,8 @@ namespace Intersect.Server.Entities
                                                 }
                                             }
 
-                                        TryAttack(entity, spellBase); //Handle damage
+                                            TryAttack(entity, spellBase); //Handle damage
+                                        }
                                     }
                                 }
                             }

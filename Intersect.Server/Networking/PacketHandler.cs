@@ -1241,9 +1241,10 @@ namespace Intersect.Server.Networking
                                 (byte)player.Dir, null
                             );
 
-                        player.AttackTimer = Timing.Global.Milliseconds +
-                                             latencyAdjustmentMs +
-                                             player.CalculateAttackTime();
+                            player.AttackTimer = Timing.Global.Milliseconds +
+                                                 latencyAdjustmentMs +
+                                                 player.CalculateAttackTime();
+                        }
 
                         return;
                     }
