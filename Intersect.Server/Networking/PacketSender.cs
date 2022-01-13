@@ -493,7 +493,7 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                foreach (var player in mapProcessingLayer.GetPlayersOnMap())
+                foreach (var player in mapProcessingLayer.GetPlayersOnLayer())
                 {
                     if (player != except)
                     {
@@ -561,7 +561,7 @@ namespace Intersect.Server.Networking
             {
                 if (mp.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
                 {
-                    var players = mapProcessingLayer.GetPlayersOnMap();
+                    var players = mapProcessingLayer.GetPlayersOnLayer();
                     foreach (var pl in players)
                     {
                         SendNpcAggressionTo(pl, en);
@@ -1052,7 +1052,7 @@ namespace Intersect.Server.Networking
         public static void SendMapItemsToProximity(Guid mapId, MapProcessingLayer mapProcessingLayer)
         {
             // Send all players on a map instance and its surrounding instances a map item update.
-            foreach(var player in mapProcessingLayer.GetAllRelevantPlayers())
+            foreach(var player in mapProcessingLayer.GetPlayersOnLayer(true))
             {
                 player.SendPacket(GenerateMapItemsPacket(player, mapId));
             }
@@ -2103,7 +2103,7 @@ namespace Intersect.Server.Networking
 
             if (MapInstance.Get(mapId).TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
             {
-                var players = mapProcessingLayer.GetPlayersOnMap();
+                var players = mapProcessingLayer.GetPlayersOnLayer();
                 foreach (var player in players)
                 {
                     if (player != null && player != except)

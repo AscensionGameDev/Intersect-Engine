@@ -356,7 +356,7 @@ namespace Intersect.Server.Entities.Events
             {
                 if (Map != null && Map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                 {
-                    var players = mapProcessingLayer.GetPlayersOnMap();
+                    var players = mapProcessingLayer.GetPlayersOnLayer();
                     foreach (var player in players)
                     {
                         if (player.X == X && player.Y == Y && player.Z == Z)

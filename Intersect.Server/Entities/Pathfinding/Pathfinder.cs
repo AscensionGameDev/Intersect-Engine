@@ -200,11 +200,6 @@ namespace Intersect.Server.Entities.Pathfinding
                                                     //Block of Players, Npcs, and Resources
                                                     foreach (var en in mapProcessingLayer.GetEntities())
                                                     {
-                                                        if (en is Resource)
-                                                        {
-                                                            Console.WriteLine("Loaded resource!");
-                                                        }
-
                                                         if (!en.IsPassable() && en.X > -1 && en.X < Options.MapWidth && en.Y > -1 && en.Y < Options.MapHeight)
                                                         {
                                                             mapGrid[(x + 1 - gridX) * Options.MapWidth + en.X,

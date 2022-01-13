@@ -233,7 +233,7 @@ namespace Intersect.Server.Maps
             var players = new List<Player>();
             foreach (var layer in mMapProcessingLayers.Keys.ToList())
             {
-                players.AddRange(mMapProcessingLayers[layer].GetPlayersOnMap());
+                players.AddRange(mMapProcessingLayers[layer].GetPlayersOnLayer());
             }
             return players;
         }
@@ -513,7 +513,7 @@ namespace Intersect.Server.Maps
         {
             lock (GetMapLock())
             {
-                if (mMapProcessingLayers[instanceLayer] != null && mMapProcessingLayers[instanceLayer].GetAllRelevantPlayers().Count <= 0)
+                if (mMapProcessingLayers[instanceLayer] != null && mMapProcessingLayers[instanceLayer].GetPlayersOnLayer(true).Count <= 0)
                 {
                     mMapProcessingLayers[instanceLayer].Dispose();
                     if (!mMapProcessingLayers.TryRemove(instanceLayer, out var removedLayer))
@@ -532,7 +532,7 @@ namespace Intersect.Server.Maps
             lock (GetMapLock())
             {
                 // Removes all processing layers that don't have active players on themselves or any adjoining layers
-                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetAllRelevantPlayers().Count <= 0).ToList();
+                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetPlayersOnLayer(true).Count <= 0).ToList();
                 var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
                 foreach (var instance in deadLayers)
                 {
@@ -556,7 +556,7 @@ namespace Intersect.Server.Maps
 
             if (mMapProcessingLayers.TryGetValue(instanceLayer, out var layer))
             {
-                foreach (var player in layer.GetPlayersOnMap())
+                foreach (var player in layer.GetPlayersOnLayer())
                 {
                     if (player != except && player.InstanceLayer == instanceLayer)
                     {
