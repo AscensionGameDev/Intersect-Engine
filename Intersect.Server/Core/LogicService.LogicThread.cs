@@ -324,7 +324,6 @@ namespace Intersect.Server.Core
             /// <param name="mapProcessingLayer">The processing layer in which to process in our queues.</param>
             private void AddToQueue(MapProcessingLayer mapProcessingLayer)
             {
-                // TODO Alex: Support this
                 if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
                 {
                     LayerProjectileUpdateQueue.Enqueue(mapProcessingLayer);

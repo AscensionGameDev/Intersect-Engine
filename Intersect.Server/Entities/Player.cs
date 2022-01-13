@@ -1569,21 +1569,8 @@ namespace Intersect.Server.Entities
             Z = zOverride;
             Dir = newDir;
 
-            // TODO Alex this method could be refactored - mostly removing and consolidating calls to getting relevant insatnce
-
-            // TODO Alex: Control when we change layers
+            // Gives us a reference to the last instance layer we were on
             LastInstanceLayer = InstanceLayer;
-            if (adminWarp)
-            {
-                if (InstanceLayer == Guid.Empty)
-                {
-                    InstanceLayer = Guid.NewGuid();
-                }
-                else
-                {
-                    InstanceLayer = Guid.Empty;
-                }
-            }
 
             var newSurroundingMaps = map.GetSurroundingMapIds(true);
             var onNewInstance = InstanceLayer != LastInstanceLayer;
@@ -1626,8 +1613,12 @@ namespace Intersect.Server.Entities
                 EventBaseIdLookup.Clear();
                 Log.Debug($"Player {Name} has joined layer {InstanceLayer} of map: {map.Name}");
                 Log.Info($"Previous layer was {LastInstanceLayer}");
-                // Todo Alex Remove this
-                PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
+                
+                if (Client.Power.IsAdmin)
+                {
+                    PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + InstanceLayer.ToString(), ChatMessageType.Local);
+                }
+
                 // We changed maps AND instance layers - remove from the old map's old layer
                 PacketSender.SendEntityLeaveLayerOnMap(this, oldMap.Id, LastInstanceLayer);
                 // Remove any trace of our player from the old layer's processing
