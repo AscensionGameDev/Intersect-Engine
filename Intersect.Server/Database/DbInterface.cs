@@ -637,7 +637,7 @@ namespace Intersect.Server.Database
                         case GameObjectType.Map:
                             foreach (var map in context.Maps)
                             {
-                                MapInstance.Lookup.Set(map.Id, map);
+                                MapController.Lookup.Set(map.Id, map);
                                 if (Options.Instance.MapOpts.Layers.DestroyOrphanedLayers)
                                 {
                                     map.DestroyOrphanedLayers();
@@ -743,7 +743,7 @@ namespace Intersect.Server.Database
 
                     break;
                 case GameObjectType.Map:
-                    dbObj = new MapInstance(predefinedid);
+                    dbObj = new MapController(predefinedid);
 
                     break;
                 case GameObjectType.Event:
@@ -856,8 +856,8 @@ namespace Intersect.Server.Database
                             break;
 
                         case GameObjectType.Map:
-                            context.Maps.Add((MapInstance)dbObj);
-                            MapInstance.Lookup.Set(dbObj.Id, dbObj);
+                            context.Maps.Add((MapController)dbObj);
+                            MapController.Lookup.Set(dbObj.Id, dbObj);
 
                             break;
 
@@ -984,8 +984,8 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Map:
-                            context.Maps.Remove((MapInstance)gameObject);
-                            MapInstance.Lookup.Delete(gameObject);
+                            context.Maps.Remove((MapController)gameObject);
+                            MapController.Lookup.Delete(gameObject);
 
                             break;
                         case GameObjectType.Event:
@@ -1101,7 +1101,7 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Map:
-                            context.Maps.Update((MapInstance)gameObject);
+                            context.Maps.Update((MapController)gameObject);
 
                             break;
                         case GameObjectType.Event:
@@ -1148,9 +1148,9 @@ namespace Intersect.Server.Database
             LoadMapFolders();
             CheckAllMapConnections();
 
-            foreach (var map in MapInstance.Lookup)
+            foreach (var map in MapController.Lookup)
             {
-                ((MapInstance) map.Value).Initialize();
+                ((MapController) map.Value).Initialize();
             }
         }
 
@@ -1224,13 +1224,13 @@ namespace Intersect.Server.Database
         public static void CheckAllMapConnections()
         {
             var changed = false;
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapController map in MapController.Lookup.Values)
             {
-                CheckMapConnections(map, MapInstance.Lookup);
+                CheckMapConnections(map, MapController.Lookup);
             }
         }
 
-        public static bool CheckMapConnections(MapInstance map, DatabaseObjectLookup maps)
+        public static bool CheckMapConnections(MapController map, DatabaseObjectLookup maps)
         {
             var updated = false;
             if (!maps.Keys.Contains(map.Up) && map.Up != Guid.Empty)
@@ -1272,7 +1272,7 @@ namespace Intersect.Server.Database
             lock (mapGrids)
             {
                 mapGrids.Clear();
-                foreach (var map in MapInstance.Lookup.Values)
+                foreach (var map in MapController.Lookup.Values)
                 {
                     if (mapGrids.Count == 0)
                     {
@@ -1301,13 +1301,13 @@ namespace Intersect.Server.Database
                     }
                 }
 
-                foreach (MapInstance map in MapInstance.Lookup.Values)
+                foreach (MapController map in MapController.Lookup.Values)
                 {
                     lock (map.GetMapLock())
                     {
                         var myGrid = map.MapGrid;
                         var surroundingMapIds = new List<Guid>();
-                        var surroundingMaps = new List<MapInstance>();
+                        var surroundingMaps = new List<MapController>();
                         for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                         {
                             for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
@@ -1325,7 +1325,7 @@ namespace Intersect.Server.Database
                                 {
                                     
                                     surroundingMapIds.Add(mapGrids[myGrid].MyGrid[x, y]);
-                                    surroundingMaps.Add(MapInstance.Get(mapGrids[myGrid].MyGrid[x, y]));
+                                    surroundingMaps.Add(MapController.Get(mapGrids[myGrid].MyGrid[x, y]));
                                 }
                             }
                         }

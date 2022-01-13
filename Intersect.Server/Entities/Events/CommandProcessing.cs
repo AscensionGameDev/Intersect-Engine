@@ -159,20 +159,19 @@ namespace Intersect.Server.Entities.Events
         private static void ProcessCommand(
             SetSelfSwitchCommand command,
             Player player,
-            Event instance,
+            Event eventInstance,
             CommandInstance stackInfo,
             Stack<CommandInstance> callStack
         )
         {
-            if (instance.Global)
+            if (eventInstance.Global)
             {
-                var map = MapInstance.Get(instance.MapId);
-                if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                if (MapController.TryGetInstanceFromMap(eventInstance.MapId, player.MapInstanceId, out var instance))
                 {
-                    var evts = mapProcessingLayer.GlobalEventInstances.Values.ToList();
+                    var evts = instance.GlobalEventInstances.Values.ToList();
                     for (var i = 0; i < evts.Count; i++)
                     {
-                        if (evts[i] != null && evts[i].BaseEvent == instance.BaseEvent)
+                        if (evts[i] != null && evts[i].BaseEvent == eventInstance.BaseEvent)
                         {
                             evts[i].SelfSwitch[command.SwitchId] = command.Value;
                         }
@@ -181,7 +180,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                instance.SelfSwitch[command.SwitchId] = command.Value;
+                eventInstance.SelfSwitch[command.SwitchId] = command.Value;
             }
         }
 
@@ -754,7 +753,7 @@ namespace Intersect.Server.Entities.Events
         private static void ProcessCommand(
             SpawnNpcCommand command,
             Player player,
-            Event instance,
+            Event eventInstance,
             CommandInstance stackInfo,
             Stack<CommandInstance> callStack
         )
@@ -777,7 +776,7 @@ namespace Intersect.Server.Entities.Events
                 {
                     foreach (var evt in player.EventLookup)
                     {
-                        if (evt.Value.MapId != instance.MapId)
+                        if (evt.Value.MapId != eventInstance.MapId)
                         {
                             continue;
                         }
@@ -833,14 +832,10 @@ namespace Intersect.Server.Entities.Events
             }
 
             var tile = new TileHelper(mapId, tileX, tileY);
-            if (tile.TryFix())
+            if (tile.TryFix() && MapController.TryGetInstanceFromMap(mapId, player.MapInstanceId, out var instance))
             {
-                var npcMapInstance = MapInstance.Get(mapId);
-                if (npcMapInstance != null && npcMapInstance.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
-                {
-                    var npc = mapProcessingLayer.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
-                    player.SpawnedNpcs.Add((Npc)npc);
-                }
+                var npc = instance.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
+                player.SpawnedNpcs.Add((Npc)npc);
             }
         }
 
@@ -921,7 +916,7 @@ namespace Intersect.Server.Entities.Events
                         //Attach to entity instead of playing on tile
                         PacketSender.SendAnimationToProximity(
                             animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id,
-                            targetEntity.MapId, 0, 0, 0, targetEntity.InstanceLayer
+                            targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
                         );
 
                         return;
@@ -970,7 +965,7 @@ namespace Intersect.Server.Entities.Events
             if (tile.TryFix())
             {
                 PacketSender.SendAnimationToProximity(
-                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte) direction, player.InstanceLayer
+                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte) direction, player.MapInstanceId
                 );
             }
         }

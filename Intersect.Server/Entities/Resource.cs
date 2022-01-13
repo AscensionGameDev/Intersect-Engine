@@ -68,7 +68,7 @@ namespace Intersect.Server.Entities
                 if (Base.AnimationId != Guid.Empty)
                 {
                     PacketSender.SendAnimationToProximity(
-                        Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, (int)Directions.Up, InstanceLayer
+                        Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, (int)Directions.Up, MapInstanceId
                     );
                 }
             }
@@ -120,10 +120,10 @@ namespace Intersect.Server.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var mapInstance = MapInstance.Get(tileHelper.GetMapId());
-                        if (mapInstance.TryGetProcesingLayerWithId(InstanceLayer, out var map))
+                        var mapId = tileHelper.GetMapId();
+                        if (MapController.TryGetInstanceFromMap(mapId, MapInstanceId, out var mapInstance))
                         {
-                            if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
+                            if (!mapInstance.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
                             {
                                 tiles.Add(tileHelper);
                             }
@@ -166,10 +166,10 @@ namespace Intersect.Server.Entities
                 {
                     if (ItemBase.Get(item.ItemId) != null)
                     {
-                        var map = MapInstance.Get(selectedTile.GetMapId());
-                        if (map != null && map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
+                        var mapId = selectedTile.GetMapId();
+                        if (MapController.TryGetInstanceFromMap(mapId, MapInstanceId, out var mapInstance))
                         {
-                            mapProcessingLayer.SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
+                            mapInstance.SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
                         }
                     }
                 }

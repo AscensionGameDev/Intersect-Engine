@@ -263,20 +263,15 @@ namespace Intersect.Server.Entities.Events
         {
             if (eventInstance != null)
             {
-                if (eventInstance.Global)
+                if (eventInstance.Global && MapController.TryGetInstanceFromMap(eventInstance.MapId, player.MapInstanceId, out var instance))
                 {
-                    var map = MapInstance.Get(eventInstance.MapId);
-                    if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                    if (instance.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
                     {
-                        if (mapProcessingLayer.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
+                        if (evt != null)
                         {
-                            if (evt != null)
-                            {
-                                return evt.SelfSwitch[condition.SwitchIndex] == condition.Value;
-                            }
+                            return evt.SelfSwitch[condition.SwitchIndex] == condition.Value;
                         }
                     }
-                        
                 }
                 else
                 {
@@ -374,13 +369,14 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            var map = MapInstance.Get(eventInstance?.MapId ?? Guid.Empty);
+            var map = MapController.Get(eventInstance?.MapId ?? Guid.Empty);
             if (map == null)
             {
-                map = MapInstance.Get(player.MapId);
+                // If we couldn't get an entity's map, use the player's map
+                map = MapController.Get(player.MapId);
             }
 
-            if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var instanceLayer))
+            if (map != null && map.TryGetInstance(player.MapInstanceId, out var instanceLayer))
             {
                 var entities = instanceLayer.GetEntities();
                 foreach (var en in entities)

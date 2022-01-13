@@ -647,7 +647,7 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, NeedMapPacket packet)
         {
             var player = client?.Entity;
-            var map = MapInstance.Get(packet.MapId);
+            var map = MapController.Get(packet.MapId);
             if (map != null)
             {
                 PacketSender.SendMap(client, packet.MapId);
@@ -823,10 +823,10 @@ namespace Intersect.Server.Networking
                 }
 
                 PacketSender.SendProximityMsgToLayer(
-                    Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.InstanceLayer, chatColor,
+                    Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                     player.Name
                 );
-                PacketSender.SendChatBubble(player.Id, player.InstanceLayer, (int) EntityTypes.GlobalEntity, msg, player.MapId);
+                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityTypes.GlobalEntity, msg, player.MapId);
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
@@ -1178,7 +1178,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendAnimationToProximity(
                             attackAnim.Id, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
-                            attackingTile.GetY(), (sbyte) player.Dir, player.InstanceLayer
+                            attackingTile.GetY(), (sbyte) player.Dir, player.MapInstanceId
                         );
                     }
 
@@ -1231,10 +1231,9 @@ namespace Intersect.Server.Networking
                                     ChatMessageType.Inventory, CustomColors.NoAmmo);
                             }
 #endif
-                        var map = MapInstance.Get(player.MapId);
-                        if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                        if (MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out var mapInstance))
                         {
-                            mapProcessingLayer
+                            mapInstance
                             .SpawnMapProjectile(
                                 player, projectileBase, null, weaponItem, player.MapId,
                                 (byte)player.X, (byte)player.Y, (byte)player.Z,
@@ -1283,24 +1282,21 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendAnimationToProximity(
                             classBase.AttackAnimationId, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
-                            attackingTile.GetY(), (sbyte) player.Dir, player.InstanceLayer
+                            attackingTile.GetY(), (sbyte) player.Dir, player.MapInstanceId
                         );
                     }
                 }
             }
 
-            foreach (var map in player.Map.GetSurroundingMaps(true))
+            foreach (var mapInstance in MapController.GetSurroundingMapInstances(player.Map.Id, player.MapInstanceId, true))
             {
-                if (map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                foreach (var entity in mapInstance.GetEntities())
                 {
-                    foreach (var entity in mapProcessingLayer.GetEntities())
+                    if (entity.Id == target)
                     {
-                        if (entity.Id == target)
-                        {
-                            player.TryAttack(entity);
+                        player.TryAttack(entity);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -1555,61 +1551,52 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var map = MapInstance.Get(packet.MapId);
-            
-            // Is this a valid map?
-            if (map == null)
+            if (MapController.TryGetInstanceFromMap(packet.MapId, player.MapInstanceId, out var mapInstance))
             {
-                return;
-            }
+                var map = MapController.Get(packet.MapId);
 
-            if(!map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
-            {
-                return;
-            }
-
-            // Is our user within range of the item they are trying to pick up?
-            if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > Options.Loot.MaximumLootWindowDistance)
-            {
-                return;
-            }
-
-            var giveItems = new Dictionary<MapInstance, List<MapItem>>();
-            // Are we trying to pick up everything on this location or one specific item?
-            if (packet.UniqueId == Guid.Empty)
-            {
-                // GET IT ALL! BE GREEDY!
-                foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
+                // Is our user within range of the item they are trying to pick up?
+                if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > Options.Loot.MaximumLootWindowDistance)
                 {
-                    var tempMap = itemMap.Key;
-                    if (!giveItems.ContainsKey(itemMap.Key))
-                    {
-                        giveItems.Add(tempMap, new List<MapItem>());
-                    }
+                    return;
+                }
 
-                    foreach(var itemLoc in itemMap.Value)
+                var giveItems = new Dictionary<MapController, List<MapItem>>();
+                // Are we trying to pick up everything on this location or one specific item?
+                if (packet.UniqueId == Guid.Empty)
+                {
+                    // GET IT ALL! BE GREEDY!
+                    foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
                     {
-                        giveItems[tempMap].AddRange(mapProcessingLayer.FindItemsAt(itemLoc));
+                        var tempMap = itemMap.Key;
+                        if (!giveItems.ContainsKey(itemMap.Key))
+                        {
+                            giveItems.Add(tempMap, new List<MapItem>());
+                        }
+
+                        foreach (var itemLoc in itemMap.Value)
+                        {
+                            giveItems[tempMap].AddRange(mapInstance.FindItemsAt(itemLoc));
+                        }
                     }
                 }
-            }
-            else
-            {
-                // One specific item.
-                giveItems.Add(map, new List<MapItem>() { mapProcessingLayer.FindItem(packet.UniqueId) });
-            }
-
-            // Go through each item we're trying to give our player and see if we can do so.
-            foreach (var itemMap in giveItems)
-            {
-                var tempMap = itemMap.Key;
-                var toRemove = new List<MapItem>();
-                foreach (var mapItem in itemMap.Value)
+                else
                 {
-                    if (mapItem == null)
+                    // One specific item.
+                    giveItems.Add(map, new List<MapItem>() { mapInstance.FindItem(packet.UniqueId) });
+                }
+
+                // Go through each item we're trying to give our player and see if we can do so.
+                foreach (var itemMap in giveItems)
+                {
+                    var tempMap = itemMap.Key;
+                    var toRemove = new List<MapItem>();
+                    foreach (var mapItem in itemMap.Value)
                     {
-                        continue;
-                    }
+                        if (mapItem == null)
+                        {
+                            continue;
+                        }
 
                     var canTake = false;
                     // Can we actually take this item?
@@ -1624,38 +1611,39 @@ namespace Intersect.Server.Networking
                         canTake = true;
                     }
 
-                    // Does this item still exist, or did it somehow get picked up before we got there?
-                    if (mapProcessingLayer.FindItem(mapItem.UniqueId) == null)
-                    {
-                        continue;
-                    }
-
-                    if (canTake)
-                    {
-                        //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
-                        mapProcessingLayer.RemoveItem(mapItem);
-
-                        // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
+                        // Does this item still exist, or did it somehow get picked up before we got there?
+                        if (mapInstance.FindItem(mapItem.UniqueId) == null)
                         {
-                            var item = ItemBase.Get(mapItem.ItemId);
-                            if (item != null)
+                            continue;
+                        }
+
+                        if (canTake)
+                        {
+                            //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
+                            mapInstance.RemoveItem(mapItem);
+
+                            // Try to give the item to our player.
+                            if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
                             {
-                                PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
+                                var item = ItemBase.Get(mapItem.ItemId);
+                                if (item != null)
+                                {
+                                    PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
+                                }
+                            }
+                            else
+                            {
+                                // We couldn't give the player their item, notify them.
+                                PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                             }
                         }
-                        else
-                        {
-                            // We couldn't give the player their item, notify them.
-                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-                        }
                     }
-                }
 
-                // Remove all items that were picked up.
-                foreach (var item in toRemove)
-                {
-                    mapProcessingLayer.RemoveItem(item);
+                    // Remove all items that were picked up.
+                    foreach (var item in toRemove)
+                    {
+                        mapInstance.RemoveItem(item);
+                    }
                 }
             }
         }
@@ -1696,18 +1684,15 @@ namespace Intersect.Server.Networking
             Entity target = null;
             if (packet.TargetId != Guid.Empty)
             {
-                foreach (var map in player.Map.GetSurroundingMaps(true))
+                foreach (var mapInstance in MapController.GetSurroundingMapInstances(player.Map.Id, player.MapInstanceId, true))
                 {
-                    if (map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                    foreach (var en in mapInstance.GetEntities())
                     {
-                        foreach (var en in mapProcessingLayer.GetEntities())
+                        if (en.Id == packet.TargetId)
                         {
-                            if (en.Id == packet.TargetId)
-                            {
-                                target = en;
+                            target = en;
 
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
@@ -1753,19 +1738,16 @@ namespace Intersect.Server.Networking
 
             if (packet.TargetId != Guid.Empty)
             {
-                foreach (var map in player.Map.GetSurroundingMaps(true))
+                foreach (var mapInstance in MapController.GetSurroundingMapInstances(player.Map.Id, player.MapInstanceId, true))
                 {
-                    if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
+                    foreach (var en in mapInstance.GetEntities())
                     {
-                        foreach (var en in mapProcessingLayer.GetEntities())
+                        if (en.Id == packet.TargetId)
                         {
-                            if (en.Id == packet.TargetId)
-                            {
-                                player.UseSpell(packet.Slot, en);
-                                casted = true;
+                            player.UseSpell(packet.Slot, en);
+                            casted = true;
 
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
@@ -2976,14 +2958,14 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var map = MapInstance.Get(packet.MapId);
+            var map = MapController.Get(packet.MapId);
 
             if (map == null)
             {
                 return;
             }
 
-            map.Load(packet.JsonData, MapInstance.Get(packet.MapId).Revision + 1);
+            map.Load(packet.JsonData, MapController.Get(packet.MapId).Revision + 1);
             MapList.List.UpdateMap(packet.MapId);
 
             //Event Fixing
@@ -3038,7 +3020,7 @@ namespace Intersect.Server.Networking
             var players = new List<Player>();
             foreach (var surrMap in map.GetSurroundingMaps(true))
             {
-                players.AddRange(surrMap.GetPlayersOnAllLayers().ToArray());
+                players.AddRange(surrMap.GetPlayersOnAllInstances().ToArray());
             }
 
             foreach (var plyr in players)
@@ -3063,14 +3045,14 @@ namespace Intersect.Server.Networking
             {
                 ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                 var newMapId = Guid.Empty;
-                MapInstance newMap = null;
-                var tmpMap = new MapInstance(true);
+                MapController newMap = null;
+                var tmpMap = new MapController(true);
                 if (!packet.AttachedToMap)
                 {
                     var destType = (int)packet.MapListParentType;
-                    newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                    newMap = (MapController)DbInterface.AddGameObject(GameObjectType.Map);
                     newMapId = newMap.Id;
-                    tmpMap = MapInstance.Get(newMapId);
+                    tmpMap = MapController.Get(newMapId);
                     DbInterface.GenerateMapGrids();
                     PacketSender.SendMap(client, newMapId, true);
                     PacketSender.SendMapGridToAll(tmpMap.MapGrid);
@@ -3117,61 +3099,61 @@ namespace Intersect.Server.Networking
                     switch (packet.AttachDir)
                     {
                         case 0:
-                            if (MapInstance.Get(MapInstance.Get(relativeMap).Up) == null)
+                            if (MapController.Get(MapController.Get(relativeMap).Up) == null)
                             {
-                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMap = (MapController)DbInterface.AddGameObject(GameObjectType.Map);
                                 newMapId = newMap.Id;
-                                tmpMap = MapInstance.Get(newMapId);
-                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
-                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY - 1;
-                                MapInstance.Get(relativeMap).Up = newMapId;
-                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
+                                tmpMap = MapController.Get(newMapId);
+                                tmpMap.MapGrid = MapController.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapController.Get(relativeMap).MapGridX;
+                                tmpMap.MapGridY = MapController.Get(relativeMap).MapGridY - 1;
+                                MapController.Get(relativeMap).Up = newMapId;
+                                DbInterface.SaveGameObject(MapController.Get(relativeMap));
                             }
 
                             break;
 
                         case 1:
-                            if (MapInstance.Get(MapInstance.Get(relativeMap).Down) == null)
+                            if (MapController.Get(MapController.Get(relativeMap).Down) == null)
                             {
-                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMap = (MapController)DbInterface.AddGameObject(GameObjectType.Map);
                                 newMapId = newMap.Id;
-                                tmpMap = MapInstance.Get(newMapId);
-                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
-                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY + 1;
-                                MapInstance.Get(relativeMap).Down = newMapId;
-                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
+                                tmpMap = MapController.Get(newMapId);
+                                tmpMap.MapGrid = MapController.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapController.Get(relativeMap).MapGridX;
+                                tmpMap.MapGridY = MapController.Get(relativeMap).MapGridY + 1;
+                                MapController.Get(relativeMap).Down = newMapId;
+                                DbInterface.SaveGameObject(MapController.Get(relativeMap));
                             }
 
                             break;
 
                         case 2:
-                            if (MapInstance.Get(MapInstance.Get(relativeMap).Left) == null)
+                            if (MapController.Get(MapController.Get(relativeMap).Left) == null)
                             {
-                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMap = (MapController)DbInterface.AddGameObject(GameObjectType.Map);
                                 newMapId = newMap.Id;
-                                tmpMap = MapInstance.Get(newMapId);
-                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX - 1;
-                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                                MapInstance.Get(relativeMap).Left = newMapId;
-                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
+                                tmpMap = MapController.Get(newMapId);
+                                tmpMap.MapGrid = MapController.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapController.Get(relativeMap).MapGridX - 1;
+                                tmpMap.MapGridY = MapController.Get(relativeMap).MapGridY;
+                                MapController.Get(relativeMap).Left = newMapId;
+                                DbInterface.SaveGameObject(MapController.Get(relativeMap));
                             }
 
                             break;
 
                         case 3:
-                            if (MapInstance.Get(MapInstance.Get(relativeMap).Right) == null)
+                            if (MapController.Get(MapController.Get(relativeMap).Right) == null)
                             {
-                                newMap = (MapInstance)DbInterface.AddGameObject(GameObjectType.Map);
+                                newMap = (MapController)DbInterface.AddGameObject(GameObjectType.Map);
                                 newMapId = newMap.Id;
-                                tmpMap = MapInstance.Get(newMapId);
-                                tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
-                                tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX + 1;
-                                tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
-                                MapInstance.Get(relativeMap).Right = newMapId;
-                                DbInterface.SaveGameObject(MapInstance.Get(relativeMap));
+                                tmpMap = MapController.Get(newMapId);
+                                tmpMap.MapGrid = MapController.Get(relativeMap).MapGrid;
+                                tmpMap.MapGridX = MapController.Get(relativeMap).MapGridX + 1;
+                                tmpMap.MapGridY = MapController.Get(relativeMap).MapGridY;
+                                MapController.Get(relativeMap).Right = newMapId;
+                                DbInterface.SaveGameObject(MapController.Get(relativeMap));
                             }
 
                             break;
@@ -3188,8 +3170,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Down != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Down).Up = newMapId;
-                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Down));
+                                    MapController.Get(tmpMap.Down).Up = newMapId;
+                                    DbInterface.SaveGameObject(MapController.Get(tmpMap.Down));
                                 }
                             }
 
@@ -3199,8 +3181,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Up != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Up).Down = newMapId;
-                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Up));
+                                    MapController.Get(tmpMap.Up).Down = newMapId;
+                                    DbInterface.SaveGameObject(MapController.Get(tmpMap.Up));
                                 }
                             }
                         }
@@ -3213,8 +3195,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Left != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Left).Right = newMapId;
-                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Left));
+                                    MapController.Get(tmpMap.Left).Right = newMapId;
+                                    DbInterface.SaveGameObject(MapController.Get(tmpMap.Left));
                                 }
                             }
 
@@ -3224,8 +3206,8 @@ namespace Intersect.Server.Networking
 
                                 if (tmpMap.Right != Guid.Empty)
                                 {
-                                    MapInstance.Get(tmpMap.Right).Left = newMapId;
-                                    DbInterface.SaveGameObject(MapInstance.Get(tmpMap.Right));
+                                    MapController.Get(tmpMap.Right).Left = newMapId;
+                                    DbInterface.SaveGameObject(MapController.Get(tmpMap.Right));
                                 }
                             }
                         }
@@ -3234,16 +3216,16 @@ namespace Intersect.Server.Networking
                             
                         DbInterface.GenerateMapGrids();
                         PacketSender.SendMap(client, newMapId, true);
-                        PacketSender.SendMapGridToAll(MapInstance.Get(newMapId).MapGrid);
+                        PacketSender.SendMapGridToAll(MapController.Get(newMapId).MapGrid);
                         PacketSender.SendEnterMap(client, newMapId);
                         var folderDir = MapList.List.FindMapParent(relativeMap, null);
                         if (folderDir != null)
                         {
-                            folderDir.Children.AddMap(newMapId, MapInstance.Get(newMapId).TimeCreated, MapBase.Lookup);
+                            folderDir.Children.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapBase.Lookup);
                         }
                         else
                         {
-                            MapList.List.AddMap(newMapId, MapInstance.Get(newMapId).TimeCreated, MapBase.Lookup);
+                            MapList.List.AddMap(newMapId, MapController.Get(newMapId).TimeCreated, MapBase.Lookup);
                         }
 
                         DbInterface.SaveMapList();
@@ -3313,8 +3295,8 @@ namespace Intersect.Server.Networking
                     {
                         var mapListMap = MapList.List.FindMap(packet.TargetId);
                         mapListMap.Name = packet.Name;
-                        MapInstance.Get(packet.TargetId).Name = packet.Name;
-                        DbInterface.SaveGameObject(MapInstance.Get(packet.TargetId));
+                        MapController.Get(packet.TargetId).Name = packet.Name;
+                        DbInterface.SaveGameObject(MapController.Get(packet.TargetId));
                         PacketSender.SendMapListToAll();
                     }
 
@@ -3328,7 +3310,7 @@ namespace Intersect.Server.Networking
                     }
                     else if (packet.TargetType == 1)
                     {
-                        if (MapInstance.Lookup.Count == 1)
+                        if (MapController.Lookup.Count == 1)
                         {
                             PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
 
@@ -3339,9 +3321,9 @@ namespace Intersect.Server.Networking
                         {
                             ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                             mapId = packet.TargetId;
-                            var players = MapInstance.Get(mapId).GetPlayersOnAllLayers();
+                            var players = MapController.Get(mapId).GetPlayersOnAllInstances();
                             MapList.List.DeleteMap(mapId);
-                            DbInterface.DeleteGameObject(MapInstance.Get(mapId));
+                            DbInterface.DeleteGameObject(MapController.Get(mapId));
                             DbInterface.GenerateMapGrids();
                             PacketSender.SendMapListToAll();
                             foreach (var plyr in players)
@@ -3371,14 +3353,14 @@ namespace Intersect.Server.Networking
             var mapId = packet.MapId;
             var curMapId = packet.CurrentMapId;
             var mapGrid = 0;
-            if (MapInstance.Lookup.Keys.Contains(mapId))
+            if (MapController.Lookup.Keys.Contains(mapId))
             {
                 if (client.IsEditor)
                 {
                     lock (ServerContext.Instance.LogicService.LogicLock)
                     {
                         ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
-                        var map = MapInstance.Get(mapId);
+                        var map = MapController.Get(mapId);
                         if (map != null)
                         {
                             map.ClearConnections();
@@ -3390,32 +3372,32 @@ namespace Intersect.Server.Networking
                             //Up
                             if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
                             {
-                                MapInstance.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
+                                MapController.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
                             }
 
                             //Down
                             if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
                             {
-                                MapInstance.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
+                                MapController.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
                             }
 
                             //Left
                             if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
                             {
-                                MapInstance.Get(grid.MyGrid[gridX - 1, gridY])
+                                MapController.Get(grid.MyGrid[gridX - 1, gridY])
                                     ?.ClearConnections((int) Directions.Right);
                             }
 
                             //Right
                             if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
                             {
-                                MapInstance.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
+                                MapController.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
                             }
 
                             DbInterface.GenerateMapGrids();
-                            if (MapInstance.Lookup.Keys.Contains(curMapId))
+                            if (MapController.Lookup.Keys.Contains(curMapId))
                             {
-                                mapGrid = MapInstance.Get(curMapId).MapGrid;
+                                mapGrid = MapController.Get(curMapId).MapGrid;
                             }
                         }
 
@@ -3435,8 +3417,8 @@ namespace Intersect.Server.Networking
 
             var adjacentMapId = packet.AdjacentMapId;
             var linkMapId = packet.LinkMapId;
-            var adjacentMap = MapInstance.Get(packet.AdjacentMapId);
-            var linkMap = MapInstance.Get(packet.LinkMapId);
+            var adjacentMap = MapController.Get(packet.AdjacentMapId);
+            var linkMap = MapController.Get(packet.LinkMapId);
             long gridX = packet.GridX;
             long gridY = packet.GridY;
             var canLink = true;
@@ -3483,7 +3465,7 @@ namespace Intersect.Server.Networking
 
                         if (canLink)
                         {
-                            var updatedMaps = new HashSet<MapInstance>();
+                            var updatedMaps = new HashSet<MapController>();
                             for (var x = -1; x < adjacentGrid.Width + 1; x++)
                             {
                                 for (var y = -1; y < adjacentGrid.Height + 1; y++)
@@ -3504,42 +3486,42 @@ namespace Intersect.Server.Networking
 
                                             if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
-                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x, y - 1]));
+                                                MapController.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x, y - 1]));
                                             }
 
                                             if (inXBounds &&
                                                 y + 1 < adjacentGrid.Height &&
                                                 adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
-                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x, y + 1]));
+                                                MapController.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x, y + 1]));
                                             }
 
                                             if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
-                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x - 1, y]));
+                                                MapController.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x - 1, y]));
                                             }
 
                                             if (inYBounds &&
                                                 x + 1 < adjacentGrid.Width &&
                                                 adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
                                             {
-                                                MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
-                                                updatedMaps.Add(MapInstance.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
 
-                                                MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapInstance.Get(adjacentGrid.MyGrid[x + 1, y]));
+                                                MapController.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x + 1, y]));
                                             }
                                         }
                                     }
@@ -3956,11 +3938,11 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (MapInstance.Lookup.Keys.Contains(packet.MapId))
+            if (MapController.Lookup.Keys.Contains(packet.MapId))
             {
                 if (client.IsEditor)
                 {
-                    PacketSender.SendMapGrid(client, MapInstance.Get(packet.MapId).MapGrid);
+                    PacketSender.SendMapGrid(client, MapController.Get(packet.MapId).MapGrid);
                 }
             }
         }
@@ -3984,7 +3966,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var map = MapInstance.Get(packet.MapId);
+            var map = MapController.Get(packet.MapId);
             if (map != null)
             {
                 PacketSender.SendMap(client, packet.MapId);

@@ -31,9 +31,9 @@ namespace Intersect.Server.Entities.Events
 
         public Guid MapId;
 
-        public Guid InstanceLayer;
+        public Guid MapInstanceId;
 
-        public MapInstance MapInstance;
+        public MapController MapController;
 
         private Dictionary<string, string> mParams = new Dictionary<string, string>();
 
@@ -56,12 +56,12 @@ namespace Intersect.Server.Entities.Events
 
         public int Y;
 
-        public Event(Guid instanceId, MapInstance map, Player player, EventBase baseEvent)
+        public Event(Guid instanceId, MapController map, Player player, EventBase baseEvent)
         {
             Id = instanceId;
-            InstanceLayer = player.InstanceLayer;
+            MapInstanceId = player.MapInstanceId;
             MapId = map?.Id ?? Guid.Empty;
-            MapInstance = map;
+            MapController = map;
             Player = player;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
@@ -69,13 +69,13 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
         }
 
-        public Event(Guid instanceId, EventBase baseEvent, MapInstance map, Guid instanceLayer) //Global constructor
+        public Event(Guid instanceId, EventBase baseEvent, MapController map, Guid instanceLayer) //Global constructor
         {
             Id = instanceId;
-            InstanceLayer = instanceLayer;
+            MapInstanceId = instanceLayer;
             Global = true;
             MapId = map?.Id ?? Guid.Empty;
-            MapInstance = map;
+            MapController = map;
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
@@ -89,7 +89,7 @@ namespace Intersect.Server.Entities.Events
 
         public bool[] SelfSwitch { get; set; }
 
-        public void Update(long timeMs, MapInstance map)
+        public void Update(long timeMs, MapController map)
         {
             var sendLeave = false;
             var originalPageInstance = PageInstance;
@@ -287,13 +287,13 @@ namespace Intersect.Server.Entities.Events
                     {
                         if (Global)
                         {
-                            if (map != null && map.TryGetProcesingLayerWithId(Player.InstanceLayer, out var mapProcessingLayer))
+                            if (MapController.TryGetInstanceFromMap(map.Id, Player.MapInstanceId, out var mapInstance))
                             {
-                                var globalEvent = mapProcessingLayer.GetGlobalEventInstance(BaseEvent);
+                                var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
                                 if (globalEvent != null)
                                 {
                                     PageInstance = new EventPageInstance(
-                                        BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, Player.InstanceLayer, this, Player,
+                                        BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, Player.MapInstanceId, this, Player,
                                         globalEvent.GlobalPageInstance[i]
                                     );
 
@@ -309,7 +309,7 @@ namespace Intersect.Server.Entities.Events
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, Player.InstanceLayer, this, Player);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, Player.MapInstanceId, this, Player);
                             sendLeave = false;
                             PageIndex = i;
                         }
@@ -336,7 +336,7 @@ namespace Intersect.Server.Entities.Events
 
             prams.Add("evtName", BaseEvent.Name);
 
-            var map = MapInstance.Get(BaseEvent.MapId);
+            var map = MapController.Get(BaseEvent.MapId);
             if (map != null)
             {
                 prams.Add("evtMap", map.Name);

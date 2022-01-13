@@ -513,11 +513,11 @@
     <Compile Include="Maps\MapActionMessages.cs" />
     <Compile Include="Maps\MapAnimations.cs" />
     <Compile Include="Maps\MapEntityMovements.cs" />
-    <Compile Include="Maps\MapInstance.cs" />
+    <Compile Include="Maps\MapController.cs" />
     <Compile Include="Maps\MapItemInstance.cs" />
     <Compile Include="Maps\MapItemSpawn.cs" />
     <Compile Include="Maps\MapNpcSpawn.cs" />
-    <Compile Include="Maps\MapProcessingLayer.cs" />
+    <Compile Include="Maps\MapInstance.cs" />
     <Compile Include="Maps\MapResourceSpawn.cs" />
     <Compile Include="Maps\MapTileLoc.cs" />
     <Compile Include="Maps\MapTrapInstance.cs" />

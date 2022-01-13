@@ -30,33 +30,33 @@ namespace Intersect.Server.General
 
         public static void KillResourcesOf(ResourceBase resource)
         {
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapController map in MapController.Lookup.Values)
             {
-                map?.DespawnResourceAcrossProcessingLayers(resource);
+                map?.DespawnResourceAcrossInstances(resource);
             }
         }
 
         public static void KillNpcsOf(NpcBase npc)
         {
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapController map in MapController.Lookup.Values)
             {
-                map?.DespawnNpcAcrossProcessingLayers(npc);
+                map?.DespawnNpcAcrossInstances(npc);
             }
         }
 
         public static void KillProjectilesOf(ProjectileBase projectile)
         {
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapController map in MapController.Lookup.Values)
             {
-                map?.DespawnProjectileAcrossProcessingLayers(projectile);
+                map?.DespawnProjectileAcrossInstances(projectile);
             }
         }
 
         public static void KillItemsOf(ItemBase item)
         {
-            foreach (MapInstance map in MapInstance.Lookup.Values)
+            foreach (MapController map in MapController.Lookup.Values)
             {
-                map?.DespawnItemAcrossProcessingLayers(item);
+                map?.DespawnItemAcrossInstances(item);
             }
         }
 

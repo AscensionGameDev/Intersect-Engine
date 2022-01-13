@@ -72,16 +72,16 @@ namespace Intersect.Server.Classes.Maps
 
         public void Update()
         {
-            if (MapInstance.Get(MapId) != null && MapInstance.Get(MapId).TryGetProcesingLayerWithId(Owner.InstanceLayer, out var mapProcessingLayer))
+            if (MapController.TryGetInstanceFromMap(MapId, Owner.MapInstanceId, out var mapInstance))
             {
                 if (Triggered)
                 {
-                    mapProcessingLayer.RemoveTrap(this);
+                    mapInstance.RemoveTrap(this);
                 }
 
                 if (Timing.Global.Milliseconds > Duration)
                 {
-                    mapProcessingLayer.RemoveTrap(this);
+                    mapInstance.RemoveTrap(this);
                 }
             }
         }
