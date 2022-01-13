@@ -354,7 +354,7 @@ namespace Intersect.Server.Entities.Events
 
             if (this.Trigger == EventTrigger.PlayerCollide && Passable)
             {
-                if (Map != null && Map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                if (Map != null && Map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                 {
                     var players = mapProcessingLayer.GetPlayersOnMap();
                     foreach (var player in players)
@@ -819,7 +819,7 @@ namespace Intersect.Server.Entities.Events
                 if (map == null)
                 {
                     return true;
-                } else if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                } else if (map != null && map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                 {
                     if (!mapProcessingLayer.FindEvent(GlobalClone.BaseEvent, GlobalClone))
                     {

@@ -287,7 +287,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         if (Global)
                         {
-                            if (map != null && map.TryGetRelevantProcessingLayer(Player.InstanceLayer, out var mapProcessingLayer))
+                            if (map != null && map.TryGetProcesingLayerWithId(Player.InstanceLayer, out var mapProcessingLayer))
                             {
                                 var globalEvent = mapProcessingLayer.GetGlobalEventInstance(BaseEvent);
                                 if (globalEvent != null)

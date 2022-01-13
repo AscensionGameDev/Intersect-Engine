@@ -167,7 +167,7 @@ namespace Intersect.Server.Entities.Events
             if (instance.Global)
             {
                 var map = MapInstance.Get(instance.MapId);
-                if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+                if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
                 {
                     var evts = mapProcessingLayer.GlobalEventInstances.Values.ToList();
                     for (var i = 0; i < evts.Count; i++)
@@ -836,7 +836,7 @@ namespace Intersect.Server.Entities.Events
             if (tile.TryFix())
             {
                 var npcMapInstance = MapInstance.Get(mapId);
-                if (npcMapInstance != null && npcMapInstance.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+                if (npcMapInstance != null && npcMapInstance.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
                 {
                     var npc = mapProcessingLayer.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
                     player.SpawnedNpcs.Add((Npc)npc);

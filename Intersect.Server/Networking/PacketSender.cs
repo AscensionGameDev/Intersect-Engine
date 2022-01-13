@@ -311,7 +311,7 @@ namespace Intersect.Server.Networking
         public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId, Player forPlayer)
         {
             var map = MapInstance.Get(mapId);
-            if (map != null && map.TryGetRelevantProcessingLayer(forPlayer.InstanceLayer, out var mapProcessingLayer))
+            if (map != null && map.TryGetProcesingLayerWithId(forPlayer.InstanceLayer, out var mapProcessingLayer))
             {
                 var entities = new List<Entity>();
                 entities.AddRange(mapProcessingLayer.GetEntities(false));
@@ -412,7 +412,7 @@ namespace Intersect.Server.Networking
         {
             // Sends a packet to the client telling it that the player has been warped to a new instance and that it should
             // clear its local entities
-            if (map != null && map.TryGetRelevantProcessingLayer(oldLayer, out var oldMapLayerProcesser))
+            if (map != null && map.TryGetProcesingLayerWithId(oldLayer, out var oldMapLayerProcesser))
             {
                 var entitiesToDispose = oldMapLayerProcesser.GetEntities();
                 var effectedMaps = oldMapLayerProcesser.GetMapInstance().GetSurroundingMapIds(true);
@@ -482,7 +482,7 @@ namespace Intersect.Server.Networking
         //EntityDataPacket
         public static void SendEntityDataToMap(Entity en, MapInstance map, Player except = null)
         {
-            if (en == null || map == null || !map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
+            if (en == null || map == null || !map.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
             {
                 return;
             }
@@ -559,7 +559,7 @@ namespace Intersect.Server.Networking
             var map = en.Map;
             foreach (var mp in en.Map.GetSurroundingMaps(true))
             {
-                if (mp.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
+                if (mp.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
                 {
                     var players = mapProcessingLayer.GetPlayersOnMap();
                     foreach (var pl in players)
@@ -823,7 +823,7 @@ namespace Intersect.Server.Networking
         public static void SendEntityMove(Entity en, bool correction = false)
         {
             var map = en?.Map;
-            if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
+            if (map != null && map.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
                 {
@@ -843,7 +843,7 @@ namespace Intersect.Server.Networking
         public static void SendEntityMoveTo(Player player, Entity en, bool correction = false)
         {
             var map = en?.Map;
-            if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
+            if (map != null && map.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
             {
                 if (en is Player && !Options.Instance.Packets.BatchPlayerMovementPackets)
                 {
@@ -1028,7 +1028,7 @@ namespace Intersect.Server.Networking
         {
             var map = MapInstance.Get(mapId);
             var items = new List<MapItemUpdatePacket>();
-            if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+            if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
             {
                 // Generate our data to be send to the client.
                 foreach (var item in mapProcessingLayer.AllMapItems.Values)
@@ -1468,7 +1468,7 @@ namespace Intersect.Server.Networking
             {
                 if (Options.Instance.Packets.BatchAnimationPackets)
                 {
-                    if (map.TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
+                    if (map.TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
                     {
                         mapProcessingLayer.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
                     }
@@ -1775,7 +1775,7 @@ namespace Intersect.Server.Networking
             if (map == null)
             {
                 return;
-            } else if (map != null && map.TryGetRelevantProcessingLayer(en.InstanceLayer, out var mapProcessingLayer))
+            } else if (map != null && map.TryGetProcesingLayerWithId(en.InstanceLayer, out var mapProcessingLayer))
             {
                 if (Options.Instance.Packets.BatchActionMessagePackets)
                 {
@@ -2101,7 +2101,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (MapInstance.Get(mapId).TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
+            if (MapInstance.Get(mapId).TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
             {
                 var players = mapProcessingLayer.GetPlayersOnMap();
                 foreach (var player in players)
@@ -2141,7 +2141,7 @@ namespace Intersect.Server.Networking
                 return false;
             }
 
-            if (MapInstance.Get(mapId).TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
+            if (MapInstance.Get(mapId).TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
             {
                 SendDataToMapLayer(mapId, instanceLayer, packet, except, mode);
 

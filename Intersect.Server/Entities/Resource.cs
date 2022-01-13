@@ -121,7 +121,7 @@ namespace Intersect.Server.Entities
                     {
                         //Tile is valid.. let's see if its open
                         var mapInstance = MapInstance.Get(tileHelper.GetMapId());
-                        if (mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var map))
+                        if (mapInstance.TryGetProcesingLayerWithId(InstanceLayer, out var map))
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
                             {
@@ -167,7 +167,7 @@ namespace Intersect.Server.Entities
                     if (ItemBase.Get(item.ItemId) != null)
                     {
                         var map = MapInstance.Get(selectedTile.GetMapId());
-                        if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                        if (map != null && map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                         {
                             mapProcessingLayer.SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
                         }

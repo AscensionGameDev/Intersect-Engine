@@ -32,7 +32,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnResourcesOfAcrossLayers(resource);
+                map?.DespawnResourceAcrossProcessingLayers(resource);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnNpcsOfAcrossLayers(npc);
+                map?.DespawnNpcAcrossProcessingLayers(npc);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnProjectilesOfAcrossLayers(projectile);
+                map?.DespawnProjectileAcrossProcessingLayers(projectile);
             }
         }
 
@@ -56,7 +56,7 @@ namespace Intersect.Server.General
         {
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
-                map?.DespawnItemsOfAcrossLayers(item);
+                map?.DespawnItemAcrossProcessingLayers(item);
             }
         }
 

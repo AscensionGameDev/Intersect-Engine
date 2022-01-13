@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Web.UI;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -13,18 +9,12 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
-using Intersect.Server.Localization;
-using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Intersect.Server.Entities;
 using Intersect.Server.Classes.Maps;
-
-using Newtonsoft.Json;
 
 namespace Intersect.Server.Maps
 {
@@ -192,7 +182,7 @@ namespace Intersect.Server.Maps
             {
                 foreach (var map in mMap.GetSurroundingMaps(false))
                 {
-                    if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                    if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                     {
                         entities.AddRange(mapProcessingLayer.GetEntities());
                     }
@@ -217,7 +207,7 @@ namespace Intersect.Server.Maps
                 if (map.Id == mMap.Id) // Map player is in
                 {
                     SendMapEntitiesTo(player);
-                } else if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer)) // Surrounding maps
+                } else if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer)) // Surrounding maps
                 {
                     mapProcessingLayer.SendMapEntitiesTo(player);
                 }
@@ -278,7 +268,7 @@ namespace Intersect.Server.Maps
             var surroundingMaps = mMap.GetSurroundingMaps();
             foreach (var map in surroundingMaps)
             {
-                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer, false))
+                if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer, false))
                 {
                     var adjoiningPlayers = mapProcessingLayer.GetPlayersOnMap();
                     if (adjoiningPlayers != null)
@@ -1195,7 +1185,7 @@ namespace Intersect.Server.Maps
             // Get all players in surrounding and current maps
             foreach (var map in surrMaps)
             {
-                if (map != null && map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                if (map != null && map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                 {
                     foreach (var plyr in mapProcessingLayer.GetPlayersOnMap())
                     {

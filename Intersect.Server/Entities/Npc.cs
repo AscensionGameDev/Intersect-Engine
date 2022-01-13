@@ -170,7 +170,7 @@ namespace Intersect.Server.Entities
                 AggroCenterZ = 0;
 
                 var map = MapInstance.Get(MapId);
-                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer)) {
+                if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer)) {
                     mapProcessingLayer.RemoveEntity(this);
                 }
                 PacketSender.SendEntityDie(this);
@@ -1170,7 +1170,7 @@ namespace Intersect.Server.Entities
                         if (curMapLink == Guid.Empty)
                         {
                             var map = MapInstance.Get(curMapLink);
-                            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                             {
                                 mapProcessingLayer.RemoveEntity(this);
                             }
@@ -1179,7 +1179,7 @@ namespace Intersect.Server.Entities
                         if (MapId != Guid.Empty)
                         {
                             var map = MapInstance.Get(MapId);
-                            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                            if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                             {
                                 mapProcessingLayer.AddEntity(this);
                             }
@@ -1250,7 +1250,7 @@ namespace Intersect.Server.Entities
         public override void NotifySwarm(Entity attacker)
         {
             var map = MapInstance.Get(MapId);
-            if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+            if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
             {
                 var mapEntities = mapProcessingLayer.GetEntities(true);
                 foreach (var en in mapEntities)
@@ -1413,7 +1413,7 @@ namespace Intersect.Server.Entities
             // Scan for nearby targets
             foreach (var map in maps)
             {
-                if (map.TryGetRelevantProcessingLayer(InstanceLayer, out var mapProcessingLayer))
+                if (map.TryGetProcesingLayerWithId(InstanceLayer, out var mapProcessingLayer))
                 {
                     foreach (var entity in mapProcessingLayer.GetCachedEntities())
                     {
@@ -1553,7 +1553,7 @@ namespace Intersect.Server.Entities
                 return;
             }
             MapProcessingLayer map;
-            if (!mapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out map))
+            if (!mapInstance.TryGetProcesingLayerWithId(InstanceLayer, out map))
             {
                 return;
             }
@@ -1567,7 +1567,7 @@ namespace Intersect.Server.Entities
                 var oldMapInstance = MapInstance.Get(MapId);
                 if (oldMapInstance != null)
                 {
-                    if (oldMapInstance.TryGetRelevantProcessingLayer(InstanceLayer, out var oldMap))
+                    if (oldMapInstance.TryGetProcesingLayerWithId(InstanceLayer, out var oldMap))
                     {
                         oldMap.RemoveEntity(this);
                     }

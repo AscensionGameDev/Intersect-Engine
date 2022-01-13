@@ -182,7 +182,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                             if (grid.MyGrid[x, y] != Guid.Empty)
                                             {
                                                 var tmpMap = MapInstance.Get(grid.MyGrid[x, y]);
-                                                if (tmpMap != null && tmpMap.TryGetRelevantProcessingLayer(mEntity.InstanceLayer, out var mapProcessingLayer))
+                                                if (tmpMap != null && tmpMap.TryGetProcesingLayerWithId(mEntity.InstanceLayer, out var mapProcessingLayer))
                                                 {
                                                     //Copy the cached array of tile blocks
 

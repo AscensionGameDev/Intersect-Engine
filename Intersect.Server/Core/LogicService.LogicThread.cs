@@ -342,7 +342,7 @@ namespace Intersect.Server.Core
                     if (onlyProjectiles)
                     {
                         
-                        map.UpdateProjectiles(Timing.Global.Milliseconds);
+                        map.UpdateProjectilesOnAllLayers(Timing.Global.Milliseconds);
                         if (ActiveMaps.Contains(map.Id))
                         {
                             MapProjectileUpdateQueue.Enqueue(map);

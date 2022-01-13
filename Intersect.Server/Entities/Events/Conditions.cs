@@ -266,7 +266,7 @@ namespace Intersect.Server.Entities.Events
                 if (eventInstance.Global)
                 {
                     var map = MapInstance.Get(eventInstance.MapId);
-                    if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var mapProcessingLayer))
+                    if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
                     {
                         if (mapProcessingLayer.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
                         {
@@ -380,7 +380,7 @@ namespace Intersect.Server.Entities.Events
                 map = MapInstance.Get(player.MapId);
             }
 
-            if (map != null && map.TryGetRelevantProcessingLayer(player.InstanceLayer, out var instanceLayer))
+            if (map != null && map.TryGetProcesingLayerWithId(player.InstanceLayer, out var instanceLayer))
             {
                 var entities = instanceLayer.GetEntities();
                 foreach (var en in entities)

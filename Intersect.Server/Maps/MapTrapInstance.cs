@@ -72,7 +72,7 @@ namespace Intersect.Server.Classes.Maps
 
         public void Update()
         {
-            if (MapInstance.Get(MapId) != null && MapInstance.Get(MapId).TryGetRelevantProcessingLayer(Owner.InstanceLayer, out var mapProcessingLayer))
+            if (MapInstance.Get(MapId) != null && MapInstance.Get(MapId).TryGetProcesingLayerWithId(Owner.InstanceLayer, out var mapProcessingLayer))
             {
                 if (Triggered)
                 {

@@ -2,23 +2,16 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
-using Intersect.Network.Packets.Server;
-using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
-using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Utilities;
 
 using Newtonsoft.Json;
 
@@ -127,8 +120,8 @@ namespace Intersect.Server.Maps
         {
             lock (mMapLock)
             {
-                DespawnEverything();
-                RespawnEverything();
+                DespawnAllProcessingLayers();
+                RespawnAllProcessingLayers();
             }
         }
 
@@ -136,7 +129,7 @@ namespace Intersect.Server.Maps
         {
             lock (mMapLock)
             {
-                DespawnEverything();
+                DespawnAllProcessingLayers();
                 base.Load(json);
                 if (keepRevision > -1)
                 {
@@ -145,7 +138,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void DespawnNpcsOfAcrossLayers(NpcBase npcBase)
+        public void DespawnNpcAcrossProcessingLayers(NpcBase npcBase)
         {
             foreach (var entity in GetEntitiesOnAllLayers())
             {
@@ -159,7 +152,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void DespawnResourcesOfAcrossLayers(ResourceBase resourceBase)
+        public void DespawnResourceAcrossProcessingLayers(ResourceBase resourceBase)
         {
             foreach (var entity in GetEntitiesOnAllLayers())
             {
@@ -173,7 +166,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void DespawnProjectilesOfAcrossLayers(ProjectileBase projectileBase)
+        public void DespawnProjectileAcrossProcessingLayers(ProjectileBase projectileBase)
         {
             var guids = new List<Guid>();
             foreach (var entity in GetEntitiesOnAllLayers())
@@ -190,7 +183,7 @@ namespace Intersect.Server.Maps
             PacketSender.SendRemoveProjectileSpawnsFromAllLayers(Id, guids.ToArray(), null);
         }
 
-        public void DespawnItemsOfAcrossLayers(ItemBase itemBase)
+        public void DespawnItemAcrossProcessingLayers(ItemBase itemBase)
         {
             foreach(var mpl in mMapProcessingLayers.Values)
             {
@@ -210,13 +203,13 @@ namespace Intersect.Server.Maps
             lock (GetMapLock())
             {
                 var surrMaps = GetSurroundingMaps(true);
-                UpdateProcessingInstances(Globals.Timing.Milliseconds);
+                UpdateAllProcessingLayers(Globals.Timing.Milliseconds);
                 LastUpdateTime = timeMs;
             }
         }
 
         // TODO Alex I don't think this will be necessary once processing layers are handled in their own jobs
-        public void UpdateProjectiles(long timeMs)
+        public void UpdateProjectilesOnAllLayers(long timeMs)
         {
             mMapProcessingLayers.Values.ToList().ForEach((mpl) =>
             {
@@ -291,7 +284,7 @@ namespace Intersect.Server.Maps
         }
 
         //Map Reseting Functions
-        public void DespawnEverything()
+        public void DespawnAllProcessingLayers()
         {
             foreach (var mpl in mMapProcessingLayers.Values)
             {
@@ -299,7 +292,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void RespawnEverything()
+        public void RespawnAllProcessingLayers()
         {
             foreach (var mpl in mMapProcessingLayers.Values)
             {
@@ -443,7 +436,7 @@ namespace Intersect.Server.Maps
         /// </summary>
         /// <param name="processingLayerId"></param>
         /// <returns>Whether or not we needed to create a new processing layer</returns>
-        public bool TryCreateProcessingInstance(Guid processingLayerId, out MapProcessingLayer newLayer)
+        public bool TryCreateProcessingLayer(Guid processingLayerId, out MapProcessingLayer newLayer)
         {
             newLayer = null;
             lock (GetMapLock())
@@ -472,7 +465,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void UpdateProcessingInstances(long timeMs)
+        public void UpdateAllProcessingLayers(long timeMs)
         {
             foreach (var instance in mMapProcessingLayers.Keys.ToList())
             {
@@ -483,7 +476,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public bool TryGetRelevantProcessingLayer(Guid instanceLayer, out MapProcessingLayer mpl, bool createIfNew = false)
+        public bool TryGetProcesingLayerWithId(Guid instanceLayer, out MapProcessingLayer mpl, bool createIfNew = false)
         {
             mpl = null;
             if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
@@ -495,7 +488,7 @@ namespace Intersect.Server.Maps
             {
                 if (createIfNew)
                 {
-                    if (TryCreateProcessingInstance(instanceLayer, out var newProcessingLayer))
+                    if (TryCreateProcessingLayer(instanceLayer, out var newProcessingLayer))
                     {
                         mpl = newProcessingLayer;
                         return true;
@@ -505,20 +498,14 @@ namespace Intersect.Server.Maps
             return false;
         }
 
-        public void RemoveEntityFromAllRelevantMapsInLayer(Entity entity, Guid instanceLayer)
+        public void RemoveEntityFromAllSurroundingMapsInLayer(Entity entity, Guid instanceLayer)
         {
             foreach(var map in GetSurroundingMaps(true))
             {
-                map?.RemoveEntityFromAllMapsInLayer(entity, instanceLayer);
-            }
-        }
-
-        // TODO Alex rename
-        public void RemoveEntityFromAllMapsInLayer(Entity entity, Guid instanceLayer)
-        {
-            if (TryGetRelevantProcessingLayer(instanceLayer, out var mapProcessingLayer))
-            {
-                mapProcessingLayer.RemoveEntity(entity);
+                if (map != null && map.TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
+                {
+                    mapProcessingLayer.RemoveEntity(entity);
+                }
             }
         }
 
