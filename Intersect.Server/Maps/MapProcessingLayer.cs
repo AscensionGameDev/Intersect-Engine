@@ -18,15 +18,86 @@ using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Maps
 {
+    /// <summary>
+    /// A <see cref="MapProcessingLayer"/> exists to process map updates, but on a "layered" system, where a single map can be processing 
+    /// differently for each layer that exists upon it.
+    /// <remarks>
+    /// <para>
+    /// A <see cref="MapInstance"/> contains a list <see cref="MapInstance.mMapProcessingLayers"/>, each one responsible for sending the necessary
+    /// packet updates to the players that exist on that layer.
+    /// </para>
+    /// <para>
+    /// By taking the processing out of the <see cref="MapInstance"/> itself, we can support map "Instancing" - ergo, the ability to process
+    /// the same map differently for different players/parties. This allows for concepts such as dungeons and personal cutscenes, minigames,
+    /// duel arenas, etc etc.
+    /// </para>
+    /// <para>
+    /// A <see cref="Player"/> is the sole creator of MapProcessingLayers. A new layer will be created (via a call to <see cref="MapInstance.TryCreateProcessingLayer(Guid, out MapProcessingLayer)"/>)
+    /// when a player:
+    /// <list type="number">
+    /// <item>
+    /// Warps to a new map, or their <see cref="Entity.InstanceLayer"/> has otherwise changed.
+    /// </item> 
+    /// <item>
+    /// Walks across a map boundary and fetches new maps from <see cref="MapInstance.GetSurroundingMaps(bool)"/>.
+    /// </item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// A <see cref="MapProcessingLayer"/> needs to know when it is ready to be cleaned up. A MapInstance can be marked for cleanup if there are no players on itself
+    /// or any of its surrounding layers, and at least <see cref="Options.TimeUntilMapCleanup"/> ms have passed since the last player was on the map/its neighbors.
+    /// </para>
+    /// </remarks>
+    /// </summary>
     public class MapProcessingLayer : IDisposable
     {
+        private MapInstance mMapInstance;
+
+        /// <summary>
+        /// The last time the layer's properties were updated and packets were sent to players
+        /// </summary>
+        private long mLastUpdateTime;
+
+        /// <summary>
+        /// Used to determine when to process the layer (update properties & send packets to players.
+        /// <remarks>
+        /// This is flipped whenever we have NO players on this or surrounding processing layers.
+        /// </remarks>
+        /// </summary>
+        private bool mIsProcessing;
+
         //SyncLock
         protected object mMapProcessLock = new object();
 
+        /// <summary>
+        /// A unique identifier referring to this processing layer alone.
+        /// <remarks>
+        /// Note that this is NOT the Instance Layer identifier - that is <see cref="InstanceLayer"/>
+        /// </remarks>
+        /// </summary>
         public Guid Id;
+
+        /// <summary>
+        /// An ID referring to which layer this processer belongs to.
+        /// <remarks>
+        /// Entities/Items/Etc with that share an <see cref="Entity.InstanceLayer"/> with <see cref="MapProcessingLayer.InstanceLayer"/> 
+        /// will be processed and fed packets by that processer.
+        /// </remarks>
+        /// </summary>
         public Guid InstanceLayer;
-        private MapInstance mMapInstance;
-        private long LastUpdateTime;
+
+        /// <summary>
+        /// The last time the <see cref="Core.LogicService.LogicThread"/> made a call to <see cref="Update(long)"/>.
+        /// <remarks>
+        /// This is used to determine when enough time has passed to cleanup this layer (remove it from it's parent <see cref="MapInstance"/>).
+        /// </remarks>
+        /// </summary>
+        public long LastRequestedUpdateTime;
+
+        /// <summary>
+        /// When the <see cref="Core.LogicService.LogicThread"/> started processing this layer.
+        /// </summary>
+        public long UpdateQueueStart = -1;
 
         // Players & Entities
         private ConcurrentDictionary<Guid, Player> mPlayers = new ConcurrentDictionary<Guid, Player>();
@@ -87,9 +158,24 @@ namespace Intersect.Server.Maps
         {
             lock (GetMapProcessLock())
             {
+                mIsProcessing = true;
+
                 CacheMapBlocks();
                 DespawnEverything();
                 RespawnEverything();
+            }
+        }
+
+        public bool ShouldBeCleaned()
+        {
+            return (!mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.TimeUntilMapCleanup);
+        }
+
+        public void RemoveLayerFromMapInstance()
+        {
+            lock (GetMapProcessLock())
+            {
+                mMapInstance.DisposeLayerWithId(InstanceLayer);
             }
         }
 
@@ -161,20 +247,26 @@ namespace Intersect.Server.Maps
         {
             lock (GetMapProcessLock())
             {
-                if (Options.Instance.Processing.MapUpdateInterval == Options.Instance.Processing.ProjectileUpdateInterval)
+                if (mIsProcessing)
                 {
-                    UpdateProjectiles(timeMs);
+                    if (Options.Instance.Processing.MapUpdateInterval == Options.Instance.Processing.ProjectileUpdateInterval)
+                    {
+                        UpdateProjectiles(timeMs);
+                    }
+
+                    UpdateItems(timeMs);
+                    UpdateEntities(timeMs);
+                    ProcessNpcRespawns();
+                    ProcessResourceRespawns();
+                    UpdateGlobalEvents(timeMs);
+
+                    SendBatchedPacketsToPlayers();
+                    mLastUpdateTime = timeMs;
                 }
 
-                UpdateItems(timeMs);
-                UpdateEntities(timeMs);
-                ProcessNpcRespawns();
-                ProcessResourceRespawns();
-                UpdateGlobalEvents(timeMs);
-
-                SendBatchedPacketsToPlayers();
-
-                LastUpdateTime = timeMs;
+                // If there are no players on this or surrounding processing layers, stop processing updates.
+                mIsProcessing = GetPlayersOnLayer(true).Any();
+                LastRequestedUpdateTime = timeMs;
             }
         }
 
@@ -1094,9 +1186,8 @@ namespace Intersect.Server.Maps
 
             foreach (var en in mEntities)
             {
-                //Let's see if and how long this map has been inactive, if longer than 30 seconds, regenerate everything on the map
-                //TODO, take this 30 second value and throw it into the server config after I switch everything to json
-                if (timeMs > LastUpdateTime + 30000)
+                //Let's see if and how long this map has been inactive, if longer than X seconds, regenerate everything on the map
+                if (timeMs > mLastUpdateTime + Options.TimeUntilMapCleanup)
                 {
                     //Regen Everything & Forget Targets
                     if (en.Value is Resource || en.Value is Npc)
@@ -1167,7 +1258,7 @@ namespace Intersect.Server.Maps
                         {
                             npcSpawnInstance.RespawnTime = Globals.Timing.Milliseconds +
                                                            ((Npc)npcSpawnInstance.Entity).Base.SpawnDuration -
-                                                           (Globals.Timing.Milliseconds - LastUpdateTime);
+                                                           (Globals.Timing.Milliseconds - mLastUpdateTime);
                         }
                         else if (npcSpawnInstance.RespawnTime < Globals.Timing.Milliseconds)
                         {

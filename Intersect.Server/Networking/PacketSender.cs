@@ -752,7 +752,7 @@ namespace Intersect.Server.Networking
         /// <returns></returns>
         public static bool SendProximityMsg(string message, ChatMessageType type, Guid mapId, Color color, string target = "")
         {
-            return SendDataToProximityAcrossAllLayers(mapId, new ChatMsgPacket(message, type, color, target));
+            return SendDataToAllLayersInProximity(mapId, new ChatMsgPacket(message, type, color, target));
         }
 
         /// <summary>
@@ -811,7 +811,7 @@ namespace Intersect.Server.Networking
         //ProjectileDeadPacket
         public static void SendRemoveProjectileSpawnsFromAllLayers(Guid mapId, Guid[] projDeaths, KeyValuePair<Guid, int>[] spawnDeaths)
         {
-            SendDataToProximityAcrossAllLayers(mapId, new ProjectileDeadPacket(projDeaths, spawnDeaths));
+            SendDataToAllLayersInProximity(mapId, new ProjectileDeadPacket(projDeaths, spawnDeaths));
         }
 
         public static void SendRemoveProjectileSpawns(Guid mapId, Guid instanceLayer, Guid[] projDeaths, KeyValuePair<Guid, int>[] spawnDeaths)
@@ -2114,8 +2114,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        // Todo Alex: Rename to Send Data To All Layers In Proximity
-        public static bool SendDataToProximityAcrossAllLayers(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)
+        public static bool SendDataToAllLayersInProximity(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)
         {
             var map = MapInstance.Get(mapId);
             if (map == null)

@@ -18,15 +18,27 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Maps
 {
 
+    /// <summary>
+    /// A <see cref="MapInstance"/> exists to provide a reference to some <see cref="Map"/> and it's neighbors, as well as give
+    /// hooks to the Instance's list of <see cref="MapProcessingLayer"/>.
+    /// <remarks>
+    /// A Map Instance is generally not responsible for sending packets to players, that is the job of the Instance's Map Processing Layers.
+    /// However, the exception to that case is whenever we want to perform some action for ALL players on a map, regardless of
+    /// whatever processing layer they are currently on. In those cases, that logic should live here, and generally means iterating
+    /// over the map processing layers that belong to this <see cref="MapInstance"/>.
+    /// <para>
+    /// A good example of this can be seen in the Respawn/Despawning functions of a <see cref="MapInstance"/> - these functions are called
+    /// when we update a Map from the editor, or otherwise need to refresh what a <see cref="Map"/> looks like under the hood, and the
+    /// methods go out to each processing layer to refresh the packets that are being sent to the player/instances that are being processed
+    /// by the <see cref="MapProcessingLayer"/>.
+    /// </para>
+    /// </remarks>
+    /// </summary>
     public partial class MapInstance : MapBase
     {
         private ConcurrentDictionary<Guid, MapProcessingLayer> mMapProcessingLayers = new ConcurrentDictionary<Guid, MapProcessingLayer>();
 
         private static MapInstances sLookup;
-
-        [JsonIgnore] [NotMapped] public long LastUpdateTime = -1;
-
-        [JsonIgnore] [NotMapped] public long UpdateQueueStart = -1;
 
         //Location of Map in the current grid
         [JsonIgnore] [NotMapped] public int MapGrid;
@@ -197,26 +209,6 @@ namespace Intersect.Server.Maps
             }
         }
 
-        //Update + Related Functions
-        public void Update(long timeMs)
-        {
-            lock (GetMapLock())
-            {
-                var surrMaps = GetSurroundingMaps(true);
-                UpdateAllProcessingLayers(Globals.Timing.Milliseconds);
-                LastUpdateTime = timeMs;
-            }
-        }
-
-        // TODO Alex I don't think this will be necessary once processing layers are handled in their own jobs
-        public void UpdateProjectilesOnAllLayers(long timeMs)
-        {
-            mMapProcessingLayers.Values.ToList().ForEach((mpl) =>
-            {
-                mpl.UpdateProjectiles(timeMs);
-            });
-        }
-
         public MapInstance[] GetSurroundingMaps(bool includingSelf = false)
         {
             return includingSelf ? mSurroundingMapsWithSelf : mSurroundingMaps;
@@ -227,7 +219,6 @@ namespace Intersect.Server.Maps
             return includingSelf ? mSurroundingMapsIdsWithSelf : mSurroundingMapIds;
         }
 
-        // TODO Alex; Rename this
         public ICollection<Player> GetPlayersOnAllLayers()
         {
             var players = new List<Player>();
@@ -246,16 +237,6 @@ namespace Intersect.Server.Maps
                 entities.AddRange(mpl.Value.GetEntities());
             }
             return entities;
-        }
-
-        public Entity[] GetCachedEntitiesOnAllLayers()
-        {
-            var entities = new List<Entity>();
-            foreach (var mpl in mMapProcessingLayers)
-            {
-                entities.AddRange(mpl.Value.GetCachedEntities());
-            }
-            return entities.ToArray();
         }
 
         public void ClearConnections(int side = -1)
@@ -283,7 +264,7 @@ namespace Intersect.Server.Maps
             DbInterface.SaveGameObject(this);
         }
 
-        //Map Reseting Functions
+        #region Map Processing Layer management
         public void DespawnAllProcessingLayers()
         {
             foreach (var mpl in mMapProcessingLayers.Values)
@@ -299,6 +280,141 @@ namespace Intersect.Server.Maps
                 mpl.RespawnEverything();
             }
         }
+
+        /// <summary>
+        /// Creates a processing layer
+        /// </summary>
+        /// <param name="processingLayerId"></param>
+        /// <returns>Whether or not we needed to create a new processing layer</returns>
+        public bool TryCreateProcessingLayer(Guid processingLayerId, out MapProcessingLayer newLayer)
+        {
+            newLayer = null;
+            lock (GetMapLock())
+            {
+                if (!mMapProcessingLayers.ContainsKey(processingLayerId))
+                {
+                    Log.Debug($"Creating new processing layer {processingLayerId} for map {Name}");
+                    mMapProcessingLayers[processingLayerId] = new MapProcessingLayer(this, processingLayerId);
+                    newLayer = mMapProcessingLayers[processingLayerId];
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public bool TryUpdateProcessingLayer(Guid instanceId, long timeMs)
+        {
+            if (mMapProcessingLayers.TryGetValue(instanceId, out var mpl))
+            {
+                mpl.Update(timeMs);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public List<MapProcessingLayer> GetAllProcessingLayers()
+        {
+            return mMapProcessingLayers.Values.ToList();
+        }
+
+        public bool TryGetProcesingLayerWithId(Guid instanceLayer, out MapProcessingLayer mpl, bool createIfNew = false)
+        {
+            mpl = null;
+            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
+            {
+                mpl = processingLayer;
+                return true;
+            }
+            else
+            {
+                if (createIfNew)
+                {
+                    if (TryCreateProcessingLayer(instanceLayer, out var newProcessingLayer))
+                    {
+                        mpl = newProcessingLayer;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void RemoveEntityFromAllSurroundingMapsInLayer(Entity entity, Guid instanceLayer)
+        {
+            foreach (var map in GetSurroundingMaps(true))
+            {
+                if (map != null && map.TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
+                {
+                    mapProcessingLayer.RemoveEntity(entity);
+                }
+            }
+        }
+
+        public void DisposeLayerWithId(Guid instanceLayer)
+        {
+            lock (GetMapLock())
+            {
+                if (mMapProcessingLayers[instanceLayer] != null)
+                {
+                    if (mMapProcessingLayers.TryRemove(instanceLayer, out var removedLayer))
+                    {
+                        removedLayer.Dispose();
+                        Log.Debug($"Cleaning up MPL {instanceLayer} for map: {Name}");
+                    }
+                }
+            }
+        }
+
+        public void TryRemoveDeadProcessingLayers()
+        {
+            lock (GetMapLock())
+            {
+                // Removes all processing layers that don't have active players on themselves or any adjoining layers
+                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetPlayersOnLayer(true).Count <= 0).ToList();
+                var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
+                foreach (var instance in deadLayers)
+                {
+                    if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
+                    {
+                        removedLayer.Dispose();
+                        Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
+                    }
+                }
+
+                if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
+                {
+                    Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
+                }
+            }
+        }
+
+        public List<Player> GetPlayersOnSharedLayers(Guid instanceLayer, Entity except)
+        {
+            var entitiesOnSharedLayer = new List<Player>();
+
+            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var layer))
+            {
+                foreach (var player in layer.GetPlayersOnLayer())
+                {
+                    if (player != except && player.InstanceLayer == instanceLayer)
+                    {
+                        entitiesOnSharedLayer.Add(player);
+                    }
+                }
+            }
+
+            return entitiesOnSharedLayer;
+        }
+
+        public void ClearAllProcessingLayers()
+        {
+            mMapProcessingLayers.Clear();
+        }
+        #endregion
 
         public static MapInstance Get(Guid id)
         {
@@ -429,148 +545,6 @@ namespace Intersect.Server.Maps
             }
 
             return locations;
-        }
-
-        /// <summary>
-        /// Creates a processing layer
-        /// </summary>
-        /// <param name="processingLayerId"></param>
-        /// <returns>Whether or not we needed to create a new processing layer</returns>
-        public bool TryCreateProcessingLayer(Guid processingLayerId, out MapProcessingLayer newLayer)
-        {
-            newLayer = null;
-            lock (GetMapLock())
-            {
-                if (!mMapProcessingLayers.ContainsKey(processingLayerId))
-                {
-                    Log.Debug($"Creating new processing layer {processingLayerId} for map {Name}");
-                    mMapProcessingLayers[processingLayerId] = new MapProcessingLayer(this, processingLayerId);
-                    newLayer = mMapProcessingLayers[processingLayerId];
-                    return true;
-                }
-
-                return false;
-            }
-        }
-
-        public bool TryUpdateProcessingLayer(Guid instanceId, long timeMs)
-        {
-            if (mMapProcessingLayers.TryGetValue(instanceId, out var mpl))
-            {
-                mpl.Update(timeMs);
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
-
-        public void UpdateAllProcessingLayers(long timeMs)
-        {
-            foreach (var instance in mMapProcessingLayers.Keys.ToList())
-            {
-                if (mMapProcessingLayers.TryGetValue(instance, out var mpl))
-                {
-                    mpl.Update(timeMs);
-                }
-            }
-        }
-
-        public bool TryGetProcesingLayerWithId(Guid instanceLayer, out MapProcessingLayer mpl, bool createIfNew = false)
-        {
-            mpl = null;
-            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var processingLayer))
-            {
-                mpl = processingLayer;
-                return true;
-            }
-            else
-            {
-                if (createIfNew)
-                {
-                    if (TryCreateProcessingLayer(instanceLayer, out var newProcessingLayer))
-                    {
-                        mpl = newProcessingLayer;
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public void RemoveEntityFromAllSurroundingMapsInLayer(Entity entity, Guid instanceLayer)
-        {
-            foreach(var map in GetSurroundingMaps(true))
-            {
-                if (map != null && map.TryGetProcesingLayerWithId(instanceLayer, out var mapProcessingLayer))
-                {
-                    mapProcessingLayer.RemoveEntity(entity);
-                }
-            }
-        }
-
-        public void CleanUpLayerIfInactive(Guid instanceLayer)
-        {
-            lock (GetMapLock())
-            {
-                if (mMapProcessingLayers[instanceLayer] != null && mMapProcessingLayers[instanceLayer].GetPlayersOnLayer(true).Count <= 0)
-                {
-                    mMapProcessingLayers[instanceLayer].Dispose();
-                    if (!mMapProcessingLayers.TryRemove(instanceLayer, out var removedLayer))
-                    {
-                        Log.Error($"Failed to cleanup layer {instanceLayer} of map {Name}");
-                    } else
-                    {
-                        Log.Debug($"Cleaned up layer {instanceLayer} of map {Name}");
-                    }
-                }
-            }
-        }
-
-        public void TryRemoveDeadProcessingLayers()
-        {
-            lock (GetMapLock())
-            {
-                // Removes all processing layers that don't have active players on themselves or any adjoining layers
-                var deadLayers = mMapProcessingLayers.Where(kv => kv.Value.GetPlayersOnLayer(true).Count <= 0).ToList();
-                var layerCountPreCleanup = mMapProcessingLayers.Keys.Count;
-                foreach (var instance in deadLayers)
-                {
-                    if (mMapProcessingLayers.TryRemove(instance.Key, out var removedLayer))
-                    {
-                        removedLayer.Dispose();
-                        Log.Debug($"Cleaning up MPL {instance} for map: {Name}");
-                    }
-                }
-
-                if (layerCountPreCleanup != mMapProcessingLayers.Keys.Count)
-                {
-                    Log.Debug($"There are now {mMapProcessingLayers.Keys.Count} layer(s) remaining for map: {Name}");
-                }
-            }
-        }
-
-        public List<Player> GetPlayersOnSharedLayers(Guid instanceLayer, Entity except)
-        {
-            var entitiesOnSharedLayer = new List<Player>();
-
-            if (mMapProcessingLayers.TryGetValue(instanceLayer, out var layer))
-            {
-                foreach (var player in layer.GetPlayersOnLayer())
-                {
-                    if (player != except && player.InstanceLayer == instanceLayer)
-                    {
-                        entitiesOnSharedLayer.Add(player);
-                    }
-                }
-            }
-
-            return entitiesOnSharedLayer;
-        }
-
-        public void ClearAllProcessingLayers()
-        {
-            mMapProcessingLayers.Clear();
         }
 
         ~MapInstance()

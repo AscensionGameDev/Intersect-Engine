@@ -49,19 +49,19 @@ namespace Intersect.Server.Core
             /// <summary>
             /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again.
             /// </summary>
-            public readonly ConcurrentQueue<MapInstance> MapUpdateQueue = new ConcurrentQueue<MapInstance>();
+            public readonly ConcurrentQueue<MapProcessingLayer> LayerUpdateQueue = new ConcurrentQueue<MapProcessingLayer>();
 
             /// <summary>
             /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again. 
             /// This queue is only used for projectile updates if the projectile update interval does not match the map update interval in the server config.
             /// </summary>
-            public readonly ConcurrentQueue<MapInstance> MapProjectileUpdateQueue = new ConcurrentQueue<MapInstance>();
+            public readonly ConcurrentQueue<MapProcessingLayer> LayerProjectileUpdateQueue = new ConcurrentQueue<MapProcessingLayer>();
 
             /// <summary>
             /// This is the set of maps determined to be 'active' based on player locations in the game. Our logic recalculates this hashset every 250ms.
             /// When maps are updated they are not added back into the map update queues unless they exist in this hash set.
             /// </summary>
-            public readonly HashSet<Guid> ActiveMaps = new HashSet<Guid>();
+            public readonly Dictionary<Guid, MapProcessingLayer> ActiveLayers = new Dictionary<Guid, MapProcessingLayer>();
 
             public LogicThread() : base("ServerLogic")
             {
@@ -84,8 +84,8 @@ namespace Intersect.Server.Core
 
                     long updateTimer = 0;
 
-                    var processedMaps = new HashSet<Guid>();
-                    var sourceMaps = new HashSet<Guid>();
+                    var processedMapLayers = new HashSet<Guid>();
+                    var sourceMapLayer = new HashSet<Guid>();
                     var players = 0;
 
                     while (ServerContext.Instance.IsRunning)
@@ -97,8 +97,8 @@ namespace Intersect.Server.Core
                         {
                             //Resync Active Maps By Scanning Players and Their Surrounding Maps
                             players = 0;
-                            processedMaps.Clear();
-                            sourceMaps.Clear();
+                            processedMapLayers.Clear();
+                            sourceMapLayer.Clear();
 
                             //Metrics
                             var globalEntities = 0;
@@ -120,39 +120,44 @@ namespace Intersect.Server.Core
                                 }
 
                                 var plyrMap = player?.MapId ?? Guid.Empty;
-                                if (plyrMap != Guid.Empty && !sourceMaps.Contains(plyrMap))
+                                if (plyrMap != Guid.Empty && !sourceMapLayer.Contains(plyrMap))
                                 {
-                                    var mapInstance = MapInstance.Get(plyrMap);
-                                    if (mapInstance != null)
+                                    // Queue up each surrounding processing layer of the given player
+                                    MapInstance.Get(plyrMap).GetSurroundingMaps(true).ToList().ForEach(mapInstance =>
                                     {
-                                        foreach (var map in mapInstance.GetSurroundingMaps(true))
+                                        if (mapInstance != null && mapInstance.TryGetProcesingLayerWithId(player.InstanceLayer, out var mapProcessingLayer))
                                         {
-                                            if (!processedMaps.Contains(map.Id))
+                                            if (!processedMapLayers.Contains(mapProcessingLayer.Id))
                                             {
-                                                if (!ActiveMaps.Contains(map.Id))
+                                                if (!ActiveLayers.Keys.Contains(mapProcessingLayer.Id))
                                                 {
-                                                    AddToQueue(map);
+                                                    AddToQueue(mapProcessingLayer);
                                                 }
-                                                
-                                                globalEntities += map.GetCachedEntitiesOnAllLayers().Length;
 
-                                                processedMaps.Add(map.Id);
+                                                globalEntities += mapProcessingLayer.GetCachedEntities().Length;
+
+                                                processedMapLayers.Add(mapProcessingLayer.Id);
                                             }
+                                            sourceMapLayer.Add(mapProcessingLayer.Id);
                                         }
-                                    }
-                                    sourceMaps.Add(plyrMap);
+                                    });
                                 }
                             }
 
                             //Refresh list of active maps & their processing layers
-                            foreach (var map in ActiveMaps.ToArray())
+                            foreach (var layerId in ActiveLayers.Keys.ToArray())
                             {
-                                //MapInstance.Get(map).RemoveDeadProcessingLayers();
-                                if (!processedMaps.Contains(map))
+                                if (!processedMapLayers.Contains(layerId))
                                 {
                                     // Remove the map entirely from the update queue
-                                    ActiveMaps.Remove(map);
-                                    MapInstance.Get(map).ClearAllProcessingLayers();
+                                    if (ActiveLayers[layerId] != null && ActiveLayers[layerId].ShouldBeCleaned())
+                                    {
+                                        ActiveLayers[layerId].RemoveLayerFromMapInstance();
+                                        ActiveLayers.Remove(layerId);
+                                    } else if (ActiveLayers[layerId] == null)
+                                    {
+                                        ActiveLayers.Remove(layerId);
+                                    }
                                 }
                             }
 
@@ -162,7 +167,7 @@ namespace Intersect.Server.Core
                                 MetricsRoot.Instance.Game.ActiveEvents.Record(events);
                                 MetricsRoot.Instance.Game.ProcessingEvents.Record(eventsProcessing);
                                 MetricsRoot.Instance.Game.AutorunEvents.Record(autorunEvents);
-                                MetricsRoot.Instance.Game.ActiveMaps.Record(ActiveMaps.Count);
+                                MetricsRoot.Instance.Game.ActiveMaps.Record(ActiveLayers.Count);
                                 MetricsRoot.Instance.Game.Players.Record(players);
                                 MetricsRoot.Instance.Network.Clients.Record(Globals.Clients?.Count ?? 0);
                             }
@@ -174,25 +179,24 @@ namespace Intersect.Server.Core
                         //Check our map update queues. If maps are ready to be updated based on our update intervals set in the server config then tell our thread pool to queue the map update as a work item.
                         lock (LogicLock)
                         {
-                            // TODO Alex Support this
-                            /*if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
+                            if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
                             {
-                                while (MapProjectileUpdateQueue.TryPeek(out MapInstance result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval <= startTime)
+                                while (LayerProjectileUpdateQueue.TryPeek(out MapProcessingLayer result) && result.LastProjectileUpdateTime + Options.Instance.Processing.ProjectileUpdateInterval <= startTime)
                                 {
-                                    if (MapProjectileUpdateQueue.TryDequeue(out MapInstance sameResult))
+                                    if (LayerProjectileUpdateQueue.TryDequeue(out MapProcessingLayer sameResult))
                                     {
                                         LogicPool.QueueWorkItem(UpdateMap, sameResult, true);
                                     }
                                 }
-                            }*/
+                            }
 
-                            while (MapUpdateQueue.TryPeek(out MapInstance result) && result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval <= startTime)
+                            while (LayerUpdateQueue.TryPeek(out MapProcessingLayer result) && result.LastRequestedUpdateTime + Options.Instance.Processing.MapUpdateInterval <= startTime)
                             {
-                                if (MapUpdateQueue.TryDequeue(out MapInstance sameResult))
+                                if (LayerUpdateQueue.TryDequeue(out MapProcessingLayer sameResult))
                                 {
                                     if (Options.Instance.Metrics.Enable)
                                     {
-                                        var delay = Timing.Global.Milliseconds - (result.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval);
+                                        var delay = Timing.Global.Milliseconds - (result.LastRequestedUpdateTime + Options.Instance.Processing.MapUpdateInterval);
                                         MetricsRoot.Instance.Game.MapQueueUpdateOffset.Record(delay);
                                         result.UpdateQueueStart = Timing.Global.Milliseconds;
                                     }
@@ -210,7 +214,7 @@ namespace Intersect.Server.Core
                             Globals.Cps = swCps;
                             swCps = 0;
                             
-                            Console.Title = $"Intersect Server - CPS: {Globals.Cps}, Players: {players}, Active Maps: {ActiveMaps.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
+                            Console.Title = $"Intersect Server - CPS: {Globals.Cps}, Players: {players}, Active Maps: {ActiveLayers.Count}, Logic Threads: {LogicPool.ActiveThreads} ({LogicPool.InUseThreads} In Use), Pool Queue: {LogicPool.CurrentWorkItemsCount}, Idle: {LogicPool.IsIdle}";
 
                             if (Options.Instance.Metrics.Enable)
                             {
@@ -315,37 +319,36 @@ namespace Intersect.Server.Core
             }
 
             /// <summary>
-            /// Adds a map to the map update queues for our logic loop to start processing.
+            /// Adds a map processing layer to the map update queues for our logic loop to start processing.
             /// </summary>
-            /// <param name="map">The map in which we want to add to our update queues.</param>
-            private void AddToQueue(MapInstance map)
+            /// <param name="mapProcessingLayer">The processing layer in which to process in our queues.</param>
+            private void AddToQueue(MapProcessingLayer mapProcessingLayer)
             {
                 // TODO Alex: Support this
                 if (Options.Instance.Processing.MapUpdateInterval != Options.Instance.Processing.ProjectileUpdateInterval)
                 {
-                    MapProjectileUpdateQueue.Enqueue(map);
+                    LayerProjectileUpdateQueue.Enqueue(mapProcessingLayer);
                 }
-                MapUpdateQueue.Enqueue(map);
-                ActiveMaps.Add(map.Id);
-                map.LastUpdateTime = Timing.Global.Milliseconds - Options.Instance.Processing.MapUpdateInterval;
+                LayerUpdateQueue.Enqueue(mapProcessingLayer);
+                ActiveLayers.Add(mapProcessingLayer.Id, mapProcessingLayer);
+                mapProcessingLayer.LastRequestedUpdateTime = Timing.Global.Milliseconds - Options.Instance.Processing.MapUpdateInterval;
             }
 
             /// <summary>
             /// This function actually runs our map update function on the logic thread pool, and then re-queues our map for future updates if the map is still considered active.
             /// </summary>
-            /// <param name="map">The map our thread updates.</param>
+            /// <param name="layer">The <see cref="MapProcessingLayer"/> our thread updates.</param>
             /// <param name="onlyProjectiles">If true only map projectiles are updated and not the entire map.</param>
-            private void UpdateMap(MapInstance map, bool onlyProjectiles)
+            private void UpdateMap(MapProcessingLayer layer, bool onlyProjectiles)
             {
                 try
                 {
                     if (onlyProjectiles)
-                    {
-                        
-                        map.UpdateProjectilesOnAllLayers(Timing.Global.Milliseconds);
-                        if (ActiveMaps.Contains(map.Id))
+                    {   
+                        layer.UpdateProjectiles(Timing.Global.Milliseconds);
+                        if (ActiveLayers.Keys.Contains(layer.Id))
                         {
-                            MapProjectileUpdateQueue.Enqueue(map);
+                            LayerProjectileUpdateQueue.Enqueue(layer);
                         }
                     }
                     else
@@ -353,23 +356,23 @@ namespace Intersect.Server.Core
                         if (Options.Instance.Metrics.Enable)
                         {
                             var timeBeforeUpdate = Timing.Global.Milliseconds;
-                            var desiredMapUpdateTime = map.LastUpdateTime + Options.Instance.Processing.MapUpdateInterval;
-                            MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - map.UpdateQueueStart);
+                            var desiredMapUpdateTime = layer.LastRequestedUpdateTime + Options.Instance.Processing.MapUpdateInterval;
+                            MetricsRoot.Instance.Game.MapUpdateQueuedTime.Record(timeBeforeUpdate - layer.UpdateQueueStart);
 
-                            map.Update(Timing.Global.Milliseconds);
+                            layer.Update(Timing.Global.Milliseconds);
 
                             var timeAfterUpdate = Timing.Global.Milliseconds;
                             MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
                             MetricsRoot.Instance.Game.MapTotalUpdateTime.Record(timeAfterUpdate - desiredMapUpdateTime);
 
-                            if (ActiveMaps.Contains(map.Id))
+                            if (ActiveLayers.Keys.Contains(layer.Id))
                             {
-                                MapUpdateQueue.Enqueue(map);
+                                LayerUpdateQueue.Enqueue(layer);
                             }
                         }
                         else
                         {
-                            map.Update(Timing.Global.Milliseconds);
+                            layer.Update(Timing.Global.Milliseconds);
                         }
                     }
                 }
