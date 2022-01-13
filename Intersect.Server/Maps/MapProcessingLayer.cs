@@ -88,17 +88,6 @@ namespace Intersect.Server.Maps
                 CacheMapBlocks();
                 DespawnEverything();
                 RespawnEverything();
-
-                var events = new List<EventBase>();
-                foreach (var evt in mMap.EventIds)
-                {
-                    var itm = EventBase.Get(evt);
-                    if (itm != null)
-                    {
-                        events.Add(itm);
-                    }
-                }
-                EventsCache = events;   
             }
         }
 
@@ -140,6 +129,7 @@ namespace Intersect.Server.Maps
             SpawnMapNpcs();
             SpawnAttributeItems(); // This must be done before spawning items or resources
             SpawnMapResources();
+            RefreshEventsCache();
             SpawnGlobalEvents();
         }
 
@@ -852,6 +842,20 @@ namespace Intersect.Server.Maps
             }
 
             return false;
+        }
+
+        public void RefreshEventsCache()
+        {
+            var events = new List<EventBase>();
+            foreach (var evt in mMap.EventIds)
+            {
+                var itm = EventBase.Get(evt);
+                if (itm != null)
+                {
+                    events.Add(itm);
+                }
+            }
+            EventsCache = events;
         }
         #endregion
 
