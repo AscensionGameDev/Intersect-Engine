@@ -302,7 +302,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Inventory.DropItemTitle,
                         Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity, Inventory[index].Quantity
                     );
                 }
                 else
@@ -341,6 +341,21 @@ namespace Intersect.Client.Entities
             }
 
             return -1;
+        }
+
+        public int GetItemQuantity(Guid itemId)
+        {
+            long count = 0;
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemId == itemId)
+                {
+                    count += Inventory[i].Quantity;
+                }
+            }
+
+            return count > Int32.MaxValue ? Int32.MaxValue : (int)count;
         }
 
         public void TryUseItem(int index)
@@ -573,13 +588,19 @@ namespace Intersect.Client.Entities
             var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
             if (item != null)
             {
-                if (item.IsStackable)
+                // Determine how many items we can purchase.
+                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
+                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+
+                // Is the item stackable, and can we make a purchase at all?
+                if (item.IsStackable && maxBuyAmount != 0)
                 {
                     var iBox = new InputBox(
                         Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
-                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot
+                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
                     );
                 }
+                // In any other case, attempt to purchase one and let the server handle the error and double checking.
                 else
                 {
                     PacketSender.SendBuyItem(slot, 1);
