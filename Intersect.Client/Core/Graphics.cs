@@ -34,6 +34,8 @@ namespace Intersect.Client.Core
         public static GameShader DefaultShader;
 
         //Rendering Variables
+        private static GameTexture sMenuBackground;
+
         public static int DrawCalls;
 
         public static int EntitiesDrawn;
@@ -55,11 +57,9 @@ namespace Intersect.Client.Core
 
         public static int MapsDrawn;
 
-        private static int sAnimTextureFrame;
+        private static int sMenuBackgroundIndex;
 
-        private static long sAnimTextureTime;
-        
-        private static int sAnimFrameCount;
+        private static long sMenuBackgroundInterval;
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -151,58 +151,74 @@ namespace Intersect.Client.Core
 
         public static void DrawMenu()
         {
-            // Draw an animated background in the main menu.
-            if (ClientConfiguration.Instance.MenuBackgroundAnimated)
+            // Animated background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count > 1)
             {
-                DrawFullScreenTextureAnimated(
-                    ClientConfiguration.Instance.MenuBackground,
-                    ClientConfiguration.Instance.MenuBackgroundFrameInterval,
-                    ClientConfiguration.Instance.MenuBackgroundDisplayMode
-                );
-            }
-
-            // Draw an static background in the main menu.
-            else
-            {
-                var imageTex = sContentManager.GetTexture(
-                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground + ".png"
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[sMenuBackgroundIndex]
                 );
 
-                if (imageTex == null)
+                if (sMenuBackground == null)
                 {
                     return;
                 }
 
-                switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+                if (sMenuBackgroundInterval < Timing.Global.Milliseconds)
                 {
-                    case DisplayModes.Default:
-                        DrawFullScreenTexture(imageTex);
-                        break;
-
-                    case DisplayModes.Center:
-                        DrawFullScreenTextureCentered(imageTex);
-                        break;
-
-                    case DisplayModes.Stretch:
-                        DrawFullScreenTextureStretched(imageTex);
-                        break;
-
-                    case DisplayModes.FitHeight:
-                        DrawFullScreenTextureFitHeight(imageTex);
-                        break;
-
-                    case DisplayModes.FitWidth:
-                        DrawFullScreenTextureFitWidth(imageTex);
-                        break;
-
-                    case DisplayModes.Fit:
-                        DrawFullScreenTextureFitMaximum(imageTex);
-                        break;
-
-                    case DisplayModes.Cover:
-                        DrawFullScreenTextureFitMinimum(imageTex);
-                        break;
+                    sMenuBackgroundIndex++;
+                    sMenuBackgroundInterval = Timing.Global.Milliseconds +
+                                              ClientConfiguration.Instance.MenuBackgroundFrameInterval;
                 }
+
+                if (sMenuBackgroundIndex >= ClientConfiguration.Instance.MenuBackground.Count)
+                {
+                    sMenuBackgroundIndex = 0;
+                }
+            }
+
+            // Static background in the main menu.
+            else if (ClientConfiguration.Instance.MenuBackground.Count == 1)
+            {
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[0]
+                );
+
+                if (sMenuBackground == null)
+                {
+                    return;
+                }
+            }
+
+            // Switch between the preferred display mode, then render the fullscreen texture.
+            switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+            {
+                case DisplayModes.Default:
+                    DrawFullScreenTexture(sMenuBackground);
+                    break;
+
+                case DisplayModes.Center:
+                    DrawFullScreenTextureCentered(sMenuBackground);
+                    break;
+
+                case DisplayModes.Stretch:
+                    DrawFullScreenTextureStretched(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitHeight:
+                    DrawFullScreenTextureFitHeight(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitWidth:
+                    DrawFullScreenTextureFitWidth(sMenuBackground);
+                    break;
+
+                case DisplayModes.Fit:
+                    DrawFullScreenTextureFitMaximum(sMenuBackground);
+                    break;
+
+                case DisplayModes.Cover:
+                    DrawFullScreenTextureFitMinimum(sMenuBackground);
+                    break;
             }
         }
 
@@ -831,67 +847,6 @@ namespace Intersect.Client.Core
             else
             {
                 DrawFullScreenTextureFitWidth(tex);
-            }
-        }
-
-        public static void DrawFullScreenTextureAnimated(
-            string animFrameName,
-            long animFrameInterval,
-            Enum displayMode
-        )
-        {
-            sAnimFrameCount = Globals.ContentManager.GetTextureNames(TextureType.Animation)
-                .Count(s => s.Contains(animFrameName));
-
-            if (sAnimTextureTime < Timing.Global.Milliseconds)
-            {
-                sAnimTextureFrame += 1;
-                sAnimTextureTime = Timing.Global.Milliseconds + animFrameInterval;
-            }
-
-            if (sAnimTextureFrame >= sAnimFrameCount - 1)
-            {
-                sAnimTextureFrame = 0;
-            }
-
-            var animTex = Globals.ContentManager.GetTexture(
-                TextureType.Animation, animFrameName + "_" + sAnimTextureFrame + ".png"
-            );
-
-            if (animTex == null)
-            {
-                return;
-            }
-
-            switch (displayMode)
-            {
-                case DisplayModes.Default:
-                    DrawFullScreenTexture(animTex);
-                    break;
-
-                case DisplayModes.Center:
-                    DrawFullScreenTextureCentered(animTex);
-                    break;
-
-                case DisplayModes.Stretch:
-                    DrawFullScreenTextureStretched(animTex);
-                    break;
-
-                case DisplayModes.FitHeight:
-                    DrawFullScreenTextureFitHeight(animTex);
-                    break;
-
-                case DisplayModes.FitWidth:
-                    DrawFullScreenTextureFitWidth(animTex);
-                    break;
-
-                case DisplayModes.Fit:
-                    DrawFullScreenTextureFitMaximum(animTex);
-                    break;
-
-                case DisplayModes.Cover:
-                    DrawFullScreenTextureFitMinimum(animTex);
-                    break;
             }
         }
 
