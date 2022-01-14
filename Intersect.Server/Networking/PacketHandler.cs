@@ -1951,7 +1951,7 @@ namespace Intersect.Server.Networking
                 Player.FindOnline(packet.TargetId) : 
                 Player.FindOnline(packet.Target.Trim());
 
-            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.Party.InviteRange))
+            if (target != null && target.Id != player.Id)
             {
                 target.InviteToParty(player);
 
