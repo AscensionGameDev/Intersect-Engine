@@ -9,17 +9,23 @@ namespace Intersect.Enums
     {
         /// <summary> Default display mode of fullscreen textures. </summary>
         Default,
-        
-        /// <summary> Positions the sprite in the center of the game window. </summary>
+
+        /// <summary> Positions the texture in the center of the game window. </summary>
         Center,
 
-        /// <summary> Stretches the sprite to the game window size. </summary>
+        /// <summary> Stretches the texture to the game window size. </summary>
         Stretch,
 
-        /// <summary> Fits the sprite to the game window height. </summary>
+        /// <summary> Fits the texture to the game window height. </summary>
         FitHeight,
 
-        /// <summary> Fits the sprite to the game window width. </summary>
-        FitWidth
+        /// <summary> Fits the texture to the game window width. </summary>
+        FitWidth,
+
+        /// <summary> Fits the texture to the game window by using the DrawFullScreenTextureFitMaximum method. </summary>
+        Fit,
+
+        /// <summary> Fits the texture to the game window by using the DrawFullScreenTextureFitMinimum method. </summary>
+        Cover
     }
 }

@@ -177,23 +177,30 @@ namespace Intersect.Client.Core
                 {
                     case DisplayModes.Default:
                         DrawFullScreenTexture(imageTex);
-
                         break;
+
                     case DisplayModes.Center:
                         DrawFullScreenTextureCentered(imageTex);
-
                         break;
+
                     case DisplayModes.Stretch:
                         DrawFullScreenTextureStretched(imageTex);
-
                         break;
+
                     case DisplayModes.FitHeight:
                         DrawFullScreenTextureFitHeight(imageTex);
-
                         break;
+
                     case DisplayModes.FitWidth:
                         DrawFullScreenTextureFitWidth(imageTex);
+                        break;
 
+                    case DisplayModes.Fit:
+                        DrawFullScreenTextureFitMaximum(imageTex);
+                        break;
+
+                    case DisplayModes.Cover:
+                        DrawFullScreenTextureFitMinimum(imageTex);
                         break;
                 }
             }
@@ -860,23 +867,30 @@ namespace Intersect.Client.Core
             {
                 case DisplayModes.Default:
                     DrawFullScreenTexture(animTex);
-
                     break;
+
                 case DisplayModes.Center:
                     DrawFullScreenTextureCentered(animTex);
-
                     break;
+
                 case DisplayModes.Stretch:
                     DrawFullScreenTextureStretched(animTex);
-
                     break;
+
                 case DisplayModes.FitHeight:
                     DrawFullScreenTextureFitHeight(animTex);
-
                     break;
+
                 case DisplayModes.FitWidth:
                     DrawFullScreenTextureFitWidth(animTex);
+                    break;
 
+                case DisplayModes.Fit:
+                    DrawFullScreenTextureFitMaximum(animTex);
+                    break;
+
+                case DisplayModes.Cover:
+                    DrawFullScreenTextureFitMinimum(animTex);
                     break;
             }
         }
