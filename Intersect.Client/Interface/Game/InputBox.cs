@@ -65,7 +65,7 @@ namespace Intersect.Client.Interface.Game
 
         public object UserData;
 
-        public float Value;
+        public double Value;
 
         public new string Name = "InputBox";
 
@@ -78,6 +78,7 @@ namespace Intersect.Client.Interface.Game
             EventHandler cancelClicked,
             object userData,
             int quantity = 0,
+            int maxQuantity = Int32.MaxValue,
             Base parent = null,
             GameContentManager.UI stage = GameContentManager.UI.InGame
         ) : base(parent)
@@ -107,11 +108,10 @@ namespace Intersect.Client.Interface.Game
             mTextbox = new TextBox(mTextboxBg, "TextboxText");
             mTextbox.SubmitPressed += TextBox_SubmitPressed;
 
-            var sliderCap = quantity > 0 ? quantity : int.MaxValue;
             mNumericSliderboxBg = new ImagePanel(mMyWindow, "Sliderbox");
             mNumericSlider = new HorizontalSlider(mNumericSliderboxBg, "Slider");
-            mNumericSlider.SetRange(1, sliderCap);
-            mNumericSlider.NotchCount = sliderCap;
+            mNumericSlider.SetRange(1, maxQuantity);
+            mNumericSlider.NotchCount = maxQuantity;
             mNumericSlider.SnapToNotches = true;
             mNumericSlider.Value = quantity;
             mNumericSlider.ValueChanged += MNumericSlider_ValueChanged;
