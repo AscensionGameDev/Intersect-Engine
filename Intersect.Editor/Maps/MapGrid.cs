@@ -227,7 +227,7 @@ namespace Intersect.Editor.Maps
                                 SaveMap();
                             }
 
-                            Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].MapId);
+                            Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].MapId, true);
                             Globals.MapEditorWindow.Select();
                         }
                     }
