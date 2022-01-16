@@ -1559,17 +1559,6 @@ namespace Intersect.Server.Entities
 
             // TODO Alex: Control when we change layers
             PreviousMapInstanceId = MapInstanceId;
-            if (adminWarp)
-            {
-                if (MapInstanceId == Guid.Empty)
-                {
-                    MapInstanceId = Guid.NewGuid();
-                }
-                else
-                {
-                    MapInstanceId = Guid.Empty;
-                }
-            }
 
             var newSurroundingMaps = newMap.GetSurroundingMapIds(false);
             var onNewInstance = MapInstanceId != PreviousMapInstanceId;
