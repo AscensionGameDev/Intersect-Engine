@@ -1544,8 +1544,8 @@ namespace Intersect.Server.Entities
             bool mapSave = false
         )
         {
-            var map = MapInstance.Get(newMapId);
-            if (map == null)
+            var newMap = MapController.Get(newMapId);
+            if (newMap == null)
             {
                 WarpToSpawn();
 
@@ -1557,103 +1557,95 @@ namespace Intersect.Server.Entities
             Z = zOverride;
             Dir = newDir;
 
-                // TODO Alex: Control when we change layers
-                PreviousMapInstanceId = MapInstanceId;
-                if (adminWarp)
+            // TODO Alex: Control when we change layers
+            PreviousMapInstanceId = MapInstanceId;
+            if (adminWarp)
+            {
+                if (MapInstanceId == Guid.Empty)
                 {
-                    if (MapInstanceId == Guid.Empty)
-                    {
-                        MapInstanceId = Guid.NewGuid();
-                    } else
-                    {
-                        MapInstanceId = Guid.Empty;
-                    }
+                    MapInstanceId = Guid.NewGuid();
                 }
-                    }
-                var newSurroundingMaps = newMap.GetSurroundingMapIds(false);
-                var onNewInstance = MapInstanceId != PreviousMapInstanceId;
-                var oldMap = MapInstance.Get(MapId);
-                MapInstance newMapInstance;
-                // Ensure there exists a map processing layer. A player is the sole entity that can create new map instances
-                lock (EntityLock)
+                else
                 {
-                    if (!newMap.TryGetInstance(MapInstanceId, out newMapInstance))
-                    {
-                        // Create a new instance for the map we're on
-                        newMap.TryCreateInstance(MapInstanceId, out newMapInstance);
-                        foreach (var surrMap in newSurroundingMaps)
-                        {
-                            MapController.Get(surrMap).TryCreateInstance(MapInstanceId, out var surrMapInstance);
-                        }
-                    }
-                }
-                    }
-                if (newMapInstance == null)
-                {
-                    Log.Error($"Player {Name} requested a new map processing layer and failed to get it.");
-                    WarpToSpawn();
-                    Log.Error($"Player {Name} requested a new map processing layer and failed to get it.");
-                    WarpToSpawn();
-
-                return;
-                // If we've changed instance layers
-                if (onNewInstance)
-                {
-                    MapInstanceChanged(newMap);
-                }
-                    map.RemoveEntityFromAllSurroundingMapsInLayer(this, LastInstanceLayer);
-                foreach (var evt in EventLookup)
-                {
-                    // Remove events that aren't relevant (on a surrounding map) anymore
-                    if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
-                    {
-                        RemoveEvent(evt.Value.Id, false);
-                    }
-                }
-                    }
-                if (newMapId != MapId || mSentMap == false) // Player warped to a new map?
-                {
-                    // Remove the entity from the old map instance
-                    var oldMap = MapController.Get(MapId);
-                    if (oldMap != null && oldMap.TryGetInstance(PreviousMapInstanceId, out var oldMapInstance))
-                    {
-                        oldMapInstance.RemoveEntity(this);
-                    }
-
-                    PacketSender.SendEntityLeave(this); // We simply changed maps - leave the old one
-                    MapId = newMapId;
-                    newMapInstance.PlayerEnteredMap(this);
-                    PacketSender.SendEntityPositionToAll(this);
-                    newMapsProcessingLayer.PlayerEnteredMap(this);
-                    //If map grid changed then send the new map grid
-                    if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
-                    {
-                        PacketSender.SendMapGrid(this.Client, newMap.MapGrid, true);
-                    }
-                        PacketSender.SendMapGrid(this.Client, map.MapGrid, true);
-                    mSentMap = true;
-                    
-                    StartCommonEventsWithTrigger(CommonEventTrigger.MapChanged);
-                }
-                else // Player moved on same map?
-                {
-                    if (onNewInstance)
-                    {
-                        // But instance changed? Add player to the new instance (will also send stats thru SendEntityDataToProximity)
-                        newMapInstance.PlayerEnteredMap(this);
-                    } else
-                    {
-                        PacketSender.SendEntityStats(this);
-                    }
-                    PacketSender.SendEntityPositionToAll(this);
-                }
-
-                if (Options.DebugAllowMapFades)
-                {
-                    PacketSender.SendFadePacket(Client, true); // fade in by default - either the player was faded out or was not
+                    MapInstanceId = Guid.Empty;
                 }
             }
+
+            var newSurroundingMaps = newMap.GetSurroundingMapIds(false);
+            var onNewInstance = MapInstanceId != PreviousMapInstanceId;
+
+            MapInstance newMapInstance;
+            // Ensure there exists a map instance. A player is the sole entity that can create new map instances
+            lock (EntityLock)
+            {
+                if (!newMap.TryGetInstance(MapInstanceId, out newMapInstance))
+                {
+                    // Create a new instance for the map we're on
+                    newMap.TryCreateInstance(MapInstanceId, out newMapInstance);
+                    foreach (var surrMap in newSurroundingMaps)
+                    {
+                        MapController.Get(surrMap).TryCreateInstance(MapInstanceId, out var surrMapInstance);
+                    }
                 }
+            }
+
+            if (newMapInstance == null)
+            {
+                Log.Error($"Player {Name} requested a new map instance with ID {MapInstanceId} and failed to get it.");
+                WarpToSpawn();
+
+                return;
+            }
+
+            // If we've changed map instances
+            if (onNewInstance)
+            {
+                MapInstanceChanged(newMap);
+            }
+
+            foreach (var evt in EventLookup)
+            {
+                // Remove events that aren't relevant (on a surrounding map) anymore
+                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                {
+                    RemoveEvent(evt.Value.Id, false);
+                }
+            }
+
+            if (newMapId != MapId || mSentMap == false) // Player warped to a new map?
+            {
+                // Remove the entity from the old map instance
+                var oldMap = MapController.Get(MapId);
+                if (oldMap != null && oldMap.TryGetInstance(PreviousMapInstanceId, out var oldMapInstance))
+                {
+                    oldMapInstance.RemoveEntity(this);
+                }
+
+                PacketSender.SendEntityLeave(this); // We simply changed maps - leave the old one
+                MapId = newMapId;
+                newMapInstance.PlayerEnteredMap(this);
+                PacketSender.SendEntityPositionToAll(this);
+
+                //If map grid changed then send the new map grid
+                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
+                {
+                    PacketSender.SendMapGrid(this.Client, newMap.MapGrid, true);
+                }
+
+                mSentMap = true;
+            }
+            else // Player moved on same map?
+            {
+                if (onNewInstance)
+                {
+                    // But instance changed? Add player to the new instance (will also send stats thru SendEntityDataToProximity)
+                    newMapInstance.PlayerEnteredMap(this);
+                }
+                else
+                {
+                    PacketSender.SendEntityStats(this);
+                }
+                PacketSender.SendEntityPositionToAll(this);
             }
         }
 
@@ -1667,17 +1659,17 @@ namespace Intersect.Server.Entities
                 PacketSender.SendMapLayerChangedPacketTo(this, oldMap, PreviousMapInstanceId);
                 oldMapInstance.ClearEntityTargetsOf(this); // Remove targets of this entity
             }
-            // Clear events - we'll get them again from the map layer's event cache
+            // Clear events - we'll get them again from the map instance's event cache
             EventTileLookup.Clear();
             EventLookup.Clear();
             EventBaseIdLookup.Clear();
-            Log.Debug($"Player {Name} has joined layer {MapInstanceId} of map: {newMap.Name}");
-            Log.Info($"Previous layer was {PreviousMapInstanceId}");
+            Log.Debug($"Player {Name} has joined instance {MapInstanceId} of map: {newMap.Name}");
+            Log.Info($"Previous instance was {PreviousMapInstanceId}");
             // Todo Alex Remove this
             PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + MapInstanceId.ToString(), ChatMessageType.Local);
-            // We changed maps AND instance layers - remove from the old map's old layer
+            // We changed maps AND instances - remove from the old map's old instance
             PacketSender.SendEntityLeaveInstanceOfMap(this, oldMap.Id, PreviousMapInstanceId);
-            // Remove any trace of our player from the old layer's processing
+            // Remove any trace of our player from the old instance's processing
             newMap.RemoveEntityFromAllSurroundingMapsInInstance(this, PreviousMapInstanceId);
         }
 
@@ -1931,7 +1923,7 @@ namespace Intersect.Server.Entities
                     if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
                     {
                         instance.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
-                        success = spawnAmount != item.Quantity;
+                        return spawnAmount != item.Quantity;
                     }
 
                     break;
@@ -2173,18 +2165,12 @@ namespace Intersect.Server.Entities
                 }
 
                 UpdateGatherItemQuests(itemDescriptor.Id);
-            return true;
-                if (CraftingTableId != Guid.Empty) // Update our crafting table if we have one
-                {
-                    StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
-                    UpdateCraftingTable(CraftingTableId);
-                }
                 return true;
             } else
             {
                 if (Map != null)
                 {
-                    Log.Error($"Could not find map layer {MapInstanceId} for player '{Name}' on map {Map.Name}.");
+                    Log.Error($"Could not find map instance {MapInstanceId} for player '{Name}' on map {Map.Name}.");
                 } else
                 {
                     Log.Error($"Could not find map {MapId} for player '{Name}'.");
@@ -4444,12 +4430,9 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-                if (spell.Combat.Friendly != IsAllyOf(target))
-                {
-                    return false;
-                }
-            }
-                }
+            if (spell.Combat.Friendly != IsAllyOf(target))
+            {
+                return false;
             }
 
             //Check for range of a single target spell

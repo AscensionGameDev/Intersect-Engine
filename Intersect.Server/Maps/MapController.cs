@@ -21,14 +21,14 @@ namespace Intersect.Server.Maps
     /// A <see cref="MapController"/> exists to provide a reference to some <see cref="Map"/> and it's neighbors, as well as give
     /// hooks to the Instance's list of <see cref="MapInstance"/>.
     /// <remarks>
-    /// A Map Instance is generally not responsible for sending packets to players, that is the job of the Instance's Map Processing Layers.
+    /// A Map Controller is generally not responsible for sending packets to players, that is the job of the Instances, stored in <see cref="mInstances"/>.
     /// However, the exception to that case is whenever we want to perform some action for ALL players on a map, regardless of
-    /// whatever processing layer they are currently on. In those cases, that logic should live here, and generally means iterating
-    /// over the map processing layers that belong to this <see cref="MapController"/>.
+    /// whatever Instance they are currently on. In those cases, that logic should live here, and generally means iterating
+    /// over the map instance that belong to this <see cref="MapController"/>.
     /// <para>
     /// A good example of this can be seen in the Respawn/Despawning functions of a <see cref="MapController"/> - these functions are called
     /// when we update a Map from the editor, or otherwise need to refresh what a <see cref="Map"/> looks like under the hood, and the
-    /// methods go out to each processing layer to refresh the packets that are being sent to the player/instances that are being processed
+    /// methods go out to each instance to refresh the packets that are being sent to the player/instances that are being processed
     /// by the <see cref="MapInstance"/>.
     /// </para>
     /// </remarks>
@@ -257,9 +257,9 @@ namespace Intersect.Server.Maps
         public ICollection<Player> GetPlayersOnAllInstances()
         {
             var players = new List<Player>();
-            foreach (var layer in mInstances.Keys.ToList())
+            foreach (var instance in mInstances.Keys.ToList())
             {
-                players.AddRange(mInstances[layer].GetPlayers());
+                players.AddRange(mInstances[instance].GetPlayers());
             }
             return players;
         }
@@ -317,10 +317,10 @@ namespace Intersect.Server.Maps
         }
 
         /// <summary>
-        /// Creates a processing layer
+        /// Creates a new instance
         /// </summary>
         /// <param name="instanceId"></param>
-        /// <returns>Whether or not we needed to create a new processing layer</returns>
+        /// <returns>Whether or not we needed to create a new map instance</returns>
         public bool TryCreateInstance(Guid instanceId, out MapInstance newLayer)
         {
             newLayer = null;
@@ -328,7 +328,7 @@ namespace Intersect.Server.Maps
             {
                 if (!mInstances.ContainsKey(instanceId))
                 {
-                    Log.Debug($"Creating new processing layer {instanceId} for map {Name}");
+                    Log.Debug($"Creating new instance with ID {instanceId} for map {Name}");
                     mInstances[instanceId] = new MapInstance(this, instanceId);
                     newLayer = mInstances[instanceId];
                     return true;
@@ -338,12 +338,12 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public bool TryGetInstance(Guid instanceLayer, out MapInstance instance, bool createIfNew = false)
+        public bool TryGetInstance(Guid mapInstanceId, out MapInstance instance, bool createIfNew = false)
         {
             lock (GetMapLock())
             {
                 instance = null;
-                if (mInstances.TryGetValue(instanceLayer, out instance))
+                if (mInstances.TryGetValue(mapInstanceId, out instance))
                 {
                     return true;
                 }
@@ -351,7 +351,7 @@ namespace Intersect.Server.Maps
                 {
                     if (createIfNew)
                     {
-                        if (TryCreateInstance(instanceLayer, out instance))
+                        if (TryCreateInstance(mapInstanceId, out instance))
                         {
                             return true;
                         }
@@ -361,38 +361,38 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public void RemoveEntityFromAllSurroundingMapsInInstance(Entity entity, Guid instanceLayer)
+        public void RemoveEntityFromAllSurroundingMapsInInstance(Entity entity, Guid mapInstanceId)
         {
-            foreach (var instance in GetSurroundingMapInstances(Id, instanceLayer, true))
+            foreach (var instance in GetSurroundingMapInstances(Id, mapInstanceId, true))
             {
                 instance.RemoveEntity(entity);
             }
         }
 
-        public void DisposeInstanceWithId(Guid instanceLayer)
+        public void DisposeInstanceWithId(Guid mapInstanceId)
         {
             lock (GetMapLock())
             {
-                if (mInstances[instanceLayer] != null)
+                if (mInstances[mapInstanceId] != null)
                 {
-                    if (mInstances.TryRemove(instanceLayer, out var removedLayer))
+                    if (mInstances.TryRemove(mapInstanceId, out var removedInstance))
                     {
-                        removedLayer.Dispose();
-                        Log.Debug($"Cleaning up Instance {instanceLayer} for map: {Name}");
+                        removedInstance.Dispose();
+                        Log.Debug($"Cleaning up Instance {mapInstanceId} for map: {Name}");
                     }
                 }
             }
         }
 
-        public List<Player> GetPlayersOnSharedInstance(Guid instanceLayer, Entity except)
+        public List<Player> GetPlayersOnSharedInstance(Guid mapInstanceId, Entity except)
         {
             var entitiesOnSharedLayer = new List<Player>();
 
-            if (mInstances.TryGetValue(instanceLayer, out var layer))
+            if (mInstances.TryGetValue(mapInstanceId, out var instance))
             {
-                foreach (var player in layer.GetPlayers())
+                foreach (var player in instance.GetPlayers())
                 {
-                    if (player != except && player.MapInstanceId == instanceLayer)
+                    if (player != except && player.MapInstanceId == mapInstanceId)
                     {
                         entitiesOnSharedLayer.Add(player);
                     }

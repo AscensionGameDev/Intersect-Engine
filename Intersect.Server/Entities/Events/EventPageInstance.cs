@@ -56,7 +56,7 @@ namespace Intersect.Server.Entities.Events
             EventBase myEvent,
             EventPage myPage,
             Guid mapId,
-            Guid instanceLayer,
+            Guid mapInstanceId,
             Event eventIndex,
             Player player
         ) : base()
@@ -65,7 +65,7 @@ namespace Intersect.Server.Entities.Events
             Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
-            MapInstanceId = instanceLayer;
+            MapInstanceId = mapInstanceId;
             X = eventIndex.X;
             Y = eventIndex.Y;
             Name = myEvent.Name;
@@ -130,7 +130,7 @@ namespace Intersect.Server.Entities.Events
             EventPage myPage,
             Guid instanceId,
             Guid mapId,
-            Guid instanceLayer,
+            Guid mapInstanceId,
             Event eventIndex,
             Player player,
             EventPageInstance globalClone
@@ -141,7 +141,7 @@ namespace Intersect.Server.Entities.Events
             GlobalClone = globalClone;
             MyPage = myPage;
             MapId = mapId;
-            MapInstanceId = instanceLayer;
+            MapInstanceId = mapInstanceId;
             X = globalClone.X;
             Y = globalClone.Y;
             Name = myEvent.Name;

@@ -756,13 +756,13 @@ namespace Intersect.Server.Networking
         /// <param name="message">The message to send.</param>
         /// <param name="type">The type of message we are sending.</param>
         /// <param name="mapId">The Map we are sending this message to (and its surroundings).</param>
-        /// <param name="instanceLayer">The ID of the layer to send the message to.</param>
+        /// <param name="mapInstanceId">The ID of the map instance to send the message to.</param>
         /// <param name="color">The color assigned to this message.</param>
         /// <param name="target">The sender of this message, should we decide to respond from the client.</param>
         /// <returns></returns>
-        public static bool SendProximityMsgToLayer(string message, ChatMessageType type, Guid mapId, Guid instanceLayer, Color color, string target = "")
+        public static bool SendProximityMsgToLayer(string message, ChatMessageType type, Guid mapId, Guid mapInstanceId, Color color, string target = "")
         {
-            return SendDataToProximityOnMapInstance(mapId, instanceLayer, new ChatMsgPacket(message, type, color, target));
+            return SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ChatMsgPacket(message, type, color, target));
         }
 
         /// <summary>
@@ -809,9 +809,9 @@ namespace Intersect.Server.Networking
             SendDataAcrossMapInstancesInProximity(mapId, new ProjectileDeadPacket(projDeaths, spawnDeaths));
         }
 
-        public static void SendRemoveProjectileSpawns(Guid mapId, Guid instanceLayer, Guid[] projDeaths, KeyValuePair<Guid, int>[] spawnDeaths)
+        public static void SendRemoveProjectileSpawns(Guid mapId, Guid mapInstanceId, Guid[] projDeaths, KeyValuePair<Guid, int>[] spawnDeaths)
         {
-            SendDataToProximityOnMapInstance(mapId, instanceLayer, new ProjectileDeadPacket(projDeaths, spawnDeaths));
+            SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ProjectileDeadPacket(projDeaths, spawnDeaths));
         }
 
         //EntityMovePacket
@@ -872,7 +872,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityVitalsPacket
-        public static void SendMapEntityVitalUpdate(MapController map, Entity[] entities, Guid instanceLayer)
+        public static void SendMapEntityVitalUpdate(MapController map, Entity[] entities, Guid mapInstanceId)
         {
             // Generate a list of vitals to send to our users!
             var data = new List<EntityVitalData>();
@@ -889,10 +889,10 @@ namespace Intersect.Server.Networking
             }
 
             // Send the data to the surroundings!
-            SendDataToProximityOnMapInstance(map.Id, instanceLayer,new MapEntityVitalsPacket(map.Id, data.ToArray()));
+            SendDataToProximityOnMapInstance(map.Id, mapInstanceId,new MapEntityVitalsPacket(map.Id, data.ToArray()));
         }
 
-        public static void SendMapEntityStatusUpdate(MapController map, Entity[] entities, Guid instanceLayer)
+        public static void SendMapEntityStatusUpdate(MapController map, Entity[] entities, Guid mapInstanceId)
         {
             // Generate a list of statuses to send to our users!
             var data = new List<EntityStatusData>();
@@ -907,7 +907,7 @@ namespace Intersect.Server.Networking
             }
 
             // Send the data to the surroundings!
-            SendDataToProximityOnMapInstance(map.Id, instanceLayer, new MapEntityStatusPacket(map.Id, data.ToArray()));
+            SendDataToProximityOnMapInstance(map.Id, mapInstanceId, new MapEntityStatusPacket(map.Id, data.ToArray()));
         }
 
         //EntityStatsPacket
@@ -1063,13 +1063,13 @@ namespace Intersect.Server.Networking
         /// <summary>
         /// Send a map item update to the relevant players.
         /// </summary>
-        /// <param name="mapId">The Id of the <see cref="MapController"/> containing the relevant processing layer.</param>
-        /// <param name="instanceLayer">The instance layer ID of the <see cref="MapInstance"/> we are sending the item update for.</param>
+        /// <param name="mapId">The Id of the <see cref="MapController"/> containing the relevant instance.</param>
+        /// <param name="mapInstanceId">The instance ID of the <see cref="MapInstance"/> we are sending the item update for.</param>
         /// <param name="uniqueId">The Id for the <see cref="MapItem"/> we are sending the item update for.</param>
         /// <param name="itemRef">The map item that we are sending (or null if removing), passing this saves us a lookup for it.</param>
         /// <param name="sendToAll">If we are removing the item from the map, do we send this data to everyone?</param>
         /// <param name="owner">The previous owner of an item being removed when the data is not send to everyone.</param>
-        public static void SendMapItemUpdate(Guid mapId, Guid instanceLayer, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
+        public static void SendMapItemUpdate(Guid mapId, Guid mapInstanceId, MapItem itemRef, bool removing, bool sendToAll = true, Guid owner = new Guid())
         {
             // Does the item exist? If not, send a delete notification. If it does, send an update.
             if (removing)
@@ -1077,7 +1077,7 @@ namespace Intersect.Server.Networking
                 // Are we to send the removal to all players?
                 if (sendToAll)
                 {
-                    SendDataToProximityOnMapInstance(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                    SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
                 }
                 else
                 {
@@ -1090,7 +1090,7 @@ namespace Intersect.Server.Networking
                     else
                     {
                         // Uh, our player doesn't exist.. send it to everyone anyway.
-                        SendDataToProximityOnMapInstance(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
+                        SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
                     }
                 }
                 
@@ -1108,7 +1108,7 @@ namespace Intersect.Server.Networking
                 }
                 else
                 {
-                    SendDataToProximityOnMapInstance(mapId, instanceLayer, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                    SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
                 }
             }
         }
@@ -1462,18 +1462,18 @@ namespace Intersect.Server.Networking
             byte x,
             byte y,
             sbyte direction,
-            Guid instanceLayer
+            Guid mapInstanceId
         )
         {
-            if (MapController.TryGetInstanceFromMap(mapId, instanceLayer, out var mapInstance))
+            if (MapController.TryGetInstanceFromMap(mapId, mapInstanceId, out var mapInstance))
             {
                 if (Options.Instance.Packets.BatchAnimationPackets)
                 {
-                    mapInstance.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction, projectileHitAnim));
+                    mapInstance.AddBatchedAnimation(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
                 }
                 else
                 {
-                    SendDataToProximityOnMapInstance(mapId, instanceLayer, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
+                    SendDataToProximityOnMapInstance(mapId, mapInstanceId, new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction), null, TransmissionMode.Any);
                 }
             }
         }
@@ -1874,9 +1874,9 @@ namespace Intersect.Server.Networking
         }
 
         //ChatBubblePacket
-        public static void SendChatBubble(Guid entityId, Guid instanceLayer, EntityTypes type, string text, Guid mapId)
+        public static void SendChatBubble(Guid entityId, Guid mapInstanceId, EntityTypes type, string text, Guid mapId)
         {
-            SendDataToProximityOnMapInstance(mapId, instanceLayer, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
+            SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }
 
         //QuestOfferPacket

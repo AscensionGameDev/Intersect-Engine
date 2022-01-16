@@ -46,7 +46,7 @@ namespace Intersect.Server.Entities
         }
 
         //Initialization
-        public Entity(Guid instanceId, Guid instanceLayer)
+        public Entity(Guid instanceId, Guid mapInstanceId)
         {
             if (!(this is EventPageInstance) && !(this is Projectile))
             {
@@ -55,7 +55,7 @@ namespace Intersect.Server.Entities
                     Stat[i] = new Stat((Stats)i, this);
                 }
             }
-            MapInstanceId = instanceLayer;
+            MapInstanceId = mapInstanceId;
 
             Id = instanceId;
         }
@@ -2176,9 +2176,7 @@ namespace Intersect.Server.Entities
                                         }
                                     }
 
-                                            TryAttack(entity, spellBase); //Handle damage
-                                        }
-                                    }
+                                    TryAttack(entity, spellBase); //Handle damage
                                 }
                             }
                         }

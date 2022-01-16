@@ -69,10 +69,10 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
         }
 
-        public Event(Guid instanceId, EventBase baseEvent, MapController map, Guid instanceLayer) //Global constructor
+        public Event(Guid instanceId, EventBase baseEvent, MapController map, Guid mapInstanceId) //Global constructor
         {
             Id = instanceId;
-            MapInstanceId = instanceLayer;
+            MapInstanceId = mapInstanceId;
             Global = true;
             MapId = map?.Id ?? Guid.Empty;
             MapController = map;
@@ -83,7 +83,7 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
             for (var i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, instanceLayer, this, null);
+                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, mapInstanceId, this, null);
             }
         }
 

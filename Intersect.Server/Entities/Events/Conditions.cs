@@ -376,9 +376,9 @@ namespace Intersect.Server.Entities.Events
                 map = MapController.Get(player.MapId);
             }
 
-            if (map != null && map.TryGetInstance(player.MapInstanceId, out var instanceLayer))
+            if (map != null && map.TryGetInstance(player.MapInstanceId, out var mapInstance))
             {
-                var entities = instanceLayer.GetEntities();
+                var entities = mapInstance.GetEntities();
                 foreach (var en in entities)
                 {
                     if (en.GetType() == typeof(Npc))
