@@ -629,7 +629,7 @@ namespace Intersect.Server.Maps
         private void DespawnResources()
         {
             //Kill all resources spawned from this map
-            lock (GetControllerLock())
+            lock (GetLock())
             {
                 foreach (var resourceSpawn in ResourceSpawnInstances)
                 {

@@ -1557,7 +1557,6 @@ namespace Intersect.Server.Entities
             Z = zOverride;
             Dir = newDir;
 
-            // TODO Alex: Control when we change layers
             PreviousMapInstanceId = MapInstanceId;
 
             var newSurroundingMaps = newMap.GetSurroundingMapIds(false);
@@ -1654,8 +1653,6 @@ namespace Intersect.Server.Entities
             EventBaseIdLookup.Clear();
             Log.Debug($"Player {Name} has joined instance {MapInstanceId} of map: {newMap.Name}");
             Log.Info($"Previous instance was {PreviousMapInstanceId}");
-            // Todo Alex Remove this
-            PacketSender.SendChatMsg(this, "Joined Map Instance with ID" + MapInstanceId.ToString(), ChatMessageType.Local);
             // We changed maps AND instances - remove from the old map's old instance
             PacketSender.SendEntityLeaveInstanceOfMap(this, oldMap.Id, PreviousMapInstanceId);
             // Remove any trace of our player from the old instance's processing
