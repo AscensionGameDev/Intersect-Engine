@@ -50,14 +50,6 @@ namespace Intersect.Server.Database.Logging
             modelBuilder.ApplyConfiguration(new RequestLog.Mapper());
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            //optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
-            //optionsBuilder.EnableSensitiveDataLogging();
-        }
-
         public void Seed()
         {
 #if DEBUG

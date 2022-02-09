@@ -14,7 +14,7 @@ namespace Intersect.Server.Database.Logging.Seed
             var chunkSize = 1000;
             for (short i = 0; i < 10; ++i)
             {
-                var tradeHistories = Enumerable.Range(0, chunkSize).Select(j =>
+                var tradeHistories = Enumerable.Range(0, chunkSize).SelectMany(j =>
                 {
                     var ij = i * chunkSize + j;
                     var octets = new byte[]
@@ -28,29 +28,47 @@ namespace Intersect.Server.Database.Logging.Seed
                         default,
                         default
                     };
-                    return new TradeHistory
+
+                    var sourceItems = new Item[]
+                            {
+                                new Item
+                                {
+                                    ItemId = Guid.NewGuid(),
+                                    Quantity = j
+                                }
+                            };
+                    var targetItems = new Item[]
+                            {
+                                new Item
+                                {
+                                    ItemId = Guid.NewGuid(),
+                                    Quantity = i
+                                }
+                            };
+
+                    return new[]
                     {
-                        TradeId = new Guid(j, default, i, octets),
-                        UserId = new Guid(j, default, i, octets),
-                        PlayerId = new Guid(j, default, i, octets),
-                        Ip = string.Join(".", octets.Take(4).Select(o => Convert.ToString(o, 10))),
-                        TimeStamp = DateTime.UtcNow.AddMilliseconds(ij),
-                        TargetId = new Guid(j, default, i, octets),
-                        Items = new Item[]
+                        new TradeHistory
                         {
-                            new Item
-                            {
-                                ItemId = Guid.NewGuid(),
-                                Quantity = j
-                            }
+                            TradeId = new Guid(j, default, i, octets),
+                            UserId = new Guid(j, default, i, octets),
+                            PlayerId = new Guid(j, 0, i, octets),
+                            Ip = string.Join(".", octets.Take(4).Select(o => Convert.ToString(o, 10))),
+                            TimeStamp = DateTime.UtcNow.AddMilliseconds(ij),
+                            TargetId = new Guid(j, 1, i, octets),
+                            Items = sourceItems,
+                            TargetItems = targetItems
                         },
-                        TargetItems = new Item[]
+                        new TradeHistory
                         {
-                            new Item
-                            {
-                                ItemId = Guid.NewGuid(),
-                                Quantity = i
-                            }
+                            TradeId = new Guid(j, default, i, octets),
+                            UserId = new Guid(j, 1, i, octets),
+                            PlayerId = new Guid(j, 1, i, octets),
+                            Ip = string.Join(".", octets.Take(4).Select(o => Convert.ToString(o, 10))),
+                            TimeStamp = DateTime.UtcNow.AddMilliseconds(ij),
+                            TargetId = new Guid(j, 0, i, octets),
+                            Items = targetItems,
+                            TargetItems = sourceItems
                         }
                     };
                 });
