@@ -746,7 +746,19 @@ namespace Intersect.Server.Entities
             pkt.Guild = Guild?.Name;
             pkt.GuildRank = GuildRank;
 
+            int[] trueStats = new int[(int)Stats.StatCount];
+            for (int i = 0; i < (int) Stats.StatCount; i++)
+            {
+                trueStats[i] = GetNonBuffedStat((Stats) i);
+            }
+            pkt.TrueStats = trueStats;
+
             return pkt;
+        }
+
+        public int GetNonBuffedStat(Stats stat)
+        {
+            return Stat[(int)stat].BaseStat + StatPointAllocations[(int)stat];
         }
 
         public override EntityTypes GetEntityType()

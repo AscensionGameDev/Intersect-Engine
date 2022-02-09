@@ -878,12 +878,24 @@ namespace Intersect.Server.Networking
         public static EntityStatsPacket GenerateEntityStatsPacket(Entity en)
         {
             var stats = new int[(int) Stats.StatCount];
+            var trueStats = new int[(int)Stats.StatCount];
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 stats[i] = en.Stat[i].Value();
+                if (en is Player player)
+                {
+                    trueStats[i] = player.GetNonBuffedStat((Stats) i);
+                }
             }
 
-            return new EntityStatsPacket(en.Id, en.GetEntityType(), en.MapId, stats);
+            if (en.GetEntityType() == EntityTypes.Player)
+            {
+                return new PlayerStatsPacket(en.Id, en.GetEntityType(), en.MapId, stats, trueStats);
+            }
+            else
+            {
+                return new EntityStatsPacket(en.Id, en.GetEntityType(), en.MapId, stats);
+            }
         }
 
         //EntityStatsPacket

@@ -910,6 +910,27 @@ namespace Intersect.Client.Networking
             en.Stat = packet.Stats;
         }
 
+        //PlayerStatsPacket
+        public void HandlePacket(IPacketSender packetSender, PlayerStatsPacket packet)
+        {
+            var id = packet.Id;
+            Entity player = null;
+
+            if (!Globals.Entities.ContainsKey(id))
+            {
+                return;
+            }
+
+            player = Globals.Entities[id];
+            if (player == null)
+            {
+                return;
+            }
+
+            player.Stat = packet.Stats;
+            player.TrueStats = packet.TrueStats;
+        }
+
         //EntityDirectionPacket
         public void HandlePacket(IPacketSender packetSender, EntityDirectionPacket packet)
         {

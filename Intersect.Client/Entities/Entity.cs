@@ -150,6 +150,8 @@ namespace Intersect.Client.Entities
         IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
         public int[] Stat { get; set; } = new int[(int)Stats.StatCount];
+        
+        public int[] TrueStats = new int[(int)Stats.StatCount];
 
         IReadOnlyList<int> IEntity.Stats => Stat.ToList();
 

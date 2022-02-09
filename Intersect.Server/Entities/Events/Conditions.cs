@@ -200,8 +200,7 @@ namespace Intersect.Server.Entities.Events
                 lvlStat = player.Stat[(int)condition.Stat].Value();
                 if (condition.IgnoreBuffs)
                 {
-                    lvlStat = player.Stat[(int)condition.Stat].BaseStat +
-                              player.StatPointAllocations[(int)condition.Stat];
+                    lvlStat = player.GetNonBuffedStat(condition.Stat);
                 }
             }
 

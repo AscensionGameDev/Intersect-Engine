@@ -258,6 +258,7 @@ namespace Intersect.Client.Entities
             CombatTimer = pkt.CombatTimeRemaining + Timing.Global.Milliseconds;
             Guild = pkt.Guild;
             Rank = pkt.GuildRank;
+            TrueStats = pkt.TrueStats;
 
             var playerPacket = (PlayerEntityPacket)packet;
 

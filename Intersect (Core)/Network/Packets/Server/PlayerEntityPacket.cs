@@ -40,6 +40,9 @@ namespace Intersect.Network.Packets.Server
 
         [Key(30)]
         public int GuildRank { get; set; }
+
+        [Key(31)]
+        public int[] TrueStats { get; set; }
     }
 
 }
