@@ -1,12 +1,11 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
-using Intersect.Server.Entities;
-using Intersect.Server.Web.RestApi;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
     [RoutePrefix("logs")]
-    [ConfigurableAuthorize]
+    [AllowAnonymous]
     public sealed class LogsController : IntersectApiController
     {
 
@@ -344,7 +343,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = DbInterface.CreateLoggingContext())
             {
                 var trades = context.TradeHistory.AsQueryable();
 
@@ -357,10 +356,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 {
                     trades = trades.Where(m => m.PlayerId == playerId);
                 }
-                else
-                {
-                    trades = trades.GroupBy(t => t.TradeId).Select(t => t.First());
-                }
 
                 if (sortDirection == SortDirection.Ascending)
                 {
@@ -371,7 +366,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     trades = trades.OrderByDescending(m => m.TimeStamp);
                 }
 
-                var values = trades.Skip(page * pageSize).Take(pageSize).ToList();
+                var pageQuery = trades.Skip(page * pageSize).Take(pageSize);
+
+                var values = pageQuery.ToList();
 
                 PopulateTradeNames(values);
 
