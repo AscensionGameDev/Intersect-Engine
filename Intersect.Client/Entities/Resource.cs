@@ -15,14 +15,16 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Entities
 {
 
-    public partial class Resource : Entity
+    public partial class Resource : Entity, IResource
     {
 
         private bool _waitingForTilesets;
 
-        public ResourceBase BaseResource;
+        public ResourceBase BaseResource { get; set; }
 
-        public bool IsDead;
+        bool IResource.IsDepleted => IsDead;
+
+        public bool IsDead { get; set; }
 
         FloatRect mDestRectangle = FloatRect.Empty;
 
@@ -65,11 +67,6 @@ namespace Intersect.Client.Entities
 
                 mHasRenderBounds = false;
             }
-        }
-
-        public ResourceBase GetResourceBase()
-        {
-            return BaseResource;
         }
 
         public override void Load(EntityPacket packet)

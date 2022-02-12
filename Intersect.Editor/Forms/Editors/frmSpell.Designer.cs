@@ -1053,6 +1053,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudSpdPercentage.ValueChanged += new System.EventHandler(this.nudSpdPercentage_ValueChanged);
             // 
             // nudMRPercentage
             // 
@@ -1077,6 +1078,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudMRPercentage.ValueChanged += new System.EventHandler(this.nudMRPercentage_ValueChanged);
             // 
             // nudDefPercentage
             // 
@@ -1101,6 +1103,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudDefPercentage.ValueChanged += new System.EventHandler(this.nudDefPercentage_ValueChanged);
             // 
             // nudMagPercentage
             // 
@@ -1125,6 +1128,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudMagPercentage.ValueChanged += new System.EventHandler(this.nudMagPercentage_ValueChanged);
             // 
             // nudStrPercentage
             // 
@@ -1149,6 +1153,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudStrPercentage.ValueChanged += new System.EventHandler(this.nudStrPercentage_ValueChanged);
             // 
             // lblPlus5
             // 
@@ -1223,6 +1228,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudSpd.ValueChanged += new System.EventHandler(this.nudSpd_ValueChanged);
             // 
             // nudMR
             // 
@@ -1247,6 +1253,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudMR.ValueChanged += new System.EventHandler(this.nudMR_ValueChanged);
             // 
             // nudDef
             // 
@@ -1271,6 +1278,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudDef.ValueChanged += new System.EventHandler(this.nudDef_ValueChanged);
             // 
             // nudMag
             // 
@@ -1295,6 +1303,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudMag.ValueChanged += new System.EventHandler(this.nudMag_ValueChanged);
             // 
             // nudStr
             // 
@@ -1319,6 +1328,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudStr.ValueChanged += new System.EventHandler(this.nudStr_ValueChanged);
             // 
             // lblSpd
             // 
@@ -1403,6 +1413,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudTick.ValueChanged += new System.EventHandler(this.nudTick_ValueChanged);
             // 
             // chkHOTDOT
             // 
@@ -1412,6 +1423,7 @@ namespace Intersect.Editor.Forms.Editors
             this.chkHOTDOT.Size = new System.Drawing.Size(86, 24);
             this.chkHOTDOT.TabIndex = 22;
             this.chkHOTDOT.Text = "HOT/DOT?";
+            this.chkHOTDOT.CheckedChanged += new System.EventHandler(this.chkHOTDOT_CheckedChanged);
             // 
             // lblTick
             // 
@@ -1481,6 +1493,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbExtraEffect.TabIndex = 36;
             this.cmbExtraEffect.Text = "None";
             this.cmbExtraEffect.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
             // 
             // picSprite
             // 
@@ -1513,6 +1526,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbTransform.TabIndex = 44;
             this.cmbTransform.Text = "None";
             this.cmbTransform.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbTransform.SelectedIndexChanged += new System.EventHandler(this.cmbTransform_SelectedIndexChanged);
             // 
             // lblSprite
             // 
@@ -1555,6 +1569,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudBuffDuration.ValueChanged += new System.EventHandler(this.nudBuffDuration_ValueChanged);
             // 
             // lblBuffDuration
             // 
@@ -1616,6 +1631,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudCritMultiplier.ValueChanged += new System.EventHandler(this.nudCritMultiplier_ValueChanged);
             // 
             // lblCritMultiplier
             // 
@@ -1639,6 +1655,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudCritChance.ValueChanged += new System.EventHandler(this.nudCritChance_ValueChanged);
             // 
             // nudScaling
             // 
@@ -1658,6 +1675,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudScaling.ValueChanged += new System.EventHandler(this.nudScaling_ValueChanged);
             // 
             // nudMPDamage
             // 
@@ -1682,6 +1700,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudMPDamage.ValueChanged += new System.EventHandler(this.nudMPDamage_ValueChanged);
             // 
             // nudHPDamage
             // 
@@ -1706,6 +1725,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
+            this.nudHPDamage.ValueChanged += new System.EventHandler(this.nudHPDamage_ValueChanged);
             // 
             // cmbScalingStat
             // 
@@ -1726,6 +1746,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbScalingStat.TabIndex = 57;
             this.cmbScalingStat.Text = null;
             this.cmbScalingStat.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbScalingStat.SelectedIndexChanged += new System.EventHandler(this.cmbScalingStat_SelectedIndexChanged);
             // 
             // lblScalingStat
             // 
@@ -1744,6 +1765,7 @@ namespace Intersect.Editor.Forms.Editors
             this.chkFriendly.Size = new System.Drawing.Size(62, 17);
             this.chkFriendly.TabIndex = 55;
             this.chkFriendly.Text = "Friendly";
+            this.chkFriendly.CheckedChanged += new System.EventHandler(this.chkFriendly_CheckedChanged);
             // 
             // lblCritChance
             // 
@@ -1786,6 +1808,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbDamageType.TabIndex = 50;
             this.cmbDamageType.Text = "Physical";
             this.cmbDamageType.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbDamageType.SelectedIndexChanged += new System.EventHandler(this.cmbDamageType_SelectedIndexChanged);
             // 
             // lblDamageType
             // 

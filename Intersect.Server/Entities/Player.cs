@@ -300,10 +300,10 @@ namespace Intersect.Server.Entities
             base.Dispose();
         }
 
-        public void TryLogout(bool force = false)
+        public void TryLogout(bool force = false, bool softLogout = false)
         {
             LastOnline = DateTime.Now;
-            Client = null;
+            Client = default;
 
             if (LoginTime != null)
             {
@@ -313,11 +313,11 @@ namespace Intersect.Server.Entities
 
             if (CombatTimer < Timing.Global.Milliseconds || force)
             {
-                Logout();
+                Logout(softLogout);
             }
         }
 
-        private void Logout()
+        private void Logout(bool softLogout = false)
         {
             var map = MapInstance.Get(MapId);
             map?.RemoveEntity(this);
@@ -418,7 +418,7 @@ namespace Intersect.Server.Entities
             //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
             if (Client == null)
             {
-                User?.TryLogout();
+                User?.TryLogout(softLogout);
             }
 
             DbInterface.Pool.QueueWorkItem(CompleteLogout);
@@ -4986,7 +4986,8 @@ namespace Intersect.Server.Entities
                         questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
                         PacketSender.SendChatMsg(
-                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, Color.Red
+                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
+                            CustomColors.Quests.Abandoned
                         );
 
                         PacketSender.SendQuestsProgress(this);
@@ -5024,7 +5025,8 @@ namespace Intersect.Server.Entities
 
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green
+                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                                        CustomColors.Quests.Completed
                                     );
                                 }
                                 else
@@ -5072,7 +5074,10 @@ namespace Intersect.Server.Entities
                     if (!skipCompletionEvent)
                     {
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
-                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
+                        PacketSender.SendChatMsg(
+                            this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                            CustomColors.Quests.Completed
+                        );
                     }
                     PacketSender.SendQuestsProgress(this);
                 }
@@ -6136,7 +6141,7 @@ namespace Intersect.Server.Entities
 
         [NotMapped, JsonIgnore] public Guid LastMapEntered = Guid.Empty;
 
-        [JsonIgnore, NotMapped] public Client Client;
+        [JsonIgnore, NotMapped] public Client Client { get; set; }
 
         [JsonIgnore, NotMapped]
         public UserRights Power => Client?.Power ?? UserRights.None;

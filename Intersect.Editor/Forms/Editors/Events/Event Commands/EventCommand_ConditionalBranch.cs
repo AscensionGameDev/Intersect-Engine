@@ -1313,7 +1313,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.Quantity = (int) nudItemAmount.Value;
             condition.VariableType = rdoInvPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
             condition.UseVariable = !rdoManual.Checked;
-            condition.VariableId = rdoInvPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex) : ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+            condition.VariableId = rdoInvPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataTypes.Integer) : ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataTypes.Integer);
         }
 
         private void SaveFormValues(InGuildWithRank condition)

@@ -1,12 +1,12 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
-using Intersect.Server.Entities;
-using Intersect.Server.Web.RestApi;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -344,7 +344,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            var start = DateTime.UtcNow;
+
+            using (var context = DbInterface.CreateLoggingContext())
             {
                 var trades = context.TradeHistory.AsQueryable();
 
@@ -357,10 +359,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 {
                     trades = trades.Where(m => m.PlayerId == playerId);
                 }
-                else
-                {
-                    trades = trades.GroupBy(t => t.TradeId).Select(t => t.First());
-                }
 
                 if (sortDirection == SortDirection.Ascending)
                 {
@@ -371,14 +369,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     trades = trades.OrderByDescending(m => m.TimeStamp);
                 }
 
-                var values = trades.Skip(page * pageSize).Take(pageSize).ToList();
+                var doGroupBy = userId == default && playerId == default;
+                var pageScalar = doGroupBy ? 2 : 1;
+                var skip = page * pageSize * pageScalar;
+                var take = limit * pageScalar;
+
+                trades = trades.Skip(skip).Take(take);
+
+                if (doGroupBy)
+                {
+                    trades = trades.GroupBy(t => t.TradeId, (key, group) => group.OrderBy(gt => gt.PlayerId)).Select(t => t.First());
+                }
+
+                var values = trades.ToList();
 
                 PopulateTradeNames(values);
 
-                if (limit != pageSize)
-                {
-                    values = values.Take(limit).ToList();
-                }
+                var delta = DateTime.UtcNow - start;
 
                 return new DataPage<TradeHistory>
                 {
@@ -386,7 +393,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     Page = page,
                     PageSize = pageSize,
                     Count = values.Count,
-                    Values = values
+                    Sort = new[] { Sort.From(nameof(TradeHistory.TimeStamp), sortDirection) },
+                    Values = values,
+#if DEBUG
+                    Extra = delta
+#endif
                 };
             }
         }
