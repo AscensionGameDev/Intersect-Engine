@@ -300,10 +300,10 @@ namespace Intersect.Server.Entities
             base.Dispose();
         }
 
-        public void TryLogout(bool force = false)
+        public void TryLogout(bool force = false, bool softLogout = false)
         {
             LastOnline = DateTime.Now;
-            Client = null;
+            Client = default;
 
             if (LoginTime != null)
             {
@@ -313,11 +313,11 @@ namespace Intersect.Server.Entities
 
             if (CombatTimer < Timing.Global.Milliseconds || force)
             {
-                Logout();
+                Logout(softLogout);
             }
         }
 
-        private void Logout()
+        private void Logout(bool softLogout = false)
         {
             var map = MapInstance.Get(MapId);
             map?.RemoveEntity(this);
@@ -418,7 +418,7 @@ namespace Intersect.Server.Entities
             //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
             if (Client == null)
             {
-                User?.TryLogout();
+                User?.TryLogout(softLogout);
             }
 
             DbInterface.Pool.QueueWorkItem(CompleteLogout);
@@ -6141,7 +6141,7 @@ namespace Intersect.Server.Entities
 
         [NotMapped, JsonIgnore] public Guid LastMapEntered = Guid.Empty;
 
-        [JsonIgnore, NotMapped] public Client Client;
+        [JsonIgnore, NotMapped] public Client Client { get; set; }
 
         [JsonIgnore, NotMapped]
         public UserRights Power => Client?.Power ?? UserRights.None;
