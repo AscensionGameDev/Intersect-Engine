@@ -14,5 +14,3 @@
 [Dog from the Kash Shop](#)
 
 [Jocelyn Cobb](https://github.com/Cheshire92)
-
-[Alex Vild](https://github.com/AlexVild)
