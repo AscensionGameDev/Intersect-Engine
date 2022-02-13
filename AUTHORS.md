@@ -9,6 +9,8 @@
 
 # Intersect Contributors
 
+[Alex Vild](https://github.com/AlexVild)
+
 [A. I. Robin](https://github.com/alloin)
 
 [Dog from the Kash Shop](#)
