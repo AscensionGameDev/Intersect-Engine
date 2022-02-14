@@ -1571,12 +1571,15 @@ namespace Intersect.Server.Entities
             }
 
             //Handle DoT/HoT spells]
-            
             if (spellBase.Combat.HoTDoT)
             {
-                target.CachedDots.ToList()
-                    .FindAll((DoT dot) => dot.SpellBase.Id == spellBase.Id && dot.Attacker == this)
-                    .ForEach((DoT dot) => dot.Expire());
+                foreach (var dot in target.CachedDots)
+                {
+                    if (dot.SpellBase.Id == spellBase.Id && dot.Attacker == this)
+                    {
+                        dot.Expire();
+                    }
+                }
 
                 new DoT(this, spellBase.Id, target);
             }
