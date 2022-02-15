@@ -283,6 +283,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 }
             }
 
+            // Vitals Regen
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                if (mItem.VitalsRegen[i] != 0)
+                {
+                    rows.AddKeyValueRow(Strings.ItemDescription.VitalsRegen[i], Strings.ItemDescription.Percentage.ToString(mItem.VitalsRegen[i]));
+                }
+            }
+
             // Stats
             if (mStatBuffs != null)
             {

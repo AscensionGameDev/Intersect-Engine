@@ -988,6 +988,13 @@ namespace Intersect.Client.Localization
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> VitalsRegen = new Dictionary<int, LocalizedString>
+            {
+                {0, @"HP Regen:"},
+                {1, @"MP Regen:"}
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> ConsumableTypes = new Dictionary<int, LocalizedString>()
             {
                 {0, "Restores HP:" },
