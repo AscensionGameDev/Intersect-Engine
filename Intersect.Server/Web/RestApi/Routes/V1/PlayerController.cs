@@ -913,28 +913,49 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var user = client?.User;
             var userId = user?.Id ?? player.UserId;
             var targetIp = client?.GetIp() ?? "";
+            var banner = Player.Find(actionParameters.Moderator);
 
             switch (adminAction)
             {
                 case AdminActions.Ban:
-                    if (string.IsNullOrEmpty(Ban.CheckBan(user, "")))
+                    if (!string.IsNullOrEmpty(Ban.CheckBan(user, string.Empty)))
                     {
+                        // Inform the banner that the user is already banned.
+                        return Request.CreateMessageResponse(
+                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name)
+                        );
+                    }
+
+                    // Check if banner has the proper authority over their target.
+                    else if (banner?.Power.GetHashCode().CompareTo(player.Power) < 0)
+                    {
+                        // Inform the banner that the ban attempt failed.
+                        return Request.CreateMessageResponse(
+                            HttpStatusCode.BadRequest, Strings.Account.BanFailed.ToString(player.Name)
+                        );
+                    }
+
+                    else
+                    {
+                        // If target is online, not yet banned, and the banner has the authority to ban them: issue the ban.
+
+                        // If BanIp is false, Client is null, or GetIp() returns null: resolve to string.Empty (no IP).
+                        targetIp = (actionParameters.Ip ? client?.GetIp() : default) ?? string.Empty;
+
+                        // Add ban
                         Ban.Add(
-                            userId, actionParameters.Duration, actionParameters.Reason ?? "",
-                            actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : ""
+                            userId, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
+                            actionParameters.Moderator ?? @"api", targetIp
                         );
 
+                        // Disconnect the banned player.
                         client?.Disconnect();
+                        
+                        // Sends a global chat message to every user online about the banned player.
                         PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
 
                         return Request.CreateMessageResponse(
                             HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name)
-                        );
-                    }
-                    else
-                    {
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name)
                         );
                     }
 
