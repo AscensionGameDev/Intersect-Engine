@@ -927,7 +927,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     }
 
                     // Check if banner has the proper authority over their target.
-                    else if (banner?.Power.GetHashCode().CompareTo(player.Power) < 0)
+                    else if (banner?.Power.IsModerator.CompareTo(player.Power.IsAdmin) < 0)
                     {
                         // Inform the banner that the ban attempt failed.
                         return Request.CreateMessageResponse(

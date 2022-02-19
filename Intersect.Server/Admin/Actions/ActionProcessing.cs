@@ -33,7 +33,7 @@ namespace Intersect.Server.Admin.Actions
                     player, Strings.Account.alreadybanned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red
                 );
             }
-            else if (player?.Power.GetHashCode().CompareTo(target.Power) < 1)
+            else if (player?.Power.IsModerator.CompareTo(target.Power.IsAdmin) < 1)
             {
                 // Inform the banner that the ban attempt failed.
                 PacketSender.SendChatMsg(
@@ -41,8 +41,8 @@ namespace Intersect.Server.Admin.Actions
                 );
 
                 // Log the ban attempt and why it failed.
-                Log.Error("'" + player.Name + "' (" + player.Power + ") failed to ban '" +
-                          target.Name + "' (" + target.Power + "). The banner doesn't have authority over their target.");
+                Log.Error("'" + player.Name + "' (Moderator) failed to ban '" +
+                          target.Name + "' (Administrator). The banner doesn't have authority over their target.");
             }
             else
             {
