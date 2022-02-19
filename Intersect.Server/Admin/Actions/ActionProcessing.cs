@@ -30,19 +30,16 @@ namespace Intersect.Server.Admin.Actions
             {
                 // Inform the banner that the user is already banned.
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.alreadybanned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red
-                );
+                    player, Strings.Account.alreadybanned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
             }
             else if (player?.Power.IsModerator.CompareTo(target.Power.IsAdmin) < 1)
             {
                 // Inform the banner that the ban attempt failed.
                 PacketSender.SendChatMsg(
-                    player, Strings.Account.BanFailed.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red
-                );
+                    player, Strings.Account.BanFailed.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Red);
 
                 // Log the ban attempt and why it failed.
-                Log.Error("'" + player.Name + "' (Moderator) failed to ban '" +
-                          target.Name + "' (Administrator). The banner doesn't have authority over their target.");
+                Log.Error($"'{player.Name}' failed to ban '{target.Name}'. The banner doesn't have authority over their target.");
             }
             else
             {
@@ -56,21 +53,15 @@ namespace Intersect.Server.Admin.Actions
 
                 // Log ban
                 UserActivityHistory.LogActivity(
-                    target?.UserId ?? Guid.Empty, target?.Id ?? Guid.Empty, target?.Client?.GetIp(),
+                    (Guid) target?.UserId, (Guid) target?.Id, target?.Client?.GetIp(),
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectBan,
-                    $"{target.User?.Name},{target.Name}"
-                );
+                    $"{target.User?.Name},{target.Name}");
 
                 // Disconnect the banned user.
                 target.Client?.Disconnect();
 
                 // Sends a global chat message to every user online about the banned player.
                 PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(target.Name));
-
-                //  Inform the banner about the successful ban.
-                PacketSender.SendChatMsg(
-                    player, Strings.Account.banned.ToString(target.Name), Enums.ChatMessageType.Admin, Color.Orange
-                );
             }
         }
 

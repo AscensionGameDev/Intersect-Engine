@@ -814,8 +814,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         // Inform the banner that the user is already banned.
                         return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(user.Name)
-                        );
+                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(user.Name));
                     }
 
                     // Check if banner has the proper authority over their target.
@@ -823,8 +822,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         // Inform the banner that the ban attempt failed.
                         return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.BanFailed.ToString(user.Name)
-                        );
+                            HttpStatusCode.BadRequest, Strings.Account.BanFailed.ToString(user.Name));
                     }
 
                     else
@@ -837,8 +835,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         // Add ban
                         Ban.Add(
                             user.Id, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
-                            actionParameters.Moderator ?? @"api", targetIp
-                        );
+                            actionParameters.Moderator ?? @"api", targetIp);
 
                         // Disconnect the banned player.
                         client?.Disconnect();
@@ -846,9 +843,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         // Sends a global chat message to every user online about the banned player.
                         PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(user.Name));
 
+                        //  Inform the API banner about the successful ban.
                         return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Account.banned.ToString(user.Name)
-                        );
+                            HttpStatusCode.OK, Strings.Account.banned.ToString(user.Name));
                     }
 
                 case AdminActions.UnBan:
