@@ -912,73 +912,87 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var user = client?.User;
             var userId = user?.Id ?? player.UserId;
-            var targetIp = client?.GetIp() ?? "";
-            var banner = Player.Find(actionParameters.Moderator);
+            var targetIp = client?.GetIp() ?? string.Empty;
+            var actionPerformer = Player.Find(actionParameters.Moderator);
 
             switch (adminAction)
             {
                 case AdminActions.Ban:
-                    if (!string.IsNullOrEmpty(Ban.CheckBan(user, string.Empty)))
+                    if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
                     {
-                        // Inform the banner that the user is already banned.
+                        // Inform to whoever performed the action that they are
+                        // not allowed to do this due to the lack of authority over their target.
                         return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name));
+                            HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
+                        );
+                    }
+                    else if (Ban.Find(userId) != null) // If the target is already banned.
+                    {
+                        return Request.CreateMessageResponse(
+                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name)
+                        );
                     }
 
-                    // Check if banner has the proper authority over their target.
-                    else if (banner?.Power.IsModerator.CompareTo(player.Power.IsAdmin) < 0)
-                    {
-                        // Inform the banner that the ban attempt failed.
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.BanFailed.ToString(player.Name));
-                    }
-
+                    // If target is online, not yet banned and the banner has the authority to ban.
                     else
                     {
-                        // If target is online, not yet banned, and the banner has the authority to ban them: issue the ban.
-
-                        // If BanIp is false, Client is null, or GetIp() returns null: resolve to string.Empty (no IP).
-                        targetIp = (actionParameters.Ip ? client?.GetIp() : default) ?? string.Empty;
-
                         // Add ban
                         Ban.Add(
                             userId, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
-                            actionParameters.Moderator ?? @"api", targetIp);
+                            actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
+                        );
 
                         // Disconnect the banned player.
                         client?.Disconnect();
-                        
+
                         // Sends a global chat message to every user online about the banned player.
                         PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
 
-                        //  Inform the API banner about the successful ban.
+                        //  Inform to the API about the successful ban.
                         return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name));
+                            HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name)
+                        );
                     }
 
                 case AdminActions.UnBan:
                     Ban.Remove(userId);
-                    PacketSender.SendGlobalMsg(Strings.Account.unbanned.ToString(player.Name));
+                    PacketSender.SendGlobalMsg(Strings.Account.UnbanSuccess.ToString(player.Name));
 
                     return Request.CreateMessageResponse(
-                        HttpStatusCode.OK, Strings.Account.unbanned.ToString(player.Name)
+                        HttpStatusCode.OK, Strings.Account.UnbanSuccess.ToString(player.Name)
                     );
 
                 case AdminActions.Mute:
-                    if (string.IsNullOrEmpty(Mute.FindMuteReason(userId, "")))
+                    if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
+                    {
+                        // Inform to whoever performed the action that they are
+                        // not allowed to do this due to the lack of authority over their target.
+                        return Request.CreateMessageResponse(
+                            HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
+                        );
+                    }
+                    else if (Mute.Find(userId) != null) // If the target is already muted.
+                    {
+                        return Request.CreateMessageResponse(
+                            HttpStatusCode.BadRequest, Strings.Account.alreadymuted.ToString(player.Name)
+                        );
+                    }
+
+                    // If target is online, not yet muted and the action performer has the authority to mute.
+                    else
                     {
                         if (user == null)
                         {
                             Mute.Add(
-                                userId, actionParameters.Duration, actionParameters.Reason ?? "",
-                                actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : ""
+                                userId, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
+                                actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
                             );
                         }
                         else
                         {
                             Mute.Add(
-                                user, actionParameters.Duration, actionParameters.Reason ?? "",
-                                actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : ""
+                                user, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
+                                actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
                             );
                         }
 
@@ -986,12 +1000,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                         return Request.CreateMessageResponse(
                             HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name)
-                        );
-                    }
-                    else
-                    {
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadymuted.ToString(player.Name)
                         );
                     }
 
@@ -1005,10 +1013,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         Mute.Remove(user);
                     }
 
-                    PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(player.Name));
+                    PacketSender.SendGlobalMsg(Strings.Account.UnmuteSuccess.ToString(player.Name));
 
                     return Request.CreateMessageResponse(
-                        HttpStatusCode.OK, Strings.Account.unmuted.ToString(player.Name)
+                        HttpStatusCode.OK, Strings.Account.UnmuteSuccess.ToString(player.Name)
                     );
 
                 case AdminActions.WarpTo:
@@ -1042,12 +1050,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminActions.Kick:
                     if (client != null)
                     {
-                        client.Disconnect(actionParameters.Reason);
-                        PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
+                        if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
+                        {
+                            // Inform to whoever performed the action that they are
+                            // not allowed to do this due to the lack of authority over their target.
+                            return Request.CreateMessageResponse(
+                                HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
+                            );
+                        }
+                        else
+                        {
+                            client.Disconnect(actionParameters.Reason);
+                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
 
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Player.serverkicked.ToString(player.Name)
-                        );
+                            return Request.CreateMessageResponse(
+                                HttpStatusCode.OK, Strings.Player.serverkicked.ToString(player.Name)
+                            );
+                        }
                     }
 
                     break;
@@ -1055,16 +1074,27 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminActions.Kill:
                     if (client != null && client.Entity != null)
                     {
-                        lock (client.Entity.EntityLock)
+                        if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
                         {
-                            client.Entity.Die();
+                            // Inform to whoever performed the action that they are
+                            // not allowed to do this due to the lack of authority over their target.
+                            return Request.CreateMessageResponse(
+                                HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
+                            );
                         }
-                        
-                        PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
+                        else
+                        {
+                            lock (client.Entity.EntityLock)
+                            {
+                                client.Entity.Die();
+                            }
 
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name)
-                        );
+                            PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
+
+                            return Request.CreateMessageResponse(
+                                HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name)
+                            );
+                        }
                     }
 
                     break;
