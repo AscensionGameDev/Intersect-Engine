@@ -2395,6 +2395,8 @@ namespace Intersect.Server.Networking
 
                     PacketSender.SendFriends(target);
                 }
+
+                player.FriendRequester = null;
             }
             else
             {
