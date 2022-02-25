@@ -1791,6 +1791,8 @@ namespace Intersect.Server.Entities
 
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
+            var slotsRequired = (int)Math.Ceiling(item.Quantity / (double) item.Descriptor.MaxInventoryStack);
+
             int spawnAmount = 0;
 
             // How are we going to be handling this?
@@ -1811,7 +1813,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
                     {
                         spawnAmount = item.Quantity;
                     }
@@ -1839,7 +1841,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
+                    else if (!item.Descriptor.Stackable && openSlots >= slotsRequired) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
                         GiveItem(item, sendUpdate);
@@ -1885,7 +1887,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
                     if (canAdd > toGive)
                     {
                         slot.Quantity += toGive;
