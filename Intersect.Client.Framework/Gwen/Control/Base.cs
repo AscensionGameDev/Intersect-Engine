@@ -11,6 +11,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Audio;
 #if DEBUG || DIAGNOSTIC
 #endif
 using Newtonsoft.Json;
@@ -2175,8 +2176,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 var soundInstance = sound.CreateInstance();
                 if (soundInstance != null)
                 {
-                    soundInstance.SetVolume(100, false);
-                    soundInstance.Play();
+                    Canvas.PlayAndAddSound(soundInstance);
                 }
             }
         }
