@@ -455,6 +455,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             {
                 if (!IsDragging)
                 {
+                    mContentPanel.IsHidden = false;
                     if (mMouseOver)
                     {
                         if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
@@ -506,8 +507,6 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     if (mDragIcon.Update())
                     {
-                        mContentPanel.IsHidden = false;
-
                         //Drug the item and now we stopped
                         IsDragging = false;
                         var dragRect = new FloatRect(
