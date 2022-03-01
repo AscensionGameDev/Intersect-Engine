@@ -63,23 +63,7 @@ namespace Intersect.Client.Interface.Game.Spells
             for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 var spell = SpellBase.Get(Globals.Me.Spells[i].Id);
-
-                if (spell != null)
-                {
-                    if (Items[i].IsDragging)
-                    {
-                        Items[i].Pnl.IsHidden = true;
-                    }
-                    else
-                    {
-                        Items[i].Pnl.IsHidden = false;
-                    }
-                }
-                else
-                {
-                    Items[i].Pnl.IsHidden = true;
-                }
-
+                Items[i].Pnl.IsHidden = spell == null || Items[i].IsDragging;
                 Items[i].Update();
             }
         }
