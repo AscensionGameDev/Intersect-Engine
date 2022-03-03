@@ -1625,31 +1625,36 @@ namespace Intersect.Server.Entities
                 if (item.Descriptor.IsStackable)
                 {
                     // Does the user have this item already?
-                    var existingSlot = FindInventoryItemSlot(item.ItemId);
-                    if (existingSlot != null)
-                    {
-                        // Can we blindly add more to this stack?
-                        var untilFull = item.Descriptor.MaxInventoryStack - existingSlot.Quantity;
-                        if (untilFull >= item.Quantity)
-                        {
-                            return true;
-                        }
+                    var itemSlots = FindInventoryItemSlots(item.ItemId);
+                    var slotsRequired = Math.Ceiling((double)item.Quantity / item.Descriptor.MaxInventoryStack);
 
-                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
-                        var toGive = item.Quantity - untilFull;
-                        if (Math.Ceiling((double) toGive / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                    // User doesn't have this item yet.
+                    if (itemSlots.Count == 0)
+                    {
+                        // Does the user have enough free space for these stacks?
+                        if (slotsRequired <= FindOpenInventorySlots().Count)
                         {
                             return true;
                         }
                     }
-                    // User doesn't have this item yet.
-                    else
+                    else // We need to check to see how much space we'd have if we first filled all possible stacks
                     {
-                        // Does the user have enough free space for these stacks?
-                        if (Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                        // Keep track of how much we have given to each stack
+                        var giveRemainder = item.Quantity;
+
+                        // For each stack while we still have items to give
+                        for (var i = 0; i < itemSlots.Count && giveRemainder > 0; i++)
                         {
-                            return true;
+                            // Give as much as possible to this stack
+                            giveRemainder -= item.Descriptor.MaxInventoryStack - itemSlots[i].Quantity;
                         }
+
+                        // We don't have anymore stuff to give after filling up our available stacks - we good
+                        bool roomInStacks = giveRemainder <= 0;
+                        // We still have leftover even after maxing each of our current stacks. See if we have empty slots in the inventory.
+                        bool roomInInventory = giveRemainder > 0 && Math.Ceiling((double)giveRemainder / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count;
+
+                        return roomInStacks || roomInInventory;
                     }
                 }
                 // Not a stacking item, so can we contain the amount we want to give them?
@@ -1786,6 +1791,8 @@ namespace Intersect.Server.Entities
 
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
+            var slotsRequired = (int)Math.Ceiling(item.Quantity / (double) item.Descriptor.MaxInventoryStack);
+
             int spawnAmount = 0;
 
             // How are we going to be handling this?
@@ -1806,7 +1813,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
                     {
                         spawnAmount = item.Quantity;
                     }
@@ -1834,7 +1841,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
+                    else if (!item.Descriptor.Stackable && openSlots >= slotsRequired) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
                         GiveItem(item, sendUpdate);
@@ -1880,7 +1887,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
                     if (canAdd > toGive)
                     {
                         slot.Quantity += toGive;
@@ -3149,10 +3156,14 @@ namespace Intersect.Server.Entities
         }
 
         //Business
-        public bool IsBusy()
-        {
-            return InShop != null || InBank || CraftingTableId != Guid.Empty || Trading.Counterparty != null;
-        }
+        private bool IsBusy() =>
+            InShop != null ||
+            InBank ||
+            CraftingTableId != Guid.Empty ||
+            Trading.Counterparty != null ||
+            Trading.Requester != null ||
+            PartyRequester != null ||
+            FriendRequester != null;
 
         //Bank
         public bool OpenBank(bool guild = false)
@@ -3536,7 +3547,7 @@ namespace Intersect.Server.Entities
 
             if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Timing.Global.Milliseconds))
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(this, fromPlayer);
@@ -3590,7 +3601,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     Trading.Requester = fromPlayer;
                     PacketSender.SendTradeRequest(this, fromPlayer);
@@ -3877,7 +3888,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     PartyRequester = fromPlayer;
                     PacketSender.SendPartyInvite(this, fromPlayer);
