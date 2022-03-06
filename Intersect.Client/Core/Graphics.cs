@@ -149,8 +149,14 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawMenu()
+        private static void DrawMenu()
         {
+            // No background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count == 0)
+            {
+                return;
+            }
+
             // Animated background in the main menu.
             if (ClientConfiguration.Instance.MenuBackground.Count > 1)
             {
@@ -163,16 +169,14 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                if (sMenuBackgroundInterval < Timing.Global.Milliseconds)
-                {
-                    sMenuBackgroundIndex++;
-                    sMenuBackgroundInterval = Timing.Global.Milliseconds +
-                                              ClientConfiguration.Instance.MenuBackgroundFrameInterval;
-                }
+                var currentTimeMs = Timing.Global.Milliseconds;
 
-                if (sMenuBackgroundIndex >= ClientConfiguration.Instance.MenuBackground.Count)
+                if (sMenuBackgroundInterval < currentTimeMs)
                 {
-                    sMenuBackgroundIndex = 0;
+                    sMenuBackgroundIndex =
+                        (sMenuBackgroundIndex + 1) % ClientConfiguration.Instance.MenuBackground.Count;
+
+                    sMenuBackgroundInterval = currentTimeMs + ClientConfiguration.Instance.MenuBackgroundFrameInterval;
                 }
             }
 
