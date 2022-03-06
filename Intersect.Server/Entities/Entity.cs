@@ -610,9 +610,10 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.StepForward:
-                        if (CanMove(Dir) > -1)
+                        var x = CanMove(Dir);
+                        if (CanMove(Dir) == -1)
                         {
-                            Move((byte) Dir, forPlayer);
+                            Move((byte) Dir, forPlayer, false, true);
                             moved = true;
                         }
 
@@ -638,9 +639,9 @@ namespace Intersect.Server.Entities
                                 break;
                         }
 
-                        if (CanMove(moveDir) > -1)
+                        if (CanMove(moveDir) == -1)
                         {
-                            Move(moveDir, forPlayer);
+                            Move(moveDir, forPlayer, false, true);
                             moved = true;
                         }
 
