@@ -1704,20 +1704,22 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var destRectangle = new FloatRect();
             var targetTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
             if (targetTex != null)
             {
-                destRectangle.X = (float) Math.Ceiling(GetCenterPos().X - (float) targetTex.GetWidth() / 4);
-                destRectangle.Y = (float) Math.Ceiling(GetCenterPos().Y - (float) targetTex.GetHeight() / 2);
-
                 var srcRectangle = new FloatRect(
-                    priority * (float) targetTex.GetWidth() / 2, 0, (float) targetTex.GetWidth() / 2,
+                    priority * targetTex.GetWidth() / 2f,
+                    0,
+                    targetTex.GetWidth() / 2f,
                     targetTex.GetHeight()
                 );
 
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
+                var destRectangle = new FloatRect(
+                    (float) Math.Ceiling(GetCenterPos().X - targetTex.GetWidth() / 4f),
+                    (float) Math.Ceiling(GetCenterPos().Y - targetTex.GetHeight() / 2f),
+                    srcRectangle.Width,
+                    srcRectangle.Height
+                );
 
                 Graphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Color.White);
             }
