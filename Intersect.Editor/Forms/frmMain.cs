@@ -405,11 +405,11 @@ namespace Intersect.Editor.Forms
             form.ShowDialog(this);
         }
 
-        public void EnterMap(Guid mapId)
+        public void EnterMap(Guid mapId, bool userEntered = false)
         {
             if (InvokeRequired)
             {
-                Invoke((MethodInvoker) delegate { EnterMap(mapId); });
+                Invoke((MethodInvoker) delegate { EnterMap(mapId, userEntered); });
 
                 return;
             }
@@ -433,6 +433,12 @@ namespace Intersect.Editor.Forms
             PacketSender.SendNeedMap(mapId);
             PacketSender.SendNeedGrid(mapId);
             Core.Graphics.TilePreviewUpdated = true;
+
+            // Save that we've opened this map last if this was a user triggered action. This way we can load it again should we restart the editor.
+            if (userEntered)
+            {
+                Preferences.SavePreference("LastMapOpened", mapId.ToString());
+            }
         }
 
         private void GrabMouseDownEvents()
