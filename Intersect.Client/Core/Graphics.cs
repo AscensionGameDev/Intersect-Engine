@@ -181,7 +181,7 @@ namespace Intersect.Client.Core
             }
 
             // Static background in the main menu.
-            else if (ClientConfiguration.Instance.MenuBackground.Count == 1)
+            else
             {
                 sMenuBackground = sContentManager.GetTexture(
                     TextureType.Gui, ClientConfiguration.Instance.MenuBackground[0]
