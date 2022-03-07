@@ -144,8 +144,6 @@ namespace Intersect.Server.Maps
             mMapController = map;
             MapInstanceId = mapInstanceId;
             Id = Guid.NewGuid();
-
-            Initialize();
         }
 
         public bool IsDisposed { get; protected set; }
