@@ -381,8 +381,8 @@ namespace Intersect.Client.Networking
             }
         }
 
-        // MapLayerChanged Packet (for traveling between map "instances")
-        public void HandlePacket(IPacketSender packetSender, MapLayerChangedPacket packet)
+        // MapInstanceChanged Packet
+        public void HandlePacket(IPacketSender packetSender, MapInstanceChangedPacket packet)
         {
             var disposingEntities = new List<Guid>();
             foreach (var pkt in packet.EntitiesToDispose)

@@ -52,6 +52,9 @@ namespace Intersect.Server.Maps
         private MapController[] mSurroundingMaps = new MapController[0];
         private MapController[] mSurroundingMapsWithSelf = new MapController[0];
 
+        /// <summary>
+        /// Contains a list of all surrounding Map (controller) IDs
+        /// </summary>
         [JsonIgnore]
         [NotMapped]
         public Guid[] SurroundingMapIds
@@ -70,6 +73,9 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Contains a list of all surrounding maps (controllers)
+        /// </summary>
         [JsonIgnore]
         [NotMapped]
         public MapController[] SurroundingMaps
@@ -113,13 +119,29 @@ namespace Intersect.Server.Maps
             Layers = null;
         }
 
+        /// <summary>
+        /// Quick reference for DB lookup of the relevant <see cref="MapBase"/>
+        /// </summary>
         public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
 
+        /// <summary>
+        /// Quick reference to get a Map Controller from its <see cref="MapBase"/> ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static MapController Get(Guid id)
         {
             return Lookup.Get<MapController>(id);
         }
 
+        /// <summary>
+        /// Tries to get a <see cref="MapInstance"/> when given an instanceId.
+        /// </summary>
+        /// <param name="mapControllerId">The id of the <see cref="MapController"/></param>
+        /// <param name="instanceId">The instance ID we want - crucially, NOT the unique ID of the <see cref="MapInstance"/>. Matches with some entity's InstanceId</param>
+        /// <param name="mapInstance">Out value for the successfully found <see cref="MapInstance"/></param>
+        /// <param name="createIfNew">(Default: false) Whether or not to create an instance of a controller if we can't find an instance with the requested ID</param>
+        /// <returns>True if successful in retrieving a <see cref="MapInstance"/>, false otherwise</returns>
         public static bool TryGetInstanceFromMap(Guid mapControllerId, Guid instanceId, out MapInstance mapInstance, bool createIfNew = false)
         {
             mapInstance = null;
@@ -134,6 +156,14 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Gets each instance of a map's surrounding maps with a given instanceID
+        /// </summary>
+        /// <param name="mapControllerId">The relevant map controller ID</param>
+        /// <param name="instanceId">The instance ID we're requesting from each map</param>
+        /// <param name="includeSelf">Whether or not to include the map of which we're checking the surroundings of</param>
+        /// <param name="createIfNew">Whether or not to create any instances that do not exist with the requested InstanceID on any of the surrounding maps</param>
+        /// <returns>A list of <see cref="MapInstance"/>, containing the instances of the requested surrounding maps with the given instance ID.</returns>
         public static List<MapInstance> GetSurroundingMapInstances(Guid mapControllerId, Guid instanceId, bool includeSelf, bool createIfNew = false)
         {
             List<MapInstance> instances = new List<MapInstance>();
@@ -163,6 +193,9 @@ namespace Intersect.Server.Maps
             Load(json, -1);
         }
 
+        /// <summary>
+        /// Refreshes all of this controller's instances
+        /// </summary>
         public void Initialize()
         {
             lock (mMapLock)
@@ -172,6 +205,11 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Load this map from JSON
+        /// </summary>
+        /// <param name="json">The JSON containing map data</param>
+        /// <param name="keepRevision">The revision number</param>
         public void Load(string json, int keepRevision = -1)
         {
             lock (mMapLock)
@@ -185,6 +223,10 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Despawns NPCs of a given <see cref="NpcBase"/> from all instances of this controller.
+        /// </summary>
+        /// <param name="npcBase">The <see cref="NpcBase"/> to despawn</param>
         public void DespawnNpcAcrossInstances(NpcBase npcBase)
         {
             foreach (var entity in GetEntitiesOnAllInstances())
@@ -199,6 +241,10 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Despawns resources of a given <see cref="ResourceBase"/> from all instances of this controller.
+        /// </summary>
+        /// <param name="resourceBase">The <see cref="ResourceBase"/> to despawn</param>
         public void DespawnResourceAcrossInstances(ResourceBase resourceBase)
         {
             foreach (var entity in GetEntitiesOnAllInstances())
@@ -213,6 +259,10 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Despawns projectiles of a given <see cref="ProjectileBase"/> from all instances of this controller.
+        /// </summary>
+        /// <param name="projectileBase">The <see cref="ProjectileBase"/> to despawn</param>
         public void DespawnProjectileAcrossInstances(ProjectileBase projectileBase)
         {
             var guids = new List<Guid>();
@@ -230,6 +280,10 @@ namespace Intersect.Server.Maps
             PacketSender.SendRemoveProjectileSpawnsFromAllLayers(Id, guids.ToArray(), null);
         }
 
+        /// <summary>
+        /// Despawns items of a given <see cref="ItemBase"/> from all instances of this controller.
+        /// </summary>
+        /// <param name="itemBase">The <see cref="ItemBase"/> to despawn</param>
         public void DespawnItemAcrossInstances(ItemBase itemBase)
         {
             foreach(var mapInstance in mInstances.Values)
@@ -244,16 +298,30 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Gets an array of MapControllers out of the maps surrounding this one
+        /// </summary>
+        /// <param name="includingSelf">Whether or not to also include the calling controller in the array</param>
+        /// <returns>An array of MapControllers out of the maps surrounding this one</returns>
         public MapController[] GetSurroundingMaps(bool includingSelf = false)
         {
             return includingSelf ? mSurroundingMapsWithSelf : mSurroundingMaps;
         }
 
+        /// <summary>
+        /// Gets an array of Guids out of the map IDs surrounding this one
+        /// </summary>
+        /// <param name="includingSelf">Whether or not to also include the calling controller in the array</param>
+        /// <returns>An array of Guids out of the maps surrounding this one</returns>
         public Guid[] GetSurroundingMapIds(bool includingSelf = false)
         {
             return includingSelf ? mSurroundingMapsIdsWithSelf : mSurroundingMapIds;
         }
 
+        /// <summary>
+        /// Gets every player that is on every instance of this map controller
+        /// </summary>
+        /// <returns>A generic collection of <see cref="Player"/>s</returns>
         public ICollection<Player> GetPlayersOnAllInstances()
         {
             var players = new List<Player>();
@@ -264,6 +332,10 @@ namespace Intersect.Server.Maps
             return players;
         }
 
+        /// <summary>
+        /// Gets every entity that is on every instance of this map controller
+        /// </summary>
+        /// <returns>A generic collection of <see cref="Entity"/>s</returns>s
         public ICollection<Entity> GetEntitiesOnAllInstances()
         {
             var entities = new List<Entity>();
@@ -274,6 +346,10 @@ namespace Intersect.Server.Maps
             return entities;
         }
 
+        /// <summary>
+        /// Destroys connections to other maps from this controller
+        /// </summary>
+        /// <param name="side">Which side to destroy connections from. -1 will clear all directionsm and is the default</param>
         public void ClearConnections(int side = -1)
         {
             if (side == -1 || side == (int) Directions.Up)
@@ -300,6 +376,9 @@ namespace Intersect.Server.Maps
         }
 
         #region Map Instance Management
+        /// <summary>
+        /// Despawns all entities/items/projectiles on each instance that belongs to this controller
+        /// </summary>
         public void DespawnAllInstances()
         {
             foreach (var mapInstance in mInstances.Values)
@@ -308,6 +387,9 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Respawns all entities/items/projectiles on each instance that belongs to this controller.
+        /// </summary>
         public void RespawnAllInstances()
         {
             foreach (var mapInstance in mInstances.Values)
@@ -339,6 +421,13 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Attempts to get an instance with some given instance ID
+        /// </summary>
+        /// <param name="mapInstanceId">The id of the instance - NOT the unique id of a <see cref="MapInstance"/></param>
+        /// <param name="instance">Out value - the mapInstance we find. Null if not found</param>
+        /// <param name="createIfNew">Whether or not to create an instance if we can't find one</param>
+        /// <returns>True if successful in finding the requested instance, false otherwise</returns>
         public bool TryGetInstance(Guid mapInstanceId, out MapInstance instance, bool createIfNew = false)
         {
             instance = null;
@@ -359,6 +448,11 @@ namespace Intersect.Server.Maps
             return false;
         }
 
+        /// <summary>
+        /// Removes a requested <see cref="Entity"/> from a requested instance on all surrounding maps, including this one
+        /// </summary>
+        /// <param name="entity">The entity we wish to remove</param>
+        /// <param name="mapInstanceId">The instance we're removing the entity from</param>
         public void RemoveEntityFromAllSurroundingMapsInInstance(Entity entity, Guid mapInstanceId)
         {
             foreach (var instance in GetSurroundingMapInstances(Id, mapInstanceId, true))
@@ -367,6 +461,10 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Disposes of an instance from this controllers <see cref="mInstances"/>
+        /// </summary>
+        /// <param name="mapInstanceId">The instance ID to dispose of</param>
         public void DisposeInstanceWithId(Guid mapInstanceId)
         {
             lock (GetMapLock())
@@ -382,6 +480,12 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Gets a list of players that are on the same instance
+        /// </summary>
+        /// <param name="mapInstanceId">The instance ID to check for</param>
+        /// <param name="except">An entity that we do NOT wish to include in the returned list</param>
+        /// <returns>A list of players on this map who share the same instance ID</returns>
         public List<Player> GetPlayersOnSharedInstance(Guid mapInstanceId, Entity except)
         {
             var entitiesOnSharedLayer = new List<Player>();
@@ -400,12 +504,18 @@ namespace Intersect.Server.Maps
             return entitiesOnSharedLayer;
         }
 
+        /// <summary>
+        /// Clears <see cref="mInstances"/>
+        /// </summary>
         public void ClearAllInstances()
         {
             mInstances.Clear();
         }
         #endregion
 
+        /// <summary>
+        /// Gets rid of any orphaned tile layers
+        /// </summary>
         public void DestroyOrphanedLayers()
         {
             if (Layers == null && TileData != null)
@@ -424,11 +534,20 @@ namespace Intersect.Server.Maps
             }
         }
 
+        /// <summary>
+        /// Removes this map from the database
+        /// </summary>
         public override void Delete()
         {
             Lookup?.Delete(this);
         }
 
+        /// <summary>
+        /// Get back a list of tiles surrounding a requested tile, with a given distance
+        /// </summary>
+        /// <param name="location">The tile to search for</param>
+        /// <param name="distance">The distance from the requested tile to search out from</param>
+        /// <returns>A dictionary of tiles on their own maps</returns>
         public Dictionary<MapController, List<int>> FindSurroundingTiles(Point location, int distance)
         {
             // Loop through all locations surrounding us to get valid tiles.
@@ -532,6 +651,9 @@ namespace Intersect.Server.Maps
             return locations;
         }
 
+        /// <summary>
+        /// A destructor, responsible for making sure that if a map controller is removed, all of its instances are as well
+        /// </summary>
         ~MapController()
         {
             ClearAllInstances();

@@ -422,7 +422,7 @@ namespace Intersect.Server.Networking
                     enPackets.Add(entitiesToDispose[i].EntityPacket(null, player));
                 }
 
-                player?.SendPacket(new MapLayerChangedPacket(enPackets.ToArray(), effectedMaps.ToList()));
+                player?.SendPacket(new MapInstanceChangedPacket(enPackets.ToArray(), effectedMaps.ToList()));
             }
         }
 

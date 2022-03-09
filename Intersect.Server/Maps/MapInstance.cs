@@ -166,7 +166,7 @@ namespace Intersect.Server.Maps
 
         public bool ShouldBeCleaned()
         {
-            return (!mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.TimeUntilMapCleanup);
+            return (!mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.Map.TimeUntilMapCleanup);
         }
 
         public void RemoveLayerFromController()
@@ -1171,7 +1171,7 @@ namespace Intersect.Server.Maps
             foreach (var en in mEntities)
             {
                 //Let's see if and how long this map has been inactive, if longer than X seconds, regenerate everything on the map
-                if (timeMs > mLastUpdateTime + Options.TimeUntilMapCleanup)
+                if (timeMs > mLastUpdateTime + Options.Map.TimeUntilMapCleanup)
                 {
                     //Regen Everything & Forget Targets
                     if (en.Value is Resource || en.Value is Npc)

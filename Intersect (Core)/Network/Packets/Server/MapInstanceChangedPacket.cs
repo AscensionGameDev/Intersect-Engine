@@ -5,12 +5,12 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapLayerChangedPacket : IntersectPacket
+    public class MapInstanceChangedPacket : IntersectPacket
     {
         // Empty for EF
-        public MapLayerChangedPacket() { }
+        public MapInstanceChangedPacket() { }
 
-        public MapLayerChangedPacket(EntityPacket[] entitiesToDispose, List<Guid> mapIds)
+        public MapInstanceChangedPacket(EntityPacket[] entitiesToDispose, List<Guid> mapIds)
         {
             EntitiesToDispose = entitiesToDispose;
             MapIdsToRefresh = mapIds;
