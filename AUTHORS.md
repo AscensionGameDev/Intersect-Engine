@@ -6,6 +6,9 @@
 
 [Robbie Lodico](https://github.com/lodicolo)
 
+# Intersect Maintainers
+
+[Jocelyn Cobb](https://github.com/Cheshire92)
 
 # Intersect Contributors
 
@@ -16,5 +19,3 @@
 [Dog from the Kash Shop](#)
 
 [Fernando Arzola Lagos](https://github.com/Arufonsu)
-
-[Jocelyn Cobb](https://github.com/Cheshire92)
